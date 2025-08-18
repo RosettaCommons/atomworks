@@ -50,7 +50,7 @@ Within the AtomWorks paradigm, the output of each `Transofrm` is not an opaque d
 
 ## Installation
 
-```
+```shell
 pip install atomworks # base installation version without torch (for only atomworks.io)
 pip install "atomworks[ml]" # with torch and ML dependencies (for atomworks.io plus atomworks.ml)
 pip install "atomworks[dev]" # with development dependencies
@@ -59,8 +59,8 @@ pip install "atomworks[ml,dev]" # with all dependencies
 
 If you are using [uv](https://docs.astral.sh/uv/reference/policies/versioning/) for package management, you can install atomworks with:
 
-```
- uv pip install "atomworks[ml,openbabel,dev]"
+```shell
+uv pip install "atomworks[ml,openbabel,dev]"
 ```
 
 For more advanced setup options (including how to run workflows via apptainers) see the [full documentation](https://baker-laboratory.github.io/atomworks-dev/latest).
@@ -69,7 +69,7 @@ For more advanced setup options (including how to run workflows via apptainers) 
 
 ## Quick Start
 
-```
+```python
 
 from atomworks.io.parser import parse
 
