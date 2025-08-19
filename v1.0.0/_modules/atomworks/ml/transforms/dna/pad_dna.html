@@ -1,0 +1,1195 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>atomworks.ml.transforms.dna.pad_dna &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/transforms/dna/pad_dna';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.0.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../../../../../_static/atomworks_logo_color.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">atomworks.ml.transforms.dna.pad_dna</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for atomworks.ml.transforms.dna.pad_dna</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Transforms for augmentation of nucleic acids&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">PathLike</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">struc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure.basepairs</span><span class="w"> </span><span class="kn">import</span> <span class="n">_check_dssr_criteria</span><span class="p">,</span> <span class="n">_get_proximate_residues</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure.filter</span><span class="w"> </span><span class="kn">import</span> <span class="n">filter_nucleotides</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure.residues</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_residue_masks</span><span class="p">,</span> <span class="n">get_residue_starts_for</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">STANDARD_DNA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.transforms.atom_array</span><span class="w"> </span><span class="kn">import</span> <span class="n">remove_nan_coords</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.io_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResIdxSlice</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.sequence</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_1_from_3_letter_code</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.executables.x3dna</span><span class="w"> </span><span class="kn">import</span> <span class="n">X3DNAFiber</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.preprocessing.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChainType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms._checks</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">check_atom_array_annotation</span><span class="p">,</span>
+    <span class="n">check_contains_keys</span><span class="p">,</span>
+    <span class="n">check_is_instance</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.atom_array</span><span class="w"> </span><span class="kn">import</span> <span class="n">_renumber_res_ids_around_reference</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.utils.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">align_atom_arrays</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.utils.misc</span><span class="w"> </span><span class="kn">import</span> <span class="n">_randomly_select_items_with_weights</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.utils.testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_clash</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;atomworks.ml&quot;</span><span class="p">)</span>
+
+<span class="n">dna_transform_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+
+<span class="n">_WATSON_CRICK_COMPLEMENT</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;N&quot;</span><span class="p">:</span> <span class="s2">&quot;N&quot;</span><span class="p">}</span>
+<span class="sd">&quot;&quot;&quot;Watson-Crick complement of standard nucleotides.&quot;&quot;&quot;</span>
+
+<span class="n">_WATSON_CRICK_COMPLEMENT_TRANSLATION_TABLE</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">maketrans</span><span class="p">(</span><span class="n">_WATSON_CRICK_COMPLEMENT</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;Translation table for the Watson-Crick complement of nucleotides.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="to_reverse_complement">
+<a class="viewcode-back" href="../../../../../ml/transforms/dna.html#atomworks.ml.transforms.dna.pad_dna.to_reverse_complement">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_reverse_complement</span><span class="p">(</span><span class="n">seq</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a Watson-Crick complement of a nucleic acid sequence (assuming one-letter codes).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">seq</span><span class="o">.</span><span class="n">upper</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">_WATSON_CRICK_COMPLEMENT_TRANSLATION_TABLE</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="generate_bform_dna">
+<a class="viewcode-back" href="../../../../../ml/transforms/dna.html#atomworks.ml.transforms.dna.pad_dna.generate_bform_dna">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_bform_dna</span><span class="p">(</span><span class="n">seq</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Uses x3dna&#39;s &#39;fiber&#39; executable to generate ideal bform DNA</span>
+<span class="sd">    with the given sequence, then returns the structure parsed into</span>
+<span class="sd">    an AtomArray.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">seq</span> <span class="o">=</span> <span class="n">seq</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Sequence must be non-empty&quot;</span>
+    <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">({</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">}),</span> <span class="sa">f</span><span class="s2">&quot;Sequence must contain only valid DNA nucleotides: </span><span class="si">{</span><span class="n">seq</span><span class="si">=}</span><span class="s2">&quot;</span>
+
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.pdb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmp_file</span><span class="p">:</span>
+        <span class="n">tmp_pdb_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">tmp_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="n">x3dna_cmd</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">X3DNAFiber</span><span class="o">.</span><span class="n">get_bin_path</span><span class="p">()),</span> <span class="s2">&quot;-b&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;-seq=</span><span class="si">{</span><span class="n">seq</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">tmp_pdb_path</span><span class="p">)]</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">x3dna_cmd</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">tmp_pdb_path</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">or</span> <span class="n">tmp_pdb_path</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;Failed to generate B-form DNA using X3DNA &#39;fiber&#39;. Ensure X3DNA is installed and PATH set.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># load the generated structure and remove any potential nans</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">load_any</span><span class="p">(</span><span class="n">tmp_pdb_path</span><span class="p">,</span> <span class="n">file_type</span><span class="o">=</span><span class="s2">&quot;pdb&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">remove_nan_coords</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Generated structure must contain atoms&quot;</span>
+
+    <span class="k">return</span> <span class="n">atom_array</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_residue_info_for_dna_chains</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">annotations</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get residue information for DNA chains in an AtomArray.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_type</span> <span class="o">==</span> <span class="n">ChainType</span><span class="o">.</span><span class="n">DNA</span><span class="p">),</span> <span class="s2">&quot;AtomArray must contain DNA chains&quot;</span>
+    <span class="n">to_canonical_dna_1_letter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span>
+        <span class="n">partial</span><span class="p">(</span><span class="n">get_1_from_3_letter_code</span><span class="p">,</span> <span class="n">use_closest_canonical</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">chain_type</span><span class="o">=</span><span class="n">ChainType</span><span class="o">.</span><span class="n">DNA</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">_res_start_stop_idxs</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">get_residue_starts</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">add_exclusive_stop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">_res_starts</span> <span class="o">=</span> <span class="n">_res_start_stop_idxs</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">dtypes</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;is_nan&quot;</span><span class="p">,</span> <span class="s2">&quot;bool&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;canonical_seq&quot;</span><span class="p">,</span> <span class="s2">&quot;U1&quot;</span><span class="p">)]</span>
+    <span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
+        <span class="n">dtypes</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">annotation</span><span class="p">,</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span><span class="p">))</span>
+
+    <span class="n">seq_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_res_start_stop_idxs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtypes</span><span class="p">))</span>
+    <span class="n">seq_array</span><span class="p">[</span><span class="s2">&quot;is_nan&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">apply_segment_wise</span><span class="p">(</span>
+        <span class="n">_res_start_stop_idxs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">function</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">all</span>
+    <span class="p">)</span>
+    <span class="n">seq_array</span><span class="p">[</span><span class="s2">&quot;canonical_seq&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_canonical_dna_1_letter</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span><span class="p">[</span><span class="n">_res_starts</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
+        <span class="n">seq_array</span><span class="p">[</span><span class="n">annotation</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="n">annotation</span><span class="p">)[</span><span class="n">_res_starts</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">seq_array</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_true_contiguous</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns True if the True values in arr form a single contiguous block.&quot;&quot;&quot;</span>
+    <span class="n">true_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">true_idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># No islands if no True values</span>
+
+    <span class="c1"># True island is contiguous if the difference between the last and first index</span>
+    <span class="c1"># is exactly the number of True values minus one</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">true_idx</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">true_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">true_idx</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_overhang_lengths</span><span class="p">(</span><span class="n">is_overhang</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Given a boolean array indicating overhangs, returns the lengths of the overhangs on the left and right.&quot;&quot;&quot;</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">is_overhang</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="o">~</span><span class="n">is_overhang</span><span class="p">)</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">is_overhang</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="o">~</span><span class="n">is_overhang</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">])</span>
+
+
+<span class="c1"># reimplementation of biotite base_pairs</span>
+<div class="viewcode-block" id="base_pairs">
+<a class="viewcode-back" href="../../../../../ml/transforms/dna.html#atomworks.ml.transforms.dna.pad_dna.base_pairs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">base_pairs</span><span class="p">(</span>
+    <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">min_atoms_per_base</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">unique</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">no_hbond_dist_cut</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.0</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="c1"># Get the nucleotides for the given atom_array</span>
+    <span class="n">nucleotides_boolean</span> <span class="o">=</span> <span class="n">filter_nucleotides</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+
+    <span class="c1"># Disregard the phosphate-backbone</span>
+    <span class="n">non_phosphate_boolean</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;O5&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="s2">&quot;OP1&quot;</span><span class="p">,</span> <span class="s2">&quot;OP2&quot;</span><span class="p">,</span> <span class="s2">&quot;OP3&quot;</span><span class="p">,</span> <span class="s2">&quot;HOP2&quot;</span><span class="p">,</span> <span class="s2">&quot;HOP3&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Combine the two boolean masks</span>
+    <span class="n">boolean_mask</span> <span class="o">=</span> <span class="n">nucleotides_boolean</span> <span class="o">&amp;</span> <span class="n">non_phosphate_boolean</span>
+
+    <span class="c1"># Get only nucleosides</span>
+    <span class="n">nucleosides</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">boolean_mask</span><span class="p">]</span>
+
+    <span class="c1"># Get the base pair candidates according to a N/O cutoff distance,</span>
+    <span class="c1"># where each base is identified as the first index of its respective</span>
+    <span class="c1"># residue</span>
+    <span class="n">n_o_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">nucleosides</span><span class="o">.</span><span class="n">element</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;O&quot;</span><span class="p">])</span>
+    <span class="n">basepair_candidates</span><span class="p">,</span> <span class="n">n_o_matches</span> <span class="o">=</span> <span class="n">_get_proximate_residues</span><span class="p">(</span><span class="n">nucleosides</span><span class="p">,</span> <span class="n">n_o_mask</span><span class="p">,</span> <span class="n">no_hbond_dist_cut</span><span class="p">)</span>
+
+    <span class="c1"># Contains the plausible base pairs</span>
+    <span class="n">basepairs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Contains the number of hydrogens for each plausible base pair</span>
+    <span class="n">basepairs_hbonds</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Get the residue masks for each residue</span>
+    <span class="n">base_masks</span> <span class="o">=</span> <span class="n">get_residue_masks</span><span class="p">(</span><span class="n">nucleosides</span><span class="p">,</span> <span class="n">basepair_candidates</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+
+    <span class="c1"># Group every two masks together for easy iteration (each &#39;row&#39; is</span>
+    <span class="c1"># respective to a row in ``basepair_candidates``)</span>
+    <span class="n">base_masks</span> <span class="o">=</span> <span class="n">base_masks</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">basepair_candidates</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="n">nucleosides</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">base1_index</span><span class="p">,</span> <span class="n">base2_index</span><span class="p">),</span> <span class="p">(</span><span class="n">base1_mask</span><span class="p">,</span> <span class="n">base2_mask</span><span class="p">),</span> <span class="n">n_o_pairs</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+        <span class="n">basepair_candidates</span><span class="p">,</span> <span class="n">base_masks</span><span class="p">,</span> <span class="n">n_o_matches</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">):</span>
+        <span class="n">base1</span> <span class="o">=</span> <span class="n">nucleosides</span><span class="p">[</span><span class="n">base1_mask</span><span class="p">]</span>
+        <span class="n">base2</span> <span class="o">=</span> <span class="n">nucleosides</span><span class="p">[</span><span class="n">base2_mask</span><span class="p">]</span>
+
+        <span class="n">hbonds</span> <span class="o">=</span> <span class="n">_check_dssr_criteria</span><span class="p">((</span><span class="n">base1</span><span class="p">,</span> <span class="n">base2</span><span class="p">),</span> <span class="n">min_atoms_per_base</span><span class="p">,</span> <span class="n">unique</span><span class="p">)</span>
+
+        <span class="c1"># If no hydrogens are present use the number N/O pairs to</span>
+        <span class="c1"># decide between multiple pairing possibilities.</span>
+
+        <span class="k">if</span> <span class="n">hbonds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Each N/O-pair is detected twice. Thus, the number of</span>
+            <span class="c1"># matches must be divided by two.</span>
+            <span class="n">hbonds</span> <span class="o">=</span> <span class="n">n_o_pairs</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">hbonds</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">basepairs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">base1_index</span><span class="p">,</span> <span class="n">base2_index</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">unique</span><span class="p">:</span>
+                <span class="n">basepairs_hbonds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hbonds</span><span class="p">)</span>
+
+    <span class="n">basepair_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">basepairs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">unique</span><span class="p">:</span>
+        <span class="c1"># Contains all non-unique base pairs that are flagged to be</span>
+        <span class="c1"># removed</span>
+        <span class="n">to_remove</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Get all bases that have non-unique pairing interactions</span>
+        <span class="n">base_indices</span><span class="p">,</span> <span class="n">occurrences</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">basepairs</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">base_index</span><span class="p">,</span> <span class="n">occurrence</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">base_indices</span><span class="p">,</span> <span class="n">occurrences</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">occurrence</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># Write the non-unique base pairs to a dictionary as</span>
+                <span class="c1"># &#39;index: number of hydrogen bonds&#39;</span>
+                <span class="n">remove_candidates</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">basepair_array</span> <span class="o">==</span> <span class="n">base_index</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+                        <span class="n">remove_candidates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">basepairs_hbonds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="c1"># Flag all non-unique base pairs for removal except the</span>
+                <span class="c1"># one that has the most hydrogen bonds</span>
+                <span class="k">del</span> <span class="n">remove_candidates</span><span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="n">remove_candidates</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">remove_candidates</span><span class="o">.</span><span class="n">get</span><span class="p">)]</span>
+                <span class="n">to_remove</span> <span class="o">+=</span> <span class="nb">list</span><span class="p">(</span><span class="n">remove_candidates</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="c1"># Remove all flagged base pairs from the output `ndarray`</span>
+        <span class="n">basepair_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">basepair_array</span><span class="p">,</span> <span class="n">to_remove</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Remap values to original atom array</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">basepair_array</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">basepair_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">boolean_mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="n">basepair_array</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">basepair_array</span><span class="p">):</span>
+            <span class="n">basepair_array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_residue_starts_for</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">basepair_array</span></div>
+
+
+
+<div class="viewcode-block" id="PadDNA">
+<a class="viewcode-back" href="../../../../../ml/transforms/dna.html#atomworks.ml.transforms.dna.pad_dna.PadDNA">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PadDNA</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Structurally pads DNA duplexes by extending them with randomly sampled DNA in B-form conformation.</span>
+
+<span class="sd">    This transform identifies DNA duplexes in the structure, completes any overhanging single-stranded regions with</span>
+<span class="sd">    complementary bases, and optionally extends the duplex with additional base pairs. The padding is done both at the</span>
+<span class="sd">    sequence level and structural level, ensuring proper base pairing and B-form DNA geometry. The original sequence</span>
+<span class="sd">    is not modified and placed at a random position in the padded sequence.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - x3dna_path (PathLike | None): Path to the X3DNA installation directory or executable. If None, this</span>
+<span class="sd">            assumes the &#39;X3DNA&#39; environment variable is set to infer the x3dna executable path.</span>
+<span class="sd">        - p_skip (float): Probability of skipping the transform. Must be between 0 and 1. Defaults to 0.</span>
+<span class="sd">        - max_overhang (int): Maximum allowed length of single-stranded overhangs. Defaults to 2.</span>
+<span class="sd">            If the overhang is longer than this, the transform will skip the DNA chain.</span>
+<span class="sd">        - max_pad (int): Maximum number of base pairs to add in a single padding event. Defaults to 100.</span>
+<span class="sd">            If the total length of the padded sequence is longer than this, the transform will skip the DNA chain.</span>
+<span class="sd">        - max_pad_tot (int): Maximum total length of padded DNA duplex. Defaults to 100.</span>
+<span class="sd">        - min_pad (int): Minimum number of base pairs to add when padding. Defaults to 20.</span>
+<span class="sd">        - pad_type_weights (dict): Weights for different padding strategies. Keys are &#39;none&#39;, &#39;pdb&#39;, &#39;uniform&#39;.</span>
+<span class="sd">            Defaults to {&quot;none&quot;: 0, &quot;pdb&quot;: 0, &quot;uniform&quot;: 1}.</span>
+<span class="sd">        - pad_nt_weights (dict): Weights for nucleotide selection during padding. Keys are &#39;A&#39;, &#39;T&#39;, &#39;C&#39;, &#39;G&#39;.</span>
+<span class="sd">            Defaults to {&quot;A&quot;: 1, &quot;C&quot;: 1, &quot;G&quot;: 1, &quot;T&quot;: 1}.</span>
+<span class="sd">        - align_len_weights (dict): Weights for selecting alignment lengths. Keys are integers. Defaults to {1: 1}.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        - AssertionError: If p_skip is not between 0 and 1.</span>
+<span class="sd">        - X3DNAExecutableError: If X3DNA executable validation fails.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># fmt: off</span>
+    <span class="n">pdb_dna_lengths</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">([</span>
+        <span class="c1">#1    #2    #3    #4    #5    #6    #7    #8    #9    #10</span>
+        <span class="mi">0</span><span class="p">,</span>    <span class="mi">5</span><span class="p">,</span>    <span class="mi">53</span><span class="p">,</span>   <span class="mi">60</span><span class="p">,</span>   <span class="mi">342</span><span class="p">,</span>  <span class="mi">616</span><span class="p">,</span>  <span class="mi">764</span><span class="p">,</span>  <span class="mi">817</span><span class="p">,</span>  <span class="mi">797</span><span class="p">,</span>  <span class="mi">675</span><span class="p">,</span> <span class="c1"># 10</span>
+        <span class="mi">1258</span><span class="p">,</span> <span class="mi">971</span><span class="p">,</span>  <span class="mi">1713</span><span class="p">,</span> <span class="mi">985</span><span class="p">,</span>  <span class="mi">795</span><span class="p">,</span>  <span class="mi">669</span><span class="p">,</span>  <span class="mi">1224</span><span class="p">,</span> <span class="mi">464</span><span class="p">,</span>  <span class="mi">697</span><span class="p">,</span>  <span class="mi">363</span><span class="p">,</span> <span class="c1"># 20</span>
+        <span class="mi">435</span><span class="p">,</span>  <span class="mi">858</span><span class="p">,</span>  <span class="mi">336</span><span class="p">,</span>  <span class="mi">218</span><span class="p">,</span>  <span class="mi">313</span><span class="p">,</span>  <span class="mi">280</span><span class="p">,</span>  <span class="mi">317</span><span class="p">,</span>  <span class="mi">351</span><span class="p">,</span>  <span class="mi">318</span><span class="p">,</span>  <span class="mi">161</span><span class="p">,</span> <span class="c1"># 30</span>
+        <span class="mi">217</span><span class="p">,</span>  <span class="mi">154</span><span class="p">,</span>  <span class="mi">218</span><span class="p">,</span>  <span class="mi">99</span><span class="p">,</span>   <span class="mi">109</span><span class="p">,</span>  <span class="mi">231</span><span class="p">,</span>  <span class="mi">155</span><span class="p">,</span>  <span class="mi">84</span><span class="p">,</span>   <span class="mi">157</span><span class="p">,</span>  <span class="mi">98</span><span class="p">,</span>  <span class="c1"># 40</span>
+        <span class="mi">320</span><span class="p">,</span>  <span class="mi">46</span><span class="p">,</span>   <span class="mi">285</span><span class="p">,</span>  <span class="mi">45</span><span class="p">,</span>   <span class="mi">84</span><span class="p">,</span>   <span class="mi">93</span><span class="p">,</span>   <span class="mi">61</span><span class="p">,</span>   <span class="mi">69</span><span class="p">,</span>   <span class="mi">267</span><span class="p">,</span>  <span class="mi">124</span><span class="p">,</span> <span class="c1"># 50</span>
+        <span class="mi">276</span><span class="p">,</span>  <span class="mi">40</span><span class="p">,</span>   <span class="mi">52</span><span class="p">,</span>   <span class="mi">46</span><span class="p">,</span>   <span class="mi">94</span><span class="p">,</span>   <span class="mi">41</span><span class="p">,</span>   <span class="mi">58</span><span class="p">,</span>   <span class="mi">35</span><span class="p">,</span>   <span class="mi">29</span><span class="p">,</span>   <span class="mi">31</span><span class="p">,</span>  <span class="c1"># 60</span>
+        <span class="mi">90</span><span class="p">,</span>   <span class="mi">39</span><span class="p">,</span>   <span class="mi">17</span><span class="p">,</span>   <span class="mi">38</span><span class="p">,</span>   <span class="mi">30</span><span class="p">,</span>   <span class="mi">18</span><span class="p">,</span>   <span class="mi">15</span><span class="p">,</span>   <span class="mi">13</span><span class="p">,</span>   <span class="mi">14</span><span class="p">,</span>   <span class="mi">8</span><span class="p">,</span>   <span class="c1"># 70</span>
+        <span class="mi">61</span><span class="p">,</span>   <span class="mi">22</span><span class="p">,</span>   <span class="mi">18</span><span class="p">,</span>   <span class="mi">4</span><span class="p">,</span>    <span class="mi">10</span><span class="p">,</span>   <span class="mi">14</span><span class="p">,</span>   <span class="mi">3</span><span class="p">,</span>    <span class="mi">9</span><span class="p">,</span>    <span class="mi">13</span><span class="p">,</span>   <span class="mi">18</span><span class="p">,</span>  <span class="c1"># 80</span>
+        <span class="mi">26</span><span class="p">,</span>   <span class="mi">14</span><span class="p">,</span>   <span class="mi">0</span><span class="p">,</span>    <span class="mi">5</span><span class="p">,</span>    <span class="mi">32</span><span class="p">,</span>   <span class="mi">45</span><span class="p">,</span>   <span class="mi">3</span><span class="p">,</span>    <span class="mi">1</span><span class="p">,</span>    <span class="mi">4</span><span class="p">,</span>    <span class="mi">1</span><span class="p">,</span>   <span class="c1"># 90</span>
+        <span class="mi">28</span><span class="p">,</span>   <span class="mi">2</span><span class="p">,</span>    <span class="mi">3</span><span class="p">,</span>    <span class="mi">3</span><span class="p">,</span>    <span class="mi">6</span><span class="p">,</span>    <span class="mi">3</span><span class="p">,</span>    <span class="mi">10</span><span class="p">,</span>   <span class="mi">0</span><span class="p">,</span>    <span class="mi">2</span><span class="p">,</span>    <span class="mi">35</span><span class="p">,</span>  <span class="c1"># 100</span>
+        <span class="mi">15</span><span class="p">,</span>   <span class="mi">0</span><span class="p">,</span>    <span class="mi">0</span><span class="p">,</span>    <span class="mi">0</span><span class="p">,</span>    <span class="mi">1</span><span class="p">,</span>    <span class="mi">11</span><span class="p">,</span>   <span class="mi">42</span><span class="p">,</span>   <span class="mi">0</span><span class="p">,</span>    <span class="mi">4</span><span class="p">,</span>    <span class="mi">2</span><span class="p">,</span>   <span class="c1"># 110</span>
+        <span class="mi">0</span><span class="p">,</span>    <span class="mi">0</span><span class="p">,</span>    <span class="mi">1</span><span class="p">,</span>    <span class="mi">0</span><span class="p">,</span>    <span class="mi">1</span><span class="p">,</span>    <span class="mi">2</span><span class="p">,</span>    <span class="mi">4</span><span class="p">,</span>    <span class="mi">0</span><span class="p">,</span>    <span class="mi">5</span><span class="p">,</span>    <span class="mi">2</span><span class="p">,</span>   <span class="c1"># 120</span>
+        <span class="mi">8</span><span class="p">,</span>    <span class="mi">2</span><span class="p">,</span>    <span class="mi">4</span><span class="p">,</span>    <span class="mi">5</span><span class="p">,</span>    <span class="mi">2</span><span class="p">,</span>    <span class="mi">4</span><span class="p">,</span>    <span class="mi">0</span><span class="p">,</span>    <span class="mi">3</span><span class="p">,</span>    <span class="mi">1</span><span class="p">,</span>    <span class="mi">0</span><span class="p">,</span>   <span class="c1"># 130</span>
+        <span class="mi">0</span><span class="p">,</span>    <span class="mi">0</span><span class="p">,</span>    <span class="mi">0</span><span class="p">,</span>    <span class="mi">4</span><span class="p">,</span>    <span class="mi">0</span><span class="p">,</span>    <span class="mi">0</span><span class="p">,</span>    <span class="mi">4</span><span class="p">,</span>    <span class="mi">2</span><span class="p">,</span>    <span class="mi">2</span><span class="p">,</span>    <span class="mi">12</span><span class="p">,</span>  <span class="c1"># 140</span>
+        <span class="mi">0</span><span class="p">,</span>    <span class="mi">2</span><span class="p">,</span>    <span class="mi">0</span><span class="p">,</span>    <span class="mi">4</span><span class="p">,</span>    <span class="mi">9</span><span class="p">,</span>    <span class="mi">203</span><span class="p">,</span>  <span class="mi">154</span><span class="p">,</span>  <span class="mi">317</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>    <span class="mi">670</span>  <span class="c1"># 150</span>
+    <span class="p">]))</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Distribution of DNA lengths in PDB as tuples of (length, count).&quot;&quot;&quot;</span>
+    <span class="c1"># fmt: on</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x3dna_path</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">p_skip</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">max_overhang</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">max_pad</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">max_pad_tot</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">min_pad</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">pad_type_weights</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;none&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;pdb&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;uniform&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+        <span class="n">pad_nt_weights</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+        <span class="n">align_len_weights</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+        <span class="n">no_hbond_dist_cut</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            x3dna_path (str) : Path to the x3dna directory. For example,</span>
+<span class="sd">                 &quot;path/to/prot_dna/x3dna-v2.4/&quot;</span>
+<span class="sd">            p_skip (float, from 0 to 1): probability that this transform is skipped and does nothing.</span>
+<span class="sd">            max_overhang (int, positive): maximum number of overhanging bases on either end of the DNA duplex</span>
+<span class="sd">                allowed. If the input&#39;s DNA has a larger overhang, this transform will do nothing.</span>
+<span class="sd">                Example: if max_overhang=2 and the DNA is ATT / AATCGCGCGCGC, the transform will do nothing.</span>
+<span class="sd">            max_pad (int, &gt;= 0): maximum number of additional basepairs to add to the DNA duplex.</span>
+<span class="sd">                Must be larger than min_pad. If set to 0, this transform will change the structure of</span>
+<span class="sd">                the duplex DNA&#39;s termini but not add any new basepairs.</span>
+<span class="sd">            max_pad_tot (int, &gt; 0): maximum total basepairs the DNA duplex can have after padding.</span>
+<span class="sd">                If the input structure already exceeds this value, this transform will do nothing.</span>
+<span class="sd">            min_pad (int, &gt;= 0): minimum number of additional basepairs to add to the DNA duplex.</span>
+<span class="sd">            pad_type_weights (dict[Literal(&quot;none&quot;,&quot;pdb&quot;,&quot;uniform&quot;):int]):</span>
+<span class="sd">                Weights for different padding distributions. Probability for each will be weight / sum(weights)</span>
+<span class="sd">                &quot;none&quot; is no padding, same as max_pad=0.</span>
+<span class="sd">                &quot;pdb&quot; follows the distribution of DNA sequence lengths in the RCSB PDB.</span>
+<span class="sd">                &quot;uniform&quot; is uniformly distributed between min_pad and max_pad.</span>
+<span class="sd">            pad_nt_weights (dict[Literal(&quot;A&quot;,&quot;C&quot;,&quot;G&quot;,&quot;T&quot;):int]): Relative weights for nucleotides</span>
+<span class="sd">                to be used in random sequence selection for padding. Default is uniform.</span>
+<span class="sd">                Example: {&quot;A&quot;:1, &quot;C&quot;:5, &quot;G&quot;:5, &quot;T&quot;:1} would generate G/C-rich padding.</span>
+<span class="sd">            align_len_weights (dict[int:int]): Weights for align_len.</span>
+<span class="sd">                align_len is the number of basepairs used for aligning generated DNA to the original DNA.</span>
+<span class="sd">                Higher values will make the overall DNA chain smoother, with worse local accuracy.</span>
+<span class="sd">                Low values (1 or 2 especially) will favor local accuracy, with any bends in the</span>
+<span class="sd">                original DNA very obvious in the overall chain. A value of 1 matches AF3 behavior.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">p_skip</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;p_skip must be between 0 and 1&quot;</span>
+
+        <span class="c1"># Configure X3DNA executable</span>
+        <span class="k">if</span> <span class="n">p_skip</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># ... set up x3dna executable manager</span>
+            <span class="n">X3DNAFiber</span><span class="o">.</span><span class="n">get_or_initialize</span><span class="p">(</span><span class="n">x3dna_path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;p_skip is 1, skipping x3dna executable validation. This transform will have no effect.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_skip</span> <span class="o">=</span> <span class="n">p_skip</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_overhang</span> <span class="o">=</span> <span class="n">max_overhang</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_pad</span> <span class="o">=</span> <span class="n">max_pad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_pad_tot</span> <span class="o">=</span> <span class="n">max_pad_tot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_pad</span> <span class="o">=</span> <span class="n">min_pad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pad_type_weights</span> <span class="o">=</span> <span class="n">pad_type_weights</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pad_nt_weights</span> <span class="o">=</span> <span class="n">pad_nt_weights</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">align_len_weights</span> <span class="o">=</span> <span class="n">align_len_weights</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">no_hbond_dist_cut</span> <span class="o">=</span> <span class="n">no_hbond_dist_cut</span>
+
+<div class="viewcode-block" id="PadDNA.check_input">
+<a class="viewcode-back" href="../../../../../ml/transforms/dna.html#atomworks.ml.transforms.dna.pad_dna.PadDNA.check_input">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="s2">&quot;chain_info&quot;</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;chain_type&quot;</span><span class="p">,</span> <span class="s2">&quot;chain_iid&quot;</span><span class="p">])</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_copy_annotations</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">target_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">source_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Copies chain-level annotations from a source array to a target one.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">keys</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+            <span class="c1"># default behavior: copy all keys that are the same across the whole structure in the source</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="n">source_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">keys</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">source_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">l_target</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_array</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">source_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="n">key</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">annot_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">l_target</span><span class="p">)]</span>
+            <span class="n">target_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">annot_array</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">target_array</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_random_padded_dna_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">seq</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds random sequence padding to a DNA sequence string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_seq</span> <span class="o">=</span> <span class="n">_randomly_select_items_with_weights</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pad_nt_weights</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># place original sequence at a random position in the new sequence</span>
+        <span class="n">seq_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_seq</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">new_seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">new_seq</span><span class="p">[:</span><span class="n">seq_idx</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">seq</span><span class="p">)),</span> <span class="n">new_seq</span><span class="p">[</span><span class="n">seq_idx</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span> <span class="p">:]))</span>
+        <span class="n">new_seq</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_seq</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_seq</span><span class="p">,</span> <span class="n">seq_idx</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_pad_dna_seq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">completed_duplex_seq</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">original_seq</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extends a DNA sequence by adding random nucleotides whilst ensuring the original</span>
+<span class="sd">        sequence is contained exactly once as a contiguous substring.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            - completed_duplex_seq (str): DNA sequence of one of the duplex strands</span>
+<span class="sd">                after overhang completion.</span>
+<span class="sd">            - original_seq (str): Original DNA sequence of the same strand before</span>
+<span class="sd">                overhang completion.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            - tuple[str, int]: Tuple containing:</span>
+<span class="sd">                - Padded DNA sequence.</span>
+<span class="sd">                - Index where original sequence starts in padded sequence, or -1 if padding fails.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            The padding length is chosen based on pad_type_weights:</span>
+<span class="sd">            - &#39;pdb&#39;: Samples from distribution of DNA lengths in PDB</span>
+<span class="sd">            - &#39;uniform&#39;: Samples uniformly between current length + min_pad and current length + max_pad</span>
+<span class="sd">            - &#39;none&#39;: No padding</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># fail if duplex sequence is too short to reasonably pad without introducing copies</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">completed_duplex_seq</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;PadDNA failed. Sequences shorter than 4 residues cannot be padded without introducing copies.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">completed_duplex_seq</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="c1"># randomly choose style of padding</span>
+        <span class="n">pad_options</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pad_type_weights</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">pad_weights</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pad_type_weights</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pad_options</span><span class="p">]</span>
+        <span class="n">pad_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pad_weights</span><span class="p">)</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">pad_weights</span><span class="p">)</span>
+        <span class="n">pad_choice</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">pad_options</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">pad_weights</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">pad_choice</span> <span class="o">==</span> <span class="s2">&quot;pdb&quot;</span><span class="p">:</span>
+            <span class="c1"># final length is sampled from distribution of DNA chains in pdb, excluding those smaller than the input</span>
+            <span class="n">pad_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdb_dna_lengths</span>
+        <span class="k">elif</span> <span class="n">pad_choice</span> <span class="o">==</span> <span class="s2">&quot;uniform&quot;</span><span class="p">:</span>
+            <span class="c1"># final length is sampled uniformly between starting length and configurable maximum (default: 100)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">completed_duplex_seq</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_pad_tot</span><span class="p">:</span>
+                <span class="c1"># no padding if sequence is already too long</span>
+                <span class="k">return</span> <span class="n">completed_duplex_seq</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">min_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">completed_duplex_seq</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_pad</span>
+            <span class="n">max_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">completed_duplex_seq</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_pad</span>
+            <span class="n">max_len</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_pad_tot</span><span class="p">)</span>
+            <span class="n">pad_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">min_len</span><span class="p">,</span> <span class="n">max_len</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># otherwise, no padding</span>
+            <span class="k">return</span> <span class="n">completed_duplex_seq</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="c1"># sample what the final length will be</span>
+        <span class="n">new_len</span> <span class="o">=</span> <span class="n">_randomly_select_items_with_weights</span><span class="p">(</span><span class="n">pad_dict</span><span class="p">)</span>
+
+        <span class="c1"># generate random DNA sequence of chosen final length</span>
+        <span class="c1"># can use a configurable distribution for sequence generation (default is uniform ACTG)</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+            <span class="n">padded_seq</span><span class="p">,</span> <span class="n">seq_insertion_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_random_padded_dna_sequence</span><span class="p">(</span><span class="n">new_len</span><span class="p">,</span> <span class="n">completed_duplex_seq</span><span class="p">)</span>
+
+            <span class="c1"># retry if the original sequence appears more than once</span>
+            <span class="k">if</span> <span class="n">padded_seq</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">original_seq</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># retry if the completed duplex sequence does not appear exactly once</span>
+            <span class="k">if</span> <span class="n">padded_seq</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">completed_duplex_seq</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">return</span> <span class="n">padded_seq</span><span class="p">,</span> <span class="n">seq_insertion_idx</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;PadDNA failed. PadDNA failed to generate an acceptable padded sequence in _pad_dna_seq()&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">completed_duplex_seq</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_pad_dna_structure</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">dna_chain_ids</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">overhangs</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">new_seq</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_seq_idx</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a new structure with padded DNA duplex by combining original and ideal B-form DNA coordinates.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            - atom_array (AtomArray): Input structure containing DNA duplex.</span>
+<span class="sd">            - dna_chain_ids (Iterable): Chain identifiers for the DNA duplex.</span>
+<span class="sd">            - overhangs (list): List of overhang sequences.</span>
+<span class="sd">            - new_seq (str): Target padded sequence.</span>
+<span class="sd">            - new_seq_idx (int): Index where original sequence starts in padded sequence.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            - AtomArray | None: New structure with padded DNA duplex, or None if padding fails due to:</span>
+<span class="sd">                - Non-canonical nucleotides at padding junction</span>
+<span class="sd">                - Poor alignment between original and ideal DNA (RMSD &gt; 5Å)</span>
+<span class="sd">                - Clashes between new DNA coordinates and original non-DNA atoms</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">            The padding process:</span>
+<span class="sd">            1. Removes overhanging nucleotides plus one base pair</span>
+<span class="sd">            2. Generates ideal B-form DNA for complete sequence</span>
+<span class="sd">            3. Aligns ideal DNA to original structure at junction points</span>
+<span class="sd">            4. Combines aligned ideal DNA with original structure</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># first, split atom_array into DNA and non-DNA parts</span>
+        <span class="n">is_dna_to_pad</span> <span class="o">=</span> <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_iid</span> <span class="o">==</span> <span class="n">dna_chain_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">|</span> <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_iid</span> <span class="o">==</span> <span class="n">dna_chain_ids</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">atom_array_non_dna</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="o">~</span><span class="n">is_dna_to_pad</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">dna_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">is_dna_to_pad</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># remove the overhanging DNA NTs, plus one additional NT on each terminus</span>
+        <span class="n">rm_a_begin</span><span class="p">,</span> <span class="n">rm_b_end</span><span class="p">,</span> <span class="n">rm_a_end</span><span class="p">,</span> <span class="n">rm_b_begin</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">overhangs</span><span class="p">]</span>
+
+        <span class="n">array_a</span> <span class="o">=</span> <span class="n">dna_array</span><span class="p">[</span><span class="n">dna_array</span><span class="o">.</span><span class="n">chain_iid</span> <span class="o">==</span> <span class="n">dna_chain_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">array_a</span> <span class="o">=</span> <span class="n">array_a</span><span class="p">[</span><span class="n">ResIdxSlice</span><span class="p">(</span><span class="n">rm_a_begin</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">rm_a_end</span><span class="p">)]</span>
+        <span class="n">array_a_nan_free</span> <span class="o">=</span> <span class="n">remove_nan_coords</span><span class="p">(</span><span class="n">array_a</span><span class="p">)</span>
+
+        <span class="n">array_b</span> <span class="o">=</span> <span class="n">dna_array</span><span class="p">[</span><span class="n">dna_array</span><span class="o">.</span><span class="n">chain_iid</span> <span class="o">==</span> <span class="n">dna_chain_ids</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">array_b</span> <span class="o">=</span> <span class="n">array_b</span><span class="p">[</span><span class="n">ResIdxSlice</span><span class="p">(</span><span class="n">rm_b_begin</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">rm_b_end</span><span class="p">)]</span>
+        <span class="n">array_b_nan_free</span> <span class="o">=</span> <span class="n">remove_nan_coords</span><span class="p">(</span><span class="n">array_b</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">struc</span><span class="o">.</span><span class="n">get_residue_count</span><span class="p">(</span><span class="n">array_a</span><span class="p">)</span> <span class="o">==</span> <span class="n">struc</span><span class="o">.</span><span class="n">get_residue_count</span><span class="p">(</span><span class="n">array_b</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;PadDNA failed. PadDNA found mismatch between first and second DNA chains.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># next, generate ideal B-form DNA with the desired final sequence using x3dna</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">array_ideal</span> <span class="o">=</span> <span class="n">generate_bform_dna</span><span class="p">(</span><span class="n">new_seq</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;PadDNA failed. Attempted to generate invalid DNA sequence with x3dna.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># correct or add in annotations like chain_id, pn_unit_id, etc. for the generated AtomArray</span>
+        <span class="n">array_ideal_a</span> <span class="o">=</span> <span class="n">array_ideal</span><span class="p">[</span><span class="n">ResIdxSlice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_seq</span><span class="p">))]</span>
+        <span class="n">array_ideal_b</span> <span class="o">=</span> <span class="n">array_ideal</span><span class="p">[</span><span class="n">ResIdxSlice</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_seq</span><span class="p">),</span> <span class="kc">None</span><span class="p">)]</span>
+        <span class="n">array_ideal_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copy_annotations</span><span class="p">(</span><span class="n">target_array</span><span class="o">=</span><span class="n">array_ideal_a</span><span class="p">,</span> <span class="n">source_array</span><span class="o">=</span><span class="n">array_a</span><span class="p">)</span>
+        <span class="n">array_ideal_b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copy_annotations</span><span class="p">(</span><span class="n">target_array</span><span class="o">=</span><span class="n">array_ideal_b</span><span class="p">,</span> <span class="n">source_array</span><span class="o">=</span><span class="n">array_b</span><span class="p">)</span>
+        <span class="n">array_ideal</span> <span class="o">=</span> <span class="n">array_ideal_a</span> <span class="o">+</span> <span class="n">array_ideal_b</span>
+
+        <span class="c1"># prepare for alignment</span>
+        <span class="c1"># Collect short-named variables needed for indexing sections to align</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">get_residue_count</span><span class="p">(</span><span class="n">array_a_nan_free</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">_randomly_select_items_with_weights</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">align_len_weights</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>  <span class="c1"># can&#39;t align more residues than there are in the structure</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_seq</span><span class="p">)</span>
+        <span class="n">r</span><span class="p">,</span> <span class="n">u</span> <span class="o">=</span> <span class="n">rm_a_begin</span><span class="p">,</span> <span class="n">rm_b_end</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">new_seq_idx</span> <span class="o">+</span> <span class="p">(</span><span class="n">r</span> <span class="o">+</span> <span class="n">u</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">o</span> <span class="o">-</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># for alignment, target is array_trim and mobile is array_ideal</span>
+        <span class="c1"># left-side alignment: (target) first `a` NTs of chain A and last `a` of chain B</span>
+        <span class="c1">#                      (mobile) corresponding section of ideal, padded structure</span>
+        <span class="c1"># right-side alignment:(target) last `a` NTs of chain A and first `a` of chain B</span>
+        <span class="c1">#                      (mobile) corresponding section of ideal, padded structure</span>
+
+        <span class="n">tgt_array_left</span> <span class="o">=</span> <span class="n">array_a_nan_free</span><span class="p">[</span><span class="n">ResIdxSlice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">a</span><span class="p">)]</span> <span class="o">+</span> <span class="n">array_b_nan_free</span><span class="p">[</span><span class="n">ResIdxSlice</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">a</span><span class="p">,</span> <span class="kc">None</span><span class="p">)]</span>
+
+        <span class="n">tgt_array_right</span> <span class="o">=</span> <span class="n">array_a_nan_free</span><span class="p">[</span><span class="n">ResIdxSlice</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">a</span><span class="p">,</span> <span class="kc">None</span><span class="p">)]</span> <span class="o">+</span> <span class="n">array_b_nan_free</span><span class="p">[</span><span class="n">ResIdxSlice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">a</span><span class="p">)]</span>
+
+        <span class="n">mbl_array_left</span> <span class="o">=</span> <span class="n">array_ideal</span><span class="p">[</span><span class="n">ResIdxSlice</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="n">a</span><span class="p">)]</span> <span class="o">+</span> <span class="n">array_ideal</span><span class="p">[</span><span class="n">ResIdxSlice</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">a</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">i</span><span class="p">)]</span>
+
+        <span class="n">mbl_array_right</span> <span class="o">=</span> <span class="n">array_ideal</span><span class="p">[</span><span class="n">ResIdxSlice</span><span class="p">(</span><span class="n">o</span> <span class="o">-</span> <span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="n">a</span><span class="p">),</span> <span class="n">o</span> <span class="o">-</span> <span class="n">j</span><span class="p">)]</span> <span class="o">+</span> <span class="n">array_ideal</span><span class="p">[</span><span class="n">ResIdxSlice</span><span class="p">(</span><span class="n">o</span> <span class="o">+</span> <span class="n">j</span><span class="p">,</span> <span class="n">o</span> <span class="o">+</span> <span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="n">a</span><span class="p">))]</span>
+
+        <span class="n">res_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">array</span> <span class="ow">in</span> <span class="p">(</span><span class="n">tgt_array_left</span><span class="p">,</span> <span class="n">tgt_array_right</span><span class="p">,</span> <span class="n">mbl_array_left</span><span class="p">,</span> <span class="n">mbl_array_right</span><span class="p">):</span>
+            <span class="n">res_names</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">res_name</span><span class="p">)</span>
+        <span class="n">noncanonical_res_names</span> <span class="o">=</span> <span class="n">res_names</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">STANDARD_DNA</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">noncanonical_res_names</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;PadDNA failed. PadDNA found a noncanonical nucleotide at the padding junction.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># apply alignments to generated ideal DNA</span>
+        <span class="n">left_aligned_ideal</span><span class="p">,</span> <span class="n">left_rmsd</span> <span class="o">=</span> <span class="n">align_atom_arrays</span><span class="p">(</span><span class="n">mbl_array_left</span><span class="p">,</span> <span class="n">tgt_array_left</span><span class="p">,</span> <span class="n">array_ideal</span><span class="p">)</span>
+        <span class="n">right_aligned_ideal</span><span class="p">,</span> <span class="n">right_rmsd</span> <span class="o">=</span> <span class="n">align_atom_arrays</span><span class="p">(</span><span class="n">mbl_array_right</span><span class="p">,</span> <span class="n">tgt_array_right</span><span class="p">,</span> <span class="n">array_ideal</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">left_rmsd</span> <span class="o">&gt;</span> <span class="mi">5</span> <span class="ow">or</span> <span class="n">right_rmsd</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;PadDNA found that the junction basepairs do not align well with idealized DNA.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># select components for the final hybrid structure</span>
+        <span class="n">component_first</span> <span class="o">=</span> <span class="n">left_aligned_ideal</span><span class="p">[</span><span class="n">ResIdxSlice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">i</span><span class="p">)]</span>
+        <span class="n">component_second</span> <span class="o">=</span> <span class="n">array_a</span>
+        <span class="n">component_third</span> <span class="o">=</span> <span class="n">right_aligned_ideal</span><span class="p">[</span><span class="n">ResIdxSlice</span><span class="p">(</span><span class="n">o</span> <span class="o">-</span> <span class="n">j</span><span class="p">,</span> <span class="n">o</span><span class="p">)]</span>
+        <span class="n">component_fourth</span> <span class="o">=</span> <span class="n">right_aligned_ideal</span><span class="p">[</span><span class="n">ResIdxSlice</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">o</span> <span class="o">+</span> <span class="n">j</span><span class="p">)]</span>
+        <span class="n">component_fifth</span> <span class="o">=</span> <span class="n">array_b</span>
+        <span class="n">component_sixth</span> <span class="o">=</span> <span class="n">left_aligned_ideal</span><span class="p">[</span><span class="n">ResIdxSlice</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">i</span><span class="p">,</span> <span class="kc">None</span><span class="p">)]</span>
+
+        <span class="c1"># check for clash between newly generated DNA coords and the original non-DNA coords</span>
+        <span class="n">all_new_array</span> <span class="o">=</span> <span class="n">component_first</span> <span class="o">+</span> <span class="n">component_third</span> <span class="o">+</span> <span class="n">component_fourth</span> <span class="o">+</span> <span class="n">component_sixth</span>
+        <span class="k">if</span> <span class="n">is_clash</span><span class="p">(</span><span class="n">all_new_array</span><span class="p">,</span> <span class="n">atom_array_non_dna</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;PadDNA failed. PadDNA found a clash between newly generated DNA coords and the original non-DNA coords.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># renumber residues in idealized components to fit around the original numbering</span>
+        <span class="n">component_first</span> <span class="o">=</span> <span class="n">_renumber_res_ids_around_reference</span><span class="p">(</span><span class="n">component_first</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">component_second</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+        <span class="n">component_third</span> <span class="o">=</span> <span class="n">_renumber_res_ids_around_reference</span><span class="p">(</span><span class="n">component_third</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">component_second</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+        <span class="n">component_fourth</span> <span class="o">=</span> <span class="n">_renumber_res_ids_around_reference</span><span class="p">(</span><span class="n">component_fourth</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">component_fifth</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+        <span class="n">component_sixth</span> <span class="o">=</span> <span class="n">_renumber_res_ids_around_reference</span><span class="p">(</span><span class="n">component_sixth</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">component_fifth</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+
+        <span class="c1"># construct final hybrid DNA structure</span>
+        <span class="n">array_new_dna</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">component_first</span> <span class="o">+</span> <span class="n">component_second</span> <span class="o">+</span> <span class="n">component_third</span> <span class="o">+</span> <span class="n">component_fourth</span> <span class="o">+</span> <span class="n">component_fifth</span> <span class="o">+</span> <span class="n">component_sixth</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">atom_array_non_dna</span> <span class="o">+</span> <span class="n">array_new_dna</span>
+
+<div class="viewcode-block" id="PadDNA.forward">
+<a class="viewcode-back" href="../../../../../ml/transforms/dna.html#atomworks.ml.transforms.dna.pad_dna.PadDNA.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_skip</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data</span>
+
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
+        <span class="n">is_dna</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">chain_type</span> <span class="o">==</span> <span class="n">ChainType</span><span class="o">.</span><span class="n">DNA</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_dna</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="c1"># ... early stop if no DNA is present</span>
+            <span class="k">return</span> <span class="n">data</span>
+
+        <span class="c1"># Find base-pairs &amp; unpaired overhangs / bases</span>
+        <span class="c1"># ... filter to only DNA chains</span>
+        <span class="n">dna_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">is_dna</span><span class="p">]</span>
+
+        <span class="c1"># ... annotate each base with a unique ID for tracking (i.e. idx in the &#39;dna_array&#39;)</span>
+        <span class="n">_res_start_stop_idxs</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">get_residue_starts</span><span class="p">(</span><span class="n">dna_array</span><span class="p">,</span> <span class="n">add_exclusive_stop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">base_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_res_start_stop_idxs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">dna_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;base_id&quot;</span><span class="p">,</span> <span class="n">struc</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">spread_segment_wise</span><span class="p">(</span><span class="n">_res_start_stop_idxs</span><span class="p">,</span> <span class="n">base_ids</span><span class="p">))</span>
+
+        <span class="c1"># ... compute all base-pairs based on the structure</span>
+        <span class="n">dna_array_no_nan</span> <span class="o">=</span> <span class="n">remove_nan_coords</span><span class="p">(</span><span class="n">dna_array</span><span class="p">)</span>
+        <span class="n">_base_pair_idxs</span> <span class="o">=</span> <span class="n">base_pairs</span><span class="p">(</span><span class="n">dna_array_no_nan</span><span class="p">,</span> <span class="n">no_hbond_dist_cut</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">no_hbond_dist_cut</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">_base_pair_idxs</span><span class="p">):</span>
+            <span class="c1"># ... early stop if no base-pairs are found</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;PadDNA found no base pairs in the input structure.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">data</span>
+
+        <span class="n">base_pair_ids</span> <span class="o">=</span> <span class="n">dna_array_no_nan</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="s2">&quot;base_id&quot;</span><span class="p">)[</span><span class="n">_base_pair_idxs</span><span class="p">]</span>  <span class="c1"># (n_base_pairs, 2)</span>
+        <span class="n">chain_pair_iids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">dna_array_no_nan</span><span class="o">.</span><span class="n">chain_iid</span><span class="p">[</span><span class="n">_base_pair_idxs</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># (n_chain_pairs, 2)</span>
+
+        <span class="c1"># ... for each base &amp; chain, annotate whether it is paired. Also annotate overhanging bases.</span>
+        <span class="n">dna_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;is_base_paired&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">dna_array</span><span class="o">.</span><span class="n">base_id</span><span class="p">,</span> <span class="n">base_pair_ids</span><span class="p">))</span>
+        <span class="n">dna_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;is_chain_paired&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">dna_array</span><span class="o">.</span><span class="n">chain_iid</span><span class="p">,</span> <span class="n">chain_pair_iids</span><span class="p">))</span>
+        <span class="n">dna_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;is_overhang&quot;</span><span class="p">,</span> <span class="n">dna_array</span><span class="o">.</span><span class="n">is_chain_paired</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">dna_array</span><span class="o">.</span><span class="n">is_base_paired</span><span class="p">)</span>
+
+        <span class="c1"># ... get number of partner-chains for each chain</span>
+        <span class="n">n_partner_chains</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">chain_pair_iids</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+
+        <span class="c1"># ... filter to &#39;extensible&#39; chains, i.e. chains which are uniquely paired with only one other chain</span>
+        <span class="n">chain_pair_iids_in_duplex</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">pair</span> <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">chain_pair_iids</span> <span class="k">if</span> <span class="n">n_partner_chains</span><span class="p">[</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">n_partner_chains</span><span class="p">[</span><span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="p">]</span>
+
+        <span class="c1"># early stop if no extensible duplexes are present</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chain_pair_iids_in_duplex</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data</span>
+
+        <span class="n">new_atom_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">annotations</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;base_id&quot;</span><span class="p">,</span> <span class="s2">&quot;is_base_paired&quot;</span><span class="p">,</span> <span class="s2">&quot;is_chain_paired&quot;</span><span class="p">,</span> <span class="s2">&quot;is_overhang&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">chain_iids</span> <span class="ow">in</span> <span class="n">chain_pair_iids_in_duplex</span><span class="p">:</span>
+            <span class="n">chain1_iid</span><span class="p">,</span> <span class="n">chain2_iid</span> <span class="o">=</span> <span class="n">chain_iids</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">chain1</span> <span class="o">=</span> <span class="n">_get_residue_info_for_dna_chains</span><span class="p">(</span><span class="n">dna_array</span><span class="p">[</span><span class="n">dna_array</span><span class="o">.</span><span class="n">chain_iid</span> <span class="o">==</span> <span class="n">chain1_iid</span><span class="p">],</span> <span class="n">annotations</span><span class="p">)</span>
+                <span class="n">chain2</span> <span class="o">=</span> <span class="n">_get_residue_info_for_dna_chains</span><span class="p">(</span><span class="n">dna_array</span><span class="p">[</span><span class="n">dna_array</span><span class="o">.</span><span class="n">chain_iid</span> <span class="o">==</span> <span class="n">chain2_iid</span><span class="p">],</span> <span class="n">annotations</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;In PadDNA, _get_residue_info_for_dna_chains() failed for duplex </span><span class="si">{</span><span class="n">chain1_iid</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">chain2_iid</span><span class="si">}</span><span class="s2">. Skipping.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1">### TODO: Move into function</span>
+            <span class="c1"># ... skip if desired duplex is already of the desired length</span>
+            <span class="k">if</span> <span class="n">chain1</span><span class="p">[</span><span class="s2">&quot;is_base_paired&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_pad_tot</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># ... skip if there is an unpaired stretch in the middle of the duplex</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_true_contiguous</span><span class="p">(</span><span class="n">chain1</span><span class="p">[</span><span class="s2">&quot;is_base_paired&quot;</span><span class="p">])</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">_is_true_contiguous</span><span class="p">(</span><span class="n">chain2</span><span class="p">[</span><span class="s2">&quot;is_base_paired&quot;</span><span class="p">]):</span>
+                <span class="c1"># ... unpaired stretches in the middle of the duplex</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;DNA duplex </span><span class="si">{</span><span class="n">chain1_iid</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">chain2_iid</span><span class="si">}</span><span class="s2"> has unpaired stretches in the middle. Skipping in PadDNA.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># ... skip if overhang is too long</span>
+            <span class="n">chain1_overhang</span> <span class="o">=</span> <span class="n">_get_overhang_lengths</span><span class="p">(</span><span class="n">chain1</span><span class="p">[</span><span class="s2">&quot;is_overhang&quot;</span><span class="p">])</span>
+            <span class="n">chain2_overhang</span> <span class="o">=</span> <span class="n">_get_overhang_lengths</span><span class="p">(</span><span class="n">chain2</span><span class="p">[</span><span class="s2">&quot;is_overhang&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">chain1_overhang</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_overhang</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">chain2_overhang</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_overhang</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;DNA duplex </span><span class="si">{</span><span class="n">chain1_iid</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">chain2_iid</span><span class="si">}</span><span class="s2"> has overhangs longer than </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_overhang</span><span class="si">}</span><span class="s2">. Skipping in PadDNA.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># ... build the completed duplex sequence (i.e. insert reverse-complements for each overhang)</span>
+            <span class="c1"># The following are paired:</span>
+            <span class="c1">#  chain 1 (fwd)      seq1_lhs - paired - seq1_rhs</span>
+            <span class="c1">#  chain 2 (fwd)      seq2_lhs - paired - seq2_rhs</span>
+            <span class="c1"># e.g.</span>
+            <span class="c1">#  chain 1 (fwd):              - CAGGT  - CT</span>
+            <span class="c1">#  chain 2 (fwd):              - ACCTG  - G</span>
+            <span class="c1">#  chain 2 (rev):            G - GTCCA  -</span>
+            <span class="c1">#</span>
+            <span class="c1"># then the completed sequence for chain1 is:</span>
+            <span class="c1">#  completed chain 1 (fwd):  C - CAGGT  - CT</span>
+            <span class="c1">#</span>
+            <span class="c1"># NOTE: seq1_lhs &amp; seq2_rhs as well as seq1_rhs &amp; seq2_lhs are mutually exclusive.</span>
+            <span class="c1"># skip if either pair is present</span>
+
+            <span class="n">seq1_lhs</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chain1</span><span class="p">[</span><span class="s2">&quot;canonical_seq&quot;</span><span class="p">][:</span> <span class="n">chain1_overhang</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+            <span class="n">seq1_paired</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chain1</span><span class="p">[</span><span class="s2">&quot;canonical_seq&quot;</span><span class="p">][</span><span class="n">chain1</span><span class="p">[</span><span class="s2">&quot;is_base_paired&quot;</span><span class="p">]])</span>
+            <span class="k">if</span> <span class="n">chain1_overhang</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># -0 index does not behave as expected</span>
+                <span class="n">seq1_rhs</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">seq1_rhs</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chain1</span><span class="p">[</span><span class="s2">&quot;canonical_seq&quot;</span><span class="p">][</span><span class="o">-</span><span class="n">chain1_overhang</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">:])</span>
+            <span class="n">seq2_lhs</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chain2</span><span class="p">[</span><span class="s2">&quot;canonical_seq&quot;</span><span class="p">][:</span> <span class="n">chain2_overhang</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+            <span class="n">seq2_paired</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chain2</span><span class="p">[</span><span class="s2">&quot;canonical_seq&quot;</span><span class="p">][</span><span class="n">chain2</span><span class="p">[</span><span class="s2">&quot;is_base_paired&quot;</span><span class="p">]])</span>
+            <span class="k">if</span> <span class="n">chain2_overhang</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># -0 index does not behave as expected</span>
+                <span class="n">seq2_rhs</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">seq2_rhs</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chain2</span><span class="p">[</span><span class="s2">&quot;canonical_seq&quot;</span><span class="p">][</span><span class="o">-</span><span class="n">chain2_overhang</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">:])</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">seq1_paired</span> <span class="o">==</span> <span class="n">to_reverse_complement</span><span class="p">(</span>
+                    <span class="n">seq2_paired</span>
+                <span class="p">),</span> <span class="s2">&quot;sequences to be joined must be reverse-complements of each other&quot;</span>
+                <span class="k">assert</span> <span class="n">seq1_lhs</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">or</span> <span class="n">seq2_rhs</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;overhang1_lhs and overhang1_rhs are mutually exclusive&quot;</span>
+                <span class="k">assert</span> <span class="n">seq1_rhs</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">or</span> <span class="n">seq2_lhs</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;overhang2_lhs and overhang2_rhs are mutually exclusive&quot;</span>
+            <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;DNA duplex </span><span class="si">{chain1_iid}</span><span class="s2">:</span><span class="si">{chain2_iid}</span><span class="s2"> has mutually exclusive overhangs. Skipping in PadDNA.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># NOTE: at least one of the first two elements &amp; at least one of the last two elements are</span>
+            <span class="c1">#  guaranteed to be empty strings due to the above assertions, so we can safely sum the lists</span>
+            <span class="n">overhangs</span> <span class="o">=</span> <span class="p">[</span><span class="n">seq1_lhs</span><span class="p">,</span> <span class="n">to_reverse_complement</span><span class="p">(</span><span class="n">seq2_rhs</span><span class="p">),</span> <span class="n">seq1_rhs</span><span class="p">,</span> <span class="n">to_reverse_complement</span><span class="p">(</span><span class="n">seq2_lhs</span><span class="p">)]</span>
+            <span class="n">completed_seq1</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">overhangs</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">seq1_paired</span><span class="p">]</span> <span class="o">+</span> <span class="n">overhangs</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+            <span class="n">full_seq1</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chain1</span><span class="p">[</span><span class="s2">&quot;canonical_seq&quot;</span><span class="p">])</span>
+
+            <span class="n">padded_seq</span><span class="p">,</span> <span class="n">seq_insertion_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pad_dna_seq</span><span class="p">(</span><span class="n">completed_seq1</span><span class="p">,</span> <span class="n">full_seq1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">seq_insertion_idx</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">tmp_atom_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pad_dna_structure</span><span class="p">(</span>
+                <span class="n">new_atom_array</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">chain_iids</span><span class="p">,</span> <span class="n">overhangs</span><span class="p">,</span> <span class="n">padded_seq</span><span class="p">,</span> <span class="n">seq_insertion_idx</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">tmp_atom_array</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># _pad_dna_structure failed</span>
+                <span class="k">continue</span>
+            <span class="n">new_atom_array</span> <span class="o">=</span> <span class="n">tmp_atom_array</span>
+
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_atom_array</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

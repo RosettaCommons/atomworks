@@ -1,0 +1,883 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>atomworks.ml.transforms.bonds &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/transforms/bonds';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.0.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_color.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">atomworks.ml.transforms.bonds</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for atomworks.ml.transforms.bonds</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClassVar</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms._checks</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">check_atom_array_annotation</span><span class="p">,</span>
+    <span class="n">check_atom_array_has_bonds</span><span class="p">,</span>
+    <span class="n">check_contains_keys</span><span class="p">,</span>
+    <span class="n">check_is_instance</span><span class="p">,</span>
+    <span class="n">check_nonzero_length</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.atomize</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomizeByCCDName</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.utils.token</span><span class="w"> </span><span class="kn">import</span> <span class="n">apply_segment_wise_2d</span><span class="p">,</span> <span class="n">get_token_starts</span>
+
+<span class="c1"># Constants copied from `chemdata` to decouple the RF2AA repository from the atomworks.ml pipeline</span>
+<span class="n">RF2AA_NO_BOND</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">RF2AA_SINGLE_BOND</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">RF2AA_DOUBLE_BOND</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">RF2AA_TRIPLE_BOND</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">RF2AA_AROMATIC_BOND</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">RF2AA_RESIDUE_BB_BOND</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">RF2AA_RESIDUE_ATOM_BOND</span> <span class="o">=</span> <span class="mi">6</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_atom_adjacency_to_token_adjacency</span><span class="p">(</span><span class="n">atom_adjacency</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">token_start_end_idxs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper function to compute the token bond adjacency matrix from the atom bond adjacency matrix.&quot;&quot;&quot;</span>
+    <span class="c1"># NOTE: This is separated out to allow for easy testing</span>
+    <span class="c1"># reduce token segments</span>
+    <span class="n">token_adjacency</span> <span class="o">=</span> <span class="n">apply_segment_wise_2d</span><span class="p">(</span><span class="n">atom_adjacency</span><span class="p">,</span> <span class="n">token_start_end_idxs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">)</span>
+    <span class="c1"># remove diagonal (bonds to self)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">token_adjacency</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">token_adjacency</span>
+
+
+<div class="viewcode-block" id="get_token_bond_adjacency">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.bonds.get_token_bond_adjacency">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_token_bond_adjacency</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the token bond adjacency matrix from the atom bond adjacency matrix.</span>
+
+<span class="sd">    This is done by performing a block-wise reduction of the atom adjacency matrix,</span>
+<span class="sd">    where block (i, j) is the sub-matrix of the atom adjacency matrix for bonds</span>
+<span class="sd">    between atoms of token i and j. The reduction is performed by `np.any`, which</span>
+<span class="sd">    returns True if at least one bond exists between the two tokens.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">atom_adjacency</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">()</span>
+    <span class="n">token_start_end_idxs</span> <span class="o">=</span> <span class="n">get_token_starts</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">add_exclusive_stop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_atom_adjacency_to_token_adjacency</span><span class="p">(</span><span class="n">atom_adjacency</span><span class="p">,</span> <span class="n">token_start_end_idxs</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_biotite_bond_types_to_rf2aa_bond_types</span><span class="p">(</span><span class="n">biotite_bond_types</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts Biotite bond types to RF2AA bond types.&quot;&quot;&quot;</span>
+    <span class="n">rf2aa_bond_types</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span>
+        <span class="n">biotite_bond_types</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span>
+    <span class="p">)</span>  <span class="c1"># 7 maps to &quot;other&quot; bond, which is not represented in the ChemData enum</span>
+    <span class="n">rf2aa_bond_types</span><span class="p">[</span><span class="n">biotite_bond_types</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">RF2AA_NO_BOND</span>
+    <span class="n">rf2aa_bond_types</span><span class="p">[</span><span class="n">biotite_bond_types</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">RF2AA_SINGLE_BOND</span>
+    <span class="n">rf2aa_bond_types</span><span class="p">[</span><span class="n">biotite_bond_types</span> <span class="o">==</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">RF2AA_DOUBLE_BOND</span>
+    <span class="n">rf2aa_bond_types</span><span class="p">[</span><span class="n">biotite_bond_types</span> <span class="o">==</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">RF2AA_TRIPLE_BOND</span>
+    <span class="n">rf2aa_bond_types</span><span class="p">[</span><span class="n">biotite_bond_types</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">RF2AA_AROMATIC_BOND</span>
+    <span class="k">return</span> <span class="n">rf2aa_bond_types</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_rf2aa_bond_features_matrix</span><span class="p">(</span>
+    <span class="n">token_bond_adjacency</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">token_is_atom</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">atom_biotite_bond_type_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the RF2AA bond features matrix based on token adjacency, atomized masks, and Biotite bond types.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        token_bond_adjacency (np.ndarray): Adjacency matrix indicating inter-token bonds.</span>
+<span class="sd">        token_is_atom (np.ndarray): Boolean array indicating if tokens are atoms (vs. residues).</span>
+<span class="sd">        atom_biotite_bond_type_matrix (np.ndarray): Matrix of Biotite bond types between atoms.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: The bond features matrix, encoded uses the RF2AA BondType convention.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ...initialize the bond features matrix, defaulting to no bond</span>
+    <span class="n">bond_features_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">token_bond_adjacency</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">RF2AA_NO_BOND</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
+
+    <span class="c1"># ...fill in the residue-residue token bonds</span>
+    <span class="c1"># If a token isn&#39;t atomized, then it must be a residue (either a protein, RNA, or DNA)</span>
+    <span class="n">token_is_residue</span> <span class="o">=</span> <span class="o">~</span><span class="n">token_is_atom</span>
+    <span class="n">residue_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">token_is_residue</span><span class="p">,</span> <span class="n">token_is_residue</span><span class="p">)</span>
+    <span class="n">bond_features_matrix</span><span class="p">[</span><span class="n">residue_matrix</span><span class="p">]</span> <span class="o">=</span> <span class="n">RF2AA_RESIDUE_BB_BOND</span>
+
+    <span class="c1"># ...fill in the residue-atom bonds</span>
+    <span class="n">atom_residue_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">token_is_residue</span><span class="p">,</span> <span class="n">token_is_atom</span><span class="p">)</span>
+    <span class="n">atom_residue_matrix</span> <span class="o">|=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">atom_residue_matrix</span><span class="p">)</span>
+    <span class="n">atom_residue_matrix</span> <span class="o">&amp;=</span> <span class="n">token_bond_adjacency</span>
+    <span class="n">bond_features_matrix</span><span class="p">[</span><span class="n">atom_residue_matrix</span><span class="p">]</span> <span class="o">=</span> <span class="n">RF2AA_RESIDUE_ATOM_BOND</span>
+
+    <span class="c1"># ...fill in the small molecule bonds</span>
+    <span class="n">rf2aa_atom_bond_matrix</span> <span class="o">=</span> <span class="n">_biotite_bond_types_to_rf2aa_bond_types</span><span class="p">(</span><span class="n">atom_biotite_bond_type_matrix</span><span class="p">)</span>
+    <span class="n">bond_features_matrix</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">token_is_atom</span><span class="p">,</span> <span class="n">token_is_atom</span><span class="p">)]</span> <span class="o">=</span> <span class="n">rf2aa_atom_bond_matrix</span>
+
+    <span class="c1"># ...apply the token_bond_adjacency mask to zero-out non-bonded interactions</span>
+    <span class="n">bond_features_matrix</span><span class="p">[</span><span class="o">~</span><span class="n">token_bond_adjacency</span><span class="p">]</span> <span class="o">=</span> <span class="n">RF2AA_NO_BOND</span>
+
+    <span class="k">return</span> <span class="n">bond_features_matrix</span>
+
+
+<div class="viewcode-block" id="AddTokenBondAdjacency">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.bonds.AddTokenBondAdjacency">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AddTokenBondAdjacency</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adds the token bond adjacency matrix to the data.</span>
+
+<span class="sd">    This transform computes the token bond adjacency matrix from the atom bond adjacency matrix</span>
+<span class="sd">    and adds it to the data dictionary under the key `token_bond_adjacency`.</span>
+
+<span class="sd">    The token bond adjacency matrix is a binary [`n_tokens`, `n_tokens`] matrix where element (i, j) is True if there is</span>
+<span class="sd">    at least one bond between any atom in token i and any atom in token j, and False otherwise.</span>
+
+<span class="sd">    Depends on the definition of `tokens` and therefore has to be applied after any transform that alters what is</span>
+<span class="sd">    considered a token (e.g. `AtomizeByCCDName`) or that changes the order or number of tokens. By default, a token</span>
+<span class="sd">    is defined as a residue in the input `AtomArray`.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        AssertionError: If the input data does not contain the required keys or types.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">requires_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">AtomizeByCCDName</span><span class="p">]</span>
+
+<div class="viewcode-block" id="AddTokenBondAdjacency.check_input">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.bonds.AddTokenBondAdjacency.check_input">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_nonzero_length</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">)</span>
+        <span class="n">check_atom_array_has_bonds</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AddTokenBondAdjacency.forward">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.bonds.AddTokenBondAdjacency.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
+        <span class="n">token_bond_adjacency</span> <span class="o">=</span> <span class="n">get_token_bond_adjacency</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;token_bond_adjacency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">token_bond_adjacency</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AddRF2AABondFeaturesMatrix">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.bonds.AddRF2AABondFeaturesMatrix">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AddRF2AABondFeaturesMatrix</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adds a matrix indicating the RF2AA bond type between two nodes to the data.</span>
+<span class="sd">    This transform builds from the Biotite bond type, modifying as needed for residue-residue and residue-atom mappings.</span>
+<span class="sd">    We then add the matrix to the data dictionary under the key `rf2aa_bond_features_matrix`.</span>
+
+<span class="sd">    From the RF2AA supplement, Supplementary Methods Table 8: Inputs to RFAA:</span>
+<span class="sd">    ------------------------------------------------------------------------------------------------</span>
+<span class="sd">    bond_feats          | (L, L, 7) Pairwise bond adjacency matrix. Pairs of residues are either</span>
+<span class="sd">                        single, double, triple, aromatic, residue-residue, residue-atom, or other.</span>
+<span class="sd">    ------------------------------------------------------------------------------------------------</span>
+
+<span class="sd">    Specifically, we map to the following enum, as described in ChemData:</span>
+<span class="sd">        - 0 = No bonds</span>
+<span class="sd">        - 1 = Single bond</span>
+<span class="sd">        - 2 = Double bond</span>
+<span class="sd">        - 3 = Triple bond</span>
+<span class="sd">        - 4 = Aromatic</span>
+<span class="sd">        - 5 = Residue-residue</span>
+<span class="sd">        - 6 = Residue-atom</span>
+<span class="sd">        - 7 = Other</span>
+
+<span class="sd">    We build the matrix from the Biotite bond types.</span>
+<span class="sd">    The Biotite `BondType` enum contains the following mapping:</span>
+<span class="sd">        - ANY = 0</span>
+<span class="sd">        - SINGLE = 1</span>
+<span class="sd">        - DOUBLE = 2</span>
+<span class="sd">        - TRIPLE = 3</span>
+<span class="sd">        - QUADRUPLE = 4</span>
+<span class="sd">        - AROMATIC_SINGLE = 5</span>
+<span class="sd">        - AROMATIC_DOUBLE = 6</span>
+<span class="sd">        - AROMATIC_TRIPLE = 7</span>
+<span class="sd">    The the index -1 is used for non-bonded interactions.</span>
+
+<span class="sd">    Reference:</span>
+<span class="sd">    - Biotite documentation (https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">requires_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">AtomizeByCCDName</span><span class="p">,</span> <span class="n">AddTokenBondAdjacency</span><span class="p">]</span>
+
+<div class="viewcode-block" id="AddRF2AABondFeaturesMatrix.check_input">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.bonds.AddRF2AABondFeaturesMatrix.check_input">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;token_bond_adjacency&quot;</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_nonzero_length</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">)</span>
+        <span class="n">check_atom_array_has_bonds</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AddRF2AABondFeaturesMatrix.forward">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.bonds.AddRF2AABondFeaturesMatrix.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
+        <span class="n">token_bond_adjacency</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;token_bond_adjacency&quot;</span><span class="p">]</span>
+        <span class="n">token_is_atom</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">atomize</span><span class="p">[</span><span class="n">get_token_starts</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)]</span>
+
+        <span class="c1"># Get bond type matrix for atomized tokens</span>
+        <span class="n">atom_bond_type_matrix</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">bond_type_matrix</span><span class="p">()</span>  <span class="c1"># [n_atoms, n_atoms]</span>
+        <span class="n">atom_biotite_bond_type_matrix</span> <span class="o">=</span> <span class="n">atom_bond_type_matrix</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atomize</span><span class="p">,</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">atomize</span><span class="p">)]</span>
+
+        <span class="c1"># Create bond features matrix</span>
+        <span class="n">bond_features_matrix</span> <span class="o">=</span> <span class="n">_create_rf2aa_bond_features_matrix</span><span class="p">(</span>
+            <span class="n">token_bond_adjacency</span><span class="o">=</span><span class="n">token_bond_adjacency</span><span class="p">,</span>
+            <span class="n">token_is_atom</span><span class="o">=</span><span class="n">token_is_atom</span><span class="p">,</span>
+            <span class="n">atom_biotite_bond_type_matrix</span><span class="o">=</span><span class="n">atom_biotite_bond_type_matrix</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;rf2aa_bond_features_matrix&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bond_features_matrix</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AddRF2AATraversalDistanceMatrix">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.bonds.AddRF2AATraversalDistanceMatrix">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AddRF2AATraversalDistanceMatrix</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a matrix indicating the minimum amount of bonds to traverse between two nodes.</span>
+<span class="sd">    We define the traversal distance between two protein nodes as zero.</span>
+<span class="sd">    Sets the &quot;traversal_distance_matrix&quot; key in the data dictionary.</span>
+
+<span class="sd">    From the RF2AA supplement, Supplementary Methods Table 8: Inputs to RFAA:</span>
+<span class="sd">    ------------------------------------------------------------------------------------------------</span>
+<span class="sd">    dist_matrix               | (L, L) Minimum amount of bonds to traverse between two nodes.</span>
+<span class="sd">                                This is 0 between all protein nodes.</span>
+<span class="sd">    ------------------------------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AddRF2AATraversalDistanceMatrix.check_input">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.bonds.AddRF2AATraversalDistanceMatrix.check_input">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;rf2aa_bond_features_matrix&quot;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="AddRF2AATraversalDistanceMatrix.forward">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.bonds.AddRF2AATraversalDistanceMatrix.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">rf2aa_bond_features_matrix</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;rf2aa_bond_features_matrix&quot;</span><span class="p">]</span>
+
+        <span class="c1"># RF2AA uses the following bond mapping, as described in ChemData:</span>
+        <span class="c1">#     - 0 = No bonds</span>
+        <span class="c1">#     - 1 = Single bond</span>
+        <span class="c1">#     - 2 = Double bond</span>
+        <span class="c1">#     - 3 = Triple bond</span>
+        <span class="c1">#     - 4 = Aromatic</span>
+        <span class="c1">#     - 5 = Residue-residue</span>
+        <span class="c1">#     - 6 = Residue-atom</span>
+        <span class="c1">#     - 7 = Other</span>
+
+        <span class="c1"># Reduce the bond features matrix to only include atom-atom bonds</span>
+        <span class="n">atom_bonds</span> <span class="o">=</span> <span class="p">(</span><span class="n">rf2aa_bond_features_matrix</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">rf2aa_bond_features_matrix</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">)</span>
+
+        <span class="c1"># Compute the shortest path distance matrix using scipy</span>
+        <span class="n">traversal_distance_matrix</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">csgraph</span><span class="o">.</span><span class="n">shortest_path</span><span class="p">(</span><span class="n">atom_bonds</span><span class="p">,</span> <span class="n">directed</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Add to the data dictionary</span>
+        <span class="c1"># NOTE: This matrix will have infinity values, which are handled downstream by the model</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;rf2aa_traversal_distance_matrix&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">traversal_distance_matrix</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="get_bond_distances">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.bonds.get_bond_distances">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_bond_distances</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the bond distance (adjacency) list as a 1D array.&quot;&quot;&quot;</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span>
+    <span class="n">atom1_idxs</span><span class="p">,</span> <span class="n">atom2_idxs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">as_array</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="n">atom1_idxs</span><span class="p">]</span> <span class="o">-</span> <span class="n">coords</span><span class="p">[</span><span class="n">atom2_idxs</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_bond_distance_matrix">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.bonds.get_bond_distance_matrix">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_bond_distance_matrix</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the bond adjacency matrix with bond distances as values.&quot;&quot;&quot;</span>
+    <span class="n">atom1_idxs</span><span class="p">,</span> <span class="n">atom2_idxs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">as_array</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">bond_distances</span> <span class="o">=</span> <span class="n">get_bond_distances</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+    <span class="n">bond_distance_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+    <span class="n">bond_distance_matrix</span><span class="p">[</span><span class="n">atom1_idxs</span><span class="p">,</span> <span class="n">atom2_idxs</span><span class="p">]</span> <span class="o">=</span> <span class="n">bond_distances</span>
+    <span class="n">bond_distance_matrix</span><span class="p">[</span><span class="n">atom2_idxs</span><span class="p">,</span> <span class="n">atom1_idxs</span><span class="p">]</span> <span class="o">=</span> <span class="n">bond_distances</span>
+    <span class="k">return</span> <span class="n">bond_distance_matrix</span></div>
+
+
+
+<div class="viewcode-block" id="get_af3_token_bond_features">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.bonds.get_af3_token_bond_features">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_af3_token_bond_features</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">distance_cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates AF3-style token bond features for an AtomArray.</span>
+<span class="sd">    For bonds between multi-atom tokens (i.e., residues), we define the &quot;bond distance&quot; as the minimum distance between an atom of one token and any atom of the other token.</span>
+
+<span class="sd">    From AF3:</span>
+<span class="sd">        Returns a 2D matrix indicating if there is a bond between any atom in</span>
+<span class="sd">        token i and token j, restricted to just polymer-ligand and ligand-ligand</span>
+<span class="sd">        bonds and bonds less than 2.4 Å during training.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - atom_array (AtomArray): The input AtomArray containing atomic coordinates and bond information.</span>
+<span class="sd">        - distance_cutoff (float, optional): The maximum distance (in Angstroms) for considering a bond. Defaults to 2.4.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        - np.ndarray: A boolean matrix where True indicates a bond between tokens that meets the specified criteria.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">token_start_end_idxs</span> <span class="o">=</span> <span class="n">get_token_starts</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">add_exclusive_stop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">token_starts</span> <span class="o">=</span> <span class="n">token_start_end_idxs</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">token_bonds</span> <span class="o">=</span> <span class="n">apply_segment_wise_2d</span><span class="p">(</span><span class="n">get_bond_distance_matrix</span><span class="p">(</span><span class="n">atom_array</span><span class="p">),</span> <span class="n">token_start_end_idxs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
+
+    <span class="c1"># remove bonds above distance cutoff</span>
+    <span class="n">token_bonds</span> <span class="o">=</span> <span class="n">token_bonds</span> <span class="o">&lt;</span> <span class="n">distance_cutoff</span>
+
+    <span class="c1"># remove token self-bonds</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">token_bonds</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># remove poly-poly bonds</span>
+    <span class="n">is_poly_poly_bond</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="o">~</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atomize</span><span class="p">[</span><span class="n">token_starts</span><span class="p">],</span> <span class="o">~</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atomize</span><span class="p">[</span><span class="n">token_starts</span><span class="p">])</span>
+    <span class="n">token_bonds</span><span class="p">[</span><span class="n">is_poly_poly_bond</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">token_bonds</span></div>
+
+
+
+<div class="viewcode-block" id="AddAF3TokenBondFeatures">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.bonds.AddAF3TokenBondFeatures">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AddAF3TokenBondFeatures</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transform that generates AF3-style token bond features for an AtomArray.</span>
+
+<span class="sd">    This transform creates a 2D matrix indicating if there is a bond between any atom in</span>
+<span class="sd">    token i and token j, restricted to just polymer-ligand and ligand-ligand bonds and</span>
+<span class="sd">    bonds less than a specified distance cutoff.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - distance_cutoff (float, optional): The maximum distance (in Angstroms) for considering a bond.</span>
+<span class="sd">            Defaults to 2.4.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        - dict: A dictionary containing the input data and the new &#39;af3_token_bond_features&#39; key with</span>
+<span class="sd">            the computed boolean matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">requires_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AtomizeByCCDName&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distance_cutoff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.4</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distance_cutoff</span> <span class="o">=</span> <span class="n">distance_cutoff</span>
+
+<div class="viewcode-block" id="AddAF3TokenBondFeatures.check_input">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.bonds.AddAF3TokenBondFeatures.check_input">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_nonzero_length</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">)</span>
+        <span class="n">check_atom_array_has_bonds</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;is_polymer&quot;</span><span class="p">,</span> <span class="s2">&quot;atomize&quot;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="AddAF3TokenBondFeatures.forward">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.bonds.AddAF3TokenBondFeatures.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
+        <span class="n">af3_token_bond_features</span> <span class="o">=</span> <span class="n">get_af3_token_bond_features</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_cutoff</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;feats&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;feats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;feats&quot;</span><span class="p">][</span><span class="s2">&quot;token_bonds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">af3_token_bond_features</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AddAtomLevelBondAdjacencyMatrix">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.bonds.AddAtomLevelBondAdjacencyMatrix">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AddAtomLevelBondAdjacencyMatrix</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adds the atom-level bond adjacency matrix to the data as a feature.</span>
+
+<span class="sd">    This transform uses Biotite&#39;s adjacency_matrix() function to create a binary matrix</span>
+<span class="sd">    where element (i, j) is 1 if atoms i and j are bonded, and 0 otherwise.</span>
+
+<span class="sd">    The matrix is added to the data dictionary under data[&quot;feats&quot;][&quot;atom_level_bond_adjacency&quot;].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AddAtomLevelBondAdjacencyMatrix.check_input">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.bonds.AddAtomLevelBondAdjacencyMatrix.check_input">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">check_atom_array_has_bonds</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AddAtomLevelBondAdjacencyMatrix.forward">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.bonds.AddAtomLevelBondAdjacencyMatrix.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Get the bond adjacency matrix from Biotite</span>
+        <span class="n">bond_adjacency_matrix</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;feats&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;feats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;feats&quot;</span><span class="p">][</span><span class="s2">&quot;atom_level_bond_adjacency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bond_adjacency_matrix</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

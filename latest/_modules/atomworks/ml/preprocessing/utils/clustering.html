@@ -1,0 +1,749 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>atomworks.ml.preprocessing.utils.clustering &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/preprocessing/utils/clustering';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.0.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../../../../../_static/atomworks_logo_color.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">atomworks.ml.preprocessing.utils.clustering</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for atomworks.ml.preprocessing.utils.clustering</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntEnum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">PathLike</span><span class="p">,</span> <span class="n">devnull</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">exists</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.preprocessing.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">NA_VALUES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.preprocessing.utils.fasta</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_fasta_file_from_df</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="CoverageMode">
+<a class="viewcode-back" href="../../../../../ml/preprocessing/utils.html#atomworks.ml.preprocessing.utils.clustering.CoverageMode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CoverageMode</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;MMSeqs2 coverage modes for clustering. For details, see</span>
+<span class="sd">    github.com/soedinglab/mmseqs2/wiki#how-to-set-the-right-alignment-coverage-to-cluster&quot;&quot;&quot;</span>
+
+    <span class="n">BIDIRECTIONAL</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Alignment covers at least specified fraction of query and at least specified fraction of target</span>
+    <span class="n">TARGET</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Alignment covers at least specified fraction of target</span>
+    <span class="n">QUERY</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># Alignment covers at least specified fraction of query</span>
+    <span class="n">TARGET_IN_QUERY</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># Target sequence length is at least specified fraction of query length</span>
+    <span class="n">QUERY_IN_TARGET</span> <span class="o">=</span> <span class="mi">4</span>  <span class="c1"># Query sequence length is at least specified fraction of target length</span>
+    <span class="n">SHORTER_IN_OTHER</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># Short sequence is at least specified fraction of the other sequence length</span></div>
+
+
+
+<div class="viewcode-block" id="ClusterMode">
+<a class="viewcode-back" href="../../../../../ml/preprocessing/utils.html#atomworks.ml.preprocessing.utils.clustering.ClusterMode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ClusterMode</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;MMSeqs2 cluster modes. For details, see github.com/soedinglab/mmseqs2/wiki#clustering-modes&quot;&quot;&quot;</span>
+
+    <span class="n">GREEDY_SET_COVER</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Greedy set cover algorithm -- standard</span>
+    <span class="n">CONNECTED_COMPONENT</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Connected component algorithm -- slower, but can cover more remote homologs</span>
+    <span class="n">GREEDY_INCREMENTAL</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># Greedy incremental algorithm</span></div>
+
+
+
+<div class="viewcode-block" id="MMSeqs2Config">
+<a class="viewcode-back" href="../../../../../ml/preprocessing/utils.html#atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MMSeqs2Config</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Input configuration for MMseqs2 clustering.&quot;&quot;&quot;</span>
+
+    <span class="n">cluster_identity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.4</span>  <span class="c1"># Sequence identity threshold for clustering</span>
+    <span class="n">coverage</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span>  <span class="c1"># Coverage threshold: usage depends on coverage mode</span>
+    <span class="n">sensitivity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">8.0</span>  <span class="c1"># Sensitivity: ~1.0 faster; ~4.0 fast; ~7.5 sensitive</span>
+    <span class="n">cluster_mode</span><span class="p">:</span> <span class="n">ClusterMode</span> <span class="o">=</span> <span class="n">ClusterMode</span><span class="o">.</span><span class="n">GREEDY_SET_COVER</span>  <span class="c1"># Clustering mode: see `ClusterMode` for details</span>
+    <span class="n">coverage_mode</span><span class="p">:</span> <span class="n">CoverageMode</span> <span class="o">=</span> <span class="n">CoverageMode</span><span class="o">.</span><span class="n">BIDIRECTIONAL</span>  <span class="c1"># Coverage mode: see `CoverageMode` for details</span>
+
+    <span class="c1"># Validating inputs</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cluster_identity</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">cluster_identity</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid cluster_identity </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cluster_identity</span><span class="si">}</span><span class="s2">: Must be in the range [0,1]&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coverage</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">coverage</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid coverage threshold </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">coverage</span><span class="si">}</span><span class="s2">: Must be in the range [0,1]&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="run_mmseqs2_clustering">
+<a class="viewcode-back" href="../../../../../ml/preprocessing/utils.html#atomworks.ml.preprocessing.utils.clustering.run_mmseqs2_clustering">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_mmseqs2_clustering</span><span class="p">(</span>
+    <span class="n">input_fasta</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">PathLike</span><span class="p">,</span>
+    <span class="n">clustering_config</span><span class="p">:</span> <span class="n">MMSeqs2Config</span> <span class="o">=</span> <span class="n">MMSeqs2Config</span><span class="p">(),</span>  <span class="c1"># noqa: B008</span>
+    <span class="n">temp_dir</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Runs MMseqs2 clustering on the input FASTA file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_fasta (str): Path to the input FASTA file. The headers for the sequences should be unique, as they are used to identify the sequences in the output.</span>
+<span class="sd">        clustering_config (MMSeqs2Config): Configuration for MMseqs2 clustering. See `MMSeqs2Config` for details.</span>
+<span class="sd">        tmp_dir (PathLike | str): Path to the temporary directory where MMseqs2 will write intermediate files. Default is None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: DataFrame containing the clustering results with columns [&quot;cluster_rep_seq_hash&quot;, &quot;seq_hash&quot;].</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        cluster_rep_seq_hash, seq_hash</span>
+<span class="sd">        afe56282ba3, afe56282ba3</span>
+<span class="sd">        afe56282ba3, ee1f80a23f3</span>
+<span class="sd">        afe56282ba3, 4a2caa18797</span>
+<span class="sd">        afe56282ba3, 19f7ce1eed1</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        - PDB clustering approach: https://www.rcsb.org/docs/grouping-structures/sequence-based-clustering</span>
+<span class="sd">        - MMseqs2 documentation: https://github.com/soedinglab/mmseqs2/wiki</span>
+<span class="sd">        - CLI documentation for the `easy-cluster` command: `mmseqs easy-cluster -h`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># If input is a Path object, convert it to a string</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_fasta</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="n">input_fasta</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">input_fasta</span><span class="p">)</span>
+
+    <span class="c1"># Ensure the temp directory exists and is a string</span>
+    <span class="n">temp_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;temp&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">)</span> <span class="k">else</span> <span class="n">Path</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">))</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Run MMseqs2 easy-cluster command</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running MMseqs2 easy-cluster with </span><span class="si">{</span><span class="n">clustering_config</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fnull</span><span class="p">:</span>
+            <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="s2">&quot;mmseqs&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;easy-cluster&quot;</span><span class="p">,</span>
+                    <span class="n">input_fasta</span><span class="p">,</span>
+                    <span class="s2">&quot;result&quot;</span><span class="p">,</span>
+                    <span class="n">temp_dir</span><span class="p">,</span>
+                    <span class="s2">&quot;--min-seq-id&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span>
+                        <span class="n">clustering_config</span><span class="o">.</span><span class="n">cluster_identity</span>
+                    <span class="p">),</span>  <span class="c1"># Sequence identity threshold for clustering, typically 0.4 for proteins, and 1.0 for nucleic acids and peptides</span>
+                    <span class="s2">&quot;-c&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">clustering_config</span><span class="o">.</span><span class="n">coverage</span><span class="p">),</span>  <span class="c1"># Coverage threshold for clustering, typically 0.8</span>
+                    <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span>
+                        <span class="n">clustering_config</span><span class="o">.</span><span class="n">sensitivity</span>
+                    <span class="p">),</span>  <span class="c1"># MMSeqs sensitivity for clustering: ~1.0 = faster, ~4.0 = fast, ~7.5 = sensitive</span>
+                    <span class="s2">&quot;--cluster-mode&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span>
+                        <span class="nb">int</span><span class="p">(</span><span class="n">clustering_config</span><span class="o">.</span><span class="n">cluster_mode</span><span class="p">)</span>
+                    <span class="p">),</span>  <span class="c1"># 0 = standard, 1 = Connected component algorithm, slower but capable of covering more remote homologs. See https://www.rcsb.org/docs/grouping-structures/sequence-based-clustering</span>
+                    <span class="s2">&quot;--cov-mode&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span>
+                        <span class="nb">int</span><span class="p">(</span><span class="n">clustering_config</span><span class="o">.</span><span class="n">coverage_mode</span><span class="p">)</span>
+                    <span class="p">),</span>  <span class="c1"># Bi-directional coverage requirements (0) likely best for full-length proteins (but possible failure mode for fragment vs. full protein)</span>
+                <span class="p">],</span>
+                <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">stdout</span><span class="o">=</span><span class="n">fnull</span><span class="p">,</span>
+                <span class="n">stderr</span><span class="o">=</span><span class="n">fnull</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Clustering completed! Parsing TSV output file into a pandas DataFrame...&quot;</span><span class="p">)</span>
+
+        <span class="n">current_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
+        <span class="n">cluster_file</span> <span class="o">=</span> <span class="n">current_dir</span> <span class="o">/</span> <span class="s2">&quot;result_cluster.tsv&quot;</span>
+
+        <span class="c1"># Load the TSV output file into a DataFrame</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+            <span class="n">cluster_file</span><span class="p">,</span>
+            <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;cluster_rep_seq_hash&quot;</span><span class="p">,</span> <span class="s2">&quot;seq_hash&quot;</span><span class="p">],</span>
+            <span class="n">keep_default_na</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">na_values</span><span class="o">=</span><span class="n">NA_VALUES</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DataFrame created with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="si">}</span><span class="s2"> rows!&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df</span>
+
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An error occurred while running MMseqs2: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="cluster_all_sequences">
+<a class="viewcode-back" href="../../../../../ml/preprocessing/utils.html#atomworks.ml.preprocessing.utils.clustering.cluster_all_sequences">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cluster_all_sequences</span><span class="p">(</span>
+    <span class="n">pn_units_df</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">sequence_col_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">sequence_hash_col_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">output_col_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;q_pn_unit_cluster&quot;</span><span class="p">,</span>
+    <span class="n">set_to_cluster_col</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">clustering_configs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">MMSeqs2Config</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">MMSeqs2Config</span><span class="p">(),</span> <span class="n">MMSeqs2Config</span><span class="p">(</span><span class="n">cluster_identity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)],</span>  <span class="c1"># noqa: B008</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clusters input sequences from a DataFrame and merges the cluster information back into the DataFrame.</span>
+
+<span class="sd">    This function performs the following steps:</span>
+<span class="sd">    1. Creates (deduplicated) FASTA files for sequences from the input DataFrame.</span>
+<span class="sd">    2. Runs MMseqs2 clustering on the generated FASTA files for each specified parameter configuration.</span>
+<span class="sd">    3. Merges the clustering results back into the original DataFrame.</span>
+<span class="sd">    4. Saves the updated DataFrame with clustering information to a specified output path.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pn_units_df_path (PathLike | str | pd.DataFrame): Path to the input DataFrame stored as a Parquet file, or the DataFrame directly.</span>
+<span class="sd">        sequence_col_name (str): The name of the column containing the canonical sequences to be clustered.</span>
+<span class="sd">        sequence_hash_col_name (str): The name of the column containing the sequence hash for the sequences to be clustered.</span>
+<span class="sd">        output_col_prefix (str): Prefix for the name of the output column containing the representative sequence hash for each cluster.</span>
+<span class="sd">        set_to_cluster_col (bool): If True, sets the &#39;cluster&#39; column of the output dataframe equal to last of the computed clusters.</span>
+<span class="sd">        output_path (str | None): Path to save the output DataFrame with clustering information. If None, returns the dataframe without saving.</span>
+<span class="sd">        clustering_configs (list[MMSeqs2Config]): List of MMSeqs2Config objects specifying the clustering configurations to run.</span>
+
+
+<span class="sd">    Columns added to DataFrame:</span>
+<span class="sd">        - {output_col_prefix}_{cluster_mode_str}_rep_seq_hash: Representative sequence hash for protein clusters with the given configuration.</span>
+<span class="sd">        - &lt;optional&gt; cluster: If `set_to_cluster_col` is True, this column is set equal to the above column.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">current_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
+    <span class="n">temp_dir</span> <span class="o">=</span> <span class="n">current_dir</span> <span class="o">/</span> <span class="s2">&quot;tmp&quot;</span>
+    <span class="n">mmseqs_fasta_path</span> <span class="o">=</span> <span class="n">temp_dir</span> <span class="o">/</span> <span class="s2">&quot;sequences_to_cluster.fasta&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pn_units_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="n">pn_units_df</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">pn_units_df</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">pn_units_df</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pn_units_df</span>
+
+    <span class="c1"># Create FASTA file for the dataframe, and save it in the temp directory</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating FASTA file...&quot;</span><span class="p">)</span>
+    <span class="n">create_fasta_file_from_df</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">sequence_col_name</span><span class="p">,</span> <span class="n">mmseqs_fasta_path</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FASTA file saved to </span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">; will be cleaned up after clustering.&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">clustering_configs</span><span class="p">:</span>
+        <span class="c1"># Run MMSeqs2 clustering</span>
+        <span class="n">cluster_df</span> <span class="o">=</span> <span class="n">run_mmseqs2_clustering</span><span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">mmseqs_fasta_path</span><span class="p">),</span>
+            <span class="n">config</span><span class="p">,</span>
+            <span class="n">temp_dir</span><span class="o">=</span><span class="n">temp_dir</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Create a short string of the cluster mode for the column name</span>
+        <span class="n">cluster_mode_str</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;(id:</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">cluster_identity</span><span class="p">)</span><span class="si">!s}</span><span class="s2">)&quot;</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;(cov:</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">coverage</span><span class="p">)</span><span class="si">!s}</span><span class="s2">)&quot;</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;(cov_mode:</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">coverage_mode</span><span class="p">)</span><span class="si">!s}</span><span class="s2">)&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Merging clustering information into the master DataFrame...&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Merge clusters into the master DataFrame</span>
+
+        <span class="c1"># ...drop the `cluster_mode_str` col, if it already exists</span>
+        <span class="n">cluster_col</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_col_prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">cluster_mode_str</span><span class="si">}</span><span class="s2">_rep_seq_hash&quot;</span>
+        <span class="k">if</span> <span class="n">cluster_col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">cluster_col</span><span class="p">])</span>
+
+        <span class="c1"># ...merge and rename</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+                <span class="n">cluster_df</span><span class="p">[[</span><span class="s2">&quot;seq_hash&quot;</span><span class="p">,</span> <span class="s2">&quot;cluster_rep_seq_hash&quot;</span><span class="p">]],</span>
+                <span class="n">left_on</span><span class="o">=</span><span class="n">sequence_hash_col_name</span><span class="p">,</span>
+                <span class="n">right_on</span><span class="o">=</span><span class="s2">&quot;seq_hash&quot;</span><span class="p">,</span>
+                <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;cluster_rep_seq_hash&quot;</span><span class="p">:</span> <span class="n">cluster_col</span><span class="p">})</span>
+            <span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Merged clusters for </span><span class="si">{</span><span class="n">cluster_mode_str</span><span class="si">}</span><span class="s2"> configuration.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># If desired, set the &#39;cluster&#39; column equal to the computed cluster</span>
+        <span class="k">if</span> <span class="n">set_to_cluster_col</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="s2">&quot;cluster&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">cluster_col</span><span class="p">]</span>
+
+        <span class="c1"># Drop the redundant &#39;seq_hash&#39; column from the merge</span>
+        <span class="k">if</span> <span class="s2">&quot;seq_hash&quot;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;seq_hash&quot;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Clustering completed for </span><span class="si">{</span><span class="n">cluster_mode_str</span><span class="si">}</span><span class="s2"> configuration!&quot;</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Clustering complete!&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">output_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Save before cleaning up, in case of errors</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving to </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DataFrame with clustering information saved to </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Remove everything in the temp directory</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Cleaning up...&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">)</span>
+
+        <span class="c1"># Remove files created by MMseqs2 in the current directory</span>
+        <span class="n">current_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
+        <span class="n">filenames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;result_cluster.tsv&quot;</span><span class="p">,</span> <span class="s2">&quot;result_all_seqs.fasta&quot;</span><span class="p">,</span> <span class="s2">&quot;result_rep_seq.fasta&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">current_dir</span> <span class="o">/</span> <span class="n">filename</span>
+            <span class="k">if</span> <span class="n">file_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">file_path</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error removing temp directory </span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">output_path</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

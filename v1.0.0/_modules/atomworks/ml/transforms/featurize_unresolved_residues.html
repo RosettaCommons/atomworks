@@ -1,0 +1,909 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>atomworks.ml.transforms.featurize_unresolved_residues &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/transforms/featurize_unresolved_residues';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.0.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_color.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">atomworks.ml.transforms.featurize_unresolved_residues</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for atomworks.ml.transforms.featurize_unresolved_residues</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Transforms to handle featurization of edge cases with unresolved residues.</span>
+
+<span class="sd">NOTE: Transforms that &quot;filter&quot; based on unresolved residues will be found in the &quot;filters&quot; file, not here.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChainTypeInfo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">NUCLEIC_ACID_FRAME_ATOM_NAMES</span><span class="p">,</span> <span class="n">PROTEIN_FRAME_ATOM_NAMES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms._checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_atom_array_annotation</span><span class="p">,</span> <span class="n">check_contains_keys</span><span class="p">,</span> <span class="n">check_is_instance</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.atom_array</span><span class="w"> </span><span class="kn">import</span> <span class="n">apply_and_spread_residue_wise</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.utils.numpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_nearest_true_index_for_each_false</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.utils.token</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">apply_token_wise</span><span class="p">,</span>
+    <span class="n">get_af3_token_center_masks</span><span class="p">,</span>
+    <span class="n">get_af3_token_representative_masks</span><span class="p">,</span>
+    <span class="n">spread_token_wise</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="mask_residues_with_specific_unresolved_atoms">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.featurize_unresolved_residues.mask_residues_with_specific_unresolved_atoms">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mask_residues_with_specific_unresolved_atoms</span><span class="p">(</span>
+    <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
+    <span class="n">chain_type_to_atom_names</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="n">Any</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">occupancy_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;If a residue has any unresolved atoms from the specified list, set the occupancy of the entire residue to zero.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atom_array (AtomArray): The atom array to modify.</span>
+<span class="sd">        chain_type_to_atom_names (dict[tuple | list | ChainType, list[str]], optional): A dictionary mapping</span>
+<span class="sd">            chain types to lists of atom names that should be checked for resolution. Keys can be:</span>
+<span class="sd">            - Single chain type (e.g., ChainType.POLYPEPTIDE_L)</span>
+<span class="sd">            - Tuple/list of chain types (e.g., ChainTypeInfo.PROTEINS)</span>
+<span class="sd">            If None, uses the default AF-3 frame atoms. Defaults to None.</span>
+<span class="sd">        occupancy_threshold (float): Atoms with occupancy &lt;= this value are considered unresolved.</span>
+<span class="sd">            Defaults to 0.0.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        AtomArray: The modified atom array.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Use default AF-3 frame atoms if not specified</span>
+    <span class="k">if</span> <span class="n">chain_type_to_atom_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">chain_type_to_atom_names</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">ChainTypeInfo</span><span class="o">.</span><span class="n">PROTEINS</span><span class="p">:</span> <span class="n">PROTEIN_FRAME_ATOM_NAMES</span><span class="p">,</span>
+            <span class="n">ChainTypeInfo</span><span class="o">.</span><span class="n">NUCLEIC_ACIDS</span><span class="p">:</span> <span class="n">NUCLEIC_ACID_FRAME_ATOM_NAMES</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="n">unresolved_backbone_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="c1"># ... subset to backbone atoms within polymers with unresolved coordinates</span>
+    <span class="c1"># (We treat partially occupied atoms as occupied; e.g., those resolved from &quot;altlocs&quot;)</span>
+    <span class="k">if</span> <span class="s2">&quot;chain_type&quot;</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">():</span>
+        <span class="c1"># Process each chain type group and its required atoms</span>
+        <span class="k">for</span> <span class="n">chain_types</span><span class="p">,</span> <span class="n">atom_names</span> <span class="ow">in</span> <span class="n">chain_type_to_atom_names</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Handle both single chain types and tuples/lists of chain types</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chain_types</span><span class="p">,</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">chain_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">chain_types</span><span class="p">]</span>
+
+            <span class="n">chain_type_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_type</span><span class="p">,</span> <span class="n">chain_types</span><span class="p">)</span>
+            <span class="n">unresolved_backbone_mask</span> <span class="o">|=</span> <span class="p">(</span>
+                <span class="n">chain_type_mask</span>
+                <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span><span class="p">,</span> <span class="n">atom_names</span><span class="p">)</span>
+                <span class="o">&amp;</span> <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">occupancy</span> <span class="o">&lt;=</span> <span class="n">occupancy_threshold</span><span class="p">)</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># ... rely on atom names if chain type is not available</span>
+        <span class="n">all_atom_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">atom_names</span> <span class="ow">in</span> <span class="n">chain_type_to_atom_names</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">all_atom_names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">atom_names</span><span class="p">)</span>
+
+        <span class="n">unresolved_backbone_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span><span class="p">,</span> <span class="n">all_atom_names</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span>
+            <span class="n">atom_array</span><span class="o">.</span><span class="n">occupancy</span> <span class="o">&lt;=</span> <span class="n">occupancy_threshold</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Residue-wise mask for unresolved backbone atoms</span>
+    <span class="n">unresolved_backbone_res_mask</span> <span class="o">=</span> <span class="n">apply_and_spread_residue_wise</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">unresolved_backbone_mask</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">)</span>
+
+    <span class="c1"># ... mask the occupancy of the entire residue</span>
+    <span class="n">atom_array</span><span class="o">.</span><span class="n">occupancy</span><span class="p">[</span><span class="n">unresolved_backbone_res_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="n">atom_array</span></div>
+
+
+
+<div class="viewcode-block" id="mask_polymer_residues_with_unresolved_frame_atoms">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.featurize_unresolved_residues.mask_polymer_residues_with_unresolved_frame_atoms">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mask_polymer_residues_with_unresolved_frame_atoms</span><span class="p">(</span>
+    <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">occupancy_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;If a polymer residue has an unresolved backbone atom (occupancy &lt;= occupancy_threshold), set the occupancy of the entire residue to zero.</span>
+
+<span class="sd">    This is a backwards-compatible wrapper around mask_residues_with_specific_unresolved_atoms.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">mask_residues_with_specific_unresolved_atoms</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">occupancy_threshold</span><span class="o">=</span><span class="n">occupancy_threshold</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="MaskResiduesWithSpecificUnresolvedAtoms">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.featurize_unresolved_residues.MaskResiduesWithSpecificUnresolvedAtoms">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MaskResiduesWithSpecificUnresolvedAtoms</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;For residues with at least one unresolved atom from the specified list, mask (set to occupancy zero) the entire residue.</span>
+
+<span class="sd">    Helpful for e.g., when we are missing backbone frame atoms, since if we don&#39;t have frame atoms, then:</span>
+<span class="sd">        - We cannot build residue frames</span>
+<span class="sd">        - The local structure quality is likely poor</span>
+
+<span class="sd">    We (and AF-3) consider the frame atoms to be:</span>
+<span class="sd">        - Proteins: N, CA, C</span>
+<span class="sd">        - Nucleic Acids: C1&#39;, C3&#39;, C4&#39;</span>
+
+<span class="sd">    As an example for proteins, see PDB ID `6Z3R`, which has unresolved C and CA atoms.</span>
+<span class="sd">    As an example fo nucleic acids, see 7Z24, which has unresolved C1&#39;, C2&#39;, and C3&#39; (but does have a resolved oxygen)</span>
+
+<span class="sd">    NOTE: This transform must be applied before other transform that rely on the `occupancy` annotation.</span>
+
+<span class="sd">    This transform allows specification of which atoms to check for each chain type; for MPNN, we consider the backbone oxygen (O) as well.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">incompatible_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;EncodeAtomArray&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CropContiguousLikeAF3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CropSpatialLikeAF3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PlaceUnresolvedTokenOnClosestResolvedTokenInSequence&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">chain_type_to_atom_names</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="n">Any</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">occupancy_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chain_type_to_atom_names</span> <span class="o">=</span> <span class="n">chain_type_to_atom_names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">occupancy_threshold</span> <span class="o">=</span> <span class="n">occupancy_threshold</span>
+
+<div class="viewcode-block" id="MaskResiduesWithSpecificUnresolvedAtoms.check_input">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.featurize_unresolved_residues.MaskResiduesWithSpecificUnresolvedAtoms.check_input">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;occupancy&quot;</span><span class="p">,</span> <span class="s2">&quot;chain_type&quot;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="MaskResiduesWithSpecificUnresolvedAtoms.forward">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.featurize_unresolved_residues.MaskResiduesWithSpecificUnresolvedAtoms.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mask_residues_with_specific_unresolved_atoms</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">chain_type_to_atom_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">occupancy_threshold</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="MaskPolymerResiduesWithUnresolvedFrameAtoms">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.featurize_unresolved_residues.MaskPolymerResiduesWithUnresolvedFrameAtoms">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MaskPolymerResiduesWithUnresolvedFrameAtoms</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;For residues with at least one unresolved frame atom, mask (set to occupancy zero) the entire residue.</span>
+
+<span class="sd">    This is a backwards-compatible wrapper around MaskResiduesWithSpecificUnresolvedAtoms.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">incompatible_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;EncodeAtomArray&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CropContiguousLikeAF3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CropSpatialLikeAF3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PlaceUnresolvedTokenOnClosestResolvedTokenInSequence&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">occupancy_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">occupancy_threshold</span> <span class="o">=</span> <span class="n">occupancy_threshold</span>
+
+<div class="viewcode-block" id="MaskPolymerResiduesWithUnresolvedFrameAtoms.check_input">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.featurize_unresolved_residues.MaskPolymerResiduesWithUnresolvedFrameAtoms.check_input">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;occupancy&quot;</span><span class="p">,</span> <span class="s2">&quot;chain_type&quot;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="MaskPolymerResiduesWithUnresolvedFrameAtoms.forward">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.featurize_unresolved_residues.MaskPolymerResiduesWithUnresolvedFrameAtoms.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mask_polymer_residues_with_unresolved_frame_atoms</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">occupancy_threshold</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="place_unresolved_token_on_closest_resolved_token_in_sequence">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.featurize_unresolved_residues.place_unresolved_token_on_closest_resolved_token_in_sequence">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">place_unresolved_token_on_closest_resolved_token_in_sequence</span><span class="p">(</span>
+    <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">annotation_to_update</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;coord_to_be_noised&quot;</span><span class="p">,</span> <span class="n">annotation_to_copy</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;coord&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Place all atoms within fully-unresolved residues on the closest resolved neighbor in sequence space.</span>
+
+<span class="sd">    NOTE: For non-polymers, each atom is considered a token, so this transform will place unresolved</span>
+<span class="sd">    atoms on the closest resolved token in sequence space (i.e., the previous or next atom).</span>
+
+<span class="sd">    NOTE: We only perform the operation WITHIN chains, such that we don&#39;t resolve across chain boundaries.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atom_array (AtomArray): The atom array to modify.</span>
+<span class="sd">        annotation_to_update (str): The annotation to update with the new coordinates. E.g., &quot;coord&quot; (if we want to modify the ground-truth),</span>
+<span class="sd">            or &quot;coord_to_be_noised&quot; (if we want to modify only the coordinates that will be noised).</span>
+<span class="sd">        annotation_to_copy (str): The annotation to copy from the resolved atom to the unresolved atom. E.g., &quot;coord&quot; (if we want to copy the ground-truth),</span>
+<span class="sd">            or &quot;coord_to_be_noised&quot; (if we want to copy the coordinates that will be noised, which may have been modified by previous transforms).</span>
+<span class="sd">            In the AF-3 pipeline, we want to copy &quot;coord_to_be_noised&quot;, to correctly resolve residues after applying PlaceUnresolvedTokenAtomsOnRepresentativeAtom.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        AtomArray: The modified atom array.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ... loop through chains with unresolved atoms, such that we don&#39;t resolve across chain boundaries</span>
+    <span class="c1"># (NOTE: We only iterate through chain instances containing any unresolved atoms for efficiency)</span>
+    <span class="k">for</span> <span class="n">chain_iid</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_iid</span><span class="p">[</span><span class="n">atom_array</span><span class="o">.</span><span class="n">occupancy</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]):</span>
+        <span class="n">chain_mask</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">chain_iid</span> <span class="o">==</span> <span class="n">chain_iid</span>
+        <span class="n">chain_atom_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">chain_mask</span><span class="p">]</span>
+
+        <span class="c1"># ... map each unresolved token to the nearest resolved token</span>
+        <span class="c1"># (Here, we consider a token resolve if any atom within the token is resolved)</span>
+        <span class="n">is_token_resolved_token_level</span> <span class="o">=</span> <span class="n">apply_token_wise</span><span class="p">(</span>
+            <span class="n">chain_atom_array</span><span class="p">,</span> <span class="n">chain_atom_array</span><span class="o">.</span><span class="n">occupancy</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span>
+        <span class="p">)</span>  <span class="c1"># (n_tokens)</span>
+        <span class="n">is_token_resolved_atom_level</span> <span class="o">=</span> <span class="n">spread_token_wise</span><span class="p">(</span><span class="n">chain_atom_array</span><span class="p">,</span> <span class="n">is_token_resolved_token_level</span><span class="p">)</span>  <span class="c1"># (n_atoms)</span>
+
+        <span class="c1"># (Early exit if  all tokens are resolved)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">is_token_resolved_atom_level</span><span class="p">):</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># (if no tokens are resolved, set nan&#39;s -&gt; 0s)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="o">~</span><span class="n">is_token_resolved_atom_level</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">annotation_to_update</span> <span class="o">==</span> <span class="s2">&quot;coord&quot;</span><span class="p">:</span>
+                <span class="c1"># (We must handle &quot;coord&quot; explicitly, as it is treated differently than other annotations)</span>
+                <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">chain_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">chain_atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="n">annotation_to_update</span><span class="p">)[</span><span class="n">chain_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span>
+                    <span class="n">chain_atom_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="n">annotation_to_update</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># ... get the nearest resolved token indices for each unresolved token</span>
+        <span class="n">nearest_resolved_token_indices_token_wise</span> <span class="o">=</span> <span class="n">get_nearest_true_index_for_each_false</span><span class="p">(</span>
+            <span class="n">is_token_resolved_token_level</span>
+        <span class="p">)</span>  <span class="c1"># (n_tokens)</span>
+        <span class="n">nearest_resolved_token_indices_atom_wise</span> <span class="o">=</span> <span class="n">spread_token_wise</span><span class="p">(</span>
+            <span class="n">chain_atom_array</span><span class="p">[</span><span class="o">~</span><span class="n">is_token_resolved_atom_level</span><span class="p">],</span> <span class="n">nearest_resolved_token_indices_token_wise</span>
+        <span class="p">)</span>  <span class="c1"># (n_atoms)</span>
+
+        <span class="c1"># Where the entire token is unresolved, set the atom coordinates to the nearest resolved token representative atom coordinates</span>
+
+        <span class="c1"># ... get coordinates of representative atoms from the specified annotation to copy</span>
+        <span class="k">if</span> <span class="n">annotation_to_copy</span> <span class="o">==</span> <span class="s2">&quot;coord&quot;</span><span class="p">:</span>
+            <span class="n">source_coordinates</span> <span class="o">=</span> <span class="n">chain_atom_array</span><span class="o">.</span><span class="n">coord</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">source_coordinates</span> <span class="o">=</span> <span class="n">chain_atom_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="n">annotation_to_copy</span><span class="p">)</span>
+
+        <span class="n">representative_atom_coordinates_atom_level</span> <span class="o">=</span> <span class="n">source_coordinates</span><span class="p">[</span>
+            <span class="n">get_af3_token_representative_masks</span><span class="p">(</span><span class="n">chain_atom_array</span><span class="p">)</span>
+        <span class="p">]</span>  <span class="c1"># (n_atoms, 3)</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">representative_atom_coordinates_atom_level</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">is_token_resolved_token_level</span><span class="p">)</span>
+
+        <span class="c1"># ... update the coordinates for the specified annotation (e.g., &quot;coord&quot; or &quot;coord_to_be_noised&quot;)</span>
+        <span class="k">if</span> <span class="n">annotation_to_update</span> <span class="o">==</span> <span class="s2">&quot;coord&quot;</span><span class="p">:</span>
+            <span class="c1"># (We must handle &quot;coord&quot; explicitly, as it is treated differently than other annotations)</span>
+            <span class="n">chain_atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="o">~</span><span class="n">is_token_resolved_atom_level</span><span class="p">]</span> <span class="o">=</span> <span class="n">representative_atom_coordinates_atom_level</span><span class="p">[</span>
+                <span class="n">nearest_resolved_token_indices_atom_wise</span>
+            <span class="p">]</span>
+            <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">chain_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">chain_atom_array</span><span class="o">.</span><span class="n">coord</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">chain_atom_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="n">annotation_to_update</span><span class="p">)[</span><span class="o">~</span><span class="n">is_token_resolved_atom_level</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">representative_atom_coordinates_atom_level</span><span class="p">[</span><span class="n">nearest_resolved_token_indices_atom_wise</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="n">annotation_to_update</span><span class="p">)[</span><span class="n">chain_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">chain_atom_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span>
+                <span class="n">annotation_to_update</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">atom_array</span></div>
+
+
+
+<div class="viewcode-block" id="PlaceUnresolvedTokenOnClosestResolvedTokenInSequence">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.featurize_unresolved_residues.PlaceUnresolvedTokenOnClosestResolvedTokenInSequence">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlaceUnresolvedTokenOnClosestResolvedTokenInSequence</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Place fully unresolved tokens on their closest resolved neighbor in sequence space, breaking ties by choosing the &quot;leftmost&quot; neighbor.</span>
+
+<span class="sd">    This heuristic is helpful to avoid noising unresolved residue coordinates from the origin during diffusion training.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        annotation_to_update (str): The annotation to update with the new coordinates. E.g., &quot;coord&quot; (if we want to modify the ground-truth),</span>
+<span class="sd">            or &quot;coord_to_be_noised&quot; (if we want to modify only the coordinates that will be noised).</span>
+<span class="sd">            NOTE: Must match the annotation used for `PlaceUnresolvedTokenAtomsOnRepresentativeAtom`.</span>
+<span class="sd">        annotation_to_copy (str): The annotation to copy from the resolved atom to the unresolved atom.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">requires_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;AtomizeByCCDName&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PlaceUnresolvedTokenAtomsOnRepresentativeAtom&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">annotation_to_update</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;coord_to_be_noised&quot;</span><span class="p">,</span> <span class="n">annotation_to_copy</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;coord_to_be_noised&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">annotation_to_update</span> <span class="o">=</span> <span class="n">annotation_to_update</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">annotation_to_copy</span> <span class="o">=</span> <span class="n">annotation_to_copy</span>
+
+<div class="viewcode-block" id="PlaceUnresolvedTokenOnClosestResolvedTokenInSequence.check_input">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.featurize_unresolved_residues.PlaceUnresolvedTokenOnClosestResolvedTokenInSequence.check_input">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+
+        <span class="n">annotations_to_check</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;occupancy&quot;</span><span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotation_to_update</span> <span class="o">!=</span> <span class="s2">&quot;coord&quot;</span><span class="p">:</span>
+            <span class="c1"># &quot;coord&quot; is a special annotation, and technically not in `atom_array.get_annotation_categories()`</span>
+            <span class="n">annotations_to_check</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">annotation_to_update</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotation_to_copy</span> <span class="o">!=</span> <span class="s2">&quot;coord&quot;</span><span class="p">:</span>
+            <span class="n">annotations_to_check</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">annotation_to_copy</span><span class="p">)</span>
+
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">annotations_to_check</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="PlaceUnresolvedTokenOnClosestResolvedTokenInSequence.forward">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.featurize_unresolved_residues.PlaceUnresolvedTokenOnClosestResolvedTokenInSequence.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">place_unresolved_token_on_closest_resolved_token_in_sequence</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">],</span>
+            <span class="n">annotation_to_update</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">annotation_to_update</span><span class="p">,</span>
+            <span class="n">annotation_to_copy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">annotation_to_copy</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="place_unresolved_token_atoms_on_token_representative_atom">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.featurize_unresolved_residues.place_unresolved_token_atoms_on_token_representative_atom">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">place_unresolved_token_atoms_on_token_representative_atom</span><span class="p">(</span>
+    <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">annotation_to_update</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;coord_to_be_noised&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Place unresolved token atoms (e.g., side chain atoms) on the representative atom of the corresponding residue (token).</span>
+
+<span class="sd">    In cases where the representative atom is unresolved, we also try the token center atom (e.g., if the CB is unresolved but the CA is resolved, like in 8E83 for chain A, residue 194).</span>
+<span class="sd">    Helpful for diffusive models to avoid noising unresolved side-chain atoms from the origin.</span>
+
+<span class="sd">    NOTE: For non-polymers, all atoms are considered tokens (and are atomized); in such cases this Transform will have no effect.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atom_array (AtomArray): The atom array to modify.</span>
+<span class="sd">        annotation_to_update (str): The annotation to update with the new coordinates. E.g., &quot;coord&quot; (if we want to modify the ground-truth),</span>
+<span class="sd">            or &quot;coord_to_be_noised&quot; (if we want to modify only the coordinates that will be noised).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        AtomArray: The modified atom array.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># ... get a mask of all unresolved atoms</span>
+    <span class="n">unresolved_atom_mask</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">occupancy</span> <span class="o">==</span> <span class="mi">0</span>
+
+    <span class="c1"># ... get the unique chain IIDs of polymers with unresolved atoms (as this transform only applies to polymers; e.g., chains without full atomization)</span>
+    <span class="n">chain_iids_with_unresolved_atoms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_iid</span><span class="p">[(</span><span class="n">unresolved_atom_mask</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atomize</span><span class="p">)])</span>
+
+    <span class="c1"># ... prepare a mask of representative atoms for each residue</span>
+    <span class="n">representative_atom_mask</span> <span class="o">=</span> <span class="n">get_af3_token_representative_masks</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+
+    <span class="c1"># (For cases where the representative atom is unresolved, we also try the token center atom)</span>
+    <span class="n">center_atom_mask</span> <span class="o">=</span> <span class="n">get_af3_token_center_masks</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">chain_iid</span> <span class="ow">in</span> <span class="n">chain_iids_with_unresolved_atoms</span><span class="p">:</span>
+        <span class="c1"># NOTE: We cannot rely on the `is_polymer` annotation, as in some instances (like acyl groups) we may have non-polymer tokens within a polymer chain (see: 7RCU)</span>
+        <span class="n">residues_with_unresolved_atoms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>
+            <span class="n">atom_array</span><span class="o">.</span><span class="n">res_id</span><span class="p">[(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_iid</span> <span class="o">==</span> <span class="n">chain_iid</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">unresolved_atom_mask</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atomize</span><span class="p">)]</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">res_id</span> <span class="ow">in</span> <span class="n">residues_with_unresolved_atoms</span><span class="p">:</span>
+            <span class="c1"># ... create a mask for the unresolved atoms in the residue</span>
+            <span class="n">residue_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_iid</span> <span class="o">==</span> <span class="n">chain_iid</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">res_id</span> <span class="o">==</span> <span class="n">res_id</span><span class="p">)</span>
+            <span class="n">unresolved_atoms_in_residue_mask</span> <span class="o">=</span> <span class="n">residue_mask</span> <span class="o">&amp;</span> <span class="n">unresolved_atom_mask</span>
+
+            <span class="c1"># ... get a mask indicating where to place unresolved atoms</span>
+            <span class="n">placement_atom_mask</span> <span class="o">=</span> <span class="n">representative_atom_mask</span> <span class="o">&amp;</span> <span class="n">residue_mask</span>
+
+            <span class="c1"># ... if the chosen atom (by default, the representative atom) is unresolved, try the center atom</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">placement_atom_mask</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">unresolved_atom_mask</span><span class="p">):</span>
+                <span class="n">placement_atom_mask</span> <span class="o">=</span> <span class="n">center_atom_mask</span> <span class="o">&amp;</span> <span class="n">residue_mask</span>
+
+            <span class="c1"># ... get the index of the representative atom (there should be exactly one instance of the chain)</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">placement_atom_mask</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="n">placement_atom_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">placement_atom_mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># ... set the unresolved atom coordinates to the placment atom coordinates</span>
+            <span class="k">if</span> <span class="n">annotation_to_update</span> <span class="o">==</span> <span class="s2">&quot;coord&quot;</span><span class="p">:</span>
+                <span class="c1"># (We must handle &quot;coord&quot; explicitly, as it is treated differently than other annotations)</span>
+                <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">unresolved_atoms_in_residue_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">placement_atom_idx</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="n">annotation_to_update</span><span class="p">)[</span><span class="n">unresolved_atoms_in_residue_mask</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="n">annotation_to_update</span><span class="p">)[</span><span class="n">placement_atom_idx</span><span class="p">]</span>
+                <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">atom_array</span></div>
+
+
+
+<div class="viewcode-block" id="PlaceUnresolvedTokenAtomsOnRepresentativeAtom">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.featurize_unresolved_residues.PlaceUnresolvedTokenAtomsOnRepresentativeAtom">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlaceUnresolvedTokenAtomsOnRepresentativeAtom</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Place unresolved token atoms (e.g., side chain atoms) on the representative atom of the residue (token).</span>
+
+<span class="sd">    Note that this Transform has no impact on non-polymers, as all atoms are considered tokens.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        annotation_to_update (str): The annotation to update with the new coordinates. E.g., &quot;coord&quot; (if we want to modify the ground-truth),</span>
+<span class="sd">        or &quot;coord_to_be_noised&quot; (if we want to modify only the coordinates that will be noised).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">requires_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AtomizeByCCDName&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotation_to_update</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;coord_to_be_noised&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">annotation_to_update</span> <span class="o">=</span> <span class="n">annotation_to_update</span>
+
+<div class="viewcode-block" id="PlaceUnresolvedTokenAtomsOnRepresentativeAtom.check_input">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.featurize_unresolved_residues.PlaceUnresolvedTokenAtomsOnRepresentativeAtom.check_input">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">annotations_to_check</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;occupancy&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotation_to_update</span> <span class="o">!=</span> <span class="s2">&quot;coord&quot;</span><span class="p">:</span>
+            <span class="c1"># &quot;coord&quot; is a special annotation, and technically not in `atom_array.get_annotation_categories()`</span>
+            <span class="n">annotations_to_check</span> <span class="o">+=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">annotation_to_update</span><span class="p">]</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">annotations_to_check</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PlaceUnresolvedTokenAtomsOnRepresentativeAtom.forward">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.featurize_unresolved_residues.PlaceUnresolvedTokenAtomsOnRepresentativeAtom.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">place_unresolved_token_atoms_on_token_representative_atom</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">],</span> <span class="n">annotation_to_update</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">annotation_to_update</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

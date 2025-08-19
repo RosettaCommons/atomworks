@@ -1,0 +1,703 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>CIFUtils: User Example &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/plot_basics';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.0.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contributing" href="../contributor_guide.html" />
+    <link rel="prev" title="Plot a Monomer Structure" href="plot_monomer.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../_static/atomworks_logo_color.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="plot_monomer.html">Plot a Monomer Structure</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">CIFUtils: User Example</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Examples</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">CIFUtils: User Example</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-plot-basics-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="cifutils-user-example">
+<span id="sphx-glr-auto-examples-plot-basics-py"></span><h1>CIFUtils: User Example<a class="headerlink" href="#cifutils-user-example" title="Link to this heading">#</a></h1>
+<p>This example demonstrates how to use the <cite>atomworks.io</cite> package to load, inspect, and manipulate mmCIF structure files. You’ll see how to parse a structure, visualize it, and perform basic analysis.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">## 1.1 Loading from mmCIF</span>
+
+<span class="sd">We start by loading a structure from an mmCIF file using `atomworks.io.parse`. This function supports various file formats and allows you to specify options such as which assembly to build, whether to add missing atoms, and more.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.database</span><span class="w"> </span><span class="kn">import</span> <span class="n">rcsb</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_pdb_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.visualize</span><span class="w"> </span><span class="kn">import</span> <span class="n">view</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_example_path_or_buffer</span><span class="p">(</span><span class="n">pdb_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># ... if file is locally available</span>
+        <span class="k">return</span> <span class="n">get_pdb_path</span><span class="p">(</span><span class="n">pdb_id</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="c1"># ... otherwise, fetch the file from RCSB</span>
+        <span class="k">return</span> <span class="n">rcsb</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">pdb_id</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;cif&quot;</span><span class="p">)</span>
+
+
+<span class="n">result_dict</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span>
+    <span class="n">filename</span><span class="o">=</span><span class="n">get_example_path_or_buffer</span><span class="p">(</span><span class="s2">&quot;6lyz&quot;</span><span class="p">),</span>
+    <span class="n">build_assembly</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">],</span>
+    <span class="n">add_missing_atoms</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">remove_waters</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">hydrogen_policy</span><span class="o">=</span><span class="s2">&quot;remove&quot;</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Keys in parsed result:&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">result_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Keys in parsed result: [&#39;extra_info&#39;, &#39;metadata&#39;, &#39;chain_info&#39;, &#39;assemblies&#39;, &#39;ligand_info&#39;, &#39;asym_unit&#39;]
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">## 1.2 Visualizing the asymmetric unit and assembly</span>
+
+<span class="sd">You can visualize the asymmetric unit or any assembly using the built-in viewer from `atomworks.io`. This is helpful for quickly inspecting the structure and its components.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">asym_unit</span> <span class="o">=</span> <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;asym_unit&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">asym_unit</span> <span class="o">=</span> <span class="n">asym_unit</span><span class="p">[</span><span class="n">asym_unit</span><span class="o">.</span><span class="n">occupancy</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">view</span><span class="p">(</span><span class="n">asym_unit</span><span class="p">)</span>
+
+<span class="n">assembly</span> <span class="o">=</span> <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;assemblies&quot;</span><span class="p">][</span><span class="s2">&quot;1&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">assembly</span> <span class="o">=</span> <span class="n">assembly</span><span class="p">[</span><span class="n">assembly</span><span class="o">.</span><span class="n">occupancy</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">view</span><span class="p">(</span><span class="n">assembly</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;py3Dmol.view object at 0x7fb5938fd1c0&gt;
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">## 1.3 Inspecting structure metadata</span>
+
+<span class="sd">The parsed result contains rich metadata, including chain and ligand information, as well as annotation categories. This information is useful for downstream analysis and filtering.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Chain info:&quot;</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;chain_info&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Ligand info:&quot;</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;ligand_info&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Metadata:&quot;</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Annotation categories:&quot;</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;asym_unit&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Chain info: {&#39;A&#39;: {&#39;rcsb_entity&#39;: &#39;1&#39;, &#39;chain_type&#39;: &lt;ChainType.POLYPEPTIDE_L: 6&gt;, &#39;unprocessed_entity_canonical_sequence&#39;: &#39;KVFGRCELAAAMKRHGLDNYRGYSLGNWVCAAKFESNFNTQATNRNTDGSTDYGILQINSRWWCNDGRTPGSRNLCNIPCSALLSSDITASVNCAKKIVSDGNGMNAWVAWRNRCKGTDVQAWIRGCRL&#39;, &#39;unprocessed_entity_non_canonical_sequence&#39;: &#39;KVFGRCELAAAMKRHGLDNYRGYSLGNWVCAAKFESNFNTQATNRNTDGSTDYGILQINSRWWCNDGRTPGSRNLCNIPCSALLSSDITASVNCAKKIVSDGNGMNAWVAWRNRCKGTDVQAWIRGCRL&#39;, &#39;is_polymer&#39;: True, &#39;ec_numbers&#39;: [&#39;3.2.1.17&#39;], &#39;res_name&#39;: [&#39;LYS&#39;, &#39;VAL&#39;, &#39;PHE&#39;, &#39;GLY&#39;, &#39;ARG&#39;, &#39;CYS&#39;, &#39;GLU&#39;, &#39;LEU&#39;, &#39;ALA&#39;, &#39;ALA&#39;, &#39;ALA&#39;, &#39;MET&#39;, &#39;LYS&#39;, &#39;ARG&#39;, &#39;HIS&#39;, &#39;GLY&#39;, &#39;LEU&#39;, &#39;ASP&#39;, &#39;ASN&#39;, &#39;TYR&#39;, &#39;ARG&#39;, &#39;GLY&#39;, &#39;TYR&#39;, &#39;SER&#39;, &#39;LEU&#39;, &#39;GLY&#39;, &#39;ASN&#39;, &#39;TRP&#39;, &#39;VAL&#39;, &#39;CYS&#39;, &#39;ALA&#39;, &#39;ALA&#39;, &#39;LYS&#39;, &#39;PHE&#39;, &#39;GLU&#39;, &#39;SER&#39;, &#39;ASN&#39;, &#39;PHE&#39;, &#39;ASN&#39;, &#39;THR&#39;, &#39;GLN&#39;, &#39;ALA&#39;, &#39;THR&#39;, &#39;ASN&#39;, &#39;ARG&#39;, &#39;ASN&#39;, &#39;THR&#39;, &#39;ASP&#39;, &#39;GLY&#39;, &#39;SER&#39;, &#39;THR&#39;, &#39;ASP&#39;, &#39;TYR&#39;, &#39;GLY&#39;, &#39;ILE&#39;, &#39;LEU&#39;, &#39;GLN&#39;, &#39;ILE&#39;, &#39;ASN&#39;, &#39;SER&#39;, &#39;ARG&#39;, &#39;TRP&#39;, &#39;TRP&#39;, &#39;CYS&#39;, &#39;ASN&#39;, &#39;ASP&#39;, &#39;GLY&#39;, &#39;ARG&#39;, &#39;THR&#39;, &#39;PRO&#39;, &#39;GLY&#39;, &#39;SER&#39;, &#39;ARG&#39;, &#39;ASN&#39;, &#39;LEU&#39;, &#39;CYS&#39;, &#39;ASN&#39;, &#39;ILE&#39;, &#39;PRO&#39;, &#39;CYS&#39;, &#39;SER&#39;, &#39;ALA&#39;, &#39;LEU&#39;, &#39;LEU&#39;, &#39;SER&#39;, &#39;SER&#39;, &#39;ASP&#39;, &#39;ILE&#39;, &#39;THR&#39;, &#39;ALA&#39;, &#39;SER&#39;, &#39;VAL&#39;, &#39;ASN&#39;, &#39;CYS&#39;, &#39;ALA&#39;, &#39;LYS&#39;, &#39;LYS&#39;, &#39;ILE&#39;, &#39;VAL&#39;, &#39;SER&#39;, &#39;ASP&#39;, &#39;GLY&#39;, &#39;ASN&#39;, &#39;GLY&#39;, &#39;MET&#39;, &#39;ASN&#39;, &#39;ALA&#39;, &#39;TRP&#39;, &#39;VAL&#39;, &#39;ALA&#39;, &#39;TRP&#39;, &#39;ARG&#39;, &#39;ASN&#39;, &#39;ARG&#39;, &#39;CYS&#39;, &#39;LYS&#39;, &#39;GLY&#39;, &#39;THR&#39;, &#39;ASP&#39;, &#39;VAL&#39;, &#39;GLN&#39;, &#39;ALA&#39;, &#39;TRP&#39;, &#39;ILE&#39;, &#39;ARG&#39;, &#39;GLY&#39;, &#39;CYS&#39;, &#39;ARG&#39;, &#39;LEU&#39;], &#39;res_id&#39;: [&#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;, &#39;6&#39;, &#39;7&#39;, &#39;8&#39;, &#39;9&#39;, &#39;10&#39;, &#39;11&#39;, &#39;12&#39;, &#39;13&#39;, &#39;14&#39;, &#39;15&#39;, &#39;16&#39;, &#39;17&#39;, &#39;18&#39;, &#39;19&#39;, &#39;20&#39;, &#39;21&#39;, &#39;22&#39;, &#39;23&#39;, &#39;24&#39;, &#39;25&#39;, &#39;26&#39;, &#39;27&#39;, &#39;28&#39;, &#39;29&#39;, &#39;30&#39;, &#39;31&#39;, &#39;32&#39;, &#39;33&#39;, &#39;34&#39;, &#39;35&#39;, &#39;36&#39;, &#39;37&#39;, &#39;38&#39;, &#39;39&#39;, &#39;40&#39;, &#39;41&#39;, &#39;42&#39;, &#39;43&#39;, &#39;44&#39;, &#39;45&#39;, &#39;46&#39;, &#39;47&#39;, &#39;48&#39;, &#39;49&#39;, &#39;50&#39;, &#39;51&#39;, &#39;52&#39;, &#39;53&#39;, &#39;54&#39;, &#39;55&#39;, &#39;56&#39;, &#39;57&#39;, &#39;58&#39;, &#39;59&#39;, &#39;60&#39;, &#39;61&#39;, &#39;62&#39;, &#39;63&#39;, &#39;64&#39;, &#39;65&#39;, &#39;66&#39;, &#39;67&#39;, &#39;68&#39;, &#39;69&#39;, &#39;70&#39;, &#39;71&#39;, &#39;72&#39;, &#39;73&#39;, &#39;74&#39;, &#39;75&#39;, &#39;76&#39;, &#39;77&#39;, &#39;78&#39;, &#39;79&#39;, &#39;80&#39;, &#39;81&#39;, &#39;82&#39;, &#39;83&#39;, &#39;84&#39;, &#39;85&#39;, &#39;86&#39;, &#39;87&#39;, &#39;88&#39;, &#39;89&#39;, &#39;90&#39;, &#39;91&#39;, &#39;92&#39;, &#39;93&#39;, &#39;94&#39;, &#39;95&#39;, &#39;96&#39;, &#39;97&#39;, &#39;98&#39;, &#39;99&#39;, &#39;100&#39;, &#39;101&#39;, &#39;102&#39;, &#39;103&#39;, &#39;104&#39;, &#39;105&#39;, &#39;106&#39;, &#39;107&#39;, &#39;108&#39;, &#39;109&#39;, &#39;110&#39;, &#39;111&#39;, &#39;112&#39;, &#39;113&#39;, &#39;114&#39;, &#39;115&#39;, &#39;116&#39;, &#39;117&#39;, &#39;118&#39;, &#39;119&#39;, &#39;120&#39;, &#39;121&#39;, &#39;122&#39;, &#39;123&#39;, &#39;124&#39;, &#39;125&#39;, &#39;126&#39;, &#39;127&#39;, &#39;128&#39;, &#39;129&#39;], &#39;processed_entity_non_canonical_sequence&#39;: &#39;KVFGRCELAAAMKRHGLDNYRGYSLGNWVCAAKFESNFNTQATNRNTDGSTDYGILQINSRWWCNDGRTPGSRNLCNIPCSALLSSDITASVNCAKKIVSDGNGMNAWVAWRNRCKGTDVQAWIRGCRL&#39;, &#39;processed_entity_canonical_sequence&#39;: &#39;KVFGRCELAAAMKRHGLDNYRGYSLGNWVCAAKFESNFNTQATNRNTDGSTDYGILQINSRWWCNDGRTPGSRNLCNIPCSALLSSDITASVNCAKKIVSDGNGMNAWVAWRNRCKGTDVQAWIRGCRL&#39;, &#39;has_sequence_heterogeneity&#39;: False}}
+Ligand info: {&#39;ligand_of_interest&#39;: [], &#39;has_ligand_of_interest&#39;: False}
+Metadata: {&#39;id&#39;: &#39;6lyz&#39;, &#39;method&#39;: &#39;X-RAY_DIFFRACTION&#39;, &#39;deposition_date&#39;: &#39;1975-02-01&#39;, &#39;release_date&#39;: &#39;1977-04-12&#39;, &#39;resolution&#39;: 2.0, &#39;extra_metadata&#39;: None, &#39;crystallization_details&#39;: {&#39;pH&#39;: None}}
+Annotation categories: [&#39;chain_id&#39;, &#39;res_id&#39;, &#39;ins_code&#39;, &#39;res_name&#39;, &#39;hetero&#39;, &#39;atom_name&#39;, &#39;element&#39;, &#39;charge&#39;, &#39;chain_type&#39;, &#39;alt_atom_id&#39;, &#39;is_polymer&#39;, &#39;occupancy&#39;, &#39;b_factor&#39;, &#39;is_aromatic&#39;, &#39;stereo&#39;, &#39;is_backbone_atom&#39;, &#39;uses_alt_atom_id&#39;, &#39;pn_unit_id&#39;, &#39;molecule_id&#39;, &#39;chain_entity&#39;, &#39;pn_unit_entity&#39;, &#39;molecule_entity&#39;, &#39;atomic_number&#39;]
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">## 1.4 Manipulating AtomArray</span>
+
+<span class="sd">You can easily extract coordinates for specific atoms or chains, and inspect bond information. This is useful for custom analysis or feature extraction.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">ca</span> <span class="o">=</span> <span class="n">assembly</span><span class="p">[(</span><span class="n">assembly</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">&quot;CA&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">assembly</span><span class="o">.</span><span class="n">occupancy</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coordinates of all resolved CA atoms:&quot;</span><span class="p">,</span> <span class="n">ca</span><span class="o">.</span><span class="n">coord</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="n">chain</span> <span class="o">=</span> <span class="n">assembly</span><span class="p">[</span><span class="n">assembly</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">==</span> <span class="s2">&quot;A&quot;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coordinates of chain A (all heavy atoms):&quot;</span><span class="p">,</span> <span class="n">chain</span><span class="o">.</span><span class="n">coord</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bond array:&quot;</span><span class="p">,</span> <span class="n">assembly</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">as_array</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Coordinates of all resolved CA atoms: (129, 3)
+Coordinates of chain A (all heavy atoms): (1001, 3)
+Bond array: [[  2   9   1]
+ [ 11  16   1]
+ [ 18  27   1]
+ ...
+ [996 997   1]
+ [997 998   1]
+ [997 999   1]]
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">## 1.5 Distance computations</span>
+
+<span class="sd">`biotite.structure` provides convenient functions for distance calculations between atoms or sets of atoms. Here we compute distances between C-alpha atoms.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">struc</span>
+
+<span class="n">distance</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">ca</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ca</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Distance between first two C-alpha atoms: </span><span class="si">{</span><span class="n">distance</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> Å&quot;</span><span class="p">)</span>
+
+<span class="n">distance</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">ca</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ca</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Distances between first C-alpha atom and all other C-alpha atoms: </span><span class="si">{</span><span class="n">distance</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Distance between first two C-alpha atoms: 3.80 Å
+Distances between first C-alpha atom and all other C-alpha atoms: [ 0.         3.7999492  6.156354   9.661932  12.549521  14.182252
+ 11.581763  10.84263   14.616771  15.219817  13.272157  14.838497
+ 18.069147  17.901442  17.395086  20.602865  19.68099   21.579292
+ 24.697742  24.088991  26.870222  27.57354   24.496967  23.660084
+ 20.183601  20.09242   20.787966  17.43983   15.200652  17.336142
+ 17.041845  13.243525  13.362299  15.886873  14.705508  11.209983
+ 10.677215   8.0477     5.7841344  5.6595535  6.6849732  9.572078
+ 13.11964   16.576756  20.033554  22.90127   26.54439   27.58783
+ 25.418657  22.863508  19.15349   16.59757   13.387169  10.174317
+  9.402125  13.177384  14.283987  16.653786  19.467123  20.810495
+ 24.450527  24.489876  21.609152  20.13909   21.382933  19.977352
+ 23.561102  24.538763  25.224674  28.811474  29.968405  27.057043
+ 27.373085  24.488192  25.097178  21.882395  22.806473  19.33622
+ 18.493265  16.118     13.694339  13.188874  11.805438   8.704005
+  7.6456475  5.4546723  8.908026   9.965934  13.512428  14.592234
+ 13.578032  15.495068  18.250061  18.6872    18.320152  21.14647
+ 23.370226  22.798538  23.847483  26.741693  28.212841  29.969715
+ 28.73933   26.48814   23.56441   25.639193  23.927898  21.194921
+ 22.984303  20.622774  21.259388  24.949894  25.389885  23.332045
+ 22.84652   26.0037    28.647352  27.044004  26.817791  23.237877
+ 23.657808  22.825241  19.110613  19.498287  21.972675  21.360188
+ 19.54008   20.864511  20.917368 ]
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">## 1.6 Efficient neighbor search with CellList</span>
+
+<span class="sd">For efficient spatial queries, use `CellList` to find atoms within a certain radius. This is useful for contact analysis and neighborhood queries.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">resolved_atom_array</span> <span class="o">=</span> <span class="n">assembly</span><span class="p">[</span><span class="n">assembly</span><span class="o">.</span><span class="n">occupancy</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">cell_list</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">CellList</span><span class="p">(</span><span class="n">resolved_atom_array</span><span class="p">,</span> <span class="n">cell_size</span><span class="o">=</span><span class="mf">5.0</span><span class="p">)</span>
+
+<span class="n">near_atoms</span> <span class="o">=</span> <span class="n">cell_list</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">(</span><span class="n">resolved_atom_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">coord</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of atoms within 7 Å of the first atom: </span><span class="si">{</span><span class="n">near_atoms</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Atom indices: </span><span class="si">{</span><span class="n">near_atoms</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Chain IDs: </span><span class="si">{</span><span class="n">resolved_atom_array</span><span class="o">.</span><span class="n">chain_id</span><span class="p">[</span><span class="n">near_atoms</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Residue IDs: </span><span class="si">{</span><span class="n">resolved_atom_array</span><span class="o">.</span><span class="n">res_id</span><span class="p">[</span><span class="n">near_atoms</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Residue names: </span><span class="si">{</span><span class="n">resolved_atom_array</span><span class="o">.</span><span class="n">res_name</span><span class="p">[</span><span class="n">near_atoms</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Number of atoms within 7 Å of the first atom: 8
+Atom indices: [  4   5   0   1   9   2   3 315]
+Chain IDs: [&#39;A&#39; &#39;A&#39; &#39;A&#39; &#39;A&#39; &#39;A&#39; &#39;A&#39; &#39;A&#39; &#39;A&#39;]
+Residue IDs: [ 1  1  1  1  2  1  1 40]
+Residue names: [&#39;LYS&#39; &#39;LYS&#39; &#39;LYS&#39; &#39;LYS&#39; &#39;VAL&#39; &#39;LYS&#39; &#39;LYS&#39; &#39;THR&#39;]
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.015 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-plot-basics-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/838b0c32fbdba429a981899b334f7350/plot_basics.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_basics.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/daf3b21aca53987dce25e26cb71d0504/plot_basics.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_basics.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/2a191f301449362e17f7bcbdee4c6ef5/plot_basics.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_basics.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="plot_monomer.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Plot a Monomer Structure</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../contributor_guide.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Contributing</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/auto_examples/plot_basics.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

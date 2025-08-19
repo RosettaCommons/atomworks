@@ -1,0 +1,834 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>atomworks.io.utils.visualize &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/io/utils/visualize';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.0.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_color.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">atomworks.io.utils.visualize</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for atomworks.io.utils.visualize</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Utility functions to visualize atom arrays with py3Dmol in Jupyter notebooks.&quot;&quot;&quot;</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;view&quot;</span><span class="p">]</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cycle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">struc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">py3Dmol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">AtomArrayStack</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">mol</span><span class="p">,</span> <span class="n">pdb</span><span class="p">,</span> <span class="n">pdbx</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">ATOMIC_NUMBER_TO_ELEMENT</span><span class="p">,</span> <span class="n">METAL_ELEMENTS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.io_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_any</span><span class="p">,</span> <span class="n">to_cif_string</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;atomworks.io&quot;</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pymol_remote.client</span>
+
+    <span class="n">_is_pymol_remote_installed</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">_is_pymol_remote_installed</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;PymolSession not installed, visualization will not work&quot;</span><span class="p">)</span>
+
+<span class="n">IPD_PYMOL_COLORS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;#888888&quot;</span><span class="p">,</span>  <span class="c1"># pymol_gray</span>
+    <span class="s2">&quot;#FAC72C&quot;</span><span class="p">,</span>  <span class="c1"># good_yellow</span>
+    <span class="s2">&quot;#29B0C1&quot;</span><span class="p">,</span>  <span class="c1"># good_teal</span>
+    <span class="s2">&quot;#AAC32F&quot;</span><span class="p">,</span>  <span class="c1"># good_green</span>
+    <span class="s2">&quot;#EC72A4&quot;</span><span class="p">,</span>  <span class="c1"># good_pink</span>
+    <span class="s2">&quot;#4499E7&quot;</span><span class="p">,</span>  <span class="c1"># good_blue</span>
+    <span class="s2">&quot;#DCDCDC&quot;</span><span class="p">,</span>  <span class="c1"># good_gray</span>
+    <span class="s2">&quot;#E44A3E&quot;</span><span class="p">,</span>  <span class="c1"># good_red</span>
+    <span class="s2">&quot;#65B37C&quot;</span><span class="p">,</span>  <span class="c1"># good_light_green</span>
+    <span class="s2">&quot;#4FB9AF&quot;</span><span class="p">,</span>  <span class="c1"># paper_teal</span>
+    <span class="s2">&quot;#FFE0AC&quot;</span><span class="p">,</span>  <span class="c1"># paper_navaho</span>
+    <span class="s2">&quot;#FFC6B2&quot;</span><span class="p">,</span>  <span class="c1"># paper_melon</span>
+    <span class="s2">&quot;#FFACB7&quot;</span><span class="p">,</span>  <span class="c1"># paper_pink</span>
+    <span class="s2">&quot;#D59AB5&quot;</span><span class="p">,</span>  <span class="c1"># paper_purple</span>
+    <span class="s2">&quot;#9596C6&quot;</span><span class="p">,</span>  <span class="c1"># paper_lightblue</span>
+    <span class="s2">&quot;#6686C5&quot;</span><span class="p">,</span>  <span class="c1"># paper_blue</span>
+    <span class="s2">&quot;#4B5FAA&quot;</span><span class="p">,</span>  <span class="c1"># paper_darkblue</span>
+    <span class="s2">&quot;#222222&quot;</span><span class="p">,</span>  <span class="c1"># pymol_black</span>
+<span class="p">]</span>
+
+<span class="n">_is_metal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">ATOMIC_NUMBER_TO_ELEMENT</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">capitalize</span><span class="p">())</span> <span class="ow">in</span> <span class="n">METAL_ELEMENTS</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="view">
+<a class="viewcode-back" href="../../../../io/utils/visualize.html#atomworks.io.utils.visualize.view">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">view</span><span class="p">(</span>
+    <span class="n">structure</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">zoom_to_selection</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">show_hover</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">show_unoccupied</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">show_cartoon</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">show_surface</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">600</span><span class="p">,</span>
+    <span class="n">height</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">400</span><span class="p">,</span>
+    <span class="n">ligand_linewidth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">polymer_sidechain_linewidth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="n">min_polymer_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">colors</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">IPD_PYMOL_COLORS</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">py3Dmol</span><span class="o">.</span><span class="n">view</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Visualize an AtomArray structure using py3Dmol for display in jupyter notebooks.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - structure (AtomArray): The atomic structure to be visualized.</span>
+<span class="sd">        - zoom_to_selection (dict[str, int | str] | None, optional): A dictionary specifying the</span>
+<span class="sd">            selection to zoom into. Defaults to None. Here are some examples:</span>
+<span class="sd">                - `{&#39;serial&#39;: 35}` - will zoom to the atom with index 35 in the atom array</span>
+<span class="sd">                - `{&#39;chain&#39;: &#39;A&#39;, &#39;resi&#39;: 35}` - will zoom to the residue id 35 in chain A</span>
+<span class="sd">                - `{&#39;chain&#39;: &#39;C&#39;} - will zoom to the entire chain C</span>
+<span class="sd">            !WARNING! If the selection is wrong, the visualization will be empty.</span>
+<span class="sd">        - show_hover (bool, optional): Whether to enable hover functionality to display atom details.</span>
+<span class="sd">            Defaults to True.</span>
+<span class="sd">        - show_unoccupied (bool, optional): Whether to show unoccupied atoms. Defaults to False.</span>
+<span class="sd">        - show_cartoon (bool, optional): Whether to show the cartoon. Defaults to True.</span>
+<span class="sd">        - show_surface (bool, optional): Whether to show the surface. Defaults to False.</span>
+<span class="sd">        - width (int, optional): The width of the visualization window. Defaults to 400.</span>
+<span class="sd">        - height (int, optional): The height of the visualization window. Defaults to 300.</span>
+<span class="sd">        - ligand_linewidth (float, optional): The linewidth for ligand representation. Defaults to 0.2.</span>
+<span class="sd">        - polymer_sidechain_linewidth (float, optional): The linewidth for polymer sidechain representation. Defaults to 0.05.</span>
+<span class="sd">        - min_polymer_size (int, optional): The minimum size for a chain to be displayed as a polymer. Defaults to 1.</span>
+<span class="sd">        - colors (list[str], optional): A list of colors to cycle through for different chains. Defaults to IPD_PYMOL_COLORS.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        py3Dmol.view: The py3Dmol view object for the structure visualization.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">AtomArrayStack</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;AtomArrayStack is not supported; using the first model.&quot;</span><span class="p">)</span>
+        <span class="n">structure</span> <span class="o">=</span> <span class="n">structure</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Initialize the py3Dmol view with specified width and height</span>
+    <span class="n">view</span> <span class="o">=</span> <span class="n">py3Dmol</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">)</span>
+
+    <span class="c1"># Handle unoccupied atoms</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">show_unoccupied</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;occupancy&quot;</span> <span class="ow">in</span> <span class="n">structure</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()):</span>
+        <span class="n">structure</span> <span class="o">=</span> <span class="n">structure</span><span class="p">[</span><span class="n">structure</span><span class="o">.</span><span class="n">occupancy</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Convert the structure to a temporary CIF string for interacting with py3Dmol</span>
+    <span class="n">_tmp_cif_str</span> <span class="o">=</span> <span class="n">to_cif_string</span><span class="p">(</span>
+        <span class="n">structure</span><span class="p">,</span>
+        <span class="n">_allow_ambiguous_bond_annotations</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">include_entity_poly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># ... add the structure model to the view in mmCIF format</span>
+    <span class="n">view</span><span class="o">.</span><span class="n">addModel</span><span class="p">(</span><span class="n">_tmp_cif_str</span><span class="p">,</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;mmcif&quot;</span><span class="p">)</span>
+    <span class="c1"># Get the chain IDs from the structure</span>
+    <span class="n">chain_ids</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">get_chains</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+
+    <span class="c1"># Iterate over each chain and assign styles based on the type of polymer</span>
+    <span class="k">for</span> <span class="n">chain_id</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">chain_ids</span><span class="p">,</span> <span class="n">cycle</span><span class="p">(</span><span class="n">colors</span><span class="p">)):</span>
+        <span class="n">is_protein</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
+            <span class="n">struc</span><span class="o">.</span><span class="n">filter_polymer</span><span class="p">(</span>
+                <span class="n">structure</span><span class="p">[</span><span class="n">structure</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">==</span> <span class="n">chain_id</span><span class="p">],</span> <span class="n">pol_type</span><span class="o">=</span><span class="s2">&quot;peptide&quot;</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="n">min_polymer_size</span>
+            <span class="p">)</span>
+            <span class="o">&amp;</span> <span class="n">struc</span><span class="o">.</span><span class="n">filter_amino_acids</span><span class="p">(</span><span class="n">structure</span><span class="p">[</span><span class="n">structure</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">==</span> <span class="n">chain_id</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="n">is_nucleic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span>
+            <span class="n">struc</span><span class="o">.</span><span class="n">filter_polymer</span><span class="p">(</span>
+                <span class="n">structure</span><span class="p">[</span><span class="n">structure</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">==</span> <span class="n">chain_id</span><span class="p">],</span> <span class="n">pol_type</span><span class="o">=</span><span class="s2">&quot;nucleotide&quot;</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="n">min_polymer_size</span>
+            <span class="p">)</span>
+            <span class="o">&amp;</span> <span class="n">struc</span><span class="o">.</span><span class="n">filter_nucleotides</span><span class="p">(</span><span class="n">structure</span><span class="p">[</span><span class="n">structure</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">==</span> <span class="n">chain_id</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="n">is_ion</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">_is_metal</span><span class="p">(</span><span class="n">structure</span><span class="p">[</span><span class="n">structure</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">==</span> <span class="n">chain_id</span><span class="p">]</span><span class="o">.</span><span class="n">element</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">is_protein</span> <span class="ow">or</span> <span class="n">is_nucleic</span><span class="p">:</span>
+            <span class="c1"># Apply protein or nucleic acid style</span>
+            <span class="n">style</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;stick&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="n">polymer_sidechain_linewidth</span><span class="p">,</span> <span class="s2">&quot;style&quot;</span><span class="p">:</span> <span class="s2">&quot;outline&quot;</span><span class="p">}}</span>
+            <span class="k">if</span> <span class="n">show_cartoon</span><span class="p">:</span>
+                <span class="n">style</span><span class="p">[</span><span class="s2">&quot;cartoon&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">color</span><span class="p">,</span> <span class="s2">&quot;arrows&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+            <span class="n">view</span><span class="o">.</span><span class="n">setStyle</span><span class="p">({</span><span class="s2">&quot;chain&quot;</span><span class="p">:</span> <span class="n">chain_id</span><span class="p">},</span> <span class="n">style</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">is_ion</span><span class="p">:</span>
+            <span class="n">view</span><span class="o">.</span><span class="n">setStyle</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;chain&quot;</span><span class="p">:</span> <span class="n">chain_id</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&quot;stick&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="n">polymer_sidechain_linewidth</span><span class="p">,</span> <span class="s2">&quot;style&quot;</span><span class="p">:</span> <span class="s2">&quot;outline&quot;</span><span class="p">}},</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">is_ion</span><span class="p">:</span>
+            <span class="c1"># Apply ion style</span>
+            <span class="n">view</span><span class="o">.</span><span class="n">setStyle</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;chain&quot;</span><span class="p">:</span> <span class="n">chain_id</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&quot;sphere&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;scale&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">}},</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Apply ligand style</span>
+            <span class="c1"># ... first, set the style for carbon atoms colored by chain</span>
+            <span class="n">view</span><span class="o">.</span><span class="n">setStyle</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;chain&quot;</span><span class="p">:</span> <span class="n">chain_id</span><span class="p">,</span> <span class="s2">&quot;elem&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&quot;stick&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">color</span><span class="p">,</span> <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="n">ligand_linewidth</span><span class="p">}},</span>
+            <span class="p">)</span>
+            <span class="c1"># ... then, set the style for all other atoms based on the element</span>
+            <span class="n">view</span><span class="o">.</span><span class="n">setStyle</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;chain&quot;</span><span class="p">:</span> <span class="n">chain_id</span><span class="p">,</span> <span class="s2">&quot;not&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;elem&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">}},</span>
+                <span class="p">{</span><span class="s2">&quot;stick&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;colorscheme&quot;</span><span class="p">:</span> <span class="s2">&quot;element&quot;</span><span class="p">,</span> <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="n">ligand_linewidth</span><span class="p">}},</span>
+            <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_surface</span><span class="p">:</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">addSurface</span><span class="p">(</span><span class="n">py3Dmol</span><span class="o">.</span><span class="n">VDW</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;opacity&quot;</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;gray&quot;</span><span class="p">})</span>
+
+    <span class="c1"># Add hover functionality to display atom details on hover</span>
+    <span class="k">if</span> <span class="n">show_hover</span><span class="p">:</span>
+        <span class="n">js_script</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;function(atom,viewer) {</span>
+<span class="s2">                    if(!atom.label) {</span>
+<span class="s2">                        atom.label = viewer.addLabel(</span>
+<span class="s2">                            atom.chain + &#39;:&#39; +</span>
+<span class="s2">                            atom.resn + &#39;(&#39; + atom.resi + &#39;):&#39; +</span>
+<span class="s2">                            atom.atom + &#39;(idx&#39; + atom.serial + &#39;)&#39;,</span>
+<span class="s2">                            {position: atom, backgroundColor:&quot;white&quot;, fontColor:&quot;black&quot;}</span>
+<span class="s2">                        );</span>
+<span class="s2">                    }</span>
+<span class="s2">                }&quot;&quot;&quot;</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">setHoverable</span><span class="p">(</span>
+            <span class="p">{},</span>
+            <span class="kc">True</span><span class="p">,</span>
+            <span class="n">js_script</span><span class="p">,</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;function(atom,viewer) {</span>
+<span class="sd">                    if(atom.label) {</span>
+<span class="sd">                        viewer.removeLabel(atom.label);</span>
+<span class="sd">                        delete atom.label;</span>
+<span class="sd">                    }</span>
+<span class="sd">                    }&quot;&quot;&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Zoom to the entire structure or to a specific selection if provided</span>
+    <span class="n">view</span><span class="o">.</span><span class="n">zoomTo</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">zoom_to_selection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">zoomTo</span><span class="p">(</span><span class="n">zoom_to_selection</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">view</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_pymol_session</span><span class="p">(</span><span class="n">hostname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;pymol_remote.client.PymolSession&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Establishes a connection to a PyMOL server and returns a `pymol_remote.client.PymolSession` object.</span>
+<span class="sd">    First attempts to reuse an existing global session if no hostname/port is specified.</span>
+<span class="sd">    Otherwise tries to establish a new connection, attempting up to 5 consecutive ports.</span>
+
+<span class="sd">    If you want to use `pymol_remote`, make sure to follow the usage instructions at</span>
+<span class="sd">        https://github.com/Croydon-Brixton/pymol-remote</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - hostname (str | None, optional): The hostname of the PyMOL server. Defaults to &#39;localhost&#39; if None.</span>
+<span class="sd">        - port (int | None, optional): The starting port number to attempt connection. Defaults to 9123 if None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pymol_remote.client.PymolSession: An active connection to the PyMOL server.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        - ImportError: If `pymol_remote` package is not installed.</span>
+<span class="sd">        - RuntimeError: If unable to establish connection after trying 5 consecutive ports.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_pymol_remote_installed</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;`pymol_remote` is not installed or in the pythonpath, visualization will not work.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ... get existing session if available</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">hostname</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">port</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="n">pymol_remote</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">_GLOBAL_SERVER_PROXY</span>
+        <span class="k">if</span> <span class="n">session</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pymol_remote</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">PymolSession</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">hostname</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">force_new</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># ... otherwise, try to connect to a new session</span>
+    <span class="n">hostname</span> <span class="o">=</span> <span class="n">hostname</span> <span class="ow">or</span> <span class="s2">&quot;localhost&quot;</span>
+    <span class="n">port</span> <span class="o">=</span> <span class="n">port</span> <span class="ow">or</span> <span class="mi">9123</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">session</span> <span class="o">=</span> <span class="n">pymol_remote</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">PymolSession</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="n">hostname</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span>
+            <span class="k">break</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">session</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">session</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Failed to connect to Pymol on </span><span class="si">{</span><span class="n">hostname</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="s2">&quot;Ensure you are using SSH forwarding and `pymol_remote` correctly.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">session</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">view_pymol</span><span class="p">(</span>
+    <span class="n">structure</span><span class="p">:</span> <span class="n">AtomArray</span>
+    <span class="o">|</span> <span class="n">AtomArrayStack</span>
+    <span class="o">|</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFFile</span>
+    <span class="o">|</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">BinaryCIFFile</span>
+    <span class="o">|</span> <span class="n">pdb</span><span class="o">.</span><span class="n">PDBFile</span>
+    <span class="o">|</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFBlock</span>
+    <span class="o">|</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">BinaryCIFBlock</span>
+    <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">hostname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">as_bcif</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">grid_slot</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Visualizes an AtomArray structure in PyMOL by connecting to a PyMOL server and loading the structure. If no ID is</span>
+<span class="sd">    provided, generates a unique identifier for the structure.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - structure (AtomArray | AtomArrayStack | CIFFile | BinaryCIFFile | PDBFile | CIFBlock | BinaryCIFBlock | PathLike):</span>
+<span class="sd">            The atomic structure to be visualized in PyMOL. For `PathLike`, the file extension is used to determine the format</span>
+<span class="sd">            of the structure when no `id` is provided.</span>
+<span class="sd">        - id (str | None, optional): Unique identifier for the structure in PyMOL. If None, generates a random 9-character</span>
+<span class="sd">            string in XXX-XXX-XXX format. Defaults to None.</span>
+<span class="sd">        - hostname (str | None, optional): The hostname of the PyMOL server. If None, uses &#39;localhost&#39; or attempts to reuse</span>
+<span class="sd">            an existing connection. Defaults to None.</span>
+<span class="sd">        - port (int | None, optional): The port number for the PyMOL server connection. If None, uses default port 9123 or</span>
+<span class="sd">            attempts to reuse existing connection. Defaults to None.</span>
+<span class="sd">        - as_bcif (bool, optional): Whether to transport the structure as BCIF instead of CIF. This speeds up the</span>
+<span class="sd">            network transfer of the structure but reading bcif files is not supported by all pymol versions.</span>
+<span class="sd">            (pymol 2.6 (LTS) and 3.1+ support bcif, older versions do not).</span>
+<span class="sd">            This only takes effect if `structure` is an `AtomArray` or `AtomArrayStack`.</span>
+<span class="sd">            Defaults to False.</span>
+<span class="sd">        - overwrite (bool, optional): Whether to overwrite an existing object with the same ID. Defaults to False.</span>
+<span class="sd">        - grid_slot (int | None, optional): The grid slot to use for the structure. If None, a random slot is chosen.</span>
+<span class="sd">            Defaults to None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The identifier used for the structure in PyMOL.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ImportError: If `pymol_remote` package is not installed.</span>
+<span class="sd">        RuntimeError: If unable to establish connection to PyMOL server.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Establish a connection to the pymol server</span>
+    <span class="n">session</span> <span class="o">=</span> <span class="n">get_pymol_session</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="nb">id</span> <span class="o">=</span> <span class="nb">id</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">structure</span> <span class="o">=</span> <span class="n">read_any</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+
+    <span class="c1"># Generate a unique ID for the structure if not provided</span>
+    <span class="k">if</span> <span class="nb">id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Generate random 9-character string in 3-3-3 format</span>
+        <span class="n">random_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)[:</span><span class="mi">9</span><span class="p">]</span>
+        <span class="nb">id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">random_str</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">random_str</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">random_str</span><span class="p">[</span><span class="mi">6</span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">if</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">session</span><span class="o">.</span><span class="n">get_names</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Object </span><span class="si">{</span><span class="nb">id</span><span class="si">=}</span><span class="s2"> already exists in PyMOL, overwriting.&quot;</span><span class="p">)</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Object </span><span class="si">{</span><span class="nb">id</span><span class="si">=}</span><span class="s2"> already exists in PyMOL, set overwrite=True to overwrite.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Send to pymol</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">):</span>
+        <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;bcif&quot;</span> <span class="k">if</span> <span class="n">as_bcif</span> <span class="k">else</span> <span class="s2">&quot;cif&quot;</span>
+        <span class="n">buffer</span> <span class="o">=</span> <span class="n">to_cif_string</span><span class="p">(</span>
+            <span class="n">structure</span><span class="p">,</span>
+            <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
+            <span class="n">_allow_ambiguous_bond_annotations</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">include_entity_poly</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">include_nan_coords</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">include_bonds</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">extra_fields</span><span class="o">=</span><span class="p">[],</span>
+            <span class="n">as_bcif</span><span class="o">=</span><span class="n">as_bcif</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFFile</span> <span class="o">|</span> <span class="n">pdb</span><span class="o">.</span><span class="n">PDBFile</span> <span class="o">|</span> <span class="n">mol</span><span class="o">.</span><span class="n">SDFile</span> <span class="o">|</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFBlock</span><span class="p">):</span>
+        <span class="nb">format</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFFile</span><span class="p">:</span> <span class="s2">&quot;cif&quot;</span><span class="p">,</span>
+            <span class="n">pdb</span><span class="o">.</span><span class="n">PDBFile</span><span class="p">:</span> <span class="s2">&quot;pdb&quot;</span><span class="p">,</span>
+            <span class="n">mol</span><span class="o">.</span><span class="n">SDFile</span><span class="p">:</span> <span class="s2">&quot;sdf&quot;</span><span class="p">,</span>
+            <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFBlock</span><span class="p">:</span> <span class="s2">&quot;cif&quot;</span><span class="p">,</span>
+        <span class="p">}[</span><span class="nb">type</span><span class="p">(</span><span class="n">structure</span><span class="p">)]</span>
+        <span class="n">buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFBlock</span><span class="p">):</span>
+            <span class="n">_tmp</span> <span class="o">=</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFFile</span><span class="p">()</span>
+            <span class="n">_tmp</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">structure</span>
+            <span class="n">structure</span> <span class="o">=</span> <span class="n">_tmp</span>
+        <span class="n">structure</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+        <span class="n">buffer</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">BinaryCIFFile</span> <span class="o">|</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">BinaryCIFBlock</span><span class="p">):</span>
+        <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;bcif&quot;</span>
+        <span class="n">buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">BinaryCIFBlock</span><span class="p">):</span>
+            <span class="n">_tmp</span> <span class="o">=</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">BinaryCIFFile</span><span class="p">()</span>
+            <span class="n">_tmp</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">structure</span>
+            <span class="n">structure</span> <span class="o">=</span> <span class="n">_tmp</span>
+        <span class="n">structure</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+        <span class="n">buffer</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unsupported structure type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span><span class="si">}</span><span class="s2">. Only AtomArray, AtomArrayStack, CIFFile, and BCIFFile are supported.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># turn str into bytes if it is not already</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+        <span class="n">buffer</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+    <span class="c1"># compress for faster network transfer</span>
+    <span class="n">buffer</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+
+    <span class="n">session</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="nb">object</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="nb">format</span><span class="p">)</span>
+    <span class="n">grid_slot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10_000</span><span class="p">)</span> <span class="k">if</span> <span class="n">grid_slot</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">grid_slot</span>
+    <span class="n">session</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;grid_slot&quot;</span><span class="p">,</span> <span class="n">grid_slot</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">id</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

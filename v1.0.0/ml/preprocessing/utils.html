@@ -1,0 +1,1098 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Preprocessing Utilities &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ml/preprocessing/utils';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.0.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Pipelines" href="../pipelines.html" />
+    <link rel="prev" title="Preprocessing" href="../preprocessing.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../../_static/atomworks_logo_color.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">API Modules</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../io.html">IO</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../io/common.html">common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../io/constants.html">constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../io/enums.html">enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../io/parser.html">parser</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../io/tools.html">Tools</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../io/tools/fasta.html">FASTA Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/tools/inference.html">Inference Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/tools/rdkit.html">RDKit Tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../io/transforms.html">Transforms</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../io/transforms/atom_array.html">Atom Array Transforms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/transforms/categories.html">Category Transforms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../io/utils.html">Utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../io/utils/assembly.html">Assembly Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/utils/bonds.html">Bond Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/utils/ccd.html">CCD Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/utils/chain.html">Chain Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/utils/io_utils.html">I/O Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/utils/non_rcsb.html">Non-RCSB Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/utils/selection.html">Selection Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/utils/sequence.html">Sequence Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/utils/testing.html">Testing Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/utils/visualize.html">Visualization Utilities</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../ml.html">ML</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../common.html">Common Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../enums.html">Enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../encoding_definitions.html">Encoding Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../samplers.html">Samplers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../datasets.html">Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../datasets/parsers.html">Dataset Parsers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../preprocessing.html">Preprocessing</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Preprocessing Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipelines.html">Pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/diffusion.html">Diffusion Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/dna.html">DNA Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/esm.html">ESM Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/feature_aggregation.html">Feature Aggregation Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/msa.html">MSA Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../api_reference.html" class="nav-link">API</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../ml.html" class="nav-link">ML</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Preprocessing Utilities</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="preprocessing-utilities">
+<h1>Preprocessing Utilities<a class="headerlink" href="#preprocessing-utilities" title="Link to this heading">#</a></h1>
+<p>This module contains utility functions for preprocessing tasks.</p>
+<section id="clustering-utilities">
+<h2>Clustering Utilities<a class="headerlink" href="#clustering-utilities" title="Link to this heading">#</a></h2>
+<dl class="py class" id="module-atomworks.ml.preprocessing.utils.clustering">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.clustering.ClusterMode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.ml.preprocessing.utils.clustering.</span></span><span class="sig-name descname"><span class="pre">ClusterMode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names=&lt;not</span> <span class="pre">given&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/atomworks/ml/preprocessing/utils/clustering.html#ClusterMode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.preprocessing.utils.clustering.ClusterMode" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">IntEnum</span></code></p>
+<p>MMSeqs2 cluster modes. For details, see github.com/soedinglab/mmseqs2/wiki#clustering-modes</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.clustering.ClusterMode.CONNECTED_COMPONENT">
+<span class="sig-name descname"><span class="pre">CONNECTED_COMPONENT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#atomworks.ml.preprocessing.utils.clustering.ClusterMode.CONNECTED_COMPONENT" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.clustering.ClusterMode.GREEDY_INCREMENTAL">
+<span class="sig-name descname"><span class="pre">GREEDY_INCREMENTAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#atomworks.ml.preprocessing.utils.clustering.ClusterMode.GREEDY_INCREMENTAL" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.clustering.ClusterMode.GREEDY_SET_COVER">
+<span class="sig-name descname"><span class="pre">GREEDY_SET_COVER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#atomworks.ml.preprocessing.utils.clustering.ClusterMode.GREEDY_SET_COVER" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.clustering.CoverageMode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.ml.preprocessing.utils.clustering.</span></span><span class="sig-name descname"><span class="pre">CoverageMode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names=&lt;not</span> <span class="pre">given&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/atomworks/ml/preprocessing/utils/clustering.html#CoverageMode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.preprocessing.utils.clustering.CoverageMode" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">IntEnum</span></code></p>
+<p>MMSeqs2 coverage modes for clustering. For details, see
+github.com/soedinglab/mmseqs2/wiki#how-to-set-the-right-alignment-coverage-to-cluster</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.clustering.CoverageMode.BIDIRECTIONAL">
+<span class="sig-name descname"><span class="pre">BIDIRECTIONAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#atomworks.ml.preprocessing.utils.clustering.CoverageMode.BIDIRECTIONAL" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.clustering.CoverageMode.QUERY">
+<span class="sig-name descname"><span class="pre">QUERY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#atomworks.ml.preprocessing.utils.clustering.CoverageMode.QUERY" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.clustering.CoverageMode.QUERY_IN_TARGET">
+<span class="sig-name descname"><span class="pre">QUERY_IN_TARGET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#atomworks.ml.preprocessing.utils.clustering.CoverageMode.QUERY_IN_TARGET" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.clustering.CoverageMode.SHORTER_IN_OTHER">
+<span class="sig-name descname"><span class="pre">SHORTER_IN_OTHER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#atomworks.ml.preprocessing.utils.clustering.CoverageMode.SHORTER_IN_OTHER" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.clustering.CoverageMode.TARGET">
+<span class="sig-name descname"><span class="pre">TARGET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#atomworks.ml.preprocessing.utils.clustering.CoverageMode.TARGET" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.clustering.CoverageMode.TARGET_IN_QUERY">
+<span class="sig-name descname"><span class="pre">TARGET_IN_QUERY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#atomworks.ml.preprocessing.utils.clustering.CoverageMode.TARGET_IN_QUERY" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.ml.preprocessing.utils.clustering.</span></span><span class="sig-name descname"><span class="pre">MMSeqs2Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_identity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coverage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensitivity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">8.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#atomworks.ml.preprocessing.utils.clustering.ClusterMode" title="atomworks.ml.preprocessing.utils.clustering.ClusterMode"><span class="pre">ClusterMode</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">ClusterMode.GREEDY_SET_COVER</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coverage_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#atomworks.ml.preprocessing.utils.clustering.CoverageMode" title="atomworks.ml.preprocessing.utils.clustering.CoverageMode"><span class="pre">CoverageMode</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">CoverageMode.BIDIRECTIONAL</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/atomworks/ml/preprocessing/utils/clustering.html#MMSeqs2Config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Input configuration for MMseqs2 clustering.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config.cluster_identity">
+<span class="sig-name descname"><span class="pre">cluster_identity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.4</span></em><a class="headerlink" href="#atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config.cluster_identity" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config.cluster_mode">
+<span class="sig-name descname"><span class="pre">cluster_mode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#atomworks.ml.preprocessing.utils.clustering.ClusterMode" title="atomworks.ml.preprocessing.utils.clustering.ClusterMode"><span class="pre">ClusterMode</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config.cluster_mode" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config.coverage">
+<span class="sig-name descname"><span class="pre">coverage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.8</span></em><a class="headerlink" href="#atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config.coverage" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config.coverage_mode">
+<span class="sig-name descname"><span class="pre">coverage_mode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#atomworks.ml.preprocessing.utils.clustering.CoverageMode" title="atomworks.ml.preprocessing.utils.clustering.CoverageMode"><span class="pre">CoverageMode</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config.coverage_mode" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config.sensitivity">
+<span class="sig-name descname"><span class="pre">sensitivity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8.0</span></em><a class="headerlink" href="#atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config.sensitivity" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.clustering.cluster_all_sequences">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.preprocessing.utils.clustering.</span></span><span class="sig-name descname"><span class="pre">cluster_all_sequences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">pn_units_df:</span> <span class="pre">~os.PathLike</span> <span class="pre">|</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">~pandas.core.frame.DataFrame,</span> <span class="pre">sequence_col_name:</span> <span class="pre">str,</span> <span class="pre">sequence_hash_col_name:</span> <span class="pre">str,</span> <span class="pre">output_col_prefix:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'q_pn_unit_cluster',</span> <span class="pre">set_to_cluster_col:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">output_path:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">clustering_configs:</span> <span class="pre">list[~atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config]</span> <span class="pre">=</span> <span class="pre">[MMSeqs2Config(cluster_identity=0.4,</span> <span class="pre">coverage=0.8,</span> <span class="pre">sensitivity=8.0,</span> <span class="pre">cluster_mode=&lt;ClusterMode.GREEDY_SET_COVER:</span> <span class="pre">0&gt;,</span> <span class="pre">coverage_mode=&lt;CoverageMode.BIDIRECTIONAL:</span> <span class="pre">0&gt;),</span> <span class="pre">MMSeqs2Config(cluster_identity=1.0,</span> <span class="pre">coverage=0.8,</span> <span class="pre">sensitivity=8.0,</span> <span class="pre">cluster_mode=&lt;ClusterMode.GREEDY_SET_COVER:</span> <span class="pre">0&gt;,</span> <span class="pre">coverage_mode=&lt;CoverageMode.BIDIRECTIONAL:</span> <span class="pre">0&gt;)]</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/preprocessing/utils/clustering.html#cluster_all_sequences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.preprocessing.utils.clustering.cluster_all_sequences" title="Link to this definition">#</a></dt>
+<dd><p>Clusters input sequences from a DataFrame and merges the cluster information back into the DataFrame.</p>
+<p>This function performs the following steps:
+1. Creates (deduplicated) FASTA files for sequences from the input DataFrame.
+2. Runs MMseqs2 clustering on the generated FASTA files for each specified parameter configuration.
+3. Merges the clustering results back into the original DataFrame.
+4. Saves the updated DataFrame with clustering information to a specified output path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pn_units_df_path</strong> (<em>PathLike</em><em> | </em><em>str</em><em> | </em><em>pd.DataFrame</em>) – Path to the input DataFrame stored as a Parquet file, or the DataFrame directly.</p></li>
+<li><p><strong>sequence_col_name</strong> (<em>str</em>) – The name of the column containing the canonical sequences to be clustered.</p></li>
+<li><p><strong>sequence_hash_col_name</strong> (<em>str</em>) – The name of the column containing the sequence hash for the sequences to be clustered.</p></li>
+<li><p><strong>output_col_prefix</strong> (<em>str</em>) – Prefix for the name of the output column containing the representative sequence hash for each cluster.</p></li>
+<li><p><strong>set_to_cluster_col</strong> (<em>bool</em>) – If True, sets the ‘cluster’ column of the output dataframe equal to last of the computed clusters.</p></li>
+<li><p><strong>output_path</strong> (<em>str</em><em> | </em><em>None</em>) – Path to save the output DataFrame with clustering information. If None, returns the dataframe without saving.</p></li>
+<li><p><strong>clustering_configs</strong> (<em>list</em><em>[</em><a class="reference internal" href="#atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config" title="atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config"><em>MMSeqs2Config</em></a><em>]</em>) – List of MMSeqs2Config objects specifying the clustering configurations to run.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Columns added to DataFrame:</dt><dd><ul class="simple">
+<li><p>{output_col_prefix}_{cluster_mode_str}_rep_seq_hash: Representative sequence hash for protein clusters with the given configuration.</p></li>
+<li><p>&lt;optional&gt; cluster: If <cite>set_to_cluster_col</cite> is True, this column is set equal to the above column.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.clustering.run_mmseqs2_clustering">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.preprocessing.utils.clustering.</span></span><span class="sig-name descname"><span class="pre">run_mmseqs2_clustering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_fasta:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">~os.PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clustering_config:</span> <span class="pre">~atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config</span> <span class="pre">=</span> <span class="pre">MMSeqs2Config(cluster_identity=0.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coverage=0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensitivity=8.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_mode=&lt;ClusterMode.GREEDY_SET_COVER:</span> <span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coverage_mode=&lt;CoverageMode.BIDIRECTIONAL:</span> <span class="pre">0&gt;)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_dir:</span> <span class="pre">~os.PathLike</span> <span class="pre">|</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/preprocessing/utils/clustering.html#run_mmseqs2_clustering"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.preprocessing.utils.clustering.run_mmseqs2_clustering" title="Link to this definition">#</a></dt>
+<dd><p>Runs MMseqs2 clustering on the input FASTA file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_fasta</strong> (<em>str</em>) – Path to the input FASTA file. The headers for the sequences should be unique, as they are used to identify the sequences in the output.</p></li>
+<li><p><strong>clustering_config</strong> (<a class="reference internal" href="#atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config" title="atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config"><em>MMSeqs2Config</em></a>) – Configuration for MMseqs2 clustering. See <cite>MMSeqs2Config</cite> for details.</p></li>
+<li><p><strong>tmp_dir</strong> (<em>PathLike</em><em> | </em><em>str</em>) – Path to the temporary directory where MMseqs2 will write intermediate files. Default is None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame containing the clustering results with columns [“cluster_rep_seq_hash”, “seq_hash”].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>cluster_rep_seq_hash, seq_hash
+afe56282ba3, afe56282ba3
+afe56282ba3, ee1f80a23f3
+afe56282ba3, 4a2caa18797
+afe56282ba3, 19f7ce1eed1</p>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>PDB clustering approach: <a class="reference external" href="https://www.rcsb.org/docs/grouping-structures/sequence-based-clustering">https://www.rcsb.org/docs/grouping-structures/sequence-based-clustering</a></p></li>
+<li><p>MMseqs2 documentation: <a class="github reference external" href="https://github.com/soedinglab/mmseqs2/wiki">soedinglab/mmseqs2</a></p></li>
+<li><p>CLI documentation for the <cite>easy-cluster</cite> command: <cite>mmseqs easy-cluster -h</cite></p></li>
+</ul>
+</dd></dl>
+
+</section>
+<section id="module-atomworks.ml.preprocessing.utils.fasta">
+<span id="fasta-utilities"></span><h2>FASTA Utilities<a class="headerlink" href="#module-atomworks.ml.preprocessing.utils.fasta" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.fasta.create_fasta_file_from_df">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.preprocessing.utils.fasta.</span></span><span class="sig-name descname"><span class="pre">create_fasta_file_from_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pn_units_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PathLike</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sequence_col_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PathLike</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/preprocessing/utils/fasta.html#create_fasta_file_from_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.preprocessing.utils.fasta.create_fasta_file_from_df" title="Link to this definition">#</a></dt>
+<dd><p>Create a FASTA file from sequences stored as a dataframe in a Parquet file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pn_units_df</strong> (<em>pd.DataFrame</em><em> | </em><em>PathLike</em><em> | </em><em>str</em>) – Dataframe, as a path Parquet or object directly, containing a column with the sequences to be clustered.</p></li>
+<li><p><strong>sequence_col_name</strong> (<em>str</em>) – The name of the column containing the canonical sequences to be clustered.</p></li>
+<li><p><strong>output_path</strong> (<em>PathLike</em><em> | </em><em>str</em>) – Path to where the fasta file will be saved. Must end in .fasta extension.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.fasta.wrap_sequence">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.preprocessing.utils.fasta.</span></span><span class="sig-name descname"><span class="pre">wrap_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sequence</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">80</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/preprocessing/utils/fasta.html#wrap_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.preprocessing.utils.fasta.wrap_sequence" title="Link to this definition">#</a></dt>
+<dd><p>Wrap a sequence string to a specified line length.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sequence</strong> (<em>str</em>) – The sequence string to wrap.</p></li>
+<li><p><strong>line_length</strong> (<em>int</em>) – The maximum line length. Default is 80.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The wrapped sequence string.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="structure-utilities">
+<h2>Structure Utilities<a class="headerlink" href="#structure-utilities" title="Link to this heading">#</a></h2>
+<p id="module-atomworks.ml.preprocessing.utils.structure_utils">Utilities to create the dataset to be loaded by RF2AA. See the main script for term Glossary.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.structure_utils.calculate_molecule_diameter">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.preprocessing.utils.structure_utils.</span></span><span class="sig-name descname"><span class="pre">calculate_molecule_diameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">full_molecule_atoms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/preprocessing/utils/structure_utils.html#calculate_molecule_diameter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.preprocessing.utils.structure_utils.calculate_molecule_diameter" title="Link to this definition">#</a></dt>
+<dd><p>Calculates the molecular diameter, defined as the maximum number of bonds between any two vertices
+in the molecule, using a maximum spanning tree.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>full_molecule_atoms</strong> (<em>AtomArray</em>) – The array of atoms representing the molecule. Must include all atoms, including those with zero occupancy.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The molecular diameter. If the diameter cannot be computed, returns 0.0.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.structure_utils.get_atom_mask_from_cell_list">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.preprocessing.utils.structure_utils.</span></span><span class="sig-name descname"><span class="pre">get_atom_mask_from_cell_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coord</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CellList</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_list_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2000000000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/preprocessing/utils/structure_utils.html#get_atom_mask_from_cell_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.preprocessing.utils.structure_utils.get_atom_mask_from_cell_list" title="Link to this definition">#</a></dt>
+<dd><p>Builds a mask indicating which atoms clash with the query PN unit. If the number of comparisons is too large,
+the computation is split into manageable chunks along the rows of <cite>coord</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coord</strong> (<em>ndarray</em>) – The coordinates of the query PN unit. Shape is (n, 3).</p></li>
+<li><p><strong>cell_list</strong> (<em>CellList</em>) – A CellList object that allows efficient vicinity searches.</p></li>
+<li><p><strong>cell_list_size</strong> (<em>int</em>) – The number of atoms in the cell list.</p></li>
+<li><p><strong>clash_distance</strong> (<em>float</em>) – The distance threshold below which atoms are considered to be clashing.</p></li>
+<li><p><strong>chunk_size</strong> (<em>int</em>) – The maximum number of comparisons allowed in a single chunk.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Mask indicating which atoms in <cite>cell_list</cite> clash with the  atoms in <cite>coord</cite>. Shape is (n, cell_list_size), dtype is bool.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.structure_utils.get_bonded_polymer_pn_units">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.preprocessing.utils.structure_utils.</span></span><span class="sig-name descname"><span class="pre">get_bonded_polymer_pn_units</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_pn_unit_iid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filtered_atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/preprocessing/utils/structure_utils.html#get_bonded_polymer_pn_units"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.preprocessing.utils.structure_utils.get_bonded_polymer_pn_units" title="Link to this definition">#</a></dt>
+<dd><p>Returns a set of polymer PN units that are covalently bonded to a given PN unit.
+For example, useful to detect oligosaccharides that are covalently bonded to a protein.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query_pn_unit_iid</strong> (<em>str</em>) – The full ID of the non-polymer PN unit to check for bonds.</p></li>
+<li><p><strong>filtered_atom_array</strong> (<em>AtomArray</em>) – AtomArray with non-zero occupancy</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A set of full IDs of polymer PN units that are covalently bonded to the query PN unit.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>set[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.structure_utils.get_clashing_pn_units">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.preprocessing.utils.structure_utils.</span></span><span class="sig-name descname"><span class="pre">get_clashing_pn_units</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pn_unit_iids_to_consider</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">np.Array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CellList</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clash_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/preprocessing/utils/structure_utils.html#get_clashing_pn_units"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.preprocessing.utils.structure_utils.get_clashing_pn_units" title="Link to this definition">#</a></dt>
+<dd><p>Wrapper function to find clashing PN units within an atom array.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.structure_utils.get_contacting_pn_units">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.preprocessing.utils.structure_utils.</span></span><span class="sig-name descname"><span class="pre">get_contacting_pn_units</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_pn_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filtered_atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CellList</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contact_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_contacts_required</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calculate_min_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/preprocessing/utils/structure_utils.html#get_contacting_pn_units"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.preprocessing.utils.structure_utils.get_contacting_pn_units" title="Link to this definition">#</a></dt>
+<dd><p>Finds PN units (proteins, nucleic acids, or small molecules) with a minimum number of atoms within a given distance of the query PN unit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query_pn_unit</strong> – AtomArray containing the query PN unit that we want to check for contacts (could be a single chain or multiple covalently bonded chains)</p></li>
+<li><p><strong>filtered_atom_array</strong> – AtomArray containing the set of atoms to consider when looking for contacts (must correspond to the <cite>cell_list</cite>)</p></li>
+<li><p><strong>cell_list</strong> – CellList of <cite>atom_array</cite> for rapid distance computations; must correspond to the <cite>filtered_atom_array</cite></p></li>
+<li><p><strong>contact_distance</strong> – Distance threshold for contacting atoms</p></li>
+<li><p><strong>min_contacts_required</strong> – Minimum number of atoms within the cutoff distance to consider a PN unit as a potential partner</p></li>
+<li><p><strong>mask</strong> – Mask of PN units to consider as potential partners within the atom_array. If None, all PN units (except the query) are considered.</p></li>
+<li><p><strong>calculate_min_distance</strong> – Whether to calculate the minimum distance between the query PN unit and each PN unit within the cutoff distance</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A list of dictionaries, each containing:</dt><dd><ul class="simple">
+<li><p>’pn_unit_iid’ (str): A string representing a unique partner PN unit in contact with the query PN unit.</p></li>
+<li><p>’num_atoms’ (int): Number of non-zero occupancy atoms in the partner PN unit.</p></li>
+<li><p>’num_contacts’ (int): Number of atoms in the partner PN unit within the contact_distance of the query PN unit.</p></li>
+<li><p>’min_distance’ (float): Minimum distance between the query PN unit and the partner PN unit.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.structure_utils.get_inter_pn_unit_bond_mask">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.preprocessing.utils.structure_utils.</span></span><span class="sig-name descname"><span class="pre">get_inter_pn_unit_bond_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/preprocessing/utils/structure_utils.html#get_inter_pn_unit_bond_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.preprocessing.utils.structure_utils.get_inter_pn_unit_bond_mask" title="Link to this definition">#</a></dt>
+<dd><p>Returns a mask indicating which bonds in <cite>atom_array.bonds</cite> are between two distinct PN units.
+Because we are operating at the PN unit-level, such bonds cannot be bonds between non-polymers.</p>
+<p>WARNING: Must be applied before reassigning PN unit IIDs (e.g., as is done for covalent modifications).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>atom_array</strong> (<em>AtomArray</em>) – The full atom array. Must have PN unit-level annotations.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A boolean mask indicating which bonds are between two PN units.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.structure_utils.get_intra_pn_unit_bonds">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.preprocessing.utils.structure_utils.</span></span><span class="sig-name descname"><span class="pre">get_intra_pn_unit_bonds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pn_unit_iid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/preprocessing/utils/structure_utils.html#get_intra_pn_unit_bonds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.preprocessing.utils.structure_utils.get_intra_pn_unit_bonds" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve all bonds within the PN unit.
+Includes inter-chain bonds if the PN unit is composed of multiple chains.
+Does NOT include bonds between the PN unit and any other PN units (e.g., protein-ligand bonds).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pn_unit_iid</strong> (<em>str</em>) – The polymer/non-polymer unit instance ID (e.g., ‘A1’, ‘C2,B3’, etc.)</p></li>
+<li><p><strong>full_atom_array</strong> (<em>AtomArray</em>) – The full structure AtomArray. Must include all atoms, including those with zero occupancy.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array of Biotite bond objects (atom_a_index, atom_b_index, bond_type) within the specified PN unit.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.structure_utils.get_ligand_validity_scores_from_pdb_id">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.preprocessing.utils.structure_utils.</span></span><span class="sig-name descname"><span class="pre">get_ligand_validity_scores_from_pdb_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/preprocessing/utils/structure_utils.html#get_ligand_validity_scores_from_pdb_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.preprocessing.utils.structure_utils.get_ligand_validity_scores_from_pdb_id" title="Link to this definition">#</a></dt>
+<dd><p>Query the RCSB PDB for ligand validity scores for a given PDB ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pdb_id</strong> (<em>str</em>) – The PDB ID to query.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>(list[dict[str, str | int | float | None]]): A list of dictionaries, each containing</dt><dd><p>the ligand validity scores for a ligand (e.g. RSCC, RSR) as well identifiers such as the
+residue name, chain ID, and entity ID. Can easily be converted to a pandas DataFrame for
+easier handling via <cite>pd.DataFrame(records)</cite>.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>records</p>
+</dd>
+</dl>
+<p>References:
+- <a class="reference external" href="https://www.rcsb.org/docs/general-help/ligand-structure-quality-in-pdb-structures">https://www.rcsb.org/docs/general-help/ligand-structure-quality-in-pdb-structures</a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.structure_utils.get_pn_units_clashing_with_pn_unit">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.preprocessing.utils.structure_utils.</span></span><span class="sig-name descname"><span class="pre">get_pn_units_clashing_with_pn_unit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_pn_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filtered_atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CellList</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clash_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/preprocessing/utils/structure_utils.html#get_pn_units_clashing_with_pn_unit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.preprocessing.utils.structure_utils.get_pn_units_clashing_with_pn_unit" title="Link to this definition">#</a></dt>
+<dd><p>Finds clashes between a query PN unit and the rest of the structure.
+A clash is defined as any pair of atoms from the query PN unit and the rest of the structure that are closer than <cite>clash_distance</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query_pn_unit</strong> – AtomArray containing the query PN unit that we want to check for clashes</p></li>
+<li><p><strong>filtered_atom_array</strong> – AtomArray containing atoms with non-zero occupancy</p></li>
+<li><p><strong>cell_list</strong> – CellList of structure for rapid distance computations</p></li>
+<li><p><strong>clash_distance</strong> – Distance threshold for clashing atoms</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Set of polymer/non-polymer unit instance IDs that are clashing with the query PN unit</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.structure_utils.get_pn_units_with_non_biological_bonds">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.preprocessing.utils.structure_utils.</span></span><span class="sig-name descname"><span class="pre">get_pn_units_with_non_biological_bonds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bond_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/preprocessing/utils/structure_utils.html#get_pn_units_with_non_biological_bonds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.preprocessing.utils.structure_utils.get_pn_units_with_non_biological_bonds" title="Link to this definition">#</a></dt>
+<dd><p>Checks for non-biological bonds between PN units within an assembly.
+Note that “inter-PN-unit bonds” in this instance do not include bonds between non-polymers,
+which are treated as the same PN unit (by definition).</p>
+<p>Specifically, this function looks for inter-molecular:
+- Oxygen-oxygen bonds
+- Fluorine-fluorine bonds
+- Bonds involving free oxygen or hydroxyl groups (e.g. HOH, OH, O)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atom_array</strong> – AtomArray containing the relevant structure</p></li>
+<li><p><strong>bond_mask</strong> – Mask of inter-molecular bonds</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array of polymer/non-polymer unit instance IDs that contain non-biological bonds</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.structure_utils.get_soi_ligands_from_pdb_id">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.preprocessing.utils.structure_utils.</span></span><span class="sig-name descname"><span class="pre">get_soi_ligands_from_pdb_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/preprocessing/utils/structure_utils.html#get_soi_ligands_from_pdb_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.preprocessing.utils.structure_utils.get_soi_ligands_from_pdb_id" title="Link to this definition">#</a></dt>
+<dd><p>This function takes a PDB ID and returns a set of ligand names that are annotated as subject of
+investigation (SOI) in the PDB. Such ligands are often considered
+biologically meaningful.</p>
+<p>NOTE: This function is kept from the old pipeline for convenience and testing,
+but not used in the current processing pipeline, where the LOI is extracted directly
+from the cif file instead of via an FTP query.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pdb_id</strong> (<em>str</em>) – The PDB ID to query.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A set of ligand names that are annotated as SOI in the PDB.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Set[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.preprocessing.utils.structure_utils.handle_clashing_pn_units">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.preprocessing.utils.structure_utils.</span></span><span class="sig-name descname"><span class="pre">handle_clashing_pn_units</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clashing_pn_units_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clashing_pn_units_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pn_unit_iid_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/preprocessing/utils/structure_utils.html#handle_clashing_pn_units"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.preprocessing.utils.structure_utils.handle_clashing_pn_units" title="Link to this definition">#</a></dt>
+<dd><p>Resolves clashing PN units according to the following process:
+1. Sort clashing PN units by the number of atoms within the PN unit
+2. Iterate through the sorted list keeping (1) the larger PN unit (2) the lower transformation number until all clashes are resolved</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>clashing_pn_units_set</strong> – Set of polymer/non-polymer unit instance IDs that contain clashing atoms</p></li>
+<li><p><strong>clashing_pn_units_dict</strong> – Dictionary mapping polymer/non-polymer unit instance IDs to a list of clashing polymer/non-polymer unit instance IDs</p></li>
+<li><p><strong>atom_array</strong> – AtomArray containing atoms with non-zero occupancy</p></li>
+<li><p><strong>pn_unit_iid_map</strong> – Dictionary mapping integer representations of polymer/non-polymer unit instance IDs to the polymer/non-polymer unit instance IDs themselves</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>AtomArray with clashing atoms removed
+ClashSeverity: Enum representing the severity of the clash</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>AtomArray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../preprocessing.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Preprocessing</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../pipelines.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Pipelines</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#clustering-utilities">Clustering Utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.clustering.ClusterMode"><code class="docutils literal notranslate"><span class="pre">ClusterMode</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.clustering.ClusterMode.CONNECTED_COMPONENT"><code class="docutils literal notranslate"><span class="pre">ClusterMode.CONNECTED_COMPONENT</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.clustering.ClusterMode.GREEDY_INCREMENTAL"><code class="docutils literal notranslate"><span class="pre">ClusterMode.GREEDY_INCREMENTAL</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.clustering.ClusterMode.GREEDY_SET_COVER"><code class="docutils literal notranslate"><span class="pre">ClusterMode.GREEDY_SET_COVER</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.clustering.CoverageMode"><code class="docutils literal notranslate"><span class="pre">CoverageMode</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.clustering.CoverageMode.BIDIRECTIONAL"><code class="docutils literal notranslate"><span class="pre">CoverageMode.BIDIRECTIONAL</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.clustering.CoverageMode.QUERY"><code class="docutils literal notranslate"><span class="pre">CoverageMode.QUERY</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.clustering.CoverageMode.QUERY_IN_TARGET"><code class="docutils literal notranslate"><span class="pre">CoverageMode.QUERY_IN_TARGET</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.clustering.CoverageMode.SHORTER_IN_OTHER"><code class="docutils literal notranslate"><span class="pre">CoverageMode.SHORTER_IN_OTHER</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.clustering.CoverageMode.TARGET"><code class="docutils literal notranslate"><span class="pre">CoverageMode.TARGET</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.clustering.CoverageMode.TARGET_IN_QUERY"><code class="docutils literal notranslate"><span class="pre">CoverageMode.TARGET_IN_QUERY</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config"><code class="docutils literal notranslate"><span class="pre">MMSeqs2Config</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config.cluster_identity"><code class="docutils literal notranslate"><span class="pre">MMSeqs2Config.cluster_identity</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config.cluster_mode"><code class="docutils literal notranslate"><span class="pre">MMSeqs2Config.cluster_mode</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config.coverage"><code class="docutils literal notranslate"><span class="pre">MMSeqs2Config.coverage</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config.coverage_mode"><code class="docutils literal notranslate"><span class="pre">MMSeqs2Config.coverage_mode</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.clustering.MMSeqs2Config.sensitivity"><code class="docutils literal notranslate"><span class="pre">MMSeqs2Config.sensitivity</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.clustering.cluster_all_sequences"><code class="docutils literal notranslate"><span class="pre">cluster_all_sequences()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.clustering.run_mmseqs2_clustering"><code class="docutils literal notranslate"><span class="pre">run_mmseqs2_clustering()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-atomworks.ml.preprocessing.utils.fasta">FASTA Utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.fasta.create_fasta_file_from_df"><code class="docutils literal notranslate"><span class="pre">create_fasta_file_from_df()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.fasta.wrap_sequence"><code class="docutils literal notranslate"><span class="pre">wrap_sequence()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#structure-utilities">Structure Utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.structure_utils.calculate_molecule_diameter"><code class="docutils literal notranslate"><span class="pre">calculate_molecule_diameter()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.structure_utils.get_atom_mask_from_cell_list"><code class="docutils literal notranslate"><span class="pre">get_atom_mask_from_cell_list()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.structure_utils.get_bonded_polymer_pn_units"><code class="docutils literal notranslate"><span class="pre">get_bonded_polymer_pn_units()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.structure_utils.get_clashing_pn_units"><code class="docutils literal notranslate"><span class="pre">get_clashing_pn_units()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.structure_utils.get_contacting_pn_units"><code class="docutils literal notranslate"><span class="pre">get_contacting_pn_units()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.structure_utils.get_inter_pn_unit_bond_mask"><code class="docutils literal notranslate"><span class="pre">get_inter_pn_unit_bond_mask()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.structure_utils.get_intra_pn_unit_bonds"><code class="docutils literal notranslate"><span class="pre">get_intra_pn_unit_bonds()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.structure_utils.get_ligand_validity_scores_from_pdb_id"><code class="docutils literal notranslate"><span class="pre">get_ligand_validity_scores_from_pdb_id()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.structure_utils.get_pn_units_clashing_with_pn_unit"><code class="docutils literal notranslate"><span class="pre">get_pn_units_clashing_with_pn_unit()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.structure_utils.get_pn_units_with_non_biological_bonds"><code class="docutils literal notranslate"><span class="pre">get_pn_units_with_non_biological_bonds()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.structure_utils.get_soi_ligands_from_pdb_id"><code class="docutils literal notranslate"><span class="pre">get_soi_ligands_from_pdb_id()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.preprocessing.utils.structure_utils.handle_clashing_pn_units"><code class="docutils literal notranslate"><span class="pre">handle_clashing_pn_units()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/ml/preprocessing/utils.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

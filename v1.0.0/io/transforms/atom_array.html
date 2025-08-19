@@ -1,0 +1,983 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Atom Array Transforms &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'io/transforms/atom_array';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.0.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Category Transforms" href="categories.html" />
+    <link rel="prev" title="Transforms" href="../transforms.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../../_static/atomworks_logo_color.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">API Modules</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../io.html">IO</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../common.html">common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../constants.html">constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../enums.html">enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../parser.html">parser</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../tools.html">Tools</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tools/fasta.html">FASTA Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tools/inference.html">Inference Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tools/rdkit.html">RDKit Tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="../transforms.html">Transforms</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Atom Array Transforms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="categories.html">Category Transforms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../utils.html">Utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../utils/assembly.html">Assembly Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/bonds.html">Bond Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/ccd.html">CCD Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/chain.html">Chain Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/io_utils.html">I/O Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/non_rcsb.html">Non-RCSB Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/selection.html">Selection Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/sequence.html">Sequence Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/testing.html">Testing Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/visualize.html">Visualization Utilities</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../ml.html">ML</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/common.html">Common Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/enums.html">Enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/encoding_definitions.html">Encoding Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/samplers.html">Samplers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/datasets.html">Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/datasets/parsers.html">Dataset Parsers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/preprocessing.html">Preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/preprocessing/utils.html">Preprocessing Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/pipelines.html">Pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/transforms.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/transforms/diffusion.html">Diffusion Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/transforms/dna.html">DNA Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/transforms/esm.html">ESM Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/transforms/feature_aggregation.html">Feature Aggregation Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/transforms/msa.html">MSA Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/utils.html">Utilities</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../api_reference.html" class="nav-link">API</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../io.html" class="nav-link">IO</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../transforms.html" class="nav-link">Transforms</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Atom Array Transforms</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="atom-array-transforms">
+<h1>Atom Array Transforms<a class="headerlink" href="#atom-array-transforms" title="Link to this heading">#</a></h1>
+<p id="module-atomworks.io.transforms.atom_array">Transforms operating predominantly on Biotite’s <cite>AtomArray</cite> objects.
+These operations should take as input, and return, <cite>AtomArray</cite> objects.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.add_atomic_number_annotation">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">add_atomic_number_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#add_atomic_number_annotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.add_atomic_number_annotation" title="Link to this definition">#</a></dt>
+<dd><p>Adds the atomic number (atomic_number) annotation to the AtomArray.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.add_chain_iid_annotation">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">add_chain_iid_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array_stack</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArrayStack</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArrayStack</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#add_chain_iid_annotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.add_chain_iid_annotation" title="Link to this definition">#</a></dt>
+<dd><p>Adds the chain instance ID (chain_iid) annotation to the AtomArrayStack</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.add_chain_type_annotation">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">add_chain_type_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chain_info_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#add_chain_type_annotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.add_chain_type_annotation" title="Link to this definition">#</a></dt>
+<dd><p>Adds a chain_type annotation to the AtomArray.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atom_array</strong> (<em>-</em>) – The full atom array.</p></li>
+<li><p><strong>chain_info_dict</strong> (<em>-</em>) – A dictionary mapping chain IDs to chain information.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The AtomArray with the chain_type annotation added as an integer.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>AtomArray | AtomArrayStack</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.add_charge_from_ccd_codes">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">add_charge_from_ccd_codes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#add_charge_from_ccd_codes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.add_charge_from_ccd_codes" title="Link to this definition">#</a></dt>
+<dd><p>Adds charge annotations to an atom array based on the Chemical Component Dictionary (CCD) codes.</p>
+<p>Retrieves charge information from the CCD for each residue and assigns it to matching atoms.
+If a residue or atom is not found in the CCD, a charge of 0 is assigned. If a charge annotation
+is already present, it is overwritten.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>atom_array</strong> – The atom array to which charge annotations will be added.
+Can be either an AtomArray or AtomArrayStack.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The input atom array with added charge annotations.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>WARNING: This function will assume that each residue in the atom array is exactly as in the CCD.</dt><dd><p>Therefore the charges will be incorrect if it is in a different protonation state, or has been
+ionized or else in the original structure. Use this function with caution!</p>
+</dd>
+<dt>NOTE: If you want to add charges to canonical amino acids based on the pH, take a look at the</dt><dd><p>‘hydride.estimate_amino_acid_charges’ function instead.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">atom_array</span> <span class="o">=</span> <span class="n">load_any</span><span class="p">(</span><span class="s2">&quot;6lyz.cif&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atom_array_with_charges</span> <span class="o">=</span> <span class="n">add_charge_from_ccd_codes</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.add_hydrogen_atom_positions">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">add_hydrogen_atom_positions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residue_level_annots_to_copy_to_hydrogens</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#add_hydrogen_atom_positions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.add_hydrogen_atom_positions" title="Link to this definition">#</a></dt>
+<dd><p>Add hydrogens using biotite supported hydride library.</p>
+<p>Removes any existing hydrogens first, then adds new hydrogens using the hydride library.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atom_array</strong> – The atom array to which hydrogens will be added.</p></li>
+<li><p><strong>residue_level_annots_to_copy_to_hydrogens</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – A list of residue-level annotations that will be copied
+over to the newly-added hydrogens for each residue.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated atom array with hydrogens added, preserving the input type.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.add_id_and_entity_annotations">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">add_id_and_entity_annotations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#add_id_and_entity_annotations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.add_id_and_entity_annotations" title="Link to this definition">#</a></dt>
+<dd><p>Adds all 6 (‘chain’, ‘pn_unit’, ‘molecule’) x (‘id’, ‘entity’) annotations to the AtomArray.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.add_iid_annotations_to_assemblies">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">add_iid_annotations_to_assemblies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assemblies_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#add_iid_annotations_to_assemblies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.add_iid_annotations_to_assemblies" title="Link to this definition">#</a></dt>
+<dd><p>Adds chain, PN unit, and molecule IIDs to assembly AtomArrayStacks.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.add_molecule_id_annotation">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">add_molecule_id_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#add_molecule_id_annotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.add_molecule_id_annotation" title="Link to this definition">#</a></dt>
+<dd><p>Adds the molecule ID (molecule_id) annotation to the AtomArray.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.add_molecule_iid_annotation">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">add_molecule_iid_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array_stack</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArrayStack</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArrayStack</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#add_molecule_iid_annotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.add_molecule_iid_annotation" title="Link to this definition">#</a></dt>
+<dd><p>Adds the molecule instance ID (molecule_iid) annotation to the AtomArrayStack</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.add_pn_unit_id_annotation">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">add_pn_unit_id_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#add_pn_unit_id_annotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.add_pn_unit_id_annotation" title="Link to this definition">#</a></dt>
+<dd><p>Adds the polymer/non-polymer unit ID (pn_unit_id) annotation to the AtomArray.
+Two covalently bonded ligands are considered one PN unit, but a ligand bonded to a protein is considered two PN units.
+See the README glossary for more details on how we define <cite>chains</cite>, <cite>pn_units</cite>, and <cite>molecules</cite> within this codebase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>atom_array</strong> (<em>AtomArray</em>) – The AtomArray to process.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The AtomArray including the <cite>pn_unit_id</cite> annotation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>atom_array (AtomArray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.add_pn_unit_iid_annotation">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">add_pn_unit_iid_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#add_pn_unit_iid_annotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.add_pn_unit_iid_annotation" title="Link to this definition">#</a></dt>
+<dd><p>Adds the polymer/non-polymer unit instance ID (pn_unit_iid) annotation to the AtomArray or AtomArrayStack.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.add_polymer_annotation">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">add_polymer_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chain_info_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#add_polymer_annotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.add_polymer_annotation" title="Link to this definition">#</a></dt>
+<dd><p>Adds an annotation to the atom array to indicate whether a chain is a polymer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atom_array</strong> (<em>AtomArray</em>) – The atom array containing the chain information.</p></li>
+<li><p><strong>chain_info_dict</strong> (<em>dict</em>) – Dictionary containing the sequence details of each chain.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated atom array with the polymer annotation added.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>AtomArray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.annotate_entities">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">annotate_entities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_level_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_level_entity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_inter_level_bond_hash</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">AtomArray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#annotate_entities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.annotate_entities" title="Link to this definition">#</a></dt>
+<dd><p>Annotates entities in an AtomArray at a given <cite>id</cite> level, based on the connectivity and annotations at the lower level.</p>
+<dl class="simple">
+<dt>The intended use is, for example:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>For the <cite>molecule</cite> level, <cite>molecule_entities</cite> are generated for each <cite>molecule_id</cite> based on the connectivty</dt><dd><p>at the <cite>pn_unit</cite> level.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>For the <cite>pn_unit</cite> level, <cite>pn_unit_entities</cite> are generated for each <cite>pn_unit_id</cite> based on the connectivty</dt><dd><p>at the <cite>chain</cite> level.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>For the <cite>chain</cite> level, <cite>chain_entities</cite> are generated for each <cite>chain_id</cite> based on the connectivty at the <cite>residue</cite></dt><dd><p>level.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atom_array</strong> (<em>-</em>) – The AtomArray to process.</p></li>
+<li><p><strong>level</strong> (<em>-</em>) – The level at which to annotate entities (e.g., “chain”, “pn_unit”, “entity”)</p></li>
+<li><p><strong>lower_level_id</strong> (<em>-</em>) – A list of annotations to consider for determining segment boundaries at a lower level.
+E.g. “pn_unit_id”, “chain_id” or “res_id”.</p></li>
+<li><p><strong>lower_level_entity</strong> (<em>-</em>) – The annotation to use for identifying entities at the lower level.
+E.g. “pn_unit_entity”, “chain_entity” or “res_name”.</p></li>
+<li><p><strong>add_inter_level_bond_hash</strong> (<em>-</em>) – Whether to add a hash of the inter-level bonds to the entity hash.
+For some cases, this may be necessary to distinguish entities (e.g., when determining molecule-level
+entities). In others (e.g., for polymers), this may be overkill.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A tuple containing:</dt><dd><ul class="simple">
+<li><p>atom_array (AtomArray): The updated AtomArray with the entity annotation.</p></li>
+<li><p>entities_info (dict): A dictionary mapping entity IDs to lists of instance IDs.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>Tuple[AtomArray, dict]</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">atom_array</span> <span class="o">=</span> <span class="n">AtomArray</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">entities_at_level</span><span class="p">,</span> <span class="n">entities_info</span> <span class="o">=</span> <span class="n">annotate_entities</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">atom_array</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">&quot;chain&quot;</span><span class="p">,</span> <span class="n">lower_level_id</span><span class="o">=</span><span class="s2">&quot;res_id&quot;</span><span class="p">,</span> <span class="n">lower_level_entity</span><span class="o">=</span><span class="s2">&quot;res_name&quot;</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">entities_at_level</span><span class="p">)</span>
+<span class="go">[0, 0, 1, 1, 2, 2]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">entities_info</span><span class="p">)</span>
+<span class="go">{0: [0, 1], 1: [2, 3], 2: [4, 5]}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.ensure_atom_array_stack">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">ensure_atom_array_stack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array_or_stack</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArrayStack</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#ensure_atom_array_stack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.ensure_atom_array_stack" title="Link to this definition">#</a></dt>
+<dd><p>Ensures that the input is an AtomArrayStack. If it is an AtomArray, it is converted to a stack.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.is_any_coord_nan">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">is_any_coord_nan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#is_any_coord_nan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.is_any_coord_nan" title="Link to this definition">#</a></dt>
+<dd><p>Returns a boolean mask of shape [n_atoms] indicating whether any coordinate is NaN for each atom in the AtomArray or AtomArrayStack.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.keep_last_residue">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">keep_last_residue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#keep_last_residue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.keep_last_residue" title="Link to this definition">#</a></dt>
+<dd><p>Removes duplicate residues in the atom array, keeping only the last occurrence.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>atom_array</strong> (<em>AtomArray</em>) – The atom array containing the chain information.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The atom array with duplicate residues removed.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>AtomArray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.maybe_fix_non_polymer_at_symmetry_center">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">maybe_fix_non_polymer_at_symmetry_center</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array_stack</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArrayStack</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clash_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clash_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArrayStack</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#maybe_fix_non_polymer_at_symmetry_center"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.maybe_fix_non_polymer_at_symmetry_center" title="Link to this definition">#</a></dt>
+<dd><p>In some PDB entries, non-polymer molecules are placed at the symmetry center and clash with themselves when
+transformed via symmetry operations. We should remove the duplicates in these cases, keeping the identity copy.</p>
+<p>We consider a non-polymer to be clashing with itself if at least <cite>clash_ratio</cite> of its atoms clash with the symmetric copy.</p>
+<p>Examples:
+— PDB ID <cite>7mub</cite> has a potassium ion at the symmetry center that when reflected with the symmetry operation clashes with itself.
+— PDB ID <cite>1xan</cite> has a ligand at a symmetry center that similarly when refelcted clashes with itself.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atom_array</strong> (<em>AtomArray</em>) – The atom array to be patched.</p></li>
+<li><p><strong>clash_distance</strong> (<em>float</em>) – The distance threshold for two atoms to be considered clashing.</p></li>
+<li><p><strong>clash_ratio</strong> (<em>float</em>) – The percentage of atoms that must clash for the molecule to be considered clashing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The patched atom array.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>AtomArray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.mse_to_met">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">mse_to_met</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#mse_to_met"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.mse_to_met" title="Link to this definition">#</a></dt>
+<dd><p>Convert MSE residues (selenomethionine) to MET (methionine).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.remove_ccd_components">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">remove_ccd_components</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ccd_codes_to_remove</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#remove_ccd_components"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.remove_ccd_components" title="Link to this definition">#</a></dt>
+<dd><p>Remove atoms from the AtomArray or AtomArrayStack that have CCD codes in the ccd_codes_to_remove list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atom_array</strong> (<em>AtomArray</em>) – The array of atoms.</p></li>
+<li><p><strong>ccd_codes_to_remove</strong> (<em>list</em>) – A list of CCD codes to be removed from the atom array.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The filtered atom array.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>AtomArray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.remove_hydrogens">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">remove_hydrogens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#remove_hydrogens"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.remove_hydrogens" title="Link to this definition">#</a></dt>
+<dd><p>Removes hydrogens from the AtomArray or AtomArrayStack.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.remove_nan_coords">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">remove_nan_coords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#remove_nan_coords"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.remove_nan_coords" title="Link to this definition">#</a></dt>
+<dd><p>Returns a copy of the AtomArray or AtomArrayStack with rows where any coordinate is NaN removed.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.remove_waters">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">remove_waters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#remove_waters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.remove_waters" title="Link to this definition">#</a></dt>
+<dd><p>Removes waters from the AtomArray or AtomArrayStack.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.replace_negative_res_ids_with_auth_seq_id">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">replace_negative_res_ids_with_auth_seq_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#replace_negative_res_ids_with_auth_seq_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.replace_negative_res_ids_with_auth_seq_id" title="Link to this definition">#</a></dt>
+<dd><p>Replaces res_id values of -1 with the corresponding auth_seq_id values.</p>
+<p>When loading from the PDB, this step is generally not needed; however, some AF-3 predictions
+have negative res_ids without labeling chains as non-polymeric via the entity_id field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>atom_array</strong> (<em>AtomArray</em>) – The atom array to fix.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated atom array with negative res_ids replaced by auth_seq_ids.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>AtomArray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.resolve_arginine_naming_ambiguity">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">resolve_arginine_naming_ambiguity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_on_error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#resolve_arginine_naming_ambiguity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.resolve_arginine_naming_ambiguity" title="Link to this definition">#</a></dt>
+<dd><p>Arginine naming ambiguities are fixed (ensuring NH1 is always closer to CD than NH2)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.subset_atom_array">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">subset_atom_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#subset_atom_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.subset_atom_array" title="Link to this definition">#</a></dt>
+<dd><p>Subsets an AtomArray or AtomArrayStack by a boolean mask.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.io.transforms.atom_array.update_nonpoly_seq_ids">
+<span class="sig-prename descclassname"><span class="pre">atomworks.io.transforms.atom_array.</span></span><span class="sig-name descname"><span class="pre">update_nonpoly_seq_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chain_info_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/transforms/atom_array.html#update_nonpoly_seq_ids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.transforms.atom_array.update_nonpoly_seq_ids" title="Link to this definition">#</a></dt>
+<dd><p>Updates the sequence IDs of non-polymeric chains in the atom array to the author sequence IDs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atom_array</strong> (<em>AtomArray</em>) – The atom array containing the chain information.</p></li>
+<li><p><strong>chain_info_dict</strong> (<em>dict</em>) – Dictionary containing the sequence details of each chain.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated atom array with the sequence IDs updated for non-polymeric chains.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>AtomArray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../transforms.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Transforms</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="categories.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Category Transforms</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.add_atomic_number_annotation"><code class="docutils literal notranslate"><span class="pre">add_atomic_number_annotation()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.add_chain_iid_annotation"><code class="docutils literal notranslate"><span class="pre">add_chain_iid_annotation()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.add_chain_type_annotation"><code class="docutils literal notranslate"><span class="pre">add_chain_type_annotation()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.add_charge_from_ccd_codes"><code class="docutils literal notranslate"><span class="pre">add_charge_from_ccd_codes()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.add_hydrogen_atom_positions"><code class="docutils literal notranslate"><span class="pre">add_hydrogen_atom_positions()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.add_id_and_entity_annotations"><code class="docutils literal notranslate"><span class="pre">add_id_and_entity_annotations()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.add_iid_annotations_to_assemblies"><code class="docutils literal notranslate"><span class="pre">add_iid_annotations_to_assemblies()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.add_molecule_id_annotation"><code class="docutils literal notranslate"><span class="pre">add_molecule_id_annotation()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.add_molecule_iid_annotation"><code class="docutils literal notranslate"><span class="pre">add_molecule_iid_annotation()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.add_pn_unit_id_annotation"><code class="docutils literal notranslate"><span class="pre">add_pn_unit_id_annotation()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.add_pn_unit_iid_annotation"><code class="docutils literal notranslate"><span class="pre">add_pn_unit_iid_annotation()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.add_polymer_annotation"><code class="docutils literal notranslate"><span class="pre">add_polymer_annotation()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.annotate_entities"><code class="docutils literal notranslate"><span class="pre">annotate_entities()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.ensure_atom_array_stack"><code class="docutils literal notranslate"><span class="pre">ensure_atom_array_stack()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.is_any_coord_nan"><code class="docutils literal notranslate"><span class="pre">is_any_coord_nan()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.keep_last_residue"><code class="docutils literal notranslate"><span class="pre">keep_last_residue()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.maybe_fix_non_polymer_at_symmetry_center"><code class="docutils literal notranslate"><span class="pre">maybe_fix_non_polymer_at_symmetry_center()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.mse_to_met"><code class="docutils literal notranslate"><span class="pre">mse_to_met()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.remove_ccd_components"><code class="docutils literal notranslate"><span class="pre">remove_ccd_components()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.remove_hydrogens"><code class="docutils literal notranslate"><span class="pre">remove_hydrogens()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.remove_nan_coords"><code class="docutils literal notranslate"><span class="pre">remove_nan_coords()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.remove_waters"><code class="docutils literal notranslate"><span class="pre">remove_waters()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.replace_negative_res_ids_with_auth_seq_id"><code class="docutils literal notranslate"><span class="pre">replace_negative_res_ids_with_auth_seq_id()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.resolve_arginine_naming_ambiguity"><code class="docutils literal notranslate"><span class="pre">resolve_arginine_naming_ambiguity()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.subset_atom_array"><code class="docutils literal notranslate"><span class="pre">subset_atom_array()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.transforms.atom_array.update_nonpoly_seq_ids"><code class="docutils literal notranslate"><span class="pre">update_nonpoly_seq_ids()</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/io/transforms/atom_array.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

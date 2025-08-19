@@ -1,0 +1,1340 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>atomworks.io.transforms.atom_array &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/io/transforms/atom_array';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.0.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_color.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">atomworks.io.transforms.atom_array</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for atomworks.io.transforms.atom_array</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Transforms operating predominantly on Biotite&#39;s `AtomArray` objects.</span>
+<span class="sd">These operations should take as input, and return, `AtomArray` objects.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span><span class="p">,</span> <span class="n">defaultdict</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">struc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">AtomArrayStack</span><span class="p">,</span> <span class="n">stack</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">listmap</span><span class="p">,</span> <span class="n">not_isin</span><span class="p">,</span> <span class="n">sum_string_arrays</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">ELEMENT_NAME_TO_ATOMIC_NUMBER</span><span class="p">,</span> <span class="n">HYDROGEN_LIKE_SYMBOLS</span><span class="p">,</span> <span class="n">WATER_LIKE_CCDS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.bonds</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">generate_inter_level_bond_hash</span><span class="p">,</span>
+    <span class="n">get_coarse_graph_as_nodes_and_edges</span><span class="p">,</span>
+    <span class="n">get_connected_nodes</span><span class="p">,</span>
+    <span class="n">hash_graph</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.ccd</span><span class="w"> </span><span class="kn">import</span> <span class="n">atom_array_from_ccd_code</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">annot_start_stop_idxs</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;atomworks.io&quot;</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">hydride</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Hydride library not found, hydrogens cannot be inferred. Pip install hydride to enable.&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="subset_atom_array">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.subset_atom_array">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">subset_atom_array</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">,</span> <span class="n">keep</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Subsets an AtomArray or AtomArrayStack by a boolean mask.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">AtomArrayStack</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">atom_array</span><span class="p">[:,</span> <span class="n">keep</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="is_any_coord_nan">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.is_any_coord_nan">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_any_coord_nan</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a boolean mask of shape [n_atoms] indicating whether any coordinate is NaN for each atom in the AtomArray or AtomArrayStack.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">AtomArrayStack</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="remove_nan_coords">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.remove_nan_coords">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_nan_coords</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a copy of the AtomArray or AtomArrayStack with rows where any coordinate is NaN removed.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">subset_atom_array</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="o">~</span><span class="n">is_any_coord_nan</span><span class="p">(</span><span class="n">atom_array</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="remove_ccd_components">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.remove_ccd_components">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_ccd_components</span><span class="p">(</span>
+    <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">,</span> <span class="n">ccd_codes_to_remove</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove atoms from the AtomArray or AtomArrayStack that have CCD codes in the ccd_codes_to_remove list.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        atom_array (AtomArray): The array of atoms.</span>
+<span class="sd">        ccd_codes_to_remove (list): A list of CCD codes to be removed from the atom array.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        AtomArray: The filtered atom array.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ccd_codes_to_remove</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ccd_codes_to_remove</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">subset_atom_array</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">not_isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span><span class="p">,</span> <span class="n">ccd_codes_to_remove</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="remove_hydrogens">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.remove_hydrogens">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_hydrogens</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Removes hydrogens from the AtomArray or AtomArrayStack.&quot;&quot;&quot;</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="n">not_isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">element</span><span class="p">,</span> <span class="n">HYDROGEN_LIKE_SYMBOLS</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">subset_atom_array</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">keep</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="remove_waters">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.remove_waters">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_waters</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Removes waters from the AtomArray or AtomArrayStack.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">remove_ccd_components</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">WATER_LIKE_CCDS</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ensure_atom_array_stack">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.ensure_atom_array_stack">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ensure_atom_array_stack</span><span class="p">(</span><span class="n">atom_array_or_stack</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ensures that the input is an AtomArrayStack. If it is an AtomArray, it is converted to a stack.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atom_array_or_stack</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">stack</span><span class="p">([</span><span class="n">atom_array_or_stack</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atom_array_or_stack</span><span class="p">,</span> <span class="n">AtomArrayStack</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">atom_array_or_stack</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected AtomArray or AtomArrayStack, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">atom_array_or_stack</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="resolve_arginine_naming_ambiguity">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.resolve_arginine_naming_ambiguity">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">resolve_arginine_naming_ambiguity</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">raise_on_error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Arginine naming ambiguities are fixed (ensuring NH1 is always closer to CD than NH2)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: Generalize to AtomArrayStack</span>
+    <span class="n">arg_mask</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span> <span class="o">==</span> <span class="s2">&quot;ARG&quot;</span>
+    <span class="n">arg_nh1_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">&quot;NH1&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">arg_mask</span>
+    <span class="n">arg_nh2_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">&quot;NH2&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">arg_mask</span>
+    <span class="n">arg_cd_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">&quot;CD&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">arg_mask</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cd_nh1_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">arg_cd_mask</span><span class="p">]</span> <span class="o">-</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">arg_nh1_mask</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">cd_nh2_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">arg_cd_mask</span><span class="p">]</span> <span class="o">-</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">arg_nh2_mask</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">both_finite</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">cd_nh1_dist</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">cd_nh2_dist</span><span class="p">)</span>
+
+        <span class="c1"># Check if there are any name swamps required</span>
+        <span class="n">local_to_swap</span> <span class="o">=</span> <span class="p">(</span><span class="n">cd_nh1_dist</span> <span class="o">&gt;</span> <span class="n">cd_nh2_dist</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">both_finite</span>  <span class="c1"># local mask</span>
+        <span class="c1"># turn local mask into global mask</span>
+        <span class="n">to_swap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">to_swap</span><span class="p">[</span><span class="n">arg_nh1_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">local_to_swap</span>
+        <span class="n">to_swap</span><span class="p">[</span><span class="n">arg_nh2_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">local_to_swap</span>
+
+        <span class="c1"># Swap NH1 and NH2 names if NH1 is further from CD than NH2</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">to_swap</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Resolving </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">local_to_swap</span><span class="p">)</span><span class="si">}</span><span class="s2"> arginine naming ambiguities.&quot;</span><span class="p">)</span>
+            <span class="n">prev_nh1_coord</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">arg_nh1_mask</span> <span class="o">&amp;</span> <span class="n">to_swap</span><span class="p">]</span>
+            <span class="n">prev_nh2_coord</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">arg_nh2_mask</span> <span class="o">&amp;</span> <span class="n">to_swap</span><span class="p">]</span>
+
+            <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">arg_nh1_mask</span> <span class="o">&amp;</span> <span class="n">to_swap</span><span class="p">]</span> <span class="o">=</span> <span class="n">prev_nh2_coord</span>
+            <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">arg_nh2_mask</span> <span class="o">&amp;</span> <span class="n">to_swap</span><span class="p">]</span> <span class="o">=</span> <span class="n">prev_nh1_coord</span>
+
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">raise_on_error</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">e</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error resolving arginine naming ambiguity: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. Returning original atom array.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">atom_array</span></div>
+
+
+
+<div class="viewcode-block" id="mse_to_met">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.mse_to_met">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mse_to_met</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert MSE residues (selenomethionine) to MET (methionine).&quot;&quot;&quot;</span>
+    <span class="n">mse_mask</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span> <span class="o">==</span> <span class="s2">&quot;MSE&quot;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mse_mask</span><span class="p">):</span>
+        <span class="n">se_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">&quot;SE&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">mse_mask</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Converting </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">se_mask</span><span class="p">)</span><span class="si">}</span><span class="s2"> MSE residues to MET.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Update residue name, hetero flag, and element</span>
+        <span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span><span class="p">[</span><span class="n">mse_mask</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;MET&quot;</span>
+        <span class="n">atom_array</span><span class="o">.</span><span class="n">hetero</span><span class="p">[</span><span class="n">mse_mask</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span><span class="p">[</span><span class="n">se_mask</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;SD&quot;</span>
+
+        <span class="c1"># ... handle cases for integer or string representations of element</span>
+        <span class="n">_elt_prev</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">element</span><span class="p">[</span><span class="n">se_mask</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">_elt_prev</span> <span class="o">==</span> <span class="s2">&quot;SE&quot;</span><span class="p">:</span>
+            <span class="n">atom_array</span><span class="o">.</span><span class="n">element</span><span class="p">[</span><span class="n">se_mask</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;S&quot;</span>
+        <span class="k">elif</span> <span class="n">_elt_prev</span> <span class="o">==</span> <span class="n">ELEMENT_NAME_TO_ATOMIC_NUMBER</span><span class="p">[</span><span class="s2">&quot;SE&quot;</span><span class="p">]:</span>
+            <span class="n">atom_array</span><span class="o">.</span><span class="n">element</span><span class="p">[</span><span class="n">se_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">ELEMENT_NAME_TO_ATOMIC_NUMBER</span><span class="p">[</span><span class="s2">&quot;S&quot;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">_elt_prev</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">ELEMENT_NAME_TO_ATOMIC_NUMBER</span><span class="p">[</span><span class="s2">&quot;SE&quot;</span><span class="p">]):</span>
+            <span class="n">atom_array</span><span class="o">.</span><span class="n">element</span><span class="p">[</span><span class="n">se_mask</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ELEMENT_NAME_TO_ATOMIC_NUMBER</span><span class="p">[</span><span class="s2">&quot;S&quot;</span><span class="p">])</span>
+
+        <span class="c1"># Reorder atoms for canonical MET ordering</span>
+        <span class="n">atom_array_mse</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">mse_mask</span><span class="p">]</span>
+        <span class="n">atom_array_mse</span> <span class="o">=</span> <span class="n">atom_array_mse</span><span class="p">[</span><span class="n">struc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">standardize_order</span><span class="p">(</span><span class="n">atom_array_mse</span><span class="p">)]</span>
+        <span class="n">atom_array</span><span class="p">[</span><span class="n">mse_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_array_mse</span>
+
+    <span class="k">return</span> <span class="n">atom_array</span></div>
+
+
+
+<div class="viewcode-block" id="keep_last_residue">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.keep_last_residue">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">keep_last_residue</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Removes duplicate residues in the atom array, keeping only the last occurrence.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atom_array (AtomArray): The atom array containing the chain information.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        AtomArray: The atom array with duplicate residues removed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">atom_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;chain_id&quot;</span><span class="p">:</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">chain_id</span><span class="p">,</span>
+            <span class="s2">&quot;res_id&quot;</span><span class="p">:</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">res_id</span><span class="p">,</span>
+            <span class="s2">&quot;res_name&quot;</span><span class="p">:</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Get the mask of duplicates based on the combination of chain_id, res_id, and res_name</span>
+    <span class="n">collapsed_df</span> <span class="o">=</span> <span class="n">atom_df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;chain_id&quot;</span><span class="p">,</span> <span class="s2">&quot;res_id&quot;</span><span class="p">,</span> <span class="s2">&quot;res_name&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Get duplicates based on res_id, keeping the last</span>
+    <span class="n">duplicate_mask</span> <span class="o">=</span> <span class="n">collapsed_df</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;chain_id&quot;</span><span class="p">,</span> <span class="s2">&quot;res_id&quot;</span><span class="p">],</span> <span class="n">keep</span><span class="o">=</span><span class="s2">&quot;last&quot;</span><span class="p">)</span>
+    <span class="n">duplicates_df</span> <span class="o">=</span> <span class="n">collapsed_df</span><span class="p">[</span><span class="n">duplicate_mask</span><span class="p">]</span>
+
+    <span class="c1"># Perform a left merge to find rows in atom_df that are also in duplicates_df</span>
+    <span class="n">merged_df</span> <span class="o">=</span> <span class="n">atom_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">duplicates_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;chain_id&quot;</span><span class="p">,</span> <span class="s2">&quot;res_id&quot;</span><span class="p">,</span> <span class="s2">&quot;res_name&quot;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">indicator</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Create a mask where True indicates the row is not in duplicates_df</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="n">merged_df</span><span class="p">[</span><span class="s2">&quot;_merge&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;left_only&quot;</span>
+
+    <span class="c1"># Remove rows from atom_array with the deletion mask</span>
+    <span class="k">return</span> <span class="n">subset_atom_array</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">keep</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="maybe_fix_non_polymer_at_symmetry_center">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.maybe_fix_non_polymer_at_symmetry_center">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">maybe_fix_non_polymer_at_symmetry_center</span><span class="p">(</span>
+    <span class="n">atom_array_stack</span><span class="p">:</span> <span class="n">AtomArrayStack</span><span class="p">,</span> <span class="n">clash_distance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">clash_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    In some PDB entries, non-polymer molecules are placed at the symmetry center and clash with themselves when</span>
+<span class="sd">    transformed via symmetry operations. We should remove the duplicates in these cases, keeping the identity copy.</span>
+
+<span class="sd">    We consider a non-polymer to be clashing with itself if at least `clash_ratio` of its atoms clash with the symmetric copy.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">    — PDB ID `7mub` has a potassium ion at the symmetry center that when reflected with the symmetry operation clashes with itself.</span>
+<span class="sd">    — PDB ID `1xan` has a ligand at a symmetry center that similarly when refelcted clashes with itself.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atom_array (AtomArray): The atom array to be patched.</span>
+<span class="sd">        clash_distance (float): The distance threshold for two atoms to be considered clashing.</span>
+<span class="sd">        clash_ratio (float): The percentage of atoms that must clash for the molecule to be considered clashing.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        AtomArray: The patched atom array.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Select one model AtomArray to simplify computations</span>
+    <span class="n">atom_array</span> <span class="o">=</span> <span class="n">atom_array_stack</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Filter to only atoms with coordinates to avoid non-physical clashes at the origin</span>
+    <span class="k">if</span> <span class="s2">&quot;occupancy&quot;</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">():</span>
+        <span class="n">resolved_mask</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">occupancy</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">resolved_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">resolved_atom_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[(</span><span class="n">resolved_mask</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">is_any_coord_nan</span><span class="p">(</span><span class="n">atom_array</span><span class="p">))]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">resolved_atom_array</span><span class="o">.</span><span class="n">is_polymer</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">atom_array_stack</span>  <span class="c1"># Early exit</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">non_polymers</span> <span class="o">=</span> <span class="n">resolved_atom_array</span><span class="p">[</span><span class="o">~</span><span class="n">resolved_atom_array</span><span class="o">.</span><span class="n">is_polymer</span><span class="p">]</span>  <span class="c1"># [n]</span>
+
+        <span class="c1"># Build cell list for rapid distance computations</span>
+        <span class="n">cell_list</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">CellList</span><span class="p">(</span><span class="n">non_polymers</span><span class="p">,</span> <span class="n">cell_size</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
+
+        <span class="c1"># Quick check to see whether any non-polymer is closer than 0.05A to any other.</span>
+        <span class="n">clash_matrix</span> <span class="o">=</span> <span class="n">cell_list</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">(</span><span class="n">non_polymers</span><span class="o">.</span><span class="n">coord</span><span class="p">,</span> <span class="n">clash_distance</span><span class="p">,</span> <span class="n">as_mask</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># [n, n]</span>
+        <span class="n">identity_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">non_polymers</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">clash_matrix</span><span class="p">,</span> <span class="n">identity_matrix</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">atom_array_stack</span>  <span class="c1"># Early exit</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Remove identity matrix so we don&#39;t count self-clashes</span>
+            <span class="n">clash_matrix</span> <span class="o">=</span> <span class="n">clash_matrix</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">identity_matrix</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Found clashing non-polymer at a symmetry center, resolving.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Get list of chain_ids with clashing atoms (for computational efficiency)</span>
+        <span class="n">clashing_atom_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">clash_matrix</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="n">clashing_chain_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">non_polymers</span><span class="o">.</span><span class="n">chain_id</span><span class="p">[</span><span class="n">clashing_atom_mask</span><span class="p">])</span>
+
+        <span class="c1"># For each clashing chain, we check whether any non-polymer is clashing with a symmetric copy of itself</span>
+        <span class="c1"># We count the clashes with each symmetric copy of itself and remove those that have a clash ratio above the threshold</span>
+        <span class="c1"># We keep the identity transformation, or the lowest transformation ID in the case of multiple symmetric copies</span>
+        <span class="n">chain_iids_to_remove</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">chain_id</span> <span class="ow">in</span> <span class="n">clashing_chain_ids</span><span class="p">:</span>
+            <span class="n">chain_mask</span> <span class="o">=</span> <span class="n">non_polymers</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">==</span> <span class="n">chain_id</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">chain_mask</span> <span class="o">&amp;</span> <span class="n">clashing_atom_mask</span>  <span class="c1"># Mask for clashing atoms in the current chain</span>
+            <span class="n">chain_clash_matrix</span> <span class="o">=</span> <span class="n">clash_matrix</span><span class="p">[</span><span class="n">mask</span><span class="p">][:,</span> <span class="n">mask</span><span class="p">]</span>
+
+            <span class="c1"># Loop through possible transformation ID&#39;s</span>
+            <span class="n">transformation_ids_to_check</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">non_polymers</span><span class="o">.</span><span class="n">transformation_id</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+            <span class="k">while</span> <span class="n">transformation_ids_to_check</span><span class="p">:</span>
+                <span class="n">transformation_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">transformation_ids_to_check</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+                <span class="n">transformation_mask</span> <span class="o">=</span> <span class="n">non_polymers</span><span class="o">.</span><span class="n">transformation_id</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">transformation_id</span><span class="p">)</span>
+                <span class="c1"># Create matrix where the rows correspond to the atoms of the current transformation and the columns corresponded to the other transformations</span>
+                <span class="n">chain_clash_matrix</span> <span class="o">=</span> <span class="n">clash_matrix</span><span class="p">[</span><span class="n">mask</span> <span class="o">&amp;</span> <span class="n">transformation_mask</span><span class="p">][</span>
+                    <span class="p">:,</span> <span class="n">mask</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">transformation_mask</span>
+                <span class="p">]</span>  <span class="c1"># [current transformation clashing atoms, other transformations clashing atoms]</span>
+                <span class="c1"># We can then count clashes by transformation ID</span>
+                <span class="n">transformation_id_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span>
+                    <span class="n">non_polymers</span><span class="o">.</span><span class="n">transformation_id</span><span class="p">[</span><span class="n">mask</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">transformation_mask</span><span class="p">],</span> <span class="p">(</span><span class="n">chain_clash_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Apply chain_clash_matrix to transformation_id_matrix so we can count clashes by transformation ID</span>
+                <span class="n">clashing_transformation_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">chain_clash_matrix</span><span class="p">,</span> <span class="n">transformation_id_matrix</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+                <span class="n">clash_count_by_transformation_id</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span>
+                    <span class="n">clashing_transformation_ids</span><span class="p">[</span><span class="n">clashing_transformation_ids</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="kc">None</span><span class="p">)]</span>
+                <span class="p">)</span>
+                <span class="n">threshold</span> <span class="o">=</span> <span class="n">clash_ratio</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">chain_mask</span> <span class="o">&amp;</span> <span class="n">transformation_mask</span><span class="p">)</span>
+
+                <span class="c1"># For each transformation ID with a clash ratio above the threshold, note the chain_iid to remove, and remove from the list to check</span>
+                <span class="n">transformation_ids_to_remove</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">trans_id</span> <span class="k">for</span> <span class="n">trans_id</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">clash_count_by_transformation_id</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="n">threshold</span>
+                <span class="p">]</span>
+                <span class="n">chain_iids_to_remove</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">chain_id</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">trans_id</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">trans_id</span> <span class="ow">in</span> <span class="n">transformation_ids_to_remove</span><span class="p">])</span>
+                <span class="n">transformation_ids_to_check</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">id_</span> <span class="k">for</span> <span class="n">id_</span> <span class="ow">in</span> <span class="n">transformation_ids_to_check</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">id_</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">transformation_ids_to_remove</span>
+                <span class="p">]</span>
+
+        <span class="c1"># Filter and return</span>
+        <span class="n">keep_mask</span> <span class="o">=</span> <span class="n">not_isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_iid</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">chain_iids_to_remove</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_iid</span><span class="o">.</span><span class="n">dtype</span><span class="p">))</span>
+        <span class="n">atom_array_stack</span> <span class="o">=</span> <span class="n">atom_array_stack</span><span class="p">[:,</span> <span class="n">keep_mask</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">atom_array_stack</span></div>
+
+
+
+<div class="viewcode-block" id="add_polymer_annotation">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.add_polymer_annotation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_polymer_annotation</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">,</span> <span class="n">chain_info_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds an annotation to the atom array to indicate whether a chain is a polymer.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atom_array (AtomArray): The atom array containing the chain information.</span>
+<span class="sd">        chain_info_dict (dict): Dictionary containing the sequence details of each chain.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        AtomArray: The updated atom array with the polymer annotation added.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">chain_ids</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="s2">&quot;chain_id&quot;</span><span class="p">)</span>
+    <span class="n">is_polymer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">chain_info_dict</span><span class="p">[</span><span class="n">chain_id</span><span class="p">][</span><span class="s2">&quot;is_polymer&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">chain_id</span> <span class="ow">in</span> <span class="n">chain_ids</span><span class="p">])</span>
+    <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;is_polymer&quot;</span><span class="p">,</span> <span class="n">is_polymer</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">atom_array</span></div>
+
+
+
+<div class="viewcode-block" id="update_nonpoly_seq_ids">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.update_nonpoly_seq_ids">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_nonpoly_seq_ids</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">chain_info_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Updates the sequence IDs of non-polymeric chains in the atom array to the author sequence IDs.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atom_array (AtomArray): The atom array containing the chain information.</span>
+<span class="sd">        chain_info_dict (dict): Dictionary containing the sequence details of each chain.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        AtomArray: The updated atom array with the sequence IDs updated for non-polymeric chains.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># For non-polymeric chains, we use the author sequence ids</span>
+    <span class="n">author_seq_ids</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="s2">&quot;auth_seq_id&quot;</span><span class="p">)</span>
+    <span class="n">chain_ids</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="s2">&quot;chain_id&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create mask based on the is_polymer column</span>
+    <span class="n">non_polymer_mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">chain_info_dict</span><span class="p">[</span><span class="n">chain_id</span><span class="p">][</span><span class="s2">&quot;is_polymer&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">chain_id</span> <span class="ow">in</span> <span class="n">chain_ids</span><span class="p">])</span>
+
+    <span class="c1"># Update the atom_array_label with the (1-indexed) author sequence ids</span>
+    <span class="n">atom_array</span><span class="o">.</span><span class="n">res_id</span><span class="p">[</span><span class="n">non_polymer_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">author_seq_ids</span><span class="p">[</span><span class="n">non_polymer_mask</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">atom_array</span></div>
+
+
+
+<div class="viewcode-block" id="replace_negative_res_ids_with_auth_seq_id">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.replace_negative_res_ids_with_auth_seq_id">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">replace_negative_res_ids_with_auth_seq_id</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Replaces res_id values of -1 with the corresponding auth_seq_id values.</span>
+
+<span class="sd">    When loading from the PDB, this step is generally not needed; however, some AF-3 predictions</span>
+<span class="sd">    have negative res_ids without labeling chains as non-polymeric via the entity_id field.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atom_array (AtomArray): The atom array to fix.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        AtomArray: The updated atom array with negative res_ids replaced by auth_seq_ids.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">author_seq_ids</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="s2">&quot;auth_seq_id&quot;</span><span class="p">)</span>
+    <span class="n">negative_res_id_mask</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">res_id</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="c1"># Convert auth_seq_ids to int if they are strings (as they are sometimes from AF-3 predictions)</span>
+    <span class="k">if</span> <span class="n">author_seq_ids</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="ow">in</span> <span class="s2">&quot;UO&quot;</span><span class="p">:</span>  <span class="c1"># Unicode or Object (string-like)</span>
+        <span class="c1"># Handle &#39;.&#39; values by replacing with -1, then convert to int</span>
+        <span class="n">author_seq_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">author_seq_ids</span> <span class="o">==</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">author_seq_ids</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="n">atom_array</span><span class="o">.</span><span class="n">res_id</span><span class="p">[</span><span class="n">negative_res_id_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">author_seq_ids</span><span class="p">[</span><span class="n">negative_res_id_mask</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">atom_array</span></div>
+
+
+
+<div class="viewcode-block" id="add_charge_from_ccd_codes">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.add_charge_from_ccd_codes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_charge_from_ccd_codes</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adds charge annotations to an atom array based on the Chemical Component Dictionary (CCD) codes.</span>
+
+<span class="sd">    Retrieves charge information from the CCD for each residue and assigns it to matching atoms.</span>
+<span class="sd">    If a residue or atom is not found in the CCD, a charge of 0 is assigned. If a charge annotation</span>
+<span class="sd">    is already present, it is overwritten.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atom_array: The atom array to which charge annotations will be added.</span>
+<span class="sd">            Can be either an AtomArray or AtomArrayStack.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The input atom array with added charge annotations.</span>
+
+
+<span class="sd">    WARNING: This function will assume that each residue in the atom array is exactly as in the CCD.</span>
+<span class="sd">       Therefore the charges will be incorrect if it is in a different protonation state, or has been</span>
+<span class="sd">       ionized or else in the original structure. Use this function with caution!</span>
+
+<span class="sd">    NOTE: If you want to add charges to canonical amino acids based on the pH, take a look at the</span>
+<span class="sd">        &#39;hydride.estimate_amino_acid_charges&#39; function instead.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; atom_array = load_any(&quot;6lyz.cif&quot;, model=1)</span>
+<span class="sd">        &gt;&gt;&gt; atom_array_with_charges = add_charge_from_ccd_codes(atom_array)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Warn if a charge annotation is already present</span>
+    <span class="k">if</span> <span class="s2">&quot;charge&quot;</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Charge annotation already present in atom array. It will be overwritten.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Build up a lookup table (res_name, atom_name) -&gt; charge for each res_name that appears in the atom_array</span>
+    <span class="n">unique_res_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span><span class="p">)</span>
+    <span class="n">charge_lookup_table</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">res_name</span> <span class="ow">in</span> <span class="n">unique_res_names</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ccd_array</span> <span class="o">=</span> <span class="n">atom_array_from_ccd_code</span><span class="p">(</span><span class="n">res_name</span><span class="p">)</span>
+            <span class="c1"># Use dictionary comprehension to build lookup entries for this residue</span>
+            <span class="n">charge_lookup_table</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="p">(</span><span class="n">res_name</span><span class="p">,</span> <span class="n">atom_name</span><span class="p">):</span> <span class="n">charge</span>
+                    <span class="k">for</span> <span class="n">atom_name</span><span class="p">,</span> <span class="n">charge</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ccd_array</span><span class="o">.</span><span class="n">atom_name</span><span class="p">,</span> <span class="n">ccd_array</span><span class="o">.</span><span class="n">charge</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CCD charge look-up failed for </span><span class="si">{</span><span class="n">res_name</span><span class="si">}</span><span class="s2">. Assuming charge is 0 for all atoms.&quot;</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+    <span class="c1"># Create the charge annotations for the atom array</span>
+    <span class="n">res_names</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span>
+    <span class="n">atom_names</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span>
+    <span class="n">charges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">charge_lookup_table</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">res</span><span class="p">,</span> <span class="n">atom</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">res</span><span class="p">,</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">res_names</span><span class="p">,</span> <span class="n">atom_names</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Set the charges annotation</span>
+    <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;charge&quot;</span><span class="p">,</span> <span class="n">charges</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">atom_array</span></div>
+
+
+
+<div class="viewcode-block" id="add_hydrogen_atom_positions">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.add_hydrogen_atom_positions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_hydrogen_atom_positions</span><span class="p">(</span>
+    <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">,</span>
+    <span class="n">residue_level_annots_to_copy_to_hydrogens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add hydrogens using biotite supported hydride library.</span>
+
+<span class="sd">    Removes any existing hydrogens first, then adds new hydrogens using the hydride library.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atom_array: The atom array to which hydrogens will be added.</span>
+<span class="sd">        residue_level_annots_to_copy_to_hydrogens (list[str]): A list of residue-level annotations that will be copied</span>
+<span class="sd">            over to the newly-added hydrogens for each residue.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The updated atom array with hydrogens added, preserving the input type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Remove existing hydrogens</span>
+    <span class="n">atom_array</span> <span class="o">=</span> <span class="n">remove_hydrogens</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+
+    <span class="c1"># Determine which fields to copy from the original array to the new hydrogens</span>
+    <span class="n">fields_to_copy_from_residue_if_present</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;auth_seq_id&quot;</span><span class="p">,</span> <span class="s2">&quot;label_entity_id&quot;</span><span class="p">]</span>
+    <span class="n">fields_to_copy_from_residue_if_present</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">residue_level_annots_to_copy_to_hydrogens</span><span class="p">)</span>
+    <span class="n">fields_to_copy_from_residue_if_present</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+        <span class="nb">set</span><span class="p">(</span><span class="n">fields_to_copy_from_residue_if_present</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()))</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Ensure charge annotation exists</span>
+    <span class="k">if</span> <span class="s2">&quot;charge&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">():</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">add_charge_from_ccd_codes</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+
+    <span class="c1"># Helper function to copy annotations from one array to another</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_copy_missing_annotations_residue_wise</span><span class="p">(</span>
+        <span class="n">from_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">to_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">fields_to_copy</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy specified annotations residue-wise from one AtomArray to another. Updates annotations in-place.&quot;&quot;&quot;</span>
+        <span class="n">residue_starts</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">get_residue_starts</span><span class="p">(</span><span class="n">from_array</span><span class="p">)</span>
+        <span class="n">residue_starts_atom_array</span> <span class="o">=</span> <span class="n">from_array</span><span class="p">[</span><span class="n">residue_starts</span><span class="p">]</span>
+        <span class="n">annot</span> <span class="o">=</span> <span class="p">{</span><span class="n">item</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">residue_starts_atom_array</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">fields_to_copy_from_residue_if_present</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields_to_copy</span><span class="p">:</span>
+            <span class="n">updated_field</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">spread_residue_wise</span><span class="p">(</span><span class="n">to_array</span><span class="p">,</span> <span class="n">annot</span><span class="p">[</span><span class="n">field</span><span class="p">])</span>
+            <span class="n">to_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">updated_field</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">to_array</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_hydrogens_nan_tolerant</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds hydrogens to the input AtomArray, safely handling the case in which some atoms have NaN coordinates&quot;&quot;&quot;</span>
+        <span class="n">original_nan_coords_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">original_nan_coords_mask</span><span class="p">):</span>
+            <span class="c1"># Temporarily set NaN coordinates to zero so that hydride doesn&#39;t error</span>
+            <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">original_nan_coords_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">original_nan_coords_mask</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+
+            <span class="c1"># Add hydrogens using hydride</span>
+            <span class="n">result_atom_array</span><span class="p">,</span> <span class="n">original_atoms_mask</span> <span class="o">=</span> <span class="n">hydride</span><span class="o">.</span><span class="n">add_hydrogen</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+
+            <span class="c1"># Reset the coordinates of atoms that originally had at least one NaN coordinate to be fully NaN</span>
+            <span class="n">originally_nan_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">result_atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">())[</span><span class="n">original_atoms_mask</span><span class="p">][</span>
+                <span class="n">original_nan_coords_mask</span>
+            <span class="p">]</span>
+            <span class="n">result_atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">originally_nan_inds</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+            <span class="c1"># For any newly-added hydrogens bonded to heavy atoms with NaN coordinates, set their coordinates to NaN as well</span>
+            <span class="n">result_nan_coords_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">result_atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">heavy_atom_nan_idces</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">result_nan_coords_mask</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="n">result_atom_array</span><span class="o">.</span><span class="n">element</span> <span class="o">==</span> <span class="s2">&quot;H&quot;</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">heavy_atom_nan_idces</span><span class="p">:</span>
+                <span class="n">bonded_atoms</span> <span class="o">=</span> <span class="n">result_atom_array</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">get_bonds</span><span class="p">(</span><span class="n">idx</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">bonded_h_atoms</span> <span class="o">=</span> <span class="n">bonded_atoms</span><span class="p">[</span><span class="n">result_atom_array</span><span class="p">[</span><span class="n">bonded_atoms</span><span class="p">]</span><span class="o">.</span><span class="n">element</span> <span class="o">==</span> <span class="s2">&quot;H&quot;</span><span class="p">]</span>
+                <span class="n">new_bonded_h_atoms</span> <span class="o">=</span> <span class="n">bonded_h_atoms</span><span class="p">[</span><span class="o">~</span><span class="n">original_atoms_mask</span><span class="p">[</span><span class="n">bonded_h_atoms</span><span class="p">]]</span>
+                <span class="n">result_atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">new_bonded_h_atoms</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result_atom_array</span><span class="p">,</span> <span class="n">original_atoms_mask</span> <span class="o">=</span> <span class="n">hydride</span><span class="o">.</span><span class="n">add_hydrogen</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result_atom_array</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">AtomArrayStack</span><span class="p">):</span>
+        <span class="n">updated_arrays</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">old_arr</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="p">:</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">_add_hydrogens_nan_tolerant</span><span class="p">(</span><span class="n">old_arr</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">_copy_missing_annotations_residue_wise</span><span class="p">(</span><span class="n">old_arr</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">fields_to_copy_from_residue_if_present</span><span class="p">)</span>
+            <span class="n">updated_arrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+
+        <span class="n">ret_array</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">updated_arrays</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">):</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">_add_hydrogens_nan_tolerant</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+        <span class="n">ret_array</span> <span class="o">=</span> <span class="n">_copy_missing_annotations_residue_wise</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="n">fields_to_copy_from_residue_if_present</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ret_array</span></div>
+
+
+
+<div class="viewcode-block" id="add_pn_unit_id_annotation">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.add_pn_unit_id_annotation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_pn_unit_id_annotation</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adds the polymer/non-polymer unit ID (pn_unit_id) annotation to the AtomArray.</span>
+<span class="sd">    Two covalently bonded ligands are considered one PN unit, but a ligand bonded to a protein is considered two PN units.</span>
+<span class="sd">    See the README glossary for more details on how we define `chains`, `pn_units`, and `molecules` within this codebase.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atom_array (AtomArray): The AtomArray to process.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        atom_array (AtomArray): The AtomArray including the `pn_unit_id` annotation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># ...initialize the pn_unit_id to chain_id (we will later update for multi-chain non-polymer PN units)</span>
+    <span class="n">pn_unit_id_annotation</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">chain_id</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+
+    <span class="c1"># ...make the NetworkX graph for non-polymer chains</span>
+    <span class="n">non_polymer_atom_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="o">~</span><span class="n">atom_array</span><span class="o">.</span><span class="n">is_polymer</span><span class="p">]</span>
+    <span class="n">connected_chains</span> <span class="o">=</span> <span class="n">get_connected_nodes</span><span class="p">(</span><span class="o">*</span><span class="n">get_coarse_graph_as_nodes_and_edges</span><span class="p">(</span><span class="n">non_polymer_atom_array</span><span class="p">,</span> <span class="s2">&quot;chain_id&quot;</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">connected_chain</span> <span class="ow">in</span> <span class="n">connected_chains</span><span class="p">:</span>
+        <span class="c1"># ...set the same the pn_unit_id for each chain in the connected chain</span>
+        <span class="n">pn_unit_id</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">connected_chain</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">chain_id</span> <span class="ow">in</span> <span class="n">connected_chain</span><span class="p">:</span>
+            <span class="n">pn_unit_id_annotation</span><span class="p">[</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">==</span> <span class="n">chain_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">pn_unit_id</span>
+
+    <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;pn_unit_id&quot;</span><span class="p">,</span> <span class="n">pn_unit_id_annotation</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">atom_array</span></div>
+
+
+
+<div class="viewcode-block" id="add_pn_unit_iid_annotation">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.add_pn_unit_iid_annotation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_pn_unit_iid_annotation</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds the polymer/non-polymer unit instance ID (pn_unit_iid) annotation to the AtomArray or AtomArrayStack.&quot;&quot;&quot;</span>
+    <span class="c1"># ...create an array that concatenates the pn_unit_id and transformation_id</span>
+    <span class="n">_temp_pn_unit_iid</span> <span class="o">=</span> <span class="n">sum_string_arrays</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_id</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">transformation_id</span><span class="p">)</span>
+    <span class="n">_final_pn_unit_iid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">fill_value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+
+    <span class="c1"># ...iterate through unique pn_unit_iids</span>
+    <span class="c1"># (We implicitly assume that a given pn_unit_id will have the same transformation_id across all atoms in the unit)</span>
+    <span class="k">for</span> <span class="n">pn_unit_iid</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">_temp_pn_unit_iid</span><span class="p">):</span>
+        <span class="c1"># ...get the pn_unit_atom_array</span>
+        <span class="n">pn_unit_atom_array</span> <span class="o">=</span> <span class="n">subset_atom_array</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">_temp_pn_unit_iid</span> <span class="o">==</span> <span class="n">pn_unit_iid</span><span class="p">)</span>
+        <span class="c1"># ...get the transformation_id and pn_unit_id (which is the same for all atoms in the unit)</span>
+        <span class="n">transformation_id</span> <span class="o">=</span> <span class="n">pn_unit_atom_array</span><span class="o">.</span><span class="n">transformation_id</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">pn_unit_id</span> <span class="o">=</span> <span class="n">pn_unit_atom_array</span><span class="o">.</span><span class="n">pn_unit_id</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="c1"># ...split apart the pn_unit_id by commas</span>
+        <span class="n">pn_unit_ids</span> <span class="o">=</span> <span class="n">pn_unit_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+
+        <span class="c1"># ...add the transformation_id to each pn_unit_id</span>
+        <span class="n">pn_unit_iids</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">unit_id</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">transformation_id</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">unit_id</span> <span class="ow">in</span> <span class="n">pn_unit_ids</span><span class="p">]</span>
+
+        <span class="c1"># ...join the instance-level identifiers back into a single string</span>
+        <span class="n">pn_unit_iid_formatted</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pn_unit_iids</span><span class="p">)</span>
+
+        <span class="c1"># ...update the AtomArray with the instance-level identifier</span>
+        <span class="n">_final_pn_unit_iid</span><span class="p">[</span><span class="n">_temp_pn_unit_iid</span> <span class="o">==</span> <span class="n">pn_unit_iid</span><span class="p">]</span> <span class="o">=</span> <span class="n">pn_unit_iid_formatted</span>
+
+    <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">,</span> <span class="n">_final_pn_unit_iid</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">atom_array</span></div>
+
+
+
+<div class="viewcode-block" id="add_molecule_id_annotation">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.add_molecule_id_annotation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_molecule_id_annotation</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds the molecule ID (molecule_id) annotation to the AtomArray.&quot;&quot;&quot;</span>
+    <span class="c1"># ...initialize the pn_unit_id to chain_id (we will later update for multi-chain non-polymer PN units)</span>
+    <span class="n">atom_array</span><span class="o">.</span><span class="n">add_annotation</span><span class="p">(</span><span class="s2">&quot;molecule_id&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
+
+    <span class="c1"># ...make the NetworkX graph for all pn_units</span>
+    <span class="n">connected_pn_units</span> <span class="o">=</span> <span class="n">get_connected_nodes</span><span class="p">(</span><span class="o">*</span><span class="n">get_coarse_graph_as_nodes_and_edges</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="s2">&quot;pn_unit_id&quot;</span><span class="p">))</span>
+
+    <span class="c1"># ...iterate through connected pn_units</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">connected_pn_unit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">connected_pn_units</span><span class="p">):</span>
+        <span class="c1"># ...set the same the molecule_id for each pn_unit in the connected pn_unit</span>
+        <span class="n">molecule_id</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="k">for</span> <span class="n">pn_unit_id</span> <span class="ow">in</span> <span class="n">connected_pn_unit</span><span class="p">:</span>
+            <span class="n">atom_array</span><span class="o">.</span><span class="n">molecule_id</span><span class="p">[</span><span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_id</span> <span class="o">==</span> <span class="n">pn_unit_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">molecule_id</span>
+
+    <span class="k">return</span> <span class="n">atom_array</span></div>
+
+
+
+<div class="viewcode-block" id="add_molecule_iid_annotation">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.add_molecule_iid_annotation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_molecule_iid_annotation</span><span class="p">(</span><span class="n">atom_array_stack</span><span class="p">:</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds the molecule instance ID (molecule_iid) annotation to the AtomArrayStack&quot;&quot;&quot;</span>
+    <span class="c1"># ...concatenate molecule_id and transformation_id to create a unique molecule instance ID</span>
+    <span class="n">molecule_iids_str</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">char</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+        <span class="n">atom_array_stack</span><span class="o">.</span><span class="n">molecule_id</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span> <span class="n">atom_array_stack</span><span class="o">.</span><span class="n">transformation_id</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># ...map each unique molecule_iid to an integer (0-indexed)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">inverse_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">molecule_iids_str</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># ...set the annotation</span>
+    <span class="n">atom_array_stack</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;molecule_iid&quot;</span><span class="p">,</span> <span class="n">inverse_indices</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">atom_array_stack</span></div>
+
+
+
+<div class="viewcode-block" id="annotate_entities">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.annotate_entities">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">annotate_entities</span><span class="p">(</span>
+    <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
+    <span class="n">level</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">lower_level_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">lower_level_entity</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">add_inter_level_bond_hash</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">AtomArray</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Annotates entities in an AtomArray at a given `id` level, based on the connectivity and annotations at the lower level.</span>
+
+<span class="sd">    The intended use is, for example:</span>
+<span class="sd">        - For the `molecule` level, `molecule_entities` are generated for each `molecule_id` based on the connectivty</span>
+<span class="sd">            at the `pn_unit` level.</span>
+<span class="sd">        - For the `pn_unit` level, `pn_unit_entities` are generated for each `pn_unit_id` based on the connectivty</span>
+<span class="sd">            at the `chain` level.</span>
+<span class="sd">        - For the `chain` level, `chain_entities` are generated for each `chain_id` based on the connectivty at the `residue`</span>
+<span class="sd">            level.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - atom_array (AtomArray): The AtomArray to process.</span>
+<span class="sd">        - level (str): The level at which to annotate entities (e.g., &quot;chain&quot;, &quot;pn_unit&quot;, &quot;entity&quot;)</span>
+<span class="sd">        - lower_level_id (str | list[str]): A list of annotations to consider for determining segment boundaries at a lower level.</span>
+<span class="sd">            E.g. &quot;pn_unit_id&quot;, &quot;chain_id&quot; or &quot;res_id&quot;.</span>
+<span class="sd">        - lower_level_entity (str): The annotation to use for identifying entities at the lower level.</span>
+<span class="sd">            E.g. &quot;pn_unit_entity&quot;, &quot;chain_entity&quot; or &quot;res_name&quot;.</span>
+<span class="sd">        - add_inter_level_bond_hash (bool): Whether to add a hash of the inter-level bonds to the entity hash.</span>
+<span class="sd">            For some cases, this may be necessary to distinguish entities (e.g., when determining molecule-level</span>
+<span class="sd">            entities). In others (e.g., for polymers), this may be overkill.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        - Tuple[AtomArray, dict]: A tuple containing:</span>
+<span class="sd">            - atom_array (AtomArray): The updated AtomArray with the entity annotation.</span>
+<span class="sd">            - entities_info (dict): A dictionary mapping entity IDs to lists of instance IDs.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; atom_array = AtomArray(...)</span>
+<span class="sd">        &gt;&gt;&gt; entities_at_level, entities_info = annotate_entities(</span>
+<span class="sd">        ...     atom_array, level=&quot;chain&quot;, lower_level_id=&quot;res_id&quot;, lower_level_entity=&quot;res_name&quot;</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; print(entities_at_level)</span>
+<span class="sd">        [0, 0, 1, 1, 2, 2]</span>
+<span class="sd">        &gt;&gt;&gt; print(entities_info)</span>
+<span class="sd">        {0: [0, 1], 1: [2, 3], 2: [4, 5]}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_next_available_entity_id</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">_hash_to_entity_id</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">ids_at_level</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="n">level</span> <span class="o">+</span> <span class="s2">&quot;_id&quot;</span><span class="p">))</span>
+
+    <span class="c1"># ... initialize annotations to fill</span>
+    <span class="n">entities_annotation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">entities_info</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">instance_id</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">ids_at_level</span><span class="p">):</span>
+        <span class="n">is_instance</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="n">level</span> <span class="o">+</span> <span class="s2">&quot;_id&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">instance_id</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">is_instance</span><span class="p">]</span>
+
+        <span class="c1"># ... get connectivity and node annotations for the coarse graph at the lower level</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">edges</span> <span class="o">=</span> <span class="n">get_coarse_graph_as_nodes_and_edges</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">lower_level_id</span><span class="p">)</span>
+        <span class="n">instance_graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+        <span class="n">instance_graph</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+
+        <span class="c1"># ... set node attributes to lower level entities</span>
+        <span class="n">lower_level_iter</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">segment_iter</span><span class="p">(</span>
+            <span class="n">instance</span><span class="p">,</span> <span class="n">annot_start_stop_idxs</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">lower_level_id</span><span class="p">,</span> <span class="n">add_exclusive_stop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">node_attrs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">idx</span><span class="p">:</span> <span class="n">lower_level_instance</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="n">lower_level_entity</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">lower_level_instance</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lower_level_iter</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">nx</span><span class="o">.</span><span class="n">set_node_attributes</span><span class="p">(</span><span class="n">instance_graph</span><span class="p">,</span> <span class="n">node_attrs</span><span class="p">,</span> <span class="s2">&quot;node&quot;</span><span class="p">)</span>
+
+        <span class="c1"># ... create the graph hash</span>
+        <span class="nb">hash</span> <span class="o">=</span> <span class="n">hash_graph</span><span class="p">(</span><span class="n">instance_graph</span><span class="p">,</span> <span class="n">node_attr</span><span class="o">=</span><span class="s2">&quot;node&quot;</span><span class="p">)</span>
+
+        <span class="c1"># ... add the inter-level bond hash (only consider the first lower level id; since we hash at the atom-level, this simplication is valid)</span>
+        <span class="k">if</span> <span class="n">add_inter_level_bond_hash</span><span class="p">:</span>
+            <span class="nb">hash</span> <span class="o">+=</span> <span class="n">generate_inter_level_bond_hash</span><span class="p">(</span>
+                <span class="n">atom_array</span><span class="o">=</span><span class="n">instance</span><span class="p">,</span>
+                <span class="n">lower_level_id</span><span class="o">=</span><span class="n">lower_level_id</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lower_level_id</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">lower_level_id</span><span class="p">,</span>
+                <span class="n">lower_level_entity</span><span class="o">=</span><span class="n">lower_level_entity</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># ... check if the graph has been seen before</span>
+        <span class="k">if</span> <span class="nb">hash</span> <span class="ow">in</span> <span class="n">_hash_to_entity_id</span><span class="p">:</span>
+            <span class="n">entity_id</span> <span class="o">=</span> <span class="n">_hash_to_entity_id</span><span class="p">[</span><span class="nb">hash</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">entity_id</span> <span class="o">=</span> <span class="n">_next_available_entity_id</span>
+            <span class="n">_hash_to_entity_id</span><span class="p">[</span><span class="nb">hash</span><span class="p">]</span> <span class="o">=</span> <span class="n">entity_id</span>
+            <span class="n">_next_available_entity_id</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># ... assign the entity id to the instance</span>
+        <span class="n">entities_annotation</span><span class="p">[</span><span class="n">is_instance</span><span class="p">]</span> <span class="o">=</span> <span class="n">entity_id</span>
+        <span class="n">entities_info</span><span class="p">[</span><span class="n">entity_id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">instance_id</span><span class="p">)</span>
+
+    <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="n">level</span> <span class="o">+</span> <span class="s2">&quot;_entity&quot;</span><span class="p">,</span> <span class="n">entities_annotation</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">atom_array</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">entities_info</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="add_chain_iid_annotation">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.add_chain_iid_annotation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_chain_iid_annotation</span><span class="p">(</span><span class="n">atom_array_stack</span><span class="p">:</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds the chain instance ID (chain_iid) annotation to the AtomArrayStack&quot;&quot;&quot;</span>
+    <span class="c1"># ...concatenate chain_id and transformation_id to create a unique chain instance ID</span>
+    <span class="n">chain_iid</span> <span class="o">=</span> <span class="n">sum_string_arrays</span><span class="p">(</span>
+        <span class="n">atom_array_stack</span><span class="o">.</span><span class="n">chain_id</span><span class="p">,</span>
+        <span class="s2">&quot;_&quot;</span><span class="p">,</span>
+        <span class="n">atom_array_stack</span><span class="o">.</span><span class="n">transformation_id</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">atom_array_stack</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;chain_iid&quot;</span><span class="p">,</span> <span class="n">chain_iid</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">atom_array_stack</span></div>
+
+
+
+<div class="viewcode-block" id="add_iid_annotations_to_assemblies">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.add_iid_annotations_to_assemblies">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_iid_annotations_to_assemblies</span><span class="p">(</span>
+    <span class="n">assemblies_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds chain, PN unit, and molecule IIDs to assembly AtomArrayStacks.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">assembly_id</span><span class="p">,</span> <span class="n">assembly</span> <span class="ow">in</span> <span class="n">assemblies_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># ...add chain IIDs</span>
+        <span class="n">assembly</span> <span class="o">=</span> <span class="n">add_chain_iid_annotation</span><span class="p">(</span><span class="n">assembly</span><span class="p">)</span>
+
+        <span class="c1"># ...check if we added bonds to the atom array</span>
+
+        <span class="c1"># ...add PN unit IIDs, if we have the `pn_unit_id` annotation</span>
+        <span class="k">if</span> <span class="s2">&quot;pn_unit_id&quot;</span> <span class="ow">in</span> <span class="n">assembly</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">():</span>
+            <span class="n">assembly</span> <span class="o">=</span> <span class="n">add_pn_unit_iid_annotation</span><span class="p">(</span><span class="n">assembly</span><span class="p">)</span>
+
+        <span class="c1"># ...add molecule IIDs, if we have the `molecule_id` annotation</span>
+        <span class="k">if</span> <span class="s2">&quot;molecule_id&quot;</span> <span class="ow">in</span> <span class="n">assembly</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">():</span>
+            <span class="n">assembly</span> <span class="o">=</span> <span class="n">add_molecule_iid_annotation</span><span class="p">(</span><span class="n">assembly</span><span class="p">)</span>
+
+        <span class="c1"># ...update the dictionary</span>
+        <span class="n">assemblies_dict</span><span class="p">[</span><span class="n">assembly_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">assembly</span>
+
+    <span class="k">return</span> <span class="n">assemblies_dict</span></div>
+
+
+
+<div class="viewcode-block" id="add_id_and_entity_annotations">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.add_id_and_entity_annotations">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_id_and_entity_annotations</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds all 6 (&#39;chain&#39;, &#39;pn_unit&#39;, &#39;molecule&#39;) x (&#39;id&#39;, &#39;entity&#39;) annotations to the AtomArray.&quot;&quot;&quot;</span>
+    <span class="c1"># ...annotate PN units (requires bonds)</span>
+    <span class="n">atom_array</span> <span class="o">=</span> <span class="n">add_pn_unit_id_annotation</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+
+    <span class="c1"># ...annotate molecules (requires bonds)</span>
+    <span class="n">atom_array</span> <span class="o">=</span> <span class="n">add_molecule_id_annotation</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+
+    <span class="n">levels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;chain&quot;</span><span class="p">,</span> <span class="s2">&quot;pn_unit&quot;</span><span class="p">,</span> <span class="s2">&quot;molecule&quot;</span><span class="p">]</span>
+    <span class="n">lower_level_ids</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;res_id&quot;</span><span class="p">,</span> <span class="s2">&quot;chain_id&quot;</span><span class="p">,</span> <span class="s2">&quot;pn_unit_id&quot;</span><span class="p">]</span>
+    <span class="n">lower_level_entities</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;res_name&quot;</span><span class="p">,</span> <span class="s2">&quot;chain_entity&quot;</span><span class="p">,</span> <span class="s2">&quot;pn_unit_entity&quot;</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">level</span><span class="p">,</span> <span class="n">lower_level_id</span><span class="p">,</span> <span class="n">lower_level_entity</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">levels</span><span class="p">,</span> <span class="n">lower_level_ids</span><span class="p">,</span> <span class="n">lower_level_entities</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="c1"># ...annotate entities at appropriate level</span>
+        <span class="n">atom_array</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">annotate_entities</span><span class="p">(</span>
+            <span class="n">atom_array</span><span class="o">=</span><span class="n">atom_array</span><span class="p">,</span>
+            <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
+            <span class="n">lower_level_id</span><span class="o">=</span><span class="n">lower_level_id</span><span class="p">,</span>
+            <span class="n">lower_level_entity</span><span class="o">=</span><span class="n">lower_level_entity</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">atom_array</span></div>
+
+
+
+<div class="viewcode-block" id="add_chain_type_annotation">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.add_chain_type_annotation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_chain_type_annotation</span><span class="p">(</span>
+    <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">,</span> <span class="n">chain_info_dict</span><span class="p">:</span> <span class="nb">dict</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adds a chain_type annotation to the AtomArray.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - atom_array (AtomArray | AtomArrayStack): The full atom array.</span>
+<span class="sd">        - chain_info_dict (dict): A dictionary mapping chain IDs to chain information.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        - AtomArray | AtomArrayStack: The AtomArray with the chain_type annotation added as an integer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Add annotation for chain_type as an integer</span>
+    <span class="n">atom_array</span><span class="o">.</span><span class="n">add_annotation</span><span class="p">(</span><span class="s2">&quot;chain_type&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">chain_id</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_id</span><span class="p">):</span>
+        <span class="n">chain_type</span> <span class="o">=</span> <span class="n">chain_info_dict</span><span class="p">[</span><span class="n">chain_id</span><span class="p">][</span><span class="s2">&quot;chain_type&quot;</span><span class="p">]</span>
+        <span class="c1"># We use the integer representation of the ChainType enum for efficiency</span>
+        <span class="n">atom_array</span><span class="o">.</span><span class="n">chain_type</span><span class="p">[</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">==</span> <span class="n">chain_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">chain_type</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="c1"># Return the modified atom array</span>
+    <span class="k">return</span> <span class="n">atom_array</span></div>
+
+
+
+<div class="viewcode-block" id="add_atomic_number_annotation">
+<a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.add_atomic_number_annotation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_atomic_number_annotation</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds the atomic number (atomic_number) annotation to the AtomArray.&quot;&quot;&quot;</span>
+    <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span>
+        <span class="s2">&quot;atomic_number&quot;</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">listmap</span><span class="p">(</span><span class="n">ELEMENT_NAME_TO_ATOMIC_NUMBER</span><span class="o">.</span><span class="n">get</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">char</span><span class="o">.</span><span class="n">upper</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">element</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">atom_array</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,942 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>atomworks.ml.preprocessing.get_pn_unit_data_from_structure &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/preprocessing/get_pn_unit_data_from_structure';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.0.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_color.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">atomworks.ml.preprocessing.get_pn_unit_data_from_structure</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for atomworks.ml.preprocessing.get_pn_unit_data_from_structure</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Pre-process mmCIF files and return a dataframe containing a record for each PN unit in the structure.</span>
+
+<span class="sd">See the `atomworks` README for a term glosssary.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">PathLike</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">struc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">atomworks.ml.preprocessing.utils.structure_utils</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dp</span>  <span class="c1"># to avoid circular imports</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChainType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">not_isin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">CRYSTALLIZATION_AIDS</span><span class="p">,</span> <span class="n">METAL_ELEMENTS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">exists</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.preprocessing.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">CELL_SIZE</span><span class="p">,</span> <span class="n">ClashSeverity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.utils.misc</span><span class="w"> </span><span class="kn">import</span> <span class="n">hash_sequence</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;preprocess&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="DataPreprocessor">
+<a class="viewcode-back" href="../../../../ml/preprocessing.html#atomworks.ml.preprocessing.get_pn_unit_data_from_structure.DataPreprocessor">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DataPreprocessor</span><span class="p">:</span>
+    <span class="c1"># (Whether examples are from the PDB)</span>
+    <span class="n">from_rcsb</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># (Cutoff distances)</span>
+    <span class="n">close_distance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30.0</span>
+    <span class="n">contact_distance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">clash_distance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="c1"># (Misc)</span>
+    <span class="n">ignore_residues</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="c1"># (Efficiency)</span>
+    <span class="n">polymer_pn_unit_limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span>
+    <span class="c1"># (CIFUtils defaults)</span>
+    <span class="n">add_missing_atoms</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">remove_waters</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">remove_ccds</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">CRYSTALLIZATION_AIDS</span><span class="p">)</span>
+    <span class="n">fix_ligands_at_symmetry_centers</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">build_assembly</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span>
+    <span class="n">fix_arginines</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">convert_mse_to_met</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">hydrogen_policy</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;remove&quot;</span><span class="p">,</span> <span class="s2">&quot;infer&quot;</span><span class="p">,</span> <span class="s2">&quot;keep&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;remove&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initialized DataPreprocessor with the following parameters: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_structure_with_atomworks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load structure file using CIFUtils parser.</span>
+
+<span class="sd">        Supported file types: .cif, .cif.gz, .pdb, .pdb.gz</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path (PathLike): The path to the structure file to load.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>  <span class="c1"># for logging</span>
+        <span class="k">return</span> <span class="n">parse</span><span class="p">(</span>
+            <span class="n">filename</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
+            <span class="n">build_assembly</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">build_assembly</span><span class="p">,</span>
+            <span class="n">add_missing_atoms</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">add_missing_atoms</span><span class="p">,</span>
+            <span class="n">remove_waters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">remove_waters</span><span class="p">,</span>
+            <span class="n">remove_ccds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">remove_ccds</span><span class="p">,</span>
+            <span class="n">fix_ligands_at_symmetry_centers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fix_ligands_at_symmetry_centers</span><span class="p">,</span>
+            <span class="n">fix_arginines</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fix_arginines</span><span class="p">,</span>
+            <span class="n">convert_mse_to_met</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">convert_mse_to_met</span><span class="p">,</span>
+            <span class="n">hydrogen_policy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hydrogen_policy</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_filters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply filters to the AtomArray to remove non-biological bonds, ignore residues, and filter out atoms with zero occupancy.&quot;&quot;&quot;</span>
+        <span class="c1"># Avoid modifying the original AtomArray</span>
+        <span class="n">filtered_atom_array</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+
+        <span class="c1"># ----- Filter A: Filter out non-polymers with non-biological bonds to polymers ------</span>
+        <span class="c1"># ... check for non-biological bonds between the current non-polymer PN unit and any polymer (e.g., oxygen-oxygen, etc.)</span>
+        <span class="n">inter_pn_unit_bond_mask</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">get_inter_pn_unit_bond_mask</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">inter_pn_unit_bond_mask</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">pn_units_with_non_biological_bonds</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">get_pn_units_with_non_biological_bonds</span><span class="p">(</span>
+                <span class="n">atom_array</span><span class="p">,</span> <span class="n">inter_pn_unit_bond_mask</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pn_units_with_non_biological_bonds</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># ... filter out non-polymer chains with non-biological bonds to polymer chains</span>
+                <span class="n">non_biological_mask</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span><span class="p">,</span> <span class="n">pn_units_with_non_biological_bonds</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">atom_array</span><span class="o">.</span><span class="n">is_polymer</span>
+                <span class="p">)</span>
+                <span class="n">filtered_atom_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="o">~</span><span class="n">non_biological_mask</span><span class="p">]</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">: Non-biological bonds detected between non-polymer and polymer PN units.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># ----- Filter B: Apply ignore residue list ------</span>
+        <span class="n">processed_ignore_residues</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_residues</span><span class="p">]</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">not_isin</span><span class="p">(</span>
+            <span class="n">filtered_atom_array</span><span class="o">.</span><span class="n">res_name</span><span class="p">,</span> <span class="n">processed_ignore_residues</span>
+        <span class="p">)</span>  <span class="c1"># (Applying filter also remove impacted bonds)</span>
+        <span class="n">filtered_atom_array</span> <span class="o">=</span> <span class="n">filtered_atom_array</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+
+        <span class="c1"># ----- Filter C: Filter out atoms with zero occupancy ------</span>
+        <span class="n">filtered_atom_array</span> <span class="o">=</span> <span class="n">filtered_atom_array</span><span class="p">[</span><span class="n">filtered_atom_array</span><span class="o">.</span><span class="n">occupancy</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">filtered_atom_array</span>
+
+<div class="viewcode-block" id="DataPreprocessor.get_rows">
+<a class="viewcode-back" href="../../../../ml/preprocessing.html#atomworks.ml.preprocessing.get_pn_unit_data_from_structure.DataPreprocessor.get_rows">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_rows</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">path_to_structure</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">ligand_scores</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;RSCC&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;RSR&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;completeness&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;intermolecular_clashes&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;is_best_instance&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ranking_model_fit&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ranking_model_geometry&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Processes a structure file, applies filters, and generates a list of records to be loaded at train-time.</span>
+
+<span class="sd">        We create a record for each PN unit (protein, nucleic acid, or non-polymer) in the structure.</span>
+<span class="sd">        Each record contains information about a query PN unit and its partner (contacting) PN units in the structure.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path_to_structure (PathLike): The path to the structure file to process. Must be readable by CIFUtils.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: A list of dictionaries. Each dictionary contains information about a query PN unit and its partner PN units.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path_to_structure</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path_to_structure</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path_to_structure</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File not found: </span><span class="si">{</span><span class="n">path_to_structure</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">result_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_structure_with_atomworks</span><span class="p">(</span><span class="n">path_to_structure</span><span class="p">)</span>
+        <span class="nb">id</span> <span class="o">=</span> <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>  <span class="c1"># For logging</span>
+
+        <span class="c1"># If applicable, query the RCSB for ligand validity scores</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_rcsb</span> <span class="ow">and</span> <span class="n">exists</span><span class="p">(</span><span class="n">ligand_scores</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ligand_scores</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Attempt fetching ligand validity scores</span>
+            <span class="n">ligand_validity_scores</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">get_ligand_validity_scores_from_pdb_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">ligand_validity_scores</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ligand_validity_scores</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># ... if successful, filter and format the data</span>
+                <span class="n">ligand_validity_scores</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">ligand_validity_scores</span><span class="p">)</span>
+                <span class="n">ligand_validity_scores</span> <span class="o">=</span> <span class="n">ligand_validity_scores</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s2">&quot;asym_id&quot;</span><span class="p">,</span> <span class="s2">&quot;res_name&quot;</span><span class="p">])[</span><span class="n">ligand_scores</span><span class="p">]</span>
+
+                <span class="c1"># Ensure the index is sorted lexicographically</span>
+                <span class="n">ligand_validity_scores</span><span class="o">.</span><span class="n">sort_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># ... if unsuccessful, log and set to None</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to fetch ligand validity scores for ID </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">ligand_validity_scores</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ligand_validity_scores</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Process each assembly</span>
+        <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">assembly_id</span> <span class="ow">in</span> <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;assemblies&quot;</span><span class="p">]:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_pn_unit_metadata_for_assembly</span><span class="p">(</span><span class="n">result_dict</span><span class="p">,</span> <span class="n">assembly_id</span><span class="p">,</span> <span class="n">ligand_validity_scores</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># The path info should be saved as well</span>
+                <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                    <span class="n">row</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path_to_structure</span>
+                <span class="n">records</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">records</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_pn_unit_metadata_for_assembly</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">result_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">assembly_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">ligand_validity_scores</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Processes an atom array that represents a single assembly and generate a list of metadata records for each PN unit.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            result_dict (dict): The dictionary containing the output of CIFUtils parser.</span>
+<span class="sd">            assembly_id (str): The ID of the assembly to process.</span>
+<span class="sd">            ligand_validity_scores (pd.DataFrame | None): A DataFrame containing ligand validity scores, otherwise None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list[dict[str, Any]]: A list of dictionaries, each containing metadata about a PN unit in the assembly.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">id</span> <span class="o">=</span> <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+        <span class="n">full_atom_array</span> <span class="o">=</span> <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;assemblies&quot;</span><span class="p">][</span><span class="n">assembly_id</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Choose the first model</span>
+
+        <span class="n">chain_info_dict</span> <span class="o">=</span> <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;chain_info&quot;</span><span class="p">]</span>
+
+        <span class="c1"># ---------- Step 1: Upfront pre-processing ---------- #</span>
+
+        <span class="c1"># Re-map PN unit IDs to integers, and keep a dictionary that maps back to the verbose PN unit IDs</span>
+        <span class="c1"># (We will use the integer IDs for memory efficiency downstream)</span>
+        <span class="n">ids_to_remap</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;pn_unit_id&quot;</span><span class="p">,</span> <span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">]</span>
+        <span class="n">id_map_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">id_to_remap</span> <span class="ow">in</span> <span class="n">ids_to_remap</span><span class="p">:</span>
+            <span class="n">ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">full_atom_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="n">id_to_remap</span><span class="p">))</span>
+
+            <span class="c1"># ... create the new map</span>
+            <span class="n">mapped_ids</span> <span class="o">=</span> <span class="p">{</span><span class="n">old_id</span><span class="p">:</span> <span class="n">new_id</span> <span class="k">for</span> <span class="n">new_id</span><span class="p">,</span> <span class="n">old_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ids</span><span class="p">)}</span>
+
+            <span class="c1"># ... apply the new map</span>
+            <span class="n">new_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">mapped_ids</span><span class="p">[</span><span class="n">old_id</span><span class="p">]</span> <span class="k">for</span> <span class="n">old_id</span> <span class="ow">in</span> <span class="n">full_atom_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="n">id_to_remap</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span>
+            <span class="p">)</span>
+            <span class="n">full_atom_array</span><span class="o">.</span><span class="n">del_annotation</span><span class="p">(</span><span class="n">id_to_remap</span><span class="p">)</span>  <span class="c1"># Remove the old annotation (so that we can change the type)</span>
+            <span class="n">full_atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="n">id_to_remap</span><span class="p">,</span> <span class="n">new_ids</span><span class="p">)</span>
+
+            <span class="c1"># ... set the reverse map so we can look up the verbose IDs later</span>
+            <span class="n">id_map_dict</span><span class="p">[</span><span class="n">id_to_remap</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">new_id</span><span class="p">:</span> <span class="n">old_id</span> <span class="k">for</span> <span class="n">old_id</span><span class="p">,</span> <span class="n">new_id</span> <span class="ow">in</span> <span class="n">mapped_ids</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+        <span class="c1"># ---------- Step 2: Apply filters to the AtomArray ---------- #</span>
+        <span class="n">filtered_atom_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_filters</span><span class="p">(</span><span class="n">full_atom_array</span><span class="p">)</span>
+
+        <span class="c1"># ---------- Step 3: Load entry-level criteria ---------- #</span>
+        <span class="n">loi_ligand_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;ligand_info&quot;</span><span class="p">][</span><span class="s2">&quot;ligand_of_interest&quot;</span><span class="p">])</span>
+        <span class="n">num_polymer_pn_units</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">filtered_atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span><span class="p">[</span><span class="n">filtered_atom_array</span><span class="o">.</span><span class="n">is_polymer</span><span class="p">]))</span>
+
+        <span class="k">if</span> <span class="n">num_polymer_pn_units</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">polymer_pn_unit_limit</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;(Example </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">num_polymer_pn_units</span><span class="si">}</span><span class="s2"> polymer PN units in entry; skipping for performance reasons.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># ---------- Step 4: Detect and resolve clashes ---------- #</span>
+
+        <span class="c1"># Build cell list for rapid distance computations</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filtered_atom_array</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(Example </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">): No atoms remaining after filtering.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="n">cell_list</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">CellList</span><span class="p">(</span><span class="n">filtered_atom_array</span><span class="p">,</span> <span class="n">cell_size</span><span class="o">=</span><span class="n">CELL_SIZE</span><span class="p">)</span>
+
+        <span class="c1"># Get the unique polymer/non-polymer unit IDs from the AtomArray (we will consider process each moving forward)</span>
+        <span class="n">pn_unit_iids_to_consider</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">filtered_atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span><span class="p">)</span>
+
+        <span class="c1"># Find inter-PN unit clashes</span>
+        <span class="n">clash_severity</span> <span class="o">=</span> <span class="n">ClashSeverity</span><span class="o">.</span><span class="n">NO_CLASH</span>
+        <span class="n">clashing_pn_units_set</span><span class="p">,</span> <span class="n">clashing_pn_units_dict</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">get_clashing_pn_units</span><span class="p">(</span>
+            <span class="n">pn_unit_iids_to_consider</span><span class="p">,</span> <span class="n">filtered_atom_array</span><span class="p">,</span> <span class="n">cell_list</span><span class="p">,</span> <span class="n">clash_distance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clash_distance</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">clashing_pn_units_set</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;(Example </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">): Clash detected between PN units: </span><span class="si">{</span><span class="p">[</span><span class="n">id_map_dict</span><span class="p">[</span><span class="s1">&#39;pn_unit_iid&#39;</span><span class="p">][</span><span class="n">pn_unit</span><span class="p">]</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">pn_unit</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">clashing_pn_units_set</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">filtered_atom_array</span><span class="p">,</span> <span class="n">clash_severity</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">handle_clashing_pn_units</span><span class="p">(</span>
+                <span class="n">clashing_pn_units_set</span><span class="p">,</span> <span class="n">clashing_pn_units_dict</span><span class="p">,</span> <span class="n">filtered_atom_array</span><span class="p">,</span> <span class="n">id_map_dict</span><span class="p">[</span><span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Remake the cell list, since we have removed atoms</span>
+            <span class="n">cell_list</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">CellList</span><span class="p">(</span><span class="n">filtered_atom_array</span><span class="p">,</span> <span class="n">cell_size</span><span class="o">=</span><span class="n">CELL_SIZE</span><span class="p">)</span>
+
+        <span class="c1"># ---------- Step 5: Find contacting/partner PN units and build dataframes ---------- #</span>
+        <span class="c1"># Loop through all considered query PN units, including proteins (single-chain), nucleic acids (single-chain), and ligands (single- or multi-chain)</span>
+        <span class="n">assembly_records</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Filter out pn_units that have length 0 atom arrays</span>
+        <span class="n">pn_unit_iids_to_consider</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">pn_unit_iid</span>
+            <span class="k">for</span> <span class="n">pn_unit_iid</span> <span class="ow">in</span> <span class="n">pn_unit_iids_to_consider</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filtered_atom_array</span><span class="p">[</span><span class="n">filtered_atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span> <span class="o">==</span> <span class="n">pn_unit_iid</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">query_pn_unit_iid</span> <span class="ow">in</span> <span class="n">pn_unit_iids_to_consider</span><span class="p">:</span>
+            <span class="n">query_pn_unit_atom_array</span> <span class="o">=</span> <span class="n">filtered_atom_array</span><span class="p">[</span><span class="n">filtered_atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span> <span class="o">==</span> <span class="n">query_pn_unit_iid</span><span class="p">]</span>
+
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">query_pn_unit_atom_array</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Query PN unit </span><span class="si">{</span><span class="n">query_pn_unit_iid</span><span class="si">}</span><span class="s2"> has zero atoms&quot;</span>
+
+            <span class="n">query_pn_unit_type</span> <span class="o">=</span> <span class="n">ChainType</span><span class="p">(</span>
+                <span class="n">query_pn_unit_atom_array</span><span class="o">.</span><span class="n">chain_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span>  <span class="c1"># All chains in a PN unit have the same type</span>
+
+            <span class="c1"># Find contacting PN units, which we will use to construct interfaces</span>
+            <span class="n">contacting_pn_unit_iids</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">get_contacting_pn_units</span><span class="p">(</span>
+                <span class="n">query_pn_unit</span><span class="o">=</span><span class="n">query_pn_unit_atom_array</span><span class="p">,</span>
+                <span class="n">filtered_atom_array</span><span class="o">=</span><span class="n">filtered_atom_array</span><span class="p">,</span>
+                <span class="n">cell_list</span><span class="o">=</span><span class="n">cell_list</span><span class="p">,</span>
+                <span class="n">contact_distance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">contact_distance</span><span class="p">,</span>
+                <span class="n">min_contacts_required</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">calculate_min_distance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Find close PN units, which will be used to determine which PN units to load at train-time</span>
+            <span class="n">close_pn_unit_iids</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">get_contacting_pn_units</span><span class="p">(</span>
+                <span class="n">query_pn_unit</span><span class="o">=</span><span class="n">query_pn_unit_atom_array</span><span class="p">,</span>
+                <span class="n">filtered_atom_array</span><span class="o">=</span><span class="n">filtered_atom_array</span><span class="p">,</span>
+                <span class="n">cell_list</span><span class="o">=</span><span class="n">cell_list</span><span class="p">,</span>
+                <span class="n">contact_distance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">close_distance</span><span class="p">,</span>
+                <span class="n">min_contacts_required</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">calculate_min_distance</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">close_pn_unit_iids</span> <span class="o">=</span> <span class="p">[</span><span class="n">id_map_dict</span><span class="p">[</span><span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">][</span><span class="n">pn_unit</span><span class="p">[</span><span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">]]</span> <span class="k">for</span> <span class="n">pn_unit</span> <span class="ow">in</span> <span class="n">close_pn_unit_iids</span><span class="p">]</span>
+
+            <span class="c1"># Sort contacting PN units by number of contacting atoms and then by minimum distance</span>
+            <span class="n">contacting_pn_unit_iids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+                <span class="n">contacting_pn_unit_iids</span><span class="p">,</span>
+                <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;num_contacts&quot;</span><span class="p">],</span> <span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;min_distance&quot;</span><span class="p">]),</span>
+                <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Determine the primary polymer chain, which is the first partner polymer PN unit for non-polymers, or the query PN unit itself for polymers</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">query_pn_unit_type</span><span class="o">.</span><span class="n">is_non_polymer</span><span class="p">():</span>
+                <span class="n">primary_polymer_partner_pn_unit_iid</span> <span class="o">=</span> <span class="n">query_pn_unit_iid</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">polymer_pn_unit_iids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">filtered_atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span><span class="p">[</span><span class="n">filtered_atom_array</span><span class="o">.</span><span class="n">is_polymer</span><span class="p">])</span>
+                <span class="c1"># Find the first polymer PN unit in the contacting_pn_unit_iids sorted list</span>
+                <span class="n">partner_polymer_pn_units</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">partner</span> <span class="k">for</span> <span class="n">partner</span> <span class="ow">in</span> <span class="n">contacting_pn_unit_iids</span> <span class="k">if</span> <span class="n">partner</span><span class="p">[</span><span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">polymer_pn_unit_iids</span>
+                <span class="p">]</span>
+                <span class="n">primary_polymer_partner_pn_unit_iid</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">partner_polymer_pn_units</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">partner_polymer_pn_units</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="p">)</span>
+
+            <span class="n">type_specific_criteria</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="c1"># For non-polymers, calculate additional information</span>
+            <span class="k">if</span> <span class="n">query_pn_unit_type</span><span class="o">.</span><span class="n">is_non_polymer</span><span class="p">():</span>
+                <span class="n">bonded_polymer_pn_units</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">get_bonded_polymer_pn_units</span><span class="p">(</span><span class="n">query_pn_unit_iid</span><span class="p">,</span> <span class="n">filtered_atom_array</span><span class="p">)</span>
+
+                <span class="c1"># ... check is SOI</span>
+                <span class="n">residue_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">query_pn_unit_atom_array</span><span class="o">.</span><span class="n">res_name</span><span class="p">)</span>
+                <span class="n">is_loi</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">loi_ligand_set</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">residue_names</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+                <span class="c1"># ... check if metal</span>
+                <span class="n">is_metal</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">query_pn_unit_atom_array</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">query_pn_unit_atom_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="n">METAL_ELEMENTS</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">ligand_validity_scores</span><span class="p">):</span>
+                    <span class="n">_query_pn_unit_ligand_ids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+                        <span class="nb">set</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">query_pn_unit_atom_array</span><span class="o">.</span><span class="n">chain_id</span><span class="p">,</span> <span class="n">query_pn_unit_atom_array</span><span class="o">.</span><span class="n">res_name</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+                    <span class="p">)</span>
+
+                    <span class="c1"># ... subset to the ids that have validity scores</span>
+                    <span class="n">_ligands_with_scores</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="n">_id</span> <span class="k">for</span> <span class="n">_id</span> <span class="ow">in</span> <span class="n">_query_pn_unit_ligand_ids</span> <span class="k">if</span> <span class="n">_id</span> <span class="ow">in</span> <span class="n">ligand_validity_scores</span><span class="o">.</span><span class="n">index</span>
+                    <span class="p">]</span>
+
+                    <span class="n">ligand_validity</span> <span class="o">=</span> <span class="n">ligand_validity_scores</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">_ligands_with_scores</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ligand_validity</span> <span class="o">=</span> <span class="p">{}</span>
+
+                <span class="c1"># Get the sequence of residues in the non-polymer PN unit</span>
+                <span class="n">non_polymer_res_names</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">get_residues</span><span class="p">(</span><span class="n">query_pn_unit_atom_array</span><span class="p">)[</span>
+                    <span class="mi">1</span>
+                <span class="p">]</span>  <span class="c1"># (`get_residues` returns a tuple of (ids, names))</span>
+
+                <span class="c1"># Other options to consider for criteria:</span>
+                <span class="c1"># -- Get the diameter of the PN unit</span>
+                <span class="c1"># -- Get whether the query PN unit is coordinated</span>
+                <span class="c1"># -- Get polar contacts</span>
+                <span class="c1"># -- Get fraction of atoms in hull</span>
+
+                <span class="n">type_specific_criteria</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;is_metal&quot;</span><span class="p">:</span> <span class="n">is_metal</span><span class="p">,</span>
+                    <span class="s2">&quot;is_loi&quot;</span><span class="p">:</span> <span class="n">is_loi</span><span class="p">,</span>
+                    <span class="s2">&quot;bonded_polymer_pn_units&quot;</span><span class="p">:</span> <span class="n">bonded_polymer_pn_units</span><span class="p">,</span>
+                    <span class="s2">&quot;ligand_validity&quot;</span><span class="p">:</span> <span class="n">ligand_validity</span><span class="p">,</span>
+                    <span class="s2">&quot;non_polymer_res_names&quot;</span><span class="p">:</span> <span class="n">non_polymer_res_names</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="k">elif</span> <span class="n">query_pn_unit_type</span><span class="o">.</span><span class="n">is_polymer</span><span class="p">():</span>
+                <span class="n">chain_id</span> <span class="o">=</span> <span class="n">query_pn_unit_atom_array</span><span class="o">.</span><span class="n">chain_id</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># (Polymers have only one chain)</span>
+                <span class="n">ec_numbers</span> <span class="o">=</span> <span class="n">chain_info_dict</span><span class="p">[</span><span class="n">chain_id</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ec_numbers&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">type_specific_criteria</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;ec_numbers&quot;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">ec_numbers</span><span class="p">),</span>
+                    <span class="s2">&quot;sequence_length&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span>
+                        <span class="n">chain_info_dict</span><span class="p">[</span><span class="n">chain_id</span><span class="p">][</span><span class="s2">&quot;processed_entity_canonical_sequence&quot;</span><span class="p">]</span>
+                    <span class="p">),</span>  <span class="c1"># (We need to use the processed sequence)</span>
+                    <span class="s2">&quot;processed_entity_canonical_sequence&quot;</span><span class="p">:</span> <span class="n">chain_info_dict</span><span class="p">[</span><span class="n">chain_id</span><span class="p">][</span>
+                        <span class="s2">&quot;processed_entity_canonical_sequence&quot;</span>
+                    <span class="p">],</span>
+                    <span class="s2">&quot;processed_entity_non_canonical_sequence&quot;</span><span class="p">:</span> <span class="n">chain_info_dict</span><span class="p">[</span><span class="n">chain_id</span><span class="p">][</span>
+                        <span class="s2">&quot;processed_entity_non_canonical_sequence&quot;</span>
+                    <span class="p">],</span>
+                <span class="p">}</span>
+
+            <span class="c1"># Sequence information</span>
+            <span class="n">q_pn_unit_processed_entity_canonical_sequence</span> <span class="o">=</span> <span class="n">type_specific_criteria</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s2">&quot;processed_entity_canonical_sequence&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span>
+            <span class="p">)</span>
+            <span class="n">q_pn_unit_processed_entity_non_canonical_sequence</span> <span class="o">=</span> <span class="n">type_specific_criteria</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s2">&quot;processed_entity_non_canonical_sequence&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Sequence hashes</span>
+            <span class="n">q_pn_unit_processed_entity_canonical_sequence_hash</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">hash_sequence</span><span class="p">(</span><span class="n">q_pn_unit_processed_entity_canonical_sequence</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">q_pn_unit_processed_entity_canonical_sequence</span>
+                <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">)</span>
+            <span class="n">q_pn_unit_processed_entity_non_canonical_sequence_hash</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">hash_sequence</span><span class="p">(</span><span class="n">q_pn_unit_processed_entity_non_canonical_sequence</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">q_pn_unit_processed_entity_non_canonical_sequence</span>
+                <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Resolved residues (we already removed atoms with zero occupancy)</span>
+            <span class="n">num_resolved_residues</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">get_residue_count</span><span class="p">(</span><span class="n">query_pn_unit_atom_array</span><span class="p">)</span>
+
+            <span class="c1"># fmt: off</span>
+            <span class="n">pn_unit_record</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="c1"># ...add entry-level data  to the record (e.g., resolution, deposition date, etc.)</span>
+                <span class="s2">&quot;pdb_id&quot;</span><span class="p">:</span> <span class="nb">id</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_rcsb</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;assembly_id&quot;</span><span class="p">:</span> <span class="n">assembly_id</span><span class="p">,</span>
+                <span class="s2">&quot;clash_severity&quot;</span><span class="p">:</span> <span class="n">clash_severity</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s2">&quot;resolution&quot;</span><span class="p">:</span> <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">][</span><span class="s2">&quot;resolution&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;deposition_date&quot;</span><span class="p">:</span> <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">][</span><span class="s2">&quot;deposition_date&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;release_date&quot;</span><span class="p">:</span> <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">][</span><span class="s2">&quot;release_date&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">][</span><span class="s2">&quot;method&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;num_polymer_pn_units&quot;</span><span class="p">:</span> <span class="n">num_polymer_pn_units</span><span class="p">,</span>
+                <span class="s2">&quot;num_resolved_atoms_in_processed_assembly&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">filtered_atom_array</span><span class="p">),</span>
+                <span class="s2">&quot;total_num_atoms_in_unprocessed_assembly&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">full_atom_array</span><span class="p">),</span>
+                <span class="s2">&quot;all_pn_unit_iids_after_processing&quot;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span><span class="n">id_map_dict</span><span class="p">[</span><span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">][</span><span class="n">pn_unit_iid</span><span class="p">]</span> <span class="k">for</span> <span class="n">pn_unit_iid</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">filtered_atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span><span class="p">)]),</span> <span class="c1"># e.g., what we should load at train-time, after resolving clashes</span>
+
+                <span class="c1"># ...add the fundamental PN unit-level data to the record directly from the AtomArray</span>
+                <span class="s2">&quot;q_pn_unit_id&quot;</span><span class="p">:</span> <span class="n">id_map_dict</span><span class="p">[</span><span class="s2">&quot;pn_unit_id&quot;</span><span class="p">][</span><span class="n">query_pn_unit_atom_array</span><span class="o">.</span><span class="n">pn_unit_id</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+                <span class="s2">&quot;q_pn_unit_iid&quot;</span><span class="p">:</span> <span class="n">id_map_dict</span><span class="p">[</span><span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">][</span><span class="n">query_pn_unit_iid</span><span class="p">],</span>
+                <span class="s2">&quot;q_pn_unit_molecule_id&quot;</span><span class="p">:</span> <span class="n">query_pn_unit_atom_array</span><span class="o">.</span><span class="n">molecule_id</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>  <span class="c1"># All atoms in a PN unit have the same molecule ID</span>
+                <span class="s2">&quot;q_pn_unit_molecule_iid&quot;</span><span class="p">:</span> <span class="n">query_pn_unit_atom_array</span><span class="o">.</span><span class="n">molecule_iid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="c1"># All atoms in a PN unit have the same molecule IID</span>
+                <span class="s2">&quot;q_pn_unit_transformation_id&quot;</span><span class="p">:</span> <span class="n">query_pn_unit_atom_array</span><span class="o">.</span><span class="n">transformation_id</span><span class="p">[</span>
+                    <span class="mi">0</span>
+                <span class="p">],</span>  <span class="c1"># All atoms in a PN unit have the same transformation ID</span>
+                <span class="s2">&quot;q_pn_unit_type&quot;</span><span class="p">:</span> <span class="n">query_pn_unit_type</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s2">&quot;q_pn_unit_is_polymer&quot;</span><span class="p">:</span> <span class="n">query_pn_unit_type</span><span class="o">.</span><span class="n">is_polymer</span><span class="p">(),</span>
+
+                <span class="c1"># ...add derived PN unit-level data to the record</span>
+                <span class="s2">&quot;q_pn_unit_num_resolved_atoms&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">query_pn_unit_atom_array</span><span class="p">),</span>
+                <span class="s2">&quot;q_pn_unit_is_multichain&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">query_pn_unit_atom_array</span><span class="o">.</span><span class="n">chain_id</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s2">&quot;q_pn_unit_is_multiresidue&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">query_pn_unit_atom_array</span><span class="o">.</span><span class="n">res_id</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s2">&quot;q_pn_unit_num_resolved_residues&quot;</span><span class="p">:</span> <span class="n">num_resolved_residues</span><span class="p">,</span>
+                <span class="c1"># (Type-specific) Non-polymer criteria</span>
+                <span class="s2">&quot;q_pn_unit_is_metal&quot;</span><span class="p">:</span> <span class="n">type_specific_criteria</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;is_metal&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+                <span class="s2">&quot;q_pn_unit_is_loi&quot;</span><span class="p">:</span> <span class="n">type_specific_criteria</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;is_loi&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+                <span class="s2">&quot;q_pn_unit_ligand_validity&quot;</span><span class="p">:</span> <span class="n">type_specific_criteria</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ligand_validity&quot;</span><span class="p">,</span> <span class="p">{}),</span>
+                <span class="s2">&quot;q_pn_unit_bonded_polymer_pn_units&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="n">id_map_dict</span><span class="p">[</span><span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">][</span><span class="n">pn_unit</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">pn_unit</span> <span class="ow">in</span> <span class="n">type_specific_criteria</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;bonded_polymer_pn_units&quot;</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
+                <span class="p">},</span>  <span class="c1"># Covalent modifications</span>
+                <span class="s2">&quot;q_pn_unit_non_polymer_res_names&quot;</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">type_specific_criteria</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;non_polymer_res_names&quot;</span><span class="p">,</span> <span class="p">[])),</span>
+                <span class="c1"># (Type-specific) Polymer criteria</span>
+                <span class="s2">&quot;q_pn_unit_ec_numbers&quot;</span><span class="p">:</span> <span class="n">type_specific_criteria</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ec_numbers&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+                <span class="s2">&quot;q_pn_unit_sequence_length&quot;</span><span class="p">:</span> <span class="n">type_specific_criteria</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sequence_length&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+
+                <span class="c1"># ...sequences</span>
+                <span class="s2">&quot;q_pn_unit_processed_entity_canonical_sequence&quot;</span><span class="p">:</span> <span class="n">q_pn_unit_processed_entity_canonical_sequence</span><span class="p">,</span>
+                <span class="s2">&quot;q_pn_unit_processed_entity_non_canonical_sequence&quot;</span><span class="p">:</span> <span class="n">q_pn_unit_processed_entity_non_canonical_sequence</span><span class="p">,</span>
+
+                <span class="c1"># ...sequence hashes</span>
+                <span class="s2">&quot;q_pn_unit_processed_entity_canonical_sequence_hash&quot;</span><span class="p">:</span> <span class="n">q_pn_unit_processed_entity_canonical_sequence_hash</span><span class="p">,</span>
+                <span class="s2">&quot;q_pn_unit_processed_entity_non_canonical_sequence_hash&quot;</span><span class="p">:</span> <span class="n">q_pn_unit_processed_entity_non_canonical_sequence_hash</span><span class="p">,</span>
+
+                <span class="c1"># ...partners</span>
+                <span class="s2">&quot;q_pn_unit_primary_polymer_partner&quot;</span><span class="p">:</span> <span class="n">id_map_dict</span><span class="p">[</span><span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">][</span><span class="n">primary_polymer_partner_pn_unit_iid</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">primary_polymer_partner_pn_unit_iid</span>
+                <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;q_pn_unit_contacting_pn_unit_iids&quot;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">:</span> <span class="n">id_map_dict</span><span class="p">[</span><span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">][</span><span class="n">partner</span><span class="p">[</span><span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">]],</span>
+                            <span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">partner</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">},</span>
+                        <span class="p">}</span>
+                        <span class="k">for</span> <span class="n">partner</span> <span class="ow">in</span> <span class="n">contacting_pn_unit_iids</span>
+                    <span class="p">]</span>
+                <span class="p">),</span>
+                <span class="s2">&quot;q_pn_unit_close_pn_unit_iids&quot;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">close_pn_unit_iids</span><span class="p">),</span>
+            <span class="p">}</span>
+            <span class="c1"># fmt: on</span>
+
+            <span class="n">assembly_records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pn_unit_record</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">assembly_records</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
