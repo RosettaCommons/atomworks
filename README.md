@@ -108,7 +108,7 @@ See [usage examples](https://baker-laboratory.github.io/atomworks-dev/latest/aut
 ## Contribution
 
 We welcome improvements!  
-Please see the [full documentation](https://baker-laboratory.github.io/atomworks-dev/latest) for contribution guidelines.
+Please see the [full documentation](https://baker-laboratory.github.io/atomworks-dev/latest/index.html) for contribution guidelines.
 
 ## Citation
 
