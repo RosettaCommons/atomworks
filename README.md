@@ -8,6 +8,8 @@
 
 **atomworks** is an open-source platform that maximizes research velocity for biomolecular modeling tasks. Much like how [Torchdata](https://docs.pytorch.org/data/beta/index.html) enables rapid prototyping within the vision and language domains, AtomWorks aims to accelerate development and experimentation within biomolecular modeling.
 
+> **⚠️ Notice:** We are currently finalizing some cleanup work within our repositories. Please expect the APIs (e.g., function and class names, inputs and outputs) to stabilize within the next two weeks. Thank you for your patience!
+
 If you're looking for the models themselves (e.g., RF3, MPNN) that integrate with AtomWorks rather than the underlying framework, check out [ModelForge](https://github.com/RosettaCommons/modelforge)
 
 AtomWorks is composed of two symbiotic libraries:
