@@ -57,7 +57,7 @@ html_static_path = ["_static"]
 
 # Theme options
 html_theme_options = {
-    "show_nav_level": 1,
+    "show_nav_level": 2,
     "collapse_navigation": False,
     "navigation_depth": -1,  # Unlimited depth
     "globaltoc_collapse": False,
