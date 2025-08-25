@@ -19,11 +19,10 @@ import pandas as pd
 from biotite.structure import AtomArray
 
 import atomworks.ml.preprocessing.utils.structure_utils as dp  # to avoid circular imports
+from atomworks.common import exists, not_isin
+from atomworks.constants import CRYSTALLIZATION_AIDS, METAL_ELEMENTS
 from atomworks.enums import ChainType
 from atomworks.io import parse
-from atomworks.io.common import not_isin
-from atomworks.io.constants import CRYSTALLIZATION_AIDS, METAL_ELEMENTS
-from atomworks.ml.common import exists
 from atomworks.ml.preprocessing.constants import CELL_SIZE, ClashSeverity
 from atomworks.ml.utils.misc import hash_sequence
 

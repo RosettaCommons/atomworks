@@ -7,12 +7,12 @@ import numpy as np
 import pytest
 import torch
 
-from atomworks.enums import ChainType
-from atomworks.io import parse
-from atomworks.io.constants import (
+from atomworks.constants import (
     AF3_EXCLUDED_LIGANDS,
     GAP,
 )
+from atomworks.enums import ChainType
+from atomworks.io import parse
 from atomworks.io.utils.testing import assert_same_atom_array
 from atomworks.ml.datasets.parsers.base import DEFAULT_CIF_PARSER_ARGS
 from atomworks.ml.pipelines.af3 import build_af3_transform_pipeline

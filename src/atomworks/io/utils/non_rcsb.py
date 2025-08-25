@@ -16,14 +16,14 @@ import numpy as np
 from biotite.structure import AtomArray
 from biotite.structure.io.pdbx import CIFCategory
 
-from atomworks.enums import ChainType
-from atomworks.io.constants import (
+from atomworks.constants import (
     AA_LIKE_CHEM_TYPES,
     DNA_LIKE_CHEM_TYPES,
     POLYPEPTIDE_D_CHEM_TYPES,
     POLYPEPTIDE_L_CHEM_TYPES,
     RNA_LIKE_CHEM_TYPES,
 )
+from atomworks.enums import ChainType
 from atomworks.io.utils.ccd import get_chem_comp_type
 from atomworks.io.utils.selection import get_residue_starts
 from atomworks.io.utils.sequence import get_1_from_3_letter_code

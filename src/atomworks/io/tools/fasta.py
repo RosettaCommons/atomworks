@@ -6,8 +6,8 @@ import logging
 import os
 import re
 
+from atomworks.constants import CCD_MIRROR_PATH
 from atomworks.enums import ChainType
-from atomworks.io.constants import CCD_MIRROR_PATH
 from atomworks.io.utils.ccd import (
     check_ccd_codes_are_available,
 )

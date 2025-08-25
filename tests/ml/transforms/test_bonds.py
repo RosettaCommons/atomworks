@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 import torch
 
-from atomworks.io.constants import STANDARD_AA
+from atomworks.constants import STANDARD_AA
 from atomworks.ml.encoding_definitions import AF3SequenceEncoding
 from atomworks.ml.transforms.atom_array import AddWithinChainInstanceResIdx, AddWithinPolyResIdxAnnotation
 from atomworks.ml.transforms.atomize import AtomizeByCCDName

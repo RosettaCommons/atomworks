@@ -2,7 +2,7 @@ import biotite.structure as struc
 import numpy as np
 import pytest
 
-from atomworks.io.constants import ELEMENT_NAME_TO_ATOMIC_NUMBER
+from atomworks.constants import ELEMENT_NAME_TO_ATOMIC_NUMBER
 from atomworks.ml.encoding_definitions import AF3_TOKENS
 from atomworks.ml.transforms.atomize import AtomizeByCCDName
 from atomworks.ml.transforms.symmetry import (

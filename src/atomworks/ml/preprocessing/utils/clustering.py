@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from atomworks.ml.common import exists
+from atomworks.common import exists
 from atomworks.ml.preprocessing.constants import NA_VALUES
 from atomworks.ml.preprocessing.utils.fasta import create_fasta_file_from_df
 

@@ -6,7 +6,7 @@ from pathlib import Path  # noqa: F401
 import numpy as np
 import pytest
 
-from atomworks.io.constants import CRYSTALLIZATION_AIDS
+from atomworks.constants import CRYSTALLIZATION_AIDS
 from atomworks.io.parser import parse
 from atomworks.io.transforms import atom_array as ta
 from atomworks.io.utils.io_utils import to_cif_file  # noqa: F401
@@ -73,7 +73,7 @@ def test_regression_against_stored_result(pdb_id: str):
     # )
 
     # ## FOR DEBUGGING REGRESSION TESTS UNCOMMENT:
-    from atomworks.io.common import sum_string_arrays
+    from atomworks.common import sum_string_arrays
 
     def get_atom_identifiers(atom_array):
         return sum_string_arrays(

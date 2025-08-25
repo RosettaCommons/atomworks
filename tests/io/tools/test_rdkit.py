@@ -4,7 +4,7 @@ import pytest
 from biotite.structure import AtomArray
 from rdkit import Chem
 
-from atomworks.io.constants import STANDARD_AA
+from atomworks.constants import STANDARD_AA
 from atomworks.io.tools.inference import components_to_atom_array
 from atomworks.io.tools.rdkit import (
     atom_array_from_rdkit,

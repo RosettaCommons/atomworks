@@ -3,7 +3,7 @@ from typing import Any
 import pytest
 import torch
 
-from atomworks.io.constants import STANDARD_AA, STANDARD_DNA, STANDARD_RNA
+from atomworks.constants import STANDARD_AA, STANDARD_DNA, STANDARD_RNA
 from atomworks.ml.encoding_definitions import RF2AA_ATOM36_ENCODING, AF3SequenceEncoding
 from atomworks.ml.transforms.atom_array import (
     AddGlobalAtomIdAnnotation,

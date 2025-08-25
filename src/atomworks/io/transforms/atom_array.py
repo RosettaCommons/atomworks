@@ -12,8 +12,8 @@ import numpy as np
 import pandas as pd
 from biotite.structure import AtomArray, AtomArrayStack, stack
 
-from atomworks.io.common import listmap, not_isin, sum_string_arrays
-from atomworks.io.constants import ELEMENT_NAME_TO_ATOMIC_NUMBER, HYDROGEN_LIKE_SYMBOLS, WATER_LIKE_CCDS
+from atomworks.common import listmap, not_isin, sum_string_arrays
+from atomworks.constants import ELEMENT_NAME_TO_ATOMIC_NUMBER, HYDROGEN_LIKE_SYMBOLS, WATER_LIKE_CCDS
 from atomworks.io.utils.bonds import (
     generate_inter_level_bond_hash,
     get_coarse_graph_as_nodes_and_edges,

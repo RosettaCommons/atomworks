@@ -19,7 +19,7 @@ import numpy as np
 from biotite.structure import AtomArray
 from openbabel import openbabel, pybel
 
-from atomworks.io.constants import ATOMIC_NUMBER_TO_ELEMENT, ELEMENT_NAME_TO_ATOMIC_NUMBER, UNKNOWN_LIGAND
+from atomworks.constants import ATOMIC_NUMBER_TO_ELEMENT, ELEMENT_NAME_TO_ATOMIC_NUMBER, UNKNOWN_LIGAND
 from atomworks.ml.transforms._checks import (
     check_atom_array_annotation,
     check_contains_keys,

@@ -10,7 +10,7 @@ import numpy as np
 from biotite.structure.atoms import AtomArray, AtomArrayStack
 
 import atomworks.io.utils.bonds as cb
-from atomworks.io.constants import PDB_MIRROR_PATH
+from atomworks.constants import PDB_MIRROR_PATH
 from atomworks.io.utils.scatter import apply_group_wise, apply_segment_wise
 
 

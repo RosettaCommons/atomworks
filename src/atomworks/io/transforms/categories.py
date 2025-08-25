@@ -17,9 +17,9 @@ import toolz
 from biotite.structure import AtomArray
 from biotite.structure.io.pdbx import CIFBlock
 
+from atomworks.common import exists
+from atomworks.constants import CCD_MIRROR_PATH
 from atomworks.enums import ChainType
-from atomworks.io.common import deduplicate_iterator, exists
-from atomworks.io.constants import CCD_MIRROR_PATH
 from atomworks.io.utils.selection import get_residue_starts
 from atomworks.io.utils.sequence import get_1_from_3_letter_code
 
@@ -253,7 +253,9 @@ def load_monomer_sequence_information_from_category(
 
     # Build up the chain_info_dict with the sequence information
     res_starts = get_residue_starts(atom_array)
-    for chain_id in deduplicate_iterator(struc.get_chains(atom_array)):
+    # ... get the unique chain IDs by order of first appearance in the AtomArray
+    chain_ids = dict.fromkeys(struc.get_chains(atom_array))
+    for chain_id in chain_ids:
         rcsb_entity = int(chain_info_dict[chain_id]["rcsb_entity"])
 
         if rcsb_entity in polymer_entity_id_to_res_names_and_ids:

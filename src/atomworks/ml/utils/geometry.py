@@ -6,7 +6,7 @@ from biotite.structure import AtomArray, rmsd, superimpose
 from einops import einsum, rearrange
 from torch.nn.functional import normalize
 
-from atomworks.ml.common import default
+from atomworks.common import default
 
 
 def get_torch_eps(dtype: torch.dtype) -> float:

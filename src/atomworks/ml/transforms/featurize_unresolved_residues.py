@@ -9,8 +9,8 @@ from typing import Any, ClassVar
 import numpy as np
 from biotite.structure import AtomArray
 
+from atomworks.constants import NUCLEIC_ACID_FRAME_ATOM_NAMES, PROTEIN_FRAME_ATOM_NAMES
 from atomworks.enums import ChainTypeInfo
-from atomworks.io.constants import NUCLEIC_ACID_FRAME_ATOM_NAMES, PROTEIN_FRAME_ATOM_NAMES
 from atomworks.ml.transforms._checks import check_atom_array_annotation, check_contains_keys, check_is_instance
 from atomworks.ml.transforms.atom_array import apply_and_spread_residue_wise
 from atomworks.ml.transforms.base import Transform
