@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-      - dev
-      - staging
       - production
     paths:
       - 'src/**'
@@ -34,9 +32,7 @@ concurrency:
   
 jobs:
   lint:
-    name: ruff (check code style)
-    # NOTE: We use an ubuntu runner to not be dependent on possibly limited digs infra
-    #   for this tiny linting job. This means we can have many lint jobs accross repos in parallel.
+    name: ruff
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -55,7 +51,7 @@ jobs:
         run: ruff check src tests
 
   test_digs:
-    name: pytest (run tests)
+    name: pytest (jojo)
     runs-on: [jojo]
     timeout-minutes: 30
     needs: lint
