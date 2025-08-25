@@ -1,6 +1,4 @@
-"""AtomWorks command-line interface."""
-
-from __future__ import annotations
+"""Entry point for the AtomWorks command-line interface."""
 
 import typer
 
@@ -15,3 +13,11 @@ from . import setup as _setup  # noqa: E402
 app.add_typer(_ccd.app, name="ccd")
 app.add_typer(_pdb.app, name="pdb")
 app.add_typer(_setup.app, name="setup")
+
+
+def main() -> None:
+    app()
+
+
+if __name__ == "__main__":
+    main()
