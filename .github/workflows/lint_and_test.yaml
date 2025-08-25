@@ -51,23 +51,18 @@ jobs:
         run: pip install ruff==${{ env.RUFF_VERSION }}
       - name: ruff format (check code formatting)
         run: ruff format --diff
-      # - name: ruff check (lint code base)
-      #   run: ruff check
+      - name: ruff check (lint code base)
+        run: ruff check src tests
 
   test_digs:
     name: pytest (run tests)
     runs-on: [jojo]
     timeout-minutes: 30
     needs: lint
-    # ... only run on non-draft PRs to `main` to avoid unnecessary CI runs
-    # ... and only run on changed files in the `atomworks`, `tests`, or `scripts` directories
-    if: |
-      (github.event_name == 'pull_request' && !github.event.pull_request.draft) ||
-      (github.event_name == 'pull_request_target' && github.event.action == 'ready_for_review')
+    if: github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v4
       - name: Run tests
-        timeout-minutes: 30
         run: |
           export N_CPU=8
           srun --chdir=$PWD -p cpu -c $N_CPU -t 00:30:00 --mem=32G bash ./.github/ci/run_tests.sh
@@ -112,7 +107,7 @@ jobs:
         run: |
           atomworks setup tests
 
-      - name: Run pytest with multiple cores
+      - name: Run pytest
         run: |
           export OPENBLAS_NUM_THREADS=1
           export OMP_NUM_THREADS=1
