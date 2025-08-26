@@ -15,8 +15,13 @@ from tqdm import tqdm
 
 from .pdb import PDB_PORT, PDB_REMOTE, _collect_pdb_ids, _pdb_id_to_relpath, _rsync_fetch_specific, _run_rsync_list
 
-TEST_PACK_URL = "https://files.ipd.uw.edu/pub/atomworks/test_pack_latest.tar.gz"
+IPD_DOWNLOAD_URL = "https://files.ipd.uw.edu/pub/atomworks"
+
+TEST_PACK_URL = f"{IPD_DOWNLOAD_URL}/test_pack_latest.tar.gz"
 """The URL for the latest AtomWorks test pack. Should be untared in `tests/data/shared`."""
+
+METADATA_URL = f"{IPD_DOWNLOAD_URL}/pdb_metadata_latest.tar.gz"
+"""The URL for the latest AtomWorks PDB metadata. Should be untared at the specifided location."""
 
 app = typer.Typer(help="Setup utilities for AtomWorks.")
 
@@ -132,3 +137,40 @@ def setup_tests(
 
     typer.secho("Test setup completed successfully!", fg=typer.colors.GREEN)
     typer.secho("To run tests use: PDB_MIRROR_PATH=tests/data/pdb pytest -n auto tests")
+
+
+@app.command("metadata")
+def setup_metadata(
+    output_dir: Path = typer.Argument(
+        ...,
+        help="Directory where the PDB metadata archive should be extracted.",
+    ),
+    keep_archive: bool = typer.Option(False, "--keep-archive", help="Keep downloaded metadata archive."),
+) -> None:
+    """Download the latest PDB metadata archive and extract it to the given directory.
+
+    NOTE: It's expected that you run this command from the root of the repository.
+
+    The metadata archive is structured to extract under `shared/` inside the provided directory by default.
+
+    Example:
+        atomworks setup metadata --output-dir tests/data
+    """
+    typer.echo("Setting up AtomWorks PDB metadata...")
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory() as tmpdir:
+        archive_path = Path(tmpdir) / "pdb_metadata_latest.tar.gz"
+        typer.echo(f"Downloading PDB metadata from {METADATA_URL} ...")
+        _download_file(METADATA_URL, archive_path)
+        typer.secho("Download complete", fg=typer.colors.GREEN)
+
+        typer.echo(f"Extracting PDB metadata into {output_dir} ...")
+        _extract_tar_gz(archive_path, output_dir)
+        typer.secho("Extraction complete", fg=typer.colors.GREEN)
+
+        if keep_archive:
+            keep_path = output_dir / archive_path.name
+            keep_path.write_bytes(archive_path.read_bytes())
+
+    typer.secho("PDB metadata setup completed successfully!", fg=typer.colors.GREEN)
