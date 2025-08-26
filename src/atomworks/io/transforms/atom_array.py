@@ -332,6 +332,19 @@ def update_nonpoly_seq_ids(atom_array: AtomArray, chain_info_dict: dict) -> Atom
     return atom_array
 
 
+def _safe_to_int(x: str | int | None) -> int:
+    """Robustly convert values to integers: map '.', empty strings, and None to -1; parse numerics otherwise"""
+    if x is None:
+        return -1
+    s = str(x).strip()
+    if s in (".", ""):
+        return -1
+    try:
+        return int(s)
+    except Exception:
+        return -1
+
+
 def replace_negative_res_ids_with_auth_seq_id(atom_array: AtomArray) -> AtomArray:
     """
     Replaces res_id values of -1 with the corresponding auth_seq_id values.
@@ -350,8 +363,7 @@ def replace_negative_res_ids_with_auth_seq_id(atom_array: AtomArray) -> AtomArra
 
     # Convert auth_seq_ids to int if they are strings (as they are sometimes from AF-3 predictions)
     if author_seq_ids.dtype.kind in "UO":  # Unicode or Object (string-like)
-        # Handle '.' values by replacing with -1, then convert to int
-        author_seq_ids = np.where(author_seq_ids == ".", -1, author_seq_ids).astype(int)
+        author_seq_ids = np.frompyfunc(_safe_to_int, 1, 1)(author_seq_ids).astype(int)
 
     atom_array.res_id[negative_res_id_mask] = author_seq_ids[negative_res_id_mask]
 
