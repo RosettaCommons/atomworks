@@ -85,14 +85,19 @@ For more advanced setup options (including how to run workflows via apptainers) 
 
 ### 2. Quick Start
 
+To parse a pdb file (parse = load, clean, annotate relevant metadata such as entities, molecules, etc) you can use the `parse` function:
+
 ```python
 
 from atomworks.io.parser import parse
 
 result = parse(filename="3nez.cif.gz")
 
+asym_unit: AtomArrayStack = result["asym_unit"]
+assemblies: dict[str, AtomArrayStack] = result["assemblies"]
+
 for chain_id, info in result["chain_info"].items():
-print(chain_id, info["sequence"])
+    print(chain_id, info["sequence"])
 
 ```
 
@@ -104,6 +109,15 @@ The output of `parse` includes:
 - **metadata** — Experimental and source information
 
 See [usage examples](https://baker-laboratory.github.io/atomworks-dev/latest/auto_examples/) for more details.
+
+If you just want to load a file, you can use the `load_any` function:
+
+```python
+from atomworks.io.utils.io_utils import load_any
+
+atom_array: AtomArray = load_any("3nez.cif.gz", model=1)  # model=1 means that we want to load the model 1 (i.e. the first model) rather than a stack of all models in the file
+```
+
 
 ### 3. Training on the PDB
 > ⚠️ **Disclaimer:** Documentation for this section is currently under construction. Please check back soon for updates!
