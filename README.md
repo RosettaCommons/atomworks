@@ -25,9 +25,10 @@ AtomWorks is built atop [biotite](https://www.biotite-python.org/): We are grate
 
 ## atomworks.io
 
-*A general-purpose Python toolkit for working with biomolecular files*
+> *A general-purpose Python toolkit for cleaning up, standardizing, and working with biomolecular files - based on biotite*
 
 **atomworks.io** lets you:
+
 - Parse, convert, and clean any common biological file (structure or sequence). For example, identifying and removing leaving groups, correcting bond order after nucleophilic addition, fixing charges, parsing covalent geometries, and appropriate treatment of structures with multiple occupancies and ligands at symmetry centers
 - Transform all data to a consistent `AtomArray` representation for further analysis or machine learning applications, regardless of initial source
 - Model missing atoms (those implied by the sequence but not represented in the coordinates) and initialize entity- and instance-level annotations (see the [glossary]() for more detail on our composable naming conventions)
@@ -38,9 +39,10 @@ We have found `atomworks.io` to be useful to a general bioinformatics and protei
 
 ## atomworks.ml
 
-*Modular, component-based library for dataset featurization within biomolecular deep learning workflows*
+> *Modular, component-based library for dataset featurization within biomolecular deep learning workflows*
 
 **atomworks.ml** provides:
+
 - A library of pre-built, well-tested `Transforms` that can be slotted into novel pipelines
 - An extensible framework, integrated with `atomworks.io`, to write `Transforms` for arbitrary use cases
 - Scripts to pre-process the PDB or other databases into dataframes appropriate for network training
@@ -102,6 +104,7 @@ for chain_id, info in result["chain_info"].items():
 ```
 
 The output of `parse` includes:
+
 - **chain_info** — Sequences/metadata for each chain
 - **ligand_info** — Ligand annotation & metrics
 - **asym_unit** — Structure (`AtomArrayStack`)
@@ -118,8 +121,8 @@ from atomworks.io.utils.io_utils import load_any
 atom_array: AtomArray = load_any("3nez.cif.gz", model=1)  # model=1 means that we want to load the model 1 (i.e. the first model) rather than a stack of all models in the file
 ```
 
-
 ### 3. Training on the PDB
+
 > ⚠️ **Disclaimer:** Documentation for this section is currently under construction. Please check back soon for updates!
 
 **Step 1 — Mirror the PDB (mmCIFs)**
@@ -154,13 +157,12 @@ atom_array: AtomArray = load_any("3nez.cif.gz", model=1)  # model=1 means that w
 
   This produces parquet files at:
 
-- `/path/to/metadata/ml/pdb_pn_units/metadata.parquet` — Contains metadata for each *PN unit* in the PDB. The term *pn unit* is shorthand for `polymer XOR non-polymer unit` and behaves for almost all purposes like the `chain` in a PDB file. The only difference is that a ligand composed of multiple covalently bonded ligands is considered a single PN unit (whilst it would be multiple chains in a PDB file). Effectively this `.parquet` is a large table of all individual chains, ligands, etc (to be precise, it has one entry per  pn unit) in the PDB that includes helpful metadata for filtering and sampling.
-- `/path/to/metadata/ml/pdb_interfaces/metadata.parquet` — Contains metadata for each interface in the PDB. This `.parquet` is a large table of all binary interfaces in the PDB. It lists each interface as (pn_unit_1, pn_unit_2) pairs and includes helpful metadata for filtering and sampling.
+- `/path/to/metadata/pn_units_df.parquet` — Contains metadata for each *PN unit* in the PDB. The term *pn unit* is shorthand for `polymer XOR non-polymer unit` and behaves for almost all purposes like the `chain` in a PDB file. The only difference is that a ligand composed of multiple covalently bonded ligands is considered a single PN unit (whilst it would be multiple chains in a PDB file). Effectively this `.parquet` is a large table of all individual chains, ligands, etc (to be precise, it has one entry per  pn unit) in the PDB that includes helpful metadata for filtering and sampling.
+- `/path/to/metadata/interfaces_df.parquet` — Contains metadata for each interface in the PDB. This `.parquet` is a large table of all binary interfaces in the PDB. It lists each interface as (pn_unit_1, pn_unit_2) pairs and includes helpful metadata for filtering and sampling.
 
   Alternatively, you can generate fresher metadata yourself (scripts will be uploaded in the coming weeks).
 
 **Step 3 — Configure an AF3-style dataset (example: train only on D-polypeptides)**
-
 Next we need to use the metadata to configure a dataset that we would like to sample from. This includes e.g. training cut-off, filters, transforms to apply, etc.
 Here's a simple example that:
 
@@ -168,6 +170,10 @@ Here's a simple example that:
 - Excludes ligands in the AF3 list of excluded ligands, available at [`atomworks.io.constants.AF3_EXCLUDED_LIGANDS_REGEX`](./src/atomworks/io/constants.py#L350).
 
 ```yaml
+# NOTE: The below is a hydra config and the _target_ fields are the hydra syntax for instantiating a class.
+#  You can use this without hyrda, but will then instead need to provide the corresponding arguments for the
+#  _target_ objects directly.
+
 # Chain type ids used below (from atomworks.enums.ChainType):
 # 0=CyclicPseudoPeptide, 1=OtherPolymer, 2=PeptideNucleicAcid,
 # 3=DNA, 4=DNA_RNA_HYBRID, 5=POLYPEPTIDE_D, 6=POLYPEPTIDE_L, 7=RNA,
@@ -200,7 +206,7 @@ af3_pdb_dataset:
         _target_: atomworks.ml.datasets.datasets.PandasDataset
         name: pn_units
         id_column: example_id
-        data: /path/to/metadata/ml/pdb_pn_units/metadata.parquet
+        data: /path/to/metadata/pn_units_df.parquet
         filters:
           - "deposition_date < '2022-01-01'"
           - "resolution < 5.0 and ~method.str.contains('NMR')"
@@ -237,7 +243,7 @@ af3_pdb_dataset:
         _target_: atomworks.ml.datasets.datasets.PandasDataset
         name: interfaces
         id_column: example_id
-        data: /path/to/metadata/ml/pdb_interfaces/metadata.parquet
+        data: /path/to/metadata/interfaces_df.parquet
         filters:
           - "deposition_date < '2022-01-01'"
           - "resolution < 5.0 and ~method.str.contains('NMR')"
@@ -294,5 +300,18 @@ Please see the [full documentation](https://baker-laboratory.github.io/atomworks
 
 If you make use of AtomWorks in your research, please cite:
 
-* N. Corley, S. Mathis, R. Krishna, M. S. Bauer, T. R. Thompson, W. Ahern, M. W. Kazman, R. I. Brent, K. Didi, A. Kubaney, L. McHugh, A. Nagle, A. Favor, M. Kshirsagar, P. Sturmfels, Y. Li, J. Butcher, B. Qiang, L. L. Schaaf, R. Mitra, K. Campbell, O. Zhang, R. Weissman, I. R. Humphreys, Q. Cong, J. Funk, S. Sonthalia, P. Lio, D. Baker, F. DiMaio,
-"Accelerating Biomolecular Modeling with AtomWorks and RF3," bioRxiv, August 2025. doi: [10.1101/2025.08.14.670328](https://doi.org/10.1101/2025.08.14.670328)
+> N. Corley\*, S. Mathis\*, R. Krishna\*, M. S. Bauer, T. R. Thompson, W. Ahern, M. W. Kazman, R. I. Brent, K. Didi, A. Kubaney, L. McHugh, A. Nagle, A. Favor, M. Kshirsagar, P. Sturmfels, Y. Li, J. Butcher, B. Qiang, L. L. Schaaf, R. Mitra, K. Campbell, O. Zhang, R. Weissman, I. R. Humphreys, Q. Cong, J. Funk, S. Sonthalia, P. Lio, D. Baker, F. DiMaio,
+> "Accelerating Biomolecular Modeling with AtomWorks and RF3," bioRxiv, August 2025. doi: [10.1101/2025.08.14.670328](https://doi.org/10.1101/2025.08.14.670328)
+
+If you use bibtex, here's the GoogleScholar formatted citation:
+
+```bibtex
+@article{corley2025accelerating,
+  title={Accelerating Biomolecular Modeling with AtomWorks and RF3},
+  author={Corley, Nathaniel and Mathis, Simon and Krishna, Rohith and Bauer, Magnus S and Thompson, Tuscan R and Ahern, Woody and Kazman, Maxwell W and Brent, Rafael I and Didi, Kieran and Kubaney, Andrew and others},
+  journal={bioRxiv},
+  pages={2025--08},
+  year={2025},
+  publisher={Cold Spring Harbor Laboratory}
+}
+```
