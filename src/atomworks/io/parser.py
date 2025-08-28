@@ -150,7 +150,7 @@ def parse(
         build_assembly (string, list, or tuple, optional): Specifies which assembly to build, if any. Options are None
             (e.g., asymmetric unit), "first", "all", or a list or tuple of assembly IDs. Defaults to "all".
         extra_fields (list, optional): A list of extra fields to include in the AtomArrayStack. Defaults to None. "all" includes all fields.
-            only support cif files.
+            Only support mmCIF files.
         keep_cif_block (bool, optional): Whether to keep the CIF block in the result. Defaults to False.
 
     Returns:

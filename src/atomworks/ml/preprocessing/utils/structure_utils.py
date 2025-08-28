@@ -92,6 +92,8 @@ def get_atom_mask_from_cell_list(
     Builds a mask indicating which atoms clash with the query PN unit. If the number of comparisons is too large,
     the computation is split into manageable chunks along the rows of `coord`.
 
+    TODO: Update documentation since this is not specific to PN units or clashes.
+
     Args:
         coord (ndarray): The coordinates of the query PN unit. Shape is (n, 3).
         cell_list (CellList): A CellList object that allows efficient vicinity searches.
