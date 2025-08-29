@@ -4,7 +4,7 @@ import pandas as pd
 import pytest
 from biotite.structure import AtomArray
 
-from atomworks.io.constants import STANDARD_AA, STANDARD_DNA, STANDARD_RNA
+from atomworks.constants import STANDARD_AA, STANDARD_DNA, STANDARD_RNA
 from atomworks.ml.datasets.parsers import PNUnitsDFParser, load_example_from_metadata_row
 from atomworks.ml.preprocessing.constants import TRAINING_SUPPORTED_CHAIN_TYPES, ChainType
 from atomworks.ml.transforms.atomize import AtomizeByCCDName

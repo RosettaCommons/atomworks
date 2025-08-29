@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 from torch.utils.data import ConcatDataset, Dataset
 
-from atomworks.ml.common import default, exists
+from atomworks.common import default, exists
 from atomworks.ml.datasets import logger
 from atomworks.ml.datasets.parsers import MetadataRowParser, load_example_from_metadata_row
 from atomworks.ml.preprocessing.constants import NA_VALUES

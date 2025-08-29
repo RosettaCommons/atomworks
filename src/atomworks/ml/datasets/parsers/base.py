@@ -4,8 +4,8 @@ from typing import Any, ClassVar
 
 import pandas as pd
 
+from atomworks.constants import CRYSTALLIZATION_AIDS
 from atomworks.io import parse
-from atomworks.io.constants import CRYSTALLIZATION_AIDS
 
 DEFAULT_CIF_PARSER_ARGS = {
     "add_missing_atoms": True,

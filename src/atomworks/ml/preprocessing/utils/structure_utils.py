@@ -13,9 +13,8 @@ import requests
 from biotite.structure import AtomArray, CellList
 from scipy.spatial.distance import cdist
 
-from atomworks.io.common import not_isin
-from atomworks.io.constants import ELEMENT_NAME_TO_ATOMIC_NUMBER, METAL_ELEMENTS
-from atomworks.ml.common import default
+from atomworks.common import default, not_isin
+from atomworks.constants import ELEMENT_NAME_TO_ATOMIC_NUMBER, METAL_ELEMENTS
 from atomworks.ml.preprocessing.constants import ClashSeverity
 
 logger = logging.getLogger("preprocess")

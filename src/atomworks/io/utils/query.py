@@ -7,7 +7,7 @@ from typing import Any
 import numpy as np
 from biotite.structure import AtomArray, AtomArrayStack
 
-from atomworks.io.common import not_isin
+from atomworks.common import not_isin
 from atomworks.io.transforms.atom_array import is_any_coord_nan
 
 

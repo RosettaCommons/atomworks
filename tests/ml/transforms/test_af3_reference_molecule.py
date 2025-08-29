@@ -5,8 +5,8 @@ import numpy as np
 import pytest
 import torch
 
+from atomworks.constants import STANDARD_AA, STANDARD_DNA, STANDARD_RNA
 from atomworks.enums import ChainType, GroundTruthConformerPolicy
-from atomworks.io.constants import STANDARD_AA, STANDARD_DNA, STANDARD_RNA
 from atomworks.io.tools.inference import components_to_atom_array
 from atomworks.io.tools.rdkit import atom_array_from_rdkit
 from atomworks.io.utils.selection import get_residue_starts

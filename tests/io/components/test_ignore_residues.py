@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from atomworks.io.constants import CRYSTALLIZATION_AIDS
+from atomworks.constants import CRYSTALLIZATION_AIDS
 from atomworks.io.parser import parse
 from tests.io.conftest import get_pdb_path
 

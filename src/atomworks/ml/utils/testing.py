@@ -3,9 +3,9 @@ import os
 import numpy as np
 from biotite.structure import AtomArray, CellList
 
+from atomworks.common import immutable_lru_cache
+from atomworks.constants import PDB_MIRROR_PATH
 from atomworks.io import parse
-from atomworks.io.common import immutable_lru_cache
-from atomworks.io.constants import PDB_MIRROR_PATH
 from atomworks.ml.preprocessing.constants import CELL_SIZE
 from atomworks.ml.preprocessing.utils.structure_utils import get_atom_mask_from_cell_list
 

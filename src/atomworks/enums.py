@@ -7,7 +7,7 @@ from typing import Final, Union
 import numpy as np
 from toolz import keymap
 
-from atomworks.io.constants import (
+from atomworks.constants import (
     AA_LIKE_CHEM_TYPES,
     DNA_LIKE_CHEM_TYPES,
     POLYPEPTIDE_D_CHEM_TYPES,

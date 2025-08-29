@@ -14,8 +14,8 @@ import torch
 from biotite.structure import AtomArray
 from torch.nn import functional as F  # noqa: N812
 
-from atomworks.io.common import KeyToIntMapper, exists
-from atomworks.io.constants import ELEMENT_NAME_TO_ATOMIC_NUMBER
+from atomworks.common import KeyToIntMapper, exists
+from atomworks.constants import ELEMENT_NAME_TO_ATOMIC_NUMBER
 from atomworks.io.utils.ccd import get_std_to_alt_atom_name_map
 from atomworks.ml.encoding_definitions import AF3SequenceEncoding, TokenEncoding
 from atomworks.ml.transforms._checks import (

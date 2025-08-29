@@ -10,7 +10,8 @@ from logging import getLogger
 import biotite.structure as struc
 import numpy as np
 
-from atomworks.io.constants import (
+from atomworks.common import exists
+from atomworks.constants import (
     AA_LIKE_CHEM_TYPES,
     CHEM_COMP_TYPES,
     DNA_LIKE_CHEM_TYPES,
@@ -25,7 +26,6 @@ from atomworks.io.constants import (
     UNKNOWN_RNA,
 )
 from atomworks.io.utils.ccd import get_chem_comp_type
-from atomworks.ml.common import exists
 
 logger = getLogger(__name__)
 

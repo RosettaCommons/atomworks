@@ -16,7 +16,7 @@ import py3Dmol
 from biotite.structure import AtomArray, AtomArrayStack
 from biotite.structure.io import mol, pdb, pdbx
 
-from atomworks.io.constants import ATOMIC_NUMBER_TO_ELEMENT, METAL_ELEMENTS
+from atomworks.constants import ATOMIC_NUMBER_TO_ELEMENT, METAL_ELEMENTS
 from atomworks.io.utils.io_utils import read_any, to_cif_string
 
 logger = logging.getLogger("atomworks.io")

@@ -11,8 +11,7 @@ import logging
 import numpy as np
 import toolz
 
-from atomworks.enums import ChainType
-from atomworks.io.constants import (
+from atomworks.constants import (
     GAP,
     GAP_ONE_LETTER,
     STANDARD_AA,
@@ -25,6 +24,7 @@ from atomworks.io.constants import (
     UNKNOWN_DNA,
     UNKNOWN_RNA,
 )
+from atomworks.enums import ChainType
 from atomworks.io.utils.ccd import (
     aa_chem_comps,
     chem_comp_to_one_letter,

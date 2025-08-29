@@ -2,7 +2,7 @@ import biotite.structure as struc
 import numpy as np
 import pytest
 
-from atomworks.io.constants import STANDARD_AA
+from atomworks.constants import STANDARD_AA
 from atomworks.ml.transforms.atomize import AtomizeByCCDName
 from atomworks.ml.utils.testing import cached_parse
 

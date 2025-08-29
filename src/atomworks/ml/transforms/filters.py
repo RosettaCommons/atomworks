@@ -10,13 +10,12 @@ import biotite.structure as struc
 import numpy as np
 from biotite.structure import AtomArray, AtomArrayStack
 
+from atomworks.common import exists, not_isin
+from atomworks.constants import HYDROGEN_LIKE_SYMBOLS
 from atomworks.enums import ChainType, ChainTypeInfo
-from atomworks.io.common import not_isin
-from atomworks.io.constants import HYDROGEN_LIKE_SYMBOLS
 from atomworks.io.utils.query import QueryExpression
 from atomworks.io.utils.selection import get_annotation
 from atomworks.io.utils.sequence import get_1_from_3_letter_code, get_3_from_1_letter_code
-from atomworks.ml.common import exists
 from atomworks.ml.preprocessing.constants import TRAINING_SUPPORTED_CHAIN_TYPES
 from atomworks.ml.transforms._checks import (
     check_atom_array_annotation,

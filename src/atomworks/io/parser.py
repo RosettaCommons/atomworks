@@ -18,9 +18,9 @@ from biotite.structure.io import pdbx
 from toolz import keyfilter
 
 import atomworks.io.transforms.atom_array as ta
+from atomworks.common import exists, string_to_md5_hash
+from atomworks.constants import CCD_MIRROR_PATH, CRYSTALLIZATION_AIDS, WATER_LIKE_CCDS
 from atomworks.io import template
-from atomworks.io.common import exists, md5_hash_string
-from atomworks.io.constants import CCD_MIRROR_PATH, CRYSTALLIZATION_AIDS, WATER_LIKE_CCDS
 from atomworks.io.transforms.categories import (
     category_to_dict,
     extract_crystallization_details,
@@ -218,7 +218,7 @@ def parse(
         }
         # Compose args_string from parse_arguments values (in order)
         args_string = ",".join(str(parse_arguments[k]) for k in parse_arguments)
-        args_hash = md5_hash_string(args_string, length=8)
+        args_hash = string_to_md5_hash(args_string, truncate=8)
 
         # ... generate assembly info
         assembly_info = ",".join(build_assembly) if isinstance(build_assembly, list | tuple) else build_assembly

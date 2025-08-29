@@ -11,9 +11,8 @@ import networkx as nx
 import numpy as np
 import toolz
 
-from atomworks.enums import ChainType, ChainTypeInfo
-from atomworks.io.common import exists, immutable_lru_cache
-from atomworks.io.constants import (
+from atomworks.common import exists, immutable_lru_cache
+from atomworks.constants import (
     AA_LIKE_CHEM_TYPES,
     CCD_MIRROR_PATH,
     DNA_LIKE_CHEM_TYPES,
@@ -25,6 +24,7 @@ from atomworks.io.constants import (
     UNKNOWN_LIGAND,
     UNKNOWN_RNA,
 )
+from atomworks.enums import ChainType, ChainTypeInfo
 
 logger = logging.getLogger(__name__)
 
