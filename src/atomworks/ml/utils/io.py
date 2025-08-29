@@ -14,7 +14,7 @@ import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from atomworks.io.constants import (
+from atomworks.constants import (
     AA_LIKE_CHEM_TYPES,
     ATOMIC_NUMBER_TO_ELEMENT,
     DNA_LIKE_CHEM_TYPES,

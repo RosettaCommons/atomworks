@@ -15,8 +15,8 @@ import torch
 from biotite.structure import AtomArray
 from torch.nn.functional import normalize
 
+from atomworks.common import exists
 from atomworks.enums import ChainType
-from atomworks.ml.common import exists
 from atomworks.ml.encoding_definitions import (
     LEGACY_RF2_ATOM14_ENCODING,
     RF2AA_ATOM36_ENCODING,

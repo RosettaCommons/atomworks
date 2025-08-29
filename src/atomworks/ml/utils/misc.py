@@ -10,7 +10,7 @@ import pandas as pd
 import torch
 from einops import rearrange
 
-from atomworks.ml.common import default
+from atomworks.common import default
 from atomworks.ml.preprocessing.constants import NA_VALUES
 
 logger = logging.getLogger(__name__)

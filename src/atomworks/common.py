@@ -1,9 +1,8 @@
-from __future__ import annotations
+"""Common functions used throughout the project."""
 
 import copy
 import hashlib
-from collections import OrderedDict
-from collections.abc import Callable, Iterable, Iterator
+from collections.abc import Callable
 from functools import lru_cache, wraps
 from typing import Any
 
@@ -12,16 +11,13 @@ from toolz.curried import compose, reduce
 
 
 def exists(obj: Any) -> bool:
+    """Check that `obj` is not `None`."""
     return obj is not None
 
 
 def default(obj: Any, default: Any) -> Any:
+    """Return `obj` if not `None`, otherwise return `default`."""
     return obj if exists(obj) else default
-
-
-def deduplicate_iterator(iterator: Iterable) -> Iterator:
-    """Deduplicate an iterator while preserving order."""
-    return iter(OrderedDict.fromkeys(iterator))
 
 
 def to_hashable(element: Any) -> Any:
@@ -29,9 +25,15 @@ def to_hashable(element: Any) -> Any:
     return element if isinstance(element, int | str | np.integer | np.str_) else tuple(element)
 
 
+def string_to_md5_hash(s: str, truncate: int = 32) -> str:
+    """Generate an MD5 hash of a string and return the first `truncate` characters."""
+    full_hash = hashlib.md5(s.encode("utf-8")).hexdigest()
+    return full_hash[:truncate]
+
+
 def sum_string_arrays(*objs: np.ndarray | str) -> np.ndarray:
     """
-    Sum a list of string arrays / strings into a single string array by concatenating them and
+    Sum a list of string arrays or strings into a single string array by concatenating them and
     determining the shortest string length to set as dtype.
     """
     return reduce(np.char.add, objs).astype(object).astype(str)
@@ -45,6 +47,24 @@ def not_isin(element: np.ndarray, array: np.ndarray, **isin_kwargs) -> np.ndarra
 def listmap(func: Callable, *iterables) -> list:
     """Like `map`, but returns a list instead of an iterator."""
     return compose(list, map)(func, *iterables)
+
+
+def as_list(value: Any) -> list:
+    """Convert a value to a list.
+
+    Handles various types using duck typing:
+        - Iterable objects (lists, tuples, strings, etc.): converted to list
+        - Single values: wrapped in a list
+    """
+    try:
+        # Try to iterate over the value (duck typing approach)
+        # Exclude strings since they're iterable but we want to treat them as single values
+        if isinstance(value, str):
+            return [value]
+        return list(value)
+    except TypeError:
+        # If it's not iterable, wrap it in a list
+        return [value]
 
 
 def immutable_lru_cache(maxsize: int = 128, typed: bool = False, deepcopy: bool = True) -> Callable:
@@ -89,9 +109,3 @@ class KeyToIntMapper:
             self.key_to_id[value] = self.next_id
             self.next_id += 1
         return self.key_to_id[value]
-
-
-def md5_hash_string(s: str, length: int = 32) -> str:
-    """Generate an MD5 hash of a string and return the first `length` characters."""
-    full_hash = hashlib.md5(s.encode("utf-8")).hexdigest()
-    return full_hash[:length]

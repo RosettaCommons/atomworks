@@ -6,8 +6,8 @@ import numpy as np
 from biotite.structure import AtomArray
 from scipy.spatial import KDTree
 
+from atomworks.common import exists
 from atomworks.io.transforms.atom_array import is_any_coord_nan
-from atomworks.ml.common import exists
 from atomworks.ml.transforms._checks import (
     check_atom_array_annotation,
     check_contains_keys,

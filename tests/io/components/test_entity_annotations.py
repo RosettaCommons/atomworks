@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 from biotite.structure import AtomArray
 
-from atomworks.io.common import not_isin
+from atomworks.common import not_isin
 from atomworks.io.parser import parse
 from atomworks.io.transforms.atom_array import annotate_entities
 from tests.io.conftest import get_pdb_path

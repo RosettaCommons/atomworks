@@ -19,7 +19,7 @@ from biotite.structure.basepairs import _check_dssr_criteria, _get_proximate_res
 from biotite.structure.filter import filter_nucleotides
 from biotite.structure.residues import get_residue_masks, get_residue_starts_for
 
-from atomworks.io.constants import STANDARD_DNA
+from atomworks.constants import STANDARD_DNA
 from atomworks.io.transforms.atom_array import remove_nan_coords
 from atomworks.io.utils.io_utils import load_any
 from atomworks.io.utils.selection import ResIdxSlice

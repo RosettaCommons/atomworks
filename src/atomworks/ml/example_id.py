@@ -1,9 +1,6 @@
-from __future__ import annotations
+"""Functions for generating and parsing example IDs that uniquely identify examples and their corresponding datasets."""
 
 import re
-from typing import Any
-
-from atomworks.io.common import default, exists  # noqa: F401
 
 
 def generate_example_id(dataset_names: list[str], pdb_id: str, assembly_id: str, query_pn_unit_iids: list) -> str:
@@ -53,21 +50,3 @@ def parse_example_id(example_id: str) -> dict:
         "assembly_id": assembly_id,
         "query_pn_unit_iids": query_pn_unit_iids,
     }
-
-
-def as_list(value: Any) -> list:
-    """Convert a value to a list.
-
-    Handles various types using duck typing:
-        - Iterable objects (lists, tuples, strings, etc.): converted to list
-        - Single values: wrapped in a list
-    """
-    try:
-        # Try to iterate over the value (duck typing approach)
-        # Exclude strings since they're iterable but we want to treat them as single values
-        if isinstance(value, str):
-            return [value]
-        return list(value)
-    except TypeError:
-        # If it's not iterable, wrap it in a list
-        return [value]

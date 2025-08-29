@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 import torch
 
-from atomworks.io.constants import STANDARD_AA, STANDARD_DNA, STANDARD_RNA, UNKNOWN_AA, UNKNOWN_DNA, UNKNOWN_RNA
+from atomworks.constants import STANDARD_AA, STANDARD_DNA, STANDARD_RNA, UNKNOWN_AA, UNKNOWN_DNA, UNKNOWN_RNA
 from atomworks.ml.encoding_definitions import RF2AA_ATOM36_ENCODING, TokenEncoding
 from atomworks.ml.transforms.atom_array import (
     AddWithinPolyResIdxAnnotation,

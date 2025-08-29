@@ -3,8 +3,8 @@ import os
 import numpy as np
 import pytest
 
-from atomworks.io.common import not_isin
-from atomworks.io.constants import CCD_MIRROR_PATH, HYDROGEN_LIKE_SYMBOLS
+from atomworks.common import not_isin
+from atomworks.constants import CCD_MIRROR_PATH, HYDROGEN_LIKE_SYMBOLS
 from atomworks.io.parser import parse
 from atomworks.io.transforms.atom_array import mse_to_met
 from atomworks.io.utils.ccd import atom_array_from_ccd_code

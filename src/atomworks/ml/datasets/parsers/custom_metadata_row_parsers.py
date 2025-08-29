@@ -5,7 +5,7 @@ from typing import Any
 
 import pandas as pd
 
-from atomworks.io.constants import PDB_MIRROR_PATH
+from atomworks.constants import PDB_MIRROR_PATH
 from atomworks.ml.datasets.parsers import MetadataRowParser
 
 

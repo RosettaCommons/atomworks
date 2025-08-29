@@ -7,7 +7,7 @@ import pandas as pd
 import pytest
 from dotenv import load_dotenv
 
-from atomworks.io.constants import AF3_EXCLUDED_LIGANDS_REGEX, _load_env_var
+from atomworks.constants import AF3_EXCLUDED_LIGANDS_REGEX, _load_env_var
 from atomworks.io.tools.inference import SequenceComponent
 from atomworks.ml.datasets.datasets import ConcatDatasetWithID, PandasDataset, StructuralDatasetWrapper
 from atomworks.ml.datasets.parsers import (

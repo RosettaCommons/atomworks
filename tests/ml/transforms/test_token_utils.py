@@ -2,7 +2,7 @@ import biotite.structure as struc
 import numpy as np
 import pytest
 
-from atomworks.io.constants import STANDARD_AA, STANDARD_DNA, STANDARD_RNA
+from atomworks.constants import STANDARD_AA, STANDARD_DNA, STANDARD_RNA
 from atomworks.io.utils.sequence import STANDARD_PURINE_RESIDUES, STANDARD_PYRIMIDINE_RESIDUES
 from atomworks.io.utils.testing import assert_same_atom_array
 from atomworks.ml.encoding_definitions import RF2AA_ATOM36_ENCODING

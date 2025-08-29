@@ -7,8 +7,8 @@ import numpy as np
 from biotite.structure import AtomArray, BondList
 
 import atomworks.io.transforms.atom_array as ta
-from atomworks.io.common import exists, immutable_lru_cache
-from atomworks.io.constants import CCD_MIRROR_PATH, DO_NOT_MATCH_CCD
+from atomworks.common import exists, immutable_lru_cache
+from atomworks.constants import CCD_MIRROR_PATH, DO_NOT_MATCH_CCD
 from atomworks.io.utils.bonds import (
     correct_bond_types_for_nucleophilic_additions,
     correct_formal_charges_for_specified_atoms,

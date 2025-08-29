@@ -3,7 +3,7 @@ import re
 import biotite.structure as struc
 import pytest
 
-from atomworks.io.constants import STRUCT_CONN_BOND_TYPES
+from atomworks.constants import STRUCT_CONN_BOND_TYPES
 from atomworks.io.parser import parse
 from tests.io.conftest import get_pdb_path
 

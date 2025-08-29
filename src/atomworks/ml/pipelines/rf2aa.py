@@ -6,8 +6,8 @@ import numpy as np
 import torch
 from biotite.structure import AtomArray
 
-from atomworks.io.constants import AF3_EXCLUDED_LIGANDS
-from atomworks.ml.common import exists
+from atomworks.common import exists
+from atomworks.constants import AF3_EXCLUDED_LIGANDS
 from atomworks.ml.encoding_definitions import RF2AA_ATOM36_ENCODING
 from atomworks.ml.transforms.atom_array import (
     AddGlobalAtomIdAnnotation,

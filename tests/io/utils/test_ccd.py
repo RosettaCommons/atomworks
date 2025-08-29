@@ -3,7 +3,7 @@ import os
 import numpy as np
 import pytest
 
-from atomworks.io.constants import CCD_MIRROR_PATH
+from atomworks.constants import CCD_MIRROR_PATH
 from atomworks.io.utils.ccd import (
     atom_array_from_ccd_code,
     get_ccd_component_from_mirror,

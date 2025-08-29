@@ -21,9 +21,9 @@ from biotite.structure.bonds import connect_via_residue_names
 from biotite.structure.io import mol, pdbx
 
 import atomworks.io.transforms.atom_array as ta  # to avoid circular import
+from atomworks.common import exists
+from atomworks.constants import ATOMIC_NUMBER_TO_ELEMENT, STANDARD_AA, STANDARD_DNA, STANDARD_RNA
 from atomworks.enums import ChainType
-from atomworks.io.common import exists
-from atomworks.io.constants import ATOMIC_NUMBER_TO_ELEMENT, STANDARD_AA, STANDARD_DNA, STANDARD_RNA
 from atomworks.io.template import add_inter_residue_bonds
 from atomworks.io.transforms.categories import category_to_dict
 from atomworks.io.utils.selection import get_annotation

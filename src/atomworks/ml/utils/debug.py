@@ -4,7 +4,7 @@ import pickle
 import re
 from datetime import datetime
 
-from atomworks.ml.common import default
+from atomworks.common import default
 
 logger = logging.getLogger("atomworks.ml")
 _USER = default(os.getenv("USER"), "")

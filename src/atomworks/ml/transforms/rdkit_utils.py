@@ -7,6 +7,7 @@ from biotite.structure import AtomArray
 from rdkit import Chem, RDLogger
 from rdkit.Chem import AllChem, Mol, rdDistGeom
 
+from atomworks.common import default
 from atomworks.io.tools.rdkit import (
     add_hydrogens,
     atom_array_from_rdkit,
@@ -15,7 +16,6 @@ from atomworks.io.tools.rdkit import (
     preserve_annotations,
     remove_hydrogens,
 )
-from atomworks.ml.common import default
 from atomworks.ml.transforms._checks import (
     check_atom_array_annotation,
     check_contains_keys,
