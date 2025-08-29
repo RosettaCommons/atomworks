@@ -98,6 +98,9 @@ class FlagAndReassignCovalentModifications(Transform):
             set atomize = true (thus, this transform must be run before the Atomize transform)
             set is_covalent_modification = true (for the entire pn_unit)
     ------------------------------------------------------------------------------------------------
+
+    TODO: Break into two Transforms - one that flags, one that reassigns. Atomizing covalent modifications is a design choice
+    that may not be desired in all pipelines. Annotating covalent modifications, however, is broadly useful.
     """
 
     incompatible_previous_transforms: ClassVar[list[str | Transform]] = [AtomizeByCCDName, "AddGlobalTokenIdAnnotation"]

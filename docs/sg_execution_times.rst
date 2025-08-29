@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:05.533** total execution time for 2 files **from all galleries**:
+**00:03.491** total execution time for 6 files **from all galleries**:
 
 .. container::
 
@@ -32,9 +32,21 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_examples_plot_monomer.py` (``examples/plot_monomer.py``)
-     - 00:05.076
-     - 0.0
    * - :ref:`sphx_glr_auto_examples_plot_basics.py` (``examples/plot_basics.py``)
-     - 00:00.457
+     - 00:03.491
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_annotate_and_save_structures.py` (``examples/annotate_and_save_structures.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_basics.py` (``examples/basics.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_load_and_visualize_structures.py` (``examples/load_and_visualize_structures.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_mpnn_pipeline.py` (``examples/mpnn_pipeline.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_pocket_conditioning_transform.py` (``examples/pocket_conditioning_transform.py``)
+     - 00:00.000
      - 0.0
