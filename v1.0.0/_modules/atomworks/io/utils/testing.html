@@ -393,15 +393,17 @@
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;assert_same_atom_array&quot;</span><span class="p">]</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">struc</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.database</span><span class="w"> </span><span class="kn">import</span> <span class="n">rcsb</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure.atoms</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">AtomArrayStack</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">atomworks.io.utils.bonds</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cb</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">PDB_MIRROR_PATH</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">PDB_MIRROR_PATH</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.scatter</span><span class="w"> </span><span class="kn">import</span> <span class="n">apply_group_wise</span><span class="p">,</span> <span class="n">apply_segment_wise</span>
 
 
@@ -427,6 +429,24 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2"> does not exist&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">filename</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_pdb_path_or_buffer</span><span class="p">(</span><span class="n">pdb_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a local file path or an in-memory buffer for a given PDB ID.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pdb_id (str): The PDB identifier of the structure.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str | io.StringIO: The local file path to the structure file if available,</span>
+<span class="sd">        otherwise an in-memory buffer containing the fetched file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># ... if file is locally available</span>
+        <span class="k">return</span> <span class="n">get_pdb_path</span><span class="p">(</span><span class="n">pdb_id</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="c1"># ... otherwise, fetch the file from RCSB</span>
+        <span class="k">return</span> <span class="n">rcsb</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">pdb_id</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;cif&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">is_same_in_segment</span><span class="p">(</span><span class="n">segment_start_stop</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">raise_if_false</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>

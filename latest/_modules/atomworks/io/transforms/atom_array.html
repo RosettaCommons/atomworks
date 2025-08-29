@@ -403,8 +403,8 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">AtomArrayStack</span><span class="p">,</span> <span class="n">stack</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">listmap</span><span class="p">,</span> <span class="n">not_isin</span><span class="p">,</span> <span class="n">sum_string_arrays</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">ELEMENT_NAME_TO_ATOMIC_NUMBER</span><span class="p">,</span> <span class="n">HYDROGEN_LIKE_SYMBOLS</span><span class="p">,</span> <span class="n">WATER_LIKE_CCDS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">listmap</span><span class="p">,</span> <span class="n">not_isin</span><span class="p">,</span> <span class="n">sum_string_arrays</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">ELEMENT_NAME_TO_ATOMIC_NUMBER</span><span class="p">,</span> <span class="n">HYDROGEN_LIKE_SYMBOLS</span><span class="p">,</span> <span class="n">WATER_LIKE_CCDS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.bonds</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">generate_inter_level_bond_hash</span><span class="p">,</span>
     <span class="n">get_coarse_graph_as_nodes_and_edges</span><span class="p">,</span>
@@ -762,6 +762,19 @@
 
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_safe_to_int</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Robustly convert values to integers: map &#39;.&#39;, empty strings, and None to -1; parse numerics otherwise&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+
 <div class="viewcode-block" id="replace_negative_res_ids_with_auth_seq_id">
 <a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.replace_negative_res_ids_with_auth_seq_id">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">replace_negative_res_ids_with_auth_seq_id</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
@@ -782,8 +795,7 @@
 
     <span class="c1"># Convert auth_seq_ids to int if they are strings (as they are sometimes from AF-3 predictions)</span>
     <span class="k">if</span> <span class="n">author_seq_ids</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="ow">in</span> <span class="s2">&quot;UO&quot;</span><span class="p">:</span>  <span class="c1"># Unicode or Object (string-like)</span>
-        <span class="c1"># Handle &#39;.&#39; values by replacing with -1, then convert to int</span>
-        <span class="n">author_seq_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">author_seq_ids</span> <span class="o">==</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">author_seq_ids</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">author_seq_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frompyfunc</span><span class="p">(</span><span class="n">_safe_to_int</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)(</span><span class="n">author_seq_ids</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
     <span class="n">atom_array</span><span class="o">.</span><span class="n">res_id</span><span class="p">[</span><span class="n">negative_res_id_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">author_seq_ids</span><span class="p">[</span><span class="n">negative_res_id_mask</span><span class="p">]</span>
 

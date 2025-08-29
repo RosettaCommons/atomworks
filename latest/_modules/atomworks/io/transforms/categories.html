@@ -408,9 +408,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure.io.pdbx</span><span class="w"> </span><span class="kn">import</span> <span class="n">CIFBlock</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">exists</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">CCD_MIRROR_PATH</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChainType</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">deduplicate_iterator</span><span class="p">,</span> <span class="n">exists</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">CCD_MIRROR_PATH</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_residue_starts</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.sequence</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_1_from_3_letter_code</span>
 
@@ -658,7 +658,9 @@
 
     <span class="c1"># Build up the chain_info_dict with the sequence information</span>
     <span class="n">res_starts</span> <span class="o">=</span> <span class="n">get_residue_starts</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">chain_id</span> <span class="ow">in</span> <span class="n">deduplicate_iterator</span><span class="p">(</span><span class="n">struc</span><span class="o">.</span><span class="n">get_chains</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)):</span>
+    <span class="c1"># ... get the unique chain IDs by order of first appearance in the AtomArray</span>
+    <span class="n">chain_ids</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">struc</span><span class="o">.</span><span class="n">get_chains</span><span class="p">(</span><span class="n">atom_array</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">chain_id</span> <span class="ow">in</span> <span class="n">chain_ids</span><span class="p">:</span>
         <span class="n">rcsb_entity</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">chain_info_dict</span><span class="p">[</span><span class="n">chain_id</span><span class="p">][</span><span class="s2">&quot;rcsb_entity&quot;</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">rcsb_entity</span> <span class="ow">in</span> <span class="n">polymer_entity_id_to_res_names_and_ids</span><span class="p">:</span>

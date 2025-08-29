@@ -404,9 +404,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">CellList</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial.distance</span><span class="w"> </span><span class="kn">import</span> <span class="n">cdist</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">not_isin</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">ELEMENT_NAME_TO_ATOMIC_NUMBER</span><span class="p">,</span> <span class="n">METAL_ELEMENTS</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">default</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">default</span><span class="p">,</span> <span class="n">not_isin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">ELEMENT_NAME_TO_ATOMIC_NUMBER</span><span class="p">,</span> <span class="n">METAL_ELEMENTS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.preprocessing.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClashSeverity</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;preprocess&quot;</span><span class="p">)</span>
@@ -490,6 +489,8 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Builds a mask indicating which atoms clash with the query PN unit. If the number of comparisons is too large,</span>
 <span class="sd">    the computation is split into manageable chunks along the rows of `coord`.</span>
+
+<span class="sd">    TODO: Update documentation since this is not specific to PN units or clashes.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        coord (ndarray): The coordinates of the query PN unit. Shape is (n, 3).</span>

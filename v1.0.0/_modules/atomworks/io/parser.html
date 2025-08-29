@@ -409,9 +409,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">toolz</span><span class="w"> </span><span class="kn">import</span> <span class="n">keyfilter</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">atomworks.io.transforms.atom_array</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">string_to_md5_hash</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">CCD_MIRROR_PATH</span><span class="p">,</span> <span class="n">CRYSTALLIZATION_AIDS</span><span class="p">,</span> <span class="n">WATER_LIKE_CCDS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">template</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">md5_hash_string</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">CCD_MIRROR_PATH</span><span class="p">,</span> <span class="n">CRYSTALLIZATION_AIDS</span><span class="p">,</span> <span class="n">WATER_LIKE_CCDS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.transforms.categories</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">category_to_dict</span><span class="p">,</span>
     <span class="n">extract_crystallization_details</span><span class="p">,</span>
@@ -543,7 +543,7 @@
 <span class="sd">        build_assembly (string, list, or tuple, optional): Specifies which assembly to build, if any. Options are None</span>
 <span class="sd">            (e.g., asymmetric unit), &quot;first&quot;, &quot;all&quot;, or a list or tuple of assembly IDs. Defaults to &quot;all&quot;.</span>
 <span class="sd">        extra_fields (list, optional): A list of extra fields to include in the AtomArrayStack. Defaults to None. &quot;all&quot; includes all fields.</span>
-<span class="sd">            only support cif files.</span>
+<span class="sd">            Only support mmCIF files.</span>
 <span class="sd">        keep_cif_block (bool, optional): Whether to keep the CIF block in the result. Defaults to False.</span>
 
 <span class="sd">    Returns:</span>
@@ -611,7 +611,7 @@
         <span class="p">}</span>
         <span class="c1"># Compose args_string from parse_arguments values (in order)</span>
         <span class="n">args_string</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">parse_arguments</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">parse_arguments</span><span class="p">)</span>
-        <span class="n">args_hash</span> <span class="o">=</span> <span class="n">md5_hash_string</span><span class="p">(</span><span class="n">args_string</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+        <span class="n">args_hash</span> <span class="o">=</span> <span class="n">string_to_md5_hash</span><span class="p">(</span><span class="n">args_string</span><span class="p">,</span> <span class="n">truncate</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
 
         <span class="c1"># ... generate assembly info</span>
         <span class="n">assembly_info</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">build_assembly</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">build_assembly</span><span class="p">,</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="n">build_assembly</span>

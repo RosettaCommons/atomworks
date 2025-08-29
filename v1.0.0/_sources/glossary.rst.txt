@@ -48,3 +48,9 @@ Molecules
 - `molecule_id`: 1 (numeric for memory concerns, but can be conceptualized as "A,B,C")
 - `molecule_iid`: 1 (numeric for memory concerns, but can be conceptualized as "A_1,B_1,C_1"), 2 (e.g., "A_2,B_2,C_2")
 - `molecule_entity`: 1 
+
+Visually, we can represent the above example as:
+
+.. image:: _static/atomworks_glossary.png
+    :alt: Visual representation of AtomWorks combinatorial nomenclature worked example
+    :align: center
