@@ -421,7 +421,7 @@ def _build_entity_poly(
     entity_poly = {cat: [] for cat in _entity_poly_categories}
     for entity_id in unique_polymer_entity_ids:
         # ... get all relevant chain ids
-        chain_ids = np.unique(chain_ids[entity_ids == entity_id])
+        example_chain_ids = np.unique(chain_ids[entity_ids == entity_id])
 
         # ... get chain type
         chain_type = ChainType.as_enum(chain_types[entity_ids == entity_id][0])
@@ -450,7 +450,7 @@ def _build_entity_poly(
         entity_poly["nstd_monomer"].append("yes" if has_non_standard_monomer else "no")
         entity_poly["pdbx_seq_one_letter_code"].append(processed_entity_non_canonical_sequence)
         entity_poly["pdbx_seq_one_letter_code_can"].append(processed_entity_canonical_sequence)
-        entity_poly["pdbx_strand_id"].append(",".join(chain_ids))
+        entity_poly["pdbx_strand_id"].append(",".join(example_chain_ids))
         entity_poly["pdbx_target_identifier"].append("?")
     return {"entity_poly": entity_poly}
 
