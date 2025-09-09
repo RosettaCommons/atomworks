@@ -150,7 +150,14 @@ def match_residue_to_template(
     return template
 
 
-def _find_residue_mask_fast(residue_keys, sorted_keys, sort_idx, chain_id, res_name, res_id):
+def _find_residue_mask_fast(
+    residue_keys: np.ndarray,
+    sorted_keys: np.ndarray,
+    sort_idx: np.ndarray,
+    chain_id: str,
+    res_name: str,
+    res_id: int,
+) -> np.ndarray:
     """
     Efficient method of getting a residue mask from a sorted list of residue keys.
 
@@ -286,10 +293,7 @@ def build_template_atom_array(
 
     # ... get the sorted list of residue keys. This will make the residue mask lookup much faster.
     residue_keys = np.array(
-        [
-            (chain_id, res_name, res_id)
-            for chain_id, res_name, res_id in zip(chain_identifiers, res_names, res_ids, strict=True)
-        ],
+        list(zip(chain_identifiers, res_names, res_ids, strict=True)),
         dtype=np.dtype([("chain_id", "object"), ("res_name", "object"), ("res_id", "<i4")]),
     )
     sort_idx = np.argsort(residue_keys)
