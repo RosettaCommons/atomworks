@@ -1,14 +1,21 @@
 """AtomWorks Dataset classes and common APIs.
 
-Provides composable dataset classes for molecular data with Transform pipeline support.
+At a high level, to train models with AtomWorks, we need a Dataset class that:
+    (1) Takes as input an item index and returns the corresponding example information; typically includes:
+        a. Path to a structural file saved on disk (`/path/to/dataset/my_dataset_0.cif`)
+        b. Additional item-specific metadata (e.g., class labels)
+    (2) Pre-loads structural information from the returned example into an `AtomArray` and assembles inputs for the Transform pipeline
+    (3) Feed the input dictionary through a Transform pipeline and return the result
 
-Key Components:
-    * :class:`MolecularDataset`: Base class with Transform pipeline and error handling
-    * :class:`PandasDataset`: Tabular data stored as pandas DataFrames
-    * :class:`FileDataset`: Individual files as examples
+Due to the heterogeneity of biomolecular data, in many cases, we may also want:
+    (4) In the event of a failure during the Transform pipeline, fall back to a different example
 
-For custom use cases, users may implement their own Dataset classes. Downstream code
-makes no assumptions about the specific implementation.
+For bespoke use cases, users may choose to write a custom Dataset that accomplish these steps; downstream code makes no assumptions.
+
+To accelerate development, we also provide an off-the-shelf, composable approach following common patterns:
+    - MolecularDataset: Base class that handles pre-loading structural data and executing the Transform pipeline with error handling and debugging utilities
+    - PandasDataset: A subclass of MolecularDataset for tabular data stored as pandas DataFrames
+    - FileDataset: A subclass of MolecularDataset where each file is one example
 """
 
 import copy
@@ -36,11 +43,7 @@ from atomworks.ml.utils.rng import capture_rng_states
 
 
 class ExampleIDMixin(ABC):
-    """Mixin providing example ID functionality to a Dataset.
-
-    Provides methods for converting between example IDs and indices, and checking
-    if an example ID exists in the dataset.
-    """
+    """Mixin providing example ID functionality to a Dataset."""
 
     @abstractmethod
     def __contains__(self, example_id: str) -> bool:
@@ -56,26 +59,12 @@ class ExampleIDMixin(ABC):
 
     @abstractmethod
     def id_to_idx(self, example_id: str | list[str]) -> int | list[int]:
-        """Convert example ID(s) to index(es).
-
-        Args:
-            example_id: Single ID or list of IDs to convert.
-
-        Returns:
-            Corresponding index or list of indices.
-        """
+        """Convert example ID(s) to index(es)."""
         pass
 
     @abstractmethod
     def idx_to_id(self, idx: int | list[int]) -> str | list[str]:
-        """Convert index(es) to example ID(s).
-
-        Args:
-            idx: Single index or list of indices to convert.
-
-        Returns:
-            Corresponding ID or list of IDs.
-        """
+        """Convert index(es) to example ID(s)."""
         pass
 
 
@@ -83,7 +72,17 @@ class MolecularDataset(Dataset):
     """Base class for AtomWorks molecular datasets.
 
     Handles Transform pipelines and loader functionality for molecular data.
-    Subclasses implement :meth:`__getitem__` with their own data access patterns.
+    Subclasses implement __getitem__ with their own data access patterns.
+
+    Args:
+        transform: Transform function or pipeline to apply to loaded data.
+            Should accept the output of the loader and return featurized data.
+        loader: Optional function to process raw dataset output into Transform-ready format.
+            For example, parsing structural files or gathering columns into structured data.
+        save_failed_examples_to_dir: Optional directory path where failed examples
+            will be saved for debugging. Includes RNG state and error information.
+        name: Descriptive name for this dataset. Used for debugging and some downstream functions when
+            using nested datasets.
     """
 
     def __init__(
@@ -94,19 +93,6 @@ class MolecularDataset(Dataset):
         loader: Callable | None = None,
         save_failed_examples_to_dir: str | Path | None = None,
     ):
-        """Initialize MolecularDataset.
-
-        Args:
-            name: Descriptive name for this dataset. Used for debugging and some
-                downstream functions when using nested datasets.
-            transform: Transform function or pipeline to apply to loaded data.
-                Should accept the output of the loader and return featurized data.
-            loader: Optional function to process raw dataset output into Transform-ready
-                format. For example, parsing structural files or gathering columns
-                into structured data.
-            save_failed_examples_to_dir: Optional directory path where failed examples
-                will be saved for debugging. Includes RNG state and error information.
-        """
         self.loader = loader
 
         self.transform = transform
@@ -114,14 +100,7 @@ class MolecularDataset(Dataset):
         self.save_failed_examples_to_dir = Path(save_failed_examples_to_dir) if save_failed_examples_to_dir else None
 
     def _apply_loader(self, raw_data: Any) -> Any:
-        """Apply the loader function to raw data with timing and debugging.
-
-        Args:
-            raw_data: The raw data to process.
-
-        Returns:
-            Processed data ready for transforms.
-        """
+        """Apply the loader function to raw data with timing and debugging."""
         if self.loader is None:
             return raw_data
 
@@ -149,17 +128,10 @@ class MolecularDataset(Dataset):
         """Apply the Transform pipeline with error handling and debugging support.
 
         Args:
-            data: The loaded data ready for transforms.
+            data: The loaded data ready for transforms
             example_id: Optional example ID for debugging purposes. If not provided,
                 will generate one using dataset name and index.
-            idx: Optional dataset index for error reporting.
-
-        Returns:
-            Transformed data.
-
-        Raises:
-            KeyboardInterrupt: Always re-raised if encountered.
-            Exception: Any exception from the transform pipeline is re-raised.
+            idx: Optional dataset index for error reporting
         """
         if self.transform is None:
             return data
@@ -196,26 +168,132 @@ class MolecularDataset(Dataset):
             # Re-raise the original exception
             raise
 
+    @abstractmethod
     def __getitem__(self, index: int) -> Any:
-        """Return a fully-featurized data example given an index.
+        """
+        Method stub for subclasses to implement that returns a fully-featurized data example given an index.
 
-        Subclasses should implement this method to:
-            1. Query the underlying data source for raw data at the given index
-            2. Optionally pre-process data to prepare for the Transform pipeline
-            3. Feed the input dictionary through a Transform pipeline
+        The __getitem__ within subclasses should:
+            (1) Query the underlying dataframe for the raw data and the given index
+            (2) Based on that data, optionally perform some pre-processing steps to prepare for the `Transform` pipeline (e.g., parse into an `AtomArray`)
+            (3) Feed the input dictionary through a Transform pipeline and return the result
 
-        Typical output for an activity prediction network:
-            Step 1: ``{"path": "/path/to/dataset", "class_label": 5}``
-            Step 2: ``{"atom_array": AtomArray, "extra_info": {"class_label": 5}}``
-            Step 3: ``{"features": torch.Tensor, "class_label": torch.Tensor}``
+        For example, typical output from each of the above steps for an illustrative activity prediction network may be:
+            Step 1: {"path": "/path/to/dataset", "class_label": 5}
+            Step 2: {"atom_array": AtomArray, "extra_info": {"class_label": 5}}
+            Step 3: {"features": torch.Tensor, "class_label": torch.Tensor}
+        """
+        pass
+
+    @abstractmethod
+    def __len__(self) -> int:
+        pass
+
+
+class FileDataset(MolecularDataset, ExampleIDMixin):
+    """Dataset that loads molecular data from individual files.
+
+    Each file represents one example in the dataset.
+    If creating a dataset from a directory, use the `from_directory()` class method instead of the default constructor.
+
+    Args:
+        file_paths: List of file paths for the dataset. Each file represents one example.
+        name: Descriptive name for this dataset. Used for debugging and some downstream functions when
+            using nested datasets.
+        filter_fn: Optional function to filter file paths. Should return True for files to include.
+        transform: Transform pipeline to apply to loaded data.
+        loader: Optional function to process raw file paths into Transform-ready format.
+        save_failed_examples_to_dir: Optional directory path where failed examples
+            will be saved for debugging. Includes RNG state and error information.
+        dataset_parser: Deprecated. Use 'loader' parameter instead.
+        cif_parser_args: Deprecated. Use 'loader' parameter instead.
+
+    Examples:
+        Create from explicit file list:
+            >>> files = ["/path/to/file1.cif", "/path/to/file2.cif"]
+            >>> dataset = FileDataset(file_paths=files, name="my_dataset")
+
+        Create from directory:
+            >>> dataset = FileDataset.from_directory(directory="/path/to/files", name="my_dataset", max_depth=2)
+    """
+
+    def __init__(
+        self,
+        *,
+        file_paths: list[str | PathLike],
+        name: str,
+        filter_fn: Callable[[PathLike], bool] | None = None,
+        **kwargs: Any,
+    ):
+        super().__init__(name=name, **kwargs)
+
+        self.filter_fn = filter_fn or (lambda x: True)
+
+        # Convert to Path objects and filter
+        file_paths = [Path(path) for path in file_paths if self.filter_fn(path)]
+        if not file_paths:
+            raise ValueError("No files found after applying filters")
+        if len(file_paths) != len(set(file_paths)):
+            raise ValueError("File paths must be unique")
+
+        # Sort for consistent id<>idx mapping
+        file_paths.sort()
+        self.file_paths = file_paths
+
+        # Create ID mapping
+        self.id_to_idx_map = {self._get_example_id(i): i for i, _ in enumerate(file_paths)}
+
+    @classmethod
+    def from_directory(
+        cls,
+        *,
+        directory: PathLike,
+        name: str,
+        max_depth: int = 3,
+        **kwargs: Any,
+    ) -> "FileDataset":
+        """Create a FileDataset by scanning a directory for files.
 
         Args:
-            index: The index of the example to retrieve.
+            directory: Path to directory to scan for files.
+            name: Descriptive name for this dataset.
+            max_depth: Maximum depth to scan for files in subdirectories.
+            **kwargs: Additional arguments passed to FileDataset.__init__.
 
         Returns:
-            Fully-featurized data example.
+            FileDataset instance with files discovered from the directory.
         """
-        raise
+        dir_path = Path(directory)
+        if not dir_path.exists():
+            raise FileNotFoundError(f"Directory {directory} does not exist.")
+        if not dir_path.is_dir():
+            raise ValueError(f"Path {directory} is not a directory.")
+
+        file_paths = scan_directory(dir_path=dir_path, max_depth=max_depth)
+        return cls(file_paths=file_paths, name=name, **kwargs)
+
+    @classmethod
+    def from_file_list(
+        cls,
+        *,
+        file_paths: list[str | PathLike],
+        name: str,
+        **kwargs: Any,
+    ) -> "FileDataset":
+        """Create a FileDataset from an explicit list of file paths.
+
+        This is an alias for the main constructor for clarity and consistency
+        with from_directory().
+
+        Args:
+            file_paths: List of file paths for the dataset. Each file represents one example.
+            name: Descriptive name for this dataset.
+            **kwargs: Additional arguments passed to FileDataset.__init__.
+
+        Returns:
+            FileDataset instance with the provided file paths.
+        """
+        return cls(file_paths=file_paths, name=name, **kwargs)
 
     def __len__(self) -> int:
         """Return the number of examples in the dataset.
@@ -337,7 +415,6 @@ class FileDataset(MolecularDataset, ExampleIDMixin):
         return len(self.file_paths)
 
     def __contains__(self, example_id: str) -> bool:
-        """Check if the dataset contains the example ID."""
         return example_id in self.id_to_idx_map
 
     def id_to_idx(self, example_id: str | list[str]) -> int | list[int]:
@@ -353,28 +430,14 @@ class FileDataset(MolecularDataset, ExampleIDMixin):
         return self._get_example_id(idx)
 
     def __getitem__(self, idx: int) -> Any:
-        """Load and transform an example by file index.
-
-        Args:
-            idx: The index of the file to load.
-
-        Returns:
-            Transformed data from the file.
-        """
+        """Load and transform an example by file index."""
         file_path = str(self.file_paths[idx])
         example_id = self._get_example_id(idx)
         data = self._apply_loader(file_path)
         return self._apply_transform(data, example_id=example_id, idx=idx)
 
     def _get_example_id(self, idx: int) -> str:
-        """Get example ID from index - returns filename stem without extensions.
-
-        Args:
-            idx: The index of the file.
-
-        Returns:
-            Filename stem without any extensions.
-        """
+        """Get example ID from index - returns filename stem without extensions."""
         file_path = self.file_paths[idx]
         filename = Path(file_path).stem
         # If filename has multiple extensions (e.g., .cif.gz), remove them all
@@ -386,8 +449,37 @@ class FileDataset(MolecularDataset, ExampleIDMixin):
 class PandasDataset(MolecularDataset, ExampleIDMixin):
     """Dataset for tabular data stored as pandas DataFrames.
 
-    Inherits all functionality from :class:`MolecularDataset` with additional
+    Inherits all functionality from MolecularDataset with additional
     DataFrame-specific features for filtering and ID-based access.
+
+    Args:
+        data: Either a pandas DataFrame or path to a CSV/Parquet file containing
+            the tabular data. Each row represents one example.
+        name: Descriptive name for this dataset. Used for debugging and some
+            downstream functions when using nested datasets.
+        id_column: Optional column name to use as the DataFrame index for
+            example ID lookups. If provided, this column will be set as the index.
+        filters: Optional list of pandas query strings to filter the data.
+            Applied in order during initialization.
+        columns_to_load: Optional list of column names to load when reading
+            from a file. If None, all columns are loaded. Can dramatically reduce memory
+            usage and load time if loading from a columnar format like Parquet.
+        transform: Transform pipeline to apply to loaded data.
+        loader: Optional function to process raw DataFrame rows into Transform-ready format.
+        save_failed_examples_to_dir: Optional directory path where failed examples
+            will be saved for debugging. Includes RNG state and error information.
+        dataset_parser: Deprecated. Use 'loader' parameter instead.
+        cif_parser_args: Deprecated. Use 'loader' parameter instead.
+        **load_kwargs: Additional keyword arguments passed to pandas' read functions
+            (read_csv, read_parquet) when loading from file.
+
+    Examples:
+        Load from DataFrame:
+            >>> df = pd.DataFrame({"path": [...], "label": [...]})
+            >>> dataset = PandasDataset(data=df, name="my_dataset")
+
+        Load from file with filtering:
+            >>> dataset = PandasDataset(data="data.csv", name="filtered_dataset", filters=["label > 0", "path.str.contains('.pdb')"])
     """
 
     def __init__(
@@ -402,37 +494,8 @@ class PandasDataset(MolecularDataset, ExampleIDMixin):
         transform: Callable | None = None,
         loader: Callable | None = None,
         save_failed_examples_to_dir: str | Path | None = None,
-        load_kwargs: dict | tuple | None = None,
+        **load_kwargs: Any,
     ):
-        """Initialize PandasDataset.
-
-        Args:
-            data: Either a pandas DataFrame or path to a CSV/Parquet file containing
-                the tabular data. Each row represents one example.
-            name: Descriptive name for this dataset. Used for debugging and some
-                downstream functions when using nested datasets.
-            id_column: Optional column name to use as the DataFrame index for
-                example ID lookups. If provided, this column will be set as the index.
-            filters: Optional list of pandas query strings to filter the data.
-                Applied in order during initialization.
-            columns_to_load: Optional list of column names to load when reading
-                from a file. If None, all columns are loaded. Can dramatically reduce
-                memory usage and load time if loading from a columnar format like Parquet.
-            transform: Transform pipeline to apply to loaded data.
-            loader: Optional function to process raw DataFrame rows into Transform-ready format.
-            save_failed_examples_to_dir: Optional directory path where failed examples
-                will be saved for debugging. Includes RNG state and error information.
-            load_kwargs: Additional keyword arguments passed to pandas' read functions
-                (read_csv, read_parquet) when loading from file.
-
-        Examples:
-            Load from DataFrame:
-                >>> df = pd.DataFrame({"path": [...], "label": [...]})
-                >>> dataset = PandasDataset(data=df, name="my_dataset")
-
-            Load from file with filtering:
-                >>> dataset = PandasDataset(data="data.csv", name="filtered_dataset", filters=["label > 0", "path.str.contains('.pdb')"])
-        """
         super().__init__(
             name=name,
             transform=transform,
@@ -442,7 +505,7 @@ class PandasDataset(MolecularDataset, ExampleIDMixin):
 
         # Load data from path if needed
         if isinstance(data, PathLike | str):
-            data = self._load_from_path(data, columns_to_load, **(load_kwargs or {}))
+            data = self._load_from_path(data, columns_to_load, **load_kwargs)
         self.data = data
 
         # Apply filters
@@ -483,21 +546,13 @@ class PandasDataset(MolecularDataset, ExampleIDMixin):
         return data
 
     def __getitem__(self, idx: int) -> Any:
-        """Get an example by index, applying specified loader and Transforms.
-
-        Args:
-            idx: The index of the example to retrieve.
-
-        Returns:
-            Transformed data from the row.
-        """
+        """Get an example by index, applying specified loader and Transforms."""
         raw_data = self.data.iloc[idx]
         example_id = self._get_example_id(idx)
         data = self._apply_loader(raw_data)
         return self._apply_transform(data, example_id=example_id, idx=idx)
 
     def __len__(self) -> int:
-        """Return the number of rows in the dataset."""
         return len(self.data)
 
     def __contains__(self, example_id: str) -> bool:
@@ -505,11 +560,9 @@ class PandasDataset(MolecularDataset, ExampleIDMixin):
         return example_id in self.data.index
 
     def _id_to_index_single(self, example_id: str) -> int:
-        """Convert single example ID to index."""
         return self.data.index.get_loc(example_id)
 
     def _id_to_index_multiple(self, example_ids: list[str]) -> list[int]:
-        """Convert multiple example IDs to indices."""
         idxs = np.arange(len(self.data))
         return [idxs[self.data.index.get_loc(example_id)] for example_id in example_ids]
 
@@ -544,7 +597,7 @@ class PandasDataset(MolecularDataset, ExampleIDMixin):
             ValueError: If the data is not initialized or if a query removes all rows.
             Warning: If a query does not remove any rows.
 
-        Examples:
+        Example
             queries = [
                 "deposition_date < '2020-01-01'",
                 "resolution < 2.5 and ~method.str.contains('NMR')",
@@ -559,11 +612,7 @@ class PandasDataset(MolecularDataset, ExampleIDMixin):
             self._apply_query(query)
 
     def _apply_query(self, query: str) -> None:
-        """Apply a single query to the data.
-
-        Args:
-            query: The pandas query string to apply.
-        """
+        """Apply a single query to the data."""
         # Filter using query and validate impact
         original_num_rows = len(self.data)
         self.data = self.data.query(query)
@@ -571,16 +620,7 @@ class PandasDataset(MolecularDataset, ExampleIDMixin):
         self._validate_filter_impact(query, original_num_rows, filtered_num_rows)
 
     def _validate_filter_impact(self, query: str, original_num_rows: int, filtered_num_rows: int) -> None:
-        """Validate the impact of the filter.
-
-        Args:
-            query: The query that was applied.
-            original_num_rows: Number of rows before filtering.
-            filtered_num_rows: Number of rows after filtering.
-
-        Raises:
-            ValueError: If the query removes all rows.
-        """
+        """Validate the impact of the filter."""
         rows_removed = original_num_rows - filtered_num_rows
         percent_removed = (rows_removed / original_num_rows) * 100
         percent_remaining = (filtered_num_rows / original_num_rows) * 100
@@ -600,33 +640,18 @@ class PandasDataset(MolecularDataset, ExampleIDMixin):
             )
 
     def _get_example_id(self, idx: int) -> str:
-        """Get example ID from index - returns the index value from the DataFrame.
-
-        Args:
-            idx: The index of the row.
-
-        Returns:
-            The index value as a string.
-        """
+        """Get example ID from index - returns the index value from the DataFrame."""
         return str(self.data.iloc[idx].name)  # .name gets the index value
 
 
 class ConcatDatasetWithID(ConcatDataset):
     """Equivalent to :class:`torch.utils.data.ConcatDataset` but allows accessing examples by ID.
 
-    Provides ID-based access across multiple datasets that implement :class:`ExampleIDMixin`.
-    """
-
     # TODO: Do I need all of these _raise_if etc. etc. here? Can I just check that the wrapped datasets inherit somehow from ExampleIDMixin?
 
     datasets: list[ExampleIDMixin]
 
     def __init__(self, datasets: list[ExampleIDMixin]):
-        """Initialize ConcatDatasetWithID.
-
-        Args:
-            datasets: List of datasets that implement ExampleIDMixin.
-        """
         super().__init__(datasets)
 
         # Log the length of each dataset
@@ -761,10 +786,11 @@ class ConcatDatasetWithID(ConcatDataset):
 
 
 def get_row_and_index_by_example_id(dataset: ExampleIDMixin, example_id: str) -> dict:
-    """Retrieve a row and its index from a nested dataset structure by its example ID.
+    """
+    Retrieve a row and its index from a nested dataset structure by its example ID.
 
-    Args:
-        dataset: The dataset or concatenated dataset to search.
+    Parameters:
+        dataset (ExampleIDMixin): The dataset or concatenated dataset to search.
             Must have the `id_to_idx` method.
         example_id: The example ID to search for.
 
@@ -853,19 +879,19 @@ class FallbackDatasetWrapper(Dataset):
 
 
 # Backwards Compatibility
-# TODO: Deprecate
 def StructuralDatasetWrapper(  # noqa: N802
     dataset_parser: Callable,
     transform: Callable | None = None,
     dataset: PandasDataset | None = None,
     cif_parser_args: dict | None = None,
     save_failed_examples_to_dir: str | Path | None = None,
-    **kwargs,
+    **kwargs
 ) -> PandasDataset:
-    """Backwards-compatible wrapper for the deprecated StructuralDatasetWrapper.
+    """
+    Backwards-compatible wrapper for the deprecated StructuralDatasetWrapper.
 
     This function is deprecated and will be removed in a future version.
-    Use :class:`PandasDataset` with the appropriate loader function instead.
+    Use PandasDataset with the appropriate loader function instead.
 
     Args:
         dataset_parser: The dataset parser to use (e.g., PNUnitsDFParser, InterfacesDFParser).
@@ -877,9 +903,6 @@ def StructuralDatasetWrapper(  # noqa: N802
 
     Returns:
         PandasDataset instance configured with the deprecated parameters.
-
-    Raises:
-        ValueError: If dataset parameter is required but not provided.
     """
     from atomworks.ml.datasets.parsers import load_example_from_metadata_row
 
@@ -895,14 +918,16 @@ def StructuralDatasetWrapper(  # noqa: N802
 
     # Create loader from deprecated parameters
     def loader(row: pd.Series) -> dict[str, Any]:
-        return load_example_from_metadata_row(row, dataset_parser, cif_parser_args=cif_parser_args or {})
+        return load_example_from_metadata_row(
+            row, dataset_parser, cif_parser_args=cif_parser_args or {}
+        )
 
     # Create a new PandasDataset with the loader
     return PandasDataset(
         data=dataset.data,
-        name=dataset.name if hasattr(dataset, "name") else "structural_dataset",
+        name=dataset.name,
         transform=transform,
         loader=loader,
         save_failed_examples_to_dir=save_failed_examples_to_dir,
-        **kwargs,
+        **kwargs
     )
