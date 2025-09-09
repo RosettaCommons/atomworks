@@ -696,7 +696,7 @@ def StructuralDatasetWrapper(  # noqa: N802
     dataset: PandasDataset | None = None,
     cif_parser_args: dict | None = None,
     save_failed_examples_to_dir: str | Path | None = None,
-    **kwargs
+    **kwargs,
 ) -> PandasDataset:
     """
     Backwards-compatible wrapper for the deprecated StructuralDatasetWrapper.
@@ -729,16 +729,14 @@ def StructuralDatasetWrapper(  # noqa: N802
 
     # Create loader from deprecated parameters
     def loader(row: pd.Series) -> dict[str, Any]:
-        return load_example_from_metadata_row(
-            row, dataset_parser, cif_parser_args=cif_parser_args or {}
-        )
+        return load_example_from_metadata_row(row, dataset_parser, cif_parser_args=cif_parser_args or {})
 
     # Create a new PandasDataset with the loader
     return PandasDataset(
         data=dataset.data,
-        name=dataset.name,
+        name=dataset.name if hasattr(dataset, "name") else "structural_dataset",
         transform=transform,
         loader=loader,
         save_failed_examples_to_dir=save_failed_examples_to_dir,
-        **kwargs
+        **kwargs,
     )
