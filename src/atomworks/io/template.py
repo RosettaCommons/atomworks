@@ -254,7 +254,6 @@ def build_template_atom_array(
                     "of a chain that only differ by `transformation_id`.\n"
                     "You can fix this for example by re-naming the chains to be named uniquely. "
                     "For the purposes of this function, you can also add a unambiguous chain_iid annotation instead. "
-                    "For more info, see: https://git.ipd.uw.edu/ai/cifutils/-/issues/15"
                 )
             elif has_ambiguous_annotation_set(residue_start_atoms, annotation_set=["chain_iid", "res_id", "res_name"]):
                 raise ValueError(
@@ -265,7 +264,6 @@ def build_template_atom_array(
                     "In this case, falling back to the `chain_iid` annotation was insufficient to resolve the ambiguity."
                     "You can fix this for example by re-naming the chains to be named uniquely. "
                     "For the purposes of this function, you can also add a unambiguous chain_iid annotation instead. "
-                    "For more info, see: https://git.ipd.uw.edu/ai/cifutils/-/issues/15"
                 )
             else:
                 use_chain_iids = True
