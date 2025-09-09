@@ -10,10 +10,11 @@ from dotenv import load_dotenv
 from atomworks.constants import AF3_EXCLUDED_LIGANDS_REGEX, PDB_MIRROR_PATH, _load_env_var
 from atomworks.io.tools.inference import SequenceComponent
 from atomworks.ml.datasets.datasets import ConcatDatasetWithID, PandasDataset
-from atomworks.ml.datasets.loaders import (
-    loader_base,
-    loader_with_interfaces_and_pn_units_to_score,
-    loader_with_query_pn_units,
+from atomworks.ml.datasets.parsers import (
+    GenericDFParser,
+    InterfacesDFParser,
+    PNUnitsDFParser,
+    ValidationDFParserLikeAF3,
 )
 from atomworks.ml.datasets.parsers.base import DEFAULT_PARSER_ARGS
 from atomworks.ml.pipelines.af3 import build_af3_transform_pipeline
@@ -22,6 +23,7 @@ from atomworks.ml.preprocessing.constants import TRAINING_SUPPORTED_CHAIN_TYPES_
 from atomworks.ml.utils.io import read_parquet_with_metadata
 from atomworks.ml.utils.testing import cached_parse
 from tests.conftest import TEST_DATA_DIR
+import os
 
 ##########################################################################################
 # + ----------------------------------- Environment ------------------------------------ +
@@ -231,7 +233,7 @@ def rf2aa_pn_units_dataset(pn_units_pandas_dataset):
     return PandasDataset(
         data=pn_units_pandas_dataset.data,
         name="rf2aa_pn_units",
-        loader=loader_with_query_pn_units(pn_unit_iid_colnames=["q_pn_unit_iid"], base_path=PDB_MIRROR_PATH),
+        dataset_parser=PNUnitsDFParser(),
         transform=build_rf2aa_transform_pipeline(
             protein_msa_dirs=PROTEIN_MSA_DIRS,
             rna_msa_dirs=RNA_MSA_DIRS,
@@ -244,6 +246,7 @@ def rf2aa_pn_units_dataset(pn_units_pandas_dataset):
             template_lookup_path=TEMPLATE_LOOKUP,
             template_base_dir=TEMPLATE_DIR,
         ),
+        cif_parser_args={"cache_dir": None},
         save_failed_examples_to_dir=None,
     )
 
@@ -253,9 +256,7 @@ def rf2aa_interfaces_dataset(interfaces_pandas_dataset):
     return PandasDataset(
         data=interfaces_pandas_dataset.data,
         name="rf2aa_interfaces",
-        loader=loader_with_query_pn_units(
-            pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"], base_path=PDB_MIRROR_PATH
-        ),
+        dataset_parser=InterfacesDFParser(),
         transform=build_rf2aa_transform_pipeline(
             protein_msa_dirs=PROTEIN_MSA_DIRS,
             rna_msa_dirs=RNA_MSA_DIRS,
@@ -268,6 +269,7 @@ def rf2aa_interfaces_dataset(interfaces_pandas_dataset):
             template_lookup_path=TEMPLATE_LOOKUP,
             template_base_dir=TEMPLATE_DIR,
         ),
+        cif_parser_args={"cache_dir": None},
         save_failed_examples_to_dir=None,
     )
 
@@ -283,12 +285,7 @@ def rf2aa_validation_dataset(validation_pandas_dataset):
     return PandasDataset(
         data=validation_pandas_dataset.data,
         name="rf2aa_validation",
-        loader=loader_with_interfaces_and_pn_units_to_score(
-            path_colname="pdb_id",
-            base_path=str(PDB_MIRROR_PATH),
-            extension=".cif.gz",
-            sharding_pattern="/1:3/",
-        ),
+        dataset_parser=ValidationDFParserLikeAF3(),
         transform=build_rf2aa_transform_pipeline(
             protein_msa_dirs=PROTEIN_MSA_DIRS,
             rna_msa_dirs=RNA_MSA_DIRS,
@@ -315,7 +312,7 @@ def af3_pn_units_dataset(pn_units_pandas_dataset):
     return PandasDataset(
         data=pn_units_pandas_dataset.data,
         name="af3_pn_units",
-        loader=loader_with_query_pn_units(pn_unit_iid_colnames=["q_pn_unit_iid"], base_path=PDB_MIRROR_PATH),
+        dataset_parser=PNUnitsDFParser(),
         transform=build_af3_transform_pipeline(
             protein_msa_dirs=PROTEIN_MSA_DIRS,
             rna_msa_dirs=RNA_MSA_DIRS,
@@ -337,9 +334,7 @@ def af3_interfaces_dataset(interfaces_pandas_dataset):
     return PandasDataset(
         data=interfaces_pandas_dataset.data,
         name="af3_interfaces",
-        loader=loader_with_query_pn_units(
-            pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"], base_path=PDB_MIRROR_PATH
-        ),
+        dataset_parser=InterfacesDFParser(),
         transform=build_af3_transform_pipeline(
             protein_msa_dirs=PROTEIN_MSA_DIRS,
             rna_msa_dirs=RNA_MSA_DIRS,
@@ -352,6 +347,7 @@ def af3_interfaces_dataset(interfaces_pandas_dataset):
             template_lookup_path=TEMPLATE_LOOKUP,
             template_base_dir=TEMPLATE_DIR,
         ),
+        cif_parser_args={"cache_dir": None},
         save_failed_examples_to_dir=None,
     )
 
@@ -366,12 +362,7 @@ def af3_validation_dataset(validation_pandas_dataset):
     return PandasDataset(
         data=validation_pandas_dataset.data,
         name="af3_validation",
-        loader=loader_with_interfaces_and_pn_units_to_score(
-            path_colname="pdb_id",
-            base_path=PDB_MIRROR_PATH,
-            extension=".cif.gz",
-            sharding_pattern="/1:3/",
-        ),
+        dataset_parser=ValidationDFParserLikeAF3(),
         transform=build_af3_transform_pipeline(
             protein_msa_dirs=PROTEIN_MSA_DIRS,
             rna_msa_dirs=RNA_MSA_DIRS,
@@ -392,7 +383,7 @@ def af3_af2fb_distillation_dataset_no_metadata(distillation_pandas_dataset_no_me
     return PandasDataset(
         data=distillation_pandas_dataset_no_metadata.data,
         name="af3_af2fb_distillation_no_metadata",
-        loader=loader_base(
+        dataset_parser=GenericDFParser(
             base_path=str(TEST_DATA_ML / "af2_distillation" / "cif"),
             extension=".cif",
         ),
@@ -413,7 +404,8 @@ def af3_af2fb_distillation_dataset_with_metadata(distillation_pandas_dataset_wit
     return PandasDataset(
         data=distillation_pandas_dataset_with_metadata.data,
         name="af3_af2fb_distillation_with_metadata",
-        loader=loader_base(),
+        dataset_parser=GenericDFParser(),
+        cif_parser_args={},
         transform=build_af3_transform_pipeline(
             protein_msa_dirs=PROTEIN_MSA_DIRS,
             rna_msa_dirs=[],
