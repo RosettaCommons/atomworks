@@ -7,7 +7,6 @@ import gzip
 import hashlib
 import os
 import pickle
-import re
 from collections.abc import Callable
 from functools import wraps
 from os import PathLike
