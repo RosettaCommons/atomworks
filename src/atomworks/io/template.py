@@ -149,6 +149,7 @@ def match_residue_to_template(
     # ... return matched array
     return template
 
+
 def _find_residue_mask_fast(residue_keys, sorted_keys, sort_idx, chain_id, res_name, res_id):
     """
     Efficient method of getting a residue mask from a sorted list of residue keys.
@@ -176,6 +177,7 @@ def _find_residue_mask_fast(residue_keys, sorted_keys, sort_idx, chain_id, res_n
         mask[sort_idx[start_idx:end_idx]] = True
 
     return mask
+
 
 def build_template_atom_array(
     chain_info_dict: dict[str, dict[str, Any]],
