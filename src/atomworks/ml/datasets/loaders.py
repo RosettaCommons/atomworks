@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
+from toolz import keyfilter
 
 
 def build_metadata_hierarchy(row: pd.Series, attrs: dict | None = None) -> dict[str, Any]:
@@ -136,7 +137,7 @@ def loader_with_query_pn_units(
             + ([assembly_id_colname] if assembly_id_colname else [])
             + ["base_path", "extension"]
         )
-        filtered_extra_info = {k: v for k, v in extra_info.items() if k not in exclude_cols}
+        filtered_extra_info = keyfilter(lambda k: k not in exclude_cols, extra_info)
 
         return {
             "example_id": row[example_id_colname],
