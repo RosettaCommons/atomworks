@@ -13,10 +13,12 @@ DEFAULT_CIF_PARSER_ARGS = {
     "add_bond_types_from_struct_conn": ["covale"],
     "remove_ccds": CRYSTALLIZATION_AIDS,
     "remove_waters": True,
-    "hydrogen_policy": "remove",
     "fix_ligands_at_symmetry_centers": True,
-    "convert_mse_to_met": True,
     "fix_arginines": True,
+    "fix_formal_charges": True,
+    "fix_bond_types": True,
+    "convert_mse_to_met": True,
+    "hydrogen_policy": "remove",
     "model": None,  # all models
 }
 """Default cif parser arguments for `atomworks.io.parse`.
@@ -115,6 +117,7 @@ def load_example_from_metadata_row(
         cif_parser_args = {}
 
     # Convenience utilities to default to loading from and saving to cache if a cache_dir is provided, unless explicitly overridden
+    # TODO: Move to DEFAULT_CIF_PARSER_ARGS, but set to False by default not True
     if cif_parser_args.get("cache_dir"):
         cif_parser_args.setdefault("load_from_cache", True)
         cif_parser_args.setdefault("save_to_cache", True)
