@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 from atomworks.constants import AF3_EXCLUDED_LIGANDS_REGEX, _load_env_var
 from atomworks.io.tools.inference import SequenceComponent
-from atomworks.ml.datasets.datasets import ConcatDatasetWithID, PandasDataset, StructuralDatasetWrapper
+from atomworks.ml.datasets.datasets import ConcatDatasetWithID, PandasDataset
 from atomworks.ml.datasets.parsers import (
     GenericDFParser,
     InterfacesDFParser,
@@ -23,6 +23,7 @@ from atomworks.ml.preprocessing.constants import TRAINING_SUPPORTED_CHAIN_TYPES_
 from atomworks.ml.utils.io import read_parquet_with_metadata
 from atomworks.ml.utils.testing import cached_parse
 from tests.conftest import TEST_DATA_DIR
+import os
 
 ##########################################################################################
 # + ----------------------------------- Environment ------------------------------------ +
@@ -37,14 +38,20 @@ def pytest_configure(config):
     dotenv_path = os.path.join(current_dir, "../..", ".env")
 
     # Load the environment variables
-    load_dotenv(dotenv_path)
+    load_dotenv(dotenv_path, override=True)
 
-
-if not os.environ.get("PDB_MIRROR_PATH") or not os.path.exists(os.environ.get("PDB_MIRROR_PATH")):
-    raise pytest.UsageError(
-        "ERROR: Required PDB_MIRROR_PATH environment variable not set. "
-        "Please set this in the .env file or in your shell environment."
-    )
+    # We require a PDB mirror (of at least a subset of the PDB) for the AtomWorks.ml tests
+    pdb_mirror_path = os.environ.get("PDB_MIRROR_PATH")
+    if not pdb_mirror_path:
+        raise pytest.UsageError(
+            "ERROR: Required PDB_MIRROR_PATH environment variable not set. "
+            "Please set this in the .env file or in your shell environment."
+        )
+    if not os.path.exists(pdb_mirror_path):
+        raise pytest.UsageError(
+            f"ERROR: PDB_MIRROR_PATH is set to '{pdb_mirror_path}', but this path does not exist. "
+            "Please check your .env file or shell environment."
+        )
 
 
 ##########################################################################################
@@ -167,9 +174,9 @@ TEST_DIFFUSION_BATCH_SIZE = 32  # Set to a value other than default (48) for tes
 @pytest.fixture(scope="session")
 def pn_units_pandas_dataset(pn_units_df):
     return PandasDataset(
+        data=pn_units_df,
         name="pn_units",
         id_column="example_id",
-        data=pn_units_df,
         filters=SHARED_TEST_FILTERS + TEST_PN_UNITS_FILTERS,
         columns_to_load=None,  # Load all columns
     )
@@ -178,9 +185,9 @@ def pn_units_pandas_dataset(pn_units_df):
 @pytest.fixture(scope="session")
 def interfaces_pandas_dataset(interfaces_df):
     return PandasDataset(
+        data=interfaces_df,
         name="interfaces",
         id_column="example_id",
-        data=interfaces_df,
         filters=SHARED_TEST_FILTERS + TEST_INTERFACES_FILTERS,
         columns_to_load=None,  # Load all columns
     )
@@ -189,8 +196,8 @@ def interfaces_pandas_dataset(interfaces_df):
 @pytest.fixture(scope="session")
 def validation_pandas_dataset(af3_validation_df):
     return PandasDataset(
-        name="validation",
         data=af3_validation_df,
+        name="validation",
         id_column="example_id",
         columns_to_load=None,  # Load all columns
     )
@@ -223,7 +230,9 @@ def distillation_pandas_dataset_with_metadata(af2_distillation_facebook_df_with_
 
 @pytest.fixture(scope="session")
 def rf2aa_pn_units_dataset(pn_units_pandas_dataset):
-    return StructuralDatasetWrapper(
+    return PandasDataset(
+        data=pn_units_pandas_dataset.data,
+        name="rf2aa_pn_units",
         dataset_parser=PNUnitsDFParser(),
         transform=build_rf2aa_transform_pipeline(
             protein_msa_dirs=PROTEIN_MSA_DIRS,
@@ -237,7 +246,6 @@ def rf2aa_pn_units_dataset(pn_units_pandas_dataset):
             template_lookup_path=TEMPLATE_LOOKUP,
             template_base_dir=TEMPLATE_DIR,
         ),
-        dataset=pn_units_pandas_dataset,
         cif_parser_args={"cache_dir": None},
         save_failed_examples_to_dir=None,
     )
@@ -245,7 +253,9 @@ def rf2aa_pn_units_dataset(pn_units_pandas_dataset):
 
 @pytest.fixture(scope="session")
 def rf2aa_interfaces_dataset(interfaces_pandas_dataset):
-    return StructuralDatasetWrapper(
+    return PandasDataset(
+        data=interfaces_pandas_dataset.data,
+        name="rf2aa_interfaces",
         dataset_parser=InterfacesDFParser(),
         transform=build_rf2aa_transform_pipeline(
             protein_msa_dirs=PROTEIN_MSA_DIRS,
@@ -259,7 +269,6 @@ def rf2aa_interfaces_dataset(interfaces_pandas_dataset):
             template_lookup_path=TEMPLATE_LOOKUP,
             template_base_dir=TEMPLATE_DIR,
         ),
-        dataset=interfaces_pandas_dataset,
         cif_parser_args={"cache_dir": None},
         save_failed_examples_to_dir=None,
     )
@@ -272,8 +281,10 @@ def rf2aa_pdb_dataset(rf2aa_pn_units_dataset, rf2aa_interfaces_dataset):
 
 @pytest.fixture(scope="session")
 def rf2aa_validation_dataset(validation_pandas_dataset):
-    """Create a StructuralDatasetWrapper for RF2AA validation."""
-    return StructuralDatasetWrapper(
+    """Create a PandasDataset for RF2AA validation."""
+    return PandasDataset(
+        data=validation_pandas_dataset.data,
+        name="rf2aa_validation",
         dataset_parser=ValidationDFParserLikeAF3(),
         transform=build_rf2aa_transform_pipeline(
             protein_msa_dirs=PROTEIN_MSA_DIRS,
@@ -287,7 +298,6 @@ def rf2aa_validation_dataset(validation_pandas_dataset):
             template_lookup_path=TEMPLATE_LOOKUP,
             template_base_dir=TEMPLATE_DIR,
         ),
-        dataset=validation_pandas_dataset,
         save_failed_examples_to_dir=None,
     )
 
@@ -299,7 +309,9 @@ def rf2aa_validation_dataset(validation_pandas_dataset):
 
 @pytest.fixture(scope="session")
 def af3_pn_units_dataset(pn_units_pandas_dataset):
-    return StructuralDatasetWrapper(
+    return PandasDataset(
+        data=pn_units_pandas_dataset.data,
+        name="af3_pn_units",
         dataset_parser=PNUnitsDFParser(),
         transform=build_af3_transform_pipeline(
             protein_msa_dirs=PROTEIN_MSA_DIRS,
@@ -313,14 +325,15 @@ def af3_pn_units_dataset(pn_units_pandas_dataset):
             template_lookup_path=TEMPLATE_LOOKUP,
             template_base_dir=TEMPLATE_DIR,
         ),
-        dataset=pn_units_pandas_dataset,
         save_failed_examples_to_dir=None,
     )
 
 
 @pytest.fixture(scope="session")
 def af3_interfaces_dataset(interfaces_pandas_dataset):
-    return StructuralDatasetWrapper(
+    return PandasDataset(
+        data=interfaces_pandas_dataset.data,
+        name="af3_interfaces",
         dataset_parser=InterfacesDFParser(),
         transform=build_af3_transform_pipeline(
             protein_msa_dirs=PROTEIN_MSA_DIRS,
@@ -334,7 +347,6 @@ def af3_interfaces_dataset(interfaces_pandas_dataset):
             template_lookup_path=TEMPLATE_LOOKUP,
             template_base_dir=TEMPLATE_DIR,
         ),
-        dataset=interfaces_pandas_dataset,
         cif_parser_args={"cache_dir": None},
         save_failed_examples_to_dir=None,
     )
@@ -347,7 +359,9 @@ def af3_pdb_dataset(af3_pn_units_dataset, af3_interfaces_dataset):
 
 @pytest.fixture(scope="session")
 def af3_validation_dataset(validation_pandas_dataset):
-    return StructuralDatasetWrapper(
+    return PandasDataset(
+        data=validation_pandas_dataset.data,
+        name="af3_validation",
         dataset_parser=ValidationDFParserLikeAF3(),
         transform=build_af3_transform_pipeline(
             protein_msa_dirs=PROTEIN_MSA_DIRS,
@@ -360,15 +374,15 @@ def af3_validation_dataset(validation_pandas_dataset):
             template_lookup_path=TEMPLATE_LOOKUP,
             template_base_dir=TEMPLATE_DIR,
         ),
-        dataset=validation_pandas_dataset,
         save_failed_examples_to_dir=None,
     )
 
 
 @pytest.fixture(scope="session")
 def af3_af2fb_distillation_dataset_no_metadata(distillation_pandas_dataset_no_metadata):
-    return StructuralDatasetWrapper(
-        dataset=distillation_pandas_dataset_no_metadata,
+    return PandasDataset(
+        data=distillation_pandas_dataset_no_metadata.data,
+        name="af3_af2fb_distillation_no_metadata",
         dataset_parser=GenericDFParser(
             base_path=str(TEST_DATA_ML / "af2_distillation" / "cif"),
             extension=".cif",
@@ -388,8 +402,9 @@ def af3_af2fb_distillation_dataset_no_metadata(distillation_pandas_dataset_no_me
 
 @pytest.fixture(scope="session")
 def af3_af2fb_distillation_dataset_with_metadata(distillation_pandas_dataset_with_metadata):
-    return StructuralDatasetWrapper(
-        dataset=distillation_pandas_dataset_with_metadata,
+    return PandasDataset(
+        data=distillation_pandas_dataset_with_metadata.data,
+        name="af3_af2fb_distillation_with_metadata",
         dataset_parser=GenericDFParser(),
         cif_parser_args={},
         transform=build_af3_transform_pipeline(

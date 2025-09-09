@@ -63,6 +63,7 @@ def test_filter_no_impact(caplog, pn_units_df):
     with caplog.at_level(logging.WARNING):
         PandasDataset(
             data=pn_units_df.copy(),
+            name="test_no_impact",
             filters=filters,
         )
     assert "did not remove any rows" in caplog.text, "Warning for no impact filter not raised"
@@ -74,6 +75,7 @@ def test_filter_remove_all_rows(pn_units_df):
     with pytest.raises(ValueError, match="removed all rows"):
         PandasDataset(
             data=pn_units_df.copy(),
+            name="test_remove_all",
             filters=filters,
         )
 
