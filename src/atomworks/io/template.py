@@ -150,6 +150,42 @@ def match_residue_to_template(
     return template
 
 
+def _find_residue_mask_fast(
+    residue_keys: np.ndarray,
+    sorted_keys: np.ndarray,
+    sort_idx: np.ndarray,
+    chain_id: str,
+    res_name: str,
+    res_id: int,
+) -> np.ndarray:
+    """
+    Efficient method of getting a residue mask from a sorted list of residue keys.
+
+    Args:
+        - residue_keys: Structured np array of residue keys to search through
+        - sorted_keys: Sorted list of residue keys
+        - sort_idx: Index of the sorted list (get from doing np.argsort(residue_keys))
+        - chain_id: Chain ID of the residue
+        - res_name: Residue name of the residue
+        - res_id: Residue ID of the residue
+
+    Returns:
+        - mask: Boolean mask of the residue keys
+    """
+    key = np.array([(chain_id, res_name, res_id)], dtype=residue_keys.dtype)
+
+    # Find start and end indices using binary search
+    start_idx = np.searchsorted(sorted_keys, key)[0]
+    end_idx = np.searchsorted(sorted_keys, key, side="right")[0]
+
+    # Create mask
+    mask = np.zeros(len(residue_keys), dtype=bool)
+    if start_idx < end_idx:
+        mask[sort_idx[start_idx:end_idx]] = True
+
+    return mask
+
+
 def build_template_atom_array(
     chain_info_dict: dict[str, dict[str, Any]],
     atom_array: AtomArray | None = None,
@@ -252,6 +288,15 @@ def build_template_atom_array(
     # ... create a list of atoms based on the reference CCD entries
     template_residues = []
     chain_identifiers = chain_iids if use_chain_iids else chain_ids
+
+    # ... get the sorted list of residue keys. This will make the residue mask lookup much faster.
+    residue_keys = np.array(
+        list(zip(chain_identifiers, res_names, res_ids, strict=True)),
+        dtype=np.dtype([("chain_id", "object"), ("res_name", "object"), ("res_id", "<i4")]),
+    )
+    sort_idx = np.argsort(residue_keys)
+    sorted_keys = residue_keys[sort_idx]
+
     for chain_identifier in list(dict.fromkeys(chain_info_dict)):
         chain_res_ids = chain_identifier_to_res_ids[chain_identifier]
         chain_res_names = chain_identifier_to_res_names[chain_identifier]
@@ -263,11 +308,13 @@ def build_template_atom_array(
         for res_id, (res_id_original, ccd_code) in enumerate(zip(chain_res_ids, chain_res_names, strict=True), start=1):
             res_id_original = int(res_id_original)
             # ... and corresponding mask
-            res_mask = (chain_identifiers == chain_identifier) & (res_names == ccd_code) & (res_ids == res_id_original)
+            res_mask = _find_residue_mask_fast(
+                residue_keys, sorted_keys, sort_idx, chain_identifier, ccd_code, res_id_original
+            )
 
             # res_mask might all False, in which case we fall back to the chain_id in the chain_info_dict (if present)
             if res_mask.any():
-                chain_id = atom_array[res_mask].chain_id[0] if exists(atom_array) else chain_identifier
+                chain_id = atom_array.chain_id[res_mask][0] if exists(atom_array) else chain_identifier
             elif not use_chain_iids:
                 chain_id = chain_identifier
             else:
