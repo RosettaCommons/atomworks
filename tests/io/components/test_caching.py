@@ -7,7 +7,7 @@ from atomworks.io.utils.testing import assert_same_atom_array
 from tests.io.conftest import get_pdb_path
 
 TEST_CASES = [
-    "4NDZ",  # 29K atoms, large enough to test caching without too much variance
+    "4NDZ", # 29K atoms, large enough to test caching without too much variance
 ]
 
 
