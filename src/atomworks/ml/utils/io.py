@@ -70,8 +70,8 @@ def scan_directory(dir_path: PathLike, max_depth: int) -> list[str]:
 
 
 def cache_based_on_subset_of_args(cache_keys: list[str], maxsize: int | None = None) -> Callable:
-    """
-    Decorator to cache function results based on a subset of its keyword arguments.
+    """Decorator to cache function results based on a subset of its keyword arguments.
+
     Most helpful when some arguments may be unhashable types (e.g., dictionaries, AtomArray).
 
     Args:

@@ -1,4 +1,4 @@
-"""Constants used in the AtomWorks library."""
+"""Constants used in the atomworks library."""
 
 import logging
 import os
