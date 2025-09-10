@@ -193,38 +193,48 @@ class GenericDFParser(MetadataRowParser):
     We parse an input row (e.g., a Pandas Series) and return a dictionary containing pertinent information for the Transform pipeline.
 
     Args:
-        example_id_colname (str): Name of the column containing a unique identifier for each example (across ALL datasets, not just this dataset).
-            By convention, the columns values should be generated with `atomworks.ml.common.generate_example_id`. Default: "example_id"
-        path_colname (str): Name of the column containing paths (relative or absolute) to the relevant structure files. Default: "path"
-        pn_unit_iid_colnames (str | List[str]): The name(s) of the column(s) containing the CIFUtils pn_unit_iid(s); used for cropping.
+        example_id_colname: Name of the column containing a unique identifier for each example (across ALL datasets, not just this dataset).
+            By convention, the columns values should be generated with ``atomworks.ml.common.generate_example_id``. Default: "example_id"
+        path_colname: Name of the column containing paths (relative or absolute) to the relevant structure files. Default: "path"
+        pn_unit_iid_colnames: The name(s) of the column(s) containing the CIFUtils pn_unit_iid(s); used for cropping.
             If given as a list, should contain one element for a monomers dataset and two for an interfaces dataset.
             Default: None (crop randomly)
-        assembly_id_colname (str | None): Optional parameter giving the name of the column containing the assembly ID.
+        assembly_id_colname: Optional parameter giving the name of the column containing the assembly ID.
             If None, the assembly ID will be set to "1" for all examples. Default: None
-        base_path (str): The base path to the files, if not included in the path.
-        extension (str): The file extension of the structure files, if not included in the path.
-        attrs (dict): Additional attributes to be merged with the dataframe-level attributes stored in the DF (if present). Attributes
+        base_path: The base path to the files, if not included in the path.
+        extension: The file extension of the structure files, if not included in the path.
+        attrs: Additional attributes to be merged with the dataframe-level attributes stored in the DF (if present). Attributes
             in this dictionary will take precedence over those in the dataset-level attributes and will be returned in the "extra_info" key.
 
     Returns:
-        - example_id: The unique identifier for the example. Must be unique across all datasets.
-        - path: The composed path to the structure file, including the base path and extension if specified.
-        - query_pn_unit_iids: The pn_unit_iid(s) that inform where to crop the structure.
-            During TRAINING, we typically want to specify the chain(s) or interface at which to center our crop. If not given (i.e., None),
-                then we will crop the structure at a random location, if a crop is required.
-            During VALIDATION, then we do not crop, and query_pn_unit_iids should be None.
-        - assembly_id: The assembly ID. Used to load the correct assembly from the CIF file. If not given, the assembly ID will be set to "1".
-        - extra_info: A dictionary containing all additional information that should be passed to the Transform pipeline. Contains, in order of precedence:
-            - Any additional key-value pairs specified by the `attrs` parameter
-            - All unused dataframe columns (i.e., those not used for example_id, path, query_pn_unit_iids, or assembly_id)
-            - Dataset-level attributes (if present), found in the `attrs` attribute of the Dataframe (or Series)
-            For example, the "extra_info" key could contain information about which chain(s) to score during validation, metadata for specific metrics, etc.
+        dict: A dictionary containing:
 
-    NOTE: We must avoid duplication of interfaces due to order inversion. If not using the preprocessing
-        scripts in `atomworks.ml`, ensure that the interfaces dataframe has been checked for duplicates.
+            example_id
+                The unique identifier for the example. Must be unique across all datasets.
+            path
+                The composed path to the structure file, including the base path and extension if specified.
+            query_pn_unit_iids
+                The pn_unit_iid(s) that inform where to crop the structure.
+                During TRAINING, we typically want to specify the chain(s) or interface at which to center our crop. If not given (i.e., None),
+                then we will crop the structure at a random location, if a crop is required.
+                During VALIDATION, then we do not crop, and query_pn_unit_iids should be None.
+            assembly_id
+                The assembly ID. Used to load the correct assembly from the CIF file. If not given, the assembly ID will be set to "1".
+            extra_info
+                A dictionary containing all additional information that should be passed to the Transform pipeline. Contains, in order of precedence:
+
+                - Any additional key-value pairs specified by the ``attrs`` parameter
+                - All unused dataframe columns (i.e., those not used for example_id, path, query_pn_unit_iids, or assembly_id)
+                - Dataset-level attributes (if present), found in the ``attrs`` attribute of the Dataframe (or Series)
+                For example, the "extra_info" key could contain information about which chain(s) to score during validation, metadata for specific metrics, etc.
+
+    Note:
+        We must avoid duplication of interfaces due to order inversion. If not using the preprocessing
+        scripts in ``atomworks.ml``, ensure that the interfaces dataframe has been checked for duplicates.
         For example, [A, B] and [B, A] should be considered the same interface.
 
-    Example dataframe:
+    Example:
+        Example dataframe:
         example_id                      path                      pn_unit_1_iid  pn_unit_2_iid
         {['my-dataset']}{ex_1}{1}{[A_1,B_1]}  /path/to/structure_1.cif  A_1            B_1
         {['my-dataset']}{ex_2}{2}{[C_1,B_1]}  /path/to/structure_2.cif  C_1            B_1

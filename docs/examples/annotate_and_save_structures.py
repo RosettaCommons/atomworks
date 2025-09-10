@@ -220,6 +220,6 @@ print("✓ Successfully demonstrated structure annotation, saving, and loading!"
 
 ########################################################################
 # Related Examples
-# ----------
+# ---------------
 #
 # - :doc:`pocket_conditioning_transform` - Create custom transforms for ligand pocket identification and ML feature generation

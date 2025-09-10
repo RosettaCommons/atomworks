@@ -56,8 +56,8 @@ def get_residue_starts(atom_array: AtomArray | AtomArrayStack, add_exclusive_sto
     Backwards compatible with `biotite.structure.residues.get_residue_starts` if the
     `transformation_id` annotation is not present.
 
-    References:
-        - https://github.com/biotite-dev/biotite/blob/231eefed334e1d3509c1b7cb3f2bfd71d4b0eeb0/src/biotite/structure/residues.py#L35
+    Reference:
+        `Biotite residues.py <https://github.com/biotite-dev/biotite/blob/231eefed334e1d3509c1b7cb3f2bfd71d4b0eeb0/src/biotite/structure/residues.py#L35>`_
     """
     _annots_to_check = ["chain_id", "res_name", "res_id", "ins_code", "transformation_id"]
     existing_annots = atom_array.get_annotation_categories()

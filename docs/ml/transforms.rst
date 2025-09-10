@@ -1,10 +1,10 @@
 Transforms
-=========
+==========
 
 This module contains various transformation classes and utilities for processing molecular data.
 
 Core Transform Classes
---------------------
+-----------------------
 
 .. automodule:: atomworks.ml.transforms.base
    :members:
@@ -87,7 +87,7 @@ Core Transform Classes
    :show-inheritance:
 
 Utility Modules
--------------
+---------------
 
 .. automodule:: atomworks.ml.transforms._checks
    :members:
@@ -115,10 +115,10 @@ Utility Modules
    :show-inheritance:
 
 Submodules
----------
+-----------
 
 DNA Transforms
-~~~~~~~~~~~~
+~~~~~~~~~~~~~~
 
 .. automodule:: atomworks.ml.transforms.dna
    :members:
@@ -126,23 +126,15 @@ DNA Transforms
    :show-inheritance:
 
 Diffusion Transforms
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 .. automodule:: atomworks.ml.transforms.diffusion
    :members:
    :undoc-members:
    :show-inheritance:
 
-ESM Transforms
-~~~~~~~~~~~~
-
-.. automodule:: atomworks.ml.transforms.esm
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Feature Aggregation Transforms
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. automodule:: atomworks.ml.transforms.feature_aggregation
    :members:
@@ -150,7 +142,7 @@ Feature Aggregation Transforms
    :show-inheritance:
 
 MSA Transforms
-~~~~~~~~~~~~
+~~~~~~~~~~~~~~
 
 .. automodule:: atomworks.ml.transforms.msa
    :members:

@@ -5,5 +5,6 @@ API
    :maxdepth: 2
    :caption: API Modules
 
+   core
    io
    ml

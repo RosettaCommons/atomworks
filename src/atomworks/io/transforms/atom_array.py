@@ -1,6 +1,6 @@
-"""
-Transforms operating predominantly on Biotite's `AtomArray` objects.
-These operations should take as input, and return, `AtomArray` objects.
+"""Transforms operating predominantly on Biotite's AtomArray objects.
+
+These operations should take as input, and return, AtomArray objects.
 """
 
 import logging
@@ -32,7 +32,15 @@ except ImportError:
 
 
 def subset_atom_array(atom_array: AtomArray | AtomArrayStack, keep: np.ndarray) -> AtomArray | AtomArrayStack:
-    """Subsets an AtomArray or AtomArrayStack by a boolean mask."""
+    """Subsets an AtomArray or AtomArrayStack by a boolean mask.
+
+    Args:
+        atom_array: The AtomArray or AtomArrayStack to subset.
+        keep: Boolean mask indicating which atoms to keep.
+
+    Returns:
+        The subsetted AtomArray or AtomArrayStack.
+    """
     if isinstance(atom_array, AtomArrayStack):
         return atom_array[:, keep]
     else:
@@ -40,7 +48,14 @@ def subset_atom_array(atom_array: AtomArray | AtomArrayStack, keep: np.ndarray) 
 
 
 def is_any_coord_nan(atom_array: AtomArray | AtomArrayStack) -> np.ndarray:
-    """Returns a boolean mask of shape [n_atoms] indicating whether any coordinate is NaN for each atom in the AtomArray or AtomArrayStack."""
+    """Returns a boolean mask indicating whether any coordinate is NaN for each atom.
+
+    Args:
+        atom_array: The AtomArray or AtomArrayStack to check.
+
+    Returns:
+        Boolean mask of shape [n_atoms] indicating NaN coordinates.
+    """
     if isinstance(atom_array, AtomArrayStack):
         return np.isnan(atom_array.coord).any(axis=(0, -1))
     else:

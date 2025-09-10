@@ -1,4 +1,12 @@
-"""Collection of monkey patches for biotite."""
+"""Collection of monkey patches for biotite.
+
+This module provides patches and extensions to the Biotite library to enhance
+functionality and fix version-specific issues.
+
+References:
+    `Biotite Documentation <https://www.biotite-python.org/>`_
+    `Biotite Structure Module <https://www.biotite-python.org/apidoc/biotite.structure.html>`_
+"""
 
 from typing import Callable
 
@@ -16,8 +24,7 @@ _HAS_BEEN_PATCHED = False
 
 
 def apply_if_version_lt(version: str, min_version: str) -> Callable:
-    """
-    Decorator to apply a function only if the given version is less than the given minimal version.
+    """Decorator to apply a function only if the given version is less than the given minimal version.
 
     Args:
         version: Version to check.

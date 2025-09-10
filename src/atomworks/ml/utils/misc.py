@@ -218,7 +218,7 @@ def masked_mean(
     tensor([3., 5.]) # float32
 
     Reference:
-    - AF2 Multimer Code (https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/model/utils.py#L79)
+        `AF2 Multimer Code <https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/model/utils.py#L79>`_
     """
 
     # Drop the last channel of the mask if specified

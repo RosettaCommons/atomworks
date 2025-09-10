@@ -1,8 +1,8 @@
-"""
-atomworks - Unified package for biological data I/O and machine learning.
+"""Unified package for biological data I/O and machine learning.
 
-This package combines functionality from atomworks.io (I/O operations) and atomworks.ml (ML utilities)
-into a unified interface for biological data processing and machine learning.
+This package combines functionality from :mod:`atomworks.io` (I/O operations) and
+:mod:`atomworks.ml` (ML utilities) into a unified interface for biological data
+processing and machine learning.
 """
 
 import importlib

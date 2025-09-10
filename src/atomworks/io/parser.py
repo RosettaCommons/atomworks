@@ -1,4 +1,12 @@
-"""Entrypoint for parsing atomic-level structure files (e.g., PDB, CIF) into Biotite-compatible data structures."""
+"""Entrypoint for parsing atomic-level structure files into Biotite-compatible data structures.
+
+This module provides functionality for parsing PDB, CIF, and other structure files
+into Biotite-compatible data structures with various processing options.
+
+References:
+    `Biotite Structure I/O <https://www.biotite-python.org/apidoc/biotite.structure.io.html>`_
+    `mmCIF Format Specification <https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/>`_
+"""
 
 from __future__ import annotations
 
@@ -102,22 +110,22 @@ def parse(
         - Perform analogous cleaning/processing steps on an existing AtomArray or AtomArrayStack.
 
     We categorize arguments into two groups:
-        - Wrapper arguments: Arguments that are used within the wrapping `parse` method (e.g., caching)
+        - Wrapper arguments: Arguments that are used within the wrapping parse method (e.g., caching)
         - CIF parsing arguments: Arguments that control structure parsing and are ultimately are passed
-            to the `_parse_from_atom_array` method (regardless of file type, we convert to an AtomArray before parsing)
+            to the _parse_from_atom_array method (regardless of file type, we convert to an AtomArray before parsing)
 
     Args:
         filename (PathLike | io.StringIO | io.BytesIO): Either a Path or buffer to the file. This may be any format of
-            atomic-level structure (e.g. .cif, .bcif, .cif.gz, .pdb), although .cif files are *strongly* recommended.
+            atomic-level structure (e.g. .cif, .bcif, .cif.gz, .pdb), although .cif files are strongly recommended.
 
-        *** Wrapper arguments ***
+        **Wrapper arguments:**
         file_type (Literal["cif", "pdb"] | None, optional): The file type of the structure file.
             If not provided, the file type will be inferred automatically.
         load_from_cache (bool, optional): Whether to load pre-compiled results from cache. Defaults to False.
         cache_dir (PathLike, optional): Directory path to save pre-compiled results. Defaults to None.
         save_to_cache (bool, optional): Whether to save the results to cache when building the structure. Defaults to False.
 
-        *** Parsing arguments ***
+        **Parsing arguments:**
         ccd_mirror_path (str, optional): Path to the local mirror of the Chemical Component Dictionary (recommended).
             If not provided, Biotite's built-in CCD will be used.
         add_missing_atoms (bool, optional): Whether to add missing atoms to the
@@ -155,14 +163,21 @@ def parse(
 
     Returns:
         dict: A dictionary containing the following keys:
-            chain_info: A dictionary mapping chain ID to sequence, type (as an IntEnum), RCSB entity,
+
+            chain_info
+                A dictionary mapping chain ID to sequence, type (as an IntEnum), RCSB entity,
                 EC number, and other information.
-            ligand_info: A dictionary containing ligand of interest information.
-            asym_unit: An AtomArrayStack instance representing the asymmetric unit.
-            assemblies: A dictionary mapping assembly IDs to AtomArrayStack instances.
-            metadata: A dictionary containing metadata about the structure
+            ligand_info
+                A dictionary containing ligand of interest information.
+            asym_unit
+                An AtomArrayStack instance representing the asymmetric unit.
+            assemblies
+                A dictionary mapping assembly IDs to AtomArrayStack instances.
+            metadata
+                A dictionary containing metadata about the structure
                 (e.g., resolution, deposition date, etc.).
-            extra_info: A dictionary with information for cross-compatibility and caching.
+            extra_info
+                A dictionary with information for cross-compatibility and caching.
                 Should typically not be used directly.
 
     """
