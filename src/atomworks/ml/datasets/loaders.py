@@ -7,12 +7,12 @@ E.g., converts what may be dataset-specific metadata into a standard format for 
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
-from atomworks.ml.utils.io import apply_sharding_pattern
 
 import pandas as pd
 from toolz import keyfilter
 
 from atomworks.io.parser import parse
+from atomworks.ml.utils.io import apply_sharding_pattern
 
 
 def _build_metadata_hierarchy(row: pd.Series, attrs: dict | None = None) -> dict[str, Any]:
@@ -82,7 +82,7 @@ def _load_structure_from_path(path: Path, assembly_id: str, parser_args: dict | 
 def loader_base(
     example_id_colname: str = "example_id",
     path_colname: str = "path",
-    assembly_id_colname: str | None = None,
+    assembly_id_colname: str | None = "assembly_id",
     attrs: dict | None = None,
     base_path: str = "",
     extension: str = "",
@@ -117,7 +117,9 @@ def loader_base(
 
         extra_info = _build_metadata_hierarchy(row, loader_attrs)
 
-        assembly_id = row[assembly_id_colname] if assembly_id_colname is not None else "1"
+        assembly_id = (
+            row[assembly_id_colname] if assembly_id_colname is not None and assembly_id_colname in row else "1"
+        )
         path = _build_structure_path(
             row[path_colname], extra_info.get("base_path"), extra_info.get("extension"), sharding_pattern
         )
@@ -152,7 +154,7 @@ def loader_with_query_pn_units(
     example_id_colname: str = "example_id",
     path_colname: str = "path",
     pn_unit_iid_colnames: str | list[str] | None = None,
-    assembly_id_colname: str | None = None,
+    assembly_id_colname: str | None = "assembly_id",
     base_path: str = "",
     extension: str = "",
     sharding_pattern: str | None = None,
@@ -209,7 +211,7 @@ def loader_with_query_pn_units(
 def loader_with_interfaces_and_pn_units_to_score(
     example_id_colname: str = "example_id",
     path_colname: str = "path",
-    assembly_id_colname: str | None = None,
+    assembly_id_colname: str | None = "assembly_id",
     interfaces_to_score_colname: str | None = "interfaces_to_score",
     pn_units_to_score_colname: str | None = "pn_units_to_score",
     base_path: str = "",

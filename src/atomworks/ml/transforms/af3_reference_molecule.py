@@ -28,7 +28,7 @@ logger = logging.getLogger("atomworks.ml")
 
 # (Lazy-load this expensive computation to avoid slow imports)
 @lru_cache(maxsize=1)
-def get_known_ccd_codes():
+def get_known_ccd_codes() -> frozenset[str]:
     """Get the set of known CCD codes, computing it lazily on first access."""
     # UNL is a special CCD code for unknown ligands; we do not consider it "known" as it has no structure
     return get_available_ccd_codes(CCD_MIRROR_PATH) - {UNKNOWN_LIGAND}

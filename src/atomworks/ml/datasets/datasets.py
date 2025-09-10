@@ -367,7 +367,7 @@ class PandasDataset(MolecularDataset, ExampleIDMixin):
         transform: Callable | None = None,
         loader: Callable | None = None,
         save_failed_examples_to_dir: str | Path | None = None,
-        load_kwargs: dict | tuple = None,
+        load_kwargs: dict | tuple | None = None,
     ):
         super().__init__(
             name=name,

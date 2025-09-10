@@ -224,10 +224,10 @@ class FilterToSpecifiedPNUnits(Transform):
 
     def forward(self, data: dict) -> dict:
         if ("extra_info" not in data) or (self.pn_unit_iid_key not in data["extra_info"]):
-            # ...short-circuit if the key does not exist in the `extra_info` dictionary
+            # ... short-circuit if the key does not exist in the `extra_info` dictionary
             return data
         else:
-            # ...otherwise, filter the atom array
+            # ... otherwise, filter the atom array
             data["atom_array"] = filter_to_specified_pn_units(
                 data["atom_array"], eval(data["extra_info"][self.pn_unit_iid_key])
             )
