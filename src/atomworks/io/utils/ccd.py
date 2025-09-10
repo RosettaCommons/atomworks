@@ -11,6 +11,7 @@ import biotite.structure.io.pdbx as pdbx
 import networkx as nx
 import numpy as np
 import toolz
+from pathlib import Path
 
 from atomworks.common import exists, immutable_lru_cache
 from atomworks.constants import (
@@ -92,10 +93,10 @@ def get_available_ccd_codes_in_mirror(ccd_mirror_path: os.PathLike = CCD_MIRROR_
             cache_mtime = os.path.getmtime(cache_file)
             dir_mtime = os.path.getmtime(root)
             if cache_mtime > dir_mtime:
-                with open(cache_file) as f:
-                    codes = {line.strip() for line in f if line.strip()}
+                with open(cache_file, "r") as f:
+                    codes = set(line.strip() for line in f if line.strip())
                     return frozenset(codes)
-        except OSError:
+        except (OSError, IOError):
             # If cache is corrupted, fall back to scanning
             pass
 
@@ -127,7 +128,7 @@ def get_available_ccd_codes_in_mirror(ccd_mirror_path: os.PathLike = CCD_MIRROR_
         with open(cache_file, "w") as f:
             for code in sorted(codes):
                 f.write(f"{code}\n")
-    except OSError:
+    except (OSError, IOError):
         # If we can't write cache, that's okay
         pass
 

@@ -332,6 +332,8 @@ def parse_sharding_pattern(sharding_pattern: str) -> list[tuple[int, int]]:
     Returns:
         List of (start, end) tuples for each directory level
     """
+    import re
+
     # Find all patterns like /start:end/ using a non-consuming lookahead
     pattern = r"/(\d+):(\d+)(?=/)"
     matches = []
@@ -362,7 +364,7 @@ def apply_sharding_pattern(path: str, sharding_pattern: str | None = None) -> Pa
         try:
             shard_levels = parse_sharding_pattern(sharding_pattern)
         except ValueError as e:
-            raise ValueError(f"Invalid sharding pattern: {e}") from e
+            raise ValueError(f"Invalid sharding pattern: {e}")
 
         # Build the sharded path
         current_path = Path()
