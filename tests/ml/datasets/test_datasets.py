@@ -7,7 +7,6 @@ from torch.utils.data import SequentialSampler, WeightedRandomSampler
 from atomworks.ml.datasets.datasets import (
     ConcatDatasetWithID,
     PandasDataset,
-    StructuralDatasetWrapper,
     get_row_and_index_by_example_id,
 )
 from atomworks.ml.samplers import (

@@ -38,7 +38,9 @@ This example demonstrates how to work with datasets in AtomWorks, from simple fi
 from atomworks.ml.datasets.datasets import FileDataset
 
 # To setup the test pack, if not already, run `atomworks setup tests`
-dataset = FileDataset.from_directory(directory="../../tests/data/ml/af2_distillation/cif", name="example_directory_dataset")
+dataset = FileDataset.from_directory(
+    directory="../../tests/data/ml/af2_distillation/cif", name="example_directory_dataset"
+)
 
 ########################################################################
 # Let's explore the dataset a tiny bit.
@@ -74,15 +76,15 @@ for i, example in enumerate(dataset):
 
 from atomworks.io import parse
 
+
 def simple_loading_fn(raw_data) -> dict:
     """Simple loading function that parses structural data and returns an AtomArray."""
     parse_output = parse(raw_data)
     return {"atom_array": parse_output["assemblies"]["1"][0]}
 
+
 dataset_with_loading_fn = FileDataset.from_directory(
-    directory="../../tests/data/pdb",
-    name="example_pdb_dataset",
-    loader=simple_loading_fn
+    directory="../../tests/data/pdb", name="example_pdb_dataset", loader=simple_loading_fn
 )
 output = dataset_with_loading_fn[1]
 print(f"Output AtomArray has {len(output['atom_array'])} atoms!")
@@ -109,7 +111,7 @@ pipe = Compose(
         AddGlobalAtomIdAnnotation(),
         AtomizeByCCDName(atomize_by_default=True, res_names_to_ignore=STANDARD_AA),
         # Crop to 20 tokens (which in this case is number amino acids/nucleic acid bases + number of small molecule atoms)
-        CropSpatialLikeAF3(crop_size=20)
+        CropSpatialLikeAF3(crop_size=20),
     ],
     track_rng_state=False,
 )
@@ -118,10 +120,7 @@ pipe = Compose(
 # Just like with the loading function, we can also pass a composed `Transform` pipeline to our datasets.
 
 dataset_with_loading_fn_and_transforms = FileDataset.from_directory(
-    directory="../../tests/data/pdb",
-    name="example_pdb_dataset",
-    loader=simple_loading_fn,
-    transform=pipe
+    directory="../../tests/data/pdb", name="example_pdb_dataset", loader=simple_loading_fn, transform=pipe
 )
 
 ########################################################################
@@ -131,7 +130,10 @@ dataset_with_loading_fn_and_transforms = FileDataset.from_directory(
 # Let's visualize the result of our transform pipeline:
 
 from atomworks.io.utils.visualize import view
-pipeline_output = dataset_with_loading_fn_and_transforms[0]  # This will trigger the loading function and print the row information
+
+pipeline_output = dataset_with_loading_fn_and_transforms[
+    0
+]  # This will trigger the loading function and print the row information
 
 view(pipeline_output["atom_array"])
 
@@ -152,7 +154,7 @@ sampler = RandomSampler(dataset_with_loading_fn_and_transforms)
 loader = DataLoader(
     dataset=dataset_with_loading_fn_and_transforms,
     sampler=sampler,
-    collate_fn=lambda x: x  # Identity collate: returns the batch as-is
+    collate_fn=lambda x: x,  # Identity collate: returns the batch as-is
 )
 
 for i, example in enumerate(loader):
@@ -194,6 +196,7 @@ for i, example in enumerate(loader):
 # We will start by exploring an example metadata dataframe, then load it into a `PandasDataset`.
 
 from atomworks.ml.utils.io import read_parquet_with_metadata
+
 interfaces_metadata_parquet_path = "../../tests/data/ml/pdb_interfaces/metadata.parquet"
 interfaces_df = read_parquet_with_metadata(interfaces_metadata_parquet_path)
 print("DataFrame shape:", interfaces_df.shape)
@@ -221,7 +224,7 @@ dataset = PandasDataset(
     name="interfaces_dataset",
     # We use a pre-built loader that takes in a list of column names and returns a loader function
     loader=loader_with_query_pn_units(pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"]),
-    transform=pipe
+    transform=pipe,
 )
 
 print(f"Created PandasDataset with {len(dataset)} examples")

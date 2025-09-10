@@ -367,7 +367,7 @@ def apply_sharding_pattern(path: str, sharding_pattern: str | None = None) -> Pa
         try:
             shard_levels = parse_sharding_pattern(sharding_pattern)
         except ValueError as e:
-            raise ValueError(f"Invalid sharding pattern: {e}")
+            raise ValueError(f"Invalid sharding pattern: {e}") from e
 
         # Build the sharded path
         current_path = Path()
