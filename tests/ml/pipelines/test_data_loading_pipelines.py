@@ -16,8 +16,8 @@ logger = logging.getLogger(__name__)
 def datasets_to_test(
     af3_pdb_dataset,
     af3_validation_dataset,
-    af2_distillation_dataset_with_metadata,
-    af2_distillation_dataset_no_metadata,
+    af3_af2fb_distillation_dataset_with_metadata,
+    af3_af2fb_distillation_dataset_no_metadata,
     rf2aa_validation_dataset,
     rf2aa_pdb_dataset,
 ):
@@ -34,14 +34,9 @@ def datasets_to_test(
             "num_examples": 1,
         },
         {
-            "dataset": af2_distillation_dataset_with_metadata,
+            "dataset": af3_af2fb_distillation_dataset_with_metadata,
             "type": "train",
-            "num_examples": 1,
-        },
-        {
-            "dataset": af2_distillation_dataset_no_metadata,
-            "type": "train",
-            "num_examples": 1,
+            "num_examples": 5,
         },
         {
             "dataset": rf2aa_validation_dataset,
