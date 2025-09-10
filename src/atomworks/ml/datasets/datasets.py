@@ -343,9 +343,7 @@ class PandasDataset(MolecularDataset, ExampleIDMixin):
         loader: Optional function to process raw DataFrame rows into Transform-ready format.
         save_failed_examples_to_dir: Optional directory path where failed examples
             will be saved for debugging. Includes RNG state and error information.
-        dataset_parser: Deprecated. Use 'loader' parameter instead.
-        cif_parser_args: Deprecated. Use 'loader' parameter instead.
-        **load_kwargs: Additional keyword arguments passed to pandas' read functions
+        load_kwargs: Additional keyword arguments passed to pandas' read functions
             (read_csv, read_parquet) when loading from file.
 
     Examples:
@@ -369,7 +367,7 @@ class PandasDataset(MolecularDataset, ExampleIDMixin):
         transform: Callable | None = None,
         loader: Callable | None = None,
         save_failed_examples_to_dir: str | Path | None = None,
-        **load_kwargs: Any,
+        load_kwargs: dict | tuple = None,
     ):
         super().__init__(
             name=name,
@@ -380,7 +378,7 @@ class PandasDataset(MolecularDataset, ExampleIDMixin):
 
         # Load data from path if needed
         if isinstance(data, PathLike | str):
-            data = self._load_from_path(data, columns_to_load, **load_kwargs)
+            data = self._load_from_path(data, columns_to_load, **(load_kwargs or {}))
         self.data = data
 
         # Apply filters

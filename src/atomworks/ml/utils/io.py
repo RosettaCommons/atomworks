@@ -277,3 +277,65 @@ def read_parquet_with_metadata(filepath: PathLike, **kwargs: Any) -> pd.DataFram
     df.attrs = metadata_dict
 
     return df
+
+
+def parse_sharding_pattern(sharding_pattern: str) -> list[tuple[int, int]]:
+    """Parse a sharding pattern string into directory levels.
+
+    Args:
+        sharding_pattern: String like "/1:2/0:2/" where each /start:end/ defines a directory level
+            - start:end defines the character range to use for that directory level
+            - Example: "/1:2/0:2/" means use chars 1-2 for first dir, then chars 0-2 for second dir
+
+    Returns:
+        List of (start, end) tuples for each directory level
+    """
+    import re
+
+    # Find all patterns like /start:end/ using a non-consuming lookahead
+    pattern = r"/(\d+):(\d+)(?=/)"
+    matches = []
+    for match in re.finditer(pattern, sharding_pattern):
+        matches.append((int(match.group(1)), int(match.group(2))))
+
+    if not matches:
+        raise ValueError(f"Invalid sharding pattern format: {sharding_pattern}. Expected format like '/1:2/0:2/'")
+
+    return matches
+
+
+def apply_sharding_pattern(path: str, sharding_pattern: str | None = None) -> Path:
+    """Apply a sharding pattern to construct a file path.
+
+    Args:
+        path: The base path or identifier (e.g., PDB ID)
+        sharding_pattern: Pattern for organizing files in subdirectories
+            - "/1:2/": Use characters 1-2 for first directory level
+            - "/1:2/0:2/": Use chars 1-2 for first dir, then chars 0-2 for second dir
+            - None: No sharding (default)
+
+    Returns:
+        Path: The constructed file path with sharding applied
+    """
+    if sharding_pattern and sharding_pattern.startswith("/"):
+        # General sharding pattern: /start:end/start:end/...
+        try:
+            shard_levels = parse_sharding_pattern(sharding_pattern)
+        except ValueError as e:
+            raise ValueError(f"Invalid sharding pattern: {e}")
+
+        # Build the sharded path
+        current_path = Path()
+
+        for start, end in shard_levels:
+            if end > len(path):
+                raise ValueError(f"Sharding range {start}:{end} exceeds path length {len(path)} for path '{path}'")
+            shard_dir = path[start:end]
+            current_path = current_path / shard_dir
+
+        final_path = current_path / path
+    else:
+        # Default behavior: no sharding
+        final_path = Path(path)
+
+    return final_path

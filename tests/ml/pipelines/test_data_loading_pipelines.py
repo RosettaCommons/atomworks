@@ -14,15 +14,25 @@ logger = logging.getLogger(__name__)
 
 @pytest.fixture
 def datasets_to_test(
+    af3_pdb_dataset,
+    af3_validation_dataset,
     af3_af2fb_distillation_dataset_with_metadata,
     af3_af2fb_distillation_dataset_no_metadata,
-    af3_validation_dataset,
     rf2aa_validation_dataset,
     rf2aa_pdb_dataset,
-    af3_pdb_dataset,
 ):
     """Create the list of datasets to test with actual dataset objects."""
     return [
+        {
+            "dataset": af3_pdb_dataset,
+            "type": "train",
+            "num_examples": 5,
+        },
+        {
+            "dataset": af3_validation_dataset,
+            "type": "validation",
+            "num_examples": 1,
+        },
         {
             "dataset": af3_af2fb_distillation_dataset_with_metadata,
             "type": "train",
@@ -34,11 +44,6 @@ def datasets_to_test(
             "num_examples": 1,
         },
         {
-            "dataset": af3_validation_dataset,
-            "type": "validation",
-            "num_examples": 1,
-        },
-        {
             "dataset": rf2aa_validation_dataset,
             "type": "validation",
             "num_examples": 1,
@@ -47,11 +52,6 @@ def datasets_to_test(
             "dataset": rf2aa_pdb_dataset,
             "type": "train",
             "num_examples": 1,
-        },
-        {
-            "dataset": af3_pdb_dataset,
-            "type": "train",
-            "num_examples": 5,
         },
     ]
 

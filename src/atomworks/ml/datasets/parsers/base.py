@@ -7,7 +7,7 @@ import pandas as pd
 from atomworks.constants import CRYSTALLIZATION_AIDS
 from atomworks.io import parse
 
-DEFAULT_CIF_PARSER_ARGS = {
+DEFAULT_PARSER_ARGS = {
     "add_missing_atoms": True,
     "add_id_and_entity_annotations": True,
     "add_bond_types_from_struct_conn": ["covale"],
@@ -123,7 +123,7 @@ def load_example_from_metadata_row(
         cif_parser_args.setdefault("save_to_cache", True)
 
     # Merge DEFAULT_CIF_PARSER_ARGS with cif_parser_args, overriding with the keys present in cif_parser_args
-    merged_cif_parser_args = {**DEFAULT_CIF_PARSER_ARGS, **cif_parser_args}
+    merged_cif_parser_args = {**DEFAULT_PARSER_ARGS, **cif_parser_args}
 
     # Use the parse function with the merged CIF parser arguments
     result_dict = parse(
