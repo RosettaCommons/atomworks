@@ -21,7 +21,7 @@ TEST_PACK_URL = f"{IPD_DOWNLOAD_URL}/test_pack_latest.tar.gz"
 """The URL for the latest AtomWorks test pack. Should be untared in `tests/data/shared`."""
 
 METADATA_URL = f"{IPD_DOWNLOAD_URL}/pdb_metadata_latest.tar.gz"
-"""The URL for the latest AtomWorks PDB metadata. Should be untared at the specifided location."""
+"""The URL for the latest AtomWorks PDB metadata. Should be untared at the specified location."""
 
 app = typer.Typer(help="Setup utilities for AtomWorks.")
 

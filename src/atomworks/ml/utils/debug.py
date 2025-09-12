@@ -1,3 +1,8 @@
+"""Debug utilities for ML components.
+
+Provides functions for saving failed examples and debugging ML pipelines.
+"""
+
 import logging
 import os
 import pickle
@@ -16,6 +21,14 @@ except ImportError:
 
 
 def _remove_special_characters(s: str) -> str:
+    """Remove special characters from a string.
+
+    Args:
+        s: The string to clean.
+
+    Returns:
+        The cleaned string with only alphanumeric characters and underscores.
+    """
     assert isinstance(s, str)
     # Remove unwanted characters using regex
     clean_s = re.sub(r"[^a-zA-Z0-9_]", "", s)
@@ -30,17 +43,14 @@ def save_failed_example_to_disk(
     rng_state_dict: dict = {},
     error_msg: str = "",
 ) -> None:
-    """
-    Attempts to save a failed example to disk as a pickle file.
+    """Attempts to save a failed example to disk as a pickle file.
 
     Args:
-        - example_id (str): The ID of the example.
-        - fail_dir (str): The directory where the failed example should be saved. Defaults to a specific path.
-        - rng_state_dict (dict): The random number generator state dictionary.
-        - error_msg (str): The error message associated with the failure.
-
-    Returns:
-        None
+        example_id: The ID of the example.
+        fail_dir: The directory where the failed example should be saved.
+        data: Optional data dictionary to save.
+        rng_state_dict: The random number generator state dictionary.
+        error_msg: The error message associated with the failure.
     """
     try:
         # Get wandb run ID if currently in a wandb run

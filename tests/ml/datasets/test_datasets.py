@@ -4,7 +4,11 @@ import pytest
 import torch
 from torch.utils.data import SequentialSampler, WeightedRandomSampler
 
-from atomworks.ml.datasets.datasets import ConcatDatasetWithID, PandasDataset, get_row_and_index_by_example_id
+from atomworks.ml.datasets.datasets import (
+    ConcatDatasetWithID,
+    PandasDataset,
+    get_row_and_index_by_example_id,
+)
 from atomworks.ml.samplers import (
     MixedSampler,
     calculate_weights_for_pdb_dataset_df,
@@ -20,7 +24,7 @@ def create_dummy_dataset(length: int, name: str, dataset_class: PandasDataset = 
         }
     )
     data.attrs = {"base_path": "/example/base/path"}
-    return dataset_class(data=data, id_column="example_id", name=name)
+    return dataset_class(data=data, name=name, id_column="example_id")
 
 
 def test_nested_dummy_datasets():
@@ -53,10 +57,10 @@ def test_nested_dummy_datasets():
 
 
 def test_structural_datasets(rf2aa_interfaces_dataset, rf2aa_pn_units_dataset, rf2aa_pdb_dataset):
-    # +------------------ Structural Dataset (PandasDataset wrapped with a StructuralDatasetWrapper) ------------------+
+    # +------------------ Structural Dataset ------------------+
     num_examples_per_epoch = 100
 
-    # ...calculate the weights based on the AF-3 weighting methodology
+    # ... calculate the weights based on the AF-3 weighting methodology
     b_pn_unit = 0.5  # β_chain
     b_interface = 0.5  # β_interface
     alphas = {
@@ -73,7 +77,7 @@ def test_structural_datasets(rf2aa_interfaces_dataset, rf2aa_pn_units_dataset, r
     )
     pdb_dataset_weights = torch.cat([pn_units_dataset_weights, interfaces_dataset_weights])  # NOTE: Order matters!
 
-    # ...and initialize one sampler for all PDB datasets, using the unified weights
+    # ... and initialize one sampler for all PDB datasets, using the unified weights
     pdb_sampler = WeightedRandomSampler(
         weights=pdb_dataset_weights,
         num_samples=num_examples_per_epoch,  # We later override with proportional number of examples
@@ -107,7 +111,7 @@ def test_structural_datasets(rf2aa_interfaces_dataset, rf2aa_pn_units_dataset, r
         n_examples_per_epoch=100,
     )
 
-    # ...create a dataset including both datasets
+    # ... create a dataset including both datasets
     concat_dataset = ConcatDatasetWithID(datasets=datasets)
 
     # +---------------------------- Tests and assertions ----------------------------+
@@ -133,7 +137,7 @@ def test_structural_datasets(rf2aa_interfaces_dataset, rf2aa_pn_units_dataset, r
     assert len(indices) == 100
 
     # Check that 80% of the indices are from the (second copy of) the pn_units dataset
-    # ...all idxs >= len(pdb_dataset) should be from pn_units dataset
+    # (all idxs >= len(pdb_dataset) should be from pn_units dataset)
     pn_unit_indices = [idx for idx in indices if idx >= len(rf2aa_pdb_dataset)]
     assert len(pn_unit_indices) == 80
 

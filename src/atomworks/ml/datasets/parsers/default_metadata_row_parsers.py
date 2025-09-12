@@ -96,7 +96,7 @@ class PNUnitsDFParser(MetadataRowParser):
 
     def __init__(
         self,
-        base_dir: Path | str | list[Path | str] | tuple[Path | str, ...] = Path(PDB_MIRROR_PATH),
+        base_dir: Path | str | list[Path | str] | tuple[Path | str, ...] = PDB_MIRROR_PATH,
         file_extension: str | list[str] | tuple[str, ...] = ".cif.gz",
         path_template: str | list[str] | tuple[str, ...] = "{base_dir}/{pdb_id[1:3]}/{pdb_id}{file_extension}",
     ):
@@ -148,7 +148,7 @@ class InterfacesDFParser(MetadataRowParser):
 
     def __init__(
         self,
-        base_dir: Path | str | list[Path | str] | tuple[Path | str, ...] = Path(PDB_MIRROR_PATH),
+        base_dir: Path | str | list[Path | str] | tuple[Path | str, ...] = PDB_MIRROR_PATH,
         file_extension: str | list[str] | tuple[str, ...] = ".cif.gz",
         path_template: str | list[str] | tuple[str, ...] = "{base_dir}/{pdb_id[1:3]}/{pdb_id}{file_extension}",
     ):

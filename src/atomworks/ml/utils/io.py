@@ -1,39 +1,40 @@
+"""I/O utilities for ML components.
+
+Provides functions for file operations, directory scanning, and data loading.
+"""
+
 import gzip
 import hashlib
+import os
 import pickle
-import warnings
+import re
 from collections.abc import Callable
 from functools import wraps
 from os import PathLike
 from pathlib import Path
 from typing import Any, TextIO
 
-import biotite.structure as struc
-import numpy as np
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from atomworks.constants import (
-    AA_LIKE_CHEM_TYPES,
-    ATOMIC_NUMBER_TO_ELEMENT,
-    DNA_LIKE_CHEM_TYPES,
-    HYDROGEN_LIKE_SYMBOLS,
-    POLYPEPTIDE_D_CHEM_TYPES,
-    POLYPEPTIDE_L_CHEM_TYPES,
-    RNA_LIKE_CHEM_TYPES,
-    UNKNOWN_LIGAND,
-)
-from atomworks.io.utils.ccd import get_chem_comp_type
 from atomworks.ml.utils.misc import (
-    convert_pn_unit_iids_to_pn_unit_ids,
-    extract_transformation_id_from_pn_unit_iid,
     logger,
 )
 
 
 def open_file(filename: PathLike) -> TextIO:
-    """Open a file, handling gzipped files if necessary."""
+    """Open a file, handling gzipped files if necessary.
+
+    Args:
+        filename: The path to the file to open.
+
+    Returns:
+        A file-like object for reading.
+
+    Raises:
+        AssertionError: If the file does not exist.
+    """
     filename = Path(filename)
     # ...assert that the file exists
     assert filename.exists(), f"File {filename} does not exist"
@@ -43,24 +44,49 @@ def open_file(filename: PathLike) -> TextIO:
     return filename.open("r")
 
 
-def cache_based_on_subset_of_args(cache_keys: list[str], maxsize: int | None = None) -> Callable:
-    """
-    Decorator to cache function results based on a subset of its keyword arguments.
-    Most helpful when some arguments may be unhashable types (e.g., dictionaries, AtomArray).
+def scan_directory(dir_path: PathLike, max_depth: int) -> list[str]:
+    """Fast, order-independent directory scan for files up to max_depth levels deep.
 
+    Args:
+        dir_path: The root directory to scan.
+        max_depth: The maximum depth to scan. A max_depth of 1 means only the top-level directory.
+
+    Returns:
+        A list of file paths found within the specified directory and depth.
+    """
+    file_paths = []
+
+    for root, dirs, files in os.walk(dir_path):
+        current_depth = len(Path(root).relative_to(dir_path).parts)
+
+        if current_depth >= max_depth:
+            dirs.clear()
+            continue
+
+        for file in files:
+            file_path = os.path.join(root, file)
+            file_paths.append(file_path)
+
+    return file_paths
+
+
+def cache_based_on_subset_of_args(cache_keys: list[str], maxsize: int | None = None) -> Callable:
+    """Decorator to cache function results based on a subset of its keyword arguments.
+
+    Most helpful when some arguments may be unhashable types (e.g., dictionaries, AtomArray).
     If the value of any of the cache keys is None, the function is executed and the result is not cached.
 
     Note:
-        The wrapped function must use keyword arguments for those specified in `cache_keys`.
+        The wrapped function must use keyword arguments for those specified in cache_keys.
         Positional arguments are not supported for cache key extraction.
 
     Args:
-        cache_keys (List[str]): The names of the keyword arguments to use as the cache key.
-        maxsize (Optional[int]): The maximum number of entries to store in the cache.
+        cache_keys: The names of the keyword arguments to use as the cache key.
+        maxsize: The maximum number of entries to store in the cache.
             If None, the cache size is unlimited.
 
     Returns:
-        Callable: A decorator that caches the function results based on the specified keyword arguments.
+        A decorator that caches the function results based on the specified keyword arguments.
 
     Example:
         @cache_based_on_subset_of_args(['arg1'], maxsize=2)
@@ -212,213 +238,6 @@ def get_sharded_file_path(
     return (nested_path / file_hash).with_suffix(extension)
 
 
-def convert_af3_model_output_to_atom_array_stack(
-    atom_to_token_map: np.ndarray[int],
-    pn_unit_iids: np.ndarray[str],
-    decoded_restypes: np.ndarray[str],
-    xyz: np.ndarray,
-    elements: np.ndarray[int | str],
-    token_is_atomized: np.ndarray[bool] = None,
-) -> struc.AtomArrayStack:
-    """
-    Create an AtomArrayStack from AlphaFold-3-type model outputs.
-    Specific to AF-3; may not work with other formats.
-
-    Parameters:
-        - atom_to_token_map (np.ndarray): Mapping from atoms to tokens [n_atom]
-        - pn_unit_iids (np.ndarray): PN unit IID's for each token [n_token]
-        - decoded_restype (np.ndarray): Decoded residue types for each token [n_token]
-        - xyz (np.ndarray): Coordinates of atoms [n_atom, 3] or [batch, n_atom, 3], where batch is the number of structures
-        - elements (np.ndarray): Element types for each atom [n_atom]
-        - token_is_atomized (np.ndarray, optional): Flags indicating if tokens are atomized [n_token]. If not provided
-            or None, residues with a single atom are considered atomized.
-
-    Returns:
-        - AtomArrayStack: Constructed AtomArrayStack.
-    """
-    # Issue a deprecation warning
-    warnings.warn(
-        "`convert_af3_model_output_to_atom_array_stack` is deprecated in favor of overwriting the AtomArray coordinates directly and will be removed in future versions.",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-
-    atom_array = None
-    chain_iid_residue_counts = {}
-
-    # If dimensions are [n_atom, 3], add a batch dimension
-    if len(xyz.shape) == 2:
-        xyz = np.expand_dims(xyz, axis=0)
-
-    # If elements are integers, convert them to strings (since that's what we get from the CCD, and it better matches what CIF files expect)
-    if np.issubdtype(type(elements[0]), np.integer):
-        elements = np.array([ATOMIC_NUMBER_TO_ELEMENT[element] for element in elements])
-
-    #######################################################################################################
-    # Iterate over the residues, and create the appropriate atoms for each residue with empty coordinates
-    # We add the atom type, residue ID, chain ID, and transformation ID to the AtomArray
-    #######################################################################################################
-
-    for global_res_idx, res_name in enumerate(decoded_restypes):
-        # Get atoms corresponding to the residue
-        atom_indices_in_token = np.where(atom_to_token_map == global_res_idx)[0]
-
-        # ...check if we're dealing with an atomized token
-        if token_is_atomized is not None:
-            # If we have the token_is_atomized array, we can use it to determine if the residue is atomized
-            is_atom = token_is_atomized[global_res_idx]
-        else:
-            # Otherwise, we assume that a residue with a single atom is atomized
-            is_atom = len(atom_indices_in_token) == 1
-
-        #  ...compute the residue ID
-        pn_unit_iid = pn_unit_iids[global_res_idx]
-        if pn_unit_iid not in chain_iid_residue_counts:
-            chain_iid_residue_counts[pn_unit_iid] = 1
-        elif not is_atom:
-            # Only increment the residue count if we're not dealing with an atomized token (we put all atomized tokens in the same residue, like the PDB)
-            chain_iid_residue_counts[pn_unit_iid] += 1
-        res_id = chain_iid_residue_counts[pn_unit_iid]
-
-        if is_atom:
-            # UNL is "Unknown Ligand" in the CCD
-            element = elements[atom_indices_in_token].item()
-
-            # ruff: noqa: B023
-            def atom_name_exists(atom_name: str) -> bool:
-                return (
-                    atom_array[
-                        (atom_array.pn_unit_iid == pn_unit_iid)
-                        & (atom_array.res_id == res_id)
-                        & (atom_array.atom_name == atom_name)
-                    ].array_length()
-                    > 0
-                )
-
-            # Create the atom name and ensure it's unique within the residue (so that we can give all the atoms the same ID)
-            atom_name = element
-            if atom_name_exists(atom_name):
-                atom_name = next(
-                    f"{element}{atom_count}"
-                    for atom_count in range(2, len(atom_array) + 1)
-                    if not atom_name_exists(f"{element}{atom_count}")
-                )
-
-            atom = struc.Atom(np.full((3,), np.nan), res_name=UNKNOWN_LIGAND, element=element, atom_name=atom_name)
-            residue_atom_array = struc.array([atom])
-        else:
-            chem_type = get_chem_comp_type(res_name)
-
-            # Get the atom array of the residue from the CCD
-            residue_atom_array = struc.info.residue(res_name)
-
-            # Set the elements to uppercase for consistency
-            residue_atom_array.element = np.array([x.upper() for x in residue_atom_array.element])
-
-            # If needed, remove type-specific atoms (e.g., OXT in polypeptides, O3' in RNA or DNA) for residues participating in inter-residue bonds
-            # If we are at a terminal residue, we don't want to remove these leaving groups
-            residue_atom_array = filter_residue_atoms(
-                residue_atom_array=residue_atom_array, chem_type=chem_type, elements=elements[atom_indices_in_token]
-            )
-
-            # Empty coordinates to avoid unexpected behavior
-            residue_atom_array.coord = np.full((residue_atom_array.array_length(), 3), np.nan)
-
-            # Wipe the bond information (we are better off letting PyMOL infer the bonds)
-            residue_atom_array.bonds = None
-
-        # Get the chain_iid, chain_id, and transformation_id
-        pn_unit_id = convert_pn_unit_iids_to_pn_unit_ids([pn_unit_iid])[0]
-        transformation_id = extract_transformation_id_from_pn_unit_iid(pn_unit_iid)
-
-        # Set the annotations (for our purposes, chains and pn_units are the same)
-        residue_atom_array.set_annotation("chain_id", np.full(residue_atom_array.array_length(), pn_unit_id))
-        residue_atom_array.set_annotation("pn_unit_id", np.full(residue_atom_array.array_length(), pn_unit_id))
-        residue_atom_array.set_annotation("chain_iid", np.full(residue_atom_array.array_length(), pn_unit_iid))
-        residue_atom_array.set_annotation("pn_unit_iid", np.full(residue_atom_array.array_length(), pn_unit_iid))
-        residue_atom_array.set_annotation(
-            "transformation_id", np.full(residue_atom_array.array_length(), transformation_id)
-        )
-
-        # Everything is full occupancy
-        residue_atom_array.set_annotation("occupancy", np.full(residue_atom_array.array_length(), 1.0))
-
-        # Set the residue ID
-        residue_atom_array.set_annotation("res_id", np.full(residue_atom_array.array_length(), res_id))
-
-        if atom_array is None:
-            atom_array = residue_atom_array
-        else:
-            atom_array += residue_atom_array
-
-    #######################################################################################################
-    # Iterate over the batches of coordinates, and create a new AtomArray for each batch
-    #######################################################################################################
-    atom_arrays = []
-    for coords in xyz:
-        # ...create a new AtomArray for each batch, with new coordinates
-        batch_atom_array = atom_array.copy()
-        batch_atom_array.coord = coords
-        atom_arrays.append(batch_atom_array)
-
-    # Convert to a stack
-    atom_array_stack = struc.stack(atom_arrays)
-
-    return atom_array_stack
-
-
-def filter_residue_atoms(
-    residue_atom_array: struc.AtomArray, chem_type: str, elements: np.ndarray[str]
-) -> struc.AtomArray:
-    """
-    Filter out unwanted atoms from a residue (e.g.., hydrogens, leaving groups)
-
-    Parameters:
-        - residue_atom_array (struc.AtomArray): The AtomArray to filter.
-        - chem_type (str): Type of the chemical chain.
-        - elements (np.array): Element types (as strings, e.g., "C") for each atom in the residue.
-
-    Returns:
-        - struc.AtomArray: Filtered AtomArray.
-    """
-    # ...capitalize the chemical type
-    chem_type = chem_type.upper()
-
-    # ...remove hydrogens and deuteriums
-    residue_atom_array = residue_atom_array[~np.isin(residue_atom_array.element, HYDROGEN_LIKE_SYMBOLS)]
-
-    # If the arrays match, we return the residue as-is
-    if len(residue_atom_array) == len(elements) and all(elements == residue_atom_array.element):
-        return residue_atom_array
-
-    # ...otherwise, we will try to remove specific atoms until the arrays match
-    if (
-        chem_type in AA_LIKE_CHEM_TYPES
-        or chem_type in POLYPEPTIDE_L_CHEM_TYPES
-        or chem_type in POLYPEPTIDE_D_CHEM_TYPES
-    ):
-        # ...try removing OXT in non-terminal polypeptides
-        candidate_residue_atom_array = residue_atom_array[residue_atom_array.atom_name != "OXT"]
-        if len(candidate_residue_atom_array) == len(elements) and all(elements == candidate_residue_atom_array.element):
-            return candidate_residue_atom_array
-
-    elif chem_type in RNA_LIKE_CHEM_TYPES or chem_type in DNA_LIKE_CHEM_TYPES:
-        # ...try removing OP3 in RNA or DNA
-        candidate_residue_atom_array = residue_atom_array[residue_atom_array.atom_name != "OP3"]
-        if len(candidate_residue_atom_array) == len(elements) and all(elements == candidate_residue_atom_array.element):
-            return candidate_residue_atom_array
-
-    # ...as a last resort, try and match the elements by sliding a window over the residue
-    for start in range(len(residue_atom_array) - len(elements) + 1):
-        current_slice = residue_atom_array[start : start + len(elements)]
-        if all(elements == current_slice.element):
-            return current_slice
-
-    raise ValueError(
-        f"Could not find a matching AtomArray for residue {residue_atom_array.res_name[0]} with elements {elements}"
-    )
-
-
 def to_parquet_with_metadata(df: pd.DataFrame, filepath: PathLike, **kwargs: Any) -> None:
     """Convenience wrapper around df.to_parquet that saves table-wide metadata (df.attrs) to the parquet file.
 
@@ -473,3 +292,63 @@ def read_parquet_with_metadata(filepath: PathLike, **kwargs: Any) -> pd.DataFram
     df.attrs = metadata_dict
 
     return df
+
+
+def parse_sharding_pattern(sharding_pattern: str) -> list[tuple[int, int]]:
+    """Parse a sharding pattern string into directory levels.
+
+    Args:
+        sharding_pattern: String like "/1:2/0:2/" where each /start:end/ defines a directory level
+            - start:end defines the character range to use for that directory level
+            - Example: "/1:2/0:2/" means use chars 1-2 for first dir, then chars 0-2 for second dir
+
+    Returns:
+        List of (start, end) tuples for each directory level
+    """
+    # Find all patterns like /start:end/ using a non-consuming lookahead
+    pattern = r"/(\d+):(\d+)(?=/)"
+    matches = []
+    for match in re.finditer(pattern, sharding_pattern):
+        matches.append((int(match.group(1)), int(match.group(2))))
+
+    if not matches:
+        raise ValueError(f"Invalid sharding pattern format: {sharding_pattern}. Expected format like '/1:2/0:2/'")
+
+    return matches
+
+
+def apply_sharding_pattern(path: str, sharding_pattern: str | None = None) -> Path:
+    """Apply a sharding pattern to construct a file path.
+
+    Args:
+        path: The base path or identifier (e.g., PDB ID)
+        sharding_pattern: Pattern for organizing files in subdirectories
+            - "/1:2/": Use characters 1-2 for first directory level
+            - "/1:2/0:2/": Use chars 1-2 for first dir, then chars 0-2 for second dir
+            - None: No sharding (default)
+
+    Returns:
+        Path: The constructed file path with sharding applied
+    """
+    if sharding_pattern and sharding_pattern.startswith("/"):
+        # General sharding pattern: /start:end/start:end/...
+        try:
+            shard_levels = parse_sharding_pattern(sharding_pattern)
+        except ValueError as e:
+            raise ValueError(f"Invalid sharding pattern: {e}") from e
+
+        # Build the sharded path
+        current_path = Path()
+
+        for start, end in shard_levels:
+            if end > len(path):
+                raise ValueError(f"Sharding range {start}:{end} exceeds path length {len(path)} for path '{path}'")
+            shard_dir = path[start:end]
+            current_path = current_path / shard_dir
+
+        final_path = current_path / path
+    else:
+        # Default behavior: no sharding
+        final_path = Path(path)
+
+    return final_path
