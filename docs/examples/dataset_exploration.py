@@ -217,13 +217,13 @@ print(interfaces_df.head())
 # **NOTE**: Because a given PDB ID may contain many interfaces and thus may appear multiple times in our dataset, we must also incorporate the `assembly_id` and the `pn_unit_iids` of the two interacting chains within the `example_id`.
 
 from atomworks.ml.datasets.datasets import PandasDataset
-from atomworks.ml.datasets.loaders import loader_with_query_pn_units
+from atomworks.ml.datasets.loaders import create_loader_with_query_pn_units
 
 dataset = PandasDataset(
     data=interfaces_df,
     name="interfaces_dataset",
     # We use a pre-built loader that takes in a list of column names and returns a loader function
-    loader=loader_with_query_pn_units(pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"]),
+    loader=create_loader_with_query_pn_units(pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"]),
     transform=pipe,
 )
 
