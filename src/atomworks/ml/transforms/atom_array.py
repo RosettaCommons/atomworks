@@ -660,9 +660,10 @@ def sort_like_rf2aa(atom_array: AtomArray) -> AtomArray:
 class SortLikeRF2AA(Transform):
     """Sort the atom array in 3 groups (in this order). Within each group the atoms are ordered by
     their pn_unit_iid (and within a pn_unit their order is preserved).
-        - (1) polymer atoms
-        - (2) non-poly atoms of a pn-unit bonded to a polymer (covalent modifications)
-        - (3) non-poly atoms of a free-floating pn-unit (free-floating ligands)
+
+    - (1) polymer atoms
+    - (2) non-poly atoms of a pn-unit bonded to a polymer (covalent modifications)
+    - (3) non-poly atoms of a free-floating pn-unit (free-floating ligands)
     """
 
     requires_previous_transforms: ClassVar[list[str | Transform]] = ["AtomizeByCCDName"]

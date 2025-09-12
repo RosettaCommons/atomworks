@@ -15,8 +15,8 @@ from atomworks.io.parser import parse
 from atomworks.ml.utils.io import apply_sharding_pattern
 
 
-def _build_metadata_hierarchy(row: pd.Series, attrs: dict | None = None) -> dict[str, Any]:
-    """Build up metadata dictionary with precedence hierarchy.
+def _construct_metadata_hierarchy(row: pd.Series, attrs: dict | None = None) -> dict[str, Any]:
+    """Construct metadata dictionary with precedence hierarchy.
 
     Assembles metadata from multiple sources with the following precedence (lowest to highest priority):
         1. DataFrame-level attributes (row.attrs)
@@ -42,7 +42,7 @@ def _build_metadata_hierarchy(row: pd.Series, attrs: dict | None = None) -> dict
     return extra_info
 
 
-def _build_structure_path(
+def _construct_structure_path(
     path: str, base_path: str | None, extension: str | None, sharding_pattern: str | None = None
 ) -> Path:
     """Construct file path with optional base_path, extension, and sharding pattern.
@@ -79,7 +79,7 @@ def _load_structure_from_path(path: Path, assembly_id: str, parser_args: dict | 
     return result_dict
 
 
-def loader_base(
+def create_base_loader(
     example_id_colname: str = "example_id",
     path_colname: str = "path",
     assembly_id_colname: str | None = "assembly_id",
@@ -89,7 +89,7 @@ def loader_base(
     sharding_pattern: str | None = None,
     parser_args: dict | None = None,
 ) -> Callable[[pd.Series], dict[str, Any]]:
-    """Base loader with common logic for many AtomWorks datasets.
+    """Factory function that creates a base loader with common logic for many AtomWorks datasets.
 
     Args:
         example_id_colname: Name of column containing unique example identifiers
@@ -105,6 +105,9 @@ def loader_base(
             - "/1:2/0:2/": Use chars 1-2 for first dir, then chars 0-2 for second dir
             - None: No sharding (default)
         parser_args: Optional dictionary of arguments to pass to the CIF parser when loading the structure file.
+
+    Returns:
+        A function that takes a pandas Series and returns a dictionary of the loaded structure.
     """
 
     def loader_function(row: pd.Series) -> dict[str, Any]:
@@ -115,12 +118,12 @@ def loader_base(
         if extension and "extension" not in loader_attrs:
             loader_attrs["extension"] = extension
 
-        extra_info = _build_metadata_hierarchy(row, loader_attrs)
+        extra_info = _construct_metadata_hierarchy(row, loader_attrs)
 
         assembly_id = (
             row[assembly_id_colname] if assembly_id_colname is not None and assembly_id_colname in row else "1"
         )
-        path = _build_structure_path(
+        path = _construct_structure_path(
             row[path_colname], extra_info.get("base_path"), extra_info.get("extension"), sharding_pattern
         )
         result_dict = _load_structure_from_path(path, assembly_id, parser_args)
@@ -150,7 +153,7 @@ def loader_base(
     return loader_function
 
 
-def loader_with_query_pn_units(
+def create_loader_with_query_pn_units(
     example_id_colname: str = "example_id",
     path_colname: str = "path",
     pn_unit_iid_colnames: str | list[str] | None = None,
@@ -168,12 +171,12 @@ def loader_with_query_pn_units(
 
     Examples:
         Interfaces dataset:
-            >>> loader = loader_with_query_pn_units(
+            >>> loader = create_loader_with_query_pn_units(
             ...     pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"], assembly_id_colname="assembly_id"
             ... )
 
         Chains dataset:
-            >>> loader = loader_with_query_pn_units(
+            >>> loader = create_loader_with_query_pn_units(
             ...     pn_unit_iid_colnames="pn_unit_iid", base_path="/data/structures", extension=".cif.gz"
             ... )
     """
@@ -183,7 +186,7 @@ def loader_with_query_pn_units(
     pn_unit_iid_colnames = pn_unit_iid_colnames or []
 
     # Create base loader with common parameters
-    base_loader = loader_base(
+    base_loader = create_base_loader(
         example_id_colname=example_id_colname,
         path_colname=path_colname,
         assembly_id_colname=assembly_id_colname,
@@ -208,7 +211,7 @@ def loader_with_query_pn_units(
     return loader_function
 
 
-def loader_with_interfaces_and_pn_units_to_score(
+def create_loader_with_interfaces_and_pn_units_to_score(
     example_id_colname: str = "example_id",
     path_colname: str = "path",
     assembly_id_colname: str | None = "assembly_id",
@@ -220,15 +223,15 @@ def loader_with_interfaces_and_pn_units_to_score(
     attrs: dict | None = None,
     parser_args: dict | None = None,
 ) -> Callable[[pd.Series], dict[str, Any]]:
-    """Loader that additionally adds interfaces and pn_units to score for validation datasets to the ground truth key.
+    """Factory function that creates a loader that adds interfaces and pn_units to score for validation datasets.
 
     Example:
-        >>> loader = loader_with_interfaces_and_pn_units_to_score(
+        >>> loader = create_loader_with_interfaces_and_pn_units_to_score(
         ...     interfaces_to_score_colname="interfaces_to_score", pn_units_to_score_colname="pn_units_to_score"
         ... )
     """
     # Create base loader with common parameters
-    base_loader = loader_base(
+    base_loader = create_base_loader(
         example_id_colname=example_id_colname,
         path_colname=path_colname,
         assembly_id_colname=assembly_id_colname,

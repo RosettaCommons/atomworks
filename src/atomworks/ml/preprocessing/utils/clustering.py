@@ -77,9 +77,9 @@ def run_mmseqs2_clustering(
         afe56282ba3, 19f7ce1eed1
 
     References:
-        - PDB clustering approach: https://www.rcsb.org/docs/grouping-structures/sequence-based-clustering
-        - MMseqs2 documentation: https://github.com/soedinglab/mmseqs2/wiki
-        - CLI documentation for the `easy-cluster` command: `mmseqs easy-cluster -h`
+        `PDB clustering approach <https://www.rcsb.org/docs/grouping-structures/sequence-based-clustering>`_
+        `MMseqs2 documentation <https://github.com/soedinglab/mmseqs2/wiki>`_
+        CLI documentation for the `easy-cluster` command: `mmseqs easy-cluster -h`
     """
     # If input is a Path object, convert it to a string
     if isinstance(input_fasta, Path):

@@ -20,7 +20,17 @@ PDB_PORT = 33444
 
 
 def _normalize_pdb_id(pdb_id: str) -> str:
-    """Return a normalized, lower-case 4-char PDB id or raise ValueError."""
+    """Return a normalized, lower-case 4-char PDB id or raise ValueError.
+
+    Args:
+        pdb_id: The PDB ID to normalize.
+
+    Returns:
+        Normalized lowercase PDB ID.
+
+    Raises:
+        ValueError: If the PDB ID is invalid.
+    """
     pdb_id = pdb_id.strip().lower()
     if not PDB_ID_REGEX.match(pdb_id):
         raise ValueError(f"Invalid PDB id: {pdb_id}")
@@ -31,6 +41,12 @@ def _pdb_id_to_relpath(pdb_id: str) -> Path:
     """Map a PDB id to its relative mmCIF path under the divided layout.
 
     Example: '1a0i' -> 'a0/1a0i.cif.gz'
+
+    Args:
+        pdb_id: The PDB ID to map.
+
+    Returns:
+        The relative path to the mmCIF file.
     """
     pid = _normalize_pdb_id(pdb_id)
     subdir = pid[1:3]
@@ -38,7 +54,15 @@ def _pdb_id_to_relpath(pdb_id: str) -> Path:
 
 
 def _run_rsync_list(remote_path: str, port: int | None) -> tuple[bool, str]:
-    """Try to list a remote rsync path and return success and output/error."""
+    """Try to list a remote rsync path and return success and output/error.
+
+    Args:
+        remote_path: The remote rsync path to list.
+        port: The port to use for rsync connection.
+
+    Returns:
+        Tuple of (success, output) where success is a boolean and output is the stdout/stderr.
+    """
     cmd = ["rsync", "--list-only"]
     if port is not None:
         cmd.extend(["--port", str(port)])

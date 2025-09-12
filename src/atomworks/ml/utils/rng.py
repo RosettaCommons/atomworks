@@ -55,52 +55,62 @@ def rng_state(
     rng_state_dict: dict[str, Any] | None = None, include_cuda: bool = True
 ) -> Generator[dict[str, Any], None, None]:
     """A context manager that resets the global random state on exit to what it was before entering.
+
     Within the context manager, the RNG states are set to the provided rng state in the dictionary.
 
     It supports isolating the states for PyTorch, Numpy, and Python built-in random number generators.
 
     Args:
-        - rng_state_dict (dict[str, Any] | None): A dictionary of RNG states to set. It can have the following keys:
+        rng_state_dict: A dictionary of RNG states to set. It can have the following keys:
+
             - "torch": The state of the PyTorch RNG.
             - "torch.cuda": The state of the PyTorch CUDA RNG.
             - "numpy": The state of the Numpy RNG.
             - "python": The state of the Python built-in RNG.
+
             If no rng_state_dict is provided, the RNG states are set to the current state of the RNGs. If the
             rng_state_dict only contains a subset of the RNG states, the other RNG states are set to the current
             state of the RNGs.
-        - include_cuda (bool): Whether to allow this function to also control the `torch.cuda` random number generator.
-            Set this to ``False`` when using the function in a forked process where CUDA re-initialization is
+        include_cuda: Whether to allow this function to also control the torch.cuda random number generator.
+            Set this to False when using the function in a forked process where CUDA re-initialization is
             prohibited. Defaults to True.
 
     Example:
+        .. code-block:: python
 
-    ```
-        # Outside the context manager
-        print("NumPy:", np.random.random(3))  # [0.04810046 0.99270597 0.70612995]
-        print("PyTorch:", torch.rand(3))  # tensor([0.1405, 0.4602, 0.4284])
-        print("Python random:", [random.random() for _ in range(3)])  # [0.7406435863188185, 0.5632059276194807, 0.8537007637060476]
+            # Outside the context manager
+            print("NumPy:", np.random.random(3))  # [0.04810046 0.99270597 0.70612995]
+            print("PyTorch:", torch.rand(3))  # tensor([0.1405, 0.4602, 0.4284])
+            print(
+                "Python random:", [random.random() for _ in range(3)]
+            )  # [0.7406435863188185, 0.5632059276194807, 0.8537007637060476]
 
-        # Inside the context manager with fixed seeds
-        with rng_state(create_rng_state_from_seeds(np_seed=42, torch_seed=42, py_seed=42)) as rng_state_dict:
-            my_state = serialize_rng_state_dict(rng_state_dict)
-            print("\nWithin context manager:")
-            print("NumPy:", np.random.random(3))  # [0.37454012 0.95071431 0.73199394]
-            print("PyTorch:", torch.rand(3))  # tensor([0.8823, 0.9150, 0.3829])
-            print("Python random:", [random.random() for _ in range(3)])  # [0.6394267984578837, 0.025010755222666936, 0.27502931836911926]
+            # Inside the context manager with fixed seeds
+            with rng_state(create_rng_state_from_seeds(np_seed=42, torch_seed=42, py_seed=42)) as rng_state_dict:
+                my_state = serialize_rng_state_dict(rng_state_dict)
+                print("\nWithin context manager:")
+                print("NumPy:", np.random.random(3))  # [0.37454012 0.95071431 0.73199394]
+                print("PyTorch:", torch.rand(3))  # tensor([0.8823, 0.9150, 0.3829])
+                print(
+                    "Python random:", [random.random() for _ in range(3)]
+                )  # [0.6394267984578837, 0.025010755222666936, 0.27502931836911926]
 
-        # Back to the original state outside the context manager
-        print("\nBack outside the context manager:")
-        print("NumPy:", np.random.random(3))  # [0.75479377 0.99594641 0.70411424]
-        print("PyTorch:", torch.rand(3))  # tensor([0.2757, 0.5345, 0.1754])
-        print("Python random:", [random.random() for _ in range(3)])  # [0.2194923914916147, 0.8731837332486028, 0.47700011905124995]
+            # Back to the original state outside the context manager
+            print("\nBack outside the context manager:")
+            print("NumPy:", np.random.random(3))  # [0.75479377 0.99594641 0.70411424]
+            print("PyTorch:", torch.rand(3))  # tensor([0.2757, 0.5345, 0.1754])
+            print(
+                "Python random:", [random.random() for _ in range(3)]
+            )  # [0.2194923914916147, 0.8731837332486028, 0.47700011905124995]
 
-        # Inside the context manager with fixed seeds
-        with rng_state(eval(my_state)):
-            print("\nWithin context manager:")
-            print("NumPy:", np.random.random(3))  # [0.37454012 0.95071431 0.73199394]
-            print("PyTorch:", torch.rand(3))  # tensor([0.8823, 0.9150, 0.3829])
-            print("Python random:", [random.random() for _ in range(3)])  # [0.6394267984578837, 0.025010755222666936, 0.27502931836911926]
-    ```
+            # Inside the context manager with fixed seeds
+            with rng_state(eval(my_state)):
+                print("\nWithin context manager:")
+                print("NumPy:", np.random.random(3))  # [0.37454012 0.95071431 0.73199394]
+                print("PyTorch:", torch.rand(3))  # tensor([0.8823, 0.9150, 0.3829])
+                print(
+                    "Python random:", [random.random() for _ in range(3)]
+                )  # [0.6394267984578837, 0.025010755222666936, 0.27502931836911926]
     """
     # Collect previous states
     prev_states = capture_rng_states(include_cuda)

@@ -70,8 +70,8 @@ def parse_fasta(filename: PathLike, maxseq: int = 10000, query_tax_id: str = "qu
         ins (np.ndarray): Array of shape (N, L) where N is the number of sequences and L is the length of sequences.
         tax_ids (np.ndarray): Array of shape (N,) containing the taxonomy IDs for each sequence in the MSA.
 
-    References:
-        - UniProt FASTA Header Documentation (https://www.uniprot.org/help/fasta-headers)
+    Reference:
+        `UniProt FASTA Header Documentation <https://www.uniprot.org/help/fasta-headers>`_
     """
     msa = []
     ins = []
@@ -149,8 +149,8 @@ def parse_a3m(
         tax_ids (np.ndarray):
             Array of shape (N,) containing the taxonomy IDs for each sequence in the MSA.
 
-    References:
-        - A3M Format Documentation (https://yanglab.qd.sdu.edu.cn/trRosetta/msa_format.html#a3m)
+    Reference:
+        `A3M Format Documentation <https://yanglab.qd.sdu.edu.cn/trRosetta/msa_format.html#a3m>`_
     """
     msa = []
     ins = []

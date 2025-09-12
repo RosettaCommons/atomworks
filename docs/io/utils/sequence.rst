@@ -1,5 +1,5 @@
 Sequence Utilities
-================
+==================
 
 .. automodule:: atomworks.io.utils.sequence
    :members:

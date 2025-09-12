@@ -135,41 +135,42 @@ class AddTokenBondAdjacency(Transform):
 
 
 class AddRF2AABondFeaturesMatrix(Transform):
-    """
-    Adds a matrix indicating the RF2AA bond type between two nodes to the data.
+    """Adds a matrix indicating the RF2AA bond type between two nodes to the data.
+
     This transform builds from the Biotite bond type, modifying as needed for residue-residue and residue-atom mappings.
-    We then add the matrix to the data dictionary under the key `rf2aa_bond_features_matrix`.
+    We then add the matrix to the data dictionary under the key "rf2aa_bond_features_matrix".
 
     From the RF2AA supplement, Supplementary Methods Table 8: Inputs to RFAA:
-    ------------------------------------------------------------------------------------------------
-    bond_feats          | (L, L, 7) Pairwise bond adjacency matrix. Pairs of residues are either
-                        single, double, triple, aromatic, residue-residue, residue-atom, or other.
-    ------------------------------------------------------------------------------------------------
+
+    bond_feats | (L, L, 7) Pairwise bond adjacency matrix. Pairs of residues are either
+               | single, double, triple, aromatic, residue-residue, residue-atom, or other.
 
     Specifically, we map to the following enum, as described in ChemData:
-        - 0 = No bonds
-        - 1 = Single bond
-        - 2 = Double bond
-        - 3 = Triple bond
-        - 4 = Aromatic
-        - 5 = Residue-residue
-        - 6 = Residue-atom
-        - 7 = Other
+    - 0 = No bonds
+    - 1 = Single bond
+    - 2 = Double bond
+    - 3 = Triple bond
+    - 4 = Aromatic
+    - 5 = Residue-residue
+    - 6 = Residue-atom
+    - 7 = Other
 
     We build the matrix from the Biotite bond types.
-    The Biotite `BondType` enum contains the following mapping:
-        - ANY = 0
-        - SINGLE = 1
-        - DOUBLE = 2
-        - TRIPLE = 3
-        - QUADRUPLE = 4
-        - AROMATIC_SINGLE = 5
-        - AROMATIC_DOUBLE = 6
-        - AROMATIC_TRIPLE = 7
+    The Biotite BondType enum contains the following mapping:
+
+    - ANY = 0
+    - SINGLE = 1
+    - DOUBLE = 2
+    - TRIPLE = 3
+    - QUADRUPLE = 4
+    - AROMATIC_SINGLE = 5
+    - AROMATIC_DOUBLE = 6
+    - AROMATIC_TRIPLE = 7
+
     The the index -1 is used for non-bonded interactions.
 
     Reference:
-    - Biotite documentation (https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType)
+        `Biotite BondType Documentation <https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType>`_
     """
 
     requires_previous_transforms: ClassVar[list[str | Transform]] = [AtomizeByCCDName, AddTokenBondAdjacency]
@@ -202,16 +203,15 @@ class AddRF2AABondFeaturesMatrix(Transform):
 
 
 class AddRF2AATraversalDistanceMatrix(Transform):
-    """
-    Generates a matrix indicating the minimum amount of bonds to traverse between two nodes.
+    """Generates a matrix indicating the minimum amount of bonds to traverse between two nodes.
+
     We define the traversal distance between two protein nodes as zero.
     Sets the "traversal_distance_matrix" key in the data dictionary.
 
     From the RF2AA supplement, Supplementary Methods Table 8: Inputs to RFAA:
-    ------------------------------------------------------------------------------------------------
-    dist_matrix               | (L, L) Minimum amount of bonds to traverse between two nodes.
-                                This is 0 between all protein nodes.
-    ------------------------------------------------------------------------------------------------
+
+    dist_matrix | (L, L) Minimum amount of bonds to traverse between two nodes.
+                | This is 0 between all protein nodes.
     """
 
     def check_input(self, data: dict) -> None:

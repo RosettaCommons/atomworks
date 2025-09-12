@@ -238,8 +238,8 @@ class DistributedMixedSampler(Sampler):
     Returns:
         iter: An iterator over indices of the dataset for the current process (of length n_samples, not n_examples_per_epoch)
 
-    References:
-        - PyTorch DistributedSampler (https://github.com/pytorch/pytorch/blob/main/torch/utils/data/distributed.py#L68)
+    Reference:
+        `PyTorch DistributedSampler <https://github.com/pytorch/pytorch/blob/main/torch/utils/data/distributed.py#L68>`_
     """
 
     def __init__(

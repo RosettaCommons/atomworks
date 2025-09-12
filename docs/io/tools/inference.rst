@@ -1,5 +1,5 @@
 Inference Tools
-==============
+===============
 
 .. automodule:: atomworks.io.tools.inference
    :members:

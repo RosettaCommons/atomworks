@@ -38,25 +38,24 @@ def timeout(timeout: float | int | None = None, strategy: Literal["signal", "sub
 
 
 def do_nothing(*args, **kwargs) -> Callable:
-    """
-    A decorator that does nothing and simply returns the original function.
+    """A decorator that does nothing and simply returns the original function.
 
     This decorator can be used as a placeholder or for testing purposes when you want
     to conditionally apply decorators without changing the code structure.
 
     Returns:
-        Callable: A decorator function that returns the original function unchanged.
+        A decorator function that returns the original function unchanged.
 
     Example:
-        ```python
-        @do_nothing_decorator()
-        def my_function():
-            return "Hello, World!"
+        .. code-block:: python
+
+            @do_nothing_decorator()
+            def my_function():
+                return "Hello, World!"
 
 
-        # or:
-        do_nothing(bla=123, blub=456)(my_function)
-        ```
+            # or:
+            do_nothing(bla=123, blub=456)(my_function)
     """
 
     def decorator(func: Callable) -> Callable:

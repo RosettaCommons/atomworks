@@ -6,8 +6,8 @@ representations of molecular structures, including atoms, bonds, and annotations
 allows using OpenBabel for identifying e.g. stereochemistry, automorphisms, etc.
 
 References:
-- OpenBabel documentation: https://open-babel.readthedocs.io/
-- Biotite documentation: https://www.biotite-python.org/
+    `OpenBabel documentation <https://open-babel.readthedocs.io/>`_
+    `Biotite documentation <https://www.biotite-python.org/>`_
 """
 
 import logging
@@ -74,7 +74,7 @@ Openbabel's special atom ID that is used for implicit hydrogens
 or lone pairs.
 
 Reference:
-    - https://open-babel.readthedocs.io/en/latest/Stereochemistry/stereo.html#accessing-stereochemistry-information
+    `OpenBabel Stereochemistry Documentation <https://open-babel.readthedocs.io/en/latest/Stereochemistry/stereo.html#accessing-stereochemistry-information>`_
 """
 
 
@@ -86,66 +86,69 @@ def atom_array_to_openbabel(
     annotations_to_keep: list[str] = _BIOTITE_DEFAULT_ANNOTATIONS,
     ph_for_inferred_hydrogens: float = 7.4,
 ) -> openbabel.OBMol:
-    """
-    Convert a Biotite AtomArray to an OpenBabel OBMol with the option of keeping custom AtomArray annotations.
+    """Convert a Biotite AtomArray to an OpenBabel OBMol with the option of keeping custom AtomArray annotations.
 
-    For easier interfacing with the `OBMol` object, you can wrap it into a `pybel.Molecule` object.
-     - https://open-babel.readthedocs.io/en/latest/UseTheLibrary/Python_PybelAPI.html
-     - https://github.com/openbabel/documentation/blob/master/pybel.py
+    For easier interfacing with the OBMol object, you can wrap it into a pybel.Molecule object.
+
+    - https://open-babel.readthedocs.io/en/latest/UseTheLibrary/Python_PybelAPI.html
+    - https://github.com/openbabel/documentation/blob/master/pybel.py
 
     Args:
-        atom_array (AtomArray): The Biotite AtomArray to convert.
-        set_coords (bool, optional): If True, set the atomic coordinates from the AtomArray in the OBMol. Defaults to True.
-        infer_aromaticity (bool, optional): If True, infer aromaticity in the OBMol or take the aromaticity annotations from the AtomArray. Defaults to False.
-        infer_hydrogens (bool, optional): If True, infer hydrogens in the OBMol or take the hydrogens annotations from the AtomArray. Defaults to False.
-        annotations_to_keep (list[str], optional): List of annotation categories to keep from the AtomArray. Defaults to _BIOTITE_DEFAULT_ANNOTATIONS.
-        ph_for_inferred_hydrogens (float, optional): The pH value to use for inferred hydrogens. Defaults to pH 7.4 which is the openbabel default.
+        atom_array: The Biotite AtomArray to convert.
+        set_coords: If True, set the atomic coordinates from the AtomArray in the OBMol. Defaults to True.
+        infer_aromaticity: If True, infer aromaticity in the OBMol or take the aromaticity annotations from the AtomArray. Defaults to False.
+        infer_hydrogens: If True, infer hydrogens in the OBMol or take the hydrogens annotations from the AtomArray. Defaults to False.
+        annotations_to_keep: List of annotation categories to keep from the AtomArray. Defaults to _BIOTITE_DEFAULT_ANNOTATIONS.
+        ph_for_inferred_hydrogens: The pH value to use for inferred hydrogens. Defaults to pH 7.4 which is the openbabel default.
             The pH value is exposed here explicitly, but we recommend using the default value and only changing it if you have a good reason, as this will
             likely make it out of sync with other parts of the codebase which use the default pH value.
 
     Returns:
-        openbabel.OBMol: The converted OpenBabel OBMol. The custom annotations are stored in the `_annotations` attribute.
+        The converted OpenBabel OBMol. The custom annotations are stored in the _annotations attribute.
 
     Example:
-        >>> from biotite.structure import AtomArray, BondType
-        >>> import numpy as np
-        >>> from atomworks.ml.transforms.openbabel_utils import atom_array_to_openbabel
-        >>> # Create AtomArray
-        >>> atom_array = AtomArray(5)
-        >>> atom_array.element = np.array(["C", "C", "O", "N", "H"])
-        >>> atom_array.coord = np.array(
-        ...     [
-        ...         [0.0, 0.0, 0.0],
-        ...         [1.5, 0.0, 0.0],
-        ...         [1.5, 1.5, 0.0],
-        ...         [0.0, 1.5, 0.0],
-        ...         [0.0, 0.0, 1.5],
-        ...     ]
-        ... )
-        >>> # Add bonds
-        >>> atom_array.bonds = struc.BondList(len(atom_array))
-        >>> atom_array.bonds.add_bond(0, 1, BondType.SINGLE)
-        >>> atom_array.bonds.add_bond(1, 2, BondType.DOUBLE)
-        >>> atom_array.bonds.add_bond(1, 3, BondType.SINGLE)
-        >>> atom_array.bonds.add_bond(0, 4, BondType.SINGLE)
-        >>> # Convert to OpenBabel molecule
-        >>> obmol = atom_array_to_openbabel(atom_array)
-        >>> # Print number of atoms
-        >>> print(f"Number of atoms: {obmol.NumAtoms()}")
-        Number of atoms: 5
-        >>> # Print atom information
-        >>> print("\nAtom information:")
-        >>> for atom in openbabel.OBMolAtomIter(obmol):
-        ...     print(
-        ...         f"Atomic number: {atom.GetAtomicNum()}, Coordinates: ({atom.GetX():.1f}, {atom.GetY():.1f}, {atom.GetZ():.1f})"
-        ...     )
+        .. code-block:: python
 
-        Atom information:
-        Atomic number: 6, Coordinates: (0.0, 0.0, 0.0)
-        Atomic number: 6, Coordinates: (1.5, 0.0, 0.0)
-        Atomic number: 8, Coordinates: (1.5, 1.5, 0.0)
-        Atomic number: 7, Coordinates: (0.0, 1.5, 0.0)
-        Atomic number: 1, Coordinates: (0.0, 0.0, 1.5)
+            from biotite.structure import AtomArray, BondType
+            import numpy as np
+            from atomworks.ml.transforms.openbabel_utils import atom_array_to_openbabel
+
+            # Create AtomArray
+            atom_array = AtomArray(5)
+            atom_array.element = np.array(["C", "C", "O", "N", "H"])
+            atom_array.coord = np.array(
+                [
+                    [0.0, 0.0, 0.0],
+                    [1.5, 0.0, 0.0],
+                    [1.5, 1.5, 0.0],
+                    [0.0, 1.5, 0.0],
+                    [0.0, 0.0, 1.5],
+                ]
+            )
+            # Add bonds
+            atom_array.bonds = struc.BondList(len(atom_array))
+            atom_array.bonds.add_bond(0, 1, BondType.SINGLE)
+            atom_array.bonds.add_bond(1, 2, BondType.DOUBLE)
+            atom_array.bonds.add_bond(1, 3, BondType.SINGLE)
+            atom_array.bonds.add_bond(0, 4, BondType.SINGLE)
+            # Convert to OpenBabel molecule
+            obmol = atom_array_to_openbabel(atom_array)
+            # Print number of atoms
+            print(f"Number of atoms: {obmol.NumAtoms()}")
+            # Number of atoms: 5
+            # Print atom information
+            print("\nAtom information:")
+            for atom in openbabel.OBMolAtomIter(obmol):
+                print(
+                    f"Atomic number: {atom.GetAtomicNum()}, Coordinates: ({atom.GetX():.1f}, {atom.GetY():.1f}, {atom.GetZ():.1f})"
+                )
+
+            # Atom information:
+            # Atomic number: 6, Coordinates: (0.0, 0.0, 0.0)
+            # Atomic number: 6, Coordinates: (1.5, 0.0, 0.0)
+            # Atomic number: 8, Coordinates: (1.5, 1.5, 0.0)
+            # Atomic number: 7, Coordinates: (0.0, 1.5, 0.0)
+            # Atomic number: 1, Coordinates: (0.0, 0.0, 1.5)
     """
     # Initialize empty OpenBabel molecule
     obmol = openbabel.OBMol()
@@ -410,8 +413,8 @@ def find_automorphisms(obmol: openbabel.OBMol, max_automorphs: int = 1000, max_m
             a single automorphism representing the identity (no swaps).
 
     References:
-        - https://openbabel.org/api/3.0/group__substructure.shtml#ga16841a730cf92c8e51a804ad8d746307
-        - https://baoilleach.blogspot.com/2010/11/automorphisms-isomorphisms-symmetry.html
+        `OpenBabel Substructure API <https://openbabel.org/api/3.0/group__substructure.shtml#ga16841a730cf92c8e51a804ad8d746307>`_
+        `Automorphisms and Symmetry Blog <https://baoilleach.blogspot.com/2010/11/automorphisms-isomorphisms-symmetry.html>`_
 
     Example:
         >>> from openbabel import pybel
@@ -546,48 +549,50 @@ class AddOpenBabelMoleculesForAtomizedMolecules(Transform):
 
 
 class GetChiralCentersFromOpenBabel(Transform):
-    """
-    Identify chiral centers in the OpenBabel molecules stored in the `data["openbabel"]` dictionary.
-    These molecules typically correspond to the atomized molecules in the `data["atom_array"]` (c.f.
-    `AddOpenBabelMoleculesForAtomizedMolecules`).
+    """Identify chiral centers in the OpenBabel molecules stored in the data["openbabel"] dictionary.
+
+    These molecules typically correspond to the atomized molecules in the data["atom_array"] (c.f.
+    AddOpenBabelMoleculesForAtomizedMolecules).
 
     Chiral centers are mapped to the global atom IDs in the atom array to enable tracking chiral
     centers regardless of cropping or reshuffling operations that may modify the atom_array.
 
     Args:
-        data (dict[str, Any]): A dictionary containing the input data, including the atom array and
-            OpenBabel molecules under the `data["openbabel"]` key.
+        data: A dictionary containing the input data, including the atom array and
+            OpenBabel molecules under the data["openbabel"] key.
 
     Returns:
-        dict[str, Any]: The updated `data` dictionary with the identified chiral centers under the
-            `"chiral_centers"` key. The chiral centers are stored as a list of dictionaries, where each
+        The updated data dictionary with the identified chiral centers under the
+            "chiral_centers" key. The chiral centers are stored as a list of dictionaries, where each
             dictionary contains the chiral center global atom ID and the atom IDs of the (3 to 4) atoms
             bonded to it.
 
     Example:
-        data = {
-            "atom_array": atom_array,
-            "openbabel": {
-                1: obmol1,
-                2: obmol2,
+        .. code-block:: python
+
+            data = {
+                "atom_array": atom_array,
+                "openbabel": {
+                    1: obmol1,
+                    2: obmol2,
+                },
             }
-        }
 
-        transform = GetChiralCentersFromOpenBabel()
-        result = transform.forward(data)
+            transform = GetChiralCentersFromOpenBabel()
+            result = transform.forward(data)
 
-        print(result["chiral_centers"])
-        # Output might look like:
-        # [
-        #     {
-        #         "chiral_center_atom_id": 5,
-        #         "bonded_explicit_atom_ids": [1, 2, 3, 4]
-        #     },
-        #     {
-        #         "chiral_center_atom_id": 10,
-        #         "bonded_explicit_atom_ids": [6, 7, 8, 9]
-        #     }
-        # ]
+            print(result["chiral_centers"])
+            # Output might look like:
+            # [
+            #     {
+            #         "chiral_center_atom_id": 5,
+            #         "bonded_explicit_atom_ids": [1, 2, 3, 4]
+            #     },
+            #     {
+            #         "chiral_center_atom_id": 10,
+            #         "bonded_explicit_atom_ids": [6, 7, 8, 9]
+            #     }
+            # ]
     """
 
     requires_previous_transforms: ClassVar[list[str | Transform]] = [
