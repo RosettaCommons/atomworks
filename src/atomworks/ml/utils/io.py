@@ -1,7 +1,13 @@
+"""I/O utilities for ML components.
+
+Provides functions for file operations, directory scanning, and data loading.
+"""
+
 import gzip
 import hashlib
 import os
 import pickle
+import re
 from collections.abc import Callable
 from functools import wraps
 from os import PathLike
@@ -18,7 +24,17 @@ from atomworks.ml.utils.misc import (
 
 
 def open_file(filename: PathLike) -> TextIO:
-    """Open a file, handling gzipped files if necessary."""
+    """Open a file, handling gzipped files if necessary.
+
+    Args:
+        filename: The path to the file to open.
+
+    Returns:
+        A file-like object for reading.
+
+    Raises:
+        AssertionError: If the file does not exist.
+    """
     filename = Path(filename)
     # ...assert that the file exists
     assert filename.exists(), f"File {filename} does not exist"
@@ -32,11 +48,11 @@ def scan_directory(dir_path: PathLike, max_depth: int) -> list[str]:
     """Fast, order-independent directory scan for files up to max_depth levels deep.
 
     Args:
-        dir_path (PathLike): The root directory to scan.
-        max_depth (int): The maximum depth to scan. A max_depth of 1 means only the top-level directory.
+        dir_path: The root directory to scan.
+        max_depth: The maximum depth to scan. A max_depth of 1 means only the top-level directory.
 
     Returns:
-        list[str]: A list of file paths found within the specified directory and depth.
+        A list of file paths found within the specified directory and depth.
     """
     file_paths = []
 
@@ -55,23 +71,22 @@ def scan_directory(dir_path: PathLike, max_depth: int) -> list[str]:
 
 
 def cache_based_on_subset_of_args(cache_keys: list[str], maxsize: int | None = None) -> Callable:
-    """
-    Decorator to cache function results based on a subset of its keyword arguments.
-    Most helpful when some arguments may be unhashable types (e.g., dictionaries, AtomArray).
+    """Decorator to cache function results based on a subset of its keyword arguments.
 
+    Most helpful when some arguments may be unhashable types (e.g., dictionaries, AtomArray).
     If the value of any of the cache keys is None, the function is executed and the result is not cached.
 
     Note:
-        The wrapped function must use keyword arguments for those specified in `cache_keys`.
+        The wrapped function must use keyword arguments for those specified in cache_keys.
         Positional arguments are not supported for cache key extraction.
 
     Args:
-        cache_keys (List[str]): The names of the keyword arguments to use as the cache key.
-        maxsize (Optional[int]): The maximum number of entries to store in the cache.
+        cache_keys: The names of the keyword arguments to use as the cache key.
+        maxsize: The maximum number of entries to store in the cache.
             If None, the cache size is unlimited.
 
     Returns:
-        Callable: A decorator that caches the function results based on the specified keyword arguments.
+        A decorator that caches the function results based on the specified keyword arguments.
 
     Example:
         @cache_based_on_subset_of_args(['arg1'], maxsize=2)
@@ -290,8 +305,6 @@ def parse_sharding_pattern(sharding_pattern: str) -> list[tuple[int, int]]:
     Returns:
         List of (start, end) tuples for each directory level
     """
-    import re
-
     # Find all patterns like /start:end/ using a non-consuming lookahead
     pattern = r"/(\d+):(\d+)(?=/)"
     matches = []

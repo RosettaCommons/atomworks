@@ -120,13 +120,13 @@ def interfaces_df():
 
 # AF2 Distillation Facebook, with and without table-wide metadata (to test metadata handling)
 @pytest.fixture(scope="session")
-def af2_distillation_facebook_df_no_metadata():
+def af2_distillation_df_no_metadata():
     path = TEST_DATA_ML / "af2_distillation" / "metadata.parquet"
     return pd.read_parquet(path)
 
 
 @pytest.fixture(scope="session")
-def af2_distillation_facebook_df_with_metadata():
+def af2_distillation_df_with_metadata():
     df = read_parquet_with_metadata(TEST_DATA_ML / "af2_distillation" / "metadata.parquet")
     df.attrs["base_path"] = str(TEST_DATA_ML / "af2_distillation" / "cif")
     return df
@@ -202,9 +202,9 @@ def validation_pandas_dataset(af3_validation_df):
 
 
 @pytest.fixture(scope="session")
-def distillation_pandas_dataset_no_metadata(af2_distillation_facebook_df_no_metadata):
+def af2_distillation_dataset_no_metadata(af2_distillation_df_no_metadata):
     return PandasDataset(
-        data=af2_distillation_facebook_df_no_metadata,
+        data=af2_distillation_df_no_metadata,
         id_column="example_id",
         name="af2fb_distillation",
         columns_to_load=["example_id", "sequence_hash", "path"],
@@ -212,9 +212,9 @@ def distillation_pandas_dataset_no_metadata(af2_distillation_facebook_df_no_meta
 
 
 @pytest.fixture(scope="session")
-def distillation_pandas_dataset_with_metadata(af2_distillation_facebook_df_with_metadata):
+def af2_distillation_dataset_with_metadata(af2_distillation_df_with_metadata):
     return PandasDataset(
-        data=af2_distillation_facebook_df_with_metadata,
+        data=af2_distillation_df_with_metadata,
         id_column="example_id",
         name="af2fb_distillation",
         columns_to_load=["example_id", "sequence_hash", "path"],
