@@ -31,31 +31,42 @@ else:
 
 
 class TransformPipelineError(Exception):
-    """A custom error class for Transform pipelines (via `Compose`)."""
+    """A custom error class for Transform pipelines (via :class:`Compose`).
+
+    Attributes:
+        rng_state_dict: Optional RNG state dictionary for debugging purposes.
+    """
 
     def __init__(self, message: str, rng_state_dict: dict[str, Any] | None = None):
+        """Initialize TransformPipelineError.
+
+        Args:
+            message: The error message.
+            rng_state_dict: Optional RNG state dictionary for debugging purposes.
+        """
         super().__init__(message)
         # expose RNG state dict for debugging
         self.rng_state_dict = rng_state_dict
 
 
 class TransformedDict(dict):
-    """A thin wrapper around a dictionary that can be used to track the transform history."""
+    """A thin wrapper around a dictionary that can be used to track the transform history.
+
+    Behaves just like a regular dictionary but includes a ``__transform_history__`` attribute
+    that tracks the sequence of transforms applied to the data.
+    """
 
     def __new__(cls, __existing_dict_to_wrap: dict[str, Any] | None = None, **kwargs):
         """Create a new instance or return the existing TransformedDict instance.
 
-        NOTE: To get a pure dictionary, simply use `dict(transformed_dict)` on a TransformedDict instance.
-        TransformedDict's behave just like dicts for all intents and purposes, so you can use them just like
-        a regular dictionary.
+        Note:
+            To get a pure dictionary, simply use ``dict(transformed_dict)`` on a TransformedDict instance.
+            TransformedDict's behave just like dicts for all intents and purposes.
 
         Args:
-            __existing_dict_to_wrap (dict, optional): This is useful for wrapping an existing dictionary.
-                The odd name `__existing_dict_to_wrap` is used as an unlikely name to avoid conflicts
-                with the `dict` class.
-            **kwargs: Additional keyword arguments to pass to the dictionary constructor. This ensures
-                that a TransformedDict can be initialized just like a regular dictionary if no existing
-                dictionary to wrap is provided.
+            __existing_dict_to_wrap: This is useful for wrapping an existing dictionary.
+                The odd name is used as an unlikely name to avoid conflicts with the dict class.
+            **kwargs: Additional keyword arguments to pass to the dictionary constructor.
         """
         # if the argument is already a TransformedDict, return it
         if isinstance(__existing_dict_to_wrap, TransformedDict):
@@ -79,21 +90,18 @@ class TransformedDict(dict):
 
 
 class Transform(ABC):
-    """
-    Abstract base class for transformations on dictionary objects.
+    """Abstract base class for transformations on dictionary objects.
 
-    Class level attributes:
-        - validate_input (bool): Whether to validate the input.
-        - raise_if_invalid_input (bool): Whether to raise an error if the input is invalid.
-        - requires_previous_transforms (list[str]): Transforms that must have been applied before this transform.
-        - incompatible_previous_transforms (list[str]): Transforms that cannot have preceeded this transform.
-        - previous_transforms_order_matters (bool): Whether the order of the transforms is important.
-        - _track_transform_history (bool): Whether to track the transform history.
+    To write a subclass, you need to implement the :meth:`forward` method.
+    Optionally, you can override :meth:`check_input` for input validation.
 
-    To write a subclass, you need to implement the following methods:
-        - check_input(data: dict): Validates the input data. Should raise an error if the input is invalid.
-            The returned value is not used.
-        - forward(data: dict): Applies the transformation to the input data and returns the transformed data.
+    Attributes:
+        validate_input: Whether to validate the input.
+        raise_if_invalid_input: Whether to raise an error if the input is invalid.
+        requires_previous_transforms: Transforms that must have been applied before this transform.
+        incompatible_previous_transforms: Transforms that cannot have preceded this transform.
+        previous_transforms_order_matters: Whether the order of the transforms is important.
+        _track_transform_history: Whether to track the transform history.
     """
 
     validate_input: bool = True
@@ -105,28 +113,39 @@ class Transform(ABC):
 
     # To be implemented by subclasses (optional)
     def check_input(self, data: dict[str, Any]) -> None:  # noqa: B027
-        """
-        Check if the input dictionary is valid for the transform. Raises an error if the input is invalid.
+        """Check if the input dictionary is valid for the transform.
+
+        Args:
+            data: The input dictionary to validate.
+
+        Raises:
+            Exception: If the input is invalid.
         """
         pass
 
     @abstractmethod
     def forward(self, data: dict[str, Any], *args, **kwargs) -> dict[str, Any]:
-        """
-        Apply a transformation to the input dictionary and return the transformed dictionary.
+        """Apply a transformation to the input dictionary and return the transformed dictionary.
 
-        Parameters:
-            data (dict): The input dictionary to transform.
+        Args:
+            data: The input dictionary to transform.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
 
         Returns:
-            dict: The transformed dictionary.
+            The transformed dictionary.
         """
         pass
 
     # Internal logic for formatting error messages, debugging, logging and transform history tracking
     def _format_error_msg(self, e: Exception) -> str:
-        """
-        Formats the error message with optional traceback when in DEBUG mode.
+        """Format the error message with optional traceback when in DEBUG mode.
+
+        Args:
+            e: The exception that occurred.
+
+        Returns:
+            Formatted error message.
         """
         msg = f"Invalid input for {self.__class__.__name__}: {e}"
         if DEBUG:
@@ -134,8 +153,13 @@ class Transform(ABC):
         return msg
 
     def _transform_to_str(self, t: str | Transform | ABCMeta) -> str:
-        """
-        Convert a transform to a string.
+        """Convert a transform to a string.
+
+        Args:
+            t: The transform to convert (string, Transform instance, or Transform class).
+
+        Returns:
+            String representation of the transform.
         """
         if isinstance(t, str):
             # case: transform was provided as string, e.g. as `"RemoveKeys"`
@@ -150,19 +174,36 @@ class Transform(ABC):
             raise ValueError(f"Transform `{t}` cannot be converted to a string form for comparison of history.")
 
     def _ensure_has_transform_history(self, data: dict[str, Any] | TransformedDict) -> TransformedDict:
-        """Ensure that the data dictionary has a transform history by wrapping it in a `TransformedDict`."""
+        """Ensure that the data dictionary has a transform history by wrapping it in a TransformedDict.
+
+        Args:
+            data: The data dictionary to wrap.
+
+        Returns:
+            TransformedDict instance with transform history.
+        """
         data = TransformedDict(data)
         return data
 
     def _get_transform_history(self, data: TransformedDict) -> list[str]:
-        """
-        Get the transform history from the data.
+        """Get the transform history from the data.
+
+        Args:
+            data: The TransformedDict containing the history.
+
+        Returns:
+            List of transform names in the history.
         """
         return data.__transform_history__
 
     def _maybe_update_transform_history(self, data: TransformedDict) -> dict[str, Any]:
-        """
-        Update the transform history by appending the current transform to the transform history.
+        """Update the transform history by appending the current transform to the transform history.
+
+        Args:
+            data: The TransformedDict to update.
+
+        Returns:
+            The updated data dictionary.
         """
         if self._track_transform_history:
             this_transform_record = {
@@ -178,8 +219,14 @@ class Transform(ABC):
         return data
 
     def _maybe_restore_transform_history(self, data: TransformedDict, transform_history: list[str]) -> dict[str, Any]:
-        """
-        Restore the transform history, in case the data was copied.
+        """Restore the transform history, in case the data was copied.
+
+        Args:
+            data: The TransformedDict to restore history for.
+            transform_history: The history to restore.
+
+        Returns:
+            The data with restored history.
         """
         if not hasattr(data, "__transform_history__") or len(data.__transform_history__) == 0:
             # restore previous transform history if it is not present (e.g. if the data was copied)
@@ -187,8 +234,13 @@ class Transform(ABC):
         return data
 
     def _maybe_record_processing_time(self, data: TransformedDict) -> dict[str, Any]:
-        """
-        Record the processing time for the transform.
+        """Record the processing time for the transform.
+
+        Args:
+            data: The TransformedDict to record timing for.
+
+        Returns:
+            The data with updated timing information.
         """
         if self._track_transform_history and len(data.__transform_history__) > 0:
             for reverse_idx in range(len(data.__transform_history__) - 1, -1, -1):
@@ -202,9 +254,13 @@ class Transform(ABC):
         return data
 
     def _check_transform_history(self, data: TransformedDict) -> None:
-        """
-        Check if the previous transforms are valid for the transform.
-        Raises an error if the input is invalid.
+        """Check if the previous transforms are valid for the transform.
+
+        Args:
+            data: The TransformedDict to check.
+
+        Raises:
+            TransformPipelineError: If the transform history is invalid.
         """
         # extract the transform history
         history = [record["name"] for record in data.__transform_history__]
@@ -243,11 +299,18 @@ class Transform(ABC):
             )
 
     def __call__(self, data: dict[str, Any], *args, **kwargs) -> dict[str, Any]:
-        """
-        Validate and apply the transformation to the given dictionary.
+        """Validate and apply the transformation to the given dictionary.
+
+        Args:
+            data: The input dictionary to transform.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            The transformed dictionary.
 
         Raises:
-            ValueError: If the input is invalid and raise_if_invalid_input is True.
+            TransformPipelineError: If the input is invalid and raise_if_invalid_input is True.
         """
         # enable history tracking if it is not already enabled
         data = self._ensure_has_transform_history(data)
@@ -291,7 +354,11 @@ class Transform(ABC):
         return data
 
     def __repr__(self) -> str:
-        """String representation of the transform for debugging, notebooks and logging."""
+        """String representation of the transform for debugging, notebooks and logging.
+
+        Returns:
+            String representation of the transform.
+        """
         # Get all the attributes of the class
         repr_str = f"{self.__class__.__name__} at {hex(id(self))}"
 
@@ -304,6 +371,17 @@ class Transform(ABC):
         return repr_str
 
     def __add__(self, other: Transform) -> Compose:
+        """Add two transforms together to create a Compose instance.
+
+        Args:
+            other: Another Transform or Compose instance.
+
+        Returns:
+            A new Compose instance containing both transforms.
+
+        Raises:
+            ValueError: If other is not a Transform or Compose instance.
+        """
         # Case 1: self & other are `Compose` instances
         #  ... overridden in `Compose` class
         # Case 2: self is a `Compose` instance and other is a `Transform` instance
@@ -321,38 +399,36 @@ class Transform(ABC):
 
 
 class Compose(Transform):
-    """
-    Compose multiple transformations together.
+    """Compose multiple transformations together.
 
     This class allows you to chain multiple transformations and apply them sequentially to a data dictionary.
     It is particularly useful for preprocessing pipelines where multiple steps need to be applied in a specific order.
 
     Attributes:
-        - transforms (list[Transform]): A list of transformations to be applied.
-        - track_rng_state (bool): Whether to track and serialize the random number generator (RNG) state. This is
+        transforms: A list of transformations to be applied.
+        track_rng_state: Whether to track and serialize the random number generator (RNG) state. This is
             useful for debugging when dealing with probabilistic transformations. The RNG state is returned with
             the error message if the transform pipeline fails, allowing you to instantiate the same RNG state
-            with `eval` for debugging.
+            with ``eval`` for debugging.
     """
 
     _track_transform_history: bool = False  # Compose does not show up in the transform history
 
     def __init__(self, transforms: list[Transform], track_rng_state: bool = True, print_rng_state: bool = False):
-        """
-        Initialize the Compose transformation pipeline.
+        """Initialize the Compose transformation pipeline.
 
         Args:
-            - transforms (list[Transform]): A list of transformations to be applied sequentially.
-            - track_rng_state (bool): Whether to track and serialize the random number generator (RNG) state.
+            transforms: A list of transformations to be applied sequentially.
+            track_rng_state: Whether to track and serialize the random number generator (RNG) state.
                 This is useful for debugging when dealing with probabilistic transformations. The RNG state
                 is returned with the error message if the transform pipeline fails, allowing you to instantiate
-                the same RNG state with `eval` for debugging.
-            - print_rng_state (bool): Whether to print the RNG state upon failure. This can be useful
+                the same RNG state with ``eval`` for debugging.
+            print_rng_state: Whether to print the RNG state upon failure. This can be useful
                 for debugging and reproducing specific states for transforms with stochasticity.
 
         Raises:
-            ValueError: If `transforms` is not a list or tuple, if it is empty, or if it contains elements that
-                are not instances of `Transform`.
+            ValueError: If transforms is not a list or tuple, if it is empty, or if it contains elements that
+                are not instances of Transform.
         """
         if not isinstance(transforms, list | tuple):
             raise ValueError(f"Expected a list or tuple of Transforms, but got a {type(transforms)}")
@@ -370,6 +446,17 @@ class Compose(Transform):
         self.print_rng_state = print_rng_state
 
     def __add__(self, other: Transform | list[Transform] | Compose) -> Compose:
+        """Add another transform or compose to this compose.
+
+        Args:
+            other: Another Transform, list of Transforms, or Compose instance.
+
+        Returns:
+            A new Compose instance containing all transforms.
+
+        Raises:
+            ValueError: If other is not a valid type.
+        """
         if isinstance(other, Compose):
             return Compose(
                 self.transforms + other.transforms, track_rng_state=self.track_rng_state or other.track_rng_state
@@ -382,6 +469,13 @@ class Compose(Transform):
             raise ValueError(f"Expected a Transform or list of Transforms or Compose, but got a {type(other)}")
 
     def check_input(self, data: dict) -> None:
+        """Check if the input is valid for the compose.
+
+        Compose is always valid, so this method does nothing.
+
+        Args:
+            data: The input data to check.
+        """
         # Compose is always valid
         pass
 
@@ -391,6 +485,19 @@ class Compose(Transform):
         next_transform_idx: int,
         stop_before: Transform | int | str | None = None,
     ) -> bool:
+        """Check if transforms should stop before the next transform.
+
+        Args:
+            next_transform: The next transform to apply.
+            next_transform_idx: The index of the next transform.
+            stop_before: The transform, name, or index to stop before.
+
+        Returns:
+            True if transforms should stop before the next transform.
+
+        Raises:
+            ValueError: If stop_before is not a valid type.
+        """
         if stop_before is None:
             return False
         elif isinstance(stop_before, int):
@@ -408,19 +515,17 @@ class Compose(Transform):
         rng_state_dict: dict[str, Any] | None = None,
         _stop_before: Transform | str | int | None = None,
     ) -> dict:
-        """
-        Apply a series of transformations to the input data.
+        """Apply a series of transformations to the input data.
 
         Args:
-            data (dict): The input data to be transformed.
-            rng_state_dict (dict[str, Any] | None, optional): Random number generator state dictionary.
-                If provided, sets the RNG state before applying transforms. Defaults to None.
-            _stop_before (Transform | str | int | None, optional): Specifies a point to stop the transformation
+            data: The input data to be transformed.
+            rng_state_dict: Random number generator state dictionary.
+                If provided, sets the RNG state before applying transforms.
+            _stop_before: Specifies a point to stop the transformation
                 process. Can be a Transform instance, a string (transform class name), or an integer (index).
-                Defaults to None.
 
         Returns:
-            dict: The transformed data.
+            The transformed data.
 
         Raises:
             Exception: If any transform in the pipeline fails, with details about the failure point and RNG state.

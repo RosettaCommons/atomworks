@@ -3,6 +3,7 @@ import logging
 import os
 from collections import defaultdict
 from collections.abc import Iterable
+from pathlib import Path
 from typing import Literal
 
 import biotite.structure as struc
@@ -82,28 +83,54 @@ def get_available_ccd_codes_in_mirror(ccd_mirror_path: os.PathLike = CCD_MIRROR_
     Only counts codes when they adhere to the CCD mirror layout (e.g. .../H/HEM/HEM.cif)
     """
     root = os.fspath(ccd_mirror_path)
+
+    # Check if we have a pre-computed cache file
+    cache_file = os.path.join(root, ".ccd_codes_cache")
+    if os.path.exists(cache_file):
+        try:
+            # Check if cache is newer than the directory
+            cache_mtime = os.path.getmtime(cache_file)
+            dir_mtime = os.path.getmtime(root)
+            if cache_mtime > dir_mtime:
+                with open(cache_file) as f:
+                    codes = {line.strip() for line in f if line.strip()}
+                    return frozenset(codes)
+        except OSError:
+            # If cache is corrupted, fall back to scanning
+            pass
+
+    # Fall back to filesystem scan
     codes: set[str] = set()
 
-    # NOTE: The below is an optimized file-system scan since this is run at every
-    with os.scandir(root) as level1:
-        for l1 in level1:
-            if not l1.is_dir(follow_symlinks=False):
+    root_path = Path(root)
+
+    for level1_dir in root_path.iterdir():
+        if not level1_dir.is_dir():
+            continue
+        first_letter = level1_dir.name
+        if len(first_letter) != 1:
+            continue
+
+        for level2_dir in level1_dir.iterdir():
+            if not level2_dir.is_dir():
                 continue
-            first_letter = l1.name
-            if len(first_letter) != 1:
+            code = level2_dir.name
+            if not code or code[0] != first_letter:
                 continue
 
-            with os.scandir(l1.path) as level2:
-                for l2 in level2:
-                    if not l2.is_dir(follow_symlinks=False):
-                        continue
-                    code = l2.name
-                    if not code or code[0] != first_letter:
-                        continue
+            expected_file = level2_dir / f"{code}.cif"
+            if expected_file.is_file():
+                codes.add(code)
 
-                    expected = os.path.join(l2.path, f"{code}.cif")
-                    if os.path.isfile(expected):
-                        codes.add(code)
+    # Cache the results for next time
+    try:
+        with open(cache_file, "w") as f:
+            for code in sorted(codes):
+                f.write(f"{code}\n")
+    except OSError:
+        # If we can't write cache, that's okay
+        pass
+
     return frozenset(codes)
 
 

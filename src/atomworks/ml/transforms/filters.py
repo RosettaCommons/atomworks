@@ -30,6 +30,7 @@ from atomworks.ml.utils.token import get_token_starts
 def remove_unresolved_pn_units(atom_array: AtomArray) -> AtomArray:
     """
     Filters PN units that have all unresolved atoms (i.e., atoms with occupancy 0) from the AtomArray.
+
     Can be applied before or after croppping, since cropping may lead to PN units with all unresolved atoms that were previously not entirely unresolved.
     At training time, these unresolved PN units provide minimal value and can lead to errors in the model.
     """
@@ -72,6 +73,7 @@ def remove_unresolved_tokens(atom_array: AtomArray) -> AtomArray:
 class RemoveUnresolvedPNUnits(Transform):
     """
     Filters PN units that have all unresolved atoms (i.e., atoms with occupancy 0) from the AtomArray.
+
     Can be applied before or after croppping, since cropping may lead to PN units with all unresolved atoms that were previously not entirely unresolved.
     At training time, these unresolved PN units provide minimal value and can lead to errors in the model.
     """
@@ -222,10 +224,10 @@ class FilterToSpecifiedPNUnits(Transform):
 
     def forward(self, data: dict) -> dict:
         if ("extra_info" not in data) or (self.pn_unit_iid_key not in data["extra_info"]):
-            # ...short-circuit if the key does not exist in the `extra_info` dictionary
+            # ... short-circuit if the key does not exist in the `extra_info` dictionary
             return data
         else:
-            # ...otherwise, filter the atom array
+            # ... otherwise, filter the atom array
             data["atom_array"] = filter_to_specified_pn_units(
                 data["atom_array"], eval(data["extra_info"][self.pn_unit_iid_key])
             )
