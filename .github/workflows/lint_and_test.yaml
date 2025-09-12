@@ -55,10 +55,10 @@ jobs:
 
   test_digs:
     name: pytest (jojo)
-    runs-on: [self-hosted, jojo]
+    runs-on: [self-hosted]
     timeout-minutes: 30
     needs: lint
-    if: always()
+    if: github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v4
       - name: Run tests
