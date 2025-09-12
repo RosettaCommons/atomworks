@@ -197,8 +197,7 @@ def atom_array_from_encoding(
     **other_annotations: np.ndarray | None,
     # TODO: Allow passing a res_id
 ) -> AtomArray:
-    """
-    Create an AtomArray from encoded coordinates, mask, and sequence.
+    """Create an AtomArray from encoded coordinates, mask, and sequence.
 
     This function takes encoded data and reconstructs an AtomArray, which is a
     structured representation of atomic information. The encoded coordinates,
@@ -206,23 +205,24 @@ def atom_array_from_encoding(
     relevant annotations are included.
 
     Args:
-        - encoded_coord (torch.Tensor | np.ndarray): Encoded coordinates tensor.
-        - encoded_mask (torch.Tensor | np.ndarray): Encoded mask tensor.
-        - encoded_seq (torch.Tensor | np.ndarray): Encoded sequence tensor.
-        - encoding (TokenEncoding): The encoding to use for encoding the atom array.
-        - chain_id (str | np.ndarray, optional): Chain ID. Can be a single string (e.g., "A")
+        encoded_coord: Encoded coordinates tensor.
+        encoded_mask: Encoded mask tensor.
+        encoded_seq: Encoded sequence tensor.
+        encoding: The encoding to use for encoding the atom array.
+        chain_id: Chain ID. Can be a single string (e.g., "A")
           or a numpy array of shape (n_res,) corresponding to each residue. Defaults to "A".
-        - token_is_atom (torch.Tensor | np.ndarray | None, optional): Boolean mask indicating
+        token_is_atom: Boolean mask indicating
           whether each token corresponds to an atom.
-        - **other_annotations (np.ndarray | None): Additional annotations to include in the
+        **other_annotations: Additional annotations to include in the
           AtomArray. The shape must match one of the following:
+
             - scalar, for global annotations
             - (n_atom,) for per-atom annotations,
             - (n_res,) for per-residue annotations,
             - (n_chain,) for per-chain annotations.
 
     Returns:
-        - atom_array (AtomArray): The created AtomArray containing the encoded atomic information.
+        The created AtomArray containing the encoded atomic information.
     """
     # Turn tensors into numpy arrays if necessary
     _from_tensor = lambda x: x.cpu().numpy() if isinstance(x, torch.Tensor) else x  # noqa E731
@@ -401,39 +401,53 @@ class AddTokenAnnotation(Transform):
 
 
 class EncodeAF3TokenLevelFeatures(Transform):
-    """
-    A transform that encodes token-level features like AF3. The token-level features are returned as:
+    """A transform that encodes token-level features like AF3. The token-level features are returned as:
 
-    - feats:
-        # (Standard AF3 token-level features)
-        - `residue_index`: Residue number in the token's original input chain (pre-crop)
-        - `token_index`: Token number. Increases monotonically; does not restart at 1 for new
+    feats:
+        (Standard AF3 token-level features)
+
+        residue_index
+            Residue number in the token's original input chain (pre-crop)
+        token_index
+            Token number. Increases monotonically; does not restart at 1 for new
             chains. (Runs from 0 to N_tokens)
-        - `asym_id`: Unique integer for each distinct chain (pn_unit_iid)
-            NOTE: We use `pn_unit_iid` rather than `chain_iid` to be more consistent
+        asym_id
+            Unique integer for each distinct chain (pn_unit_iid)
+            NOTE: We use pn_unit_iid rather than chain_iid to be more consistent
             with handling of multi-residue/multi-chain ligands (especially sugars)
-        - `entity_id`: Unique integer for each distinct sequence (pn_unit entity)
-        - `sym_id`: Unique integer within chains of this sequence. E.g. if pn_units A, B and C
-            share a sequence but D does not, their `sym_id`s would be [0, 1, 2, 0].
-        - `restype`: Integer encoding of the sequence. 32 possible values: 20 AA + unknown,
+        entity_id
+            Unique integer for each distinct sequence (pn_unit entity)
+        sym_id
+            Unique integer within chains of this sequence. E.g. if pn_units A, B and C
+            share a sequence but D does not, their sym_ids would be [0, 1, 2, 0].
+        restype
+            Integer encoding of the sequence. 32 possible values: 20 AA + unknown,
             4 RNA nucleotides + unknown, 4 DNA nucleotides + unknown, and gap. Ligands are
-            represented as unknown amino acid (`UNK`)
-        - `is_protein`: whether a token is of protein type
-        - `is_rna`: whether a token is of RNA type
-        - `is_dna`: whether a token is of DNA type
-        - `is_ligand`: whether a token is a ligand residue
+            represented as unknown amino acid (UNK)
+        is_protein
+            whether a token is of protein type
+        is_rna
+            whether a token is of RNA type
+        is_dna
+            whether a token is of DNA type
+        is_ligand
+            whether a token is a ligand residue
 
-        # (Custom token-level features)
-        - `is_atomized`: whether a token is an atomized token
+        (Custom token-level features)
 
-    - feat_metadata:
-        - `asym_name`: The asymmetric unit name for each id in `asym_id`. Acts as a legend.
-        - `entity_name`: The entity name for each id in `entity_id`. Acts as a legend.
-        - `sym_name`: The symmetric unit name for each id in `sym_id`. Acts as a legend.
+        is_atomized
+            whether a token is an atomized token
+
+    feat_metadata:
+        asym_name
+            The asymmetric unit name for each id in asym_id. Acts as a legend.
+        entity_name
+            The entity name for each id in entity_id. Acts as a legend.
+        sym_name
+            The symmetric unit name for each id in sym_id. Acts as a legend.
 
     Reference:
-        - Section 2.8 of the AF3 supplementary (Table 5)
-          https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf
+        `Section 2.8 of the AF3 supplementary (Table 5) <https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf>`_
     """
 
     def __init__(self, sequence_encoding: AF3SequenceEncoding):

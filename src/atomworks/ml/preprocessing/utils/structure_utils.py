@@ -395,8 +395,8 @@ def get_ligand_validity_scores_from_pdb_id(pdb_id: str) -> list[dict[str, str | 
             residue name, chain ID, and entity ID. Can easily be converted to a pandas DataFrame for
             easier handling via `pd.DataFrame(records)`.
 
-    References:
-    - https://www.rcsb.org/docs/general-help/ligand-structure-quality-in-pdb-structures
+    Reference:
+        `RCSB Ligand Structure Quality Guide <https://www.rcsb.org/docs/general-help/ligand-structure-quality-in-pdb-structures>`_
     """
     pdb_graphql_url: Final[str] = "https://data.rcsb.org/graphql"
 

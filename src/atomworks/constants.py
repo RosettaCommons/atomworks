@@ -16,7 +16,14 @@ logger = logging.getLogger(__name__)
 
 
 def _load_env_var(var_name: str) -> str | None:
-    """Load an environment variable, returning None if it is not set."""
+    """Load an environment variable, returning None if it is not set.
+
+    Args:
+        var_name: The name of the environment variable to load.
+
+    Returns:
+        The value of the environment variable, or None if not set.
+    """
     try:
         return os.environ[var_name]
     except KeyError:
@@ -32,10 +39,18 @@ def _load_env_var(var_name: str) -> str | None:
 
 
 CCD_MIRROR_PATH: Final[str] = _load_env_var("CCD_MIRROR_PATH")
-"""A path to a carbon-copy mirror of the CCD ligands in the RCSB CCD."""
+"""A path to a carbon-copy mirror of the CCD ligands in the RCSB CCD.
+
+Reference:
+    `RCSB Chemical Component Dictionary <https://www.rcsb.org/ligand>`_
+"""
 
 PDB_MIRROR_PATH: Final[str] = _load_env_var("PDB_MIRROR_PATH")
-"""A path to a mirror of the PDB."""
+"""A path to a mirror of the PDB.
+
+Reference:
+    `Protein Data Bank <https://www.rcsb.org/>`_
+"""
 
 UNKNOWN_ELEMENT: Final[str] = "X"
 """The element name for an unknown element."""
@@ -59,13 +74,27 @@ ELEMENT_NAME_TO_ATOMIC_NUMBER: Final[MappingProxyType[str, int]] = MappingProxyT
     "Rg": 111, "Cn": 112, "Nh": 113, "Fl": 114, "Mc": 115, "Lv": 116, "Ts": 117, "Og": 118,
     UNKNOWN_ELEMENT: UNKNOWN_ATOMIC_NUMBER
 }))
-"""Map canonical *UPPERCASE* 2 letter element names to their atomic numbers. WARNING: Case-sensitive."""
+"""Map canonical *UPPERCASE* 2 letter element names to their atomic numbers.
+
+Warning:
+    Case-sensitive.
+
+Reference:
+    `IUPAC Periodic Table <https://iupac.org/what-we-do/periodic-table-of-elements/>`_
+"""
 
 ATOMIC_NUMBER_TO_ELEMENT: Final[MappingProxyType[int | str, str]] = MappingProxyType(
     {v: k for k, v in ELEMENT_NAME_TO_ATOMIC_NUMBER.items()} |
     {str(v): k for k, v in ELEMENT_NAME_TO_ATOMIC_NUMBER.items()}
 )
-"""Map atomic numbers (int/str) to their canonical *UPPERCASE* 2 letter element names. WARNING: Case-sensitive."""
+"""Map atomic numbers (int/str) to their canonical *UPPERCASE* 2 letter element names.
+
+Warning:
+    Case-sensitive.
+
+Reference:
+    `IUPAC Periodic Table <https://iupac.org/what-we-do/periodic-table-of-elements/>`_
+"""
 
 METAL_ELEMENTS: Final[frozenset[str]] = frozenset(map(str.upper, [
     "Li", "Na", "K", "Rb", "Cs", "Be", "Mg", "Ca", "Sr", "Ba",
@@ -74,7 +103,14 @@ METAL_ELEMENTS: Final[frozenset[str]] = frozenset(map(str.upper, [
     "La", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg",
     "Al", "Ga", "In", "Sn", "Tl", "Pb", "Bi",
 ]))
-"""A set of all metal elements, all *UPPERCASE*. WARNING: Case-sensitive."""
+"""A set of all metal elements, all *UPPERCASE*.
+
+Warning:
+    Case-sensitive.
+
+Reference:
+    `IUPAC Periodic Table - Metals <https://iupac.org/what-we-do/periodic-table-of-elements/>`_
+"""
 # fmt: on
 
 CHEM_COMP_TYPES: Final[tuple[str, ...]] = tuple(
@@ -114,10 +150,11 @@ CHEM_COMP_TYPES: Final[tuple[str, ...]] = tuple(
     ]
 )
 """Allowed Chemical Component Types for residues in the PDB + `mask`.
+
 All uppercase.
 
 Reference:
-    - http://mmcif.rcsb.org/dictionaries/mmcif_pdbx_v50.dic/Items/_chem_comp.type.html
+    `RCSB mmCIF Dictionary - chem_comp.type <http://mmcif.rcsb.org/dictionaries/mmcif_pdbx_v50.dic/Items/_chem_comp.type.html>`_
 """
 
 AA_LIKE_CHEM_TYPES: Final[frozenset[str]] = frozenset(
@@ -273,7 +310,7 @@ STRUCT_CONN_BOND_TYPES: Final[frozenset[str]] = frozenset({"covale", "disulf", "
 """A set of bond types that are considered when adding bonds to the atom array.
 
 Reference:
-    - https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/Items/_struct_conn.conn_type_id.html
+    `struct_conn.conn_type_id <https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/Items/_struct_conn.conn_type_id.html>`_
 """
 
 STRUCT_CONN_BOND_ORDER_TO_INT: Final[MappingProxyType[str, int]] = MappingProxyType(
@@ -287,8 +324,8 @@ STRUCT_CONN_BOND_ORDER_TO_INT: Final[MappingProxyType[str, int]] = MappingProxyT
 """
 Mapping from `struct_conn.pdbx_value_order` to integer bond orders.
 
-References:
-    - https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/Items/_struct_conn.pdbx_value_order.html
+Reference:
+    `struct_conn.pdbx_value_order <https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/Items/_struct_conn.pdbx_value_order.html>`_
 """
 
 BIOTITE_BOND_TYPE_TO_BOND_ORDER: Final[MappingProxyType[BondType, int]] = MappingProxyType(
@@ -320,7 +357,7 @@ DEFAULT_VALENCE = {
 Only elements that have unambiguous valences are included.
 
 Reference:
-    - https://www.rdkit.org/docs/RDKit_Book.html#valence-calculation-and-allowed-valences
+    `RDKit Book - Valence Calculation <https://www.rdkit.org/docs/RDKit_Book.html#valence-calculation-and-allowed-valences>`_
 """
 
 CRYSTALLIZATION_AIDS: Final[list[str]] = [
@@ -344,7 +381,7 @@ CRYSTALLIZATION_AIDS: Final[list[str]] = [
 """A list of CCD codes of common crystallization aids used in the crystallization of proteins.
 
 Reference:
-    - AF3 (Supp. Table 9) https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf
+    `AF3 (Supp. Table 9) <https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf>`_
 """
 
 AF3_EXCLUDED_LIGANDS: Final[list[str]] = [
@@ -483,7 +520,7 @@ AF3_EXCLUDED_LIGANDS: Final[list[str]] = [
 """A list of CCD codes of ligands that were excluded in AF3.
 
 Reference:
-    - AF3 (Supp. Table 10) https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf
+    `AF3 (Supp. Table 10) <https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf>`_
 """
 
 AF3_EXCLUDED_LIGANDS_REGEX: Final[str] = r"(?:^|,)\s*(?:" + "|".join(AF3_EXCLUDED_LIGANDS) + r")\s*(?:,|$)"
@@ -519,21 +556,21 @@ DICT_THREE_TO_ONE: Final[dict[str, str]] = {
 """A dictionary that maps three-letter amino acid codes to one-letter codes.
 
 Reference:
-    - Biotite: https://github.com/biotite-dev/biotite/blob/v0.41.0/src/biotite/sequence/seqtypes.py#L348-L556
+    `Biotite seqtypes.py <https://github.com/biotite-dev/biotite/blob/v0.41.0/src/biotite/sequence/seqtypes.py#L348-L556>`_
 """
 
 UNKNOWN_LIGAND: Final[str] = sys.intern("UNL")
 """The CCD code for unknown ligands (`UNL`).
 
 Reference:
-    - https://www.wwpdb.org/documentation/procedure
+    `wwPDB Documentation <https://www.wwpdb.org/documentation/procedure>`_
 """
 
 UNKNOWN_AA: Final[str] = sys.intern("UNK")
 """The CCD code for unknown amino acids (`UNK`).
 
 Reference:
-    - https://www.wwpdb.org/documentation/procedure
+    `wwPDB Documentation <https://www.wwpdb.org/documentation/procedure>`_
 """
 
 # TODO: Change these to something unique.
@@ -541,21 +578,21 @@ UNKNOWN_RNA: Final[str] = sys.intern("N")
 """The CCD code for unknown RNA nucleotides (`N`).
 
 Reference:
-    - https://www.wwpdb.org/documentation/procedure
+    `wwPDB Documentation <https://www.wwpdb.org/documentation/procedure>`_
 """
 
 UNKNOWN_DNA: Final[str] = sys.intern("DN")
 """The CCD code for unknown DNA nucleotides (`DN`).
 
 Reference:
-    - https://www.wwpdb.org/documentation/procedure
+    `wwPDB Documentation <https://www.wwpdb.org/documentation/procedure>`_
 """
 
 UNKNOWN_ATOM: Final[str] = sys.intern("UNX")
 """The CCD code for unknown atoms (`UNX`).
 
 Reference:
-    - https://www.wwpdb.org/documentation/procedure
+    `wwPDB Documentation <https://www.wwpdb.org/documentation/procedure>`_
 """
 
 GAP: Final[str] = sys.intern("<G>")

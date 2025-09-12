@@ -90,7 +90,7 @@ def _get_plane_pair_keys_for_planes_between_chiral_center_and_tetrahedral_side(
         AssertionError: If the length of `bonded_atoms` is not 4.
 
     Reference:
-     - RF2AA supplementary notes figure S1 (https://www.science.org/doi/10.1126/science.adl2528#supplementary-materials)
+        `RF2AA supplementary notes figure S1 <https://www.science.org/doi/10.1126/science.adl2528#supplementary-materials>`_
 
     Example:
         >>> chiral_center = 1
@@ -159,11 +159,13 @@ def get_rf2aa_chiral_features(
 
     NOTE: Each row of output features contains the indices of the plane pairs and the signed ideal
         dihedral angle for each chiral center. For example, the entry:
-            `[c, i, j, k, angle]`
-        means that the atom at index `c` is a chiral center with atoms at indices `(i, j, k)` bonded
-        to it. The signed dihedral angle `angle` is the signed angle between the planes `(cij)` and
-        `(ijk)`. The sign of the angle determines the chirality of the chiral center.
+            [c, i, j, k, angle]
+        means that the atom at index c is a chiral center with atoms at indices (i, j, k) bonded
+        to it. The signed dihedral angle angle is the signed angle between the planes (cij) and
+        (ijk). The sign of the angle determines the chirality of the chiral center.
+
     NOTE: Each chiral center will result in more than one feature. In particular:
+
         - 3 features if one of the 4 atoms bonded to the chiral center is an implicit hydrogen (as
             we do not look at any pair of planes where one plane contains an implicit hydrogen).
         - 12 features if all 4 atoms bonded to the chiral center are explicit atoms.
@@ -176,19 +178,19 @@ def get_rf2aa_chiral_features(
     network to iteratively refine predictions to match ideal tetrahedral geometry.
 
     Args:
-        chiral_centers (list[dict]): A list of dictionaries, of the form:
+        chiral_centers: A list of dictionaries, of the form:
             {"chiral_center_idx": int, "bonded_explicit_atom_idxs": list[int]}
-            where `chiral_center_idx` is the index of the chiral center atom, and `bonded_explicit_atom_idxs`
+            where chiral_center_idx is the index of the chiral center atom, and bonded_explicit_atom_idxs
             is a list of the indices of the atoms bonded to the chiral center (excluding implicit hydrogens).
-        coords (np.ndarray): A numpy array of atomic coordinates.
-        take_first_chiral_subordering (bool): If True, only the first subordering is considered (when four
+        coords: A numpy array of atomic coordinates.
+        take_first_chiral_subordering: If True, only the first subordering is considered (when four
             bonded non-hydrogen atoms are present). If False, all orderings are considered (leading to
             12 unique plane pairs in the case of 4 bonded atoms, or 3 unique plane pairs in the case of 3 bonded
             atoms).
 
     Returns:
-        torch.Tensor: A tensor of shape [n_chirals, 5] where each row contains the indices of the plane pairs
-                      and the *signed* ideal dihedral angle for each chiral center. The sign of the dihedral
+        A tensor of shape [n_chirals, 5] where each row contains the indices of the plane pairs
+                      and the signed ideal dihedral angle for each chiral center. The sign of the dihedral
                       angle determines the chirality of the chiral center (+1 for clockwise, -1 for counterclockwise).
                       If no stereocenters are found, returns an empty tensor of shape [0, 5].
     """
@@ -233,46 +235,43 @@ def get_rf2aa_chiral_features(
 
 
 class AddRF2AAChiralFeatures(Transform):
-    """
-    AddRF2AAChiralFeatures adds chiral features to the atom array data under the `"chiral_feats"` key.
-    Chiral centers are taken from `data["chiral_centers"]`, which is a list of dictionaries, of the form:
-        {"chiral_center_atom_id": int, "bonded_explicit_atom_ids": list[int]}
-    This metadata can be added by running e.g. the `AddOpenBabelMoleculesForAtomizedMolecules` and
-    `GetChiralCentersFromOpenBabel` transforms.This transform also requires the `AtomizeByCCDName` transform
+    """AddRF2AAChiralFeatures adds chiral features to the atom array data under the "chiral_feats" key.
+
+    Chiral centers are taken from data["chiral_centers"], which is a list of dictionaries, of the form:
+    {"chiral_center_atom_id": int, "bonded_explicit_atom_ids": list[int]}
+
+    This metadata can be added by running e.g. the AddOpenBabelMoleculesForAtomizedMolecules and
+    GetChiralCentersFromOpenBabel transforms. This transform also requires the AtomizeByCCDName transform
     to be applied previously to ensure the atom array is properly atomized.
 
     Args:
-        data (dict[str, Any]): A dictionary containing the input data, including the atom array and chiral centers.
+        data: A dictionary containing the input data, including the atom array and chiral centers.
 
     Returns:
-        dict[str, Any]: The updated `data` dictionary with the added chiral features under the `"chiral_feats"` key.
+        The updated data dictionary with the added chiral features under the "chiral_feats" key.
 
     Example:
-        data = {
-            "atom_array": atom_array,
-            "chiral_centers": [
-                {
-                    "chiral_center_atom_id": 5,
-                    "bonded_explicit_atom_ids": [1, 2, 3, 4]
-                },
-                {
-                    "chiral_center_atom_id": 10,
-                    "bonded_explicit_atom_ids": [6, 7, 8, 9]
-                }
-            ]
-        }
+        .. code-block:: python
 
-        transform = AddRF2AAChiralFeatures()
-        result = transform.forward(data)
+            data = {
+                "atom_array": atom_array,
+                "chiral_centers": [
+                    {"chiral_center_atom_id": 5, "bonded_explicit_atom_ids": [1, 2, 3, 4]},
+                    {"chiral_center_atom_id": 10, "bonded_explicit_atom_ids": [6, 7, 8, 9]},
+                ],
+            }
 
-        print(result["chiral_feats"])
-        # Output might look like:
-        #  (assuming the atom_id s above also correspond to the indices in the atom array,
-        #   otherwise the first 4 columns look different as they are the indices in the atom array)
-        # tensor([[ 5.,  1.,  2.,  3.,  0.61546...],
-        #         [ 5.,  2.,  3.,  4., -0.61546...],
-        #         ...
-        #         [10.,  7.,  8.,  9., -0.61546...]])
+            transform = AddRF2AAChiralFeatures()
+            result = transform.forward(data)
+
+            print(result["chiral_feats"])
+            # Output might look like:
+            #  (assuming the atom_id s above also correspond to the indices in the atom array,
+            #   otherwise the first 4 columns look different as they are the indices in the atom array)
+            # tensor([[ 5.,  1.,  2.,  3.,  0.61546...],
+            #         [ 5.,  2.,  3.,  4., -0.61546...],
+            #         ...
+            #         [10.,  7.,  8.,  9., -0.61546...]])
     """
 
     requires_previous_transforms: ClassVar[list[str | Transform]] = ["AtomizeByCCDName"]
@@ -401,12 +400,14 @@ def add_af3_chiral_features(
 
 
 class AddAF3ChiralFeatures(Transform):
-    """Adds chiral features into the `feats` dictionary.
+    """Adds chiral features into the feats dictionary.
 
     Adds the following features to the data dictionary under the 'feats' key:
-        - chiral_feats: [N_chiral_centers, 5] A listing of chiral centers of the format:
-                  tensor([[ 5.,  1.,  2.,  3.,  0.61546...],...])
-          Here, the first 4 columns define atom indices of chiral center; the 5th is target dihedral
+
+        chiral_feats
+            [N_chiral_centers, 5] A listing of chiral centers of the format:
+            tensor([[ 5.,  1.,  2.,  3.,  0.61546...],...])
+            Here, the first 4 columns define atom indices of chiral center; the 5th is target dihedral
 
     Metadata from GetRDKitChiralCenters, held in the "chiral_centers" key, is needed for this transform.
     """

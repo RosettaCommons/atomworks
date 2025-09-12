@@ -159,21 +159,19 @@ ATOM_TO_FRAME_PRIORITY = {x: i for i, x in enumerate(FRAME_PRIORITY_TO_ATOM)}
 def find_all_paths_of_length_n(
     graph: nx.Graph, n: int, order_independent_atom_frame_prioritization: bool = True
 ) -> list:
-    """
-    Find all paths of a given length n in a NetworkX graph.
+    """Find all paths of a given length n in a NetworkX graph.
 
-    Parameters:
-    G (nx.Graph): The input graph.
-    n (int): The length of the paths to find.
-    order_independent_frame_prioritization (bool, optional):
-        If True, considers paths with the same nodes but in different orders as equivalent.
-        Defaults to True.
+    Args:
+        graph: The input graph.
+        n: The length of the paths to find.
+        order_independent_atom_frame_prioritization: If True, considers paths with the same nodes but in different orders as equivalent.
+            Defaults to True.
 
     Returns:
-    np.ndarray: A tensor containing all unique paths of length n.
+        A tensor containing all unique paths of length n.
 
     Reference:
-        https://stackoverflow.com/questions/28095646/finding-all-paths-walks-of-given-length-in-a-networkx-graph'''
+        `StackOverflow: Finding all paths of given length <https://stackoverflow.com/questions/28095646/finding-all-paths-walks-of-given-length-in-a-networkx-graph>`_
     """
 
     def find_paths(graph: nx.Graph, u: Any, n: int) -> list[list[Any]]:

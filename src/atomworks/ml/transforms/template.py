@@ -41,27 +41,26 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class RF2AATemplate:
-    """
-    Data class for holding template information in the RF, RF2 & RF2AA format.
+    """Data class for holding template information in the RF, RF2 & RF2AA format.
 
     NOTE:
-     - RF templates only exist for proteins
-     - This is a helper class to cast the templates into a more `readable` format and also
-       to provide an interface layer that allows us to deal with templates as atom_arrays, if
-       we ever re-create templates or add templates for non-proteins
-     - RF-style templates already come encoded in atom14 representation (RFAtom14, not AF2Atom14)
+        - RF templates only exist for proteins
+        - This is a helper class to cast the templates into a more readable format and also
+          to provide an interface layer that allows us to deal with templates as atom_arrays, if
+          we ever re-create templates or add templates for non-proteins
+        - RF-style templates already come encoded in atom14 representation (RFAtom14, not AF2Atom14)
 
     Keys:
-    - xyz: Tensor([1, n_templates x n_atoms_per_template, 14, 3]), raw coordinates of all templates
-    - mask: Tensor([1, n_templates x n_atom_per_template, 14]), mask of all templates
-    - qmap: Tensor([1, n_templates x n_atom_per_template, 2]), alignment mapping of all templates
-        - index 0: which index in the query protein this template index matches to
-        - index 1: which template index this matches to
-    - f0d: Tensor([1, n_templates, 8?]), [0,:,4] holds sequence identity info
-    - f1d: Tensor([1, n_templates x n_atoms_per_template, 3]), something in there may be related to template confidence, gaps?
-    - seq: Tensor([1, 100677]) (tensor, encoded with Chemdata.aa2num encoding)
-    - ids: list[tuple[str]]  # Holds the f"{pdb_id}_{chain_id}" of the template
-    - label: list[str]  # holds the lookup_id for this template
+        - xyz: Tensor([1, n_templates x n_atoms_per_template, 14, 3]), raw coordinates of all templates
+        - mask: Tensor([1, n_templates x n_atom_per_template, 14]), mask of all templates
+        - qmap: Tensor([1, n_templates x n_atom_per_template, 2]), alignment mapping of all templates
+            - index 0: which index in the query protein this template index matches to
+            - index 1: which template index this matches to
+        - f0d: Tensor([1, n_templates, 8?]), [0,:,4] holds sequence identity info
+        - f1d: Tensor([1, n_templates x n_atoms_per_template, 3]), something in there may be related to template confidence, gaps?
+        - seq: Tensor([1, 100677]) (tensor, encoded with Chemdata.aa2num encoding)
+        - ids: list[tuple[str]]  # Holds the f"{pdb_id}_{chain_id}" of the template
+        - label: list[str]  # holds the lookup_id for this template
     """
 
     xyz: torch.Tensor  # [1, n_templates x n_atoms_per_template, 14, 3]
@@ -735,10 +734,8 @@ def featurize_templates_like_af3(
         dict: A dictionary containing the template features.
 
     References:
-        - Section 2.8 of the AF3 supplementary information
-          https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf
-        - AF2 supplementary information
-          https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf
+        `Section 2.8 of the AF3 supplementary information <https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf>`_
+        `AF2 supplementary information <https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf>`_
 
     NOTE: For templates a token is always a residue since we never align ligands, non-canonicals, PTMs, etc.
     """
@@ -907,10 +904,8 @@ class FeaturizeTemplatesLikeAF3(Transform):
             of the CA atom of all residues within the local frame of each residue.
 
     References:
-        - Section 2.8 of the AF3 supplementary information
-          https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf
-        - AF2 supplementary information
-          https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf
+        `Section 2.8 of the AF3 supplementary information <https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf>`_
+        `AF2 supplementary information <https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf>`_
     """
 
     requires_previous_transforms: ClassVar[list[str | Transform]] = [

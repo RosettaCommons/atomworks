@@ -34,44 +34,45 @@ logger.setLevel(logging.WARNING)
 
 
 def apply_automorphs(data: torch.Tensor, automorphs: np.ndarray | torch.Tensor) -> torch.Tensor:
-    """
-    Create data permutations of the input data for each of the automorphs.
+    """Create data permutations of the input data for each of the automorphs.
 
-    This function generates permutations of the input tensor `data` based on the provided automorphisms.
+    This function generates permutations of the input tensor data based on the provided automorphisms.
     Each permutation corresponds to a different automorphism, effectively reordering the data according
     to the automorphisms.
 
     Args:
-        - data (torch.Tensor): The input tensor to be permuted. The first dimension has to correspond to
+        data: The input tensor to be permuted. The first dimension has to correspond to
             the number of atoms.
-        - automorphs (np.ndarray | torch.Tensor): A tensor or numpy array of shape [n_automorphs, n_atoms, 2]
+        automorphs: A tensor or numpy array of shape [n_automorphs, n_atoms, 2]
             representing the automorphisms. Each automorphism is a list of paired atom indices
-            (from_idx, to_idx). The `from_idx` column is essentially just a repetition of np.arange(n_atoms).
+            (from_idx, to_idx). The from_idx column is essentially just a repetition of np.arange(n_atoms).
 
     Returns:
-        - data_automorphs (torch.Tensor): A tensor of shape [n_automorphs, *data.shape] containing the permuted
+        A tensor of shape [n_automorphs, ``*data.shape``] containing the permuted
             data for each automorphism.
 
     Example:
-        >>> data = torch.tensor([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]])
-        >>> # Example automorphisms (2 automorphisms for 3 atoms)
-        >>> automorphs = np.array([
+        .. code-block:: python
+
+            data = torch.tensor([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]])
+            # Example automorphisms (2 automorphisms for 3 atoms)
+            automorphs = np.array([
                 [[0, 0],
                  [1, 1],
                  [2, 2]],
                 [[0, 2],
                  [1, 0],
                  [2, 1]]
-        ... ])
-        >>> permuted_data = create_automorph_permutations(data, automorphs)
-        >>> print(permuted_data)
-        tensor([[[1.0, 2.0],
-                 [3.0, 4.0],
-                 [5.0, 6.0]],
-
-                [[5.0, 6.0],
-                 [1.0, 2.0],
-                 [3.0, 4.0]]])
+            ... ])
+            permuted_data = create_automorph_permutations(data, automorphs)
+            print(permuted_data)
+            # tensor([[[1.0, 2.0],
+            #          [3.0, 4.0],
+            #          [5.0, 6.0]],
+            #
+            #         [[5.0, 6.0],
+            #          [1.0, 2.0],
+            #          [3.0, 4.0]]])
     """
     automorphs = torch.as_tensor(automorphs)
     n_automorphs, n_atoms, _ = automorphs.shape
@@ -518,33 +519,33 @@ class CreateSymmetryCopyAxisLikeRF2AA(Transform):
         post_poly_array: AtomArray,
         crop_tmask: np.ndarray,
     ) -> tuple[torch.Tensor, torch.Tensor]:
-        """
-        Handles polymer symmetries by computing all swaps between isomorphic (i.e., equivalent) polymers
+        """Handles polymer symmetries by computing all swaps between isomorphic (i.e., equivalent) polymers
         that are at least partially in the crop.
 
         NOTE: This function only swaps full chains. Swaps within atoms of a polymer (e.g., residue
         naming ambiguities) are not considered and are handled elsewhere.
 
         The process involves the following steps:
+
         1. Subset the crop mask and pre-cropped atom array to only include polymers that are at least
            partially in the crop.
         2. Among these, identify polymers that are equal to each other (i.e., symmetry groups).
         3. Generate all possible combinations of in-group permutations (isomorphisms).
-        3. Apply these isomorphisms to the coordinates and masks of the pre-cropped, encoded polymers.
-        4. Crop to the relevant bits that appear in the crop.
-        5. De-duplicate the isomorphisms to remove any redundancies.
+        4. Apply these isomorphisms to the coordinates and masks of the pre-cropped, encoded polymers.
+        5. Crop to the relevant bits that appear in the crop.
+        6. De-duplicate the isomorphisms to remove any redundancies.
 
         Args:
-            - pre_poly_array (AtomArray): The atom array representing the state before cropping,
+            pre_poly_array: The atom array representing the state before cropping,
               containing polymer tokens.
-            - post_poly_array (AtomArray): The atom array representing the state after cropping,
+            post_poly_array: The atom array representing the state after cropping,
               containing polymer tokens.
-            - crop_tmask (np.ndarray): A boolean mask indicating which tokens are included in the crop.
+            crop_tmask: A boolean mask indicating which tokens are included in the crop.
 
         Returns:
-            - poly_xyz (torch.Tensor): The xyz coordinates of the polymers after applying the isomorphisms.
+            poly_xyz: The xyz coordinates of the polymers after applying the isomorphisms.
                 It has shape [n_permutations, n_crop_tokens, n_atoms_per_token, 3].
-            - poly_mask (torch.Tensor): The mask of the polymers after applying the isomorphisms.
+            poly_mask: The mask of the polymers after applying the isomorphisms.
                 It has shape [n_permutations, n_crop_tokens, n_atoms_per_token].
         """
         # NOTATION: a = atom-level, t = token-level, tidx = token-level index, tmask = token-level mask
@@ -626,21 +627,21 @@ class CreateSymmetryCopyAxisLikeRF2AA(Transform):
         crop_tmask: np.ndarray,
         openbabel_data: dict[int, Any],
     ) -> tuple[torch.Tensor, torch.Tensor]:
-        """
-        Handles non-polymer symmetries by computing automorphs within each non-polymer that
+        """Handles non-polymer symmetries by computing automorphs within each non-polymer that
         is at least partially in the crop.
 
         This function calculates the swapped coordinate and mask values for each molecule and
-        concatenates all automorphs together, padding the `n_permutations` dimension to the
+        concatenates all automorphs together, padding the n_permutations dimension to the
         maximum number of automorphs for any molecule.
 
         WARNING: Unlike polymer symmetries, inter-molecule symmetries are not considered here, as they
         are managed by the RF2AA loss function through a greedy search.
 
         For non-polymers, the following steps are performed:
+
         1. Subset the pre-cropped non-poly array to only include the non-poly molecules that are
            at least partially in the crop.
-        2. Compute the automorphs for each identified full molecule (i.e. *BEFORE* cropping).
+        2. Compute the automorphs for each identified full molecule (i.e. BEFORE cropping).
         3. Apply the computed automorphs to the coordinates and masks of the encoded full molecules.
         4. Crop to the relevant sections of the molecules that appear in the crop.
         5. Concatenate all automorphs together, padding to the maximum number of automorphs
@@ -649,15 +650,15 @@ class CreateSymmetryCopyAxisLikeRF2AA(Transform):
            two automorphs, but the atom swaps are in a part that is not within the crop)
 
         Args:
-            - pre_nonpoly_array (AtomArray): The pre-cropped non-polymer array to process.
-            - post_nonpoly_array (AtomArray): The post-cropped non-polymer array to process.
-            - crop_tmask (np.ndarray): A boolean mask indicating which tokens are in the crop.
-            - openbabel_data (dict[int, Any]): A dictionary containing Open Babel data for molecules.
+            pre_nonpoly_array: The pre-cropped non-polymer array to process.
+            post_nonpoly_array: The post-cropped non-polymer array to process.
+            crop_tmask: A boolean mask indicating which tokens are in the crop.
+            openbabel_data: A dictionary containing Open Babel data for molecules.
 
         Returns:
-            - nonpoly_xyzs (torch.Tensor): A tensor containing the coordinates of the non-polymer automorphs.
-            - nonpoly_masks (torch.Tensor): A tensor containing the masks of the non-polymer automorphs.
-            - symmetry_info (dict[tuple[int, str], int]): A dictionary containing the symmetry information.
+            nonpoly_xyzs: A tensor containing the coordinates of the non-polymer automorphs.
+            nonpoly_masks: A tensor containing the masks of the non-polymer automorphs.
+            symmetry_info: A dictionary containing the symmetry information.
         """
         n_nonpoly_token_in_crop = get_token_count(post_nonpoly_array)
 

@@ -1,5 +1,4 @@
-"""
-Transforms operating on Biotite's CIFBlock and CIFCategory objects.
+"""Transforms operating on Biotite's CIFBlock and CIFCategory objects.
 
 These transforms are used to extract information from the CIFBlock and return a dictionary containing processed information.
 """
@@ -27,12 +26,28 @@ logger = logging.getLogger("atomworks.io")
 
 
 def category_to_df(cif_block: CIFBlock, category: str) -> pd.DataFrame | None:
-    """Convert a CIF block to a pandas DataFrame."""
+    """Convert a CIF block to a pandas DataFrame.
+
+    Args:
+        cif_block: The CIF block to convert.
+        category: The category name to extract.
+
+    Returns:
+        DataFrame containing the category data, or None if category doesn't exist.
+    """
     return pd.DataFrame(category_to_dict(cif_block, category)) if category in cif_block else None
 
 
 def category_to_dict(cif_block: CIFBlock, category: str) -> dict[str, np.ndarray]:
-    """Convert a CIF block to a dictionary."""
+    """Convert a CIF block to a dictionary.
+
+    Args:
+        cif_block: The CIF block to convert.
+        category: The category name to extract.
+
+    Returns:
+        Dictionary containing the category data as numpy arrays.
+    """
     if exists(cif_block.get(category)):
         return toolz.valmap(lambda x: x.as_array(), dict(cif_block[category]))
     else:
@@ -303,7 +318,7 @@ def get_ligand_of_interest_info(cif_block: CIFBlock) -> dict:
     """Extract ligand of interest information from a CIF block.
 
     Reference:
-        - https://pdb101.rcsb.org/learn/guide-to-understanding-pdb-data/small-molecule-ligands
+        `PDB101 Small Molecule Ligands Guide <https://pdb101.rcsb.org/learn/guide-to-understanding-pdb-data/small-molecule-ligands>`_
     """
     # Extract binary flag for whether the ligand of interest is specified
     # NOTE: This is being used in addition to the below as it has slightly higher coverage across the PDB

@@ -60,35 +60,34 @@ def generate_conformers(
     attempts_with_random_coordinates: int = 10_000,
     **uff_optimize_kwargs: dict,
 ) -> Mol:
-    """
-    Generate conformations for the given molecule.
+    """Generate conformations for the given molecule.
 
     Args:
-        - mol (rdkit.Chem.Mol): The RDKit molecule to generate conformations for.
-        - seed (int | None): Random seed for reproducibility. If None, a random seed is used.
-        - n_conformers (int): Number of conformations to generate.
-        - method (str): The method to use for conformer generation. Default is "ETKDGv3".
+        mol: The RDKit molecule to generate conformations for.
+        seed: Random seed for reproducibility. If None, a random seed is used.
+        n_conformers: Number of conformations to generate.
+        method: The method to use for conformer generation. Default is "ETKDGv3".
             Allowed methods are: "ETDG", "ETKDG", "ETKDGv2", "ETKDGv3", "srETKDGv3"
             See https://rdkit.org/docs/RDKit_Book.html#conformer-generation for details.
-        - num_threads (int): Number of threads to use for parallel computation. Default is 1.
-        - hydrogen_policy (Literal["infer", "remove", "keep", "auto"]): Whether to add explicit
+        num_threads: Number of threads to use for parallel computation. Default is 1.
+        hydrogen_policy: Whether to add explicit
             hydrogens to the molecule. If "remove", hydrogens are temporarily added for conformer
             generation, but removed again before returning the molecule. If "keep" the molecule is
             used as-is (without adding or removing hydrogens). If "auto", the policy is set to "keep"
             if the molecule already has explicit hydrogens, otherwise it is set to "remove".
             If "infer", we follow the same behavior as "remove," but do not remove added hydrogens
             prior to returning the molecule.
-        - optimize (bool): Whether to optimize the generated conformers using UFF.
+        optimize: Whether to optimize the generated conformers using UFF.
             Default is True.
-        - **uff_optimize_kwargs (dict): Additional keyword arguments for UFF optimization:
-            - maxIters (int): Maximum number of iterations (default 200).
-            - vdwThresh (float): Used to exclude long-range van der Waals interactions
+        **uff_optimize_kwargs: Additional keyword arguments for UFF optimization:
+            - maxIters: Maximum number of iterations (default 200).
+            - vdwThresh: Used to exclude long-range van der Waals interactions
               (default 10.0).
-            - ignoreInterfragInteractions (bool): If True, nonbonded terms between
+            - ignoreInterfragInteractions: If True, nonbonded terms between
               fragments will not be added to the forcefield (default True).
 
     Returns:
-        rdkit.Chem.Mol: The molecule with generated conformations.
+        The molecule with generated conformations.
 
     Note:
         - Optimizing conformers (optimize_conformers=True) is recommended for obtaining
@@ -114,11 +113,10 @@ def generate_conformers(
            maxIterations or use more advanced sampling techniques.
 
     References:
-        1. Conformer tutorial: https://rdkit.org/docs/RDKit_Book.html#conformer-generation
-        1. RDKit Cookbook: https://www.rdkit.org/docs/Cookbook.html
-        2. Riniker and Landrum, "Better Informed Distance Geometry: Using What We Know To
-           Improve Conformation Generation", JCIM, 2015.
-
+        `Conformer tutorial <https://rdkit.org/docs/RDKit_Book.html#conformer-generation>`_
+        `RDKit Cookbook <https://www.rdkit.org/docs/Cookbook.html>`_
+        Riniker and Landrum, "Better Informed Distance Geometry: Using What We Know To
+        Improve Conformation Generation", JCIM, 2015.
     """
     # Ensure that all properties are being pickled (needed when we use timeout)
     assert (
@@ -326,8 +324,8 @@ def find_automorphisms_with_rdkit(
             If the search fails (e.g. due to running out of memory), returns an array with
             a single automorphism representing the identity (no swaps).
 
-    References:
-        - https://sourceforge.net/p/rdkit/mailman/message/27897393/
+    Reference:
+        `RDKit Mailman Discussion <https://sourceforge.net/p/rdkit/mailman/message/27897393/>`_
 
     Example:
         >>> from openbabel import pybel
@@ -397,21 +395,21 @@ def sample_rdkit_conformer_for_atom_array(
     """Sample a conformer for a Biotite AtomArray using RDKit.
 
     Args:
-        - atom_array: The Biotite AtomArray to sample a conformer for.
-        - n_conformers: The number of conformers to sample.
-        - timeout: The timeout for conformer generation. If None,
+        atom_array: The Biotite AtomArray to sample a conformer for.
+        n_conformers: The number of conformers to sample.
+        timeout: The timeout for conformer generation. If None,
             no timeout is applied. If a tuple, the first element is the offset and the
             second element is the slope.
-        - seed: The seed for conformer generation. If None, a random seed
+        seed: The seed for conformer generation. If None, a random seed
             is generated using the global numpy RNG.
-        - timeout_strategy: The strategy to use for the timeout.
+        timeout_strategy: The strategy to use for the timeout.
             Defaults to "subprocess".
-        - **generate_conformers_kwargs: Additional keyword arguments to pass to the
+        **generate_conformers_kwargs: Additional keyword arguments to pass to the
             generate_conformers function.
 
     Returns:
-        - AtomArray: The AtomArray with updated coordinates from the sampled conformer.
-        - Chem.Mol: The RDKit molecule with the generated conformer.
+        The AtomArray with updated coordinates from the sampled conformer.
+        The RDKit molecule with the generated conformer.
 
     Note:
         This function preserves the original atom order and properties of the input AtomArray.
@@ -464,13 +462,13 @@ def ccd_code_to_rdkit_with_conformers(
     skip_rdkit_conformer_generation: bool = False,
     **generate_conformers_kwargs,
 ) -> Chem.Mol:
-    """
-    Generate an RDKit molecule with conformers for a given residue name.
+    """Generate an RDKit molecule with conformers for a given residue name.
 
     This function attempts to generate the specified number of conformers for the given CCD code
     using RDKit's conformer generation (based on ETKDGv3 per default).
     If conformer generation fails or times out, it falls back to using the idealized conformer
     from the CCD entry if one is available.
+
     Args:
         ccd_code: The CCD code to generate conformers for. E.g. 'ALA' or 'GLY', '9RH' etc.
         n_conformers: The number of conformers to generate for the given CCD code.
@@ -485,7 +483,7 @@ def ccd_code_to_rdkit_with_conformers(
             generate_conformers function.
 
     Returns:
-        Chem.Mol: An RDKit molecule with the specified number of conformers.
+        An RDKit molecule with the specified number of conformers.
     """
     # ... get molecule from CCD with its idealized conformer (default conformer 0)
     mol = ccd_code_to_rdkit(ccd_code, hydrogen_policy="remove")
@@ -699,28 +697,32 @@ def get_rdkit_chiral_centers(rdkit_mols: dict[str, Mol]) -> dict:
 
 
 class GetRDKitChiralCenters(Transform):
-    """
-    Identify chiral centers in the RDKit molecules stored in the `data["rdkit"]` dictionary.
+    """Identify chiral centers in the RDKit molecules stored in the data["rdkit"] dictionary.
+
     Returns a dictionary mapping each residue name to a list of chiral centers, e.g:
-      data["chiral_centers"] = {
-          ...
-          "ILE": [
-              {'chiral_center_idx': 1, 'bonded_explicit_atom_idxs': [0, 2, 4], 'chirality': 'S'},
-              {'chiral_center_idx': 4, 'bonded_explicit_atom_idxs': [1, 5, 6], 'chirality': 'S'}
-          ],
-          ...
-      }
+
+    .. code-block:: python
+
+        data["chiral_centers"] = {
+            ...
+            "ILE": [
+                {'chiral_center_idx': 1, 'bonded_explicit_atom_idxs': [0, 2, 4], 'chirality': 'S'},
+                {'chiral_center_idx': 4, 'bonded_explicit_atom_idxs': [1, 5, 6], 'chirality': 'S'}
+            ],
+            ...
+        }
+
     Each chiral center is a dict with a center atom index, 3 or 4 bonded atom indices, and the
     RDKit-determined chirality.
 
     Uses RDKit molecules first computed in GetAF3ReferenceMoleculeFeatures.
 
     Args:
-        data (dict[str, Any]): A dictionary containing the input data, including RDKit molecules
-            under the `"rdkit"` key.
+        data: A dictionary containing the input data, including RDKit molecules
+            under the "rdkit" key.
 
     Returns:
-        dict[str, Any]: The updated `data` dictionary with `chiral_centers` containing chiral
+        The updated data dictionary with chiral_centers containing chiral
             centers for each molecule.
     """
 

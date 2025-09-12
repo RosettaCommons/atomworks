@@ -4,18 +4,22 @@
 [![Documentation Status](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://baker-laboratory.github.io/atomworks-dev/latest/index.html)
 [![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
-<img src="docs/_static/atomworks_logo_color.svg" width="450" alt="atomworks logo">
+<div align="center">
+  <img src="docs/_static/atomworks_logo_color.svg" width="450" alt="atomworks logo">
+</div>
 
-**atomworks** is an open-source platform that maximizes research velocity for biomolecular modeling tasks. Much like how [Torchdata](https://docs.pytorch.org/data/beta/index.html) enables rapid prototyping within the vision and language domains, AtomWorks aims to accelerate development and experimentation within biomolecular modeling.
+**atomworks** is an open-source platform that maximizes research velocity for biomolecular modeling tasks. Much like how [Torchvision](https://docs.pytorch.org/vision/stable/index.html) enables rapid prototyping within the vision domain, and [Torchaudio](https://docs.pytorch.org/audio/main/) within the audio domain, AtomWorks aims to accelerate development and experimentation within biomolecular modeling.
 
-> **⚠️ Notice:** We are currently finalizing some cleanup work within our repositories. Please expect the APIs (e.g., function and class names, inputs and outputs) to stabilize within the next two weeks. Thank you for your patience!
+> **⚠️ Notice:** We are currently finalizing some cleanup work within our repositories. Please expect the APIs (e.g., function and class names, inputs and outputs) to stabilize within the next one week. Thank you for your patience!
 
 If you're looking for the models themselves (e.g., RF3, MPNN) that integrate with AtomWorks rather than the underlying framework, check out [ModelForge](https://github.com/RosettaCommons/modelforge)
 
+> **💡 Note:** Not sure where to start? We've made some [examples in the AtomWorks documentation](https://baker-laboratory.github.io/atomworks-dev/latest/auto_examples/index.html) that work through several helpful scenarios; a full tutorial is under construction!
+
 AtomWorks is composed of two symbiotic libraries:
 
-- **atomworks.io:** A universal Python toolkit for parsing, cleaning, manipulating, and converting biological data (structures, sequences, small molecules). Built on the [biotite](https://www.biotite-python.org/) API, it seamlessly loads and exports between standard formats like mmCIF, PDB, FASTA, SMILES, MOL, and more.
-- **atomworks.ml:** Advanced dataset featurization and sampling for deep learning workflows that uses `atomworks.io` as its structural backbone. We provide a comprehensive, pre-built and well-tested set of `Transforms` for common tasks that can be easily composed into full deep-learning pipelines; users may also create their own `Transforms` for custom operations.
+- `atomworks.io`: A universal Python toolkit for parsing, cleaning, manipulating, and converting biological data (structures, sequences, small molecules). Built on the [biotite](https://www.biotite-python.org/) API, it seamlessly loads and exports between standard formats like mmCIF, PDB, FASTA, SMILES, MOL, and more. Broadly useful for anyone who works with structural data for biomolecules.
+- `atomworks.ml`: Advanced dataset featurization and sampling for deep learning workflows that uses `atomworks.io` as its structural backbone. We provide a comprehensive, pre-built and well-tested set of `Transforms` for common tasks that can be easily composed into full deep-learning pipelines; users may also create their own `Transforms` for custom operations.
 
 For more detail on the motivation for and applications of AtomWorks, please see the [preprint](https://doi.org/10.1101/2025.08.14.670328). 
 
@@ -25,7 +29,7 @@ AtomWorks is built atop [biotite](https://www.biotite-python.org/): We are grate
 
 ## atomworks.io
 
-> *A general-purpose Python toolkit for cleaning up, standardizing, and working with biomolecular files - based on biotite*
+> *A general-purpose Python toolkit for cleaning, standardizing, and manipulating with biomolecular structure files - built atop [biotite](https://www.biotite-python.org/):
 
 **atomworks.io** lets you:
 
@@ -33,7 +37,7 @@ AtomWorks is built atop [biotite](https://www.biotite-python.org/): We are grate
 - Transform all data to a consistent `AtomArray` representation for further analysis or machine learning applications, regardless of initial source
 - Model missing atoms (those implied by the sequence but not represented in the coordinates) and initialize entity- and instance-level annotations (see the [glossary]() for more detail on our composable naming conventions)
 
-We have found `atomworks.io` to be useful to a general bioinformatics and protein design audience; in many cases, `atomworks.io` can replace bespoke scripts and manual curation, enabling researchers to spend more time testing hypothesis and less time juggling dozens of tools and dependencies.
+We have found `atomworks.io` to be generally useful to a broad bioinformatics and protein design audience; in many cases, `atomworks.io` can replace bespoke scripts and manual curation, enabling researchers to spend more time testing hypothesis and less time juggling dozens of tools and dependencies.
 
 ---
 
@@ -45,10 +49,11 @@ We have found `atomworks.io` to be useful to a general bioinformatics and protei
 
 - A library of pre-built, well-tested `Transforms` that can be slotted into novel pipelines
 - An extensible framework, integrated with `atomworks.io`, to write `Transforms` for arbitrary use cases
-- Scripts to pre-process the PDB or other databases into dataframes appropriate for network training
-- Efficient sampling and batching utilities for training machine learning models
+- Pre-built datasets and samplers suitable for most model training scenarios
 
 Within the AtomWorks paradigm, the output of each `Transform` is not an opaque dictionary with model-specific tensors but instead an updated version of our atom-level structural representation (Biotite's `AtomArray`). Operations within – and between – pipelines thus maintain a common vocabulary of inputs and outputs.
+
+We have found that `atomworks.ml` **dramatically** reduces the overhead of starting, and completing, many ML projects; research topics that once took months now achieve signal within weeks if not days, accelerating the pace of innovation.
 
 ---
 

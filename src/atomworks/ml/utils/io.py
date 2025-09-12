@@ -89,12 +89,15 @@ def cache_based_on_subset_of_args(cache_keys: list[str], maxsize: int | None = N
         A decorator that caches the function results based on the specified keyword arguments.
 
     Example:
-        @cache_based_on_subset_of_args(['arg1'], maxsize=2)
-        def function(*, arg1, arg2):
-            return arg1 + arg2
+        .. code-block:: python
 
-        result1 = function(arg1=1, arg2=2)  # Caches with key 1
-        result2 = function(arg1=1, arg2=3)  # Retrieves from cache
+            @cache_based_on_subset_of_args(["arg1"], maxsize=2)
+            def function(*, arg1, arg2):
+                return arg1 + arg2
+
+
+            result1 = function(arg1=1, arg2=2)  # Caches with key 1
+            result2 = function(arg1=1, arg2=3)  # Retrieves from cache
     """
 
     def decorator(func: Callable) -> Callable:

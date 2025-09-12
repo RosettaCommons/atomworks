@@ -133,16 +133,14 @@ class CalculateSASA(Transform):
         check_atom_array_annotation(data, ["res_name"])
 
     def forward(self, data: dict, key_to_add_sasa_to: str = "atom_array") -> dict:
-        """
-        Calculates SASA and adds it to the data dictionary under the key `atom_array`.
+        """Calculates SASA and adds it to the data dictionary under the key "atom_array".
+
         Args:
-            data: dict
-                A dictionary containing the input data atomarray.
-            key_to_add_sasa_to: str
-                The key in the data dictionary to add the SASA values to.
+            data: A dictionary containing the input data atomarray.
+            key_to_add_sasa_to: The key in the data dictionary to add the SASA values to.
 
         Returns:
-            dict: The data dictionary with SASA values added.
+            The data dictionary with SASA values added.
         """
         atom_array: AtomArray = data[key_to_add_sasa_to]
         sasa = calculate_atomwise_sasa(

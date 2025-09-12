@@ -1,6 +1,6 @@
 """
 Dataset Exploration and Management in AtomWorks
-==============================================
+===============================================
 
 This example demonstrates how to work with datasets in AtomWorks, from simple file-based datasets to complex tabular datasets with custom loaders and transform pipelines.
 
@@ -17,11 +17,11 @@ This example demonstrates how to work with datasets in AtomWorks, from simple fi
 # Overview
 # =========
 #
-# ``Transform`` pipelines can be used with any data loader and any dataset. They are simply functions that take as input an ``AtomArray`` (which is often the output of ``AtomWorks.io``) and output ``PyTorch`` tensors ready for ingestion by a model.
+# `Transform` pipelines can be used with any data loader and any dataset. They are simply functions that take as input an `AtomArray` (which is often the output of `AtomWorks.io`) and output `PyTorch` tensors ready for ingestion by a model.
 #
-# However, most users will not want to build datasets from scratch. For convenience, we provide pre-built datasets and dataloaders that play well with ``Transform`` pipelines as well, roughly adhering to `Torchvision <https://docs.pytorch.org/vision/stable/datasets.html>`_ conventions.
+# However, most users will not want to build datasets from scratch. For convenience, we provide pre-built datasets and dataloaders that play well with `Transform` pipelines as well, roughly adhering to `Torchvision <https://docs.pytorch.org/vision/stable/datasets.html>`_ conventions.
 #
-# We demonstrate below a couple of different ways to connect a ``Transform`` pipeline with arbitrary datasets and connect them with trivial ``Transform`` pipelines.
+# We demonstrate below a couple of different ways to connect a `Transform` pipeline with arbitrary datasets and connect them with trivial `Transform` pipelines.
 
 ########################################################################
 # Datasets in AtomWorks
@@ -31,14 +31,13 @@ This example demonstrates how to work with datasets in AtomWorks, from simple fi
 # Using a Folder of CIF/PDB Files as a Dataset
 # ---------------------------------------------
 #
-# The simplest way to use AtomWorks with a Dataset is to create a ``Dataset`` and ``Sampler`` pointed to a directory of structural files (e.g., PDB, CIF).
+# The simplest way to use AtomWorks with a Dataset is to create a `Dataset` and `Sampler` pointed to a directory of structural files (e.g., PDB, CIF).
 #
-# .. note::
-#    All AtomWorks Datasets require a ``name`` attribute to support many of the logging/debugging features that are supplied out-of-the-box.
+# **NOTE**: All AtomWorks Datasets require a `name` attribute to support many of the logging/debugging features that are supplied out-of-the-box.
 
 from atomworks.ml.datasets.datasets import FileDataset
 
-# To setup the test pack, if not already, run ``atomworks setup tests``
+# To setup the test pack, if not already, run `atomworks setup tests`
 dataset = FileDataset.from_directory(
     directory="../../tests/data/ml/af2_distillation/cif", name="example_directory_dataset"
 )
@@ -62,18 +61,18 @@ for i, example in enumerate(dataset):
 # At a high level, to train models with AtomWorks, we need typically need a Dataset that:
 #
 # (1) Takes as input an item index and returns the corresponding example information; typically includes:
-#     a. Path to a structural file saved on disk (``/path/to/dataset/my_dataset_0.cif``)
+#     a. Path to a structural file saved on disk (`/path/to/dataset/my_dataset_0.cif`)
 #     b. Additional item-specific metadata (e.g., class labels)
 #
-# (2) Pre-loads structural information from the returned example into an ``AtomArray`` and assembles inputs for the Transform pipeline
+# (2) Pre-loads structural information from the returned example into an `AtomArray` and assembles inputs for the Transform pipeline
 #
 # (3) Feed the input dictionary through a Transform pipeline and returns the result
 #
-# So far, the ``FileDataset`` we initialized only accomplishes (1) from above - returning the raw data.
+# So far, the `FileDataset` we initialized only accomplishes (1) from above - returning the raw data.
 #
 # To accomplish (2), we can additionally pass a loading function at dataset initialization that takes the raw example data as input and returns a pre-processed ready for a Transform pipeline.
 #
-# In most cases, this will involve using ``parse`` or ``load_any`` from ``AtomWorks.io`` to build an ``AtomArray``, which is the common language of our ``Transform`` library.
+# In most cases, this will involve using `parse` or `load_any` from `AtomWorks.io` to build an `AtomArray`, which is the common language of our `Transform` library.
 
 from atomworks.io import parse
 
@@ -118,7 +117,7 @@ pipe = Compose(
 )
 
 ########################################################################
-# Just like with the loading function, we can also pass a composed ``Transform`` pipeline to our datasets.
+# Just like with the loading function, we can also pass a composed `Transform` pipeline to our datasets.
 
 dataset_with_loading_fn_and_transforms = FileDataset.from_directory(
     directory="../../tests/data/pdb", name="example_pdb_dataset", loader=simple_loading_fn, transform=pipe
@@ -147,7 +146,7 @@ view(pipeline_output["atom_array"])
 #
 # We will then sample uniformly (with or without replacement) from this dataset during training. Such a simple application may be appropriate for many fine-tuning cases such as distillation.
 #
-# The only "gotcha" outside of normal PyTorch sampling is that you'll need to implement a default collate function (which could simply be the identity) so long as your output dictionary contains an ``AtomArray``.
+# The only "gotcha" outside of normal PyTorch sampling is that you'll need to implement a default collate function (which could simply be the identity) so long as your output dictionary contains an `AtomArray`.
 
 from torch.utils.data import RandomSampler, DataLoader
 
@@ -165,7 +164,7 @@ for i, example in enumerate(loader):
         break
 
 ########################################################################
-# For more complicated sampling strategies, including distributed sampling for multi-GPU training, see the API documentation for ``samplers.py``, and the tests in ``test_samplers.py``
+# For more complicated sampling strategies, including distributed sampling for multi-GPU training, see the API documentation for `samplers.py`, and the tests in `test_samplers.py`
 
 ########################################################################
 # Tabular Datasets
@@ -175,26 +174,26 @@ for i, example in enumerate(loader):
 #
 # We thus support instantiating datasets from tabular sources stored on disk.
 #
-# We have implemented a ``PandasDataset`` class for this purpose; however, any tabular format (e.g., ``PolarsDataset``) could be similarly implemented without difficulty should the need arise (PR's welcome!)
+# We have implemented a `PandasDataset` class for this purpose; however, any tabular format (e.g., `PolarsDataset`) could be similarly implemented without difficulty should the need arise (PR's welcome!)
 
 ########################################################################
 # PandasDataset
 # --------------
 #
-# The ``PandasDataset`` class requires a couple of arguments:
-# - ``data``: Either a pandas DataFrame or path to a CSV/Parquet file containing the tabular data. Each row represents one example.
-# - ``name``: Descriptive name for this dataset, just as in ``FileDataset`` and all AtomWorks ``Dataset`` classes. Used for debugging and some downstream functions when using nested datasets.
+# The `PandasDataset` class requires a couple of arguments:
+# - `data`: Either a pandas DataFrame or path to a CSV/Parquet file containing the tabular data. Each row represents one example.
+# - `name`: Descriptive name for this dataset, just as in `FileDataset` and all AtomWorks `Dataset` classes. Used for debugging and some downstream functions when using nested datasets.
 #
 # Again, we can also pass a `transform` pipeline and `loader`:
-# - ``transform``: Transform pipeline to apply to loaded data.
-# - ``loader``: Optional function to process raw DataFrame rows into Transform-ready format.
+# - `transform`: Transform pipeline to apply to loaded data.
+# - `loader`: Optional function to process raw DataFrame rows into Transform-ready format.
 #
 # There's also a few other `PandasDataset`-specific arguments to note:
-# - ``filters``: Optional list of pandas query strings to filter the data. Applied in order during initialization.
-# - ``columns_to_load``: Optional list of column names to load when reading from a file. If None, all columns are loaded. Can dramatically reduce memory usage and load time if loading from a columnar format like Parquet.
+# - `filters`: Optional list of pandas query strings to filter the data. Applied in order during initialization.
+# - `columns_to_load`: Optional list of column names to load when reading from a file. If None, all columns are loaded. Can dramatically reduce memory usage and load time if loading from a columnar format like Parquet.
 
 ########################################################################
-# We will start by exploring an example metadata dataframe, then load it into a ``PandasDataset``.
+# We will start by exploring an example metadata dataframe, then load it into a `PandasDataset`.
 
 from atomworks.ml.utils.io import read_parquet_with_metadata
 
@@ -209,23 +208,22 @@ print(interfaces_df.head())
 # Understanding the Metadata
 # ---------------------------
 #
-# This dataframe includes a row for every interface between two ``pn_units`` (essentially, chains) in the Protein Data Bank. For illustration purposes, however, we're loading the test dataframe, which only includes information for a small subset of the full PDB.
+# This dataframe includes a row for every interface between two `pn_units` (essentially, chains) in the Protein Data Bank. For illustration purposes, however, we're loading the test dataframe, which only includes information for a small subset of the full PDB.
 #
-# The complete dataframes can be downloaded with ``atomworks setup metadata`` and will be described in greater detail elsewhere in the documentation.
+# The complete dataframes can be downloaded with `atomworks setup metadata` and will be described in greater detail elsewhere in the documentation.
 #
-# For our purposes, note that we have a ``path`` column that points to a ``.cif`` file stored on disk, an ``example_id`` column which is unique across every row in the dataset, and two columns ``pn_unit_1_iid`` and ``pn_unit_2_iid`` that specify the interface of interest for this particular row.
+# For our purposes, note that we have a `path` column that points to a `.cif` file stored on disk, an `example_id` column which is unique across every row in the dataset, and two columns `pn_unit_1_iid` and `pn_unit_2_iid` that specify the interface of interest for this particular row.
 #
-# .. note::
-#    Because a given PDB ID may contain many interfaces and thus may appear multiple times in our dataset, we must also incorporate the ``assembly_id`` and the ``pn_unit_iids`` of the two interacting chains within the ``example_id``.
+# **NOTE**: Because a given PDB ID may contain many interfaces and thus may appear multiple times in our dataset, we must also incorporate the `assembly_id` and the `pn_unit_iids` of the two interacting chains within the `example_id`.
 
 from atomworks.ml.datasets.datasets import PandasDataset
-from atomworks.ml.datasets.loaders import loader_with_query_pn_units
+from atomworks.ml.datasets.loaders import create_loader_with_query_pn_units
 
 dataset = PandasDataset(
     data=interfaces_df,
     name="interfaces_dataset",
     # We use a pre-built loader that takes in a list of column names and returns a loader function
-    loader=loader_with_query_pn_units(pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"]),
+    loader=create_loader_with_query_pn_units(pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"]),
     transform=pipe,
 )
 
@@ -233,7 +231,7 @@ print(f"Created PandasDataset with {len(dataset)} examples")
 
 ########################################################################
 # Related Examples
-# ----------
+# ---------------
 #
 # - :doc:`load_and_visualize_structures` - Learn how to load and explore protein structures
 # - :doc:`pocket_conditioning_transform` - Create custom transforms for ligand pocket identification and ML feature generation

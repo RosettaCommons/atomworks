@@ -88,7 +88,7 @@ def _get_rdkit_mols_with_conformers(
         to using the idealized conformer from the CCD entry if available.
 
     Reference:
-        - https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf
+        `AF3 Supplementary Information <https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf>`_
     """
     ref_mols = {}
     for res_name, count in res_stochiometry.items():
@@ -120,7 +120,7 @@ def _encode_atom_names_like_af3(atom_names: np.ndarray) -> np.ndarray:
         length 4.
 
     Reference:
-        - https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf
+        `AF3 Supplementary Information <https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf>`_
     """
     # Ensure uppercase
     atom_names = np.char.upper(atom_names)
@@ -230,8 +230,7 @@ def get_af3_reference_molecule_features(
         - is_atomized_atom_level: [N_atoms] Whether the atom is atomized (atom-level version of "is_ligand")
 
     Reference:
-        - Section 2.8 of the AF3 supplementary information
-          https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf
+        `Section 2.8 of the AF3 supplementary information <https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf>`_
     """
     _has_ground_truth_conformer_policy = "ground_truth_conformer_policy" in atom_array.get_annotation_categories()
     _has_global_res_id = "res_id_global" in atom_array.get_annotation_categories()
@@ -463,8 +462,7 @@ class GetAF3ReferenceMoleculeFeatures(Transform):
     Note: This transform should be applied after cropping.
 
     Reference:
-        - Section 2.8 of the AF3 supplementary information
-          https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf
+        `Section 2.8 of the AF3 supplementary information <https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf>`_
     """
 
     def __init__(

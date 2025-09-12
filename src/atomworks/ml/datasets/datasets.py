@@ -1,14 +1,21 @@
 """AtomWorks Dataset classes and common APIs.
 
-Provides composable dataset classes for molecular data with Transform pipeline support.
+At a high level, to train models with AtomWorks, we need a Dataset class that:
+    (1) Takes as input an item index and returns the corresponding example information; typically includes:
+        a. Path to a structural file saved on disk (`/path/to/dataset/my_dataset_0.cif`)
+        b. Additional item-specific metadata (e.g., class labels)
+    (2) Pre-loads structural information from the returned example into an `AtomArray` and assembles inputs for the Transform pipeline
+    (3) Feed the input dictionary through a Transform pipeline and return the result
 
-Key Components:
-    * :class:`MolecularDataset`: Base class with Transform pipeline and error handling
-    * :class:`PandasDataset`: Tabular data stored as pandas DataFrames
-    * :class:`FileDataset`: Individual files as examples
+Due to the heterogeneity of biomolecular data, in many cases, we may also want:
+    (4) In the event of a failure during the Transform pipeline, fall back to a different example
 
-For custom use cases, users may implement their own Dataset classes. Downstream code
-makes no assumptions about the specific implementation.
+For bespoke use cases, users may choose to write a custom Dataset that accomplish these steps; downstream code makes no assumptions.
+
+To accelerate development, we also provide an off-the-shelf, composable approach following common patterns:
+    - :class:`MolecularDataset`: Base class that handles pre-loading structural data and executing the Transform pipeline with error handling and debugging utilities
+    - :class:`PandasDataset`: A subclass of MolecularDataset for tabular data stored as pandas DataFrames
+    - :class:`FileDataset`: A subclass of MolecularDataset where each file is one example
 """
 
 import copy
@@ -395,7 +402,7 @@ class PandasDataset(MolecularDataset, ExampleIDMixin):
         *,
         data: pd.DataFrame | PathLike,
         name: str,
-        id_column: str | None = None,
+        id_column: str | None = "example_id",
         filters: list[str] | None = None,
         columns_to_load: list[str] | None = None,
         # MolecularDataset parameters
@@ -544,13 +551,14 @@ class PandasDataset(MolecularDataset, ExampleIDMixin):
             ValueError: If the data is not initialized or if a query removes all rows.
             Warning: If a query does not remove any rows.
 
-        Examples:
-            queries = [
-                "deposition_date < '2020-01-01'",
-                "resolution < 2.5 and ~method.str.contains('NMR')",
-                "cluster.notnull()",
-                "method in ['X-RAY_DIFFRACTION', 'ELECTRON_MICROSCOPY']"
-            ]
+        Example:
+            >>> queries = [
+            >>>     "deposition_date < '2020-01-01'",
+            >>>     "resolution < 2.5 and ~method.str.contains('NMR')",
+            >>>     "cluster.notnull()",
+            >>>     "method in ['X-RAY_DIFFRACTION', 'ELECTRON_MICROSCOPY']"
+            >>> ]
+            >>> dataset = PandasDataset(data="data.csv", name="filtered_dataset", filters=queries)
         """
         assert not self._already_filtered, "Filters cannot be applied after initialization."
 
