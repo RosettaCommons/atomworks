@@ -11,26 +11,26 @@ from toolz.curried import compose, reduce
 
 
 def exists(obj: Any) -> bool:
-    """Check if an object is not None.
+    """Check that obj is not None.
 
     Args:
         obj: The object to check.
 
     Returns:
-        True if the object is not None, False otherwise.
+        True if obj is not None, False otherwise.
     """
     return obj is not None
 
 
 def default(obj: Any, default: Any) -> Any:
-    """Return the object if not None, otherwise return the default value.
+    """Return obj if not None, otherwise return default.
 
     Args:
-        obj: The object to check.
-        default: The default value to return if obj is None.
+        obj: The primary object to return.
+        default: The fallback value if obj is None.
 
     Returns:
-        obj if it's not None, otherwise default.
+        obj if it is not None, otherwise default.
     """
     return obj if exists(obj) else default
 
@@ -55,34 +55,33 @@ def string_to_md5_hash(s: str, truncate: int = 32) -> str:
         truncate: Number of characters to return from the hash.
 
     Returns:
-        The truncated MD5 hash string.
+        The truncated MD5 hash as a string.
     """
     full_hash = hashlib.md5(s.encode("utf-8")).hexdigest()
     return full_hash[:truncate]
 
 
 def sum_string_arrays(*objs: np.ndarray | str) -> np.ndarray:
-    """Sum string arrays or strings into a single string array.
+    """Sum a list of string arrays or strings into a single string array.
 
-    Concatenates the input arrays/strings and determines the shortest string
-    length to set as dtype.
+    Concatenates the arrays and determines the shortest string length to set as dtype.
 
     Args:
-        *objs: Variable number of string arrays or strings to concatenate.
+        *objs: Variable number of string arrays or strings to sum.
 
     Returns:
-        A single string array containing the concatenated results.
+        A single concatenated string array.
     """
     return reduce(np.char.add, objs).astype(object).astype(str)
 
 
 def not_isin(element: np.ndarray, array: np.ndarray, **isin_kwargs) -> np.ndarray:
-    """More efficient version of ~np.isin.
+    """Like ~np.isin, but more efficient.
 
     Args:
-        element: Array of elements to test.
-        array: Array of values to test against.
-        **isin_kwargs: Additional keyword arguments passed to np.isin.
+        element: The array to test.
+        array: The array of values to test against.
+        **isin_kwargs: Additional keyword arguments for np.isin.
 
     Returns:
         Boolean array indicating which elements are not in the array.
@@ -94,11 +93,11 @@ def listmap(func: Callable, *iterables) -> list:
     """Like map, but returns a list instead of an iterator.
 
     Args:
-        func: Function to apply to each element.
+        func: The function to apply.
         *iterables: Variable number of iterables to map over.
 
     Returns:
-        List of results from applying func to each element.
+        A list containing the results of applying func to the iterables.
     """
     return compose(list, map)(func, *iterables)
 
@@ -114,7 +113,7 @@ def as_list(value: Any) -> list:
         value: The value to convert to a list.
 
     Returns:
-        A list containing the value or its elements.
+        A list containing the value(s).
     """
     try:
         # Try to iterate over the value (duck typing approach)
@@ -131,9 +130,9 @@ def immutable_lru_cache(maxsize: int = 128, typed: bool = False, deepcopy: bool 
     """An immutable version of lru_cache for caching functions that return mutable objects.
 
     Args:
-        maxsize: Maximum number of cached results.
+        maxsize: Maximum number of items to cache.
         typed: Whether to treat different types as separate cache entries.
-        deepcopy: Whether to use deep copy for immutable results.
+        deepcopy: Whether to use deep copy for immutable caching.
 
     Returns:
         A decorator that provides immutable caching functionality.
@@ -153,9 +152,9 @@ def immutable_lru_cache(maxsize: int = 128, typed: bool = False, deepcopy: bool 
 
 
 class KeyToIntMapper:
-    """Maps keys to unique integers based on the order of first appearance.
+    """Maps keys to unique integers based on the order of the first appearance of the key.
 
-    This is useful for mapping IDs such as chain_id, chain_entity, molecule_iid, etc.
+    This is useful for mapping id's such as chain_id, chain_entity, molecule_iid, etc.
     to integers.
 
     Example:
@@ -167,18 +166,18 @@ class KeyToIntMapper:
     """
 
     def __init__(self):
-        """Initialize the mapper with empty state."""
+        """Initialize KeyToIntMapper with empty mapping."""
         self.key_to_id = {}
         self.next_id = 0
 
     def __call__(self, value: Any) -> int:
-        """Map a value to a unique integer.
+        """Map a key to a unique integer.
 
         Args:
-            value: The value to map.
+            value: The key to map.
 
         Returns:
-            The unique integer ID for the value.
+            The unique integer assigned to the key.
         """
         if value not in self.key_to_id:
             self.key_to_id[value] = self.next_id

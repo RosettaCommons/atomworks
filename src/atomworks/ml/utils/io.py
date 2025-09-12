@@ -7,6 +7,7 @@ import gzip
 import hashlib
 import os
 import pickle
+import re
 from collections.abc import Callable
 from functools import wraps
 from os import PathLike
@@ -45,34 +46,6 @@ def open_file(filename: PathLike) -> TextIO:
 
 def scan_directory(dir_path: PathLike, max_depth: int) -> list[str]:
     """Fast, order-independent directory scan for files up to max_depth levels deep.
-
-    Args:
-        dir_path (PathLike): The root directory to scan.
-        max_depth (int): The maximum depth to scan. A max_depth of 1 means only the top-level directory.
-
-    Returns:
-        list[str]: A list of file paths found within the specified directory and depth.
-    """
-    file_paths = []
-
-    for root, dirs, files in os.walk(dir_path):
-        current_depth = len(Path(root).relative_to(dir_path).parts)
-
-        if current_depth >= max_depth:
-            dirs.clear()
-            continue
-
-        for file in files:
-            file_path = os.path.join(root, file)
-            file_paths.append(file_path)
-
-    return file_paths
-
-
-def cache_based_on_subset_of_args(cache_keys: list[str], maxsize: int | None = None) -> Callable:
-    """Decorator to cache function results based on a subset of its keyword arguments.
-
-    Most helpful when some arguments may be unhashable types (e.g., dictionaries, AtomArray).
 
     Args:
         dir_path: The root directory to scan.
@@ -335,8 +308,6 @@ def parse_sharding_pattern(sharding_pattern: str) -> list[tuple[int, int]]:
     Returns:
         List of (start, end) tuples for each directory level
     """
-    import re
-
     # Find all patterns like /start:end/ using a non-consuming lookahead
     pattern = r"/(\d+):(\d+)(?=/)"
     matches = []
