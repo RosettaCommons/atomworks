@@ -36,8 +36,13 @@ logger = logging.getLogger("atomworks.io")
 
 @functools.cache
 def aa_chem_comp_3to1(standard_only: bool = False) -> dict[str, str]:
-    """
-    Returns a dictionary mapping 3-letter amino acid codes to 1-letter codes.
+    """Returns a dictionary mapping 3-letter amino acid codes to 1-letter codes.
+
+    Args:
+        standard_only: If True, only include standard amino acids.
+
+    Returns:
+        Dictionary mapping 3-letter to 1-letter amino acid codes.
     """
     aa_3to1 = toolz.keyfilter(lambda x: x in aa_chem_comps(), chem_comp_to_one_letter())
     if standard_only:
@@ -47,8 +52,13 @@ def aa_chem_comp_3to1(standard_only: bool = False) -> dict[str, str]:
 
 @functools.cache
 def na_chem_comp_3to1(standard_only: bool = False) -> dict[str, str]:
-    """
-    Returns a dictionary mapping 3-letter DNA codes to 1-letter codes.
+    """Returns a dictionary mapping 3-letter DNA codes to 1-letter codes.
+
+    Args:
+        standard_only: If True, only include standard nucleic acids.
+
+    Returns:
+        Dictionary mapping 3-letter to 1-letter nucleic acid codes.
     """
     na_3to1 = toolz.keyfilter(lambda x: x in na_chem_comps(), chem_comp_to_one_letter())
     if standard_only:

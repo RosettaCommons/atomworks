@@ -32,25 +32,41 @@ logger = logging.getLogger(__name__)
 
 @functools.cache
 def aa_chem_comps() -> frozenset[str]:
-    """Set of amino acid chemical components. E.g. {'ALA', 'ARG', ...}"""
+    """Set of amino acid chemical components.
+
+    Returns:
+        Set of amino acid chemical components (e.g., {'ALA', 'ARG', ...}).
+    """
     return frozenset(struc.info.groups._get_group_members(list(AA_LIKE_CHEM_TYPES)))
 
 
 @functools.cache
 def na_chem_comps() -> frozenset[str]:
-    """Set of nucleic acid chemical components. E.g. {'DA', 'DC', ...}"""
+    """Set of nucleic acid chemical components.
+
+    Returns:
+        Set of nucleic acid chemical components (e.g., {'DA', 'DC', ...}).
+    """
     return frozenset(struc.info.groups._get_group_members(list(NA_LIKE_CHEM_TYPES)))
 
 
 @functools.cache
 def rna_chem_comps() -> frozenset[str]:
-    """Set of RNA chemical components. E.g. {'A', 'C', ...}"""
+    """Set of RNA chemical components.
+
+    Returns:
+        Set of RNA chemical components (e.g., {'A', 'C', ...}).
+    """
     return frozenset(struc.info.groups._get_group_members(list(RNA_LIKE_CHEM_TYPES)))
 
 
 @functools.cache
 def dna_chem_comps() -> frozenset[str]:
-    """Set of DNA chemical components. E.g. {'DA', 'DC', ...}"""
+    """Set of DNA chemical components.
+
+    Returns:
+        Set of DNA chemical components (e.g., {'DA', 'DC', ...}).
+    """
     return frozenset(struc.info.groups._get_group_members(list(DNA_LIKE_CHEM_TYPES)))
 
 
@@ -58,8 +74,16 @@ def dna_chem_comps() -> frozenset[str]:
 def chem_comp_to_one_letter() -> dict[str, str]:
     """Dictionary mapping the chemical components to their 1-letter code.
 
-    NOTE: Chemical components historically used to be 3-letter codes,
-    but nowadays longer codes exist.
+    Note:
+        Chemical components historically used to be 3-letter codes,
+        but nowadays longer codes exist.
+
+    Returns:
+        Dictionary mapping chemical component names to their 1-letter codes.
+
+    References:
+        `RCSB Chemical Component Dictionary <https://www.rcsb.org/ligand>`_
+        `Biotite CCD Module <https://www.biotite-python.org/apidoc/biotite.structure.info.ccd.html>`_
     """
     ccd = struc.info.ccd.get_ccd()
     three_letter_code = ccd["chem_comp"]["three_letter_code"].as_array()
@@ -81,6 +105,16 @@ def get_available_ccd_codes_in_mirror(ccd_mirror_path: os.PathLike = CCD_MIRROR_
     """Set of all CCD codes available in the local mirror.
 
     Only counts codes when they adhere to the CCD mirror layout (e.g. .../H/HEM/HEM.cif)
+
+    Args:
+        ccd_mirror_path: Path to the CCD mirror directory.
+
+    Returns:
+        Set of all available CCD codes in the mirror.
+
+    References:
+        `RCSB Chemical Component Dictionary <https://www.rcsb.org/ligand>`_
+        `CCD Mirror Layout <https://www.rcsb.org/ligand>`_
     """
     root = os.fspath(ccd_mirror_path)
 
@@ -237,25 +271,23 @@ def parse_ccd_cif(
     add_properties: bool = False,
     add_mapping: bool = False,
 ) -> struc.AtomArray:
-    """
-    Parses a Chemical Component Dictionary CIF file into a Biotite AtomArray structure.
+    """Parses a Chemical Component Dictionary CIF file into a Biotite AtomArray structure.
 
     Args:
-        - cif (CIFFile): The CIF file containing the component data.
-        - coords (Literal["model", "ideal_pdbx", "ideal_rdkit"] | None | tuple[str, ...]):
-            Type of coordinates to use. Defaults to ("ideal_pdbx", "model", "ideal_rdkit").
+        cif: The CIF file containing the component data.
+        coords: Type of coordinates to use. Defaults to ("ideal_pdbx", "model", "ideal_rdkit").
             Can be a single coordinate type or a tuple of fallback preferences (e.g., ("ideal_pdbx", "model", "ideal_rdkit")).
-                - "model": Use the coordinates that are found in a random (but fixed) pdb file.
-                - "ideal_pdbx": Use the idealized coordinates computed by the RCSB PDB (sometimes not available).
-                - "ideal_rdkit": Use the idealized coordinates computed by RDKit (sometimes unrealistic).
-        - add_properties (bool): Whether to include RDKit-computed properties. Defaults to False.
-            Properties are available under the `properties` attribute of the returned `AtomArray`.
-        - add_mapping (bool): Whether to include external resource mappings, such as e.g. the ChEMBL ID.
+            - "model": Use the coordinates that are found in a random (but fixed) pdb file.
+            - "ideal_pdbx": Use the idealized coordinates computed by the RCSB PDB (sometimes not available).
+            - "ideal_rdkit": Use the idealized coordinates computed by RDKit (sometimes unrealistic).
+        add_properties: Whether to include RDKit-computed properties. Defaults to False.
+            Properties are available under the ``properties`` attribute of the returned ``AtomArray``.
+        add_mapping: Whether to include external resource mappings, such as e.g. the ChEMBL ID.
             Defaults to False.
-            Mappings are available under the `mapping` attribute of the returned `AtomArray`.
+            Mappings are available under the ``mapping`` attribute of the returned ``AtomArray``.
 
     Returns:
-        - AtomArray: The parsed atomic structure with requested annotations and properties.
+        AtomArray: The parsed atomic structure with requested annotations and properties.
 
     Example:
         >>> cif = pdbx.CIFFile.read("path/to/ALA.cif")
@@ -398,21 +430,20 @@ def parse_ccd_cif(
 def get_ccd_component_from_mirror(
     ccd_code: str, ccd_mirror_path: os.PathLike = CCD_MIRROR_PATH, **parse_ccd_cif_kwargs
 ) -> struc.AtomArray:
-    """
-    Retrieves and parses a component from a local mirror of the Chemical Component Dictionary.
+    """Retrieves and parses a component from a local mirror of the Chemical Component Dictionary.
 
     Args:
-        - ccd_code (str): The three-letter code of the chemical component.
-        - ccd_mirror_path (os.PathLike): Path to the root of the CCD mirror directory.
-        - **parse_ccd_cif_kwargs: Additional keyword arguments passed to parse_ccd_cif():
-            - coords (Literal["model", "ideal_pdbx", "ideal_rdkit"] | None):
-                Type of coordinates to use. Defaults to "ideal_pdbx".
-            - add_properties (bool): Whether to include RDKit-computed properties. Defaults to True.
-            - add_mapping (bool): Whether to include external resource mappings, such as e.g. the ChEMBL ID.
+        ccd_code: The three-letter code of the chemical component.
+        ccd_mirror_path: Path to the root of the CCD mirror directory.
+        **parse_ccd_cif_kwargs: Additional keyword arguments passed to parse_ccd_cif():
+            coords: Type of coordinates to use ("model", "ideal_pdbx", "ideal_rdkit", or None).
+                Defaults to "ideal_pdbx".
+            add_properties: Whether to include RDKit-computed properties. Defaults to True.
+            add_mapping: Whether to include external resource mappings, such as e.g. the ChEMBL ID.
                 Defaults to False.
 
     Returns:
-        - AtomArray: The parsed atomic structure of the requested component.
+        AtomArray: The parsed atomic structure of the requested component.
 
     Example:
         >>> atom_array = get_ccd_component_from_mirror("ALA", coords="ideal_pdbx")

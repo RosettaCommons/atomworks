@@ -151,8 +151,8 @@ def mask_msa_like_bert(
             - masked_msa (torch.Tensor): Tensor [n_rows, n_tokens_across_chains] representing the masked MSA, with the mask only applied to indices where `index_can_be_masked` is True.
             - mask_position (torch.Tensor): Boolean tensor [n_rows, n_tokens_across_chains] indicating positions where a mask was applied (i.e., one of the outcomes of the mask behavior)
 
-    References:
-    - AF2 Supplement https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf
+    Reference:
+        `AF2 Supplement <https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf>`_
     """
     # We start by defining the probabilities for each masking behavior:
 
@@ -318,8 +318,8 @@ def summarize_clusters(
     Examples:
         See the test cases in `test_featurize_msa`.
 
-    References:
-    - AlphaFold2 (https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/model/tf/data_transforms.py#L292)
+    Reference:
+        `AlphaFold2 data_transforms.py <https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/model/tf/data_transforms.py#L292>`_
     """
     n_clust = selected_indices.shape[0]
     n_rows, n_seq = encoded_msa.shape

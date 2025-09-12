@@ -1,5 +1,5 @@
 FASTA Tools
-==========
+===========
 
 .. automodule:: atomworks.io.tools.fasta
    :members:

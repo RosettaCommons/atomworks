@@ -1,5 +1,5 @@
 CCD Utilities
-============
+=============
 
 .. automodule:: atomworks.io.utils.ccd
    :members:

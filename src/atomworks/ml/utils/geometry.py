@@ -38,8 +38,7 @@ def rigid_from_3_points(
         t: torch.Tensor of shape [..., 3], translation vector
 
     Reference:
-        - AF2 supplementary, Algorithm 21
-          https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf
+        `AF2 supplementary, Algorithm 21 <https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf>`_
 
     Example:
         >>> x1 = torch.tensor([0.0, 0.0, 1.0])
@@ -239,18 +238,18 @@ def get_random_rots(batch_size: int, **tensor_kwargs) -> torch.Tensor:
 
 
 def get_random_rigid(batch_size: int, scale: float = 1.0, **tensor_kwargs) -> tuple[torch.Tensor, torch.Tensor]:
-    """
-    Generate random rigid body transformations (R, t).
+    """Generate random rigid body transformations (R, t).
 
     Args:
-        - batch_size (int): Number of rigid transformations to generate.
-        - scale (float, optional): Scale factor for the translation vectors. Defaults to 1.0.
-        - **tensor_kwargs: Additional keyword arguments to pass to tensor creation functions.
+        batch_size: Number of rigid transformations to generate.
+        scale: Scale factor for the translation vectors. Defaults to 1.0.
+        **tensor_kwargs: Additional keyword arguments to pass to tensor creation functions.
 
     Returns:
-        - tuple[torch.Tensor, torch.Tensor]: A `rigid`tuple containing:
-            - rots (torch.Tensor): Batch of random rotation matrices with shape (batch_size, 3, 3).
-            - trans (torch.Tensor): Batch of random translation vectors with shape (batch_size, 3).
+        A rigid tuple containing:
+
+            - rots: Batch of random rotation matrices with shape (batch_size, 3, 3).
+            - trans: Batch of random translation vectors with shape (batch_size, 3).
 
     Note:
         If batch_size is 1, the output tensors are squeezed to remove the batch dimension.

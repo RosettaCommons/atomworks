@@ -1,5 +1,5 @@
 Diffusion Transforms
-==================
+====================
 
 This module contains transformations for diffusion-based structure processing.
 

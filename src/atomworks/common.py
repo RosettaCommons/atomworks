@@ -1,4 +1,4 @@
-"""Common functions used throughout the project."""
+"""Common utility functions used throughout the project."""
 
 import copy
 import hashlib
@@ -158,11 +158,11 @@ class KeyToIntMapper:
     to integers.
 
     Example:
-        chain_id_to_int = KeyToIntMapper()
-        chain_id_to_int("A")  # 0
-        chain_id_to_int("C")  # 1
-        chain_id_to_int("A")  # 0
-        chain_id_to_int("B")  # 2
+        >>> chain_id_to_int = KeyToIntMapper()
+        >>> chain_id_to_int("A")  # 0
+        >>> chain_id_to_int("C")  # 1
+        >>> chain_id_to_int("A")  # 0
+        >>> chain_id_to_int("B")  # 2
     """
 
     def __init__(self):

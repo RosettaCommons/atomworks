@@ -56,8 +56,8 @@ def test_nested_dummy_datasets():
         assert row.attrs["base_path"] is not None
 
 
-def test_structural_datasets(rf2aa_interfaces_dataset, rf2aa_pn_units_dataset, rf2aa_pdb_dataset):
-    # +------------------ Structural Dataset ------------------+
+def test_nested_datasets_with_weighted_samplers(rf2aa_interfaces_dataset, rf2aa_pn_units_dataset, rf2aa_pdb_dataset):
+    # +------------------  Sampler ------------------+
     num_examples_per_epoch = 100
 
     # ... calculate the weights based on the AF-3 weighting methodology

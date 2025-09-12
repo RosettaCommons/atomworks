@@ -1,4 +1,4 @@
-"""Enums used accross `atomworks`."""
+"""Enums used across atomworks."""
 
 from enum import IntEnum, StrEnum, auto
 from types import MappingProxyType
@@ -19,13 +19,15 @@ from atomworks.constants import (
 class ChainType(IntEnum):
     """IntEnum representing the type of chain in a RCSB mmCIF file from the Protein Data Bank (PDB).
 
-    Useful constants relating to ChainType are defined in ChainTypeInfo.
+    Useful constants relating to ChainType are defined in :class:`ChainTypeInfo`.
 
-    Sources:
-        - https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/Items/_entity.type.html
-        - https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/Items/_entity_poly.type.html
+    Note:
+        The chain type fields in the PDB are not stable; note the specific versions
+        of the dictionaries used (updated November, 2024)
 
-    NOTE: The chain type fields in the PDB are not stable; note the specific versions of the dictionaries used (updated November, 2024)
+    References:
+        `RCSB mmCIF Dictionary - entity.type <https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/Items/_entity.type.html>`_
+        `RCSB mmCIF Dictionary - entity_poly.type <https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/Items/_entity_poly.type.html>`_
     """
 
     # Polymers
@@ -46,7 +48,17 @@ class ChainType(IntEnum):
 
     @classmethod
     def from_string(cls, str_value: str) -> "ChainType":
-        """Convert a string to a ChainType enum."""
+        """Convert a string to a ChainType enum.
+
+        Args:
+            str_value: The string value to convert.
+
+        Returns:
+            The corresponding ChainType enum.
+
+        Raises:
+            ValueError: If the string value is not a valid chain type.
+        """
         try:
             return ChainTypeInfo.STRING_TO_ENUM[str_value.upper()]
         except KeyError:
@@ -56,36 +68,67 @@ class ChainType(IntEnum):
 
     @staticmethod
     def get_chain_type_strings() -> list[str]:
-        """Get a list of all chain type strings."""
+        """Get a list of all chain type strings.
+
+        Returns:
+            List of all valid chain type strings.
+        """
         return list(ChainTypeInfo.STRING_TO_ENUM.keys())
 
     @staticmethod
     def get_polymers() -> list["ChainType"]:
-        """Get a list of all polymer chain types."""
+        """Get a list of all polymer chain types.
+
+        Returns:
+            List of polymer chain types.
+        """
         return ChainTypeInfo.POLYMERS
 
     @staticmethod
     def get_non_polymers() -> list["ChainType"]:
-        """Get a list of all non-polymer chain types."""
+        """Get a list of all non-polymer chain types.
+
+        Returns:
+            List of non-polymer chain types.
+        """
         return ChainTypeInfo.NON_POLYMERS
 
     @staticmethod
     def get_proteins() -> list["ChainType"]:
-        """Get a list of all protein chain types."""
+        """Get a list of all protein chain types.
+
+        Returns:
+            List of protein chain types.
+        """
         return ChainTypeInfo.PROTEINS
 
     @staticmethod
     def get_nucleic_acids() -> list["ChainType"]:
-        """Get a list of all nucleic acid chain types."""
+        """Get a list of all nucleic acid chain types.
+
+        Returns:
+            List of nucleic acid chain types.
+        """
         return ChainTypeInfo.NUCLEIC_ACIDS
 
     @staticmethod
     def get_all_types() -> list["ChainType"]:
-        """Get a list of all chain types."""
+        """Get a list of all chain types.
+
+        Returns:
+            List of all chain types.
+        """
         return list(ChainType)
 
     def __eq__(self, other: Union["ChainType", int, str]) -> bool:
-        """Check if two ChainType enums are equal."""
+        """Check if two ChainType enums are equal.
+
+        Args:
+            other: Another ChainType, int, or string to compare with.
+
+        Returns:
+            True if the chain types are equal, False otherwise.
+        """
         if isinstance(other, ChainType):
             return self.value == other.value
         elif isinstance(other, int):
@@ -101,44 +144,85 @@ class ChainType(IntEnum):
         return NotImplemented
 
     def __hash__(self):
-        """Hash a ChainType enum."""
+        """Hash a ChainType enum.
+
+        Returns:
+            Hash value of the enum.
+        """
         return hash(self.value)
 
     def __str__(self) -> str:
-        """Convert a ChainType enum to a string."""
+        """Convert a ChainType enum to a string.
+
+        Returns:
+            String representation of the chain type.
+        """
         return self.to_string()
 
     def get_valid_chem_comp_types(self) -> set[str]:
-        """Get the set of valid chemical component types for a ChainType."""
+        """Get the set of valid chemical component types for a ChainType.
+
+        Returns:
+            Set of valid chemical component types for this chain type.
+        """
         return ChainTypeInfo.VALID_CHEM_COMP_TYPES[self]
 
     def is_protein(self) -> bool:
-        """Check if a ChainType is a protein."""
+        """Check if a ChainType is a protein.
+
+        Returns:
+            True if this chain type represents a protein, False otherwise.
+        """
         return self in ChainTypeInfo.PROTEINS
 
     def is_nucleic_acid(self) -> bool:
-        """Check if a ChainType is a nucleic acid."""
+        """Check if a ChainType is a nucleic acid.
+
+        Returns:
+            True if this chain type represents a nucleic acid, False otherwise.
+        """
         return self in ChainTypeInfo.NUCLEIC_ACIDS
 
     def is_polymer(self) -> bool:
-        """Check if a ChainType is a polymer."""
+        """Check if a ChainType is a polymer.
+
+        Returns:
+            True if this chain type represents a polymer, False otherwise.
+        """
         return self in ChainTypeInfo.POLYMERS
 
     def is_non_polymer(self) -> bool:
-        """Check if a ChainType is a non-polymer."""
+        """Check if a ChainType is a non-polymer.
+
+        Returns:
+            True if this chain type represents a non-polymer, False otherwise.
+        """
         return self in ChainTypeInfo.NON_POLYMERS
 
     def to_string(self) -> str:
-        """
-        Convert a ChainType enum to a string.
+        """Convert a ChainType enum to a string.
 
-        NOTE: Returns UPPERCASE string (e.g., "POLYPEPTIDE(D)" instead of "polypeptide(D)")
+        Note:
+            Returns UPPERCASE string (e.g., "POLYPEPTIDE(D)" instead of "polypeptide(D)")
+
+        Returns:
+            Uppercase string representation of the chain type.
         """
         return ChainTypeInfo.ENUM_TO_STRING[self]
 
     @staticmethod
     def as_enum(value: Union[str, int, "ChainType"]) -> "ChainType":
-        """Convert a string, int, or ChainType to a ChainType enum."""
+        """Convert a string, int, or ChainType to a ChainType enum.
+
+        Args:
+            value: The value to convert to a ChainType enum.
+
+        Returns:
+            The corresponding ChainType enum.
+
+        Raises:
+            ValueError: If the value cannot be converted to a ChainType.
+        """
         if isinstance(value, ChainType):
             return value
         elif isinstance(value, str):
@@ -150,10 +234,10 @@ class ChainType(IntEnum):
 
 
 class ChainTypeInfo:
-    """
-    Companion class containing metadata and helper methods for ChainType enum.
+    """Companion class containing metadata and helper methods for ChainType enum.
 
-    This class should not be instantiated - it serves as a namespace for ChainType-related constants and utilities.
+    This class should not be instantiated - it serves as a namespace for
+    ChainType-related constants and utilities.
     """
 
     POLYMERS: Final[tuple[ChainType, ...]] = (
@@ -253,11 +337,17 @@ class GroundTruthConformerPolicy(IntEnum):
     """Enum for ground truth conformer policy.
 
     Possible values are:
-        -  REPLACE: Use the ground-truth coordinates as the reference conformer, replacing the coordinated generated by RDKit in-place (and add a flag to indicate that the coordinates were replaced)
-        -  ADD: Return an additional feature (with the same shape as `ref_pos`) containing the ground-truth coordinates
-        -  FALLBACK: Use the ground-truth coordinates only if our standard conformer generation pipeline fails (e.g., we cannot generate a conformer with RDKit,
-            and the molecule is either not in the CCD or the CCD entry is invalid)
-        -  IGNORE: Do not use the ground-truth coordinates as the reference conformer under any circumstances
+        - REPLACE: Use the ground-truth coordinates as the reference conformer,
+          replacing the coordinates generated by RDKit in-place (and add a flag
+          to indicate that the coordinates were replaced)
+        - ADD: Return an additional feature (with the same shape as ref_pos)
+          containing the ground-truth coordinates
+        - FALLBACK: Use the ground-truth coordinates only if our standard
+          conformer generation pipeline fails (e.g., we cannot generate a
+          conformer with RDKit, and the molecule is either not in the CCD or
+          the CCD entry is invalid)
+        - IGNORE: Do not use the ground-truth coordinates as the reference
+          conformer under any circumstances
     """
 
     REPLACE = 1
@@ -270,9 +360,9 @@ class HydrogenPolicy(StrEnum):
     """Enum for hydrogen policy.
 
     Possible values are:
-        -  KEEP: Keep the hydrogens as they are
-        -  REMOVE: Remove the hydrogens
-        -  INFER: Infer the hydrogens from the atom array
+        - KEEP: Keep the hydrogens as they are
+        - REMOVE: Remove the hydrogens
+        - INFER: Infer the hydrogens from the atom array
     """
 
     KEEP = auto()

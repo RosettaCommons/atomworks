@@ -1,5 +1,4 @@
-"""
-atomworks.io - Input/Output operations for biological data structures.
+"""Input/Output operations for biological data structures.
 
 This subpackage provides functionality for parsing, converting, and manipulating
 biological data formats, originally from the atomworks.io package.

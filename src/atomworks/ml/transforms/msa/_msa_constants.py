@@ -78,8 +78,8 @@ AMINO_ACID_ONE_LETTER_TO_INT = {
 Ordered list of protein amino acid one-letter codes, including gaps, ambiguous, and rare amino acids.
 
 References:
-    - https://iupac.qmul.ac.uk/AminoAcid/A2021.html#AA21 (for IUPAC amino acid codes)
-    - https://www.cup.uni-muenchen.de/ch/compchem/tink/as.html (for Pyrollisine)
+    `IUPAC Amino Acid Codes <https://iupac.qmul.ac.uk/AminoAcid/A2021.html#AA21>`_
+    `Pyrollisine <https://www.cup.uni-muenchen.de/ch/compchem/tink/as.html>`_
 """
 
 RNA_NUCLEOTIDE_ONE_LETTER_TO_INT = {
@@ -109,8 +109,8 @@ RNA_NUCLEOTIDE_ONE_LETTER_TO_INT = {
 """
 Ordered list of RNA nucleotide one-letter codes, including gaps, ambiguous, and rare residues.
 
-References:
-    - https://www.promega.com/resources/guides/nucleic-acid-analysis/restriction-enzyme-resource/restriction-enzyme-resource-tables/iupac-ambiguity-codes-for-nucleotide-degeneracy/
+Reference:
+    `IUPAC Ambiguity Codes for Nucleotide Degeneracy <https://www.promega.com/resources/guides/nucleic-acid-analysis/restriction-enzyme-resource/restriction-enzyme-resource-tables/iupac-ambiguity-codes-for-nucleotide-degeneracy/>`_
 """
 
 # Create lookup tables from MSA one letter codes to integers, based on the above mappings

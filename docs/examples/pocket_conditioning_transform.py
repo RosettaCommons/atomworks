@@ -29,7 +29,7 @@ This example demonstrates how to create custom Transform classes in AtomWorks us
 # Conventions
 # -----------
 # **A.** Store information in ``AtomArray`` annotations, not in the state dictionary.
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 # This ensures robustness when atoms are added/removed downstream.
 #
@@ -39,7 +39,7 @@ This example demonstrates how to create custom Transform classes in AtomWorks us
 # - ❌ Store ``pocket_atom_indices`` in dictionary (which creates significant dependencies with operations that delete or re-order atoms)
 #
 # **B.** Within ``forward()``, call a stand-alone function with the same name as the transform class.
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 # We thus maintain an object-oriented and a functional API, making our core logic re-usable and testable outside of the ``Transform`` framework.
 #
@@ -51,7 +51,7 @@ This example demonstrates how to create custom Transform classes in AtomWorks us
 # Additionally, this function should preserve the input (e.g., not modify the underlying ``AtomArray``) and take as arguments any necessary parameters.
 #
 # **C.** Each ``Transform`` should follow the single-responsibility-principle; in particular separate Annotation from Featurization ``Transforms``
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 # To ensure our ``Transform`` code is maximally forward-compatible and re-usable across disparate pipelines, we adhere to the single responsibility principle - that is, each transform should do *exactly one* action.
 #
@@ -88,7 +88,7 @@ print(f"Heme atoms: {np.sum(atom_array.res_name == 'HEM')}")
 
 ########################################################################
 # Building ``AnnotateLigandPockets``
-# ===============================
+# ==================================
 #
 # Let's create a ``Transform`` that identifies atoms near ligands (non-polymer molecules) of sufficient size.
 #
@@ -209,7 +209,7 @@ view(result_array.query("is_ligand_pocket | (res_name == 'HEM')"))
 
 ########################################################################
 # Building ``FeaturizePocketAtoms``
-# ==============================
+# =================================
 #
 # Now let's create a model-specific transform that converts derived pocket annotations into numeric features.
 #

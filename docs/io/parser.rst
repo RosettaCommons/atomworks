@@ -1,5 +1,5 @@
 parser
-====
+======
 
 .. automodule:: atomworks.io.parser
    :members:

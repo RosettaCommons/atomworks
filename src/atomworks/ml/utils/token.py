@@ -329,7 +329,7 @@ def get_af3_token_center_masks(atom_array: AtomArray) -> np.ndarray:
         np.ndarray: A boolean mask indicating the center atoms of the tokens in the atom array.
 
     Reference:
-        - AF3: https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf
+        `AF3 Supplementary Information <https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf>`_
 
     """
     assert (
@@ -378,7 +378,7 @@ def get_af3_token_center_coords(atom_array: AtomArray) -> np.ndarray:
         np.ndarray: The center coordinates of the tokens in the atom array.
 
     Reference:
-        - AF3: https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf
+        `AF3 Supplementary Information <https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf>`_
 
     Example:
         >>> # Contrived example showing only a few tokens and annotations per residue for illustration

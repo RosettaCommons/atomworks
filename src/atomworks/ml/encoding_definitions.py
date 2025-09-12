@@ -35,34 +35,36 @@ UNKNOWN_ELEMENT_TOKEN = 0
 
 @dataclass
 class TokenEncoding:
-    """A class to represent an fixed length token encoding.
+    """A class to represent a fixed length token encoding.
 
     Args:
-        token_atoms (dict[str, np.ndarray]): A dictionary mapping token names to atom names.
+        token_atoms: A dictionary mapping token names to atom names.
             The order of the tokens in the sequence determines the integer encoding of the token.
             The order of the atom names in the tuple determines the integer encoding of the atom name
             within the token.
-        chemcomp_type_to_unknown (dict[str, str]): A dictionary mapping chemical component types
+        chemcomp_type_to_unknown: A dictionary mapping chemical component types
             to unknown token names. This is used to map unknown residues to the respective unknown
             token. Different chemical component types may map to different unknown token names.
-            Defaults to `{}`, meaning that no unknown tokens are defined, leading to a `KeyError`
+            Defaults to ``{}``, meaning that no unknown tokens are defined, leading to a ``KeyError``
             if an unknown residue is encountered.
 
-    NOTE: We follow these conventions for tokens to make them compatible with the CCD for
-    robust and easy tokenization. If you want to use the Transforms written for automatically
-    tokenizing and encoding, you need to follow these conventions.
+    Note:
+        We follow these conventions for tokens to make them compatible with the CCD for
+        robust and easy tokenization. If you want to use the Transforms written for automatically
+        tokenizing and encoding, you need to follow these conventions:
+
         - When encoding a residue, we use the standardized (up to) 3-letter residue name from the CCD,
-            e.g. 'ALA' for Alanine, or `DA` for Deoxyadenosine, or `U` for Uracil.
+            e.g. ``'ALA'`` for Alanine, or ``'DA'`` for Deoxyadenosine, or ``'U'`` for Uracil.
         - When encoding unknown tokens, we may define different unknown tokens for different
             chemical components (e.g. a different unknown for proteins, vs. dna, ...). The
-            unkown tokens can take on any arbitrary 3-letter code that we want to map to, but
+            unknown tokens can take on any arbitrary 3-letter code that we want to map to, but
             they should not clash with existing residue names in the CCD.
         - When encoding an atom, we use the atomic number of the element as a string as the
-            token name. E.g. '1' for Hydrogen, '6' for Carbon, '9' for Fluorine, ...
-            For unknown atoms, we use '0' as the token name.
-            # TODO: Deal with ligand names such as `100` which is also an atomic number
-        - To denote masked tokens, we use a '<...>' syntax. E.g. '<M>' for a generic mask token,
-            or '<MP>' for a mask token for proteins. The ... can be any arbitrary string. We
+            token name. E.g. ``'1'`` for Hydrogen, ``'6'`` for Carbon, ``'9'`` for Fluorine, ...
+            For unknown atoms, we use ``'0'`` as the token name.
+            # TODO: Deal with ligand names such as ``'100'`` which is also an atomic number
+        - To denote masked tokens, we use a ``'<...>'`` syntax. E.g. ``'<M>'`` for a generic mask token,
+            or ``'<MP>'`` for a mask token for proteins. The ... can be any arbitrary string. We
             use the angle brackets to avoid clashes with existing residue names in the CCD.
     """
 
@@ -282,7 +284,7 @@ AF2_ATOM14_ENCODING = TokenEncoding(
 """AF2's atom14 encoding.
 
 Reference:
-    - https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/common/residue_constants.py#L505
+    `AlphaFold residue_constants.py <https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/common/residue_constants.py#L505>`_
 """
 
 AF2_ATOM37_ENCODING = TokenEncoding(
@@ -315,7 +317,7 @@ AF2_ATOM37_ENCODING = TokenEncoding(
 """AF2's atom37 encoding
 
 Reference:
-    - https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/common/residue_constants.py#L492-L544
+    `AlphaFold residue_constants.py <https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/common/residue_constants.py#L492-L544>`_
 (extracted via:
 ```python
 atom37 = {}
@@ -447,8 +449,10 @@ RF2_ATOM14_ENCODING = TokenEncoding(
     chemcomp_type_to_unknown={chem_type: "UNK" for chem_type in AA_LIKE_CHEM_TYPES},
 )
 """RF2 atom14 encoding for proteins.
-    - Encodes only the heavy atoms (max 14, for `TRP`)
-    - Includes 1 unknown tokens: `UNK`
+
+- Encodes only the heavy atoms (max 14, for ``TRP``)
+- Includes 1 unknown tokens: ``UNK``
+
 Print it out to see a visual representation of the encoding.
 """
 
@@ -494,8 +498,10 @@ RF2_ATOM23_ENCODING = TokenEncoding(
     ),
 )
 """RF2 atom23 encoding for proteins and nucleic acids.
-    - Encodes only the heavy atoms (max 22, for `RG`)
-    - Includes 3 unknown tokens: `UNK` for proteins, `DN` for dna, `N` for RNA
+
+- Encodes only the heavy atoms (max 22, for ``RG``)
+- Includes 3 unknown tokens: ``UNK`` for proteins, ``DN`` for dna, ``N`` for RNA
+
 Print it out to see a visual representation of the encoding.
 """
 
@@ -687,18 +693,11 @@ AF3_TOKENS = (
 
 
 class AF3SequenceEncoding:
-    """
-    Encodes and decodes sequence tokens for AlphaFold 3.
+    """Encodes and decodes sequence tokens for AlphaFold 3.
 
     This class provides functionality to convert between residue names and their
     corresponding integer encodings as used in AlphaFold 3. It handles standard
     amino acids, RNA, DNA, and unknown residues.
-
-    Methods:
-        encode(res_names): Encode residue names to integer indices.
-        decode(res_indices): Decode integer indices to residue names.
-        tokens: Property that returns the list of AF3 tokens.
-        n_tokens: Property that returns the number of AF3 tokens.
     """
 
     def __init__(self):
