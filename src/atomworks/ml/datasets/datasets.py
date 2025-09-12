@@ -402,7 +402,7 @@ class PandasDataset(MolecularDataset, ExampleIDMixin):
         *,
         data: pd.DataFrame | PathLike,
         name: str,
-        id_column: str | None = None,
+        id_column: str | None = "example_id",
         filters: list[str] | None = None,
         columns_to_load: list[str] | None = None,
         # MolecularDataset parameters
