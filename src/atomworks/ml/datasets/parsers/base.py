@@ -7,16 +7,18 @@ import pandas as pd
 from atomworks.constants import CRYSTALLIZATION_AIDS
 from atomworks.io import parse
 
-DEFAULT_CIF_PARSER_ARGS = {
+DEFAULT_PARSER_ARGS = {
     "add_missing_atoms": True,
     "add_id_and_entity_annotations": True,
     "add_bond_types_from_struct_conn": ["covale"],
     "remove_ccds": CRYSTALLIZATION_AIDS,
     "remove_waters": True,
-    "hydrogen_policy": "remove",
     "fix_ligands_at_symmetry_centers": True,
-    "convert_mse_to_met": True,
     "fix_arginines": True,
+    "fix_formal_charges": True,
+    "fix_bond_types": True,
+    "convert_mse_to_met": True,
+    "hydrogen_policy": "remove",
     "model": None,  # all models
 }
 """Default cif parser arguments for `atomworks.io.parse`.
@@ -115,12 +117,13 @@ def load_example_from_metadata_row(
         cif_parser_args = {}
 
     # Convenience utilities to default to loading from and saving to cache if a cache_dir is provided, unless explicitly overridden
+    # TODO: Move to DEFAULT_CIF_PARSER_ARGS, but set to False by default not True
     if cif_parser_args.get("cache_dir"):
         cif_parser_args.setdefault("load_from_cache", True)
         cif_parser_args.setdefault("save_to_cache", True)
 
     # Merge DEFAULT_CIF_PARSER_ARGS with cif_parser_args, overriding with the keys present in cif_parser_args
-    merged_cif_parser_args = {**DEFAULT_CIF_PARSER_ARGS, **cif_parser_args}
+    merged_cif_parser_args = {**DEFAULT_PARSER_ARGS, **cif_parser_args}
 
     # Use the parse function with the merged CIF parser arguments
     result_dict = parse(

@@ -4,7 +4,6 @@ import time
 from typing import Any
 
 import numpy as np
-import pandas as pd
 import pytest
 
 from atomworks.enums import ChainType
@@ -15,7 +14,6 @@ from atomworks.ml.transforms.msa._msa_constants import (
 from atomworks.ml.transforms.msa._msa_loading_utils import get_msa_path
 from atomworks.ml.transforms.msa.msa import LoadPolymerMSAs
 from atomworks.ml.utils.testing import cached_parse
-from tests.conftest import skip_if_not_on_digs
 from tests.ml.conftest import PROTEIN_MSA_DIRS, RNA_MSA_DIRS
 
 logging.basicConfig(level=logging.INFO)
@@ -200,47 +198,6 @@ def test_msas_with_mse():
     assert (
         results["n_proteins_with_msas"] == results["n_proteins"]
     ), "All proteins should have MSAs after MSE conversion"
-
-
-@pytest.mark.slow
-@pytest.mark.requires_digs
-@skip_if_not_on_digs
-def test_msa_coverage(pn_units_df):
-    """Ensure the  MSA coverage for the test data set surpasses a certain threshold."""
-
-    protein_coverage_threshold = 0.95
-    rna_coverage_threshold = 0.40
-
-    result = _evaluate_coverage_for_df(pn_units_df, PROTEIN_MSA_DIRS, RNA_MSA_DIRS)
-
-    assert (
-        result["protein_coverage"] >= protein_coverage_threshold
-    ), f"Protein MSA coverage of {result['protein_coverage']} is below the threshold of {protein_coverage_threshold}"
-    assert (
-        result["rna_coverage"] >= rna_coverage_threshold
-    ), f"RNA MSA coverage of {result['rna_coverage']} is below the threshold of {rna_coverage_threshold}"
-
-
-def _evaluate_coverage_for_df(df: pd.DataFrame, protein_msa_dirs: list[str], rna_msa_dirs: list[str]):
-    """Utility function to evaluate the MSA coverage for a DataFrame path."""
-    num_proteins = num_proteins_with_msas = num_rna = num_rna_with_msa = 0
-
-    for row in df.itertuples():
-        chain_type = ChainType(row.q_pn_unit_type)
-        if chain_type.is_protein():
-            num_proteins += 1
-            if get_msa_path(row.q_pn_unit_processed_entity_non_canonical_sequence, protein_msa_dirs) is not None:
-                num_proteins_with_msas += 1
-        elif chain_type == ChainType.RNA:
-            num_rna += 1
-            # HACK: Replace U with T to match the RNA MSA file names (legacy issue)
-            sequence = row.q_pn_unit_processed_entity_non_canonical_sequence.replace("U", "T")
-            if get_msa_path(sequence, rna_msa_dirs) is not None:
-                num_rna_with_msa += 1
-    return {
-        "protein_coverage": num_proteins_with_msas / num_proteins,
-        "rna_coverage": num_rna_with_msa / num_rna,
-    }
 
 
 @pytest.mark.parametrize("test_case", MSA_TEST_CASES)

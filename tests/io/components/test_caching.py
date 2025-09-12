@@ -7,7 +7,7 @@ from atomworks.io.utils.testing import assert_same_atom_array
 from tests.io.conftest import get_pdb_path
 
 TEST_CASES = [
-    "1A7J",  # Contains an unusual operation expression for assembly building
+    "4NDZ",  # 29K atoms, large enough to test caching without too much variance
 ]
 
 
@@ -93,8 +93,8 @@ def test_caching(pdb_id: str, tmp_path):
             normal_result["assemblies"][assembly_id], cached_result["assemblies"][assembly_id], annotations_to_compare
         )
 
-    # Assert that the cached result is at least 1.5x faster than the normal result
-    assert cached_elapsed_time < normal_elapsed_time / 1.5
+    # Assert that the cached result is at least 3x faster than the normal result
+    assert cached_elapsed_time < normal_elapsed_time / 3
 
     # Assert that the result with different arguments is similar to the normal elapsed time
     assert abs(different_args_elapsed_time - normal_elapsed_time) < normal_elapsed_time * 0.5

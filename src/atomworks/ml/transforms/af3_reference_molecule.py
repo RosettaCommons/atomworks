@@ -1,5 +1,6 @@
 import logging
 from collections import defaultdict
+from functools import lru_cache
 from typing import Any, ClassVar, Literal
 
 import biotite.structure as struc
@@ -24,8 +25,13 @@ from atomworks.ml.utils.geometry import masked_center, random_rigid_augmentation
 
 logger = logging.getLogger("atomworks.ml")
 
-# UNL is a special CCD code for unknown ligands; we do not consider it "known" as it has no structure
-KNOWN_CCD_CODES = get_available_ccd_codes(CCD_MIRROR_PATH) - {UNKNOWN_LIGAND}
+
+# (Lazy-load this expensive computation to avoid slow imports)
+@lru_cache(maxsize=1)
+def get_known_ccd_codes() -> frozenset[str]:
+    """Get the set of known CCD codes, computing it lazily on first access."""
+    # UNL is a special CCD code for unknown ligands; we do not consider it "known" as it has no structure
+    return get_available_ccd_codes(CCD_MIRROR_PATH) - {UNKNOWN_LIGAND}
 
 
 def _extract_cached_conformers(
@@ -86,7 +92,7 @@ def _get_rdkit_mols_with_conformers(
     """
     ref_mols = {}
     for res_name, count in res_stochiometry.items():
-        if res_name not in KNOWN_CCD_CODES:
+        if res_name not in get_known_ccd_codes():
             ref_mols[res_name] = None  # placeholder so that the unknown CCD codes are still counted later on
             continue
 
@@ -263,8 +269,8 @@ def get_af3_reference_molecule_features(
 
     # ... generate conformers for CCD codes that are unknown (including UNL)
     unknown_ccd_conformers = defaultdict(list)
-    if not all(res_name in KNOWN_CCD_CODES for res_name in res_stochiometry):
-        res_indices_with_unknown = np.where(~np.isin(_res_names, list(KNOWN_CCD_CODES)))[0]
+    if not all(res_name in get_known_ccd_codes() for res_name in res_stochiometry):
+        res_indices_with_unknown = np.where(~np.isin(_res_names, list(get_known_ccd_codes())))[0]
         for res_index in res_indices_with_unknown:
             res_name = _res_names[res_index]
 
@@ -307,7 +313,7 @@ def get_af3_reference_molecule_features(
             conf_idx = _next_conf_idx[res_name]
 
         # ... turn conformer into an atom array
-        if res_name not in KNOWN_CCD_CODES:
+        if res_name not in get_known_ccd_codes():
             # (conformers for unknown CCD codes are already atom arrays, since we generated them directly)
             conformer = unknown_ccd_conformers[res_name][conf_idx % len(unknown_ccd_conformers[res_name])]
         else:
