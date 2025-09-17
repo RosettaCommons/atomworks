@@ -65,6 +65,7 @@ RDKIT_BOND_TYPE_TO_BIOTITE: Final[dict[tuple[Chem.BondType, bool], struc.bonds.B
     (Chem.BondType.DOUBLE, False): struc.bonds.BondType.DOUBLE,
     (Chem.BondType.TRIPLE, False): struc.bonds.BondType.TRIPLE,
     (Chem.BondType.QUADRUPLE, False): struc.bonds.BondType.QUADRUPLE,
+    (Chem.BondType.DATIVE, False): struc.bonds.BondType.COORDINATION,
     (Chem.BondType.SINGLE, True): struc.bonds.BondType.AROMATIC_SINGLE,
     (Chem.BondType.DOUBLE, True): struc.bonds.BondType.AROMATIC_DOUBLE,
     (Chem.BondType.TRIPLE, True): struc.bonds.BondType.AROMATIC_TRIPLE,
@@ -83,6 +84,7 @@ BIOTITE_BOND_TYPE_TO_RDKIT: Final[dict[struc.bonds.BondType, tuple[Chem.BondType
     struc.bonds.BondType.DOUBLE: (Chem.BondType.DOUBLE, False),
     struc.bonds.BondType.TRIPLE: (Chem.BondType.TRIPLE, False),
     struc.bonds.BondType.QUADRUPLE: (Chem.BondType.QUADRUPLE, False),
+    struc.bonds.BondType.COORDINATION: (Chem.BondType.DATIVE, False),
     # NOTE: We map aromatics to single/double/triple instead of Chem.BondType.AROMATIC
     #       because the PDB specified bond-order (from a kekulized form of the molecule)
     #       is lost when we map to aromatic, which can lead to incorrect bond-order

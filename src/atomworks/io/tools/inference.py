@@ -40,9 +40,10 @@ from atomworks.io.utils.ccd import (
     check_ccd_codes_are_available,
     get_chain_type_from_ccd_code,
     get_chem_comp_type,
+    parse_ccd_cif,
 )
 from atomworks.io.utils.chain import create_chain_id_generator
-from atomworks.io.utils.io_utils import CIF_LIKE_EXTENSIONS
+from atomworks.io.utils.io_utils import CIF_LIKE_EXTENSIONS, read_any
 
 logger = logging.getLogger("atomworks.io")
 
@@ -206,56 +207,83 @@ class SDFComponent(LigandComponent):
 class CIFOrPDBFileComponent(ChemicalComponent):
     path: os.PathLike | io.StringIO
     msa_paths: dict[str, os.PathLike] | None = None
-    chain_type: ChainType | str | None = None
     custom_parse_kwargs: dict[str, Any] | None = None
 
     def __post_init__(self):
-        if self.chain_type:
-            self.chain_type = ChainType.as_enum(self.chain_type)
+        """Initialize the component by parsing the structure file."""
+        if self._is_ccd_cif_file():
+            self._parse_ccd_style_cif()
+        else:
+            self._parse_standard_pdb_or_cif()
+
+    def _is_ccd_cif_file(self) -> bool:
+        """Check if we are given a CCD CIF file, which by convention includes the _chem_comp_atom field but not the atom_site field"""
+        cif = read_any(self.path)
+        keys = list(cif.block.keys())
+
+        has_atom_site = "atom_site" in keys
+        has_chem_comp_atom = "chem_comp_atom" in keys
+
+        return has_chem_comp_atom and not has_atom_site
+
+    def _parse_ccd_style_cif(self) -> None:
+        """Parse a CCD-style CIF file."""
+
+        if self.custom_parse_kwargs is not None:
+            raise ValueError("Custom parse kwargs are not supported for CCD CIF files.")
+
+        logger.warning(
+            f"CCD CIF file detected: {self.path}. "
+            "This file will be parsed as a CCD CIF file rather than a regular CIF file "
+            "(e.g., with an `atom_site` category)."
+        )
+
+        self.atom_array = parse_ccd_cif(read_any(self.path))
+        self.atom_array.set_annotation("is_polymer", np.full(len(self.atom_array), False))
+        self.chain_ids = np.unique(self.atom_array.chain_id)
+
+        # Set occupancy to all 1s since we presumably want to predict everything
+        self.atom_array.occupancy = np.full(len(self.atom_array), 1.0)
+
+    def _parse_standard_pdb_or_cif(self) -> None:
+        """Parse a standard PDB or CIF structure file."""
         if self.custom_parse_kwargs is None:
             self.custom_parse_kwargs = {}
 
+        # We add missing atoms later to the fully-concatenated inference AtomArray
         parse_kwargs = {**DEFAULT_PARSE_KWARGS, "add_missing_atoms": False} | self.custom_parse_kwargs
 
         if parse_kwargs["add_missing_atoms"]:
             logger.warning(
                 "Missing atoms will be added later to the fully-concatenated inference AtomArray. "
-                "It is recommended to set this argument to False in initial CIFOrPDBFileComponent parsing. "
+                "It is recommended to set this argument to False in initial CIFOrPDBFileComponent parsing."
             )
 
-        # Parse using atomworks.io
         parsing_results = parse(self.path, **parse_kwargs)
 
         if "assemblies" in parsing_results:
             assemblies = parsing_results["assemblies"]
-
             # We will keep only the first assembly that was parsed
             first_assembly_id = next(iter(assemblies.keys()))
 
-            # Give warning if multiple assemblies were parsed
             if len(assemblies) > 1:
                 logger.warning(
                     f"Multiple biological assemblies found in {self.path} and none were specified. "
                     f"Only the first assembly (assembly_id={first_assembly_id}) will be used for inference. "
-                    f"If you would like to use a different assembly, please specify this in the `parse_kwargs`."
+                    "If you would like to use a different assembly, please specify this in the `parse_kwargs`."
                 )
 
-            # Get the atom array stack corresponding to this assembly
             atom_array_stack = assemblies[first_assembly_id]
-
-        # Use the asymmetric unit if no assemblies were returned
         else:
             atom_array_stack = parsing_results["asym_unit"]
 
-        # We will keep only the first model of the parsed structure
         if atom_array_stack.stack_depth() > 1:
             logger.warning(
                 f"Multiple models found in {self.path}. Only the first model will be used for inference. "
-                f"If you would like to use a different model, please specify this in the `parse_kwargs`."
+                "If you would like to use a different model, please specify this in the `parse_kwargs`."
             )
-        structure_file_atom_array = atom_array_stack[0]
 
-        # Record chain ids and AtomArray
+        structure_file_atom_array = atom_array_stack[0]
         self.chain_ids = np.unique(structure_file_atom_array.chain_id)
         self.atom_array = structure_file_atom_array
 
@@ -663,6 +691,13 @@ def components_to_atom_array(
     for component in components:
         # CIFOrPDBFileComponents already have parsed AtomArrays
         if isinstance(component, CIFOrPDBFileComponent):
+            atom_array = component.atom_array
+            if np.any(atom_array.chain_id == ""):
+                atom_array.chain_id = np.full(atom_array.array_length(), next(chain_id_generator))
+                logger.warning(
+                    f"Chain ID was not set for {component.path}. "
+                    f"The next available chain ID was assigned, assuming that this is a single-chain structure: {atom_array.chain_id[0]}"
+                )
             atom_arrays.append(component.atom_array)
             continue
 
@@ -672,12 +707,16 @@ def components_to_atom_array(
             atom_arrays.append(sequence_to_annotated_atom_array(**component.as_dict(), custom_residues=custom_residues))
         elif isinstance(component, SmilesComponent):
             ligand_array = smiles_to_annotated_atom_array(**component.as_dict())
-            atom_arrays.append(assign_res_name_from_atom_array_hash(ligand_array, ligand_hash_to_id))
+            if component.res_name == UNKNOWN_LIGAND:
+                ligand_array = assign_res_name_from_atom_array_hash(ligand_array, ligand_hash_to_id)
+            atom_arrays.append(ligand_array)
         elif isinstance(component, CCDComponent):
             atom_arrays.append(ccd_code_to_annotated_atom_array(**component.as_dict()))
         elif isinstance(component, SDFComponent):
             ligand_array = sdf_to_annotated_atom_array(**component.as_dict())
-            atom_arrays.append(assign_res_name_from_atom_array_hash(ligand_array, ligand_hash_to_id))
+            if component.res_name == UNKNOWN_LIGAND:
+                ligand_array = assign_res_name_from_atom_array_hash(ligand_array, ligand_hash_to_id)
+            atom_arrays.append(ligand_array)
         else:
             raise ValueError(f"Unknown chemical component type: {type(component)}")
 
