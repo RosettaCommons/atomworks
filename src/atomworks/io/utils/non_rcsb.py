@@ -147,8 +147,12 @@ def initialize_chain_info_from_atom_array(
     res_names = atom_array.res_name[_res_starts]
     hetero = atom_array.hetero[_res_starts]
 
-    # Loop through chains
     for chain_identifier in np.unique(chain_identifiers):
+        if not chain_identifier:
+            raise ValueError(
+                'Chain identifier is empty! Please ensure that in your input file, each chain has a unique identifier (e.g., `label_asym_id` in a CIF file cannot be "").'
+            )
+
         is_in_chain = chain_identifiers == chain_identifier
         seq = res_names[is_in_chain]
 

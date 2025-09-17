@@ -812,6 +812,8 @@ def spoof_struct_conn_dict_from_string(bonds: list[tuple[str, str]]) -> dict[str
 
     NOTE: We only support covalent bonds.
 
+    TODO: Use AtomSelection to parse the bond strings
+
     Args:
         bonds (list[tuple[str, str]]): A list of bond strings.
             Each bond string should be in the format:

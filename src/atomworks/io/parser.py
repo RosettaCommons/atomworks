@@ -158,7 +158,7 @@ def parse(
         build_assembly (string, list, or tuple, optional): Specifies which assembly to build, if any. Options are None
             (e.g., asymmetric unit), "first", "all", or a list or tuple of assembly IDs. Defaults to "all".
         extra_fields (list, optional): A list of extra fields to include in the AtomArrayStack. Defaults to None. "all" includes all fields.
-            Only support mmCIF files.
+            Only supports mmCIF files.
         keep_cif_block (bool, optional): Whether to keep the CIF block in the result. Defaults to False.
 
     Returns:
@@ -551,7 +551,7 @@ def parse_atom_array(
             if msa_path != "":
                 data_dict["chain_info"][chain]["msa_path"] = Path(msa_path)
 
-    # ... optionally, build assemblies and add assembly-specifc annotation (instance IDs)
+    # ... optionally, build assemblies and add assembly-specifc annotation (instance IDs like `chain_iid`, `pn_unit_iid`, `molecule_iid`)
     if exists(build_assembly):
         assert (
             build_assembly in ["first", "all", "_spoof"] or isinstance(build_assembly, list | tuple)
@@ -735,7 +735,7 @@ def _parse_from_pdb(filename: os.PathLike, **parse_from_cif_kwargs) -> dict[str,
             updated_chain_hetero_annotations = atom_array_stack.hetero[atom_array_stack.chain_id == chain_id]
             assert np.all(updated_chain_hetero_annotations) or np.all(~updated_chain_hetero_annotations)
 
-    # ...parse the CIF block into a dictionary
+    # ... parse the CIF block into a dictionary
     parse_from_cif_kwargs["file_type"] = "pdb"
     parse_from_cif_kwargs["extra_fields"] = None
     parse_from_cif_kwargs["build_assembly"] = "_spoof"
