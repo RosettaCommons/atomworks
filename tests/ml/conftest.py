@@ -250,7 +250,6 @@ def rf2aa_validation_dataset(af3_validation_df):
             template_base_dir=TEMPLATE_DIR,
         ),
         save_failed_examples_to_dir=None,
-        filters=SHARED_TEST_FILTERS + TEST_INTERFACES_FILTERS,
     )
 
 

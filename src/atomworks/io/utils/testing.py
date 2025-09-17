@@ -196,6 +196,10 @@ def assert_same_atom_array(
         arr2, AtomArray | AtomArrayStack
     ), f"arr2 is not an AtomArray or AtomArrayStack but has type {type(arr2)}"
 
+    # Copy both arrays to avoid modifying the original arrays
+    arr1 = arr1.copy()
+    arr2 = arr2.copy()
+
     # If the input is a stack, only compare the first array
     if isinstance(arr1, AtomArrayStack):
         arr1 = arr1[0]
@@ -309,6 +313,14 @@ def assert_same_atom_array(
     if compare_bonds:
         assert arr1.bonds is not None, "arr1.bonds is None"
         assert arr2.bonds is not None, "arr2.bonds is None"
+
+        # TODO: Switch to using the `convert_bond_type` method once we upgrade to Biotite v1.4.0
+        # structure.bonds.convert_bond_type(struc.bonds.BondType.COORDINATION, struc.bonds.BondType.SINGLE)
+        mask_1 = arr1.bonds._bonds[:, 2] == struc.bonds.BondType.COORDINATION
+        arr1.bonds._bonds[mask_1, 2] = struc.bonds.BondType.SINGLE
+
+        mask_2 = arr2.bonds._bonds[:, 2] == struc.bonds.BondType.COORDINATION
+        arr2.bonds._bonds[mask_2, 2] = struc.bonds.BondType.SINGLE
 
         if enforce_order:
             # Compare bond arrays directly

@@ -120,7 +120,7 @@ def initialize_chain_info_from_atom_array(
     In particular, this function adds the following information to the chain_info_dict:
         - The RCSB entity ID for each chain (e.g., 1, 2, 3, etc.), if present in the AtomArray (under the entity_id atom site label)
         - The unprocessed one-letter entity canonical and non-canonical sequences.
-        - (OptionallyA boolean flag indicating whether the chain is a polymer.
+        - (Optionally) A boolean flag indicating whether the chain is a polymer.
         - (Optionally) The chain type as an IntEnum (e.g., polypeptide(L), non-polymer, etc.)
         - (Optionally) The residue IDs and residue names, inferred from the AtomArray.
 
@@ -147,8 +147,12 @@ def initialize_chain_info_from_atom_array(
     res_names = atom_array.res_name[_res_starts]
     hetero = atom_array.hetero[_res_starts]
 
-    # Loop through chains
     for chain_identifier in np.unique(chain_identifiers):
+        if not chain_identifier:
+            raise ValueError(
+                'Chain identifier is empty! Please ensure that in your input file, each chain has a unique identifier (e.g., `label_asym_id` in a CIF file cannot be "").'
+            )
+
         is_in_chain = chain_identifiers == chain_identifier
         seq = res_names[is_in_chain]
 
