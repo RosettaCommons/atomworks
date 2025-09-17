@@ -164,7 +164,7 @@ def test_parse_selection_string(selection_string, pymol_string, expected_selecti
     from_pymol_string = parse_pymol_string(pymol_string)
     assert from_selection_string == expected_selection
     assert from_pymol_string == expected_selection
-    assert from_selection_string == AtomSelection.from_str(selection_string)
+    assert from_selection_string == AtomSelection.from_selection_str(selection_string)
 
 
 def test_get_mask_from_selection_string(basic_atom_array: struc.AtomArray):
@@ -172,13 +172,13 @@ def test_get_mask_from_selection_string(basic_atom_array: struc.AtomArray):
     mask = get_mask_from_selection_string(basic_atom_array, "A/ALA/1/CA")
     expected_mask = np.array([False, True, False, False, False, False], dtype=bool)
     assert np.array_equal(mask, expected_mask)
-    assert np.array_equal(mask, AtomSelection.from_str("A/ALA/1/CA").get_mask(basic_atom_array))
+    assert np.array_equal(mask, AtomSelection.from_selection_str("A/ALA/1/CA").get_mask(basic_atom_array))
 
     # Test partial match
     mask = get_mask_from_selection_string(basic_atom_array, "A/ALA")
     expected_mask = np.array([True, True, False, False, False, False], dtype=bool)
     assert np.array_equal(mask, expected_mask)
-    assert np.array_equal(mask, AtomSelection.from_str("A/ALA").get_mask(basic_atom_array))
+    assert np.array_equal(mask, AtomSelection.from_selection_str("A/ALA").get_mask(basic_atom_array))
 
     # Test no match raises ValueError
     with pytest.raises(ValueError, match="No atoms found for selection: A/VAL/1/CB"):
@@ -192,18 +192,18 @@ CONTIG_TEST_CASES = [
 
 
 @pytest.mark.parametrize("contig_test_case", CONTIG_TEST_CASES)
-def test_get_mask_from_contig_string(contig_test_case: str):
+def test_get_mask_from_contig(contig_test_case: str):
     contig_string, expected_length = contig_test_case
-    selection_stack = AtomSelectionStack.from_contig_string(contig_string)
+    selection_stack = AtomSelectionStack.from_contig(contig_string)
 
     assert isinstance(selection_stack, AtomSelectionStack)
     assert len(selection_stack.selections) == expected_length
 
 
 @pytest.mark.parametrize("contig_test_case", CONTIG_TEST_CASES)
-def test_get_mask_from_contig_string_with_atom_array(basic_atom_array: struc.AtomArray, contig_test_case: str):
+def test_get_mask_from_contig_with_atom_array(basic_atom_array: struc.AtomArray, contig_test_case: str):
     contig_string, expected_length = contig_test_case
-    selection_stack = AtomSelectionStack.from_contig_string(contig_string)
+    selection_stack = AtomSelectionStack.from_contig(contig_string)
     residue_starts = get_residue_starts(basic_atom_array)
     mask = selection_stack.get_mask(basic_atom_array)
 
@@ -214,7 +214,7 @@ def test_get_mask_from_contig_string_with_atom_array(basic_atom_array: struc.Ato
 
 def test_atom_selection_stack_get_center_of_mass(basic_atom_array: struc.AtomArray):
     """Test that get_center_of_mass returns the correct center for selected atoms."""
-    selection_stack = AtomSelectionStack.from_contig_string("A1-2, B3-3")
+    selection_stack = AtomSelectionStack.from_contig("A1-2, B3-3")
     center_of_mass = selection_stack.get_center_of_mass(basic_atom_array)
     expected_center = np.mean(basic_atom_array[selection_stack.get_mask(basic_atom_array)].coord, axis=0)
     assert np.allclose(center_of_mass, expected_center)
@@ -229,7 +229,7 @@ def test_atom_selection_stack_get_center_of_mass(basic_atom_array: struc.AtomArr
 
 def test_atom_selection_stack_get_principle_components(basic_atom_array: struc.AtomArray):
     """Test that get_principle_components returns correct principal axes for selected atoms."""
-    selection_stack = AtomSelectionStack.from_contig_string("A1-2, B3-3")
+    selection_stack = AtomSelectionStack.from_contig("A1-2, B3-3")
     # AtomArray case
     pcs = selection_stack.get_principal_components(basic_atom_array)
     coords = basic_atom_array[selection_stack.get_mask(basic_atom_array)].coord
@@ -250,6 +250,24 @@ def test_atom_selection_stack_get_principle_components(basic_atom_array: struc.A
         expected_pcs = vh.T
         assert pcs_stack.shape == (2, 3, 3)
         assert np.allclose(np.abs(pcs_stack[i]), np.abs(expected_pcs))
+
+
+def test_atom_selection_stack_from_query_ranges(basic_atom_array: struc.AtomArray) -> None:
+    """Select a range of residue IDs within a chain using extended syntax."""
+    selection_stack = AtomSelectionStack.from_query("A/*/1-2")
+    mask = selection_stack.get_mask(basic_atom_array)
+    # Expect residues 1 and 2 in chain A (first four atoms)
+    expected_mask = np.array([True, True, True, True, False, False], dtype=bool)
+    assert np.array_equal(mask, expected_mask)
+
+
+def test_atom_selection_stack_from_query_multiple_tokens(basic_atom_array: struc.AtomArray) -> None:
+    """Union of multiple selection tokens."""
+    selection_stack = AtomSelectionStack.from_query(["A/ALA", "B/VAL"])  # include ALA in chain A and VAL in chain B
+    mask = selection_stack.get_mask(basic_atom_array)
+    # Expect ALA in chain A (first two atoms) and VAL in chain B (last two atoms)
+    expected_mask = np.array([True, True, False, False, True, True], dtype=bool)
+    assert np.array_equal(mask, expected_mask)
 
 
 if __name__ == "__main__":

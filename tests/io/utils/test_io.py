@@ -511,7 +511,6 @@ def custom_residues():
     return {
         "C:0": {
             "path": f"{TEST_DATA_IO}/example_ncaa.cif",
-            "chain_type": "polypeptide(l)",
         }
     }
 
