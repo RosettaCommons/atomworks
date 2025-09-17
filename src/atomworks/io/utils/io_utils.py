@@ -570,7 +570,7 @@ def _to_cif_or_bcif(
     if not include_nan_coords:
         structure = ta.remove_nan_coords(structure)
 
-    if include_bonds:
+    if include_bonds and structure.bonds is not None:
         # TODO: Switch to using the `convert_bond_type` method once we upgrade to Biotite v1.4.0
         # structure.bonds.convert_bond_type(struc.bonds.BondType.COORDINATION, struc.bonds.BondType.SINGLE)
         mask = structure.bonds._bonds[:, 2] == struc.bonds.BondType.COORDINATION

@@ -10,7 +10,6 @@ from typing import Any, Literal
 import biotite.structure as struc
 import numpy as np
 from biotite.structure import AtomArray
-from biotite.structure.io.pdbx import CIFFile
 from rdkit import Chem
 from rdkit.Chem import AllChem
 
@@ -44,7 +43,7 @@ from atomworks.io.utils.ccd import (
     parse_ccd_cif,
 )
 from atomworks.io.utils.chain import create_chain_id_generator
-from atomworks.io.utils.io_utils import CIF_LIKE_EXTENSIONS
+from atomworks.io.utils.io_utils import CIF_LIKE_EXTENSIONS, read_any
 
 logger = logging.getLogger("atomworks.io")
 
@@ -219,7 +218,7 @@ class CIFOrPDBFileComponent(ChemicalComponent):
 
     def _is_ccd_cif_file(self) -> bool:
         """Check if we are given a CCD CIF file, which by convention includes the _chem_comp_atom field but not the atom_site field"""
-        cif = CIFFile.read(self.path)
+        cif = read_any(self.path)
         keys = list(cif.block.keys())
 
         has_atom_site = "atom_site" in keys
@@ -239,7 +238,7 @@ class CIFOrPDBFileComponent(ChemicalComponent):
             "(e.g., with an `atom_site` category)."
         )
 
-        self.atom_array = parse_ccd_cif(CIFFile.read(self.path))
+        self.atom_array = parse_ccd_cif(read_any(self.path))
         self.atom_array.set_annotation("is_polymer", np.full(len(self.atom_array), False))
         self.chain_ids = np.unique(self.atom_array.chain_id)
 
