@@ -345,10 +345,13 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">API Modules</span></p>
 <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../core.html">Core Modules</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../core/common.html">Common Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core/constants.html">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core/enums.html">Enumerations</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../io.html">IO</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../io/common.html">common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../io/constants.html">constants</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../io/enums.html">enums</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../io/parser.html">parser</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../io/tools.html">Tools</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../io/tools/fasta.html">FASTA Tools</a></li>
@@ -377,19 +380,17 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../ml.html">ML</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="common.html">Common Utilities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="enums.html">Enums</a></li>
 <li class="toctree-l2"><a class="reference internal" href="encoding_definitions.html">Encoding Definitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="samplers.html">Samplers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="datasets.html">Datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="datasets/parsers.html">Dataset Parsers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="preprocessing.html">Preprocessing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="preprocessing/utils.html">Preprocessing Utilities</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="datasets.html">Datasets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="datasets/datasets.html">Dataset Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datasets/parsers.html">Dataset Parsers</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2"><a class="reference internal" href="pipelines.html">Pipelines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="transforms.html">Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="transforms/diffusion.html">Diffusion Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="transforms/dna.html">DNA Transforms</a></li>
-<li class="toctree-l2"><a class="reference internal" href="transforms/esm.html">ESM Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="transforms/feature_aggregation.html">Feature Aggregation Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="transforms/msa.html">MSA Transforms</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Utilities</a></li>
@@ -463,6 +464,8 @@
 <p>This module contains various utility functions and classes used throughout the atomworks.ml package.</p>
 <section id="module-atomworks.ml.utils.debug">
 <span id="debug-utilities"></span><h2>Debug Utilities<a class="headerlink" href="#module-atomworks.ml.utils.debug" title="Link to this heading">#</a></h2>
+<p>Debug utilities for ML components.</p>
+<p>Provides functions for saving failed examples and debugging ML pipelines.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="atomworks.ml.utils.debug.save_failed_example_to_disk">
 <span class="sig-prename descclassname"><span class="pre">atomworks.ml.utils.debug.</span></span><span class="sig-name descname"><span class="pre">save_failed_example_to_disk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">example_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fail_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng_state_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/atomworks/ml/utils/debug.html#save_failed_example_to_disk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.utils.debug.save_failed_example_to_disk" title="Link to this definition">#</a></dt>
@@ -470,14 +473,12 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>example_id</strong> (<em>-</em>) – The ID of the example.</p></li>
-<li><p><strong>fail_dir</strong> (<em>-</em>) – The directory where the failed example should be saved. Defaults to a specific path.</p></li>
-<li><p><strong>rng_state_dict</strong> (<em>-</em>) – The random number generator state dictionary.</p></li>
-<li><p><strong>error_msg</strong> (<em>-</em>) – The error message associated with the failure.</p></li>
+<li><p><strong>example_id</strong> – The ID of the example.</p></li>
+<li><p><strong>fail_dir</strong> – The directory where the failed example should be saved.</p></li>
+<li><p><strong>data</strong> – Optional data dictionary to save.</p></li>
+<li><p><strong>rng_state_dict</strong> – The random number generator state dictionary.</p></li>
+<li><p><strong>error_msg</strong> – The error message associated with the failure.</p></li>
 </ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -676,27 +677,20 @@ translation vector (t) representing the rigid body transformation.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>batch_size</strong> (<em>-</em>) – Number of rigid transformations to generate.</p></li>
-<li><p><strong>scale</strong> (<em>-</em>) – Scale factor for the translation vectors. Defaults to 1.0.</p></li>
-<li><p><strong>**tensor_kwargs</strong> (<em>-</em>) – <p>Additional keyword arguments to pass to tensor creation functions.</p>
-</p></li>
+<li><p><strong>batch_size</strong> – Number of rigid transformations to generate.</p></li>
+<li><p><strong>scale</strong> – Scale factor for the translation vectors. Defaults to 1.0.</p></li>
+<li><p><strong>**tensor_kwargs</strong> – Additional keyword arguments to pass to tensor creation functions.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>A <a href="#id3"><span class="problematic" id="id4">`</span></a>rigid`tuple containing:</dt><dd><ul class="simple">
-<li><p>rots (torch.Tensor): Batch of random rotation matrices with shape (batch_size, 3, 3).</p></li>
-<li><p>trans (torch.Tensor): Batch of random translation vectors with shape (batch_size, 3).</p></li>
+<dd class="field-even"><p><ul class="simple">
+<li><p>rots: Batch of random rotation matrices with shape (batch_size, 3, 3).</p></li>
+<li><p>trans: Batch of random translation vectors with shape (batch_size, 3).</p></li>
 </ul>
-</dd>
-</dl>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><ul class="simple">
-<li><p>tuple[torch.Tensor, torch.Tensor]</p></li>
-</ul>
-</p>
+<dd class="field-odd"><p>A rigid tuple containing</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -843,10 +837,7 @@ t: torch.Tensor of shape […, 3], translation vector</p>
 </dd>
 </dl>
 <dl class="simple">
-<dt>Reference:</dt><dd><ul class="simple">
-<li><p>AF2 supplementary, Algorithm 21
-<a class="reference external" href="https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf">https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf</a></p></li>
-</ul>
+<dt>Reference:</dt><dd><p><a class="reference external" href="https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf">AF2 supplementary, Algorithm 21</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -867,40 +858,64 @@ t: torch.Tensor of shape […, 3], translation vector</p>
 </section>
 <section id="module-atomworks.ml.utils.io">
 <span id="i-o-utilities"></span><h2>I/O Utilities<a class="headerlink" href="#module-atomworks.ml.utils.io" title="Link to this heading">#</a></h2>
+<p>I/O utilities for ML components.</p>
+<p>Provides functions for file operations, directory scanning, and data loading.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.utils.io.apply_sharding_pattern">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.utils.io.</span></span><span class="sig-name descname"><span class="pre">apply_sharding_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sharding_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../_modules/atomworks/ml/utils/io.html#apply_sharding_pattern"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.utils.io.apply_sharding_pattern" title="Link to this definition">#</a></dt>
+<dd><p>Apply a sharding pattern to construct a file path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – The base path or identifier (e.g., PDB ID)</p></li>
+<li><p><strong>sharding_pattern</strong> – Pattern for organizing files in subdirectories
+- “/1:2/”: Use characters 1-2 for first directory level
+- “/1:2/0:2/”: Use chars 1-2 for first dir, then chars 0-2 for second dir
+- None: No sharding (default)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The constructed file path with sharding applied</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Path</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="atomworks.ml.utils.io.cache_based_on_subset_of_args">
 <span class="sig-prename descclassname"><span class="pre">atomworks.ml.utils.io.</span></span><span class="sig-name descname"><span class="pre">cache_based_on_subset_of_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cache_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span></span></span><a class="reference internal" href="../_modules/atomworks/ml/utils/io.html#cache_based_on_subset_of_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.utils.io.cache_based_on_subset_of_args" title="Link to this definition">#</a></dt>
-<dd><p>Decorator to cache function results based on a subset of its keyword arguments.
-Most helpful when some arguments may be unhashable types (e.g., dictionaries, AtomArray).</p>
-<p>If the value of any of the cache keys is None, the function is executed and the result is not cached.</p>
+<dd><p>Decorator to cache function results based on a subset of its keyword arguments.</p>
+<p>Most helpful when some arguments may be unhashable types (e.g., dictionaries, AtomArray).
+If the value of any of the cache keys is None, the function is executed and the result is not cached.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The wrapped function must use keyword arguments for those specified in <cite>cache_keys</cite>.
+<p>The wrapped function must use keyword arguments for those specified in cache_keys.
 Positional arguments are not supported for cache key extraction.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cache_keys</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – The names of the keyword arguments to use as the cache key.</p></li>
-<li><p><strong>maxsize</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The maximum number of entries to store in the cache.
+<li><p><strong>cache_keys</strong> – The names of the keyword arguments to use as the cache key.</p></li>
+<li><p><strong>maxsize</strong> – The maximum number of entries to store in the cache.
 If None, the cache size is unlimited.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A decorator that caches the function results based on the specified keyword arguments.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Callable</p>
-</dd>
 </dl>
 <p class="rubric">Example</p>
-<p>&#64;cache_based_on_subset_of_args([‘arg1’], maxsize=2)
-def function(<a href="#id5"><span class="problematic" id="id6">*</span></a>, arg1, arg2):</p>
-<blockquote>
-<div><p>return arg1 + arg2</p>
-</div></blockquote>
-<p>result1 = function(arg1=1, arg2=2)  # Caches with key 1
-result2 = function(arg1=1, arg2=3)  # Retrieves from cache</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@cache_based_on_subset_of_args</span><span class="p">([</span><span class="s2">&quot;arg1&quot;</span><span class="p">],</span> <span class="n">maxsize</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">arg1</span> <span class="o">+</span> <span class="n">arg2</span>
+
+
+<span class="n">result1</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">arg1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">arg2</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># Caches with key 1</span>
+<span class="n">result2</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">arg1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">arg2</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># Retrieves from cache</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -925,59 +940,6 @@ function is called, and the result is saved to the cache file.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>function</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="atomworks.ml.utils.io.convert_af3_model_output_to_atom_array_stack">
-<span class="sig-prename descclassname"><span class="pre">atomworks.ml.utils.io.</span></span><span class="sig-name descname"><span class="pre">convert_af3_model_output_to_atom_array_stack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_to_token_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pn_unit_iids</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decoded_restypes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elements</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token_is_atomized</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArrayStack</span></span></span><a class="reference internal" href="../_modules/atomworks/ml/utils/io.html#convert_af3_model_output_to_atom_array_stack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.utils.io.convert_af3_model_output_to_atom_array_stack" title="Link to this definition">#</a></dt>
-<dd><p>Create an AtomArrayStack from AlphaFold-3-type model outputs.
-Specific to AF-3; may not work with other formats.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>atom_to_token_map</strong> (<em>-</em>) – Mapping from atoms to tokens [n_atom]</p></li>
-<li><p><strong>pn_unit_iids</strong> (<em>-</em>) – PN unit IID’s for each token [n_token]</p></li>
-<li><p><strong>decoded_restype</strong> (<em>-</em>) – Decoded residue types for each token [n_token]</p></li>
-<li><p><strong>xyz</strong> (<em>-</em>) – Coordinates of atoms [n_atom, 3] or [batch, n_atom, 3], where batch is the number of structures</p></li>
-<li><p><strong>elements</strong> (<em>-</em>) – Element types for each atom [n_atom]</p></li>
-<li><p><strong>token_is_atomized</strong> (<em>-</em>) – Flags indicating if tokens are atomized [n_token]. If not provided
-or None, residues with a single atom are considered atomized.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Constructed AtomArrayStack.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><ul class="simple">
-<li><p>AtomArrayStack</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="atomworks.ml.utils.io.filter_residue_atoms">
-<span class="sig-prename descclassname"><span class="pre">atomworks.ml.utils.io.</span></span><span class="sig-name descname"><span class="pre">filter_residue_atoms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">residue_atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chem_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elements</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span></span></span><a class="reference internal" href="../_modules/atomworks/ml/utils/io.html#filter_residue_atoms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.utils.io.filter_residue_atoms" title="Link to this definition">#</a></dt>
-<dd><p>Filter out unwanted atoms from a residue (e.g.., hydrogens, leaving groups)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>residue_atom_array</strong> (<em>-</em>) – The AtomArray to filter.</p></li>
-<li><p><strong>chem_type</strong> (<em>-</em>) – Type of the chemical chain.</p></li>
-<li><p><strong>elements</strong> (<em>-</em>) – Element types (as strings, e.g., “C”) for each atom in the residue.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Filtered AtomArray.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><ul class="simple">
-<li><p>struc.AtomArray</p></li>
-</ul>
-</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1019,6 +981,33 @@ or None, residues with a single atom are considered atomized.</p></li>
 <dt class="sig sig-object py" id="atomworks.ml.utils.io.open_file">
 <span class="sig-prename descclassname"><span class="pre">atomworks.ml.utils.io.</span></span><span class="sig-name descname"><span class="pre">open_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PathLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TextIO</span></span></span><a class="reference internal" href="../_modules/atomworks/ml/utils/io.html#open_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.utils.io.open_file" title="Link to this definition">#</a></dt>
 <dd><p>Open a file, handling gzipped files if necessary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> – The path to the file to open.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A file-like object for reading.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>AssertionError</strong> – If the file does not exist.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.utils.io.parse_sharding_pattern">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.utils.io.</span></span><span class="sig-name descname"><span class="pre">parse_sharding_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sharding_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/atomworks/ml/utils/io.html#parse_sharding_pattern"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.utils.io.parse_sharding_pattern" title="Link to this definition">#</a></dt>
+<dd><p>Parse a sharding pattern string into directory levels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sharding_pattern</strong> – String like “/1:2/0:2/” where each /start:end/ defines a directory level
+- start:end defines the character range to use for that directory level
+- Example: “/1:2/0:2/” means use chars 1-2 for first dir, then chars 0-2 for second dir</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of (start, end) tuples for each directory level</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1039,6 +1028,23 @@ or None, residues with a single atom are considered atomized.</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.utils.io.scan_directory">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.utils.io.</span></span><span class="sig-name descname"><span class="pre">scan_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/atomworks/ml/utils/io.html#scan_directory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.utils.io.scan_directory" title="Link to this definition">#</a></dt>
+<dd><p>Fast, order-independent directory scan for files up to max_depth levels deep.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dir_path</strong> – The root directory to scan.</p></li>
+<li><p><strong>max_depth</strong> – The maximum depth to scan. A max_depth of 1 means only the top-level directory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of file paths found within the specified directory and depth.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="atomworks.ml.utils.io.to_parquet_with_metadata">
 <span class="sig-prename descclassname"><span class="pre">atomworks.ml.utils.io.</span></span><span class="sig-name descname"><span class="pre">to_parquet_with_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PathLike</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/atomworks/ml/utils/io.html#to_parquet_with_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.utils.io.to_parquet_with_metadata" title="Link to this definition">#</a></dt>
 <dd><p>Convenience wrapper around df.to_parquet that saves table-wide metadata (df.attrs) to the parquet file.</p>
@@ -1054,9 +1060,9 @@ or None, residues with a single atom are considered atomized.</p></li>
 </dd></dl>
 
 </section>
-<section id="miscellaneous-utilities">
-<h2>Miscellaneous Utilities<a class="headerlink" href="#miscellaneous-utilities" title="Link to this heading">#</a></h2>
-<dl class="py function" id="module-atomworks.ml.utils.misc">
+<section id="module-atomworks.ml.utils.misc">
+<span id="miscellaneous-utilities"></span><h2>Miscellaneous Utilities<a class="headerlink" href="#module-atomworks.ml.utils.misc" title="Link to this heading">#</a></h2>
+<dl class="py function">
 <dt class="sig sig-object py" id="atomworks.ml.utils.misc.argunsort">
 <span class="sig-prename descclassname"><span class="pre">atomworks.ml.utils.misc.</span></span><span class="sig-name descname"><span class="pre">argunsort</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/atomworks/ml/utils/misc.html#argunsort"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.utils.misc.argunsort" title="Link to this definition">#</a></dt>
 <dd><p>Returns the permutation necessary to undo a sort given the argsort array.</p>
@@ -1280,14 +1286,16 @@ Shape: (num_groups, …, D).</p>
 &gt;&gt;&gt; value = torch.tensor([[2.0, 3.0], [4.0, 5.0]], dtype=torch.float16)
 &gt;&gt;&gt; mask_mean(mask, value, axis=0)
 tensor([3., 5.]) # float32</p>
-<p>Reference:
-- AF2 Multimer Code (<a class="github reference external" href="https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/model/utils.py#L79">google-deepmind/alphafold</a>)</p>
+<dl class="simple">
+<dt>Reference:</dt><dd><p><a class="reference external" href="https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/model/utils.py#L79">AF2 Multimer Code</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
-<section id="nested-dictionary-utilities">
-<h2>Nested Dictionary Utilities<a class="headerlink" href="#nested-dictionary-utilities" title="Link to this heading">#</a></h2>
-<p id="module-atomworks.ml.utils.nested_dict">Tools to work with nested dictionaries.</p>
+<section id="module-atomworks.ml.utils.nested_dict">
+<span id="nested-dictionary-utilities"></span><h2>Nested Dictionary Utilities<a class="headerlink" href="#module-atomworks.ml.utils.nested_dict" title="Link to this heading">#</a></h2>
+<p>Tools to work with nested dictionaries.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="atomworks.ml.utils.nested_dict.flatten">
 <span class="sig-prename descclassname"><span class="pre">atomworks.ml.utils.nested_dict.</span></span><span class="sig-name descname"><span class="pre">flatten</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fuse_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/atomworks/ml/utils/nested_dict.html#flatten"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.utils.nested_dict.flatten" title="Link to this definition">#</a></dt>
@@ -1623,9 +1631,9 @@ ties by choosing the nearest True to the left.</p>
 </dd></dl>
 
 </section>
-<section id="random-number-generation">
-<h2>Random Number Generation<a class="headerlink" href="#random-number-generation" title="Link to this heading">#</a></h2>
-<p id="module-atomworks.ml.utils.rng">Utilities for managing the random number generators in the current process.
+<section id="module-atomworks.ml.utils.rng">
+<span id="random-number-generation"></span><h2>Random Number Generation<a class="headerlink" href="#module-atomworks.ml.utils.rng" title="Link to this heading">#</a></h2>
+<p>Utilities for managing the random number generators in the current process.
 Inspired by: <a class="github reference external" href="https://github.com/Lightning-AI/pytorch-lightning/blob/709a2a9d3b79b0a436eb2d271fbeecf8a7ba1352/src/lightning/fabric/utilities/seed.py">Lightning-AI/pytorch-lightning</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="atomworks.ml.utils.rng.capture_rng_states">
@@ -1669,13 +1677,14 @@ the CUDA RNG is not included. Defaults to True.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="atomworks.ml.utils.rng.rng_state">
 <span class="sig-prename descclassname"><span class="pre">atomworks.ml.utils.rng.</span></span><span class="sig-name descname"><span class="pre">rng_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rng_state_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_cuda</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/atomworks/ml/utils/rng.html#rng_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.utils.rng.rng_state" title="Link to this definition">#</a></dt>
-<dd><dl>
-<dt>A context manager that resets the global random state on exit to what it was before entering.</dt><dd><p>Within the context manager, the RNG states are set to the provided rng state in the dictionary.</p>
+<dd><p>A context manager that resets the global random state on exit to what it was before entering.</p>
+<blockquote>
+<div><p>Within the context manager, the RNG states are set to the provided rng state in the dictionary.</p>
 <p>It supports isolating the states for PyTorch, Numpy, and Python built-in random number generators.</p>
 <dl>
-<dt>Args:</dt><dd><ul>
-<li><dl>
-<dt>rng_state_dict (dict[str, Any] | None): A dictionary of RNG states to set. It can have the following keys:</dt><dd><ul class="simple">
+<dt>Args:</dt><dd><p>rng_state_dict: A dictionary of RNG states to set. It can have the following keys:</p>
+<blockquote>
+<div><ul class="simple">
 <li><p>“torch”: The state of the PyTorch RNG.</p></li>
 <li><p>“torch.cuda”: The state of the PyTorch CUDA RNG.</p></li>
 <li><p>“numpy”: The state of the Numpy RNG.</p></li>
@@ -1684,56 +1693,62 @@ the CUDA RNG is not included. Defaults to True.</p>
 <p>If no rng_state_dict is provided, the RNG states are set to the current state of the RNGs. If the
 rng_state_dict only contains a subset of the RNG states, the other RNG states are set to the current
 state of the RNGs.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>include_cuda (bool): Whether to allow this function to also control the <cite>torch.cuda</cite> random number generator.</dt><dd><p>Set this to <code class="docutils literal notranslate"><span class="pre">False</span></code> when using the function in a forked process where CUDA re-initialization is
+</div></blockquote>
+<dl class="simple">
+<dt>include_cuda: Whether to allow this function to also control the torch.cuda random number generator.</dt><dd><p>Set this to False when using the function in a forked process where CUDA re-initialization is
 prohibited. Defaults to True.</p>
 </dd>
 </dl>
-</li>
-</ul>
+</dd>
+<dt>Example:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Outside the context manager</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NumPy:&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># [0.04810046 0.99270597 0.70612995]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PyTorch:&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># tensor([0.1405, 0.4602, 0.4284])</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;Python random:&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+<span class="p">)</span>  <span class="c1"># [0.7406435863188185, 0.5632059276194807, 0.8537007637060476]</span>
+
+<span class="c1"># Inside the context manager with fixed seeds</span>
+<span class="k">with</span> <span class="n">rng_state</span><span class="p">(</span><span class="n">create_rng_state_from_seeds</span><span class="p">(</span><span class="n">np_seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">torch_seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">py_seed</span><span class="o">=</span><span class="mi">42</span><span class="p">))</span> <span class="k">as</span> <span class="n">rng_state_dict</span><span class="p">:</span>
+    <span class="n">my_state</span> <span class="o">=</span> <span class="n">serialize_rng_state_dict</span><span class="p">(</span><span class="n">rng_state_dict</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
 </dd>
 </dl>
-<p>Example:</p>
-<dl>
-<dt><a href="#id7"><span class="problematic" id="id8">``</span></a><a href="#id9"><span class="problematic" id="id10">`</span></a></dt><dd><p># Outside the context manager
-print(“NumPy:”, np.random.random(3))  # [0.04810046 0.99270597 0.70612995]
-print(“PyTorch:”, torch.rand(3))  # tensor([0.1405, 0.4602, 0.4284])
-print(“Python random:”, [random.random() for _ in range(3)])  # [0.7406435863188185, 0.5632059276194807, 0.8537007637060476]</p>
-<p># Inside the context manager with fixed seeds
-with rng_state(create_rng_state_from_seeds(np_seed=42, torch_seed=42, py_seed=42)) as rng_state_dict:</p>
-<blockquote>
-<div><p>my_state = serialize_rng_state_dict(rng_state_dict)
-print(”</p>
 </div></blockquote>
-</dd>
-</dl>
-</dd>
+<dl>
 <dt>Within context manager:”)</dt><dd><blockquote>
 <div><p>print(“NumPy:”, np.random.random(3))  # [0.37454012 0.95071431 0.73199394]
 print(“PyTorch:”, torch.rand(3))  # tensor([0.8823, 0.9150, 0.3829])
-print(“Python random:”, [random.random() for _ in range(3)])  # [0.6394267984578837, 0.025010755222666936, 0.27502931836911926]</p>
+print(</p>
+<blockquote>
+<div><p>“Python random:”, [random.random() for _ in range(3)]</p>
+</div></blockquote>
+<p>)  # [0.6394267984578837, 0.025010755222666936, 0.27502931836911926]</p>
 </div></blockquote>
 <p># Back to the original state outside the context manager
 print(”</p>
 </dd>
 <dt>Back outside the context manager:”)</dt><dd><p>print(“NumPy:”, np.random.random(3))  # [0.75479377 0.99594641 0.70411424]
 print(“PyTorch:”, torch.rand(3))  # tensor([0.2757, 0.5345, 0.1754])
-print(“Python random:”, [random.random() for _ in range(3)])  # [0.2194923914916147, 0.8731837332486028, 0.47700011905124995]</p>
+print(</p>
+<blockquote>
+<div><p>“Python random:”, [random.random() for _ in range(3)]</p>
+</div></blockquote>
+<p>)  # [0.2194923914916147, 0.8731837332486028, 0.47700011905124995]</p>
 <p># Inside the context manager with fixed seeds
 with rng_state(eval(my_state)):</p>
 <blockquote>
 <div><p>print(”</p>
 </div></blockquote>
 </dd>
-<dt>Within context manager:”)</dt><dd><blockquote>
-<div><p>print(“NumPy:”, np.random.random(3))  # [0.37454012 0.95071431 0.73199394]
+<dt>Within context manager:”)</dt><dd><p>print(“NumPy:”, np.random.random(3))  # [0.37454012 0.95071431 0.73199394]
 print(“PyTorch:”, torch.rand(3))  # tensor([0.8823, 0.9150, 0.3829])
-print(“Python random:”, [random.random() for _ in range(3)])  # [0.6394267984578837, 0.025010755222666936, 0.27502931836911926]</p>
+print(</p>
+<blockquote>
+<div><p>“Python random:”, [random.random() for _ in range(3)]</p>
 </div></blockquote>
-<p><a href="#id11"><span class="problematic" id="id12">``</span></a><a href="#id13"><span class="problematic" id="id14">`</span></a></p>
+<p>)  # [0.6394267984578837, 0.025010755222666936, 0.27502931836911926]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1789,20 +1804,17 @@ to conditionally apply decorators without changing the code structure.</p>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A decorator function that returns the original function unchanged.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Callable</p>
-</dd>
 </dl>
 <p class="rubric">Example</p>
-<p><a href="#id15"><span class="problematic" id="id16">``</span></a><a href="#id17"><span class="problematic" id="id18">`</span></a>python
-&#64;do_nothing_decorator()
-def my_function():</p>
-<blockquote>
-<div><p>return “Hello, World!”</p>
-</div></blockquote>
-<p># or:
-do_nothing(bla=123, blub=456)(my_function)
-<a href="#id19"><span class="problematic" id="id20">``</span></a><a href="#id21"><span class="problematic" id="id22">`</span></a></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@do_nothing_decorator</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_function</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s2">&quot;Hello, World!&quot;</span>
+
+
+<span class="c1"># or:</span>
+<span class="n">do_nothing</span><span class="p">(</span><span class="n">bla</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span> <span class="n">blub</span><span class="o">=</span><span class="mi">456</span><span class="p">)(</span><span class="n">my_function</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -1941,9 +1953,7 @@ the center coordinate is set to <cite>np.nan</cite>.</p>
 </dd>
 </dl>
 <dl class="simple">
-<dt>Reference:</dt><dd><ul class="simple">
-<li><p>AF3: <a class="reference external" href="https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf">https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf</a></p></li>
-</ul>
+<dt>Reference:</dt><dd><p><a class="reference external" href="https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf">AF3 Supplementary Information</a></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -1992,9 +2002,7 @@ the center coordinate is set to <cite>np.nan</cite>.</p>
 </dd>
 </dl>
 <dl class="simple">
-<dt>Reference:</dt><dd><ul class="simple">
-<li><p>AF3: <a class="reference external" href="https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf">https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf</a></p></li>
-</ul>
+<dt>Reference:</dt><dd><p><a class="reference external" href="https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf">AF3 Supplementary Information</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2277,17 +2285,18 @@ or if <cite>atomize</cite> is False everywhere.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-atomworks.ml.utils.io">I/O Utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.io.apply_sharding_pattern"><code class="docutils literal notranslate"><span class="pre">apply_sharding_pattern()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.io.cache_based_on_subset_of_args"><code class="docutils literal notranslate"><span class="pre">cache_based_on_subset_of_args()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.io.cache_to_disk_as_pickle"><code class="docutils literal notranslate"><span class="pre">cache_to_disk_as_pickle()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.io.convert_af3_model_output_to_atom_array_stack"><code class="docutils literal notranslate"><span class="pre">convert_af3_model_output_to_atom_array_stack()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.io.filter_residue_atoms"><code class="docutils literal notranslate"><span class="pre">filter_residue_atoms()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.io.get_sharded_file_path"><code class="docutils literal notranslate"><span class="pre">get_sharded_file_path()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.io.open_file"><code class="docutils literal notranslate"><span class="pre">open_file()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.io.parse_sharding_pattern"><code class="docutils literal notranslate"><span class="pre">parse_sharding_pattern()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.io.read_parquet_with_metadata"><code class="docutils literal notranslate"><span class="pre">read_parquet_with_metadata()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.io.scan_directory"><code class="docutils literal notranslate"><span class="pre">scan_directory()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.io.to_parquet_with_metadata"><code class="docutils literal notranslate"><span class="pre">to_parquet_with_metadata()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#miscellaneous-utilities">Miscellaneous Utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-atomworks.ml.utils.misc">Miscellaneous Utilities</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.misc.argunsort"><code class="docutils literal notranslate"><span class="pre">argunsort()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.misc.convert_pn_unit_iids_to_pn_unit_ids"><code class="docutils literal notranslate"><span class="pre">convert_pn_unit_iids_to_pn_unit_ids()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.misc.cumcount"><code class="docutils literal notranslate"><span class="pre">cumcount()</span></code></a></li>
@@ -2300,7 +2309,7 @@ or if <cite>atomize</cite> is False everywhere.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.misc.masked_mean"><code class="docutils literal notranslate"><span class="pre">masked_mean()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nested-dictionary-utilities">Nested Dictionary Utilities</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-atomworks.ml.utils.nested_dict">Nested Dictionary Utilities</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.nested_dict.flatten"><code class="docutils literal notranslate"><span class="pre">flatten()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.nested_dict.get"><code class="docutils literal notranslate"><span class="pre">get()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.nested_dict.getitem"><code class="docutils literal notranslate"><span class="pre">getitem()</span></code></a></li>
@@ -2319,7 +2328,7 @@ or if <cite>atomize</cite> is False everywhere.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.numpy.unique_by_first_occurrence"><code class="docutils literal notranslate"><span class="pre">unique_by_first_occurrence()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#random-number-generation">Random Number Generation</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-atomworks.ml.utils.rng">Random Number Generation</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.rng.capture_rng_states"><code class="docutils literal notranslate"><span class="pre">capture_rng_states()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.rng.create_rng_state_from_seeds"><code class="docutils literal notranslate"><span class="pre">create_rng_state_from_seeds()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.utils.rng.get_numpy_rng_state_hash"><code class="docutils literal notranslate"><span class="pre">get_numpy_rng_state_hash()</span></code></a></li>

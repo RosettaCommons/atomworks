@@ -1,0 +1,1445 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>atomworks.ml.datasets.datasets &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/datasets/datasets';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.0.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_color.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">atomworks.ml.datasets.datasets</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for atomworks.ml.datasets.datasets</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;AtomWorks Dataset classes and common APIs.</span>
+
+<span class="sd">At a high level, to train models with AtomWorks, we need a Dataset class that:</span>
+<span class="sd">    (1) Takes as input an item index and returns the corresponding example information; typically includes:</span>
+<span class="sd">        a. Path to a structural file saved on disk (`/path/to/dataset/my_dataset_0.cif`)</span>
+<span class="sd">        b. Additional item-specific metadata (e.g., class labels)</span>
+<span class="sd">    (2) Pre-loads structural information from the returned example into an `AtomArray` and assembles inputs for the Transform pipeline</span>
+<span class="sd">    (3) Feed the input dictionary through a Transform pipeline and return the result</span>
+
+<span class="sd">Due to the heterogeneity of biomolecular data, in many cases, we may also want:</span>
+<span class="sd">    (4) In the event of a failure during the Transform pipeline, fall back to a different example</span>
+
+<span class="sd">For bespoke use cases, users may choose to write a custom Dataset that accomplish these steps; downstream code makes no assumptions.</span>
+
+<span class="sd">To accelerate development, we also provide an off-the-shelf, composable approach following common patterns:</span>
+<span class="sd">    - :class:`MolecularDataset`: Base class that handles pre-loading structural data and executing the Transform pipeline with error handling and debugging utilities</span>
+<span class="sd">    - :class:`PandasDataset`: A subclass of MolecularDataset for tabular data stored as pandas DataFrames</span>
+<span class="sd">    - :class:`FileDataset`: A subclass of MolecularDataset where each file is one example</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">PathLike</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConcatDataset</span><span class="p">,</span> <span class="n">Dataset</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.preprocessing.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">NA_VALUES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransformedDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.utils.debug</span><span class="w"> </span><span class="kn">import</span> <span class="n">save_failed_example_to_disk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.utils.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_parquet_with_metadata</span><span class="p">,</span> <span class="n">scan_directory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.utils.rng</span><span class="w"> </span><span class="kn">import</span> <span class="n">capture_rng_states</span>
+
+
+<div class="viewcode-block" id="ExampleIDMixin">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.datasets.ExampleIDMixin">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ExampleIDMixin</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mixin providing example ID functionality to a Dataset.</span>
+
+<span class="sd">    Provides methods for converting between example IDs and indices, and checking</span>
+<span class="sd">    if an example ID exists in the dataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the dataset contains the example ID.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            example_id: The ID to check for.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if the ID exists in the dataset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="ExampleIDMixin.id_to_idx">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.datasets.ExampleIDMixin.id_to_idx">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">id_to_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert example ID(s) to index(es).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            example_id: Single ID or list of IDs to convert.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Corresponding index or list of indices.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ExampleIDMixin.idx_to_id">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.datasets.ExampleIDMixin.idx_to_id">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">idx_to_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert index(es) to example ID(s).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            idx: Single index or list of indices to convert.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Corresponding ID or list of IDs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="MolecularDataset">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.datasets.MolecularDataset">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MolecularDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for AtomWorks molecular datasets.</span>
+
+<span class="sd">    Handles Transform pipelines and loader functionality for molecular data.</span>
+<span class="sd">    Subclasses implement :meth:`__getitem__` with their own data access patterns.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">transform</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">loader</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">save_failed_examples_to_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize MolecularDataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name: Descriptive name for this dataset. Used for debugging and some</span>
+<span class="sd">                downstream functions when using nested datasets.</span>
+<span class="sd">            transform: Transform function or pipeline to apply to loaded data.</span>
+<span class="sd">                Should accept the output of the loader and return featurized data.</span>
+<span class="sd">            loader: Optional function to process raw dataset output into Transform-ready</span>
+<span class="sd">                format. For example, parsing structural files or gathering columns</span>
+<span class="sd">                into structured data.</span>
+<span class="sd">            save_failed_examples_to_dir: Optional directory path where failed examples</span>
+<span class="sd">                will be saved for debugging. Includes RNG state and error information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader</span> <span class="o">=</span> <span class="n">loader</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">transform</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_failed_examples_to_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">save_failed_examples_to_dir</span><span class="p">)</span> <span class="k">if</span> <span class="n">save_failed_examples_to_dir</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_loader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply the loader function to raw data with timing and debugging.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            raw_data: The raw data to process.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Processed data ready for transforms.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">raw_data</span>
+
+        <span class="c1"># Apply loader function with timing</span>
+        <span class="n">_start_load_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="p">(</span><span class="n">raw_data</span><span class="p">)</span>
+        <span class="n">_stop_load_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="c1"># Add timing information if data supports it (preserving TransformDataset behavior)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">TransformedDict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">__transform_history__</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;apply loader&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;instance&quot;</span><span class="p">:</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="p">)),</span>
+                    <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="n">_start_load_time</span><span class="p">,</span>
+                    <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="n">_stop_load_time</span><span class="p">,</span>
+                    <span class="s2">&quot;processing_time&quot;</span><span class="p">:</span> <span class="n">_stop_load_time</span> <span class="o">-</span> <span class="n">_start_load_time</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply the Transform pipeline with error handling and debugging support.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: The loaded data ready for transforms.</span>
+<span class="sd">            example_id: Optional example ID for debugging purposes. If not provided,</span>
+<span class="sd">                will generate one using dataset name and index.</span>
+<span class="sd">            idx: Optional dataset index for error reporting.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Transformed data.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyboardInterrupt: Always re-raised if encountered.</span>
+<span class="sd">            Exception: Any exception from the transform pipeline is re-raised.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data</span>
+
+        <span class="c1"># Generate default example_id from idx and dataset name if not provided</span>
+        <span class="k">if</span> <span class="n">example_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">example_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="c1"># Get process id and hostname for debugging</span>
+        <span class="k">if</span> <span class="n">example_id</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">()</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span><span class="si">}</span><span class="s2">) Processing example: </span><span class="si">{</span><span class="n">example_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Capture RNG state for reproducibility before applying Transforms</span>
+            <span class="n">rng_state_dict</span> <span class="o">=</span> <span class="n">capture_rng_states</span><span class="p">(</span><span class="n">include_cuda</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">data</span>
+
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+            <span class="c1"># Always re-raise keyboard interrupts</span>
+            <span class="k">raise</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_failed_examples_to_dir</span> <span class="ow">and</span> <span class="n">example_id</span><span class="p">:</span>
+                <span class="n">save_failed_example_to_disk</span><span class="p">(</span>
+                    <span class="n">example_id</span><span class="o">=</span><span class="n">example_id</span><span class="p">,</span>
+                    <span class="n">error_msg</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
+                    <span class="n">rng_state_dict</span><span class="o">=</span><span class="n">rng_state_dict</span><span class="p">,</span>
+                    <span class="n">data</span><span class="o">=</span><span class="p">{},</span>  <span class="c1"># We do not save the data by default, since it may be large</span>
+                    <span class="n">fail_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">save_failed_examples_to_dir</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Re-raise the original exception</span>
+            <span class="k">raise</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a fully-featurized data example given an index.</span>
+
+<span class="sd">        Subclasses should implement this method to:</span>
+<span class="sd">            1. Query the underlying data source for raw data at the given index</span>
+<span class="sd">            2. Optionally pre-process data to prepare for the Transform pipeline</span>
+<span class="sd">            3. Feed the input dictionary through a Transform pipeline</span>
+
+<span class="sd">        Typical output for an activity prediction network:</span>
+<span class="sd">            Step 1: ``{&quot;path&quot;: &quot;/path/to/dataset&quot;, &quot;class_label&quot;: 5}``</span>
+<span class="sd">            Step 2: ``{&quot;atom_array&quot;: AtomArray, &quot;extra_info&quot;: {&quot;class_label&quot;: 5}}``</span>
+<span class="sd">            Step 3: ``{&quot;features&quot;: torch.Tensor, &quot;class_label&quot;: torch.Tensor}``</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            index: The index of the example to retrieve.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Fully-featurized data example.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of examples in the dataset.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The dataset length.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="FileDataset">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.datasets.FileDataset">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FileDataset</span><span class="p">(</span><span class="n">MolecularDataset</span><span class="p">,</span> <span class="n">ExampleIDMixin</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dataset that loads molecular data from individual files.</span>
+
+<span class="sd">    Each file represents one example in the dataset. If creating a dataset from a</span>
+<span class="sd">    directory, use the :meth:`from_directory` class method instead of the default</span>
+<span class="sd">    constructor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">file_paths</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">PathLike</span><span class="p">],</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">filter_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">PathLike</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize FileDataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_paths: List of file paths for the dataset. Each file represents</span>
+<span class="sd">                one example.</span>
+<span class="sd">            name: Descriptive name for this dataset. Used for debugging and some</span>
+<span class="sd">                downstream functions when using nested datasets.</span>
+<span class="sd">            filter_fn: Optional function to filter file paths. Should return True</span>
+<span class="sd">                for files to include.</span>
+<span class="sd">            **kwargs: Additional arguments passed to :class:`MolecularDataset`.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            Create from explicit file list:</span>
+<span class="sd">                &gt;&gt;&gt; files = [&quot;/path/to/file1.cif&quot;, &quot;/path/to/file2.cif&quot;]</span>
+<span class="sd">                &gt;&gt;&gt; dataset = FileDataset(file_paths=files, name=&quot;my_dataset&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">filter_fn</span> <span class="o">=</span> <span class="n">filter_fn</span> <span class="ow">or</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Convert to Path objects and filter</span>
+        <span class="n">file_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">file_paths</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_fn</span><span class="p">(</span><span class="n">path</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">file_paths</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No files found after applying filters&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_paths</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">file_paths</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;File paths must be unique&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Sort for consistent id&lt;&gt;idx mapping</span>
+        <span class="n">file_paths</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_paths</span> <span class="o">=</span> <span class="n">file_paths</span>
+
+        <span class="c1"># Create ID mapping</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id_to_idx_map</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_example_id</span><span class="p">(</span><span class="n">i</span><span class="p">):</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_paths</span><span class="p">)}</span>
+
+        <span class="c1"># Verify that all example IDs are unique</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id_to_idx_map</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_paths</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Example IDs must be unique. Found duplicate example IDs.&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FileDataset.from_directory">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.datasets.FileDataset.from_directory">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_directory</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">directory</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">max_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;FileDataset&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a FileDataset by scanning a directory for files.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            directory: Path to directory to scan for files.</span>
+<span class="sd">            name: Descriptive name for this dataset.</span>
+<span class="sd">            max_depth: Maximum depth to scan for files in subdirectories.</span>
+<span class="sd">            **kwargs: Additional arguments passed to :class:`FileDataset`.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            FileDataset instance with files discovered from the directory.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            Create from directory:</span>
+<span class="sd">                &gt;&gt;&gt; dataset = FileDataset.from_directory(directory=&quot;/path/to/files&quot;, name=&quot;my_dataset&quot;, max_depth=2)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dir_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dir_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Directory </span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dir_path</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Path </span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2"> is not a directory.&quot;</span><span class="p">)</span>
+
+        <span class="n">file_paths</span> <span class="o">=</span> <span class="n">scan_directory</span><span class="p">(</span><span class="n">dir_path</span><span class="o">=</span><span class="n">dir_path</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="n">max_depth</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">file_paths</span><span class="o">=</span><span class="n">file_paths</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="FileDataset.from_file_list">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.datasets.FileDataset.from_file_list">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_file_list</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">file_paths</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">PathLike</span><span class="p">],</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;FileDataset&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a FileDataset from an explicit list of file paths.</span>
+
+<span class="sd">        This is an alias for the main constructor for clarity and consistency</span>
+<span class="sd">        with :meth:`from_directory`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_paths: List of file paths for the dataset. Each file represents one example.</span>
+<span class="sd">            name: Descriptive name for this dataset.</span>
+<span class="sd">            **kwargs: Additional arguments passed to :class:`FileDataset`.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            FileDataset instance with the provided file paths.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">file_paths</span><span class="o">=</span><span class="n">file_paths</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of files in the dataset.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_paths</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the dataset contains the example ID.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">example_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_to_idx_map</span>
+
+<div class="viewcode-block" id="FileDataset.id_to_idx">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.datasets.FileDataset.id_to_idx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">id_to_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert example ID(s) to index(es).&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">example_id</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">id_to_idx_map</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">example_id</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_to_idx_map</span><span class="p">[</span><span class="n">example_id</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="FileDataset.idx_to_id">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.datasets.FileDataset.idx_to_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">idx_to_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert index(es) to example ID(s).&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_example_id</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idx</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_example_id</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load and transform an example by file index.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            idx: The index of the file to load.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Transformed data from the file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_paths</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+        <span class="n">example_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_example_id</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_loader</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_transform</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">example_id</span><span class="o">=</span><span class="n">example_id</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_example_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get example ID from index - returns filename stem without extensions.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            idx: The index of the file.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Filename stem without any extensions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_paths</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span>
+        <span class="c1"># If filename has multiple extensions (e.g., .cif.gz), remove them all</span>
+        <span class="k">while</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span>
+        <span class="k">return</span> <span class="n">filename</span></div>
+
+
+
+<div class="viewcode-block" id="PandasDataset">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.datasets.PandasDataset">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PandasDataset</span><span class="p">(</span><span class="n">MolecularDataset</span><span class="p">,</span> <span class="n">ExampleIDMixin</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dataset for tabular data stored as pandas DataFrames.</span>
+
+<span class="sd">    Inherits all functionality from :class:`MolecularDataset` with additional</span>
+<span class="sd">    DataFrame-specific features for filtering and ID-based access.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">id_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;example_id&quot;</span><span class="p">,</span>
+        <span class="n">filters</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">columns_to_load</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># MolecularDataset parameters</span>
+        <span class="n">transform</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">loader</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">save_failed_examples_to_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">load_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize PandasDataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: Either a pandas DataFrame or path to a CSV/Parquet file containing</span>
+<span class="sd">                the tabular data. Each row represents one example.</span>
+<span class="sd">            name: Descriptive name for this dataset. Used for debugging and some</span>
+<span class="sd">                downstream functions when using nested datasets.</span>
+<span class="sd">            id_column: Optional column name to use as the DataFrame index for</span>
+<span class="sd">                example ID lookups. If provided, this column will be set as the index.</span>
+<span class="sd">            filters: Optional list of pandas query strings to filter the data.</span>
+<span class="sd">                Applied in order during initialization.</span>
+<span class="sd">            columns_to_load: Optional list of column names to load when reading</span>
+<span class="sd">                from a file. If None, all columns are loaded. Can dramatically reduce</span>
+<span class="sd">                memory usage and load time if loading from a columnar format like Parquet.</span>
+<span class="sd">            transform: Transform pipeline to apply to loaded data.</span>
+<span class="sd">            loader: Optional function to process raw DataFrame rows into Transform-ready format.</span>
+<span class="sd">            save_failed_examples_to_dir: Optional directory path where failed examples</span>
+<span class="sd">                will be saved for debugging. Includes RNG state and error information.</span>
+<span class="sd">            load_kwargs: Additional keyword arguments passed to pandas&#39; read functions</span>
+<span class="sd">                (read_csv, read_parquet) when loading from file.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            Load from DataFrame:</span>
+<span class="sd">                &gt;&gt;&gt; df = pd.DataFrame({&quot;path&quot;: [...], &quot;label&quot;: [...]})</span>
+<span class="sd">                &gt;&gt;&gt; dataset = PandasDataset(data=df, name=&quot;my_dataset&quot;)</span>
+
+<span class="sd">            Load from file with filtering:</span>
+<span class="sd">                &gt;&gt;&gt; dataset = PandasDataset(data=&quot;data.csv&quot;, name=&quot;filtered_dataset&quot;, filters=[&quot;label &gt; 0&quot;, &quot;path.str.contains(&#39;.pdb&#39;)&quot;])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
+            <span class="n">loader</span><span class="o">=</span><span class="n">loader</span><span class="p">,</span>
+            <span class="n">save_failed_examples_to_dir</span><span class="o">=</span><span class="n">save_failed_examples_to_dir</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Load data from path if needed</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_from_path</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns_to_load</span><span class="p">,</span> <span class="o">**</span><span class="p">(</span><span class="n">load_kwargs</span> <span class="ow">or</span> <span class="p">{}))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+
+        <span class="c1"># Apply filters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span> <span class="o">=</span> <span class="n">filters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_already_filtered</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">filters</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_apply_filters</span><span class="p">(</span><span class="n">filters</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_already_filtered</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Set index column if specified</span>
+        <span class="k">if</span> <span class="n">id_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">id_column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Column </span><span class="si">{</span><span class="n">id_column</span><span class="si">}</span><span class="s2"> not found in dataset.&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">id_column</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verify_integrity</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_from_path</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">columns_to_load</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">load_kwargs</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load data from file path.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path: Path to the file to load.</span>
+<span class="sd">            columns_to_load: Optional list of column names to load.</span>
+<span class="sd">            **load_kwargs: Additional arguments for pandas read functions.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Loaded DataFrame.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If file type is unsupported.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.csv&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="n">columns_to_load</span><span class="p">,</span> <span class="n">keep_default_na</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">na_values</span><span class="o">=</span><span class="n">NA_VALUES</span><span class="p">,</span> <span class="o">**</span><span class="n">load_kwargs</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.parquet&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">read_parquet_with_metadata</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns_to_load</span><span class="p">,</span> <span class="o">**</span><span class="n">load_kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported file type: </span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get an example by index, applying specified loader and Transforms.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            idx: The index of the example to retrieve.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Transformed data from the row.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">raw_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">example_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_example_id</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_loader</span><span class="p">(</span><span class="n">raw_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_transform</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">example_id</span><span class="o">=</span><span class="n">example_id</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of rows in the dataset.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the dataset contains the example ID.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">example_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">index</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_id_to_index_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert single example ID to index.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">example_id</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_id_to_index_multiple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert multiple example IDs to indices.&quot;&quot;&quot;</span>
+        <span class="n">idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">idxs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">example_id</span><span class="p">)]</span> <span class="k">for</span> <span class="n">example_id</span> <span class="ow">in</span> <span class="n">example_ids</span><span class="p">]</span>
+
+<div class="viewcode-block" id="PandasDataset.id_to_idx">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.datasets.PandasDataset.id_to_idx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">id_to_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert an example ID to the corresponding local index.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">example_id</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id_to_index_single</span><span class="p">(</span><span class="n">example_id</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">example_id</span><span class="p">,</span> <span class="nb">list</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id_to_index_multiple</span><span class="p">(</span><span class="n">example_id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid type for example_id: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">example_id</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PandasDataset.idx_to_id">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.datasets.PandasDataset.idx_to_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">idx_to_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a local index to the corresponding example ID.&quot;&quot;&quot;</span>
+        <span class="n">_return_single</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">idx</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">()):</span>
+            <span class="n">_return_single</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="k">else</span> <span class="n">idx</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">return</span> <span class="n">ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">_return_single</span> <span class="k">else</span> <span class="n">ids</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_filters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filters</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply filters to the data based on the provided list of query strings.</span>
+
+<span class="sd">        For documentation on pandas query syntax, see: https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.query.html</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filters: List of query strings to apply to the data.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the data is not initialized or if a query removes all rows.</span>
+<span class="sd">            Warning: If a query does not remove any rows.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; queries = [</span>
+<span class="sd">            &gt;&gt;&gt;     &quot;deposition_date &lt; &#39;2020-01-01&#39;&quot;,</span>
+<span class="sd">            &gt;&gt;&gt;     &quot;resolution &lt; 2.5 and ~method.str.contains(&#39;NMR&#39;)&quot;,</span>
+<span class="sd">            &gt;&gt;&gt;     &quot;cluster.notnull()&quot;,</span>
+<span class="sd">            &gt;&gt;&gt;     &quot;method in [&#39;X-RAY_DIFFRACTION&#39;, &#39;ELECTRON_MICROSCOPY&#39;]&quot;</span>
+<span class="sd">            &gt;&gt;&gt; ]</span>
+<span class="sd">            &gt;&gt;&gt; dataset = PandasDataset(data=&quot;data.csv&quot;, name=&quot;filtered_dataset&quot;, filters=queries)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_already_filtered</span><span class="p">,</span> <span class="s2">&quot;Filters cannot be applied after initialization.&quot;</span>
+
+        <span class="c1"># Apply queries one by one, confirming the impact of each</span>
+        <span class="k">for</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_apply_query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply a single query to the data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query: The pandas query string to apply.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Filter using query and validate impact</span>
+        <span class="n">original_num_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="n">filtered_num_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_filter_impact</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">original_num_rows</span><span class="p">,</span> <span class="n">filtered_num_rows</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_filter_impact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">original_num_rows</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">filtered_num_rows</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the impact of the filter.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            query: The query that was applied.</span>
+<span class="sd">            original_num_rows: Number of rows before filtering.</span>
+<span class="sd">            filtered_num_rows: Number of rows after filtering.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the query removes all rows.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rows_removed</span> <span class="o">=</span> <span class="n">original_num_rows</span> <span class="o">-</span> <span class="n">filtered_num_rows</span>
+        <span class="n">percent_removed</span> <span class="o">=</span> <span class="p">(</span><span class="n">rows_removed</span> <span class="o">/</span> <span class="n">original_num_rows</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+        <span class="n">percent_remaining</span> <span class="o">=</span> <span class="p">(</span><span class="n">filtered_num_rows</span> <span class="o">/</span> <span class="n">original_num_rows</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+
+        <span class="k">if</span> <span class="n">filtered_num_rows</span> <span class="o">==</span> <span class="n">original_num_rows</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Query &#39;</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2">&#39; on dataset </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> did not remove any rows.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">filtered_num_rows</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Query &#39;</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2">&#39; on dataset </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> removed all rows.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">+-------------------------------------------+</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Query &#39;</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2">&#39; on dataset </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;  - Started with: </span><span class="si">{</span><span class="n">original_num_rows</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> rows</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;  - Removed: </span><span class="si">{</span><span class="n">rows_removed</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> rows (</span><span class="si">{</span><span class="n">percent_removed</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%)</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;  - Remaining: </span><span class="si">{</span><span class="n">filtered_num_rows</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> rows (</span><span class="si">{</span><span class="n">percent_remaining</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%)</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;+-------------------------------------------+</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_example_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get example ID from index - returns the index value from the DataFrame.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            idx: The index of the row.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The index value as a string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>  <span class="c1"># .name gets the index value</span></div>
+
+
+
+<div class="viewcode-block" id="ConcatDatasetWithID">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.datasets.ConcatDatasetWithID">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConcatDatasetWithID</span><span class="p">(</span><span class="n">ConcatDataset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Equivalent to :class:`torch.utils.data.ConcatDataset` but allows accessing examples by ID.</span>
+
+<span class="sd">    Provides ID-based access across multiple datasets that implement :class:`ExampleIDMixin`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># TODO: Do I need all of these _raise_if etc. etc. here? Can I just check that the wrapped datasets inherit somehow from ExampleIDMixin?</span>
+
+    <span class="n">datasets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ExampleIDMixin</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datasets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ExampleIDMixin</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize ConcatDatasetWithID.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            datasets: List of datasets that implement ExampleIDMixin.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">datasets</span><span class="p">)</span>
+
+        <span class="c1"># Log the length of each dataset</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">datasets</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dataset </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> examples&quot;</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_can_convert_ids_and_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if all sub-datasets can convert between IDs and indices.&quot;&quot;&quot;</span>
+        <span class="n">has_id_to_idx</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">sub_dataset</span><span class="p">,</span> <span class="s2">&quot;id_to_idx&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">sub_dataset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">)</span>
+        <span class="n">has_idx_to_id</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">sub_dataset</span><span class="p">,</span> <span class="s2">&quot;idx_to_id&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">sub_dataset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">has_id_to_idx</span> <span class="ow">and</span> <span class="n">has_idx_to_id</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_can_check_contains</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_can_check_contains</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if all sub-datasets support contains operations.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">sub_dataset</span><span class="p">,</span> <span class="s2">&quot;__contains__&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">sub_dataset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_raise_if_cannot_check_contains</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Raise error if dataset cannot check contains.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_can_check_contains</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;This dataset cannot check if it contains an example ID.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_raise_if_cannot_convert_ids_and_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Raise error if dataset cannot convert IDs and indices.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_can_convert_ids_and_idx</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;This dataset cannot convert example IDs to indices.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_raise_if_idx_out_of_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Raise error if index is out of bounds.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            idx: The index to check.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Index </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2"> out of bounds for dataset of length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the dataset contains the example ID.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            example_id: The ID to check for.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if the ID exists in any sub-dataset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raise_if_cannot_check_contains</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">example_id</span> <span class="ow">in</span> <span class="n">sub_dataset</span> <span class="k">for</span> <span class="n">sub_dataset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ConcatDatasetWithID.id_to_idx">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.datasets.ConcatDatasetWithID.id_to_idx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">id_to_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves the index corresponding to the example ID.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            example_id: The ID to convert.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The corresponding index.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the example ID is not found.</span>
+
+<span class="sd">        Warning:</span>
+<span class="sd">            Assumes that the example ID is unique within the dataset. If not,</span>
+<span class="sd">            the first occurrence of the example ID is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: Generalize to list[str]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raise_if_cannot_convert_ids_and_idx</span><span class="p">()</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">sub_dataset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">example_id</span> <span class="ow">in</span> <span class="n">sub_dataset</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">sub_dataset</span><span class="o">.</span><span class="n">id_to_idx</span><span class="p">(</span><span class="n">example_id</span><span class="p">)</span>
+            <span class="n">offset</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_dataset</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Example ID </span><span class="si">{</span><span class="n">example_id</span><span class="si">}</span><span class="s2"> not found in any sub-dataset.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConcatDatasetWithID.idx_to_id">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.datasets.ConcatDatasetWithID.idx_to_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">idx_to_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves the example ID corresponding to the index.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            idx: The index to convert.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The corresponding example ID.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the index is out of bounds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: Generalize to list[int]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raise_if_cannot_convert_ids_and_idx</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raise_if_idx_out_of_bounds</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">sub_dataset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_dataset</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">sub_dataset</span><span class="o">.</span><span class="n">idx_to_id</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+            <span class="n">idx</span> <span class="o">-=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_dataset</span><span class="p">)</span>
+        <span class="c1"># This should never be reached</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Index </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2"> out of bounds for any sub-dataset.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConcatDatasetWithID.get_dataset_by_idx">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.datasets.ConcatDatasetWithID.get_dataset_by_idx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_dataset_by_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves the dataset containing the index.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            idx: The index to find.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The sub-dataset containing the index.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the index is out of bounds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raise_if_idx_out_of_bounds</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">sub_dataset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_dataset</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">sub_dataset</span>
+            <span class="n">idx</span> <span class="o">-=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_dataset</span><span class="p">)</span>
+        <span class="c1"># This should never be reached</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Index </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2"> out of bounds for any sub-dataset.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConcatDatasetWithID.get_dataset_by_id">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.datasets.ConcatDatasetWithID.get_dataset_by_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_dataset_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves the dataset containing the example ID.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            example_id: The ID to find.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The sub-dataset containing the ID.</span>
+
+<span class="sd">        Warning:</span>
+<span class="sd">            Assumes that the example ID is unique within the dataset. If not,</span>
+<span class="sd">            the first occurrence of the example ID is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_to_idx</span><span class="p">(</span><span class="n">example_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dataset_by_idx</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="get_row_and_index_by_example_id">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.datasets.get_row_and_index_by_example_id">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_row_and_index_by_example_id</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">ExampleIDMixin</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve a row and its index from a nested dataset structure by its example ID.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset: The dataset or concatenated dataset to search.</span>
+<span class="sd">            Must have the `id_to_idx` method.</span>
+<span class="sd">        example_id: The example ID to search for.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dictionary containing the row and global index corresponding to the example ID.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;id_to_idx&quot;</span><span class="p">),</span> <span class="s2">&quot;Dataset must have the `id_to_idx` method.&quot;</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">id_to_idx</span><span class="p">(</span><span class="n">example_id</span><span class="p">)</span>
+
+    <span class="n">_local_idx</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+    <span class="k">while</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">ConcatDatasetWithID</span><span class="p">):</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">get_dataset_by_idx</span><span class="p">(</span><span class="n">_local_idx</span><span class="p">)</span>
+        <span class="n">_local_idx</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">id_to_idx</span><span class="p">(</span><span class="n">example_id</span><span class="p">)</span>
+
+    <span class="n">row</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">example_id</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;row&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">,</span> <span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="n">idx</span><span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="FallbackDatasetWrapper">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.datasets.FallbackDatasetWrapper">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FallbackDatasetWrapper</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A wrapper around a dataset that allows for a fallback dataset to be used when an error occurs.</span>
+
+<span class="sd">    Meant to be used with a FallbackSamplerWrapper.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">fallback_dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize FallbackDatasetWrapper.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dataset: The primary dataset to retrieve data from.</span>
+<span class="sd">            fallback_dataset: The fallback dataset to use when an error occurs. This</span>
+<span class="sd">                may be the same as the primary dataset, or a different one.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fallback_dataset</span> <span class="o">=</span> <span class="n">fallback_dataset</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idxs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Attempt to retrieve an item from the primary dataset, falling back to additional indices if errors occur.</span>
+
+<span class="sd">        If all attempts fail, raises a RuntimeError containing all encountered exceptions.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            idxs: Tuple of indices, where the first is for the primary dataset and the rest are for fallbacks.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The retrieved item from the first successful dataset.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyboardInterrupt: If interrupted.</span>
+<span class="sd">            StopIteration: If iteration should stop.</span>
+<span class="sd">            RuntimeError: If all attempts fail, with a list of all exceptions encountered.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">error_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">example_id_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">idxs</span><span class="p">):</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">fallback_dataset</span>
+            <span class="n">dataset_name</span> <span class="o">=</span> <span class="s2">&quot;Primary dataset&quot;</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;Fallback </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">idxs</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">dataset</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">KeyboardInterrupt</span><span class="p">,</span> <span class="ne">StopIteration</span><span class="p">):</span>
+                <span class="k">raise</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">error_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+                <span class="c1"># Log the error</span>
+                <span class="n">example_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; (</span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">idx_to_id</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;idx_to_id&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">example_id_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">example_id</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">): Error (</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">) at index </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">example_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="c1"># Log fallback attempt if not the last one</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">idxs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">): Trying fallback index </span><span class="si">{</span><span class="n">idxs</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">example_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># All attempts failed</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;(Exceeded all </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">idxs</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="si">}</span><span class="s2"> fallbacks. Training will crash now. Errors: </span><span class="si">{</span><span class="n">error_list</span><span class="si">}</span><span class="s2"> for examples: </span><span class="si">{</span><span class="n">example_id_list</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;All attempts failed for indices </span><span class="si">{</span><span class="n">idxs</span><span class="si">}</span><span class="s2">. See error_list for details.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ExceptionGroup</span><span class="p">(</span>
+            <span class="s2">&quot;All fallback attempts failed&quot;</span><span class="p">,</span> <span class="n">error_list</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the length of the primary dataset.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Backwards Compatibility</span>
+<span class="c1"># TODO: Deprecate</span>
+<div class="viewcode-block" id="StructuralDatasetWrapper">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.datasets.StructuralDatasetWrapper">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">StructuralDatasetWrapper</span><span class="p">(</span>  <span class="c1"># noqa: N802</span>
+    <span class="n">dataset_parser</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">transform</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">PandasDataset</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">cif_parser_args</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">save_failed_examples_to_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PandasDataset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Backwards-compatible wrapper for the deprecated StructuralDatasetWrapper.</span>
+
+<span class="sd">    This function is deprecated and will be removed in a future version.</span>
+<span class="sd">    Use :class:`PandasDataset` with the appropriate loader function instead.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset_parser: The dataset parser to use (e.g., PNUnitsDFParser, InterfacesDFParser).</span>
+<span class="sd">        transform: Transform pipeline to apply to loaded data.</span>
+<span class="sd">        dataset: The underlying PandasDataset containing the tabular data.</span>
+<span class="sd">        cif_parser_args: Arguments to pass to the CIF parser.</span>
+<span class="sd">        save_failed_examples_to_dir: Directory to save failed examples for debugging.</span>
+<span class="sd">        **kwargs: Additional arguments passed to PandasDataset.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        PandasDataset instance configured with the deprecated parameters.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If dataset parameter is required but not provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.datasets.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_example_from_metadata_row</span>
+
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+        <span class="s2">&quot;StructuralDatasetWrapper is deprecated. Use PandasDataset with a loader function instead. &quot;</span>
+        <span class="s2">&quot;See atomworks.ml.datasets.loaders for functional alternatives to dataset parsers.&quot;</span><span class="p">,</span>
+        <span class="ne">DeprecationWarning</span><span class="p">,</span>
+        <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">dataset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;dataset parameter is required for StructuralDatasetWrapper&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create loader from deprecated parameters</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">loader</span><span class="p">(</span><span class="n">row</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">load_example_from_metadata_row</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">dataset_parser</span><span class="p">,</span> <span class="n">cif_parser_args</span><span class="o">=</span><span class="n">cif_parser_args</span> <span class="ow">or</span> <span class="p">{})</span>
+
+    <span class="c1"># Create a new PandasDataset with the loader</span>
+    <span class="k">return</span> <span class="n">PandasDataset</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">dataset</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;structural_dataset&quot;</span><span class="p">,</span>
+        <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
+        <span class="n">loader</span><span class="o">=</span><span class="n">loader</span><span class="p">,</span>
+        <span class="n">save_failed_examples_to_dir</span><span class="o">=</span><span class="n">save_failed_examples_to_dir</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

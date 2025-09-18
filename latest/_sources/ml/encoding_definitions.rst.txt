@@ -1,5 +1,5 @@
 Encoding Definitions
-===================
+====================
 
 This module contains definitions for various encoding schemes used in the atomworks.ml package.
 

@@ -55,7 +55,7 @@
         </script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Annotating and Saving Protein Structures" href="annotate_and_save_structures.html" />
+    <link rel="next" title="Dataset Exploration and Management in AtomWorks" href="dataset_exploration.html" />
     <link rel="prev" title="Structure Manipulation Basics" href="basics.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -353,6 +353,10 @@
 
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Loading and Visualizing Protein Structures</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="dataset_exploration.html">Dataset Exploration and Management in AtomWorks</a></li>
+
+
+
 <li class="toctree-l1"><a class="reference internal" href="annotate_and_save_structures.html">Annotating and Saving Protein Structures</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pocket_conditioning_transform.html">Creating Custom Transforms: Ligand Pocket Conditioning</a></li>
 
@@ -568,6 +572,18 @@ The <code class="docutils literal notranslate"><span class="pre">parse()</span><
 </pre></div>
 </div>
 </section>
+<section id="accessing-the-original-mmcif-data">
+<h2>Accessing the Original mmCIF Data<a class="headerlink" href="#accessing-the-original-mmcif-data" title="Link to this heading">#</a></h2>
+<p>If there is information contained in the mmCIF file that is <em>not</em> extracted by <cite>parse</cite>, we can still gain access
+to the original Biotite CIF block using the <code class="docutils literal notranslate"><span class="pre">keep_cif_block=True</span></code> argument to <cite>parse</cite>.
+We can then use the Biotite API to explore any additional data we might need.
+(E.g., we could write a simple <cite>Transform</cite> that extracts the necessary information)</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load with original CIF block retained</span>
+<span class="n">parse_output_with_cif</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">pdb_path</span><span class="p">,</span> <span class="n">keep_cif_block</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">cif_block</span> <span class="o">=</span> <span class="n">parse_output_with_cif</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cif_block&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 <section id="related-examples">
 <h2>Related Examples<a class="headerlink" href="#related-examples" title="Link to this heading">#</a></h2>
 <ul class="simple">
@@ -609,11 +625,11 @@ The <code class="docutils literal notranslate"><span class="pre">parse()</span><
       </div>
     </a>
     <a class="right-next"
-       href="annotate_and_save_structures.html"
+       href="dataset_exploration.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Annotating and Saving Protein Structures</p>
+        <p class="prev-next-title">Dataset Exploration and Management in AtomWorks</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -644,6 +660,7 @@ The <code class="docutils literal notranslate"><span class="pre">parse()</span><
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-assemblies-vs-asymmetric-units">Understanding Assemblies vs Asymmetric Units</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-exploration">Data Exploration</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-metadata-and-chain-information">Exploring Metadata and Chain Information</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#accessing-the-original-mmcif-data">Accessing the Original mmCIF Data</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#related-examples">Related Examples</a></li>
 </ul>
 </li>

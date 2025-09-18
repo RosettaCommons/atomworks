@@ -389,8 +389,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for atomworks.io.transforms.categories</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Transforms operating on Biotite&#39;s CIFBlock and CIFCategory objects.</span>
+<span></span><span class="sd">&quot;&quot;&quot;Transforms operating on Biotite&#39;s CIFBlock and CIFCategory objects.</span>
 
 <span class="sd">These transforms are used to extract information from the CIFBlock and return a dictionary containing processed information.</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -420,7 +419,15 @@
 <div class="viewcode-block" id="category_to_df">
 <a class="viewcode-back" href="../../../../io/transforms/categories.html#atomworks.io.transforms.categories.category_to_df">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">category_to_df</span><span class="p">(</span><span class="n">cif_block</span><span class="p">:</span> <span class="n">CIFBlock</span><span class="p">,</span> <span class="n">category</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a CIF block to a pandas DataFrame.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a CIF block to a pandas DataFrame.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cif_block: The CIF block to convert.</span>
+<span class="sd">        category: The category name to extract.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        DataFrame containing the category data, or None if category doesn&#39;t exist.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">category_to_dict</span><span class="p">(</span><span class="n">cif_block</span><span class="p">,</span> <span class="n">category</span><span class="p">))</span> <span class="k">if</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">cif_block</span> <span class="k">else</span> <span class="kc">None</span></div>
 
 
@@ -428,7 +435,15 @@
 <div class="viewcode-block" id="category_to_dict">
 <a class="viewcode-back" href="../../../../io/transforms/categories.html#atomworks.io.transforms.categories.category_to_dict">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">category_to_dict</span><span class="p">(</span><span class="n">cif_block</span><span class="p">:</span> <span class="n">CIFBlock</span><span class="p">,</span> <span class="n">category</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a CIF block to a dictionary.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a CIF block to a dictionary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cif_block: The CIF block to convert.</span>
+<span class="sd">        category: The category name to extract.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dictionary containing the category data as numpy arrays.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">cif_block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">category</span><span class="p">)):</span>
         <span class="k">return</span> <span class="n">toolz</span><span class="o">.</span><span class="n">valmap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">as_array</span><span class="p">(),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">cif_block</span><span class="p">[</span><span class="n">category</span><span class="p">]))</span>
     <span class="k">else</span><span class="p">:</span>
@@ -711,7 +726,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract ligand of interest information from a CIF block.</span>
 
 <span class="sd">    Reference:</span>
-<span class="sd">        - https://pdb101.rcsb.org/learn/guide-to-understanding-pdb-data/small-molecule-ligands</span>
+<span class="sd">        `PDB101 Small Molecule Ligands Guide &lt;https://pdb101.rcsb.org/learn/guide-to-understanding-pdb-data/small-molecule-ligands&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Extract binary flag for whether the ligand of interest is specified</span>
     <span class="c1"># NOTE: This is being used in addition to the below as it has slightly higher coverage across the PDB</span>

@@ -513,7 +513,7 @@
 <span class="sd">    In particular, this function adds the following information to the chain_info_dict:</span>
 <span class="sd">        - The RCSB entity ID for each chain (e.g., 1, 2, 3, etc.), if present in the AtomArray (under the entity_id atom site label)</span>
 <span class="sd">        - The unprocessed one-letter entity canonical and non-canonical sequences.</span>
-<span class="sd">        - (OptionallyA boolean flag indicating whether the chain is a polymer.</span>
+<span class="sd">        - (Optionally) A boolean flag indicating whether the chain is a polymer.</span>
 <span class="sd">        - (Optionally) The chain type as an IntEnum (e.g., polypeptide(L), non-polymer, etc.)</span>
 <span class="sd">        - (Optionally) The residue IDs and residue names, inferred from the AtomArray.</span>
 
@@ -540,8 +540,12 @@
     <span class="n">res_names</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span><span class="p">[</span><span class="n">_res_starts</span><span class="p">]</span>
     <span class="n">hetero</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">hetero</span><span class="p">[</span><span class="n">_res_starts</span><span class="p">]</span>
 
-    <span class="c1"># Loop through chains</span>
     <span class="k">for</span> <span class="n">chain_identifier</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">chain_identifiers</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">chain_identifier</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Chain identifier is empty! Please ensure that in your input file, each chain has a unique identifier (e.g., `label_asym_id` in a CIF file cannot be &quot;&quot;).&#39;</span>
+            <span class="p">)</span>
+
         <span class="n">is_in_chain</span> <span class="o">=</span> <span class="n">chain_identifiers</span> <span class="o">==</span> <span class="n">chain_identifier</span>
         <span class="n">seq</span> <span class="o">=</span> <span class="n">res_names</span><span class="p">[</span><span class="n">is_in_chain</span><span class="p">]</span>
 

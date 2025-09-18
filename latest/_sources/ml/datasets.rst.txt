@@ -1,7 +1,7 @@
 Datasets
 ========
 
-This module contains dataset classes and utilities for loading and processing molecular data.
+This module contains dataset classes and utilities for loading and processing molecular data using a modern, composable architecture.
 
 Core Dataset Classes
 --------------------
@@ -11,10 +11,19 @@ Core Dataset Classes
    :undoc-members:
    :show-inheritance:
 
-Parsers
--------
+Functional Loaders
+------------------
 
-.. automodule:: atomworks.ml.datasets.parsers
+.. automodule:: atomworks.ml.datasets.loaders
    :members:
    :undoc-members:
-   :show-inheritance: 
+   :show-inheritance:
+
+Dataset Architecture and Migration Guide
+----------------------------------------
+
+.. toctree::
+   :maxdepth: 2
+
+   datasets/datasets
+   datasets/parsers 

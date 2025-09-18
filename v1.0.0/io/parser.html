@@ -56,7 +56,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Tools" href="tools.html" />
-    <link rel="prev" title="enums" href="enums.html" />
+    <link rel="prev" title="IO" href="../io.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="1.0.0" />
@@ -345,10 +345,13 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">API Modules</span></p>
 <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../core.html">Core Modules</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../core/common.html">Common Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core/constants.html">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core/enums.html">Enumerations</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../io.html">IO</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="common.html">common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="constants.html">constants</a></li>
-<li class="toctree-l2"><a class="reference internal" href="enums.html">enums</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">parser</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="tools.html">Tools</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="tools/fasta.html">FASTA Tools</a></li>
@@ -377,19 +380,17 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../ml.html">ML</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../ml/common.html">Common Utilities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ml/enums.html">Enums</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../ml/encoding_definitions.html">Encoding Definitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../ml/samplers.html">Samplers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ml/datasets.html">Datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ml/datasets/parsers.html">Dataset Parsers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ml/preprocessing.html">Preprocessing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ml/preprocessing/utils.html">Preprocessing Utilities</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../ml/datasets.html">Datasets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../ml/datasets/datasets.html">Dataset Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ml/datasets/parsers.html">Dataset Parsers</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2"><a class="reference internal" href="../ml/pipelines.html">Pipelines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../ml/transforms.html">Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../ml/transforms/diffusion.html">Diffusion Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../ml/transforms/dna.html">DNA Transforms</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../ml/transforms/esm.html">ESM Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../ml/transforms/feature_aggregation.html">Feature Aggregation Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../ml/transforms/msa.html">MSA Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../ml/utils.html">Utilities</a></li>
@@ -458,9 +459,14 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="parser">
-<h1>parser<a class="headerlink" href="#parser" title="Link to this heading">#</a></h1>
-<p id="module-atomworks.io.parser">Entrypoint for parsing atomic-level structure files (e.g., PDB, CIF) into Biotite-compatible data structures.</p>
+  <section id="module-atomworks.io.parser">
+<span id="parser"></span><h1>parser<a class="headerlink" href="#module-atomworks.io.parser" title="Link to this heading">#</a></h1>
+<p>Entrypoint for parsing atomic-level structure files into Biotite-compatible data structures.</p>
+<p>This module provides functionality for parsing PDB, CIF, and other structure files
+into Biotite-compatible data structures with various processing options.</p>
+<p class="rubric">References</p>
+<p><a class="reference external" href="https://www.biotite-python.org/apidoc/biotite.structure.io.html">Biotite Structure I/O</a>
+<a class="reference external" href="https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/">mmCIF Format Specification</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="atomworks.io.parser.parse">
 <span class="sig-prename descclassname"><span class="pre">atomworks.io.parser.</span></span><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PathLike</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">StringIO</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">BytesIO</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'cif'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'pdb'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ccd_mirror_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PathLike</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PathLike</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_to_cache</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_from_cache</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_missing_atoms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_id_and_entity_annotations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_bond_types_from_struct_conn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">['covale']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_ccds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_waters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_ligands_at_symmetry_centers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_arginines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_formal_charges</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_bond_types</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert_mse_to_met</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hydrogen_policy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'keep'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'remove'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'infer'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'keep'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">build_assembly</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'first'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_cif_block</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/atomworks/io/parser.html#parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.parser.parse" title="Link to this definition">#</a></dt>
@@ -473,9 +479,9 @@
 </ul>
 </dd>
 <dt>We categorize arguments into two groups:</dt><dd><ul class="simple">
-<li><p>Wrapper arguments: Arguments that are used within the wrapping <cite>parse</cite> method (e.g., caching)</p></li>
+<li><p>Wrapper arguments: Arguments that are used within the wrapping parse method (e.g., caching)</p></li>
 <li><dl class="simple">
-<dt>CIF parsing arguments: Arguments that control structure parsing and are ultimately are passed</dt><dd><p>to the <cite>_parse_from_atom_array</cite> method (regardless of file type, we convert to an AtomArray before parsing)</p>
+<dt>CIF parsing arguments: Arguments that control structure parsing and are ultimately are passed</dt><dd><p>to the _parse_from_atom_array method (regardless of file type, we convert to an AtomArray before parsing)</p>
 </dd>
 </dl>
 </li>
@@ -486,14 +492,16 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filename</strong> (<em>PathLike</em><em> | </em><em>io.StringIO</em><em> | </em><em>io.BytesIO</em>) – Either a Path or buffer to the file. This may be any format of
-atomic-level structure (e.g. .cif, .bcif, .cif.gz, .pdb), although .cif files are <em>strongly</em> recommended.</p></li>
-<li><p><strong>***</strong> (<em>*** Parsing arguments</em>) – </p></li>
+atomic-level structure (e.g. .cif, .bcif, .cif.gz, .pdb), although .cif files are strongly recommended.</p></li>
+<li><p><strong>arguments</strong> (<em>**Parsing</em>) – <p><a href="#id1"><span class="problematic" id="id2">**</span></a></p>
+</p></li>
 <li><p><strong>file_type</strong> (<em>Literal</em><em>[</em><em>&quot;cif&quot;</em><em>, </em><em>&quot;pdb&quot;</em><em>] </em><em>| </em><em>None</em><em>, </em><em>optional</em>) – The file type of the structure file.
 If not provided, the file type will be inferred automatically.</p></li>
 <li><p><strong>load_from_cache</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to load pre-compiled results from cache. Defaults to False.</p></li>
 <li><p><strong>cache_dir</strong> (<em>PathLike</em><em>, </em><em>optional</em>) – Directory path to save pre-compiled results. Defaults to None.</p></li>
 <li><p><strong>save_to_cache</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to save the results to cache when building the structure. Defaults to False.</p></li>
-<li><p><strong>***</strong> – </p></li>
+<li><p><strong>arguments</strong> – <p><a href="#id3"><span class="problematic" id="id4">**</span></a></p>
+</p></li>
 <li><p><strong>ccd_mirror_path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the local mirror of the Chemical Component Dictionary (recommended).
 If not provided, Biotite’s built-in CCD will be used.</p></li>
 <li><p><strong>add_missing_atoms</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to add missing atoms to the
@@ -526,29 +534,31 @@ Defaults to all models (None).</p></li>
 <li><p><strong>build_assembly</strong> (<em>string</em><em>, </em><em>list</em><em>, or </em><em>tuple</em><em>, </em><em>optional</em>) – Specifies which assembly to build, if any. Options are None
 (e.g., asymmetric unit), “first”, “all”, or a list or tuple of assembly IDs. Defaults to “all”.</p></li>
 <li><p><strong>extra_fields</strong> (<em>list</em><em>, </em><em>optional</em>) – A list of extra fields to include in the AtomArrayStack. Defaults to None. “all” includes all fields.
-Only support mmCIF files.</p></li>
+Only supports mmCIF files.</p></li>
 <li><p><strong>keep_cif_block</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to keep the CIF block in the result. Defaults to False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><dl>
-<dt>A dictionary containing the following keys:</dt><dd><dl class="simple">
-<dt>chain_info: A dictionary mapping chain ID to sequence, type (as an IntEnum), RCSB entity,</dt><dd><p>EC number, and other information.</p>
-</dd>
-</dl>
-<p>ligand_info: A dictionary containing ligand of interest information.
-asym_unit: An AtomArrayStack instance representing the asymmetric unit.
-assemblies: A dictionary mapping assembly IDs to AtomArrayStack instances.
-metadata: A dictionary containing metadata about the structure</p>
+<dd class="field-even"><p><p>A dictionary containing the following keys:</p>
 <blockquote>
-<div><p>(e.g., resolution, deposition date, etc.).</p>
+<div><dl class="simple">
+<dt>chain_info</dt><dd><p>A dictionary mapping chain ID to sequence, type (as an IntEnum), RCSB entity,
+EC number, and other information.</p>
+</dd>
+<dt>ligand_info</dt><dd><p>A dictionary containing ligand of interest information.</p>
+</dd>
+<dt>asym_unit</dt><dd><p>An AtomArrayStack instance representing the asymmetric unit.</p>
+</dd>
+<dt>assemblies</dt><dd><p>A dictionary mapping assembly IDs to AtomArrayStack instances.</p>
+</dd>
+<dt>metadata</dt><dd><p>A dictionary containing metadata about the structure
+(e.g., resolution, deposition date, etc.).</p>
+</dd>
+<dt>extra_info</dt><dd><p>A dictionary with information for cross-compatibility and caching.
+Should typically not be used directly.</p>
+</dd>
+</dl>
 </div></blockquote>
-<dl class="simple">
-<dt>extra_info: A dictionary with information for cross-compatibility and caching.</dt><dd><p>Should typically not be used directly.</p>
-</dd>
-</dl>
-</dd>
-</dl>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -570,12 +580,12 @@ metadata: A dictionary containing metadata about the structure</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="enums.html"
+       href="../io.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">enums</p>
+        <p class="prev-next-title">IO</p>
       </div>
     </a>
     <a class="right-next"

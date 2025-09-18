@@ -389,9 +389,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for atomworks.io.utils.io_utils</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">General utility functions for working with CIF files in Biotite.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;General utility functions for working with CIF files in Biotite.&quot;&quot;&quot;</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;get_structure&quot;</span><span class="p">,</span> <span class="s2">&quot;load_any&quot;</span><span class="p">,</span> <span class="s2">&quot;read_any&quot;</span><span class="p">,</span> <span class="s2">&quot;to_cif_buffer&quot;</span><span class="p">,</span> <span class="s2">&quot;to_cif_file&quot;</span><span class="p">,</span> <span class="s2">&quot;to_cif_string&quot;</span><span class="p">]</span>
 
@@ -427,8 +425,10 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_logged_in_user</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get the logged in user.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the logged in user.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The username of the logged in user, or &quot;unknown_user&quot; if unavailable.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">getlogin</span><span class="p">()</span>
@@ -450,19 +450,20 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convenience function for loading a structure from a file or buffer.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        - file_or_buffer: Path to the file or buffer to load the structure from.</span>
-<span class="sd">        - file_type: Type of the file to load. If None, it will be inferred.</span>
-<span class="sd">        - extra_fields: List of extra fields to include as AtomArray annotations.</span>
+<span class="sd">        file_or_buffer: Path to the file or buffer to load the structure from.</span>
+<span class="sd">        file_type: Type of the file to load. If None, it will be inferred.</span>
+<span class="sd">        extra_fields: List of extra fields to include as AtomArray annotations.</span>
 <span class="sd">            If &quot;all&quot;, all fields in the &#39;atom_site&#39; category of the file will be included.</span>
-<span class="sd">        - include_bonds: Whether to include bonds in the structure.</span>
-<span class="sd">        - model: The model number to use for loading the structure. If None, all models will be loaded.</span>
-<span class="sd">        - altloc: The altloc ID to use for loading the structure.</span>
+<span class="sd">        include_bonds: Whether to include bonds in the structure.</span>
+<span class="sd">        model: The model number to use for loading the structure. If None, all models will be loaded.</span>
+<span class="sd">        altloc: The altloc ID to use for loading the structure.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        AtomArrayStack: The loaded structure with the specified fields and assumptions.</span>
+<span class="sd">        The loaded structure with the specified fields and assumptions.</span>
 
-<span class="sd">    Reference:</span>
-<span class="sd">        Biotite documentation (https://www.biotite-python.org/apidoc/biotite.structure.io.pdbx.get_structure.html#biotite.structure.io.pdbx.get_structure)</span>
+<span class="sd">    References:</span>
+<span class="sd">        `Biotite Structure I/O &lt;https://www.biotite-python.org/apidoc/biotite.structure.io.pdbx.get_structure.html#biotite.structure.io.pdbx.get_structure&gt;`_</span>
+<span class="sd">        `mmCIF Format Specification &lt;https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">file_obj</span> <span class="o">=</span> <span class="n">read_any</span><span class="p">(</span><span class="n">file_or_buffer</span><span class="p">,</span> <span class="n">file_type</span><span class="o">=</span><span class="n">file_type</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">get_structure</span><span class="p">(</span>
@@ -481,17 +482,17 @@
     <span class="n">add_bond_types_from_struct_conn</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;covale&quot;</span><span class="p">],</span>
     <span class="n">fix_bond_types</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Add bonds to the AtomArray and filter by a given altloc strategy.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add bonds to the AtomArray and filter by a given altloc strategy.</span>
+
 <span class="sd">    Avoids the issue where spurious bonds are added due to uninformative label_seq_ids.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        - atom_array: The AtomArray to add bonds to. Must contain `auth_seq_id` annotation.</span>
-<span class="sd">        - cif_block: The CIFBlock containing the structure data.</span>
-<span class="sd">        - add_bond_types_from_struct_conn (list, optional): A list of bond types to add to the structure</span>
+<span class="sd">        atom_array: The AtomArray to add bonds to. Must contain `auth_seq_id` annotation.</span>
+<span class="sd">        cif_block: The CIFBlock containing the structure data.</span>
+<span class="sd">        add_bond_types_from_struct_conn: A list of bond types to add to the structure</span>
 <span class="sd">            from the `struct_conn` category. Defaults to `[&quot;covale&quot;]`. This means that we will only</span>
 <span class="sd">            add covalent bonds to the structure (excluding metal coordination and disulfide bonds).</span>
-<span class="sd">        - fix_bond_types (bool, optional): Whether to correct for nucleophilic additions on atoms involved in inter-residue bonds.</span>
+<span class="sd">        fix_bond_types: Whether to correct for nucleophilic additions on atoms involved in inter-residue bonds.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        AtomArray | AtomArrayStack: The AtomArray or AtomArrayStack with bonds and filtered by altloc.</span>
@@ -605,7 +606,7 @@
 <span class="sd">        AtomArray | AtomArrayStack: The loaded structure with the specified fields and assumptions.</span>
 
 <span class="sd">    Reference:</span>
-<span class="sd">        Biotite documentation (https://www.biotite-python.org/apidoc/biotite.structure.io.pdbx.get_structure.html#biotite.structure.io.pdbx.get_structure)</span>
+<span class="sd">        `Biotite documentation &lt;https://www.biotite-python.org/apidoc/biotite.structure.io.pdbx.get_structure.html#biotite.structure.io.pdbx.get_structure&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tmp_altloc</span> <span class="o">=</span> <span class="n">altloc</span> <span class="k">if</span> <span class="n">altloc</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;first&quot;</span><span class="p">,</span> <span class="s2">&quot;occupancy&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">}</span> <span class="k">else</span> <span class="s2">&quot;all&quot;</span>
 
@@ -821,7 +822,7 @@
     <span class="n">entity_poly</span> <span class="o">=</span> <span class="p">{</span><span class="n">cat</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">_entity_poly_categories</span><span class="p">}</span>
     <span class="k">for</span> <span class="n">entity_id</span> <span class="ow">in</span> <span class="n">unique_polymer_entity_ids</span><span class="p">:</span>
         <span class="c1"># ... get all relevant chain ids</span>
-        <span class="n">chain_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">chain_ids</span><span class="p">[</span><span class="n">entity_ids</span> <span class="o">==</span> <span class="n">entity_id</span><span class="p">])</span>
+        <span class="n">example_chain_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">chain_ids</span><span class="p">[</span><span class="n">entity_ids</span> <span class="o">==</span> <span class="n">entity_id</span><span class="p">])</span>
 
         <span class="c1"># ... get chain type</span>
         <span class="n">chain_type</span> <span class="o">=</span> <span class="n">ChainType</span><span class="o">.</span><span class="n">as_enum</span><span class="p">(</span><span class="n">chain_types</span><span class="p">[</span><span class="n">entity_ids</span> <span class="o">==</span> <span class="n">entity_id</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
@@ -850,7 +851,7 @@
         <span class="n">entity_poly</span><span class="p">[</span><span class="s2">&quot;nstd_monomer&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;yes&quot;</span> <span class="k">if</span> <span class="n">has_non_standard_monomer</span> <span class="k">else</span> <span class="s2">&quot;no&quot;</span><span class="p">)</span>
         <span class="n">entity_poly</span><span class="p">[</span><span class="s2">&quot;pdbx_seq_one_letter_code&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">processed_entity_non_canonical_sequence</span><span class="p">)</span>
         <span class="n">entity_poly</span><span class="p">[</span><span class="s2">&quot;pdbx_seq_one_letter_code_can&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">processed_entity_canonical_sequence</span><span class="p">)</span>
-        <span class="n">entity_poly</span><span class="p">[</span><span class="s2">&quot;pdbx_strand_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chain_ids</span><span class="p">))</span>
+        <span class="n">entity_poly</span><span class="p">[</span><span class="s2">&quot;pdbx_strand_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">example_chain_ids</span><span class="p">))</span>
         <span class="n">entity_poly</span><span class="p">[</span><span class="s2">&quot;pdbx_target_identifier&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;?&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;entity_poly&quot;</span><span class="p">:</span> <span class="n">entity_poly</span><span class="p">}</span>
 
@@ -968,6 +969,12 @@
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">include_nan_coords</span><span class="p">:</span>
         <span class="n">structure</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">remove_nan_coords</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">include_bonds</span> <span class="ow">and</span> <span class="n">structure</span><span class="o">.</span><span class="n">bonds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># TODO: Switch to using the `convert_bond_type` method once we upgrade to Biotite v1.4.0</span>
+        <span class="c1"># structure.bonds.convert_bond_type(struc.bonds.BondType.COORDINATION, struc.bonds.BondType.SINGLE)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">_bonds</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">COORDINATION</span>
+        <span class="n">structure</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">_bonds</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span>
 
     <span class="n">pdbx</span><span class="o">.</span><span class="n">set_structure</span><span class="p">(</span><span class="n">cif_file</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">data_block</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">include_bonds</span><span class="o">=</span><span class="n">include_bonds</span><span class="p">,</span> <span class="n">extra_fields</span><span class="o">=</span><span class="n">extra_fields</span><span class="p">)</span>
 

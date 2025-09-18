@@ -36,7 +36,7 @@ I/O Utilities
    :show-inheritance:
 
 Miscellaneous Utilities
-----------------------
+-----------------------
 
 .. automodule:: atomworks.ml.utils.misc
    :members:
@@ -44,7 +44,7 @@ Miscellaneous Utilities
    :show-inheritance:
 
 Nested Dictionary Utilities
---------------------------
+---------------------------
 
 .. automodule:: atomworks.ml.utils.nested_dict
    :members:
@@ -60,7 +60,7 @@ NumPy Utilities
    :show-inheritance:
 
 Random Number Generation
------------------------
+------------------------
 
 .. automodule:: atomworks.ml.utils.rng
    :members:

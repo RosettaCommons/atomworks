@@ -484,7 +484,7 @@
 <span class="sd">        AssertionError: If the length of `bonded_atoms` is not 4.</span>
 
 <span class="sd">    Reference:</span>
-<span class="sd">     - RF2AA supplementary notes figure S1 (https://www.science.org/doi/10.1126/science.adl2528#supplementary-materials)</span>
+<span class="sd">        `RF2AA supplementary notes figure S1 &lt;https://www.science.org/doi/10.1126/science.adl2528#supplementary-materials&gt;`_</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; chiral_center = 1</span>
@@ -555,11 +555,13 @@
 
 <span class="sd">    NOTE: Each row of output features contains the indices of the plane pairs and the signed ideal</span>
 <span class="sd">        dihedral angle for each chiral center. For example, the entry:</span>
-<span class="sd">            `[c, i, j, k, angle]`</span>
-<span class="sd">        means that the atom at index `c` is a chiral center with atoms at indices `(i, j, k)` bonded</span>
-<span class="sd">        to it. The signed dihedral angle `angle` is the signed angle between the planes `(cij)` and</span>
-<span class="sd">        `(ijk)`. The sign of the angle determines the chirality of the chiral center.</span>
+<span class="sd">            [c, i, j, k, angle]</span>
+<span class="sd">        means that the atom at index c is a chiral center with atoms at indices (i, j, k) bonded</span>
+<span class="sd">        to it. The signed dihedral angle angle is the signed angle between the planes (cij) and</span>
+<span class="sd">        (ijk). The sign of the angle determines the chirality of the chiral center.</span>
+
 <span class="sd">    NOTE: Each chiral center will result in more than one feature. In particular:</span>
+
 <span class="sd">        - 3 features if one of the 4 atoms bonded to the chiral center is an implicit hydrogen (as</span>
 <span class="sd">            we do not look at any pair of planes where one plane contains an implicit hydrogen).</span>
 <span class="sd">        - 12 features if all 4 atoms bonded to the chiral center are explicit atoms.</span>
@@ -572,19 +574,19 @@
 <span class="sd">    network to iteratively refine predictions to match ideal tetrahedral geometry.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        chiral_centers (list[dict]): A list of dictionaries, of the form:</span>
+<span class="sd">        chiral_centers: A list of dictionaries, of the form:</span>
 <span class="sd">            {&quot;chiral_center_idx&quot;: int, &quot;bonded_explicit_atom_idxs&quot;: list[int]}</span>
-<span class="sd">            where `chiral_center_idx` is the index of the chiral center atom, and `bonded_explicit_atom_idxs`</span>
+<span class="sd">            where chiral_center_idx is the index of the chiral center atom, and bonded_explicit_atom_idxs</span>
 <span class="sd">            is a list of the indices of the atoms bonded to the chiral center (excluding implicit hydrogens).</span>
-<span class="sd">        coords (np.ndarray): A numpy array of atomic coordinates.</span>
-<span class="sd">        take_first_chiral_subordering (bool): If True, only the first subordering is considered (when four</span>
+<span class="sd">        coords: A numpy array of atomic coordinates.</span>
+<span class="sd">        take_first_chiral_subordering: If True, only the first subordering is considered (when four</span>
 <span class="sd">            bonded non-hydrogen atoms are present). If False, all orderings are considered (leading to</span>
 <span class="sd">            12 unique plane pairs in the case of 4 bonded atoms, or 3 unique plane pairs in the case of 3 bonded</span>
 <span class="sd">            atoms).</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        torch.Tensor: A tensor of shape [n_chirals, 5] where each row contains the indices of the plane pairs</span>
-<span class="sd">                      and the *signed* ideal dihedral angle for each chiral center. The sign of the dihedral</span>
+<span class="sd">        A tensor of shape [n_chirals, 5] where each row contains the indices of the plane pairs</span>
+<span class="sd">                      and the signed ideal dihedral angle for each chiral center. The sign of the dihedral</span>
 <span class="sd">                      angle determines the chirality of the chiral center (+1 for clockwise, -1 for counterclockwise).</span>
 <span class="sd">                      If no stereocenters are found, returns an empty tensor of shape [0, 5].</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -632,46 +634,43 @@
 <div class="viewcode-block" id="AddRF2AAChiralFeatures">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.chirals.AddRF2AAChiralFeatures">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AddRF2AAChiralFeatures</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    AddRF2AAChiralFeatures adds chiral features to the atom array data under the `&quot;chiral_feats&quot;` key.</span>
-<span class="sd">    Chiral centers are taken from `data[&quot;chiral_centers&quot;]`, which is a list of dictionaries, of the form:</span>
-<span class="sd">        {&quot;chiral_center_atom_id&quot;: int, &quot;bonded_explicit_atom_ids&quot;: list[int]}</span>
-<span class="sd">    This metadata can be added by running e.g. the `AddOpenBabelMoleculesForAtomizedMolecules` and</span>
-<span class="sd">    `GetChiralCentersFromOpenBabel` transforms.This transform also requires the `AtomizeByCCDName` transform</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;AddRF2AAChiralFeatures adds chiral features to the atom array data under the &quot;chiral_feats&quot; key.</span>
+
+<span class="sd">    Chiral centers are taken from data[&quot;chiral_centers&quot;], which is a list of dictionaries, of the form:</span>
+<span class="sd">    {&quot;chiral_center_atom_id&quot;: int, &quot;bonded_explicit_atom_ids&quot;: list[int]}</span>
+
+<span class="sd">    This metadata can be added by running e.g. the AddOpenBabelMoleculesForAtomizedMolecules and</span>
+<span class="sd">    GetChiralCentersFromOpenBabel transforms. This transform also requires the AtomizeByCCDName transform</span>
 <span class="sd">    to be applied previously to ensure the atom array is properly atomized.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        data (dict[str, Any]): A dictionary containing the input data, including the atom array and chiral centers.</span>
+<span class="sd">        data: A dictionary containing the input data, including the atom array and chiral centers.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        dict[str, Any]: The updated `data` dictionary with the added chiral features under the `&quot;chiral_feats&quot;` key.</span>
+<span class="sd">        The updated data dictionary with the added chiral features under the &quot;chiral_feats&quot; key.</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        data = {</span>
-<span class="sd">            &quot;atom_array&quot;: atom_array,</span>
-<span class="sd">            &quot;chiral_centers&quot;: [</span>
-<span class="sd">                {</span>
-<span class="sd">                    &quot;chiral_center_atom_id&quot;: 5,</span>
-<span class="sd">                    &quot;bonded_explicit_atom_ids&quot;: [1, 2, 3, 4]</span>
-<span class="sd">                },</span>
-<span class="sd">                {</span>
-<span class="sd">                    &quot;chiral_center_atom_id&quot;: 10,</span>
-<span class="sd">                    &quot;bonded_explicit_atom_ids&quot;: [6, 7, 8, 9]</span>
-<span class="sd">                }</span>
-<span class="sd">            ]</span>
-<span class="sd">        }</span>
+<span class="sd">        .. code-block:: python</span>
 
-<span class="sd">        transform = AddRF2AAChiralFeatures()</span>
-<span class="sd">        result = transform.forward(data)</span>
+<span class="sd">            data = {</span>
+<span class="sd">                &quot;atom_array&quot;: atom_array,</span>
+<span class="sd">                &quot;chiral_centers&quot;: [</span>
+<span class="sd">                    {&quot;chiral_center_atom_id&quot;: 5, &quot;bonded_explicit_atom_ids&quot;: [1, 2, 3, 4]},</span>
+<span class="sd">                    {&quot;chiral_center_atom_id&quot;: 10, &quot;bonded_explicit_atom_ids&quot;: [6, 7, 8, 9]},</span>
+<span class="sd">                ],</span>
+<span class="sd">            }</span>
 
-<span class="sd">        print(result[&quot;chiral_feats&quot;])</span>
-<span class="sd">        # Output might look like:</span>
-<span class="sd">        #  (assuming the atom_id s above also correspond to the indices in the atom array,</span>
-<span class="sd">        #   otherwise the first 4 columns look different as they are the indices in the atom array)</span>
-<span class="sd">        # tensor([[ 5.,  1.,  2.,  3.,  0.61546...],</span>
-<span class="sd">        #         [ 5.,  2.,  3.,  4., -0.61546...],</span>
-<span class="sd">        #         ...</span>
-<span class="sd">        #         [10.,  7.,  8.,  9., -0.61546...]])</span>
+<span class="sd">            transform = AddRF2AAChiralFeatures()</span>
+<span class="sd">            result = transform.forward(data)</span>
+
+<span class="sd">            print(result[&quot;chiral_feats&quot;])</span>
+<span class="sd">            # Output might look like:</span>
+<span class="sd">            #  (assuming the atom_id s above also correspond to the indices in the atom array,</span>
+<span class="sd">            #   otherwise the first 4 columns look different as they are the indices in the atom array)</span>
+<span class="sd">            # tensor([[ 5.,  1.,  2.,  3.,  0.61546...],</span>
+<span class="sd">            #         [ 5.,  2.,  3.,  4., -0.61546...],</span>
+<span class="sd">            #         ...</span>
+<span class="sd">            #         [10.,  7.,  8.,  9., -0.61546...]])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">requires_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AtomizeByCCDName&quot;</span><span class="p">]</span>
@@ -812,12 +811,14 @@
 <div class="viewcode-block" id="AddAF3ChiralFeatures">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.chirals.AddAF3ChiralFeatures">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AddAF3ChiralFeatures</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds chiral features into the `feats` dictionary.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds chiral features into the feats dictionary.</span>
 
 <span class="sd">    Adds the following features to the data dictionary under the &#39;feats&#39; key:</span>
-<span class="sd">        - chiral_feats: [N_chiral_centers, 5] A listing of chiral centers of the format:</span>
-<span class="sd">                  tensor([[ 5.,  1.,  2.,  3.,  0.61546...],...])</span>
-<span class="sd">          Here, the first 4 columns define atom indices of chiral center; the 5th is target dihedral</span>
+
+<span class="sd">        chiral_feats</span>
+<span class="sd">            [N_chiral_centers, 5] A listing of chiral centers of the format:</span>
+<span class="sd">            tensor([[ 5.,  1.,  2.,  3.,  0.61546...],...])</span>
+<span class="sd">            Here, the first 4 columns define atom indices of chiral center; the 5th is target dihedral</span>
 
 <span class="sd">    Metadata from GetRDKitChiralCenters, held in the &quot;chiral_centers&quot; key, is needed for this transform.</span>
 <span class="sd">    &quot;&quot;&quot;</span>

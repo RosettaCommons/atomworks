@@ -389,9 +389,9 @@
                 <article class="bd-article">
                   
   <h1>Source code for atomworks.io.transforms.atom_array</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Transforms operating predominantly on Biotite&#39;s `AtomArray` objects.</span>
-<span class="sd">These operations should take as input, and return, `AtomArray` objects.</span>
+<span></span><span class="sd">&quot;&quot;&quot;Transforms operating predominantly on Biotite&#39;s AtomArray objects.</span>
+
+<span class="sd">These operations should take as input, and return, AtomArray objects.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
@@ -425,7 +425,15 @@
 <div class="viewcode-block" id="subset_atom_array">
 <a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.subset_atom_array">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">subset_atom_array</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">,</span> <span class="n">keep</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Subsets an AtomArray or AtomArrayStack by a boolean mask.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Subsets an AtomArray or AtomArrayStack by a boolean mask.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atom_array: The AtomArray or AtomArrayStack to subset.</span>
+<span class="sd">        keep: Boolean mask indicating which atoms to keep.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The subsetted AtomArray or AtomArrayStack.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">AtomArrayStack</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">atom_array</span><span class="p">[:,</span> <span class="n">keep</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
@@ -436,7 +444,14 @@
 <div class="viewcode-block" id="is_any_coord_nan">
 <a class="viewcode-back" href="../../../../io/transforms/atom_array.html#atomworks.io.transforms.atom_array.is_any_coord_nan">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_any_coord_nan</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a boolean mask of shape [n_atoms] indicating whether any coordinate is NaN for each atom in the AtomArray or AtomArrayStack.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a boolean mask indicating whether any coordinate is NaN for each atom.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atom_array: The AtomArray or AtomArrayStack to check.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Boolean mask of shape [n_atoms] indicating NaN coordinates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">AtomArrayStack</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>

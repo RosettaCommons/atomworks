@@ -55,8 +55,8 @@
         </script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Preprocessing" href="../preprocessing.html" />
-    <link rel="prev" title="Datasets" href="../datasets.html" />
+    <link rel="next" title="Pipelines" href="../pipelines.html" />
+    <link rel="prev" title="Dataset Architecture" href="datasets.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="1.0.0" />
@@ -345,10 +345,13 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">API Modules</span></p>
 <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../core.html">Core Modules</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../core/common.html">Common Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../core/constants.html">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../core/enums.html">Enumerations</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../io.html">IO</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../io/common.html">common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../io/constants.html">constants</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../io/enums.html">enums</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../io/parser.html">parser</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../io/tools.html">Tools</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../io/tools/fasta.html">FASTA Tools</a></li>
@@ -377,19 +380,17 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../../ml.html">ML</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../common.html">Common Utilities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../enums.html">Enums</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../encoding_definitions.html">Encoding Definitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../samplers.html">Samplers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets.html">Datasets</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Dataset Parsers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../preprocessing.html">Preprocessing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../preprocessing/utils.html">Preprocessing Utilities</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="../datasets.html">Datasets</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="datasets.html">Dataset Architecture</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Dataset Parsers</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2"><a class="reference internal" href="../pipelines.html">Pipelines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../transforms.html">Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../transforms/diffusion.html">Diffusion Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../transforms/dna.html">DNA Transforms</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../transforms/esm.html">ESM Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../transforms/feature_aggregation.html">Feature Aggregation Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../transforms/msa.html">MSA Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
@@ -441,6 +442,9 @@
     
     <li class="breadcrumb-item"><a href="../../ml.html" class="nav-link">ML</a></li>
     
+    
+    <li class="breadcrumb-item"><a href="../datasets.html" class="nav-link">Datasets</a></li>
+    
     <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Dataset Parsers</span></li>
   </ul>
 </nav>
@@ -458,14 +462,11 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="dataset-parsers">
-<h1>Dataset Parsers<a class="headerlink" href="#dataset-parsers" title="Link to this heading">#</a></h1>
-<p>This module contains parsers for different types of dataset metadata and structures.</p>
-<section id="module-atomworks.ml.datasets.parsers.base">
-<span id="base-parser"></span><h2>Base Parser<a class="headerlink" href="#module-atomworks.ml.datasets.parsers.base" title="Link to this heading">#</a></h2>
-<dl class="py data">
-<dt class="sig sig-object py" id="atomworks.ml.datasets.parsers.base.DEFAULT_CIF_PARSER_ARGS">
-<span class="sig-prename descclassname"><span class="pre">atomworks.ml.datasets.parsers.base.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_CIF_PARSER_ARGS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'add_bond_types_from_struct_conn':</span> <span class="pre">['covale'],</span> <span class="pre">'add_id_and_entity_annotations':</span> <span class="pre">True,</span> <span class="pre">'add_missing_atoms':</span> <span class="pre">True,</span> <span class="pre">'convert_mse_to_met':</span> <span class="pre">True,</span> <span class="pre">'fix_arginines':</span> <span class="pre">True,</span> <span class="pre">'fix_ligands_at_symmetry_centers':</span> <span class="pre">True,</span> <span class="pre">'hydrogen_policy':</span> <span class="pre">'remove',</span> <span class="pre">'model':</span> <span class="pre">None,</span> <span class="pre">'remove_ccds':</span> <span class="pre">['SO4',</span> <span class="pre">'GOL',</span> <span class="pre">'EDO',</span> <span class="pre">'PO4',</span> <span class="pre">'ACT',</span> <span class="pre">'PEG',</span> <span class="pre">'DMS',</span> <span class="pre">'TRS',</span> <span class="pre">'PGE',</span> <span class="pre">'PG4',</span> <span class="pre">'FMT',</span> <span class="pre">'EPE',</span> <span class="pre">'MPD',</span> <span class="pre">'MES',</span> <span class="pre">'CD',</span> <span class="pre">'IOD'],</span> <span class="pre">'remove_waters':</span> <span class="pre">True}</span></em><a class="headerlink" href="#atomworks.ml.datasets.parsers.base.DEFAULT_CIF_PARSER_ARGS" title="Link to this definition">#</a></dt>
+  <section id="module-atomworks.ml.datasets.parsers">
+<span id="dataset-parsers"></span><h1>Dataset Parsers<a class="headerlink" href="#module-atomworks.ml.datasets.parsers" title="Link to this heading">#</a></h1>
+<dl class="py data" id="module-atomworks.ml.datasets.parsers.base">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.parsers.base.DEFAULT_PARSER_ARGS">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.datasets.parsers.base.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_PARSER_ARGS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'add_bond_types_from_struct_conn':</span> <span class="pre">['covale'],</span> <span class="pre">'add_id_and_entity_annotations':</span> <span class="pre">True,</span> <span class="pre">'add_missing_atoms':</span> <span class="pre">True,</span> <span class="pre">'convert_mse_to_met':</span> <span class="pre">True,</span> <span class="pre">'fix_arginines':</span> <span class="pre">True,</span> <span class="pre">'fix_bond_types':</span> <span class="pre">True,</span> <span class="pre">'fix_formal_charges':</span> <span class="pre">True,</span> <span class="pre">'fix_ligands_at_symmetry_centers':</span> <span class="pre">True,</span> <span class="pre">'hydrogen_policy':</span> <span class="pre">'remove',</span> <span class="pre">'model':</span> <span class="pre">None,</span> <span class="pre">'remove_ccds':</span> <span class="pre">['SO4',</span> <span class="pre">'GOL',</span> <span class="pre">'EDO',</span> <span class="pre">'PO4',</span> <span class="pre">'ACT',</span> <span class="pre">'PEG',</span> <span class="pre">'DMS',</span> <span class="pre">'TRS',</span> <span class="pre">'PGE',</span> <span class="pre">'PG4',</span> <span class="pre">'FMT',</span> <span class="pre">'EPE',</span> <span class="pre">'MPD',</span> <span class="pre">'MES',</span> <span class="pre">'CD',</span> <span class="pre">'IOD'],</span> <span class="pre">'remove_waters':</span> <span class="pre">True}</span></em><a class="headerlink" href="#atomworks.ml.datasets.parsers.base.DEFAULT_PARSER_ARGS" title="Link to this definition">#</a></dt>
 <dd><p>Default cif parser arguments for <cite>atomworks.io.parse</cite>.
 This dictionary exists to provide a convenient import for the default parameters.</p>
 </dd></dl>
@@ -542,9 +543,6 @@ and CIF parser arguments.</p>
 </dl>
 </dd></dl>
 
-</section>
-<section id="custom-metadata-parsers">
-<h2>Custom Metadata Parsers<a class="headerlink" href="#custom-metadata-parsers" title="Link to this heading">#</a></h2>
 <p id="module-atomworks.ml.datasets.parsers.custom_metadata_row_parsers">Row parser for non-standard metadata dataframes</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="atomworks.ml.datasets.parsers.custom_metadata_row_parsers.AF2FB_DistillationParser">
@@ -601,10 +599,129 @@ in the <cite>af2_distillation_facebook.parquet</cite> dataframe.</p>
 </dl>
 </dd></dl>
 
-</section>
-<section id="default-metadata-parsers">
-<h2>Default Metadata Parsers<a class="headerlink" href="#default-metadata-parsers" title="Link to this heading">#</a></h2>
-</section>
+<p id="module-atomworks.ml.datasets.parsers.default_metadata_row_parsers">MetadataRowParser implementations for chain- and interface-based datasets.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.parsers.default_metadata_row_parsers.GenericDFParser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.ml.datasets.parsers.default_metadata_row_parsers.</span></span><span class="sig-name descname"><span class="pre">GenericDFParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">example_id_colname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'example_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_colname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'path'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pn_unit_iid_colnames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assembly_id_colname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/parsers/default_metadata_row_parsers.html#GenericDFParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.parsers.default_metadata_row_parsers.GenericDFParser" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#atomworks.ml.datasets.parsers.base.MetadataRowParser" title="atomworks.ml.datasets.parsers.base.MetadataRowParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetadataRowParser</span></code></a></p>
+<p>Generic dataframe parser for training or validation dataframes.</p>
+<p>We parse an input row (e.g., a Pandas Series) and return a dictionary containing pertinent information for the Transform pipeline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>example_id_colname</strong> – Name of the column containing a unique identifier for each example (across ALL datasets, not just this dataset).
+By convention, the columns values should be generated with <code class="docutils literal notranslate"><span class="pre">atomworks.ml.common.generate_example_id</span></code>. Default: “example_id”</p></li>
+<li><p><strong>path_colname</strong> – Name of the column containing paths (relative or absolute) to the relevant structure files. Default: “path”</p></li>
+<li><p><strong>pn_unit_iid_colnames</strong> – The name(s) of the column(s) containing the CIFUtils pn_unit_iid(s); used for cropping.
+If given as a list, should contain one element for a monomers dataset and two for an interfaces dataset.
+Default: None (crop randomly)</p></li>
+<li><p><strong>assembly_id_colname</strong> – Optional parameter giving the name of the column containing the assembly ID.
+If None, the assembly ID will be set to “1” for all examples. Default: None</p></li>
+<li><p><strong>base_path</strong> – The base path to the files, if not included in the path.</p></li>
+<li><p><strong>extension</strong> – The file extension of the structure files, if not included in the path.</p></li>
+<li><p><strong>attrs</strong> – Additional attributes to be merged with the dataframe-level attributes stored in the DF (if present). Attributes
+in this dictionary will take precedence over those in the dataset-level attributes and will be returned in the “extra_info” key.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A dictionary containing:</p>
+<blockquote>
+<div><dl>
+<dt>example_id</dt><dd><p>The unique identifier for the example. Must be unique across all datasets.</p>
+</dd>
+<dt>path</dt><dd><p>The composed path to the structure file, including the base path and extension if specified.</p>
+</dd>
+<dt>query_pn_unit_iids</dt><dd><p>The pn_unit_iid(s) that inform where to crop the structure.
+During TRAINING, we typically want to specify the chain(s) or interface at which to center our crop. If not given (i.e., None),
+then we will crop the structure at a random location, if a crop is required.
+During VALIDATION, then we do not crop, and query_pn_unit_iids should be None.</p>
+</dd>
+<dt>assembly_id</dt><dd><p>The assembly ID. Used to load the correct assembly from the CIF file. If not given, the assembly ID will be set to “1”.</p>
+</dd>
+<dt>extra_info</dt><dd><p>A dictionary containing all additional information that should be passed to the Transform pipeline. Contains, in order of precedence:</p>
+<ul class="simple">
+<li><p>Any additional key-value pairs specified by the <code class="docutils literal notranslate"><span class="pre">attrs</span></code> parameter</p></li>
+<li><p>All unused dataframe columns (i.e., those not used for example_id, path, query_pn_unit_iids, or assembly_id)</p></li>
+<li><p>Dataset-level attributes (if present), found in the <code class="docutils literal notranslate"><span class="pre">attrs</span></code> attribute of the Dataframe (or Series)</p></li>
+</ul>
+<p>For example, the “extra_info” key could contain information about which chain(s) to score during validation, metadata for specific metrics, etc.</p>
+</dd>
+</dl>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We must avoid duplication of interfaces due to order inversion. If not using the preprocessing
+scripts in <code class="docutils literal notranslate"><span class="pre">atomworks.ml</span></code>, ensure that the interfaces dataframe has been checked for duplicates.
+For example, [A, B] and [B, A] should be considered the same interface.</p>
+</div>
+<p class="rubric">Example</p>
+<p>Example dataframe:
+example_id                      path                      pn_unit_1_iid  pn_unit_2_iid
+{[‘my-dataset’]}{ex_1}{1}{[A_1,B_1]}  /path/to/structure_1.cif  A_1            B_1
+{[‘my-dataset’]}{ex_2}{2}{[C_1,B_1]}  /path/to/structure_2.cif  C_1            B_1</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.parsers.default_metadata_row_parsers.InterfacesDFParser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.ml.datasets.parsers.default_metadata_row_parsers.</span></span><span class="sig-name descname"><span class="pre">InterfacesDFParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_extension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.cif.gz'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'{base_dir}/{pdb_id[1:3]}/{pdb_id}{file_extension}'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/parsers/default_metadata_row_parsers.html#InterfacesDFParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.parsers.default_metadata_row_parsers.InterfacesDFParser" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#atomworks.ml.datasets.parsers.base.MetadataRowParser" title="atomworks.ml.datasets.parsers.base.MetadataRowParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetadataRowParser</span></code></a></p>
+<p>Parser for interfaces DataFrame rows.</p>
+<dl class="simple">
+<dt>In addition to standard fields (example_id, path), this parser also includes:</dt><dd><ul class="simple">
+<li><p>The two query pn_unit instance IDs, as a list, which are used to sample the interface during cropping.</p></li>
+<li><p>The assembly ID, which is used to load the correct assembly from the CIF file.</p></li>
+<li><p>Any extra information from the DataFrame, which is stored in the <cite>extra_info</cite> field.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.parsers.default_metadata_row_parsers.PNUnitsDFParser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.ml.datasets.parsers.default_metadata_row_parsers.</span></span><span class="sig-name descname"><span class="pre">PNUnitsDFParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_extension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.cif.gz'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'{base_dir}/{pdb_id[1:3]}/{pdb_id}{file_extension}'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/parsers/default_metadata_row_parsers.html#PNUnitsDFParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.parsers.default_metadata_row_parsers.PNUnitsDFParser" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#atomworks.ml.datasets.parsers.base.MetadataRowParser" title="atomworks.ml.datasets.parsers.base.MetadataRowParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetadataRowParser</span></code></a></p>
+<p>Parser for pn_units DataFrame rows.</p>
+<dl class="simple">
+<dt>In addition to standard fields (example_id, path), this parser also includes:</dt><dd><ul class="simple">
+<li><p>The query pn_unit instance ID, which is used to center the crop.</p></li>
+<li><p>The assembly ID, which is used to load the correct assembly from the CIF file.</p></li>
+<li><p>Any extra information from the DataFrame, which is stored in the <cite>extra_info</cite> field.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.parsers.default_metadata_row_parsers.build_path_from_template">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.datasets.parsers.default_metadata_row_parsers.</span></span><span class="sig-name descname"><span class="pre">build_path_from_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/parsers/default_metadata_row_parsers.html#build_path_from_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.parsers.default_metadata_row_parsers.build_path_from_template" title="Link to this definition">#</a></dt>
+<dd><p>Build a path using a template string with variable substitution and slicing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_template</strong> – Template string with {var} and {var[start:end]} patterns</p></li>
+<li><p><strong>**kwargs</strong> – Variables to substitute</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">build_path_from_template</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{base_dir}</span><span class="s2">/</span><span class="si">{pdb_id[1:3]}</span><span class="s2">/</span><span class="si">{pdb_id}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">base_dir</span><span class="o">=</span><span class="s2">&quot;/data&quot;</span><span class="p">,</span> <span class="n">pdb_id</span><span class="o">=</span><span class="s2">&quot;3usg&quot;</span><span class="p">)</span>
+<span class="go">Path(&quot;/data/us/3usg&quot;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.parsers.default_metadata_row_parsers.find_existing_file_path">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.datasets.parsers.default_metadata_row_parsers.</span></span><span class="sig-name descname"><span class="pre">find_existing_file_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_dirs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_extensions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_templates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pdb_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/parsers/default_metadata_row_parsers.html#find_existing_file_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.parsers.default_metadata_row_parsers.find_existing_file_path" title="Link to this definition">#</a></dt>
+<dd><p>Find the first existing file path by trying corresponding base_dirs, file_extensions, and path_templates in order.</p>
+</dd></dl>
+
 </section>
 
 
@@ -618,20 +735,20 @@ in the <cite>af2_distillation_facebook.parquet</cite> dataframe.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../datasets.html"
+       href="datasets.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Datasets</p>
+        <p class="prev-next-title">Dataset Architecture</p>
       </div>
     </a>
     <a class="right-next"
-       href="../preprocessing.html"
+       href="../pipelines.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Preprocessing</p>
+        <p class="prev-next-title">Pipelines</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -654,23 +771,21 @@ in the <cite>af2_distillation_facebook.parquet</cite> dataframe.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-atomworks.ml.datasets.parsers.base">Base Parser</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.parsers.base.DEFAULT_CIF_PARSER_ARGS"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CIF_PARSER_ARGS</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.parsers.base.MetadataRowParser"><code class="docutils literal notranslate"><span class="pre">MetadataRowParser</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.parsers.base.MetadataRowParser.parse"><code class="docutils literal notranslate"><span class="pre">MetadataRowParser.parse()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.parsers.base.MetadataRowParser.required_schema"><code class="docutils literal notranslate"><span class="pre">MetadataRowParser.required_schema</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.parsers.base.MetadataRowParser.validate_output"><code class="docutils literal notranslate"><span class="pre">MetadataRowParser.validate_output()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.parsers.base.DEFAULT_PARSER_ARGS"><code class="docutils literal notranslate"><span class="pre">DEFAULT_PARSER_ARGS</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.parsers.base.MetadataRowParser"><code class="docutils literal notranslate"><span class="pre">MetadataRowParser</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.parsers.base.MetadataRowParser.parse"><code class="docutils literal notranslate"><span class="pre">MetadataRowParser.parse()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.parsers.base.MetadataRowParser.required_schema"><code class="docutils literal notranslate"><span class="pre">MetadataRowParser.required_schema</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.parsers.base.MetadataRowParser.validate_output"><code class="docutils literal notranslate"><span class="pre">MetadataRowParser.validate_output()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.parsers.base.load_example_from_metadata_row"><code class="docutils literal notranslate"><span class="pre">load_example_from_metadata_row()</span></code></a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-metadata-parsers">Custom Metadata Parsers</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.parsers.custom_metadata_row_parsers.AF2FB_DistillationParser"><code class="docutils literal notranslate"><span class="pre">AF2FB_DistillationParser</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.parsers.custom_metadata_row_parsers.ValidationDFParserLikeAF3"><code class="docutils literal notranslate"><span class="pre">ValidationDFParserLikeAF3</span></code></a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#default-metadata-parsers">Default Metadata Parsers</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.parsers.base.load_example_from_metadata_row"><code class="docutils literal notranslate"><span class="pre">load_example_from_metadata_row()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.parsers.custom_metadata_row_parsers.AF2FB_DistillationParser"><code class="docutils literal notranslate"><span class="pre">AF2FB_DistillationParser</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.parsers.custom_metadata_row_parsers.ValidationDFParserLikeAF3"><code class="docutils literal notranslate"><span class="pre">ValidationDFParserLikeAF3</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.parsers.default_metadata_row_parsers.GenericDFParser"><code class="docutils literal notranslate"><span class="pre">GenericDFParser</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.parsers.default_metadata_row_parsers.InterfacesDFParser"><code class="docutils literal notranslate"><span class="pre">InterfacesDFParser</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.parsers.default_metadata_row_parsers.PNUnitsDFParser"><code class="docutils literal notranslate"><span class="pre">PNUnitsDFParser</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.parsers.default_metadata_row_parsers.build_path_from_template"><code class="docutils literal notranslate"><span class="pre">build_path_from_template()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.parsers.default_metadata_row_parsers.find_existing_file_path"><code class="docutils literal notranslate"><span class="pre">find_existing_file_path()</span></code></a></li>
 </ul>
   </nav></div>
 

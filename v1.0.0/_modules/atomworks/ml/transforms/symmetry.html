@@ -430,44 +430,45 @@
 <div class="viewcode-block" id="apply_automorphs">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.symmetry.apply_automorphs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">apply_automorphs</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">automorphs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create data permutations of the input data for each of the automorphs.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create data permutations of the input data for each of the automorphs.</span>
 
-<span class="sd">    This function generates permutations of the input tensor `data` based on the provided automorphisms.</span>
+<span class="sd">    This function generates permutations of the input tensor data based on the provided automorphisms.</span>
 <span class="sd">    Each permutation corresponds to a different automorphism, effectively reordering the data according</span>
 <span class="sd">    to the automorphisms.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        - data (torch.Tensor): The input tensor to be permuted. The first dimension has to correspond to</span>
+<span class="sd">        data: The input tensor to be permuted. The first dimension has to correspond to</span>
 <span class="sd">            the number of atoms.</span>
-<span class="sd">        - automorphs (np.ndarray | torch.Tensor): A tensor or numpy array of shape [n_automorphs, n_atoms, 2]</span>
+<span class="sd">        automorphs: A tensor or numpy array of shape [n_automorphs, n_atoms, 2]</span>
 <span class="sd">            representing the automorphisms. Each automorphism is a list of paired atom indices</span>
-<span class="sd">            (from_idx, to_idx). The `from_idx` column is essentially just a repetition of np.arange(n_atoms).</span>
+<span class="sd">            (from_idx, to_idx). The from_idx column is essentially just a repetition of np.arange(n_atoms).</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        - data_automorphs (torch.Tensor): A tensor of shape [n_automorphs, *data.shape] containing the permuted</span>
+<span class="sd">        A tensor of shape [n_automorphs, ``*data.shape``] containing the permuted</span>
 <span class="sd">            data for each automorphism.</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; data = torch.tensor([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]])</span>
-<span class="sd">        &gt;&gt;&gt; # Example automorphisms (2 automorphisms for 3 atoms)</span>
-<span class="sd">        &gt;&gt;&gt; automorphs = np.array([</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            data = torch.tensor([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]])</span>
+<span class="sd">            # Example automorphisms (2 automorphisms for 3 atoms)</span>
+<span class="sd">            automorphs = np.array([</span>
 <span class="sd">                [[0, 0],</span>
 <span class="sd">                 [1, 1],</span>
 <span class="sd">                 [2, 2]],</span>
 <span class="sd">                [[0, 2],</span>
 <span class="sd">                 [1, 0],</span>
 <span class="sd">                 [2, 1]]</span>
-<span class="sd">        ... ])</span>
-<span class="sd">        &gt;&gt;&gt; permuted_data = create_automorph_permutations(data, automorphs)</span>
-<span class="sd">        &gt;&gt;&gt; print(permuted_data)</span>
-<span class="sd">        tensor([[[1.0, 2.0],</span>
-<span class="sd">                 [3.0, 4.0],</span>
-<span class="sd">                 [5.0, 6.0]],</span>
-
-<span class="sd">                [[5.0, 6.0],</span>
-<span class="sd">                 [1.0, 2.0],</span>
-<span class="sd">                 [3.0, 4.0]]])</span>
+<span class="sd">            ... ])</span>
+<span class="sd">            permuted_data = create_automorph_permutations(data, automorphs)</span>
+<span class="sd">            print(permuted_data)</span>
+<span class="sd">            # tensor([[[1.0, 2.0],</span>
+<span class="sd">            #          [3.0, 4.0],</span>
+<span class="sd">            #          [5.0, 6.0]],</span>
+<span class="sd">            #</span>
+<span class="sd">            #         [[5.0, 6.0],</span>
+<span class="sd">            #          [1.0, 2.0],</span>
+<span class="sd">            #          [3.0, 4.0]]])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">automorphs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">automorphs</span><span class="p">)</span>
     <span class="n">n_automorphs</span><span class="p">,</span> <span class="n">n_atoms</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">automorphs</span><span class="o">.</span><span class="n">shape</span>
@@ -946,33 +947,33 @@
         <span class="n">post_poly_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
         <span class="n">crop_tmask</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Handles polymer symmetries by computing all swaps between isomorphic (i.e., equivalent) polymers</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handles polymer symmetries by computing all swaps between isomorphic (i.e., equivalent) polymers</span>
 <span class="sd">        that are at least partially in the crop.</span>
 
 <span class="sd">        NOTE: This function only swaps full chains. Swaps within atoms of a polymer (e.g., residue</span>
 <span class="sd">        naming ambiguities) are not considered and are handled elsewhere.</span>
 
 <span class="sd">        The process involves the following steps:</span>
+
 <span class="sd">        1. Subset the crop mask and pre-cropped atom array to only include polymers that are at least</span>
 <span class="sd">           partially in the crop.</span>
 <span class="sd">        2. Among these, identify polymers that are equal to each other (i.e., symmetry groups).</span>
 <span class="sd">        3. Generate all possible combinations of in-group permutations (isomorphisms).</span>
-<span class="sd">        3. Apply these isomorphisms to the coordinates and masks of the pre-cropped, encoded polymers.</span>
-<span class="sd">        4. Crop to the relevant bits that appear in the crop.</span>
-<span class="sd">        5. De-duplicate the isomorphisms to remove any redundancies.</span>
+<span class="sd">        4. Apply these isomorphisms to the coordinates and masks of the pre-cropped, encoded polymers.</span>
+<span class="sd">        5. Crop to the relevant bits that appear in the crop.</span>
+<span class="sd">        6. De-duplicate the isomorphisms to remove any redundancies.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            - pre_poly_array (AtomArray): The atom array representing the state before cropping,</span>
+<span class="sd">            pre_poly_array: The atom array representing the state before cropping,</span>
 <span class="sd">              containing polymer tokens.</span>
-<span class="sd">            - post_poly_array (AtomArray): The atom array representing the state after cropping,</span>
+<span class="sd">            post_poly_array: The atom array representing the state after cropping,</span>
 <span class="sd">              containing polymer tokens.</span>
-<span class="sd">            - crop_tmask (np.ndarray): A boolean mask indicating which tokens are included in the crop.</span>
+<span class="sd">            crop_tmask: A boolean mask indicating which tokens are included in the crop.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            - poly_xyz (torch.Tensor): The xyz coordinates of the polymers after applying the isomorphisms.</span>
+<span class="sd">            poly_xyz: The xyz coordinates of the polymers after applying the isomorphisms.</span>
 <span class="sd">                It has shape [n_permutations, n_crop_tokens, n_atoms_per_token, 3].</span>
-<span class="sd">            - poly_mask (torch.Tensor): The mask of the polymers after applying the isomorphisms.</span>
+<span class="sd">            poly_mask: The mask of the polymers after applying the isomorphisms.</span>
 <span class="sd">                It has shape [n_permutations, n_crop_tokens, n_atoms_per_token].</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># NOTATION: a = atom-level, t = token-level, tidx = token-level index, tmask = token-level mask</span>
@@ -1057,21 +1058,21 @@
         <span class="n">crop_tmask</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">openbabel_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Handles non-polymer symmetries by computing automorphs within each non-polymer that</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handles non-polymer symmetries by computing automorphs within each non-polymer that</span>
 <span class="sd">        is at least partially in the crop.</span>
 
 <span class="sd">        This function calculates the swapped coordinate and mask values for each molecule and</span>
-<span class="sd">        concatenates all automorphs together, padding the `n_permutations` dimension to the</span>
+<span class="sd">        concatenates all automorphs together, padding the n_permutations dimension to the</span>
 <span class="sd">        maximum number of automorphs for any molecule.</span>
 
 <span class="sd">        WARNING: Unlike polymer symmetries, inter-molecule symmetries are not considered here, as they</span>
 <span class="sd">        are managed by the RF2AA loss function through a greedy search.</span>
 
 <span class="sd">        For non-polymers, the following steps are performed:</span>
+
 <span class="sd">        1. Subset the pre-cropped non-poly array to only include the non-poly molecules that are</span>
 <span class="sd">           at least partially in the crop.</span>
-<span class="sd">        2. Compute the automorphs for each identified full molecule (i.e. *BEFORE* cropping).</span>
+<span class="sd">        2. Compute the automorphs for each identified full molecule (i.e. BEFORE cropping).</span>
 <span class="sd">        3. Apply the computed automorphs to the coordinates and masks of the encoded full molecules.</span>
 <span class="sd">        4. Crop to the relevant sections of the molecules that appear in the crop.</span>
 <span class="sd">        5. Concatenate all automorphs together, padding to the maximum number of automorphs</span>
@@ -1080,15 +1081,15 @@
 <span class="sd">           two automorphs, but the atom swaps are in a part that is not within the crop)</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            - pre_nonpoly_array (AtomArray): The pre-cropped non-polymer array to process.</span>
-<span class="sd">            - post_nonpoly_array (AtomArray): The post-cropped non-polymer array to process.</span>
-<span class="sd">            - crop_tmask (np.ndarray): A boolean mask indicating which tokens are in the crop.</span>
-<span class="sd">            - openbabel_data (dict[int, Any]): A dictionary containing Open Babel data for molecules.</span>
+<span class="sd">            pre_nonpoly_array: The pre-cropped non-polymer array to process.</span>
+<span class="sd">            post_nonpoly_array: The post-cropped non-polymer array to process.</span>
+<span class="sd">            crop_tmask: A boolean mask indicating which tokens are in the crop.</span>
+<span class="sd">            openbabel_data: A dictionary containing Open Babel data for molecules.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            - nonpoly_xyzs (torch.Tensor): A tensor containing the coordinates of the non-polymer automorphs.</span>
-<span class="sd">            - nonpoly_masks (torch.Tensor): A tensor containing the masks of the non-polymer automorphs.</span>
-<span class="sd">            - symmetry_info (dict[tuple[int, str], int]): A dictionary containing the symmetry information.</span>
+<span class="sd">            nonpoly_xyzs: A tensor containing the coordinates of the non-polymer automorphs.</span>
+<span class="sd">            nonpoly_masks: A tensor containing the masks of the non-polymer automorphs.</span>
+<span class="sd">            symmetry_info: A dictionary containing the symmetry information.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">n_nonpoly_token_in_crop</span> <span class="o">=</span> <span class="n">get_token_count</span><span class="p">(</span><span class="n">post_nonpoly_array</span><span class="p">)</span>
 

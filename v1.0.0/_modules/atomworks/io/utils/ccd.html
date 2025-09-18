@@ -394,6 +394,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">struc</span>
@@ -424,7 +425,11 @@
 <a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.aa_chem_comps">[docs]</a>
 <span class="nd">@functools</span><span class="o">.</span><span class="n">cache</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">aa_chem_comps</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of amino acid chemical components. E.g. {&#39;ALA&#39;, &#39;ARG&#39;, ...}&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of amino acid chemical components.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Set of amino acid chemical components (e.g., {&#39;ALA&#39;, &#39;ARG&#39;, ...}).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">struc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">_get_group_members</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">AA_LIKE_CHEM_TYPES</span><span class="p">)))</span></div>
 
 
@@ -433,7 +438,11 @@
 <a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.na_chem_comps">[docs]</a>
 <span class="nd">@functools</span><span class="o">.</span><span class="n">cache</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">na_chem_comps</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of nucleic acid chemical components. E.g. {&#39;DA&#39;, &#39;DC&#39;, ...}&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of nucleic acid chemical components.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Set of nucleic acid chemical components (e.g., {&#39;DA&#39;, &#39;DC&#39;, ...}).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">struc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">_get_group_members</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">NA_LIKE_CHEM_TYPES</span><span class="p">)))</span></div>
 
 
@@ -442,7 +451,11 @@
 <a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.rna_chem_comps">[docs]</a>
 <span class="nd">@functools</span><span class="o">.</span><span class="n">cache</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">rna_chem_comps</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of RNA chemical components. E.g. {&#39;A&#39;, &#39;C&#39;, ...}&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of RNA chemical components.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Set of RNA chemical components (e.g., {&#39;A&#39;, &#39;C&#39;, ...}).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">struc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">_get_group_members</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">RNA_LIKE_CHEM_TYPES</span><span class="p">)))</span></div>
 
 
@@ -451,7 +464,11 @@
 <a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.dna_chem_comps">[docs]</a>
 <span class="nd">@functools</span><span class="o">.</span><span class="n">cache</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">dna_chem_comps</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of DNA chemical components. E.g. {&#39;DA&#39;, &#39;DC&#39;, ...}&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of DNA chemical components.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Set of DNA chemical components (e.g., {&#39;DA&#39;, &#39;DC&#39;, ...}).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">struc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">_get_group_members</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">DNA_LIKE_CHEM_TYPES</span><span class="p">)))</span></div>
 
 
@@ -462,8 +479,16 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">chem_comp_to_one_letter</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Dictionary mapping the chemical components to their 1-letter code.</span>
 
-<span class="sd">    NOTE: Chemical components historically used to be 3-letter codes,</span>
-<span class="sd">    but nowadays longer codes exist.</span>
+<span class="sd">    Note:</span>
+<span class="sd">        Chemical components historically used to be 3-letter codes,</span>
+<span class="sd">        but nowadays longer codes exist.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dictionary mapping chemical component names to their 1-letter codes.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        `RCSB Chemical Component Dictionary &lt;https://www.rcsb.org/ligand&gt;`_</span>
+<span class="sd">        `Biotite CCD Module &lt;https://www.biotite-python.org/apidoc/biotite.structure.info.ccd.html&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ccd</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">ccd</span><span class="o">.</span><span class="n">get_ccd</span><span class="p">()</span>
     <span class="n">three_letter_code</span> <span class="o">=</span> <span class="n">ccd</span><span class="p">[</span><span class="s2">&quot;chem_comp&quot;</span><span class="p">][</span><span class="s2">&quot;three_letter_code&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">()</span>
@@ -488,30 +513,66 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of all CCD codes available in the local mirror.</span>
 
 <span class="sd">    Only counts codes when they adhere to the CCD mirror layout (e.g. .../H/HEM/HEM.cif)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ccd_mirror_path: Path to the CCD mirror directory.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Set of all available CCD codes in the mirror.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        `RCSB Chemical Component Dictionary &lt;https://www.rcsb.org/ligand&gt;`_</span>
+<span class="sd">        `CCD Mirror Layout &lt;https://www.rcsb.org/ligand&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">ccd_mirror_path</span><span class="p">)</span>
+
+    <span class="c1"># Check if we have a pre-computed cache file</span>
+    <span class="n">cache_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">&quot;.ccd_codes_cache&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cache_file</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Check if cache is newer than the directory</span>
+            <span class="n">cache_mtime</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">cache_file</span><span class="p">)</span>
+            <span class="n">dir_mtime</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cache_mtime</span> <span class="o">&gt;</span> <span class="n">dir_mtime</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cache_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">codes</span> <span class="o">=</span> <span class="p">{</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()}</span>
+                    <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">codes</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="c1"># If cache is corrupted, fall back to scanning</span>
+            <span class="k">pass</span>
+
+    <span class="c1"># Fall back to filesystem scan</span>
     <span class="n">codes</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
-    <span class="c1"># NOTE: The below is an optimized file-system scan since this is run at every</span>
-    <span class="k">with</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="n">root</span><span class="p">)</span> <span class="k">as</span> <span class="n">level1</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">l1</span> <span class="ow">in</span> <span class="n">level1</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">l1</span><span class="o">.</span><span class="n">is_dir</span><span class="p">(</span><span class="n">follow_symlinks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">root_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">level1_dir</span> <span class="ow">in</span> <span class="n">root_path</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">level1_dir</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+            <span class="k">continue</span>
+        <span class="n">first_letter</span> <span class="o">=</span> <span class="n">level1_dir</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">first_letter</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="k">for</span> <span class="n">level2_dir</span> <span class="ow">in</span> <span class="n">level1_dir</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">level2_dir</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
                 <span class="k">continue</span>
-            <span class="n">first_letter</span> <span class="o">=</span> <span class="n">l1</span><span class="o">.</span><span class="n">name</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">first_letter</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="n">level2_dir</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">code</span> <span class="ow">or</span> <span class="n">code</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">first_letter</span><span class="p">:</span>
                 <span class="k">continue</span>
 
-            <span class="k">with</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="n">l1</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">level2</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">l2</span> <span class="ow">in</span> <span class="n">level2</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">l2</span><span class="o">.</span><span class="n">is_dir</span><span class="p">(</span><span class="n">follow_symlinks</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-                        <span class="k">continue</span>
-                    <span class="n">code</span> <span class="o">=</span> <span class="n">l2</span><span class="o">.</span><span class="n">name</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">code</span> <span class="ow">or</span> <span class="n">code</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">first_letter</span><span class="p">:</span>
-                        <span class="k">continue</span>
+            <span class="n">expected_file</span> <span class="o">=</span> <span class="n">level2_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s2">.cif&quot;</span>
+            <span class="k">if</span> <span class="n">expected_file</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+                <span class="n">codes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
 
-                    <span class="n">expected</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">l2</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s2">.cif&quot;</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">expected</span><span class="p">):</span>
-                        <span class="n">codes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+    <span class="c1"># Cache the results for next time</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cache_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">code</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">codes</span><span class="p">):</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+        <span class="c1"># If we can&#39;t write cache, that&#39;s okay</span>
+        <span class="k">pass</span>
+
     <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">codes</span><span class="p">)</span></div>
 
 
@@ -633,25 +694,23 @@
     <span class="n">add_properties</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">add_mapping</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">struc</span><span class="o">.</span><span class="n">AtomArray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Parses a Chemical Component Dictionary CIF file into a Biotite AtomArray structure.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parses a Chemical Component Dictionary CIF file into a Biotite AtomArray structure.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        - cif (CIFFile): The CIF file containing the component data.</span>
-<span class="sd">        - coords (Literal[&quot;model&quot;, &quot;ideal_pdbx&quot;, &quot;ideal_rdkit&quot;] | None | tuple[str, ...]):</span>
-<span class="sd">            Type of coordinates to use. Defaults to (&quot;ideal_pdbx&quot;, &quot;model&quot;, &quot;ideal_rdkit&quot;).</span>
+<span class="sd">        cif: The CIF file containing the component data.</span>
+<span class="sd">        coords: Type of coordinates to use. Defaults to (&quot;ideal_pdbx&quot;, &quot;model&quot;, &quot;ideal_rdkit&quot;).</span>
 <span class="sd">            Can be a single coordinate type or a tuple of fallback preferences (e.g., (&quot;ideal_pdbx&quot;, &quot;model&quot;, &quot;ideal_rdkit&quot;)).</span>
-<span class="sd">                - &quot;model&quot;: Use the coordinates that are found in a random (but fixed) pdb file.</span>
-<span class="sd">                - &quot;ideal_pdbx&quot;: Use the idealized coordinates computed by the RCSB PDB (sometimes not available).</span>
-<span class="sd">                - &quot;ideal_rdkit&quot;: Use the idealized coordinates computed by RDKit (sometimes unrealistic).</span>
-<span class="sd">        - add_properties (bool): Whether to include RDKit-computed properties. Defaults to False.</span>
-<span class="sd">            Properties are available under the `properties` attribute of the returned `AtomArray`.</span>
-<span class="sd">        - add_mapping (bool): Whether to include external resource mappings, such as e.g. the ChEMBL ID.</span>
+<span class="sd">            - &quot;model&quot;: Use the coordinates that are found in a random (but fixed) pdb file.</span>
+<span class="sd">            - &quot;ideal_pdbx&quot;: Use the idealized coordinates computed by the RCSB PDB (sometimes not available).</span>
+<span class="sd">            - &quot;ideal_rdkit&quot;: Use the idealized coordinates computed by RDKit (sometimes unrealistic).</span>
+<span class="sd">        add_properties: Whether to include RDKit-computed properties. Defaults to False.</span>
+<span class="sd">            Properties are available under the ``properties`` attribute of the returned ``AtomArray``.</span>
+<span class="sd">        add_mapping: Whether to include external resource mappings, such as e.g. the ChEMBL ID.</span>
 <span class="sd">            Defaults to False.</span>
-<span class="sd">            Mappings are available under the `mapping` attribute of the returned `AtomArray`.</span>
+<span class="sd">            Mappings are available under the ``mapping`` attribute of the returned ``AtomArray``.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        - AtomArray: The parsed atomic structure with requested annotations and properties.</span>
+<span class="sd">        AtomArray: The parsed atomic structure with requested annotations and properties.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; cif = pdbx.CIFFile.read(&quot;path/to/ALA.cif&quot;)</span>
@@ -797,21 +856,20 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">get_ccd_component_from_mirror</span><span class="p">(</span>
     <span class="n">ccd_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ccd_mirror_path</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">=</span> <span class="n">CCD_MIRROR_PATH</span><span class="p">,</span> <span class="o">**</span><span class="n">parse_ccd_cif_kwargs</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">struc</span><span class="o">.</span><span class="n">AtomArray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Retrieves and parses a component from a local mirror of the Chemical Component Dictionary.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieves and parses a component from a local mirror of the Chemical Component Dictionary.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        - ccd_code (str): The three-letter code of the chemical component.</span>
-<span class="sd">        - ccd_mirror_path (os.PathLike): Path to the root of the CCD mirror directory.</span>
-<span class="sd">        - **parse_ccd_cif_kwargs: Additional keyword arguments passed to parse_ccd_cif():</span>
-<span class="sd">            - coords (Literal[&quot;model&quot;, &quot;ideal_pdbx&quot;, &quot;ideal_rdkit&quot;] | None):</span>
-<span class="sd">                Type of coordinates to use. Defaults to &quot;ideal_pdbx&quot;.</span>
-<span class="sd">            - add_properties (bool): Whether to include RDKit-computed properties. Defaults to True.</span>
-<span class="sd">            - add_mapping (bool): Whether to include external resource mappings, such as e.g. the ChEMBL ID.</span>
+<span class="sd">        ccd_code: The three-letter code of the chemical component.</span>
+<span class="sd">        ccd_mirror_path: Path to the root of the CCD mirror directory.</span>
+<span class="sd">        **parse_ccd_cif_kwargs: Additional keyword arguments passed to parse_ccd_cif():</span>
+<span class="sd">            coords: Type of coordinates to use (&quot;model&quot;, &quot;ideal_pdbx&quot;, &quot;ideal_rdkit&quot;, or None).</span>
+<span class="sd">                Defaults to &quot;ideal_pdbx&quot;.</span>
+<span class="sd">            add_properties: Whether to include RDKit-computed properties. Defaults to True.</span>
+<span class="sd">            add_mapping: Whether to include external resource mappings, such as e.g. the ChEMBL ID.</span>
 <span class="sd">                Defaults to False.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        - AtomArray: The parsed atomic structure of the requested component.</span>
+<span class="sd">        AtomArray: The parsed atomic structure of the requested component.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; atom_array = get_ccd_component_from_mirror(&quot;ALA&quot;, coords=&quot;ideal_pdbx&quot;)</span>

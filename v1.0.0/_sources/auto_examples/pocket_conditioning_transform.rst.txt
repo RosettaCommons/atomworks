@@ -48,7 +48,7 @@ Optional Methods & Attributes
 Conventions
 -----------
 **A.** Store information in ``AtomArray`` annotations, not in the state dictionary.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This ensures robustness when atoms are added/removed downstream.
 
@@ -58,7 +58,7 @@ For the example below:
 - ❌ Store ``pocket_atom_indices`` in dictionary (which creates significant dependencies with operations that delete or re-order atoms)
 
 **B.** Within ``forward()``, call a stand-alone function with the same name as the transform class.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We thus maintain an object-oriented and a functional API, making our core logic re-usable and testable outside of the ``Transform`` framework.
 
@@ -70,7 +70,7 @@ For the example below:
 Additionally, this function should preserve the input (e.g., not modify the underlying ``AtomArray``) and take as arguments any necessary parameters.
 
 **C.** Each ``Transform`` should follow the single-responsibility-principle; in particular separate Annotation from Featurization ``Transforms``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To ensure our ``Transform`` code is maximally forward-compatible and re-usable across disparate pipelines, we adhere to the single responsibility principle - that is, each transform should do *exactly one* action.
 
@@ -114,7 +114,7 @@ Now, if a different model wants to perform an action on small molecule pockets, 
 .. GENERATED FROM PYTHON SOURCE LINES 90-101
 
 Building ``AnnotateLigandPockets``
-===============================
+==================================
 
 Let's create a ``Transform`` that identifies atoms near ligands (non-polymer molecules) of sufficient size.
 
@@ -247,7 +247,7 @@ Observe how we follow the conventions outlined above:
 .. GENERATED FROM PYTHON SOURCE LINES 211-221
 
 Building ``FeaturizePocketAtoms``
-==============================
+=================================
 
 Now let's create a model-specific transform that converts derived pocket annotations into numeric features.
 

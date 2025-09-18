@@ -423,6 +423,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">remove_unresolved_pn_units</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Filters PN units that have all unresolved atoms (i.e., atoms with occupancy 0) from the AtomArray.</span>
+
 <span class="sd">    Can be applied before or after croppping, since cropping may lead to PN units with all unresolved atoms that were previously not entirely unresolved.</span>
 <span class="sd">    At training time, these unresolved PN units provide minimal value and can lead to errors in the model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -471,6 +472,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">RemoveUnresolvedPNUnits</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Filters PN units that have all unresolved atoms (i.e., atoms with occupancy 0) from the AtomArray.</span>
+
 <span class="sd">    Can be applied before or after croppping, since cropping may lead to PN units with all unresolved atoms that were previously not entirely unresolved.</span>
 <span class="sd">    At training time, these unresolved PN units provide minimal value and can lead to errors in the model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -674,10 +676,10 @@
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.FilterToSpecifiedPNUnits.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;extra_info&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pn_unit_iid_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;extra_info&quot;</span><span class="p">]):</span>
-            <span class="c1"># ...short-circuit if the key does not exist in the `extra_info` dictionary</span>
+            <span class="c1"># ... short-circuit if the key does not exist in the `extra_info` dictionary</span>
             <span class="k">return</span> <span class="n">data</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># ...otherwise, filter the atom array</span>
+            <span class="c1"># ... otherwise, filter the atom array</span>
             <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filter_to_specified_pn_units</span><span class="p">(</span>
                 <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">],</span> <span class="nb">eval</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;extra_info&quot;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">pn_unit_iid_key</span><span class="p">])</span>
             <span class="p">)</span>

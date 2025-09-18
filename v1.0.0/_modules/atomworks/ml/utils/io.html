@@ -389,36 +389,27 @@
                 <article class="bd-article">
                   
   <h1>Source code for atomworks.ml.utils.io</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
+<span></span><span class="sd">&quot;&quot;&quot;I/O utilities for ML components.</span>
+
+<span class="sd">Provides functions for file operations, directory scanning, and data loading.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">PathLike</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TextIO</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">struc</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pyarrow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pa</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pyarrow.parquet</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pq</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">AA_LIKE_CHEM_TYPES</span><span class="p">,</span>
-    <span class="n">ATOMIC_NUMBER_TO_ELEMENT</span><span class="p">,</span>
-    <span class="n">DNA_LIKE_CHEM_TYPES</span><span class="p">,</span>
-    <span class="n">HYDROGEN_LIKE_SYMBOLS</span><span class="p">,</span>
-    <span class="n">POLYPEPTIDE_D_CHEM_TYPES</span><span class="p">,</span>
-    <span class="n">POLYPEPTIDE_L_CHEM_TYPES</span><span class="p">,</span>
-    <span class="n">RNA_LIKE_CHEM_TYPES</span><span class="p">,</span>
-    <span class="n">UNKNOWN_LIGAND</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.ccd</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_chem_comp_type</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.utils.misc</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">convert_pn_unit_iids_to_pn_unit_ids</span><span class="p">,</span>
-    <span class="n">extract_transformation_id_from_pn_unit_iid</span><span class="p">,</span>
     <span class="n">logger</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -426,7 +417,17 @@
 <div class="viewcode-block" id="open_file">
 <a class="viewcode-back" href="../../../../ml/utils.html#atomworks.ml.utils.io.open_file">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">open_file</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TextIO</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Open a file, handling gzipped files if necessary.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Open a file, handling gzipped files if necessary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename: The path to the file to open.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A file-like object for reading.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        AssertionError: If the file does not exist.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="c1"># ...assert that the file exists</span>
     <span class="k">assert</span> <span class="n">filename</span><span class="o">.</span><span class="n">exists</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">&quot;File </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2"> does not exist&quot;</span>
@@ -437,34 +438,65 @@
 
 
 
+<div class="viewcode-block" id="scan_directory">
+<a class="viewcode-back" href="../../../../ml/utils.html#atomworks.ml.utils.io.scan_directory">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">scan_directory</span><span class="p">(</span><span class="n">dir_path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fast, order-independent directory scan for files up to max_depth levels deep.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dir_path: The root directory to scan.</span>
+<span class="sd">        max_depth: The maximum depth to scan. A max_depth of 1 means only the top-level directory.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of file paths found within the specified directory and depth.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">file_paths</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">dir_path</span><span class="p">):</span>
+        <span class="n">current_depth</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">dir_path</span><span class="p">)</span><span class="o">.</span><span class="n">parts</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">current_depth</span> <span class="o">&gt;=</span> <span class="n">max_depth</span><span class="p">:</span>
+            <span class="n">dirs</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="k">continue</span>
+
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+            <span class="n">file_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">file_paths</span></div>
+
+
+
 <div class="viewcode-block" id="cache_based_on_subset_of_args">
 <a class="viewcode-back" href="../../../../ml/utils.html#atomworks.ml.utils.io.cache_based_on_subset_of_args">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">cache_based_on_subset_of_args</span><span class="p">(</span><span class="n">cache_keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">maxsize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Decorator to cache function results based on a subset of its keyword arguments.</span>
-<span class="sd">    Most helpful when some arguments may be unhashable types (e.g., dictionaries, AtomArray).</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator to cache function results based on a subset of its keyword arguments.</span>
 
+<span class="sd">    Most helpful when some arguments may be unhashable types (e.g., dictionaries, AtomArray).</span>
 <span class="sd">    If the value of any of the cache keys is None, the function is executed and the result is not cached.</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">        The wrapped function must use keyword arguments for those specified in `cache_keys`.</span>
+<span class="sd">        The wrapped function must use keyword arguments for those specified in cache_keys.</span>
 <span class="sd">        Positional arguments are not supported for cache key extraction.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        cache_keys (List[str]): The names of the keyword arguments to use as the cache key.</span>
-<span class="sd">        maxsize (Optional[int]): The maximum number of entries to store in the cache.</span>
+<span class="sd">        cache_keys: The names of the keyword arguments to use as the cache key.</span>
+<span class="sd">        maxsize: The maximum number of entries to store in the cache.</span>
 <span class="sd">            If None, the cache size is unlimited.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        Callable: A decorator that caches the function results based on the specified keyword arguments.</span>
+<span class="sd">        A decorator that caches the function results based on the specified keyword arguments.</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        @cache_based_on_subset_of_args([&#39;arg1&#39;], maxsize=2)</span>
-<span class="sd">        def function(*, arg1, arg2):</span>
-<span class="sd">            return arg1 + arg2</span>
+<span class="sd">        .. code-block:: python</span>
 
-<span class="sd">        result1 = function(arg1=1, arg2=2)  # Caches with key 1</span>
-<span class="sd">        result2 = function(arg1=1, arg2=3)  # Retrieves from cache</span>
+<span class="sd">            @cache_based_on_subset_of_args([&quot;arg1&quot;], maxsize=2)</span>
+<span class="sd">            def function(*, arg1, arg2):</span>
+<span class="sd">                return arg1 + arg2</span>
+
+
+<span class="sd">            result1 = function(arg1=1, arg2=2)  # Caches with key 1</span>
+<span class="sd">            result2 = function(arg1=1, arg2=3)  # Retrieves from cache</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
@@ -615,219 +647,6 @@
 
 
 
-<div class="viewcode-block" id="convert_af3_model_output_to_atom_array_stack">
-<a class="viewcode-back" href="../../../../ml/utils.html#atomworks.ml.utils.io.convert_af3_model_output_to_atom_array_stack">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">convert_af3_model_output_to_atom_array_stack</span><span class="p">(</span>
-    <span class="n">atom_to_token_map</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
-    <span class="n">pn_unit_iids</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-    <span class="n">decoded_restypes</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-    <span class="n">xyz</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">elements</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">],</span>
-    <span class="n">token_is_atomized</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">struc</span><span class="o">.</span><span class="n">AtomArrayStack</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create an AtomArrayStack from AlphaFold-3-type model outputs.</span>
-<span class="sd">    Specific to AF-3; may not work with other formats.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">        - atom_to_token_map (np.ndarray): Mapping from atoms to tokens [n_atom]</span>
-<span class="sd">        - pn_unit_iids (np.ndarray): PN unit IID&#39;s for each token [n_token]</span>
-<span class="sd">        - decoded_restype (np.ndarray): Decoded residue types for each token [n_token]</span>
-<span class="sd">        - xyz (np.ndarray): Coordinates of atoms [n_atom, 3] or [batch, n_atom, 3], where batch is the number of structures</span>
-<span class="sd">        - elements (np.ndarray): Element types for each atom [n_atom]</span>
-<span class="sd">        - token_is_atomized (np.ndarray, optional): Flags indicating if tokens are atomized [n_token]. If not provided</span>
-<span class="sd">            or None, residues with a single atom are considered atomized.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        - AtomArrayStack: Constructed AtomArrayStack.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Issue a deprecation warning</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-        <span class="s2">&quot;`convert_af3_model_output_to_atom_array_stack` is deprecated in favor of overwriting the AtomArray coordinates directly and will be removed in future versions.&quot;</span><span class="p">,</span>
-        <span class="ne">DeprecationWarning</span><span class="p">,</span>
-        <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">atom_array</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">chain_iid_residue_counts</span> <span class="o">=</span> <span class="p">{}</span>
-
-    <span class="c1"># If dimensions are [n_atom, 3], add a batch dimension</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xyz</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-    <span class="c1"># If elements are integers, convert them to strings (since that&#39;s what we get from the CCD, and it better matches what CIF files expect)</span>
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
-        <span class="n">elements</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ATOMIC_NUMBER_TO_ELEMENT</span><span class="p">[</span><span class="n">element</span><span class="p">]</span> <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">])</span>
-
-    <span class="c1">#######################################################################################################</span>
-    <span class="c1"># Iterate over the residues, and create the appropriate atoms for each residue with empty coordinates</span>
-    <span class="c1"># We add the atom type, residue ID, chain ID, and transformation ID to the AtomArray</span>
-    <span class="c1">#######################################################################################################</span>
-
-    <span class="k">for</span> <span class="n">global_res_idx</span><span class="p">,</span> <span class="n">res_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">decoded_restypes</span><span class="p">):</span>
-        <span class="c1"># Get atoms corresponding to the residue</span>
-        <span class="n">atom_indices_in_token</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">atom_to_token_map</span> <span class="o">==</span> <span class="n">global_res_idx</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-
-        <span class="c1"># ...check if we&#39;re dealing with an atomized token</span>
-        <span class="k">if</span> <span class="n">token_is_atomized</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># If we have the token_is_atomized array, we can use it to determine if the residue is atomized</span>
-            <span class="n">is_atom</span> <span class="o">=</span> <span class="n">token_is_atomized</span><span class="p">[</span><span class="n">global_res_idx</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Otherwise, we assume that a residue with a single atom is atomized</span>
-            <span class="n">is_atom</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">atom_indices_in_token</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-
-        <span class="c1">#  ...compute the residue ID</span>
-        <span class="n">pn_unit_iid</span> <span class="o">=</span> <span class="n">pn_unit_iids</span><span class="p">[</span><span class="n">global_res_idx</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">pn_unit_iid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">chain_iid_residue_counts</span><span class="p">:</span>
-            <span class="n">chain_iid_residue_counts</span><span class="p">[</span><span class="n">pn_unit_iid</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="n">is_atom</span><span class="p">:</span>
-            <span class="c1"># Only increment the residue count if we&#39;re not dealing with an atomized token (we put all atomized tokens in the same residue, like the PDB)</span>
-            <span class="n">chain_iid_residue_counts</span><span class="p">[</span><span class="n">pn_unit_iid</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">res_id</span> <span class="o">=</span> <span class="n">chain_iid_residue_counts</span><span class="p">[</span><span class="n">pn_unit_iid</span><span class="p">]</span>
-
-        <span class="k">if</span> <span class="n">is_atom</span><span class="p">:</span>
-            <span class="c1"># UNL is &quot;Unknown Ligand&quot; in the CCD</span>
-            <span class="n">element</span> <span class="o">=</span> <span class="n">elements</span><span class="p">[</span><span class="n">atom_indices_in_token</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
-
-            <span class="c1"># ruff: noqa: B023</span>
-            <span class="k">def</span><span class="w"> </span><span class="nf">atom_name_exists</span><span class="p">(</span><span class="n">atom_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-                <span class="k">return</span> <span class="p">(</span>
-                    <span class="n">atom_array</span><span class="p">[</span>
-                        <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span> <span class="o">==</span> <span class="n">pn_unit_iid</span><span class="p">)</span>
-                        <span class="o">&amp;</span> <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">res_id</span> <span class="o">==</span> <span class="n">res_id</span><span class="p">)</span>
-                        <span class="o">&amp;</span> <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="n">atom_name</span><span class="p">)</span>
-                    <span class="p">]</span><span class="o">.</span><span class="n">array_length</span><span class="p">()</span>
-                    <span class="o">&gt;</span> <span class="mi">0</span>
-                <span class="p">)</span>
-
-            <span class="c1"># Create the atom name and ensure it&#39;s unique within the residue (so that we can give all the atoms the same ID)</span>
-            <span class="n">atom_name</span> <span class="o">=</span> <span class="n">element</span>
-            <span class="k">if</span> <span class="n">atom_name_exists</span><span class="p">(</span><span class="n">atom_name</span><span class="p">):</span>
-                <span class="n">atom_name</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">element</span><span class="si">}{</span><span class="n">atom_count</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="k">for</span> <span class="n">atom_count</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">atom_name_exists</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">element</span><span class="si">}{</span><span class="n">atom_count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="p">)</span>
-
-            <span class="n">atom</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">Atom</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">3</span><span class="p">,),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">),</span> <span class="n">res_name</span><span class="o">=</span><span class="n">UNKNOWN_LIGAND</span><span class="p">,</span> <span class="n">element</span><span class="o">=</span><span class="n">element</span><span class="p">,</span> <span class="n">atom_name</span><span class="o">=</span><span class="n">atom_name</span><span class="p">)</span>
-            <span class="n">residue_atom_array</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">atom</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">chem_type</span> <span class="o">=</span> <span class="n">get_chem_comp_type</span><span class="p">(</span><span class="n">res_name</span><span class="p">)</span>
-
-            <span class="c1"># Get the atom array of the residue from the CCD</span>
-            <span class="n">residue_atom_array</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">residue</span><span class="p">(</span><span class="n">res_name</span><span class="p">)</span>
-
-            <span class="c1"># Set the elements to uppercase for consistency</span>
-            <span class="n">residue_atom_array</span><span class="o">.</span><span class="n">element</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">residue_atom_array</span><span class="o">.</span><span class="n">element</span><span class="p">])</span>
-
-            <span class="c1"># If needed, remove type-specific atoms (e.g., OXT in polypeptides, O3&#39; in RNA or DNA) for residues participating in inter-residue bonds</span>
-            <span class="c1"># If we are at a terminal residue, we don&#39;t want to remove these leaving groups</span>
-            <span class="n">residue_atom_array</span> <span class="o">=</span> <span class="n">filter_residue_atoms</span><span class="p">(</span>
-                <span class="n">residue_atom_array</span><span class="o">=</span><span class="n">residue_atom_array</span><span class="p">,</span> <span class="n">chem_type</span><span class="o">=</span><span class="n">chem_type</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">[</span><span class="n">atom_indices_in_token</span><span class="p">]</span>
-            <span class="p">)</span>
-
-            <span class="c1"># Empty coordinates to avoid unexpected behavior</span>
-            <span class="n">residue_atom_array</span><span class="o">.</span><span class="n">coord</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">residue_atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
-
-            <span class="c1"># Wipe the bond information (we are better off letting PyMOL infer the bonds)</span>
-            <span class="n">residue_atom_array</span><span class="o">.</span><span class="n">bonds</span> <span class="o">=</span> <span class="kc">None</span>
-
-        <span class="c1"># Get the chain_iid, chain_id, and transformation_id</span>
-        <span class="n">pn_unit_id</span> <span class="o">=</span> <span class="n">convert_pn_unit_iids_to_pn_unit_ids</span><span class="p">([</span><span class="n">pn_unit_iid</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">transformation_id</span> <span class="o">=</span> <span class="n">extract_transformation_id_from_pn_unit_iid</span><span class="p">(</span><span class="n">pn_unit_iid</span><span class="p">)</span>
-
-        <span class="c1"># Set the annotations (for our purposes, chains and pn_units are the same)</span>
-        <span class="n">residue_atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;chain_id&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">residue_atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">pn_unit_id</span><span class="p">))</span>
-        <span class="n">residue_atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;pn_unit_id&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">residue_atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">pn_unit_id</span><span class="p">))</span>
-        <span class="n">residue_atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;chain_iid&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">residue_atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">pn_unit_iid</span><span class="p">))</span>
-        <span class="n">residue_atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">residue_atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">pn_unit_iid</span><span class="p">))</span>
-        <span class="n">residue_atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span>
-            <span class="s2">&quot;transformation_id&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">residue_atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">transformation_id</span><span class="p">)</span>
-        <span class="p">)</span>
-
-        <span class="c1"># Everything is full occupancy</span>
-        <span class="n">residue_atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;occupancy&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">residue_atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="mf">1.0</span><span class="p">))</span>
-
-        <span class="c1"># Set the residue ID</span>
-        <span class="n">residue_atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;res_id&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">residue_atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">res_id</span><span class="p">))</span>
-
-        <span class="k">if</span> <span class="n">atom_array</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">atom_array</span> <span class="o">=</span> <span class="n">residue_atom_array</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">atom_array</span> <span class="o">+=</span> <span class="n">residue_atom_array</span>
-
-    <span class="c1">#######################################################################################################</span>
-    <span class="c1"># Iterate over the batches of coordinates, and create a new AtomArray for each batch</span>
-    <span class="c1">#######################################################################################################</span>
-    <span class="n">atom_arrays</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">coords</span> <span class="ow">in</span> <span class="n">xyz</span><span class="p">:</span>
-        <span class="c1"># ...create a new AtomArray for each batch, with new coordinates</span>
-        <span class="n">batch_atom_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">batch_atom_array</span><span class="o">.</span><span class="n">coord</span> <span class="o">=</span> <span class="n">coords</span>
-        <span class="n">atom_arrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">batch_atom_array</span><span class="p">)</span>
-
-    <span class="c1"># Convert to a stack</span>
-    <span class="n">atom_array_stack</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">atom_arrays</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">atom_array_stack</span></div>
-
-
-
-<div class="viewcode-block" id="filter_residue_atoms">
-<a class="viewcode-back" href="../../../../ml/utils.html#atomworks.ml.utils.io.filter_residue_atoms">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">filter_residue_atoms</span><span class="p">(</span>
-    <span class="n">residue_atom_array</span><span class="p">:</span> <span class="n">struc</span><span class="o">.</span><span class="n">AtomArray</span><span class="p">,</span> <span class="n">chem_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">elements</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">struc</span><span class="o">.</span><span class="n">AtomArray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Filter out unwanted atoms from a residue (e.g.., hydrogens, leaving groups)</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">        - residue_atom_array (struc.AtomArray): The AtomArray to filter.</span>
-<span class="sd">        - chem_type (str): Type of the chemical chain.</span>
-<span class="sd">        - elements (np.array): Element types (as strings, e.g., &quot;C&quot;) for each atom in the residue.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        - struc.AtomArray: Filtered AtomArray.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># ...capitalize the chemical type</span>
-    <span class="n">chem_type</span> <span class="o">=</span> <span class="n">chem_type</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
-
-    <span class="c1"># ...remove hydrogens and deuteriums</span>
-    <span class="n">residue_atom_array</span> <span class="o">=</span> <span class="n">residue_atom_array</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">residue_atom_array</span><span class="o">.</span><span class="n">element</span><span class="p">,</span> <span class="n">HYDROGEN_LIKE_SYMBOLS</span><span class="p">)]</span>
-
-    <span class="c1"># If the arrays match, we return the residue as-is</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">residue_atom_array</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">elements</span> <span class="o">==</span> <span class="n">residue_atom_array</span><span class="o">.</span><span class="n">element</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">residue_atom_array</span>
-
-    <span class="c1"># ...otherwise, we will try to remove specific atoms until the arrays match</span>
-    <span class="k">if</span> <span class="p">(</span>
-        <span class="n">chem_type</span> <span class="ow">in</span> <span class="n">AA_LIKE_CHEM_TYPES</span>
-        <span class="ow">or</span> <span class="n">chem_type</span> <span class="ow">in</span> <span class="n">POLYPEPTIDE_L_CHEM_TYPES</span>
-        <span class="ow">or</span> <span class="n">chem_type</span> <span class="ow">in</span> <span class="n">POLYPEPTIDE_D_CHEM_TYPES</span>
-    <span class="p">):</span>
-        <span class="c1"># ...try removing OXT in non-terminal polypeptides</span>
-        <span class="n">candidate_residue_atom_array</span> <span class="o">=</span> <span class="n">residue_atom_array</span><span class="p">[</span><span class="n">residue_atom_array</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">!=</span> <span class="s2">&quot;OXT&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidate_residue_atom_array</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">elements</span> <span class="o">==</span> <span class="n">candidate_residue_atom_array</span><span class="o">.</span><span class="n">element</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">candidate_residue_atom_array</span>
-
-    <span class="k">elif</span> <span class="n">chem_type</span> <span class="ow">in</span> <span class="n">RNA_LIKE_CHEM_TYPES</span> <span class="ow">or</span> <span class="n">chem_type</span> <span class="ow">in</span> <span class="n">DNA_LIKE_CHEM_TYPES</span><span class="p">:</span>
-        <span class="c1"># ...try removing OP3 in RNA or DNA</span>
-        <span class="n">candidate_residue_atom_array</span> <span class="o">=</span> <span class="n">residue_atom_array</span><span class="p">[</span><span class="n">residue_atom_array</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">!=</span> <span class="s2">&quot;OP3&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidate_residue_atom_array</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">elements</span> <span class="o">==</span> <span class="n">candidate_residue_atom_array</span><span class="o">.</span><span class="n">element</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">candidate_residue_atom_array</span>
-
-    <span class="c1"># ...as a last resort, try and match the elements by sliding a window over the residue</span>
-    <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">residue_atom_array</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="n">current_slice</span> <span class="o">=</span> <span class="n">residue_atom_array</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">start</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">)]</span>
-        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">elements</span> <span class="o">==</span> <span class="n">current_slice</span><span class="o">.</span><span class="n">element</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">current_slice</span>
-
-    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Could not find a matching AtomArray for residue </span><span class="si">{</span><span class="n">residue_atom_array</span><span class="o">.</span><span class="n">res_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> with elements </span><span class="si">{</span><span class="n">elements</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="p">)</span></div>
-
-
-
 <div class="viewcode-block" id="to_parquet_with_metadata">
 <a class="viewcode-back" href="../../../../ml/utils.html#atomworks.ml.utils.io.to_parquet_with_metadata">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">to_parquet_with_metadata</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -887,6 +706,72 @@
     <span class="n">df</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="n">metadata_dict</span>
 
     <span class="k">return</span> <span class="n">df</span></div>
+
+
+
+<div class="viewcode-block" id="parse_sharding_pattern">
+<a class="viewcode-back" href="../../../../ml/utils.html#atomworks.ml.utils.io.parse_sharding_pattern">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_sharding_pattern</span><span class="p">(</span><span class="n">sharding_pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a sharding pattern string into directory levels.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sharding_pattern: String like &quot;/1:2/0:2/&quot; where each /start:end/ defines a directory level</span>
+<span class="sd">            - start:end defines the character range to use for that directory level</span>
+<span class="sd">            - Example: &quot;/1:2/0:2/&quot; means use chars 1-2 for first dir, then chars 0-2 for second dir</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of (start, end) tuples for each directory level</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Find all patterns like /start:end/ using a non-consuming lookahead</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;/(\d+):(\d+)(?=/)&quot;</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">sharding_pattern</span><span class="p">):</span>
+        <span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">matches</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid sharding pattern format: </span><span class="si">{</span><span class="n">sharding_pattern</span><span class="si">}</span><span class="s2">. Expected format like &#39;/1:2/0:2/&#39;&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">matches</span></div>
+
+
+
+<div class="viewcode-block" id="apply_sharding_pattern">
+<a class="viewcode-back" href="../../../../ml/utils.html#atomworks.ml.utils.io.apply_sharding_pattern">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_sharding_pattern</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sharding_pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply a sharding pattern to construct a file path.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path: The base path or identifier (e.g., PDB ID)</span>
+<span class="sd">        sharding_pattern: Pattern for organizing files in subdirectories</span>
+<span class="sd">            - &quot;/1:2/&quot;: Use characters 1-2 for first directory level</span>
+<span class="sd">            - &quot;/1:2/0:2/&quot;: Use chars 1-2 for first dir, then chars 0-2 for second dir</span>
+<span class="sd">            - None: No sharding (default)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Path: The constructed file path with sharding applied</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">sharding_pattern</span> <span class="ow">and</span> <span class="n">sharding_pattern</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">):</span>
+        <span class="c1"># General sharding pattern: /start:end/start:end/...</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">shard_levels</span> <span class="o">=</span> <span class="n">parse_sharding_pattern</span><span class="p">(</span><span class="n">sharding_pattern</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid sharding pattern: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+
+        <span class="c1"># Build the sharded path</span>
+        <span class="n">current_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">shard_levels</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">end</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sharding range </span><span class="si">{</span><span class="n">start</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">end</span><span class="si">}</span><span class="s2"> exceeds path length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="si">}</span><span class="s2"> for path &#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="n">shard_dir</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+            <span class="n">current_path</span> <span class="o">=</span> <span class="n">current_path</span> <span class="o">/</span> <span class="n">shard_dir</span>
+
+        <span class="n">final_path</span> <span class="o">=</span> <span class="n">current_path</span> <span class="o">/</span> <span class="n">path</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Default behavior: no sharding</span>
+        <span class="n">final_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">final_path</span></div>
 
 </pre></div>
 

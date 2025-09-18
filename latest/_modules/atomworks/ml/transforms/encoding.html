@@ -593,8 +593,7 @@
     <span class="o">**</span><span class="n">other_annotations</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
     <span class="c1"># TODO: Allow passing a res_id</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create an AtomArray from encoded coordinates, mask, and sequence.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an AtomArray from encoded coordinates, mask, and sequence.</span>
 
 <span class="sd">    This function takes encoded data and reconstructs an AtomArray, which is a</span>
 <span class="sd">    structured representation of atomic information. The encoded coordinates,</span>
@@ -602,23 +601,24 @@
 <span class="sd">    relevant annotations are included.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        - encoded_coord (torch.Tensor | np.ndarray): Encoded coordinates tensor.</span>
-<span class="sd">        - encoded_mask (torch.Tensor | np.ndarray): Encoded mask tensor.</span>
-<span class="sd">        - encoded_seq (torch.Tensor | np.ndarray): Encoded sequence tensor.</span>
-<span class="sd">        - encoding (TokenEncoding): The encoding to use for encoding the atom array.</span>
-<span class="sd">        - chain_id (str | np.ndarray, optional): Chain ID. Can be a single string (e.g., &quot;A&quot;)</span>
+<span class="sd">        encoded_coord: Encoded coordinates tensor.</span>
+<span class="sd">        encoded_mask: Encoded mask tensor.</span>
+<span class="sd">        encoded_seq: Encoded sequence tensor.</span>
+<span class="sd">        encoding: The encoding to use for encoding the atom array.</span>
+<span class="sd">        chain_id: Chain ID. Can be a single string (e.g., &quot;A&quot;)</span>
 <span class="sd">          or a numpy array of shape (n_res,) corresponding to each residue. Defaults to &quot;A&quot;.</span>
-<span class="sd">        - token_is_atom (torch.Tensor | np.ndarray | None, optional): Boolean mask indicating</span>
+<span class="sd">        token_is_atom: Boolean mask indicating</span>
 <span class="sd">          whether each token corresponds to an atom.</span>
-<span class="sd">        - **other_annotations (np.ndarray | None): Additional annotations to include in the</span>
+<span class="sd">        **other_annotations: Additional annotations to include in the</span>
 <span class="sd">          AtomArray. The shape must match one of the following:</span>
+
 <span class="sd">            - scalar, for global annotations</span>
 <span class="sd">            - (n_atom,) for per-atom annotations,</span>
 <span class="sd">            - (n_res,) for per-residue annotations,</span>
 <span class="sd">            - (n_chain,) for per-chain annotations.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        - atom_array (AtomArray): The created AtomArray containing the encoded atomic information.</span>
+<span class="sd">        The created AtomArray containing the encoded atomic information.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Turn tensors into numpy arrays if necessary</span>
     <span class="n">_from_tensor</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span>  <span class="c1"># noqa E731</span>
@@ -818,39 +818,53 @@
 <div class="viewcode-block" id="EncodeAF3TokenLevelFeatures">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.encoding.EncodeAF3TokenLevelFeatures">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EncodeAF3TokenLevelFeatures</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A transform that encodes token-level features like AF3. The token-level features are returned as:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A transform that encodes token-level features like AF3. The token-level features are returned as:</span>
 
-<span class="sd">    - feats:</span>
-<span class="sd">        # (Standard AF3 token-level features)</span>
-<span class="sd">        - `residue_index`: Residue number in the token&#39;s original input chain (pre-crop)</span>
-<span class="sd">        - `token_index`: Token number. Increases monotonically; does not restart at 1 for new</span>
+<span class="sd">    feats:</span>
+<span class="sd">        (Standard AF3 token-level features)</span>
+
+<span class="sd">        residue_index</span>
+<span class="sd">            Residue number in the token&#39;s original input chain (pre-crop)</span>
+<span class="sd">        token_index</span>
+<span class="sd">            Token number. Increases monotonically; does not restart at 1 for new</span>
 <span class="sd">            chains. (Runs from 0 to N_tokens)</span>
-<span class="sd">        - `asym_id`: Unique integer for each distinct chain (pn_unit_iid)</span>
-<span class="sd">            NOTE: We use `pn_unit_iid` rather than `chain_iid` to be more consistent</span>
+<span class="sd">        asym_id</span>
+<span class="sd">            Unique integer for each distinct chain (pn_unit_iid)</span>
+<span class="sd">            NOTE: We use pn_unit_iid rather than chain_iid to be more consistent</span>
 <span class="sd">            with handling of multi-residue/multi-chain ligands (especially sugars)</span>
-<span class="sd">        - `entity_id`: Unique integer for each distinct sequence (pn_unit entity)</span>
-<span class="sd">        - `sym_id`: Unique integer within chains of this sequence. E.g. if pn_units A, B and C</span>
-<span class="sd">            share a sequence but D does not, their `sym_id`s would be [0, 1, 2, 0].</span>
-<span class="sd">        - `restype`: Integer encoding of the sequence. 32 possible values: 20 AA + unknown,</span>
+<span class="sd">        entity_id</span>
+<span class="sd">            Unique integer for each distinct sequence (pn_unit entity)</span>
+<span class="sd">        sym_id</span>
+<span class="sd">            Unique integer within chains of this sequence. E.g. if pn_units A, B and C</span>
+<span class="sd">            share a sequence but D does not, their sym_ids would be [0, 1, 2, 0].</span>
+<span class="sd">        restype</span>
+<span class="sd">            Integer encoding of the sequence. 32 possible values: 20 AA + unknown,</span>
 <span class="sd">            4 RNA nucleotides + unknown, 4 DNA nucleotides + unknown, and gap. Ligands are</span>
-<span class="sd">            represented as unknown amino acid (`UNK`)</span>
-<span class="sd">        - `is_protein`: whether a token is of protein type</span>
-<span class="sd">        - `is_rna`: whether a token is of RNA type</span>
-<span class="sd">        - `is_dna`: whether a token is of DNA type</span>
-<span class="sd">        - `is_ligand`: whether a token is a ligand residue</span>
+<span class="sd">            represented as unknown amino acid (UNK)</span>
+<span class="sd">        is_protein</span>
+<span class="sd">            whether a token is of protein type</span>
+<span class="sd">        is_rna</span>
+<span class="sd">            whether a token is of RNA type</span>
+<span class="sd">        is_dna</span>
+<span class="sd">            whether a token is of DNA type</span>
+<span class="sd">        is_ligand</span>
+<span class="sd">            whether a token is a ligand residue</span>
 
-<span class="sd">        # (Custom token-level features)</span>
-<span class="sd">        - `is_atomized`: whether a token is an atomized token</span>
+<span class="sd">        (Custom token-level features)</span>
 
-<span class="sd">    - feat_metadata:</span>
-<span class="sd">        - `asym_name`: The asymmetric unit name for each id in `asym_id`. Acts as a legend.</span>
-<span class="sd">        - `entity_name`: The entity name for each id in `entity_id`. Acts as a legend.</span>
-<span class="sd">        - `sym_name`: The symmetric unit name for each id in `sym_id`. Acts as a legend.</span>
+<span class="sd">        is_atomized</span>
+<span class="sd">            whether a token is an atomized token</span>
+
+<span class="sd">    feat_metadata:</span>
+<span class="sd">        asym_name</span>
+<span class="sd">            The asymmetric unit name for each id in asym_id. Acts as a legend.</span>
+<span class="sd">        entity_name</span>
+<span class="sd">            The entity name for each id in entity_id. Acts as a legend.</span>
+<span class="sd">        sym_name</span>
+<span class="sd">            The symmetric unit name for each id in sym_id. Acts as a legend.</span>
 
 <span class="sd">    Reference:</span>
-<span class="sd">        - Section 2.8 of the AF3 supplementary (Table 5)</span>
-<span class="sd">          https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf</span>
+<span class="sd">        `Section 2.8 of the AF3 supplementary (Table 5) &lt;https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequence_encoding</span><span class="p">:</span> <span class="n">AF3SequenceEncoding</span><span class="p">):</span>

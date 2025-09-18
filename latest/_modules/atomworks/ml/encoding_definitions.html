@@ -428,34 +428,36 @@
 <a class="viewcode-back" href="../../../ml/encoding_definitions.html#atomworks.ml.encoding_definitions.TokenEncoding">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">TokenEncoding</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class to represent an fixed length token encoding.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class to represent a fixed length token encoding.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        token_atoms (dict[str, np.ndarray]): A dictionary mapping token names to atom names.</span>
+<span class="sd">        token_atoms: A dictionary mapping token names to atom names.</span>
 <span class="sd">            The order of the tokens in the sequence determines the integer encoding of the token.</span>
 <span class="sd">            The order of the atom names in the tuple determines the integer encoding of the atom name</span>
 <span class="sd">            within the token.</span>
-<span class="sd">        chemcomp_type_to_unknown (dict[str, str]): A dictionary mapping chemical component types</span>
+<span class="sd">        chemcomp_type_to_unknown: A dictionary mapping chemical component types</span>
 <span class="sd">            to unknown token names. This is used to map unknown residues to the respective unknown</span>
 <span class="sd">            token. Different chemical component types may map to different unknown token names.</span>
-<span class="sd">            Defaults to `{}`, meaning that no unknown tokens are defined, leading to a `KeyError`</span>
+<span class="sd">            Defaults to ``{}``, meaning that no unknown tokens are defined, leading to a ``KeyError``</span>
 <span class="sd">            if an unknown residue is encountered.</span>
 
-<span class="sd">    NOTE: We follow these conventions for tokens to make them compatible with the CCD for</span>
-<span class="sd">    robust and easy tokenization. If you want to use the Transforms written for automatically</span>
-<span class="sd">    tokenizing and encoding, you need to follow these conventions.</span>
+<span class="sd">    Note:</span>
+<span class="sd">        We follow these conventions for tokens to make them compatible with the CCD for</span>
+<span class="sd">        robust and easy tokenization. If you want to use the Transforms written for automatically</span>
+<span class="sd">        tokenizing and encoding, you need to follow these conventions:</span>
+
 <span class="sd">        - When encoding a residue, we use the standardized (up to) 3-letter residue name from the CCD,</span>
-<span class="sd">            e.g. &#39;ALA&#39; for Alanine, or `DA` for Deoxyadenosine, or `U` for Uracil.</span>
+<span class="sd">            e.g. ``&#39;ALA&#39;`` for Alanine, or ``&#39;DA&#39;`` for Deoxyadenosine, or ``&#39;U&#39;`` for Uracil.</span>
 <span class="sd">        - When encoding unknown tokens, we may define different unknown tokens for different</span>
 <span class="sd">            chemical components (e.g. a different unknown for proteins, vs. dna, ...). The</span>
-<span class="sd">            unkown tokens can take on any arbitrary 3-letter code that we want to map to, but</span>
+<span class="sd">            unknown tokens can take on any arbitrary 3-letter code that we want to map to, but</span>
 <span class="sd">            they should not clash with existing residue names in the CCD.</span>
 <span class="sd">        - When encoding an atom, we use the atomic number of the element as a string as the</span>
-<span class="sd">            token name. E.g. &#39;1&#39; for Hydrogen, &#39;6&#39; for Carbon, &#39;9&#39; for Fluorine, ...</span>
-<span class="sd">            For unknown atoms, we use &#39;0&#39; as the token name.</span>
-<span class="sd">            # TODO: Deal with ligand names such as `100` which is also an atomic number</span>
-<span class="sd">        - To denote masked tokens, we use a &#39;&lt;...&gt;&#39; syntax. E.g. &#39;&lt;M&gt;&#39; for a generic mask token,</span>
-<span class="sd">            or &#39;&lt;MP&gt;&#39; for a mask token for proteins. The ... can be any arbitrary string. We</span>
+<span class="sd">            token name. E.g. ``&#39;1&#39;`` for Hydrogen, ``&#39;6&#39;`` for Carbon, ``&#39;9&#39;`` for Fluorine, ...</span>
+<span class="sd">            For unknown atoms, we use ``&#39;0&#39;`` as the token name.</span>
+<span class="sd">            # TODO: Deal with ligand names such as ``&#39;100&#39;`` which is also an atomic number</span>
+<span class="sd">        - To denote masked tokens, we use a ``&#39;&lt;...&gt;&#39;`` syntax. E.g. ``&#39;&lt;M&gt;&#39;`` for a generic mask token,</span>
+<span class="sd">            or ``&#39;&lt;MP&gt;&#39;`` for a mask token for proteins. The ... can be any arbitrary string. We</span>
 <span class="sd">            use the angle brackets to avoid clashes with existing residue names in the CCD.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -682,7 +684,7 @@
 <span class="sd">&quot;&quot;&quot;AF2&#39;s atom14 encoding.</span>
 
 <span class="sd">Reference:</span>
-<span class="sd">    - https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/common/residue_constants.py#L505</span>
+<span class="sd">    `AlphaFold residue_constants.py &lt;https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/common/residue_constants.py#L505&gt;`_</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="n">AF2_ATOM37_ENCODING</span> <span class="o">=</span> <span class="n">TokenEncoding</span><span class="p">(</span>
@@ -715,7 +717,7 @@
 <span class="sd">&quot;&quot;&quot;AF2&#39;s atom37 encoding</span>
 
 <span class="sd">Reference:</span>
-<span class="sd">    - https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/common/residue_constants.py#L492-L544</span>
+<span class="sd">    `AlphaFold residue_constants.py &lt;https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/common/residue_constants.py#L492-L544&gt;`_</span>
 <span class="sd">(extracted via:</span>
 <span class="sd">```python</span>
 <span class="sd">atom37 = {}</span>
@@ -847,8 +849,10 @@
     <span class="n">chemcomp_type_to_unknown</span><span class="o">=</span><span class="p">{</span><span class="n">chem_type</span><span class="p">:</span> <span class="s2">&quot;UNK&quot;</span> <span class="k">for</span> <span class="n">chem_type</span> <span class="ow">in</span> <span class="n">AA_LIKE_CHEM_TYPES</span><span class="p">},</span>
 <span class="p">)</span>
 <span class="sd">&quot;&quot;&quot;RF2 atom14 encoding for proteins.</span>
-<span class="sd">    - Encodes only the heavy atoms (max 14, for `TRP`)</span>
-<span class="sd">    - Includes 1 unknown tokens: `UNK`</span>
+
+<span class="sd">- Encodes only the heavy atoms (max 14, for ``TRP``)</span>
+<span class="sd">- Includes 1 unknown tokens: ``UNK``</span>
+
 <span class="sd">Print it out to see a visual representation of the encoding.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -894,8 +898,10 @@
     <span class="p">),</span>
 <span class="p">)</span>
 <span class="sd">&quot;&quot;&quot;RF2 atom23 encoding for proteins and nucleic acids.</span>
-<span class="sd">    - Encodes only the heavy atoms (max 22, for `RG`)</span>
-<span class="sd">    - Includes 3 unknown tokens: `UNK` for proteins, `DN` for dna, `N` for RNA</span>
+
+<span class="sd">- Encodes only the heavy atoms (max 22, for ``RG``)</span>
+<span class="sd">- Includes 3 unknown tokens: ``UNK`` for proteins, ``DN`` for dna, ``N`` for RNA</span>
+
 <span class="sd">Print it out to see a visual representation of the encoding.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -1089,18 +1095,11 @@
 <div class="viewcode-block" id="AF3SequenceEncoding">
 <a class="viewcode-back" href="../../../ml/encoding_definitions.html#atomworks.ml.encoding_definitions.AF3SequenceEncoding">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AF3SequenceEncoding</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Encodes and decodes sequence tokens for AlphaFold 3.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encodes and decodes sequence tokens for AlphaFold 3.</span>
 
 <span class="sd">    This class provides functionality to convert between residue names and their</span>
 <span class="sd">    corresponding integer encodings as used in AlphaFold 3. It handles standard</span>
 <span class="sd">    amino acids, RNA, DNA, and unknown residues.</span>
-
-<span class="sd">    Methods:</span>
-<span class="sd">        encode(res_names): Encode residue names to integer indices.</span>
-<span class="sd">        decode(res_indices): Decode integer indices to residue names.</span>
-<span class="sd">        tokens: Property that returns the list of AF3 tokens.</span>
-<span class="sd">        n_tokens: Property that returns the number of AF3 tokens.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

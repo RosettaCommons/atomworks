@@ -389,7 +389,12 @@
                 <article class="bd-article">
                   
   <h1>Source code for atomworks.ml.utils.debug</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span></span><span class="sd">&quot;&quot;&quot;Debug utilities for ML components.</span>
+
+<span class="sd">Provides functions for saving failed examples and debugging ML pipelines.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
@@ -407,6 +412,14 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_remove_special_characters</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove special characters from a string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        s: The string to clean.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The cleaned string with only alphanumeric characters and underscores.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
     <span class="c1"># Remove unwanted characters using regex</span>
     <span class="n">clean_s</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[^a-zA-Z0-9_]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
@@ -423,17 +436,14 @@
     <span class="n">rng_state_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">error_msg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Attempts to save a failed example to disk as a pickle file.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Attempts to save a failed example to disk as a pickle file.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        - example_id (str): The ID of the example.</span>
-<span class="sd">        - fail_dir (str): The directory where the failed example should be saved. Defaults to a specific path.</span>
-<span class="sd">        - rng_state_dict (dict): The random number generator state dictionary.</span>
-<span class="sd">        - error_msg (str): The error message associated with the failure.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        None</span>
+<span class="sd">        example_id: The ID of the example.</span>
+<span class="sd">        fail_dir: The directory where the failed example should be saved.</span>
+<span class="sd">        data: Optional data dictionary to save.</span>
+<span class="sd">        rng_state_dict: The random number generator state dictionary.</span>
+<span class="sd">        error_msg: The error message associated with the failure.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="c1"># Get wandb run ID if currently in a wandb run</span>

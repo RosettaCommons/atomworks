@@ -389,7 +389,15 @@
                 <article class="bd-article">
                   
   <h1>Source code for atomworks.io.parser</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Entrypoint for parsing atomic-level structure files (e.g., PDB, CIF) into Biotite-compatible data structures.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Entrypoint for parsing atomic-level structure files into Biotite-compatible data structures.</span>
+
+<span class="sd">This module provides functionality for parsing PDB, CIF, and other structure files</span>
+<span class="sd">into Biotite-compatible data structures with various processing options.</span>
+
+<span class="sd">References:</span>
+<span class="sd">    `Biotite Structure I/O &lt;https://www.biotite-python.org/apidoc/biotite.structure.io.html&gt;`_</span>
+<span class="sd">    `mmCIF Format Specification &lt;https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/&gt;`_</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -495,22 +503,22 @@
 <span class="sd">        - Perform analogous cleaning/processing steps on an existing AtomArray or AtomArrayStack.</span>
 
 <span class="sd">    We categorize arguments into two groups:</span>
-<span class="sd">        - Wrapper arguments: Arguments that are used within the wrapping `parse` method (e.g., caching)</span>
+<span class="sd">        - Wrapper arguments: Arguments that are used within the wrapping parse method (e.g., caching)</span>
 <span class="sd">        - CIF parsing arguments: Arguments that control structure parsing and are ultimately are passed</span>
-<span class="sd">            to the `_parse_from_atom_array` method (regardless of file type, we convert to an AtomArray before parsing)</span>
+<span class="sd">            to the _parse_from_atom_array method (regardless of file type, we convert to an AtomArray before parsing)</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        filename (PathLike | io.StringIO | io.BytesIO): Either a Path or buffer to the file. This may be any format of</span>
-<span class="sd">            atomic-level structure (e.g. .cif, .bcif, .cif.gz, .pdb), although .cif files are *strongly* recommended.</span>
+<span class="sd">            atomic-level structure (e.g. .cif, .bcif, .cif.gz, .pdb), although .cif files are strongly recommended.</span>
 
-<span class="sd">        *** Wrapper arguments ***</span>
+<span class="sd">        **Wrapper arguments:**</span>
 <span class="sd">        file_type (Literal[&quot;cif&quot;, &quot;pdb&quot;] | None, optional): The file type of the structure file.</span>
 <span class="sd">            If not provided, the file type will be inferred automatically.</span>
 <span class="sd">        load_from_cache (bool, optional): Whether to load pre-compiled results from cache. Defaults to False.</span>
 <span class="sd">        cache_dir (PathLike, optional): Directory path to save pre-compiled results. Defaults to None.</span>
 <span class="sd">        save_to_cache (bool, optional): Whether to save the results to cache when building the structure. Defaults to False.</span>
 
-<span class="sd">        *** Parsing arguments ***</span>
+<span class="sd">        **Parsing arguments:**</span>
 <span class="sd">        ccd_mirror_path (str, optional): Path to the local mirror of the Chemical Component Dictionary (recommended).</span>
 <span class="sd">            If not provided, Biotite&#39;s built-in CCD will be used.</span>
 <span class="sd">        add_missing_atoms (bool, optional): Whether to add missing atoms to the</span>
@@ -543,19 +551,26 @@
 <span class="sd">        build_assembly (string, list, or tuple, optional): Specifies which assembly to build, if any. Options are None</span>
 <span class="sd">            (e.g., asymmetric unit), &quot;first&quot;, &quot;all&quot;, or a list or tuple of assembly IDs. Defaults to &quot;all&quot;.</span>
 <span class="sd">        extra_fields (list, optional): A list of extra fields to include in the AtomArrayStack. Defaults to None. &quot;all&quot; includes all fields.</span>
-<span class="sd">            Only support mmCIF files.</span>
+<span class="sd">            Only supports mmCIF files.</span>
 <span class="sd">        keep_cif_block (bool, optional): Whether to keep the CIF block in the result. Defaults to False.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: A dictionary containing the following keys:</span>
-<span class="sd">            chain_info: A dictionary mapping chain ID to sequence, type (as an IntEnum), RCSB entity,</span>
+
+<span class="sd">            chain_info</span>
+<span class="sd">                A dictionary mapping chain ID to sequence, type (as an IntEnum), RCSB entity,</span>
 <span class="sd">                EC number, and other information.</span>
-<span class="sd">            ligand_info: A dictionary containing ligand of interest information.</span>
-<span class="sd">            asym_unit: An AtomArrayStack instance representing the asymmetric unit.</span>
-<span class="sd">            assemblies: A dictionary mapping assembly IDs to AtomArrayStack instances.</span>
-<span class="sd">            metadata: A dictionary containing metadata about the structure</span>
+<span class="sd">            ligand_info</span>
+<span class="sd">                A dictionary containing ligand of interest information.</span>
+<span class="sd">            asym_unit</span>
+<span class="sd">                An AtomArrayStack instance representing the asymmetric unit.</span>
+<span class="sd">            assemblies</span>
+<span class="sd">                A dictionary mapping assembly IDs to AtomArrayStack instances.</span>
+<span class="sd">            metadata</span>
+<span class="sd">                A dictionary containing metadata about the structure</span>
 <span class="sd">                (e.g., resolution, deposition date, etc.).</span>
-<span class="sd">            extra_info: A dictionary with information for cross-compatibility and caching.</span>
+<span class="sd">            extra_info</span>
+<span class="sd">                A dictionary with information for cross-compatibility and caching.</span>
 <span class="sd">                Should typically not be used directly.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -930,7 +945,7 @@
             <span class="k">if</span> <span class="n">msa_path</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
                 <span class="n">data_dict</span><span class="p">[</span><span class="s2">&quot;chain_info&quot;</span><span class="p">][</span><span class="n">chain</span><span class="p">][</span><span class="s2">&quot;msa_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">msa_path</span><span class="p">)</span>
 
-    <span class="c1"># ... optionally, build assemblies and add assembly-specifc annotation (instance IDs)</span>
+    <span class="c1"># ... optionally, build assemblies and add assembly-specifc annotation (instance IDs like `chain_iid`, `pn_unit_iid`, `molecule_iid`)</span>
     <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">build_assembly</span><span class="p">):</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="n">build_assembly</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;first&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="s2">&quot;_spoof&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">build_assembly</span><span class="p">,</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">)</span>
@@ -1114,7 +1129,7 @@
             <span class="n">updated_chain_hetero_annotations</span> <span class="o">=</span> <span class="n">atom_array_stack</span><span class="o">.</span><span class="n">hetero</span><span class="p">[</span><span class="n">atom_array_stack</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">==</span> <span class="n">chain_id</span><span class="p">]</span>
             <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">updated_chain_hetero_annotations</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="o">~</span><span class="n">updated_chain_hetero_annotations</span><span class="p">)</span>
 
-    <span class="c1"># ...parse the CIF block into a dictionary</span>
+    <span class="c1"># ... parse the CIF block into a dictionary</span>
     <span class="n">parse_from_cif_kwargs</span><span class="p">[</span><span class="s2">&quot;file_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pdb&quot;</span>
     <span class="n">parse_from_cif_kwargs</span><span class="p">[</span><span class="s2">&quot;extra_fields&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">parse_from_cif_kwargs</span><span class="p">[</span><span class="s2">&quot;build_assembly&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;_spoof&quot;</span>

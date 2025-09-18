@@ -398,16 +398,18 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">CRYSTALLIZATION_AIDS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse</span>
 
-<span class="n">DEFAULT_CIF_PARSER_ARGS</span> <span class="o">=</span> <span class="p">{</span>
+<span class="n">DEFAULT_PARSER_ARGS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;add_missing_atoms&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
     <span class="s2">&quot;add_id_and_entity_annotations&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
     <span class="s2">&quot;add_bond_types_from_struct_conn&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;covale&quot;</span><span class="p">],</span>
     <span class="s2">&quot;remove_ccds&quot;</span><span class="p">:</span> <span class="n">CRYSTALLIZATION_AIDS</span><span class="p">,</span>
     <span class="s2">&quot;remove_waters&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;hydrogen_policy&quot;</span><span class="p">:</span> <span class="s2">&quot;remove&quot;</span><span class="p">,</span>
     <span class="s2">&quot;fix_ligands_at_symmetry_centers&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;convert_mse_to_met&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
     <span class="s2">&quot;fix_arginines&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">&quot;fix_formal_charges&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">&quot;fix_bond_types&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">&quot;convert_mse_to_met&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">&quot;hydrogen_policy&quot;</span><span class="p">:</span> <span class="s2">&quot;remove&quot;</span><span class="p">,</span>
     <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># all models</span>
 <span class="p">}</span>
 <span class="sd">&quot;&quot;&quot;Default cif parser arguments for `atomworks.io.parse`.</span>
@@ -517,12 +519,13 @@
         <span class="n">cif_parser_args</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="c1"># Convenience utilities to default to loading from and saving to cache if a cache_dir is provided, unless explicitly overridden</span>
+    <span class="c1"># TODO: Move to DEFAULT_CIF_PARSER_ARGS, but set to False by default not True</span>
     <span class="k">if</span> <span class="n">cif_parser_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cache_dir&quot;</span><span class="p">):</span>
         <span class="n">cif_parser_args</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;load_from_cache&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="n">cif_parser_args</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;save_to_cache&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
     <span class="c1"># Merge DEFAULT_CIF_PARSER_ARGS with cif_parser_args, overriding with the keys present in cif_parser_args</span>
-    <span class="n">merged_cif_parser_args</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">DEFAULT_CIF_PARSER_ARGS</span><span class="p">,</span> <span class="o">**</span><span class="n">cif_parser_args</span><span class="p">}</span>
+    <span class="n">merged_cif_parser_args</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">DEFAULT_PARSER_ARGS</span><span class="p">,</span> <span class="o">**</span><span class="n">cif_parser_args</span><span class="p">}</span>
 
     <span class="c1"># Use the parse function with the merged CIF parser arguments</span>
     <span class="n">result_dict</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span>

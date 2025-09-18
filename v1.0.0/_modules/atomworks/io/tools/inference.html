@@ -431,9 +431,10 @@
     <span class="n">check_ccd_codes_are_available</span><span class="p">,</span>
     <span class="n">get_chain_type_from_ccd_code</span><span class="p">,</span>
     <span class="n">get_chem_comp_type</span><span class="p">,</span>
+    <span class="n">parse_ccd_cif</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.chain</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_chain_id_generator</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.io_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">CIF_LIKE_EXTENSIONS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.io_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">CIF_LIKE_EXTENSIONS</span><span class="p">,</span> <span class="n">read_any</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;atomworks.io&quot;</span><span class="p">)</span>
 
@@ -632,56 +633,83 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">CIFOrPDBFileComponent</span><span class="p">(</span><span class="n">ChemicalComponent</span><span class="p">):</span>
     <span class="n">path</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span>
     <span class="n">msa_paths</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">chain_type</span><span class="p">:</span> <span class="n">ChainType</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">custom_parse_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chain_type</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">chain_type</span> <span class="o">=</span> <span class="n">ChainType</span><span class="o">.</span><span class="n">as_enum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chain_type</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the component by parsing the structure file.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_ccd_cif_file</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parse_ccd_style_cif</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parse_standard_pdb_or_cif</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_ccd_cif_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if we are given a CCD CIF file, which by convention includes the _chem_comp_atom field but not the atom_site field&quot;&quot;&quot;</span>
+        <span class="n">cif</span> <span class="o">=</span> <span class="n">read_any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cif</span><span class="o">.</span><span class="n">block</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="n">has_atom_site</span> <span class="o">=</span> <span class="s2">&quot;atom_site&quot;</span> <span class="ow">in</span> <span class="n">keys</span>
+        <span class="n">has_chem_comp_atom</span> <span class="o">=</span> <span class="s2">&quot;chem_comp_atom&quot;</span> <span class="ow">in</span> <span class="n">keys</span>
+
+        <span class="k">return</span> <span class="n">has_chem_comp_atom</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_atom_site</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_ccd_style_cif</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse a CCD-style CIF file.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_parse_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Custom parse kwargs are not supported for CCD CIF files.&quot;</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;CCD CIF file detected: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">. &quot;</span>
+            <span class="s2">&quot;This file will be parsed as a CCD CIF file rather than a regular CIF file &quot;</span>
+            <span class="s2">&quot;(e.g., with an `atom_site` category).&quot;</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom_array</span> <span class="o">=</span> <span class="n">parse_ccd_cif</span><span class="p">(</span><span class="n">read_any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;is_polymer&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atom_array</span><span class="p">),</span> <span class="kc">False</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chain_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_id</span><span class="p">)</span>
+
+        <span class="c1"># Set occupancy to all 1s since we presumably want to predict everything</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom_array</span><span class="o">.</span><span class="n">occupancy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atom_array</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_standard_pdb_or_cif</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse a standard PDB or CIF structure file.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_parse_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">custom_parse_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
 
+        <span class="c1"># We add missing atoms later to the fully-concatenated inference AtomArray</span>
         <span class="n">parse_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">DEFAULT_PARSE_KWARGS</span><span class="p">,</span> <span class="s2">&quot;add_missing_atoms&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span> <span class="o">|</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_parse_kwargs</span>
 
         <span class="k">if</span> <span class="n">parse_kwargs</span><span class="p">[</span><span class="s2">&quot;add_missing_atoms&quot;</span><span class="p">]:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;Missing atoms will be added later to the fully-concatenated inference AtomArray. &quot;</span>
-                <span class="s2">&quot;It is recommended to set this argument to False in initial CIFOrPDBFileComponent parsing. &quot;</span>
+                <span class="s2">&quot;It is recommended to set this argument to False in initial CIFOrPDBFileComponent parsing.&quot;</span>
             <span class="p">)</span>
 
-        <span class="c1"># Parse using atomworks.io</span>
         <span class="n">parsing_results</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">parse_kwargs</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="s2">&quot;assemblies&quot;</span> <span class="ow">in</span> <span class="n">parsing_results</span><span class="p">:</span>
             <span class="n">assemblies</span> <span class="o">=</span> <span class="n">parsing_results</span><span class="p">[</span><span class="s2">&quot;assemblies&quot;</span><span class="p">]</span>
-
             <span class="c1"># We will keep only the first assembly that was parsed</span>
             <span class="n">first_assembly_id</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">assemblies</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
 
-            <span class="c1"># Give warning if multiple assemblies were parsed</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">assemblies</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Multiple biological assemblies found in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2"> and none were specified. &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;Only the first assembly (assembly_id=</span><span class="si">{</span><span class="n">first_assembly_id</span><span class="si">}</span><span class="s2">) will be used for inference. &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;If you would like to use a different assembly, please specify this in the `parse_kwargs`.&quot;</span>
+                    <span class="s2">&quot;If you would like to use a different assembly, please specify this in the `parse_kwargs`.&quot;</span>
                 <span class="p">)</span>
 
-            <span class="c1"># Get the atom array stack corresponding to this assembly</span>
             <span class="n">atom_array_stack</span> <span class="o">=</span> <span class="n">assemblies</span><span class="p">[</span><span class="n">first_assembly_id</span><span class="p">]</span>
-
-        <span class="c1"># Use the asymmetric unit if no assemblies were returned</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">atom_array_stack</span> <span class="o">=</span> <span class="n">parsing_results</span><span class="p">[</span><span class="s2">&quot;asym_unit&quot;</span><span class="p">]</span>
 
-        <span class="c1"># We will keep only the first model of the parsed structure</span>
         <span class="k">if</span> <span class="n">atom_array_stack</span><span class="o">.</span><span class="n">stack_depth</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Multiple models found in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">. Only the first model will be used for inference. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;If you would like to use a different model, please specify this in the `parse_kwargs`.&quot;</span>
+                <span class="s2">&quot;If you would like to use a different model, please specify this in the `parse_kwargs`.&quot;</span>
             <span class="p">)</span>
-        <span class="n">structure_file_atom_array</span> <span class="o">=</span> <span class="n">atom_array_stack</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="c1"># Record chain ids and AtomArray</span>
+        <span class="n">structure_file_atom_array</span> <span class="o">=</span> <span class="n">atom_array_stack</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">chain_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">structure_file_atom_array</span><span class="o">.</span><span class="n">chain_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">atom_array</span> <span class="o">=</span> <span class="n">structure_file_atom_array</span></div>
 
@@ -1131,6 +1159,13 @@
     <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">components</span><span class="p">:</span>
         <span class="c1"># CIFOrPDBFileComponents already have parsed AtomArrays</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="n">CIFOrPDBFileComponent</span><span class="p">):</span>
+            <span class="n">atom_array</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">atom_array</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+                <span class="n">atom_array</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="nb">next</span><span class="p">(</span><span class="n">chain_id_generator</span><span class="p">))</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Chain ID was not set for </span><span class="si">{</span><span class="n">component</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;The next available chain ID was assigned, assuming that this is a single-chain structure: </span><span class="si">{</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_id</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
             <span class="n">atom_arrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">atom_array</span><span class="p">)</span>
             <span class="k">continue</span>
 
@@ -1140,12 +1175,16 @@
             <span class="n">atom_arrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sequence_to_annotated_atom_array</span><span class="p">(</span><span class="o">**</span><span class="n">component</span><span class="o">.</span><span class="n">as_dict</span><span class="p">(),</span> <span class="n">custom_residues</span><span class="o">=</span><span class="n">custom_residues</span><span class="p">))</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="n">SmilesComponent</span><span class="p">):</span>
             <span class="n">ligand_array</span> <span class="o">=</span> <span class="n">smiles_to_annotated_atom_array</span><span class="p">(</span><span class="o">**</span><span class="n">component</span><span class="o">.</span><span class="n">as_dict</span><span class="p">())</span>
-            <span class="n">atom_arrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">assign_res_name_from_atom_array_hash</span><span class="p">(</span><span class="n">ligand_array</span><span class="p">,</span> <span class="n">ligand_hash_to_id</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">component</span><span class="o">.</span><span class="n">res_name</span> <span class="o">==</span> <span class="n">UNKNOWN_LIGAND</span><span class="p">:</span>
+                <span class="n">ligand_array</span> <span class="o">=</span> <span class="n">assign_res_name_from_atom_array_hash</span><span class="p">(</span><span class="n">ligand_array</span><span class="p">,</span> <span class="n">ligand_hash_to_id</span><span class="p">)</span>
+            <span class="n">atom_arrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ligand_array</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="n">CCDComponent</span><span class="p">):</span>
             <span class="n">atom_arrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ccd_code_to_annotated_atom_array</span><span class="p">(</span><span class="o">**</span><span class="n">component</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()))</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="n">SDFComponent</span><span class="p">):</span>
             <span class="n">ligand_array</span> <span class="o">=</span> <span class="n">sdf_to_annotated_atom_array</span><span class="p">(</span><span class="o">**</span><span class="n">component</span><span class="o">.</span><span class="n">as_dict</span><span class="p">())</span>
-            <span class="n">atom_arrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">assign_res_name_from_atom_array_hash</span><span class="p">(</span><span class="n">ligand_array</span><span class="p">,</span> <span class="n">ligand_hash_to_id</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">component</span><span class="o">.</span><span class="n">res_name</span> <span class="o">==</span> <span class="n">UNKNOWN_LIGAND</span><span class="p">:</span>
+                <span class="n">ligand_array</span> <span class="o">=</span> <span class="n">assign_res_name_from_atom_array_hash</span><span class="p">(</span><span class="n">ligand_array</span><span class="p">,</span> <span class="n">ligand_hash_to_id</span><span class="p">)</span>
+            <span class="n">atom_arrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ligand_array</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown chemical component type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">component</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 

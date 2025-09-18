@@ -37,7 +37,7 @@ pdb_path = get_pdb_path_or_buffer(example_pdb_id)
 
 ########################################################################
 # Using ``parse()`` for Full Processing
-# ------------------------------------
+# -------------------------------------
 #
 # For RCSB structures, we typically load structures with ``parse()`` to get clean data suitable for most downstream tasks.
 #
@@ -58,7 +58,7 @@ print("Available data keys:", list(parse_output.keys()))
 
 ########################################################################
 # Using ``load_any()`` for Lightweight Loading
-# -------------------------------------------
+# --------------------------------------------
 
 # For comparison: load_any() for lightweight loading (no extensive processing)
 # Useful when you have clean data (e.g., from distillation) and/or want to preserve all annotations
@@ -156,8 +156,21 @@ for key, value in chain_a_info.items():
         print(f"  {key}: {value}")
 
 ########################################################################
+# Accessing the Original mmCIF Data
+# -----------------------------------
+#
+# If there is information contained in the mmCIF file that is *not* extracted by `parse`, we can still gain access
+# to the original Biotite CIF block using the ``keep_cif_block=True`` argument to `parse`.
+# We can then use the Biotite API to explore any additional data we might need.
+# (E.g., we could write a simple `Transform` that extracts the necessary information)
+
+# Load with original CIF block retained
+parse_output_with_cif = parse(pdb_path, keep_cif_block=True)
+cif_block = parse_output_with_cif.get("cif_block", None)
+
+########################################################################
 # Related Examples
-# ----------
+# ---------------
 #
 # - :doc:`annotate_and_save_structures` - Learn how to add custom annotations to structures and save them for later use
 # - :doc:`pocket_conditioning_transform` - Create custom transforms for ligand pocket identification and ML feature generation

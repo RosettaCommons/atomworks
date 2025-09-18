@@ -345,10 +345,13 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">API Modules</span></p>
 <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../core.html">Core Modules</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../core/common.html">Common Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../core/constants.html">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../core/enums.html">Enumerations</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../../io.html">IO</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../common.html">common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../constants.html">constants</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../enums.html">enums</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../parser.html">parser</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../tools.html">Tools</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="../tools/fasta.html">FASTA Tools</a></li>
@@ -377,19 +380,17 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../ml.html">ML</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../ml/common.html">Common Utilities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ml/enums.html">Enums</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../ml/encoding_definitions.html">Encoding Definitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../ml/samplers.html">Samplers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ml/datasets.html">Datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ml/datasets/parsers.html">Dataset Parsers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ml/preprocessing.html">Preprocessing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ml/preprocessing/utils.html">Preprocessing Utilities</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../ml/datasets.html">Datasets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../ml/datasets/datasets.html">Dataset Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ml/datasets/parsers.html">Dataset Parsers</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2"><a class="reference internal" href="../../ml/pipelines.html">Pipelines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../ml/transforms.html">Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../ml/transforms/diffusion.html">Diffusion Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../ml/transforms/dna.html">DNA Transforms</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../ml/transforms/esm.html">ESM Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../ml/transforms/feature_aggregation.html">Feature Aggregation Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../ml/transforms/msa.html">MSA Transforms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../ml/utils.html">Utilities</a></li>
@@ -463,7 +464,176 @@
                   
   <section id="selection-utilities">
 <h1>Selection Utilities<a class="headerlink" href="#selection-utilities" title="Link to this heading">#</a></h1>
-<p id="module-atomworks.io.utils.selection">Utility functions for selecting segments of an AtomArray</p>
+<p id="module-atomworks.io.utils.selection">Tools for atom and segment selection on <code class="docutils literal notranslate"><span class="pre">AtomArray</span></code> and <code class="docutils literal notranslate"><span class="pre">AtomArrayStack</span></code>.</p>
+<p>Provides helpers to compute segment boundaries and apply expressive selection syntax to structures.</p>
+<p>Key public objects:
+- <a class="reference internal" href="#atomworks.io.utils.selection.AtomSelection" title="atomworks.io.utils.selection.AtomSelection"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomSelection</span></code></a>
+- <a class="reference internal" href="#atomworks.io.utils.selection.AtomSelectionStack" title="atomworks.io.utils.selection.AtomSelectionStack"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomSelectionStack</span></code></a>
+- <code class="xref py py-class docutils literal notranslate"><span class="pre">SegmentSlice</span></code></p>
+<p>See individual docstrings for usage and examples.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="atomworks.io.utils.selection.AtomSelection">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.io.utils.selection.</span></span><span class="sig-name descname"><span class="pre">AtomSelection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chain_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'*'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'*'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'*'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atom_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'*'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transformation_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'*'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/atomworks/io/utils/selection.html#AtomSelection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.utils.selection.AtomSelection" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Represent a selection of atoms in a molecular structure.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.io.utils.selection.AtomSelection.from_pymol_str">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_pymol_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pymol_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#atomworks.io.utils.selection.AtomSelection" title="atomworks.io.utils.selection.AtomSelection"><span class="pre">AtomSelection</span></a></span></span><a class="reference internal" href="../../_modules/atomworks/io/utils/selection.html#AtomSelection.from_pymol_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.utils.selection.AtomSelection.from_pymol_str" title="Link to this definition">#</a></dt>
+<dd><p>Create a selection from a PyMOL atom label string.</p>
+<p>PyMOL strings are of the form <code class="docutils literal notranslate"><span class="pre">CHAIN/RES`RESID/ATOM</span></code> and do not support
+<code class="docutils literal notranslate"><span class="pre">transformation_id</span></code>. <code class="docutils literal notranslate"><span class="pre">&quot;*&quot;</span></code> may be used as a wildcard.</p>
+<p>PyMOL strings do not support transformation_id.</p>
+<p>We introduce to default PyMOL syntax the “*” operator as a wildcard to select all atoms in a given granularity.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Selects the OD2 atom of the ASP residue at chain A, residue index 37</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">AtomSelection</span><span class="o">.</span><span class="n">from_pymol_str</span><span class="p">(</span><span class="s2">&quot;A/ASP`37/OD2&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.io.utils.selection.AtomSelection.from_selection_str">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_selection_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selection_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#atomworks.io.utils.selection.AtomSelection" title="atomworks.io.utils.selection.AtomSelection"><span class="pre">AtomSelection</span></a></span></span><a class="reference internal" href="../../_modules/atomworks/io/utils/selection.html#AtomSelection.from_selection_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.utils.selection.AtomSelection.from_selection_str" title="Link to this definition">#</a></dt>
+<dd><p>Create a selection from <code class="docutils literal notranslate"><span class="pre">CHAIN/RES/RESID/ATOM/TRANSFORM</span></code> syntax.</p>
+<p><code class="docutils literal notranslate"><span class="pre">&quot;*&quot;</span></code> acts as a wildcard for any field. Trailing fields may be omitted
+and default to <code class="docutils literal notranslate"><span class="pre">&quot;*&quot;</span></code>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Selects the CA atom of the ALA residue at chain A, residue index 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">AtomSelection</span><span class="o">.</span><span class="n">from_selection_str</span><span class="p">(</span><span class="s2">&quot;A/ALA/1/CA&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Selects the CB atom of the ALA residue in any chain at any residue index</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">AtomSelection</span><span class="o">.</span><span class="n">from_selection_str</span><span class="p">(</span><span class="s2">&quot;*/ALA/*/CB&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Selects all atoms of the ALA residue at chain A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">AtomSelection</span><span class="o">.</span><span class="n">from_selection_str</span><span class="p">(</span><span class="s2">&quot;A/ALA/&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Selects the CA atom of the ALA residue at chain A, residue index 1, transformation index 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">AtomSelection</span><span class="o">.</span><span class="n">from_selection_str</span><span class="p">(</span><span class="s2">&quot;A/ALA/1/CA/1&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.io.utils.selection.AtomSelection.get_idxs">
+<span class="sig-name descname"><span class="pre">get_idxs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/utils/selection.html#AtomSelection.get_idxs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.utils.selection.AtomSelection.get_idxs" title="Link to this definition">#</a></dt>
+<dd><p>Get the indices of atoms selected by this AtomSelection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.io.utils.selection.AtomSelection.get_mask">
+<span class="sig-name descname"><span class="pre">get_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/utils/selection.html#AtomSelection.get_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.utils.selection.AtomSelection.get_mask" title="Link to this definition">#</a></dt>
+<dd><p>Create a boolean mask using this AtomSelection on an AtomArray.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="atomworks.io.utils.selection.AtomSelectionStack">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.io.utils.selection.</span></span><span class="sig-name descname"><span class="pre">AtomSelectionStack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selections</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#atomworks.io.utils.selection.AtomSelection" title="atomworks.io.utils.selection.AtomSelection"><span class="pre">AtomSelection</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/atomworks/io/utils/selection.html#AtomSelectionStack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.utils.selection.AtomSelectionStack" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Manage multiple <a class="reference internal" href="#atomworks.io.utils.selection.AtomSelection" title="atomworks.io.utils.selection.AtomSelection"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtomSelection</span></code></a> objects as a unioned query.</p>
+<p>Supports ranges and comma-separated tokens via <a class="reference internal" href="#atomworks.io.utils.selection.AtomSelectionStack.from_query" title="atomworks.io.utils.selection.AtomSelectionStack.from_query"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_query()</span></code></a> and
+contiguous ranges via <a class="reference internal" href="#atomworks.io.utils.selection.AtomSelectionStack.from_contig" title="atomworks.io.utils.selection.AtomSelectionStack.from_contig"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_contig()</span></code></a>.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#atomworks.io.utils.selection.AtomSelectionStack.from_query" title="atomworks.io.utils.selection.AtomSelectionStack.from_query"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_query()</span></code></a>,
+<a class="reference internal" href="#atomworks.io.utils.selection.AtomSelectionStack.from_contig" title="atomworks.io.utils.selection.AtomSelectionStack.from_contig"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_contig()</span></code></a></p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.io.utils.selection.AtomSelectionStack.from_contig">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_contig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#atomworks.io.utils.selection.AtomSelectionStack" title="atomworks.io.utils.selection.AtomSelectionStack"><span class="pre">AtomSelectionStack</span></a></span></span><a class="reference internal" href="../../_modules/atomworks/io/utils/selection.html#AtomSelectionStack.from_contig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.utils.selection.AtomSelectionStack.from_contig" title="Link to this definition">#</a></dt>
+<dd><p>Create a stack from contiguous residue ranges.</p>
+<p>Contig strings specify inclusive residue index ranges, e.g. <code class="docutils literal notranslate"><span class="pre">&quot;A1-2&quot;</span></code>
+or <code class="docutils literal notranslate"><span class="pre">&quot;A1-2,</span> <span class="pre">B3-10&quot;</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contig</strong> – Contiguous residue selection string like <code class="docutils literal notranslate"><span class="pre">&quot;A1-2,</span> <span class="pre">B3-10&quot;</span></code>.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Selects residues 1..2 in chain A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">AtomSelectionStack</span><span class="o">.</span><span class="n">from_contig</span><span class="p">(</span><span class="s2">&quot;A1-2&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Selects residues 1..2 in chain A and 3..10 in chain B</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">AtomSelectionStack</span><span class="o">.</span><span class="n">from_contig</span><span class="p">(</span><span class="s2">&quot;A1-2, B3-10&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#atomworks.io.utils.selection.AtomSelectionStack.from_query" title="atomworks.io.utils.selection.AtomSelectionStack.from_query"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_query()</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.io.utils.selection.AtomSelectionStack.from_query">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#atomworks.io.utils.selection.AtomSelectionStack" title="atomworks.io.utils.selection.AtomSelectionStack"><span class="pre">AtomSelectionStack</span></a></span></span><a class="reference internal" href="../../_modules/atomworks/io/utils/selection.html#AtomSelectionStack.from_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.utils.selection.AtomSelectionStack.from_query" title="Link to this definition">#</a></dt>
+<dd><p>Create a stack from extended query syntax with ranges.</p>
+<p>Extended syntax overview:
+- <strong>Chains</strong>: <code class="docutils literal notranslate"><span class="pre">A</span></code> (all atoms in chain A), <code class="docutils literal notranslate"><span class="pre">A/ALA</span></code> (all ALA in chain A)
+- <strong>Ranges (``res_id`` only)</strong>: <code class="docutils literal notranslate"><span class="pre">A/*/5-10</span></code> selects residues 5..10 in chain A</p>
+<p>Grammar per field (<code class="docutils literal notranslate"><span class="pre">CHAIN/RES/RESID/ATOM/TRANSFORM</span></code>):
+- <code class="docutils literal notranslate"><span class="pre">&quot;*&quot;</span></code> wildcard
+- Exact value, e.g. <code class="docutils literal notranslate"><span class="pre">&quot;A&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;ALA&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;CA&quot;</span></code>
+- Range (<code class="docutils literal notranslate"><span class="pre">res_id</span></code> only): <code class="docutils literal notranslate"><span class="pre">&quot;5-10&quot;</span></code> (inclusive)</p>
+<p>Notes:
+- Fields are in order: CHAIN_ID/RES_NAME/RES_ID/ATOM_NAME/TRANSFORMATION_ID
+- Wildcard is “*”. Missing trailing fields default to “*”.
+- Multiple comma-separated tokens are combined by union.</p>
+<p>Multiple tokens may be provided as a comma-separated string or <code class="docutils literal notranslate"><span class="pre">list[str]</span></code>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Selects residues 5..10 in chain A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">AtomSelectionStack</span><span class="o">.</span><span class="n">from_query</span><span class="p">(</span><span class="s2">&quot;A/*/5-10&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Selects residues 5..10 in chain A and 3..10 in chain B</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">AtomSelectionStack</span><span class="o">.</span><span class="n">from_query</span><span class="p">(</span><span class="s2">&quot;A/*/5-10, B/*/3-10&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Selects residues 5..10 in chain A and 3..10 in chain B</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">AtomSelectionStack</span><span class="o">.</span><span class="n">from_query</span><span class="p">([</span><span class="s2">&quot;A/*/5-10&quot;</span><span class="p">,</span> <span class="s2">&quot;B/*/3-10&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.io.utils.selection.AtomSelectionStack.get_center_of_mass">
+<span class="sig-name descname"><span class="pre">get_center_of_mass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/utils/selection.html#AtomSelectionStack.get_center_of_mass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.utils.selection.AtomSelectionStack.get_center_of_mass" title="Link to this definition">#</a></dt>
+<dd><p>Return the center of mass of the selected atoms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">(3,)</span></code> array.
+For <code class="xref py py-class docutils literal notranslate"><span class="pre">AtomArrayStack</span></code>: <code class="docutils literal notranslate"><span class="pre">(n_models,)</span></code> array of means.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>For <code class="xref py py-class docutils literal notranslate"><span class="pre">AtomArray</span></code></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If no atoms are selected.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.io.utils.selection.AtomSelectionStack.get_mask">
+<span class="sig-name descname"><span class="pre">get_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/utils/selection.html#AtomSelectionStack.get_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.utils.selection.AtomSelectionStack.get_mask" title="Link to this definition">#</a></dt>
+<dd><p>Create a boolean mask by unioning all selections.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.io.utils.selection.AtomSelectionStack.get_principal_components">
+<span class="sig-name descname"><span class="pre">get_principal_components</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/utils/selection.html#AtomSelectionStack.get_principal_components"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.utils.selection.AtomSelectionStack.get_principal_components" title="Link to this definition">#</a></dt>
+<dd><p>Return principal axes (eigenvectors) of the selected atoms via SVD.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">(3,</span> <span class="pre">3)</span></code> array for <code class="xref py py-class docutils literal notranslate"><span class="pre">AtomArray</span></code>.
+<code class="docutils literal notranslate"><span class="pre">(n_models,</span> <span class="pre">3,</span> <span class="pre">3)</span></code> array for <code class="xref py py-class docutils literal notranslate"><span class="pre">AtomArrayStack</span></code>.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If no atoms are selected.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="atomworks.io.utils.selection.annot_start_stop_idxs">
 <span class="sig-prename descclassname"><span class="pre">atomworks.io.utils.selection.</span></span><span class="sig-name descname"><span class="pre">annot_start_stop_idxs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annots</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_exclusive_stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/utils/selection.html#annot_start_stop_idxs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.utils.selection.annot_start_stop_idxs" title="Link to this definition">#</a></dt>
@@ -471,19 +641,13 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>atom_array</strong> (<em>-</em>) – The AtomArray to process.</p></li>
-<li><p><strong>annots</strong> (<em>-</em>) – The annotation(s) to consider for determining segment boundaries.</p></li>
-<li><p><strong>add_exclusive_stop</strong> (<em>-</em>) – If True, an exclusive stop index (the length of the AtomArray) is added to the result.</p></li>
+<li><p><strong>atom_array</strong> – The AtomArray to process.</p></li>
+<li><p><strong>annots</strong> – Annotation name or names to define segments.</p></li>
+<li><p><strong>add_exclusive_stop</strong> – Append an exclusive stop index at the end. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>An array of start and stop indices for segments where the annotations change.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><ul class="simple">
-<li><p>np.ndarray</p></li>
-</ul>
-</p>
+<dd class="field-even"><p>1D array of start/stop indices that bound segments.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -498,20 +662,44 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="atomworks.io.utils.selection.get_annotation">
 <span class="sig-prename descclassname"><span class="pre">atomworks.io.utils.selection.</span></span><span class="sig-name descname"><span class="pre">get_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_body</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/utils/selection.html#get_annotation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.utils.selection.get_annotation" title="Link to this definition">#</a></dt>
-<dd><p>Get the annotation for an AtomArray or AtomArrayStack if it exists, otherwise return the default value.</p>
+<dd><p>Return an annotation array if present, otherwise <code class="docutils literal notranslate"><span class="pre">default</span></code>.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">n_body</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, the dimensionality is auto-detected by probing 1D then 2D annotation categories.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atom_array</strong> – Structure to query.</p></li>
+<li><p><strong>annot</strong> – Annotation category name.</p></li>
+<li><p><strong>n_body</strong> – 1 for 1D annotations, 2 for 2D annotations; auto-detected if <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>default</strong> – Value to return if the annotation is missing. Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The requested annotation array or <code class="docutils literal notranslate"><span class="pre">default</span></code> if missing.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="atomworks.io.utils.selection.get_residue_starts">
 <span class="sig-prename descclassname"><span class="pre">atomworks.io.utils.selection.</span></span><span class="sig-name descname"><span class="pre">get_residue_starts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_exclusive_stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/atomworks/io/utils/selection.html#get_residue_starts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.io.utils.selection.get_residue_starts" title="Link to this definition">#</a></dt>
 <dd><p>Get the start (and optionally stop) indices of residues in an AtomArray.</p>
-<p>More robust version of <cite>biotite.structure.residues.get_residue_starts</cite> that also
-differentiates between residues resulting from different transformation ids.</p>
-<p>Backwards compatible with <cite>biotite.structure.residues.get_residue_starts</cite> if the
-<cite>transformation_id</cite> annotation is not present.</p>
+<p>This is a more robust version of <code class="xref py py-func docutils literal notranslate"><span class="pre">biotite.structure.residues.get_residue_starts()</span></code>
+that additionally differentiates residues across different <code class="docutils literal notranslate"><span class="pre">transformation_id</span></code> values
+when present. It is backwards compatible if the annotation is absent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>atom_array</strong> – Structure to analyze.</p></li>
+<li><p><strong>add_exclusive_stop</strong> – Append an exclusive stop index at the end. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>1D array of residue boundary indices.</p>
+</dd>
+</dl>
 <p class="rubric">References</p>
 <ul class="simple">
-<li><p><a class="github reference external" href="https://github.com/biotite-dev/biotite/blob/231eefed334e1d3509c1b7cb3f2bfd71d4b0eeb0/src/biotite/structure/residues.py#L35">biotite-dev/biotite</a></p></li>
+<li><p><a class="reference external" href="https://github.com/biotite-dev/biotite/blob/231eefed334e1d3509c1b7cb3f2bfd71d4b0eeb0/src/biotite/structure/residues.py#L35">Biotite get_residue_starts</a></p></li>
 </ul>
 </dd></dl>
 
@@ -564,6 +752,21 @@ differentiates between residues resulting from different transformation ids.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.utils.selection.AtomSelection"><code class="docutils literal notranslate"><span class="pre">AtomSelection</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.utils.selection.AtomSelection.from_pymol_str"><code class="docutils literal notranslate"><span class="pre">AtomSelection.from_pymol_str()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.utils.selection.AtomSelection.from_selection_str"><code class="docutils literal notranslate"><span class="pre">AtomSelection.from_selection_str()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.utils.selection.AtomSelection.get_idxs"><code class="docutils literal notranslate"><span class="pre">AtomSelection.get_idxs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.utils.selection.AtomSelection.get_mask"><code class="docutils literal notranslate"><span class="pre">AtomSelection.get_mask()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.utils.selection.AtomSelectionStack"><code class="docutils literal notranslate"><span class="pre">AtomSelectionStack</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.utils.selection.AtomSelectionStack.from_contig"><code class="docutils literal notranslate"><span class="pre">AtomSelectionStack.from_contig()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.utils.selection.AtomSelectionStack.from_query"><code class="docutils literal notranslate"><span class="pre">AtomSelectionStack.from_query()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.utils.selection.AtomSelectionStack.get_center_of_mass"><code class="docutils literal notranslate"><span class="pre">AtomSelectionStack.get_center_of_mass()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.utils.selection.AtomSelectionStack.get_mask"><code class="docutils literal notranslate"><span class="pre">AtomSelectionStack.get_mask()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.utils.selection.AtomSelectionStack.get_principal_components"><code class="docutils literal notranslate"><span class="pre">AtomSelectionStack.get_principal_components()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.utils.selection.annot_start_stop_idxs"><code class="docutils literal notranslate"><span class="pre">annot_start_stop_idxs()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.utils.selection.get_annotation"><code class="docutils literal notranslate"><span class="pre">get_annotation()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.io.utils.selection.get_residue_starts"><code class="docutils literal notranslate"><span class="pre">get_residue_starts()</span></code></a></li>

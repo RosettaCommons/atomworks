@@ -434,27 +434,26 @@
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.RF2AATemplate">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">RF2AATemplate</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Data class for holding template information in the RF, RF2 &amp; RF2AA format.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data class for holding template information in the RF, RF2 &amp; RF2AA format.</span>
 
 <span class="sd">    NOTE:</span>
-<span class="sd">     - RF templates only exist for proteins</span>
-<span class="sd">     - This is a helper class to cast the templates into a more `readable` format and also</span>
-<span class="sd">       to provide an interface layer that allows us to deal with templates as atom_arrays, if</span>
-<span class="sd">       we ever re-create templates or add templates for non-proteins</span>
-<span class="sd">     - RF-style templates already come encoded in atom14 representation (RFAtom14, not AF2Atom14)</span>
+<span class="sd">        - RF templates only exist for proteins</span>
+<span class="sd">        - This is a helper class to cast the templates into a more readable format and also</span>
+<span class="sd">          to provide an interface layer that allows us to deal with templates as atom_arrays, if</span>
+<span class="sd">          we ever re-create templates or add templates for non-proteins</span>
+<span class="sd">        - RF-style templates already come encoded in atom14 representation (RFAtom14, not AF2Atom14)</span>
 
 <span class="sd">    Keys:</span>
-<span class="sd">    - xyz: Tensor([1, n_templates x n_atoms_per_template, 14, 3]), raw coordinates of all templates</span>
-<span class="sd">    - mask: Tensor([1, n_templates x n_atom_per_template, 14]), mask of all templates</span>
-<span class="sd">    - qmap: Tensor([1, n_templates x n_atom_per_template, 2]), alignment mapping of all templates</span>
-<span class="sd">        - index 0: which index in the query protein this template index matches to</span>
-<span class="sd">        - index 1: which template index this matches to</span>
-<span class="sd">    - f0d: Tensor([1, n_templates, 8?]), [0,:,4] holds sequence identity info</span>
-<span class="sd">    - f1d: Tensor([1, n_templates x n_atoms_per_template, 3]), something in there may be related to template confidence, gaps?</span>
-<span class="sd">    - seq: Tensor([1, 100677]) (tensor, encoded with Chemdata.aa2num encoding)</span>
-<span class="sd">    - ids: list[tuple[str]]  # Holds the f&quot;{pdb_id}_{chain_id}&quot; of the template</span>
-<span class="sd">    - label: list[str]  # holds the lookup_id for this template</span>
+<span class="sd">        - xyz: Tensor([1, n_templates x n_atoms_per_template, 14, 3]), raw coordinates of all templates</span>
+<span class="sd">        - mask: Tensor([1, n_templates x n_atom_per_template, 14]), mask of all templates</span>
+<span class="sd">        - qmap: Tensor([1, n_templates x n_atom_per_template, 2]), alignment mapping of all templates</span>
+<span class="sd">            - index 0: which index in the query protein this template index matches to</span>
+<span class="sd">            - index 1: which template index this matches to</span>
+<span class="sd">        - f0d: Tensor([1, n_templates, 8?]), [0,:,4] holds sequence identity info</span>
+<span class="sd">        - f1d: Tensor([1, n_templates x n_atoms_per_template, 3]), something in there may be related to template confidence, gaps?</span>
+<span class="sd">        - seq: Tensor([1, 100677]) (tensor, encoded with Chemdata.aa2num encoding)</span>
+<span class="sd">        - ids: list[tuple[str]]  # Holds the f&quot;{pdb_id}_{chain_id}&quot; of the template</span>
+<span class="sd">        - label: list[str]  # holds the lookup_id for this template</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">xyz</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>  <span class="c1"># [1, n_templates x n_atoms_per_template, 14, 3]</span>
@@ -1161,10 +1160,8 @@
 <span class="sd">        dict: A dictionary containing the template features.</span>
 
 <span class="sd">    References:</span>
-<span class="sd">        - Section 2.8 of the AF3 supplementary information</span>
-<span class="sd">          https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf</span>
-<span class="sd">        - AF2 supplementary information</span>
-<span class="sd">          https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf</span>
+<span class="sd">        `Section 2.8 of the AF3 supplementary information &lt;https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf&gt;`_</span>
+<span class="sd">        `AF2 supplementary information &lt;https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf&gt;`_</span>
 
 <span class="sd">    NOTE: For templates a token is always a residue since we never align ligands, non-canonicals, PTMs, etc.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1336,10 +1333,8 @@
 <span class="sd">            of the CA atom of all residues within the local frame of each residue.</span>
 
 <span class="sd">    References:</span>
-<span class="sd">        - Section 2.8 of the AF3 supplementary information</span>
-<span class="sd">          https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf</span>
-<span class="sd">        - AF2 supplementary information</span>
-<span class="sd">          https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf</span>
+<span class="sd">        `Section 2.8 of the AF3 supplementary information &lt;https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf&gt;`_</span>
+<span class="sd">        `AF2 supplementary information &lt;https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">requires_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>

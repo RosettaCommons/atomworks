@@ -1,0 +1,1158 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Dataset Architecture &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ml/datasets/datasets';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.0.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Dataset Parsers" href="parsers.html" />
+    <link rel="prev" title="Datasets" href="../datasets.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.0.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../../_static/atomworks_logo_color.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">API Modules</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../core.html">Core Modules</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../core/common.html">Common Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../core/constants.html">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../core/enums.html">Enumerations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../io.html">IO</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../io/parser.html">parser</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../io/tools.html">Tools</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../io/tools/fasta.html">FASTA Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/tools/inference.html">Inference Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/tools/rdkit.html">RDKit Tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../io/transforms.html">Transforms</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../io/transforms/atom_array.html">Atom Array Transforms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/transforms/categories.html">Category Transforms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../io/utils.html">Utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../io/utils/assembly.html">Assembly Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/utils/bonds.html">Bond Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/utils/ccd.html">CCD Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/utils/chain.html">Chain Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/utils/io_utils.html">I/O Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/utils/non_rcsb.html">Non-RCSB Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/utils/selection.html">Selection Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/utils/sequence.html">Sequence Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/utils/testing.html">Testing Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../io/utils/visualize.html">Visualization Utilities</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../ml.html">ML</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../encoding_definitions.html">Encoding Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../samplers.html">Samplers</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="../datasets.html">Datasets</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Dataset Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parsers.html">Dataset Parsers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipelines.html">Pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/diffusion.html">Diffusion Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/dna.html">DNA Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/feature_aggregation.html">Feature Aggregation Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/msa.html">MSA Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../utils.html">Utilities</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../api_reference.html" class="nav-link">API</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../ml.html" class="nav-link">ML</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../datasets.html" class="nav-link">Datasets</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Dataset Architecture</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="dataset-architecture">
+<h1>Dataset Architecture<a class="headerlink" href="#dataset-architecture" title="Link to this heading">#</a></h1>
+<p>AtomWorks provides a modern, composable dataset architecture that separates data loading, processing, and transformation concerns. This approach replaces the legacy parser-based system with functional loaders and transform pipelines.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The metadata parser system (<code class="docutils literal notranslate"><span class="pre">atomworks.ml.datasets.parsers</span></code>) is <strong>deprecated</strong> and will be removed in a future version.
+Use the new loader-based approach with <code class="docutils literal notranslate"><span class="pre">FileDataset</span></code> and <code class="docutils literal notranslate"><span class="pre">PandasDataset</span></code> instead.</p>
+</div>
+<section id="modern-dataset-architecture">
+<h2>Modern Dataset Architecture<a class="headerlink" href="#modern-dataset-architecture" title="Link to this heading">#</a></h2>
+<p>The current AtomWorks dataset system consists of three main components:</p>
+<ol class="arabic simple">
+<li><p><strong>Datasets</strong>: Container classes that manage data access and indexing</p></li>
+<li><p><strong>Loaders</strong>: Functions that process raw data into transform-ready format</p></li>
+<li><p><strong>Transforms</strong>: Pipelines that convert loaded data into model inputs</p></li>
+</ol>
+</section>
+<section id="module-atomworks.ml.datasets.datasets">
+<span id="dataset-classes"></span><h2>Dataset Classes<a class="headerlink" href="#module-atomworks.ml.datasets.datasets" title="Link to this heading">#</a></h2>
+<p>AtomWorks Dataset classes and common APIs.</p>
+<dl class="simple">
+<dt>At a high level, to train models with AtomWorks, we need a Dataset class that:</dt><dd><ol class="arabic simple">
+<li><p>Takes as input an item index and returns the corresponding example information; typically includes:
+a. Path to a structural file saved on disk (<cite>/path/to/dataset/my_dataset_0.cif</cite>)
+b. Additional item-specific metadata (e.g., class labels)</p></li>
+<li><p>Pre-loads structural information from the returned example into an <cite>AtomArray</cite> and assembles inputs for the Transform pipeline</p></li>
+<li><p>Feed the input dictionary through a Transform pipeline and return the result</p></li>
+</ol>
+</dd>
+<dt>Due to the heterogeneity of biomolecular data, in many cases, we may also want:</dt><dd><ol class="arabic simple" start="4">
+<li><p>In the event of a failure during the Transform pipeline, fall back to a different example</p></li>
+</ol>
+</dd>
+</dl>
+<p>For bespoke use cases, users may choose to write a custom Dataset that accomplish these steps; downstream code makes no assumptions.</p>
+<dl class="simple">
+<dt>To accelerate development, we also provide an off-the-shelf, composable approach following common patterns:</dt><dd><ul class="simple">
+<li><p><a class="reference internal" href="#atomworks.ml.datasets.datasets.MolecularDataset" title="atomworks.ml.datasets.datasets.MolecularDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">MolecularDataset</span></code></a>: Base class that handles pre-loading structural data and executing the Transform pipeline with error handling and debugging utilities</p></li>
+<li><p><a class="reference internal" href="#atomworks.ml.datasets.datasets.PandasDataset" title="atomworks.ml.datasets.datasets.PandasDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">PandasDataset</span></code></a>: A subclass of MolecularDataset for tabular data stored as pandas DataFrames</p></li>
+<li><p><a class="reference internal" href="#atomworks.ml.datasets.datasets.FileDataset" title="atomworks.ml.datasets.datasets.FileDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileDataset</span></code></a>: A subclass of MolecularDataset where each file is one example</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.ConcatDatasetWithID">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.ml.datasets.datasets.</span></span><span class="sig-name descname"><span class="pre">ConcatDatasetWithID</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#atomworks.ml.datasets.datasets.ExampleIDMixin" title="atomworks.ml.datasets.datasets.ExampleIDMixin"><span class="pre">ExampleIDMixin</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/datasets.html#ConcatDatasetWithID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.datasets.ConcatDatasetWithID" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ConcatDataset</span></code></p>
+<p>Equivalent to <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.ConcatDataset</span></code> but allows accessing examples by ID.</p>
+<p>Provides ID-based access across multiple datasets that implement <a class="reference internal" href="#atomworks.ml.datasets.datasets.ExampleIDMixin" title="atomworks.ml.datasets.datasets.ExampleIDMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExampleIDMixin</span></code></a>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.ConcatDatasetWithID.cumulative_sizes">
+<span class="sig-name descname"><span class="pre">cumulative_sizes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#atomworks.ml.datasets.datasets.ConcatDatasetWithID.cumulative_sizes" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.ConcatDatasetWithID.datasets">
+<span class="sig-name descname"><span class="pre">datasets</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#atomworks.ml.datasets.datasets.ExampleIDMixin" title="atomworks.ml.datasets.datasets.ExampleIDMixin"><span class="pre">ExampleIDMixin</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#atomworks.ml.datasets.datasets.ConcatDatasetWithID.datasets" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.ConcatDatasetWithID.get_dataset_by_id">
+<span class="sig-name descname"><span class="pre">get_dataset_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">example_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dataset</span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/datasets.html#ConcatDatasetWithID.get_dataset_by_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.datasets.ConcatDatasetWithID.get_dataset_by_id" title="Link to this definition">#</a></dt>
+<dd><p>Retrieves the dataset containing the example ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>example_id</strong> – The ID to find.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The sub-dataset containing the ID.</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Assumes that the example ID is unique within the dataset. If not,
+the first occurrence of the example ID is returned.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.ConcatDatasetWithID.get_dataset_by_idx">
+<span class="sig-name descname"><span class="pre">get_dataset_by_idx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dataset</span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/datasets.html#ConcatDatasetWithID.get_dataset_by_idx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.datasets.ConcatDatasetWithID.get_dataset_by_idx" title="Link to this definition">#</a></dt>
+<dd><p>Retrieves the dataset containing the index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>idx</strong> – The index to find.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The sub-dataset containing the index.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If the index is out of bounds.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.ConcatDatasetWithID.id_to_idx">
+<span class="sig-name descname"><span class="pre">id_to_idx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">example_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/datasets.html#ConcatDatasetWithID.id_to_idx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.datasets.ConcatDatasetWithID.id_to_idx" title="Link to this definition">#</a></dt>
+<dd><p>Retrieves the index corresponding to the example ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>example_id</strong> – The ID to convert.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The corresponding index.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If the example ID is not found.</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Assumes that the example ID is unique within the dataset. If not,
+the first occurrence of the example ID is returned.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.ConcatDatasetWithID.idx_to_id">
+<span class="sig-name descname"><span class="pre">idx_to_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/datasets.html#ConcatDatasetWithID.idx_to_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.datasets.ConcatDatasetWithID.idx_to_id" title="Link to this definition">#</a></dt>
+<dd><p>Retrieves the example ID corresponding to the index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>idx</strong> – The index to convert.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The corresponding example ID.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If the index is out of bounds.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.ExampleIDMixin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.ml.datasets.datasets.</span></span><span class="sig-name descname"><span class="pre">ExampleIDMixin</span></span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/datasets.html#ExampleIDMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.datasets.ExampleIDMixin" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Mixin providing example ID functionality to a Dataset.</p>
+<p>Provides methods for converting between example IDs and indices, and checking
+if an example ID exists in the dataset.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.ExampleIDMixin.id_to_idx">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id_to_idx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">example_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/datasets.html#ExampleIDMixin.id_to_idx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.datasets.ExampleIDMixin.id_to_idx" title="Link to this definition">#</a></dt>
+<dd><p>Convert example ID(s) to index(es).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>example_id</strong> – Single ID or list of IDs to convert.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Corresponding index or list of indices.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.ExampleIDMixin.idx_to_id">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">idx_to_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/datasets.html#ExampleIDMixin.idx_to_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.datasets.ExampleIDMixin.idx_to_id" title="Link to this definition">#</a></dt>
+<dd><p>Convert index(es) to example ID(s).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>idx</strong> – Single index or list of indices to convert.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Corresponding ID or list of IDs.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.FallbackDatasetWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.ml.datasets.datasets.</span></span><span class="sig-name descname"><span class="pre">FallbackDatasetWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback_dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/datasets.html#FallbackDatasetWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.datasets.FallbackDatasetWrapper" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></p>
+<p>A wrapper around a dataset that allows for a fallback dataset to be used when an error occurs.</p>
+<p>Meant to be used with a FallbackSamplerWrapper.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.FileDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.ml.datasets.datasets.</span></span><span class="sig-name descname"><span class="pre">FileDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">PathLike</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/datasets.html#FileDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.datasets.FileDataset" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#atomworks.ml.datasets.datasets.MolecularDataset" title="atomworks.ml.datasets.datasets.MolecularDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">MolecularDataset</span></code></a>, <a class="reference internal" href="#atomworks.ml.datasets.datasets.ExampleIDMixin" title="atomworks.ml.datasets.datasets.ExampleIDMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExampleIDMixin</span></code></a></p>
+<p>Dataset that loads molecular data from individual files.</p>
+<p>Each file represents one example in the dataset. If creating a dataset from a
+directory, use the <a class="reference internal" href="#atomworks.ml.datasets.datasets.FileDataset.from_directory" title="atomworks.ml.datasets.datasets.FileDataset.from_directory"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_directory()</span></code></a> class method instead of the default
+constructor.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.FileDataset.from_directory">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#atomworks.ml.datasets.datasets.FileDataset" title="atomworks.ml.datasets.datasets.FileDataset"><span class="pre">FileDataset</span></a></span></span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/datasets.html#FileDataset.from_directory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.datasets.FileDataset.from_directory" title="Link to this definition">#</a></dt>
+<dd><p>Create a FileDataset by scanning a directory for files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directory</strong> – Path to directory to scan for files.</p></li>
+<li><p><strong>name</strong> – Descriptive name for this dataset.</p></li>
+<li><p><strong>max_depth</strong> – Maximum depth to scan for files in subdirectories.</p></li>
+<li><p><strong>**kwargs</strong> – Additional arguments passed to <a class="reference internal" href="#atomworks.ml.datasets.datasets.FileDataset" title="atomworks.ml.datasets.datasets.FileDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileDataset</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>FileDataset instance with files discovered from the directory.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<dl>
+<dt>Create from directory:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span> <span class="o">=</span> <span class="n">FileDataset</span><span class="o">.</span><span class="n">from_directory</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="s2">&quot;/path/to/files&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_dataset&quot;</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.FileDataset.from_file_list">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_file_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#atomworks.ml.datasets.datasets.FileDataset" title="atomworks.ml.datasets.datasets.FileDataset"><span class="pre">FileDataset</span></a></span></span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/datasets.html#FileDataset.from_file_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.datasets.FileDataset.from_file_list" title="Link to this definition">#</a></dt>
+<dd><p>Create a FileDataset from an explicit list of file paths.</p>
+<p>This is an alias for the main constructor for clarity and consistency
+with <a class="reference internal" href="#atomworks.ml.datasets.datasets.FileDataset.from_directory" title="atomworks.ml.datasets.datasets.FileDataset.from_directory"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_directory()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_paths</strong> – List of file paths for the dataset. Each file represents one example.</p></li>
+<li><p><strong>name</strong> – Descriptive name for this dataset.</p></li>
+<li><p><strong>**kwargs</strong> – Additional arguments passed to <a class="reference internal" href="#atomworks.ml.datasets.datasets.FileDataset" title="atomworks.ml.datasets.datasets.FileDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileDataset</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>FileDataset instance with the provided file paths.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.FileDataset.id_to_idx">
+<span class="sig-name descname"><span class="pre">id_to_idx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">example_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/datasets.html#FileDataset.id_to_idx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.datasets.FileDataset.id_to_idx" title="Link to this definition">#</a></dt>
+<dd><p>Convert example ID(s) to index(es).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.FileDataset.idx_to_id">
+<span class="sig-name descname"><span class="pre">idx_to_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/datasets.html#FileDataset.idx_to_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.datasets.FileDataset.idx_to_id" title="Link to this definition">#</a></dt>
+<dd><p>Convert index(es) to example ID(s).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.MolecularDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.ml.datasets.datasets.</span></span><span class="sig-name descname"><span class="pre">MolecularDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_failed_examples_to_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/datasets.html#MolecularDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.datasets.MolecularDataset" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></p>
+<p>Base class for AtomWorks molecular datasets.</p>
+<p>Handles Transform pipelines and loader functionality for molecular data.
+Subclasses implement <code class="xref py py-meth docutils literal notranslate"><span class="pre">__getitem__()</span></code> with their own data access patterns.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.PandasDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.ml.datasets.datasets.</span></span><span class="sig-name descname"><span class="pre">PandasDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'example_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns_to_load</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_failed_examples_to_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/datasets.html#PandasDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.datasets.PandasDataset" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#atomworks.ml.datasets.datasets.MolecularDataset" title="atomworks.ml.datasets.datasets.MolecularDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">MolecularDataset</span></code></a>, <a class="reference internal" href="#atomworks.ml.datasets.datasets.ExampleIDMixin" title="atomworks.ml.datasets.datasets.ExampleIDMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExampleIDMixin</span></code></a></p>
+<p>Dataset for tabular data stored as pandas DataFrames.</p>
+<p>Inherits all functionality from <a class="reference internal" href="#atomworks.ml.datasets.datasets.MolecularDataset" title="atomworks.ml.datasets.datasets.MolecularDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">MolecularDataset</span></code></a> with additional
+DataFrame-specific features for filtering and ID-based access.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.PandasDataset.id_to_idx">
+<span class="sig-name descname"><span class="pre">id_to_idx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">example_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/datasets.html#PandasDataset.id_to_idx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.datasets.PandasDataset.id_to_idx" title="Link to this definition">#</a></dt>
+<dd><p>Convert an example ID to the corresponding local index.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.PandasDataset.idx_to_id">
+<span class="sig-name descname"><span class="pre">idx_to_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/datasets.html#PandasDataset.idx_to_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.datasets.PandasDataset.idx_to_id" title="Link to this definition">#</a></dt>
+<dd><p>Convert a local index to the corresponding example ID.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.StructuralDatasetWrapper">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.datasets.datasets.</span></span><span class="sig-name descname"><span class="pre">StructuralDatasetWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#atomworks.ml.datasets.datasets.PandasDataset" title="atomworks.ml.datasets.datasets.PandasDataset"><span class="pre">PandasDataset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cif_parser_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_failed_examples_to_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#atomworks.ml.datasets.datasets.PandasDataset" title="atomworks.ml.datasets.datasets.PandasDataset"><span class="pre">PandasDataset</span></a></span></span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/datasets.html#StructuralDatasetWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.datasets.StructuralDatasetWrapper" title="Link to this definition">#</a></dt>
+<dd><p>Backwards-compatible wrapper for the deprecated StructuralDatasetWrapper.</p>
+<p>This function is deprecated and will be removed in a future version.
+Use <a class="reference internal" href="#atomworks.ml.datasets.datasets.PandasDataset" title="atomworks.ml.datasets.datasets.PandasDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">PandasDataset</span></code></a> with the appropriate loader function instead.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset_parser</strong> – The dataset parser to use (e.g., PNUnitsDFParser, InterfacesDFParser).</p></li>
+<li><p><strong>transform</strong> – Transform pipeline to apply to loaded data.</p></li>
+<li><p><strong>dataset</strong> – The underlying PandasDataset containing the tabular data.</p></li>
+<li><p><strong>cif_parser_args</strong> – Arguments to pass to the CIF parser.</p></li>
+<li><p><strong>save_failed_examples_to_dir</strong> – Directory to save failed examples for debugging.</p></li>
+<li><p><strong>**kwargs</strong> – Additional arguments passed to PandasDataset.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>PandasDataset instance configured with the deprecated parameters.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If dataset parameter is required but not provided.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.datasets.get_row_and_index_by_example_id">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.datasets.datasets.</span></span><span class="sig-name descname"><span class="pre">get_row_and_index_by_example_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#atomworks.ml.datasets.datasets.ExampleIDMixin" title="atomworks.ml.datasets.datasets.ExampleIDMixin"><span class="pre">ExampleIDMixin</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">example_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/datasets.html#get_row_and_index_by_example_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.datasets.get_row_and_index_by_example_id" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve a row and its index from a nested dataset structure by its example ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> – The dataset or concatenated dataset to search.
+Must have the <cite>id_to_idx</cite> method.</p></li>
+<li><p><strong>example_id</strong> – The example ID to search for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary containing the row and global index corresponding to the example ID.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="functional-loaders">
+<h2>Functional Loaders<a class="headerlink" href="#functional-loaders" title="Link to this heading">#</a></h2>
+<p>Loaders are functions that process raw dataset output (e.g., pandas Series) into a Transform-ready format.
+They replace the legacy parser classes with a more flexible, functional approach.</p>
+<p id="module-atomworks.ml.datasets.loaders">Functional loader implementations for AtomWorks datasets.</p>
+<p>Loaders are functions that process raw dataset output (e.g., pandas Series) into a Transform-ready format.
+E.g., converts what may be dataset-specific metadata into a standard format for use in AtomWorks Transform pipelines.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.loaders.create_base_loader">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.datasets.loaders.</span></span><span class="sig-name descname"><span class="pre">create_base_loader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">example_id_colname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'example_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_colname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'path'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assembly_id_colname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'assembly_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sharding_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parser_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Series</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/loaders.html#create_base_loader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.loaders.create_base_loader" title="Link to this definition">#</a></dt>
+<dd><p>Factory function that creates a base loader with common logic for many AtomWorks datasets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>example_id_colname</strong> – Name of column containing unique example identifiers</p></li>
+<li><p><strong>path_colname</strong> – Name of column containing paths to structure files</p></li>
+<li><p><strong>assembly_id_colname</strong> – Optional column name containing assembly IDs.
+If None, assembly_id defaults to “1” for all examples.</p></li>
+<li><p><strong>attrs</strong> – Additional attributes to merge with highest precedence into the metadata hierarchy
+(and ultimately included in the output dictionary’s “extra_info” key).</p></li>
+<li><p><strong>base_path</strong> – Base path to prepend to file paths if not included in path column</p></li>
+<li><p><strong>extension</strong> – File extension to add/replace if not included in path column</p></li>
+<li><p><strong>sharding_pattern</strong> – Pattern for how files are organized in subdirectories, if not specified in the path
+- “/1:2/”: Use characters 1-2 for first directory level
+- “/1:2/0:2/”: Use chars 1-2 for first dir, then chars 0-2 for second dir
+- None: No sharding (default)</p></li>
+<li><p><strong>parser_args</strong> – Optional dictionary of arguments to pass to the CIF parser when loading the structure file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A function that takes a pandas Series and returns a dictionary of the loaded structure.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.loaders.create_loader_with_interfaces_and_pn_units_to_score">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.datasets.loaders.</span></span><span class="sig-name descname"><span class="pre">create_loader_with_interfaces_and_pn_units_to_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">example_id_colname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'example_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_colname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'path'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assembly_id_colname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'assembly_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interfaces_to_score_colname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'interfaces_to_score'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pn_units_to_score_colname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pn_units_to_score'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sharding_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parser_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Series</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/loaders.html#create_loader_with_interfaces_and_pn_units_to_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.loaders.create_loader_with_interfaces_and_pn_units_to_score" title="Link to this definition">#</a></dt>
+<dd><p>Factory function that creates a loader that adds interfaces and pn_units to score for validation datasets.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">loader</span> <span class="o">=</span> <span class="n">create_loader_with_interfaces_and_pn_units_to_score</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">interfaces_to_score_colname</span><span class="o">=</span><span class="s2">&quot;interfaces_to_score&quot;</span><span class="p">,</span> <span class="n">pn_units_to_score_colname</span><span class="o">=</span><span class="s2">&quot;pn_units_to_score&quot;</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.datasets.loaders.create_loader_with_query_pn_units">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.datasets.loaders.</span></span><span class="sig-name descname"><span class="pre">create_loader_with_query_pn_units</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">example_id_colname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'example_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_colname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'path'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pn_unit_iid_colnames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assembly_id_colname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'assembly_id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sharding_pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parser_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Series</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/atomworks/ml/datasets/loaders.html#create_loader_with_query_pn_units"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.datasets.loaders.create_loader_with_query_pn_units" title="Link to this definition">#</a></dt>
+<dd><p>Factory function that creates a generic loader for pipelines with query pn_units (chains).</p>
+<p>For instance, in the interfaces dataset, each sampled row contains two pn_unit instance IDs
+that should be included in the cropped structure.</p>
+<p class="rubric">Examples</p>
+<dl>
+<dt>Interfaces dataset:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">loader</span> <span class="o">=</span> <span class="n">create_loader_with_query_pn_units</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">pn_unit_iid_colnames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pn_unit_1_iid&quot;</span><span class="p">,</span> <span class="s2">&quot;pn_unit_2_iid&quot;</span><span class="p">],</span> <span class="n">assembly_id_colname</span><span class="o">=</span><span class="s2">&quot;assembly_id&quot;</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Chains dataset:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">loader</span> <span class="o">=</span> <span class="n">create_loader_with_query_pn_units</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">pn_unit_iid_colnames</span><span class="o">=</span><span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">,</span> <span class="n">base_path</span><span class="o">=</span><span class="s2">&quot;/data/structures&quot;</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;.cif.gz&quot;</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="basic-usage-examples">
+<h3>Basic Usage Examples<a class="headerlink" href="#basic-usage-examples" title="Link to this heading">#</a></h3>
+<p><strong>File-based datasets</strong> (replacing simple file parsers):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.datasets.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">simple_loading_fn</span><span class="p">(</span><span class="n">raw_data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple loading function that parses structural data.&quot;&quot;&quot;</span>
+    <span class="n">parse_output</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">raw_data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;atom_array&quot;</span><span class="p">:</span> <span class="n">parse_output</span><span class="p">[</span><span class="s2">&quot;assemblies&quot;</span><span class="p">][</span><span class="s2">&quot;1&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]}</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">FileDataset</span><span class="o">.</span><span class="n">from_directory</span><span class="p">(</span>
+    <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;/path/to/structures&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_dataset&quot;</span><span class="p">,</span>
+    <span class="n">loader</span><span class="o">=</span><span class="n">simple_loading_fn</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Tabular datasets</strong> (replacing metadata parsers):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.datasets.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">PandasDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.datasets.loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">loader_with_query_pn_units</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">PandasDataset</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="s2">&quot;metadata.parquet&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;interfaces_dataset&quot;</span><span class="p">,</span>
+    <span class="n">loader</span><span class="o">=</span><span class="n">loader_with_query_pn_units</span><span class="p">(</span>
+        <span class="n">pn_unit_iid_colnames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pn_unit_1_iid&quot;</span><span class="p">,</span> <span class="s2">&quot;pn_unit_2_iid&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Custom loaders</strong> for specialized use cases:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">custom_loader</span><span class="p">(</span><span class="n">row</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom loader with specific processing logic.&quot;&quot;&quot;</span>
+    <span class="c1"># Load structure</span>
+    <span class="n">structure_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">])</span>
+    <span class="n">parse_output</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">structure_path</span><span class="p">)</span>
+
+    <span class="c1"># Extract specific metadata</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;resolution&quot;</span><span class="p">:</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;resolution&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;custom_field&quot;</span><span class="p">:</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;custom_field&quot;</span><span class="p">,</span> <span class="s2">&quot;default_value&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;atom_array&quot;</span><span class="p">:</span> <span class="n">parse_output</span><span class="p">[</span><span class="s2">&quot;assemblies&quot;</span><span class="p">][</span><span class="s2">&quot;1&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="s2">&quot;extra_info&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">,</span>
+        <span class="s2">&quot;example_id&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;example_id&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">PandasDataset</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">my_dataframe</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;custom_dataset&quot;</span><span class="p">,</span>
+    <span class="n">loader</span><span class="o">=</span><span class="n">custom_loader</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="common-loader-patterns">
+<h3>Common Loader Patterns<a class="headerlink" href="#common-loader-patterns" title="Link to this heading">#</a></h3>
+<p><strong>Base loader</strong> for standard structure loading:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.datasets.loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">loader_base</span>
+
+<span class="n">loader</span> <span class="o">=</span> <span class="n">loader_base</span><span class="p">(</span>
+    <span class="n">example_id_colname</span><span class="o">=</span><span class="s2">&quot;example_id&quot;</span><span class="p">,</span>
+    <span class="n">path_colname</span><span class="o">=</span><span class="s2">&quot;path&quot;</span><span class="p">,</span>
+    <span class="n">assembly_id_colname</span><span class="o">=</span><span class="s2">&quot;assembly_id&quot;</span><span class="p">,</span>
+    <span class="n">base_path</span><span class="o">=</span><span class="s2">&quot;/data/structures&quot;</span><span class="p">,</span>
+    <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;.cif&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Interface loader</strong> for protein-protein interfaces:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.datasets.loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">loader_with_query_pn_units</span>
+
+<span class="n">loader</span> <span class="o">=</span> <span class="n">loader_with_query_pn_units</span><span class="p">(</span>
+    <span class="n">pn_unit_iid_colnames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pn_unit_1_iid&quot;</span><span class="p">,</span> <span class="s2">&quot;pn_unit_2_iid&quot;</span><span class="p">],</span>
+    <span class="n">base_path</span><span class="o">=</span><span class="s2">&quot;/data/pdb&quot;</span><span class="p">,</span>
+    <span class="n">extension</span><span class="o">=</span><span class="s2">&quot;.cif.gz&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Validation loader</strong> with scoring targets:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.datasets.loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">loader_with_interfaces_and_pn_units_to_score</span>
+
+<span class="n">loader</span> <span class="o">=</span> <span class="n">loader_with_interfaces_and_pn_units_to_score</span><span class="p">(</span>
+    <span class="n">interfaces_to_score_colname</span><span class="o">=</span><span class="s2">&quot;interfaces_to_score&quot;</span><span class="p">,</span>
+    <span class="n">pn_units_to_score_colname</span><span class="o">=</span><span class="s2">&quot;pn_units_to_score&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="integration-with-transform-pipelines">
+<h3>Integration with Transform Pipelines<a class="headerlink" href="#integration-with-transform-pipelines" title="Link to this heading">#</a></h3>
+<p>Loaders work seamlessly with AtomWorks transform pipelines. The loader output becomes the input to the transform pipeline:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Compose</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.crop</span><span class="w"> </span><span class="kn">import</span> <span class="n">CropSpatialLikeAF3</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.atom_array</span><span class="w"> </span><span class="kn">import</span> <span class="n">AddGlobalAtomIdAnnotation</span>
+
+<span class="c1"># Create a transform pipeline</span>
+<span class="n">transform_pipeline</span> <span class="o">=</span> <span class="n">Compose</span><span class="p">([</span>
+    <span class="n">AddGlobalAtomIdAnnotation</span><span class="p">(),</span>
+    <span class="n">CropSpatialLikeAF3</span><span class="p">(</span><span class="n">crop_size</span><span class="o">=</span><span class="mi">256</span><span class="p">),</span>
+<span class="p">])</span>
+
+<span class="c1"># Create dataset with both loader and transforms</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">PandasDataset</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="s2">&quot;metadata.parquet&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_dataset&quot;</span><span class="p">,</span>
+    <span class="n">loader</span><span class="o">=</span><span class="n">loader_with_query_pn_units</span><span class="p">(</span>
+        <span class="n">pn_unit_iid_colnames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pn_unit_1_iid&quot;</span><span class="p">,</span> <span class="s2">&quot;pn_unit_2_iid&quot;</span><span class="p">]</span>
+    <span class="p">),</span>
+    <span class="n">transform</span><span class="o">=</span><span class="n">transform_pipeline</span>
+<span class="p">)</span>
+
+<span class="c1"># Access processed data</span>
+<span class="n">example</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Returns transformed data ready for model input</span>
+</pre></div>
+</div>
+</section>
+<section id="data-flow">
+<h3>Data Flow<a class="headerlink" href="#data-flow" title="Link to this heading">#</a></h3>
+<p>The complete data flow in the new architecture is:</p>
+<ol class="arabic simple">
+<li><p><strong>Raw Data</strong>: File paths or DataFrame rows</p></li>
+<li><p><strong>Loader</strong>: Processes raw data into standardized format with <code class="docutils literal notranslate"><span class="pre">AtomArray</span></code></p></li>
+<li><p><strong>Transform Pipeline</strong>: Converts loaded data into model-ready tensors</p></li>
+<li><p><strong>Model Input</strong>: Final processed data ready for training/inference</p></li>
+</ol>
+<p>This separation allows for:
+- <strong>Reusable loaders</strong> across different datasets
+- <strong>Composable transforms</strong> that can be mixed and matched
+- <strong>Easy testing</strong> of individual components
+- <strong>Clear debugging</strong> when issues arise</p>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../datasets.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Datasets</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="parsers.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Dataset Parsers</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#modern-dataset-architecture">Modern Dataset Architecture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-atomworks.ml.datasets.datasets">Dataset Classes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.ConcatDatasetWithID"><code class="docutils literal notranslate"><span class="pre">ConcatDatasetWithID</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.ConcatDatasetWithID.cumulative_sizes"><code class="docutils literal notranslate"><span class="pre">ConcatDatasetWithID.cumulative_sizes</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.ConcatDatasetWithID.datasets"><code class="docutils literal notranslate"><span class="pre">ConcatDatasetWithID.datasets</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.ConcatDatasetWithID.get_dataset_by_id"><code class="docutils literal notranslate"><span class="pre">ConcatDatasetWithID.get_dataset_by_id()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.ConcatDatasetWithID.get_dataset_by_idx"><code class="docutils literal notranslate"><span class="pre">ConcatDatasetWithID.get_dataset_by_idx()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.ConcatDatasetWithID.id_to_idx"><code class="docutils literal notranslate"><span class="pre">ConcatDatasetWithID.id_to_idx()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.ConcatDatasetWithID.idx_to_id"><code class="docutils literal notranslate"><span class="pre">ConcatDatasetWithID.idx_to_id()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.ExampleIDMixin"><code class="docutils literal notranslate"><span class="pre">ExampleIDMixin</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.ExampleIDMixin.id_to_idx"><code class="docutils literal notranslate"><span class="pre">ExampleIDMixin.id_to_idx()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.ExampleIDMixin.idx_to_id"><code class="docutils literal notranslate"><span class="pre">ExampleIDMixin.idx_to_id()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.FallbackDatasetWrapper"><code class="docutils literal notranslate"><span class="pre">FallbackDatasetWrapper</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.FileDataset"><code class="docutils literal notranslate"><span class="pre">FileDataset</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.FileDataset.from_directory"><code class="docutils literal notranslate"><span class="pre">FileDataset.from_directory()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.FileDataset.from_file_list"><code class="docutils literal notranslate"><span class="pre">FileDataset.from_file_list()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.FileDataset.id_to_idx"><code class="docutils literal notranslate"><span class="pre">FileDataset.id_to_idx()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.FileDataset.idx_to_id"><code class="docutils literal notranslate"><span class="pre">FileDataset.idx_to_id()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.MolecularDataset"><code class="docutils literal notranslate"><span class="pre">MolecularDataset</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.PandasDataset"><code class="docutils literal notranslate"><span class="pre">PandasDataset</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.PandasDataset.id_to_idx"><code class="docutils literal notranslate"><span class="pre">PandasDataset.id_to_idx()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.PandasDataset.idx_to_id"><code class="docutils literal notranslate"><span class="pre">PandasDataset.idx_to_id()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.StructuralDatasetWrapper"><code class="docutils literal notranslate"><span class="pre">StructuralDatasetWrapper()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.datasets.get_row_and_index_by_example_id"><code class="docutils literal notranslate"><span class="pre">get_row_and_index_by_example_id()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functional-loaders">Functional Loaders</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.loaders.create_base_loader"><code class="docutils literal notranslate"><span class="pre">create_base_loader()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.loaders.create_loader_with_interfaces_and_pn_units_to_score"><code class="docutils literal notranslate"><span class="pre">create_loader_with_interfaces_and_pn_units_to_score()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.datasets.loaders.create_loader_with_query_pn_units"><code class="docutils literal notranslate"><span class="pre">create_loader_with_query_pn_units()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-usage-examples">Basic Usage Examples</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#common-loader-patterns">Common Loader Patterns</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#integration-with-transform-pipelines">Integration with Transform Pipelines</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-flow">Data Flow</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/ml/datasets/datasets.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
