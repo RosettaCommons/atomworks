@@ -44,6 +44,7 @@ from atomworks.io.utils.ccd import (
 )
 from atomworks.io.utils.chain import create_chain_id_generator
 from atomworks.io.utils.io_utils import CIF_LIKE_EXTENSIONS, read_any
+from biotite.structure.io import pdbx
 
 logger = logging.getLogger("atomworks.io")
 
@@ -218,7 +219,12 @@ class CIFOrPDBFileComponent(ChemicalComponent):
 
     def _is_ccd_cif_file(self) -> bool:
         """Check if we are given a CCD CIF file, which by convention includes the _chem_comp_atom field but not the atom_site field"""
+        # If not a CIF file, return False
         cif = read_any(self.path)
+
+        if not isinstance(cif, pdbx.CIFFile | pdbx.BinaryCIFFile):
+            return False
+
         keys = list(cif.block.keys())
 
         has_atom_site = "atom_site" in keys
