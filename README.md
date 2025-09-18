@@ -14,7 +14,7 @@
 
 If you're looking for the models themselves (e.g., RF3, MPNN) that integrate with AtomWorks rather than the underlying framework, check out [ModelForge](https://github.com/RosettaCommons/modelforge)
 
-> **💡 Note:** Not sure where to start? We've made some [examples in the AtomWorks documentation](https://baker-laboratory.github.io/atomworks-dev/latest/auto_examples/index.html) that work through several helpful scenarios; a full tutorial is under construction!
+> **💡 Note:** Not sure where to start? We've made some [examples in the AtomWorks documentation](https://rosettacommons.github.io/atomworks/latest/auto_examples/index.html) that work through several helpful scenarios; a full tutorial is under construction!
 
 AtomWorks is composed of two symbiotic libraries:
 
