@@ -281,7 +281,11 @@ class FileDataset(MolecularDataset, ExampleIDMixin):
         self.file_paths = file_paths
 
         # Create ID mapping
-        self.id_to_idx_map = {self._get_example_id(i): i for i, _ in enumerate(file_paths)}
+        self.id_to_idx_map = {self._get_example_id(i): i for i, _ in enumerate(self.file_paths)}
+
+        # Verify that all example IDs are unique
+        if len(self.id_to_idx_map) != len(self.file_paths):
+            raise ValueError("Example IDs must be unique. Found duplicate example IDs.")
 
     @classmethod
     def from_directory(
