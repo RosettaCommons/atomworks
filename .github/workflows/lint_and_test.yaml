@@ -111,14 +111,20 @@ jobs:
           export OMP_NUM_THREADS=1
           # Get number of CPUs available
           N_CPU=$(nproc)
+          coverage erase
           #echo "Running tests with max $N_CPU CPUs"
           # Run the tests with coverage
-          PDB_MIRROR_PATH=tests/data/pdb CCD_MIRROR_PATH=tests/data/ccd pytest -n auto -m "not benchmark" tests/io
-          PDB_MIRROR_PATH=tests/data/pdb CCD_MIRROR_PATH=tests/data/ccd pytest -n auto -m "not benchmark and not slow" tests/ml
+          PDB_MIRROR_PATH=tests/data/pdb CCD_MIRROR_PATH=tests/data/ccd pytest -n auto -m "not benchmark" tests/io --cov=atomworks --cov-append --cov-report= --no-cov-on-fail 
+          PDB_MIRROR_PATH=tests/data/pdb CCD_MIRROR_PATH=tests/data/ccd pytest -n auto -m "not benchmark and not slow" tests/ml --cov=atomworks --cov-append --cov-report= --no-cov-on-fail
           #run slow test on 1 processor to limit memory usage
-          PDB_MIRROR_PATH=tests/data/pdb CCD_MIRROR_PATH=tests/data/ccd pytest -n 1 -m "not benchmark and slow" tests/ml
+          PDB_MIRROR_PATH=tests/data/pdb CCD_MIRROR_PATH=tests/data/ccd pytest -n 1 -m "not benchmark and slow" tests/ml --cov=atomworks --cov-append --cov-report= --no-cov-on-fail
           # Currently, running tests in different steps, so we do not go over memory limits 
           #  PDB_MIRROR_PATH=tests/data/pdb CCD_MIRROR_PATH=tests/data/ccd pytest -m "not benchmark" -n auto --maxprocesses=$N_CPU --dist=worksteal --cov=atomworks --cov-report=xml --cov-report=term --cov-report=term-missing tests/
+
+          # combine coverage 
+          coverage combine
+          coverage report -m 
+          coverage xml -o coverage.xml
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
