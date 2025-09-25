@@ -113,13 +113,17 @@ jobs:
           N_CPU=$(nproc)
           echo "Running tests with max $N_CPU CPUs"
           # Run the tests with coverage
-          if [ "$N_CPU" -eq 1 ]; then
-            PDB_MIRROR_PATH=tests/data/pdb CCD_MIRROR_PATH=tests/data/ccd pytest -m "not benchmark" tests/io
-            PDB_MIRROR_PATH=tests/data/pdb CCD_MIRROR_PATH=tests/data/ccd pytest -m "not benchmark and not slow" tests/ml
-            # NOTE: The slow tests below are currently skipped on github runners due to low memory.
-            # PDB_MIRROR_PATH=tests/data/pdb CCD_MIRROR_PATH=tests/data/ccd pytest -m "not benchmark and slow" tests/ml
-          else
-            PDB_MIRROR_PATH=tests/data/pdb CCD_MIRROR_PATH=tests/data/ccd pytest -m "not benchmark" -n auto --maxprocesses=$N_CPU --dist=worksteal --cov=atomworks --cov-report=xml --cov-report=term --cov-report=term-missing tests/
+          PDB_MIRROR_PATH=tests/data/pdb CCD_MIRROR_PATH=tests/data/ccd pytest -n auto -m "not benchmark" tests/io
+          PDB_MIRROR_PATH=tests/data/pdb CCD_MIRROR_PATH=tests/data/ccd pytest -m "not benchmark and not slow" tests/ml
+          #run slow test on 1 processor to limit memory usage
+          PDB_MIRROR_PATH=tests/data/pdb CCD_MIRROR_PATH=tests/data/ccd pytest -n 1 -m "not benchmark and slow" tests/ml
+          #if [ "$N_CPU" -eq 1 ]; then
+          #  PDB_MIRROR_PATH=tests/data/pdb CCD_MIRROR_PATH=tests/data/ccd pytest -m "not benchmark" tests/io
+          #  PDB_MIRROR_PATH=tests/data/pdb CCD_MIRROR_PATH=tests/data/ccd pytest -m "not benchmark and not slow" tests/ml
+          #  # NOTE: The slow tests below are currently skipped on github runners due to low memory.
+          #  # PDB_MIRROR_PATH=tests/data/pdb CCD_MIRROR_PATH=tests/data/ccd pytest -m "not benchmark and slow" tests/ml
+          #else
+          #  PDB_MIRROR_PATH=tests/data/pdb CCD_MIRROR_PATH=tests/data/ccd pytest -m "not benchmark" -n auto --maxprocesses=$N_CPU --dist=worksteal --cov=atomworks --cov-report=xml --cov-report=term --cov-report=term-missing tests/
           fi
 
       - name: Upload coverage report
