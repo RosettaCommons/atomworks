@@ -53,23 +53,6 @@ jobs:
       - name: ruff check (lint code base)
         run: ruff check src tests
 
-  test_digs:
-    name: pytest (jojo)
-    runs-on: [self-hosted]
-    timeout-minutes: 30
-    needs: lint
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run tests
-        run: |
-          export N_CPU=8
-          srun --chdir=$PWD -p cpu -c $N_CPU -t 00:30:00 --mem=32G bash ./.github/ci/run_tests.sh
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: coverage.xml
-
   test_github:
     name: pytest (github)
     runs-on: ubuntu-latest
@@ -112,7 +95,7 @@ jobs:
           # Get number of CPUs available
           N_CPU=$(nproc)
           coverage erase
-          #echo "Running tests with max $N_CPU CPUs"
+          echo "Running tests with max $N_CPU CPUs"
           # Run the tests with coverage
           PDB_MIRROR_PATH=tests/data/pdb CCD_MIRROR_PATH=tests/data/ccd pytest -n auto -m "not benchmark" tests/io --cov=atomworks --cov-append --cov-report=
           PDB_MIRROR_PATH=tests/data/pdb CCD_MIRROR_PATH=tests/data/ccd pytest -n auto -m "not benchmark and not slow" tests/ml --cov=atomworks --cov-append --cov-report= --no-cov-on-fail
