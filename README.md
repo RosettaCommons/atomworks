@@ -35,7 +35,7 @@ AtomWorks is built atop [biotite](https://www.biotite-python.org/): We are grate
 
 - Parse, convert, and clean any common biological file (structure or sequence). For example, identifying and removing leaving groups, correcting bond order after nucleophilic addition, fixing charges, parsing covalent geometries, and appropriate treatment of structures with multiple occupancies and ligands at symmetry centers
 - Transform all data to a consistent `AtomArray` representation for further analysis or machine learning applications, regardless of initial source
-- Model missing atoms (those implied by the sequence but not represented in the coordinates) and initialize entity- and instance-level annotations (see the [glossary]() for more detail on our composable naming conventions)
+- Model missing atoms (those implied by the sequence but not represented in the coordinates) and initialize entity- and instance-level annotations (see the [glossary](https://rosettacommons.github.io/atomworks/latest/glossary.html) for more detail on our composable naming conventions)
 
 We have found `atomworks.io` to be generally useful to a broad bioinformatics and protein design audience; in many cases, `atomworks.io` can replace bespoke scripts and manual curation, enabling researchers to spend more time testing hypothesis and less time juggling dozens of tools and dependencies.
 
