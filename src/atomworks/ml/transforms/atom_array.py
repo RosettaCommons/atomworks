@@ -5,7 +5,7 @@ from __future__ import annotations
 import copy
 import logging
 from collections.abc import Callable, Iterator
-from typing import Any, ClassVar, Literal
+from typing import Any, ClassVar, Literal, List
 
 import biotite.structure as struc
 import numpy as np
@@ -87,6 +87,23 @@ def atom_id_to_token_idx(atom_array: AtomArray, atom_id: int) -> int:
     token_idx = np.searchsorted(token_start_idxs, atom_idx, side="right") - 1
 
     return token_idx
+
+
+def atom_ids_to_token_idxs(atom_array: AtomArray, atom_ids: List[int]) -> List[int]:
+    """Convert a list of atom IDs to a list of token indices in the given array."""
+    
+    # 过程待优化，把第一步向量化
+    atom_idxs = []
+    for atom_id in atom_ids:
+        atom_idx = atom_id_to_atom_idx(atom_array, atom_id)
+        atom_idxs.append(atom_idx)
+
+    # 获取已排序的 token 起始位置
+    token_start_idxs = get_token_starts(atom_array)  # 形状为 (M,)
+    # 向量化搜索：找到每个 atom_idx 所属的 token
+    token_idxs = np.searchsorted(token_start_idxs, atom_idxs, side="right") - 1
+
+    return token_idxs
 
 
 def apply_and_spread_residue_wise(

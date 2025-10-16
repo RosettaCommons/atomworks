@@ -93,6 +93,7 @@ def build_af3_transform_pipeline(
     # Crop params
     crop_size: int = 384,
     crop_center_cutoff_distance: float = 15.0,
+    hotspot_cutoff_distance: float = 4.5,
     crop_contiguous_probability: float = 0.5,
     crop_spatial_probability: float = 0.5,
     max_atoms_in_crop: int | None = None,
@@ -130,6 +131,9 @@ def build_af3_transform_pipeline(
     pad_dna_p_skip: float = 0.0,
     b_factor_min: float | None = None,
     b_factor_max: float | None = None,
+    hotspot_sample_range_min: float = 0.1,
+    hotspot_sample_range_max: float = 0.3,
+    hotspot_sample_chains_num: int = 1,
 ) -> Transform:
     """Build the AF3 pipeline with specified parameters.
 
@@ -224,8 +228,12 @@ def build_af3_transform_pipeline(
                 CropSpatialLikeAF3(
                     crop_size=crop_size,
                     crop_center_cutoff_distance=crop_center_cutoff_distance,
+                    hotspot_cutoff_distance=hotspot_cutoff_distance,
                     keep_uncropped_atom_array=True,
                     max_atoms_in_crop=max_atoms_in_crop,
+                    hotspot_sample_range_min = hotspot_sample_range_min,
+                    hotspot_sample_range_max = hotspot_sample_range_max,
+                    hotspot_sample_chains_num = hotspot_sample_chains_num,
                 ),
             ],
             probs=[crop_contiguous_probability, crop_spatial_probability],
@@ -383,6 +391,7 @@ def build_af3_transform_pipeline(
         "automorphisms",
         "symmetry_resolution",
         "extra_info",
+        "crop_info"
     ]
 
     if run_confidence_head:

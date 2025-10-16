@@ -1,6 +1,6 @@
 import itertools
 import logging
-from typing import ClassVar
+from typing import ClassVar, Sequence, Union, Optional
 
 import numpy as np
 from biotite.structure import AtomArray
@@ -13,7 +13,11 @@ from atomworks.ml.transforms._checks import (
     check_contains_keys,
     check_is_instance,
 )
-from atomworks.ml.transforms.atom_array import atom_id_to_atom_idx, atom_id_to_token_idx
+from atomworks.ml.transforms.atom_array import (
+    atom_id_to_atom_idx, 
+    atom_id_to_token_idx,
+    atom_ids_to_token_idxs
+)
 from atomworks.ml.transforms.base import Transform
 from atomworks.ml.utils.token import (
     apply_token_wise,
@@ -175,6 +179,25 @@ def crop_contiguous_af2_multimer(iids: list[int | str], instance_lens: list[int]
     return keep_tokens  # dict[int | str, np.ndarray[bool]]
 
 
+def coo_to_dense_min(mat, n_tokens, fill_value=np.inf):
+    order = np.lexsort((mat.col, mat.row))
+    rows, cols, data = mat.row[order], mat.col[order], mat.data[order]
+
+    # 标记每组 (i,j) 的开始
+    diff = np.empty_like(rows)
+    diff[0] = True
+    diff[1:] = (rows[1:] != rows[:-1]) | (cols[1:] != cols[:-1])
+    grp_ids = np.nonzero(diff)[0]
+
+    u_rows, u_cols = rows[grp_ids], cols[grp_ids]
+    # 手动做分组最小值
+    v_min = np.minimum.reduceat(data, grp_ids)
+    dense = np.full((n_tokens, n_tokens), fill_value, dtype=data.dtype)
+    dense[u_rows, u_cols] = v_min
+    np.fill_diagonal(dense, np.inf)
+    return dense
+
+
 def get_spatial_crop_center(
     atom_array: AtomArray,
     query_pn_unit_iids: list[str],
@@ -244,6 +267,7 @@ def get_spatial_crop_center(
 
     # ... get mask for ligands of interest
     is_at_interface = np.zeros_like(is_query_pn_unit, dtype=bool)
+    dists = {}
     for pn_unit_1_iid, pn_unit_2_iid in itertools.combinations(query_pn_unit_iids, 2):
         # ... get mask, indices, and kdtree for pn_unit_1
         pn_unit_1_mask = (atom_array.pn_unit_iid == pn_unit_1_iid) & is_occupied
@@ -255,17 +279,25 @@ def get_spatial_crop_center(
         pn_unit_2_indices = np.where(pn_unit_2_mask)[0]
         _tree2 = KDTree(atom_array.coord[pn_unit_2_mask])
 
-        dists = _tree1.sparse_distance_matrix(_tree2, max_distance=cutoff_distance, output_type="coo_matrix")
+        atom_dists = _tree1.sparse_distance_matrix(_tree2, max_distance=cutoff_distance, output_type="coo_matrix")
 
         # ... update the interface mask (by converting the local idxs to the global idxs)
-        is_at_interface[pn_unit_1_indices[np.unique(dists.row)]] = True
-        is_at_interface[pn_unit_2_indices[np.unique(dists.col)]] = True
+        is_at_interface[pn_unit_1_indices[np.unique(atom_dists.row)]] = True
+        is_at_interface[pn_unit_2_indices[np.unique(atom_dists.col)]] = True
+        
+        row_global_idx = pn_unit_1_indices[atom_dists.row]
+        col_global_idx = pn_unit_2_indices[atom_dists.col]
+
+        atom_dists.row = row_global_idx
+        atom_dists.col = col_global_idx
+
+        dists[(pn_unit_1_iid, pn_unit_2_iid)] = atom_dists
 
     # ... assemble final crop mask
     can_be_crop_center = is_query_pn_unit & is_at_interface & is_occupied
 
     assert np.any(can_be_crop_center), "No crop center found!"
-    return can_be_crop_center
+    return can_be_crop_center, dists
 
 
 def get_spatial_crop_mask(
@@ -423,14 +455,74 @@ class CropContiguousLikeAF3(CropTransformBase):
         return data
 
 
+def sample_to_hotspot(
+    arrays: Sequence[np.ndarray],   # 各元素为一维数组，内容是全局 token idx
+    n: int,                        # 要选择的数组数量（从 N 个里选 n 个）
+    pct_range: Union[float, tuple[float, float]],  # 抽样比例范围，如 0.1 或 (0.1, 0.3)
+    ntoken: int,                   # 最终掩码长度
+    random_state: Optional[int] = None
+) -> np.ndarray:
+    """
+    从N个数组中随机选n个，拼接后按百分比范围无放回抽样，生成布尔掩码。
+    """
+    rng = np.random.default_rng(random_state)
+
+    # 0) 初始化掩码
+    is_hotspot = np.zeros(ntoken, dtype=bool)
+
+    if n <= 0:
+        return is_hotspot
+
+    # 1) 标准化比例范围
+    if np.isscalar(pct_range):
+        low, high = pct_range, pct_range
+    else:
+        low, high = sorted(pct_range)
+    assert 0.0 <= low <= 1.0 and 0.0 <= high <= 1.0, "pct_range 必须在 [0,1] 范围内"
+
+    # 2) 随机选 n 个数组（允许重复选择同一数组）
+    chosen_idxs = rng.choice(len(arrays), size=n, replace=True)
+
+    # 3) 拼接被选数组的索引，并去重（全局无放回）
+    # 注意：这里“无放回”指全局不重复，因此先合并再一次性抽样
+    candidate = np.concatenate([arrays[i] for i in chosen_idxs])
+
+    # 若候选为空，直接返回
+    if candidate.size == 0:
+        return is_hotspot
+
+    # 4) 去重（全局不放回）
+    # unique 返回升序索引；我们只需要唯一集合
+    _, idx_keep = np.unique(candidate, return_index=True)
+    candidate = candidate[np.sort(idx_keep)]
+
+    # 5) 按百分比范围确定样本数（向上取整的最小值为1）
+    L = len(candidate)
+    k = rng.integers(int(low * L), int(high * L) + 1)
+    k = max(1, k)  # 至少抽 1 个
+
+    # 6) 无放回抽样
+    chosen_global = rng.choice(candidate, size=k, replace=False)
+
+    # 7) 写入掩码并返回
+    valid = (chosen_global >= 0) & (chosen_global < ntoken)
+    if np.any(valid):
+        is_hotspot[chosen_global[valid]] = True
+    return is_hotspot
+
+
 def crop_spatial_like_af3(
     atom_array: AtomArray,
     query_pn_unit_iids: list[str],
     crop_size: int,
     jitter_scale: float = 1e-3,
     crop_center_cutoff_distance: float = 15.0,
+    hotspot_cutoff_distance: float = 4.5,
     force_crop: bool = False,
     raise_if_missing_query: bool = True,
+    hotspot_sample_range_min = float,
+    hotspot_sample_range_max = float,
+    hotspot_sample_chains_num = int,
 ) -> dict:
     """Crop spatial tokens around a given `crop_center` by keeping the `crop_size` nearest neighbors (with jitter).
 
@@ -469,9 +561,48 @@ def crop_spatial_like_af3(
     requires_crop = n_tokens > crop_size
 
     # ... get possible crop centers
-    can_be_crop_center = get_spatial_crop_center(
+    can_be_crop_center, dists = get_spatial_crop_center(
         atom_array, query_pn_unit_iids, crop_center_cutoff_distance, raise_if_missing_query=raise_if_missing_query
     )
+
+    hotspots_list = []
+
+    for pair, atom_dists in dists.items():
+
+        row_atom_ids_global = atom_array.atom_id[atom_dists.row]
+        col_atom_ids_global = atom_array.atom_id[atom_dists.col]
+        # crop_center_atom_id = np.random.choice(atom_array[can_be_crop_center].atom_id)
+
+        row_token_idx_global = atom_ids_to_token_idxs(atom_array, row_atom_ids_global)
+        col_token_idx_global = atom_ids_to_token_idxs(atom_array, col_atom_ids_global)
+
+        atom_dists.row = row_token_idx_global
+        atom_dists.col = col_token_idx_global
+
+        token_dists_dense = coo_to_dense_min(atom_dists, n_tokens=n_tokens)
+
+        # 得到可以作为的行列
+        rows, cols = np.where(token_dists_dense <= hotspot_cutoff_distance)  # 也可改为 >、<、==
+        coords = list(zip(rows, cols))
+
+        for i,j in zip(rows, cols):
+            print(token_dists_dense[i,j])
+        hotspots_list.append(rows)
+        hotspots_list.append(cols)
+    # is_hotspot = np.zeros(n_tokens, dtype=bool)
+
+    is_hotspot_token = sample_to_hotspot(
+        hotspots_list,   # 各元素为一维数组，内容是全局 token idx
+        n = hotspot_sample_chains_num,                   # 要选择的数组数量（从 N 个里选 n 个）
+        pct_range=(hotspot_sample_range_min, hotspot_sample_range_max),  # 抽样比例范围，如 0.1 或 (0.1, 0.3)
+        ntoken = n_tokens
+    )
+    is_hotspot_atom = spread_token_wise(atom_array, is_hotspot_token, token_starts=token_segments)
+
+    atom_array.set_annotation("is_hotspot_atom", is_hotspot_atom.astype(bool))
+
+    for i in range(len(atom_array)):
+        print(i, atom_array[i].atom_id, atom_array[i].is_hotspot_atom, atom_array[i].res_id)
 
     # ... sample crop center atom
     crop_center_atom_id = np.random.choice(atom_array[can_be_crop_center].atom_id)
@@ -498,6 +629,7 @@ def crop_spatial_like_af3(
         "crop_center_token_idx": crop_center_token_idx,  # token_idx of crop center
         "crop_token_idxs": np.where(is_token_in_crop)[0],  # token_idxs in crop
         "crop_atom_idxs": np.where(is_atom_in_crop)[0],  # atom_idxs in crop
+        "crop_sample_of_hotspot": is_hotspot_token[is_token_in_crop],
     }
 
 
@@ -527,6 +659,7 @@ def resize_crop_info_if_too_many_atoms(
     assert "crop_token_idxs" in crop_info, "crop_token_idxs not found in crop"
     crop_atom_idxs = crop_info["crop_atom_idxs"]
     crop_token_idxs = crop_info["crop_token_idxs"]
+    crop_sample_of_hotspot = crop_info["crop_sample_of_hotspot"]
     crop_atom_array = atom_array[crop_atom_idxs]
 
     # Check if resizing is needed
@@ -561,6 +694,7 @@ def resize_crop_info_if_too_many_atoms(
     # ... get token indices within budget
     is_in_budget = sort_by_distance[:cutoff]
     token_idxs_in_budget = crop_token_idxs[is_in_budget]
+    crop_sample_of_hotspot_in_budget = crop_sample_of_hotspot[is_in_budget]
 
     # Update atom idxs accordingly
     # ... create updated masks for chosen tokens
@@ -572,6 +706,7 @@ def resize_crop_info_if_too_many_atoms(
     # Update crop info
     crop_info["crop_atom_idxs"] = atom_idxs_in_budget
     crop_info["crop_token_idxs"] = token_idxs_in_budget
+    crop_info["crop_sample_of_hotspot"] = crop_sample_of_hotspot_in_budget
 
     return crop_info
 
@@ -613,10 +748,14 @@ class CropSpatialLikeAF3(CropTransformBase):
         crop_size: int,
         jitter_scale: float = 1e-3,
         crop_center_cutoff_distance: float = 15.0,
+        hotspot_cutoff_distance: float = 4.5,
         keep_uncropped_atom_array: bool = False,
         force_crop: bool = False,
         max_atoms_in_crop: int | None = None,
         raise_if_missing_query: bool = True,
+        hotspot_sample_range_min: float = 0.1,
+        hotspot_sample_range_max: float = 0.3,
+        hotspot_sample_chains_num: int = 1,
         **kwargs,
     ):
         """Initialize the CropSpatialLikeAF3 transform.
@@ -642,10 +781,14 @@ class CropSpatialLikeAF3(CropTransformBase):
         self.crop_size = crop_size
         self.jitter_scale = jitter_scale
         self.crop_center_cutoff_distance = crop_center_cutoff_distance
+        self.hotspot_cutoff_distance = hotspot_cutoff_distance
         self.keep_uncropped_atom_array = keep_uncropped_atom_array
         self.force_crop = force_crop
         self.max_atoms_in_crop = max_atoms_in_crop
         self.raise_if_missing_query = raise_if_missing_query
+        self.hotspot_sample_range_min = hotspot_sample_range_min
+        self.hotspot_sample_range_max = hotspot_sample_range_max
+        self.hotspot_sample_chains_num = hotspot_sample_chains_num
         self._validate()
 
     def check_input(self, data: dict) -> None:
@@ -668,9 +811,14 @@ class CropSpatialLikeAF3(CropTransformBase):
             crop_size=self.crop_size,
             jitter_scale=self.jitter_scale,
             crop_center_cutoff_distance=self.crop_center_cutoff_distance,
+            hotspot_cutoff_distance = self.hotspot_cutoff_distance,
             force_crop=self.force_crop,
             raise_if_missing_query=self.raise_if_missing_query,
+            hotspot_sample_range_min = self.hotspot_sample_range_min,
+            hotspot_sample_range_max = self.hotspot_sample_range_max,
+            hotspot_sample_chains_num = self.hotspot_sample_chains_num,
         )
+
         crop_info = resize_crop_info_if_too_many_atoms(
             crop_info=crop_info,
             atom_array=atom_array,
