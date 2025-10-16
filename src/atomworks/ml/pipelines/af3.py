@@ -133,7 +133,7 @@ def build_af3_transform_pipeline(
     b_factor_max: float | None = None,
     hotspot_sample_range_min: float = 0.1,
     hotspot_sample_range_max: float = 0.3,
-    hotspot_sample_chains_num: int = 1,
+    hotspot_sample_all_chains_prob: float = 1.0,
 ) -> Transform:
     """Build the AF3 pipeline with specified parameters.
 
@@ -233,7 +233,7 @@ def build_af3_transform_pipeline(
                     max_atoms_in_crop=max_atoms_in_crop,
                     hotspot_sample_range_min = hotspot_sample_range_min,
                     hotspot_sample_range_max = hotspot_sample_range_max,
-                    hotspot_sample_chains_num = hotspot_sample_chains_num,
+                    hotspot_sample_all_chains_prob = hotspot_sample_all_chains_prob,
                 ),
             ],
             probs=[crop_contiguous_probability, crop_spatial_probability],

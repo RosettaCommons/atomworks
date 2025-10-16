@@ -479,10 +479,10 @@ class EncodeAF3TokenLevelFeatures(Transform):
         # ... (token)
         token_index = np.arange(len(token_starts))
 
-        if hasattr(atom_array, "is_hotspot_atom"):
-            is_hotspot = token_level_array.is_hotspot_atom
+        if hasattr(atom_array, "is_sample_of_hotspot_atom"):
+            is_sampled_hotspot = token_level_array.is_sample_of_hotspot_atom
         else:
-            is_hotspot = np.zeros_like(token_index, dtype=bool)
+            is_sampled_hotspot = np.zeros_like(token_index, dtype=bool)
         # ... (chain instance)
         asym_name, asym_id = np.unique(token_level_array.pn_unit_iid, return_inverse=True)
         # ... (chain entity)
@@ -531,7 +531,7 @@ class EncodeAF3TokenLevelFeatures(Transform):
             "is_dna": is_dna,  # (N_tokens) (bool)
             "is_ligand": is_ligand,  # (N_tokens) (bool)
             "is_atomized": token_level_array.atomize,  # (N_tokens) (bool)
-            "is_hotspot": is_hotspot, # (N_tokens, bool)
+            "is_sampled_hotspot": is_sampled_hotspot, # (N_tokens, bool)
         }
         data["feat_metadata"] |= {
             "asym_name": asym_name,  # (N_asyms)

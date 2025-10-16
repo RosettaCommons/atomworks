@@ -26,7 +26,7 @@ from atomworks.ml.utils.token import (
     get_token_starts,
     spread_token_wise,
 )
-
+from atomworks.ml.transforms.hotspot import HotspotSampler
 logger = logging.getLogger("atomworks.ml")
 
 
@@ -455,62 +455,6 @@ class CropContiguousLikeAF3(CropTransformBase):
         return data
 
 
-def sample_to_hotspot(
-    arrays: Sequence[np.ndarray],   # 各元素为一维数组，内容是全局 token idx
-    n: int,                        # 要选择的数组数量（从 N 个里选 n 个）
-    pct_range: Union[float, tuple[float, float]],  # 抽样比例范围，如 0.1 或 (0.1, 0.3)
-    ntoken: int,                   # 最终掩码长度
-    random_state: Optional[int] = None
-) -> np.ndarray:
-    """
-    从N个数组中随机选n个，拼接后按百分比范围无放回抽样，生成布尔掩码。
-    """
-    rng = np.random.default_rng(random_state)
-
-    # 0) 初始化掩码
-    is_hotspot = np.zeros(ntoken, dtype=bool)
-
-    if n <= 0:
-        return is_hotspot
-
-    # 1) 标准化比例范围
-    if np.isscalar(pct_range):
-        low, high = pct_range, pct_range
-    else:
-        low, high = sorted(pct_range)
-    assert 0.0 <= low <= 1.0 and 0.0 <= high <= 1.0, "pct_range 必须在 [0,1] 范围内"
-
-    # 2) 随机选 n 个数组（允许重复选择同一数组）
-    chosen_idxs = rng.choice(len(arrays), size=n, replace=True)
-
-    # 3) 拼接被选数组的索引，并去重（全局无放回）
-    # 注意：这里“无放回”指全局不重复，因此先合并再一次性抽样
-    candidate = np.concatenate([arrays[i] for i in chosen_idxs])
-
-    # 若候选为空，直接返回
-    if candidate.size == 0:
-        return is_hotspot
-
-    # 4) 去重（全局不放回）
-    # unique 返回升序索引；我们只需要唯一集合
-    _, idx_keep = np.unique(candidate, return_index=True)
-    candidate = candidate[np.sort(idx_keep)]
-
-    # 5) 按百分比范围确定样本数（向上取整的最小值为1）
-    L = len(candidate)
-    k = rng.integers(int(low * L), int(high * L) + 1)
-    k = max(1, k)  # 至少抽 1 个
-
-    # 6) 无放回抽样
-    chosen_global = rng.choice(candidate, size=k, replace=False)
-
-    # 7) 写入掩码并返回
-    valid = (chosen_global >= 0) & (chosen_global < ntoken)
-    if np.any(valid):
-        is_hotspot[chosen_global[valid]] = True
-    return is_hotspot
-
-
 def crop_spatial_like_af3(
     atom_array: AtomArray,
     query_pn_unit_iids: list[str],
@@ -522,7 +466,7 @@ def crop_spatial_like_af3(
     raise_if_missing_query: bool = True,
     hotspot_sample_range_min = float,
     hotspot_sample_range_max = float,
-    hotspot_sample_chains_num = int,
+    hotspot_sample_all_chains_prob = float,
 ) -> dict:
     """Crop spatial tokens around a given `crop_center` by keeping the `crop_size` nearest neighbors (with jitter).
 
@@ -566,6 +510,7 @@ def crop_spatial_like_af3(
     )
 
     hotspots_list = []
+    token_dists_tmp = []
 
     for pair, atom_dists in dists.items():
 
@@ -580,29 +525,16 @@ def crop_spatial_like_af3(
         atom_dists.col = col_token_idx_global
 
         token_dists_dense = coo_to_dense_min(atom_dists, n_tokens=n_tokens)
+        token_dists_tmp.append(token_dists_dense)
 
         # 得到可以作为的行列
         rows, cols = np.where(token_dists_dense <= hotspot_cutoff_distance)  # 也可改为 >、<、==
-        coords = list(zip(rows, cols))
 
-        for i,j in zip(rows, cols):
-            print(token_dists_dense[i,j])
         hotspots_list.append(rows)
         hotspots_list.append(cols)
-    # is_hotspot = np.zeros(n_tokens, dtype=bool)
 
-    is_hotspot_token = sample_to_hotspot(
-        hotspots_list,   # 各元素为一维数组，内容是全局 token idx
-        n = hotspot_sample_chains_num,                   # 要选择的数组数量（从 N 个里选 n 个）
-        pct_range=(hotspot_sample_range_min, hotspot_sample_range_max),  # 抽样比例范围，如 0.1 或 (0.1, 0.3)
-        ntoken = n_tokens
-    )
-    is_hotspot_atom = spread_token_wise(atom_array, is_hotspot_token, token_starts=token_segments)
+    token_dists_matrix = np.min(token_dists_tmp, axis=0)
 
-    atom_array.set_annotation("is_hotspot_atom", is_hotspot_atom.astype(bool))
-
-    for i in range(len(atom_array)):
-        print(i, atom_array[i].atom_id, atom_array[i].is_hotspot_atom, atom_array[i].res_id)
 
     # ... sample crop center atom
     crop_center_atom_id = np.random.choice(atom_array[can_be_crop_center].atom_id)
@@ -622,6 +554,19 @@ def crop_spatial_like_af3(
         is_atom_in_crop = np.ones(len(atom_array), dtype=bool)
         is_token_in_crop = np.ones(n_tokens, dtype=bool)
 
+    hotspot_sampler = HotspotSampler(hotspots_list, n_tokens, is_token_in_crop)
+    is_sample_of_hotspot_token = hotspot_sampler.sample(
+        all_chains_prob=hotspot_sample_all_chains_prob, 
+        sample_percentage_range=(hotspot_sample_range_min, hotspot_sample_range_max))
+
+    is_sample_of_hotspot_atom = spread_token_wise(
+        atom_array, 
+        is_sample_of_hotspot_token, 
+        token_starts=token_segments
+    )
+    atom_array.set_annotation("is_sample_of_hotspot_atom", is_sample_of_hotspot_atom.astype(bool))
+    sampling_info = hotspot_sampler.get_detailed_sampling_info(is_sample_of_hotspot_token)
+
     return {
         "requires_crop": requires_crop,  # whether cropping was necessary
         "crop_center_atom_id": crop_center_atom_id,  # atom_id of crop center
@@ -629,7 +574,8 @@ def crop_spatial_like_af3(
         "crop_center_token_idx": crop_center_token_idx,  # token_idx of crop center
         "crop_token_idxs": np.where(is_token_in_crop)[0],  # token_idxs in crop
         "crop_atom_idxs": np.where(is_atom_in_crop)[0],  # atom_idxs in crop
-        "crop_sample_of_hotspot": is_hotspot_token[is_token_in_crop],
+        "crop_sample_of_hotspot": is_sample_of_hotspot_token[is_token_in_crop],
+        "token_dists_matrix": token_dists_matrix,
     }
 
 
@@ -755,7 +701,7 @@ class CropSpatialLikeAF3(CropTransformBase):
         raise_if_missing_query: bool = True,
         hotspot_sample_range_min: float = 0.1,
         hotspot_sample_range_max: float = 0.3,
-        hotspot_sample_chains_num: int = 1,
+        hotspot_sample_all_chains_prob: float = 1.0,
         **kwargs,
     ):
         """Initialize the CropSpatialLikeAF3 transform.
@@ -788,7 +734,7 @@ class CropSpatialLikeAF3(CropTransformBase):
         self.raise_if_missing_query = raise_if_missing_query
         self.hotspot_sample_range_min = hotspot_sample_range_min
         self.hotspot_sample_range_max = hotspot_sample_range_max
-        self.hotspot_sample_chains_num = hotspot_sample_chains_num
+        self.hotspot_sample_all_chains_prob = hotspot_sample_all_chains_prob
         self._validate()
 
     def check_input(self, data: dict) -> None:
@@ -816,7 +762,7 @@ class CropSpatialLikeAF3(CropTransformBase):
             raise_if_missing_query=self.raise_if_missing_query,
             hotspot_sample_range_min = self.hotspot_sample_range_min,
             hotspot_sample_range_max = self.hotspot_sample_range_max,
-            hotspot_sample_chains_num = self.hotspot_sample_chains_num,
+            hotspot_sample_all_chains_prob = self.hotspot_sample_all_chains_prob,
         )
 
         crop_info = resize_crop_info_if_too_many_atoms(
