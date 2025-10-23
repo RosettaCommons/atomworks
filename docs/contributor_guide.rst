@@ -49,7 +49,7 @@ As you review
 3. Keep review time <1h and <500 LOC for focus.
 
 Contributing to the documentation
---------------------------------
+---------------------------------
 The external AtomWorks documentation is built using `Sphinx <https://www.sphinx-doc.org/en/master/#>`_ and hosted on `GitHub Pages <https://docs.github.com/en/pages>`_.
 Aside from having AtomWorks and its dependencies installed, to build the documentation locally, you will need to install the documentation requirements:
 
@@ -92,5 +92,3 @@ When contributing to this repository, please follow these steps:
    - Example: ``git commit -m "docs: add contributing guidelines"``
 5. Open a pull request to ``staging`` and describe your changes.
 6. Wait for review and merge your changes.
-
-For more details, see the README or contact the maintainers. 

@@ -1,11 +1,19 @@
 Installation
 ============
 
-atomworks can be installed in several ways, depending on your workflow and environment. Below are the recommended methods:
+AtomWorks can be installed in several ways, depending on your workflow and environment. Below are the recommended methods:
+
+0. Prerequisites
+-----------------
+
+Before installing AtomWorks, ensure you have the following prerequisites:
+
+* Python 3.12 or higher
+* `dotenv <https://www.npmjs.com/package/dotenv>`_
 
 1. Installing via pip (recommended)
-----------------------
-This is the easiest way to get started with atomworks.
+-----------------------------------
+This is the easiest way to get started with AtomWorks.
 
 .. code-block:: bash
 
@@ -53,10 +61,10 @@ To install in a fresh environment:
    make env
    pytest tests
 
-3. As a Dependency in Your Apptainer
-------------------------------------
-Add `atomworks.io/src` to your apptainer's PYTHONPATH:
-
-.. code-block:: bash
-
-   export PYTHONPATH=$PWD/src:$PYTHONPATH
+#3. As a Dependency in Your Apptainer
+#------------------------------------
+#Add `atomworks.io/src` to your apptainer's PYTHONPATH:
+#
+#.. code-block:: bash
+#
+#   export PYTHONPATH=$PWD/src:$PYTHONPATH
