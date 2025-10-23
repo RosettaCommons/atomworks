@@ -23,3 +23,4 @@ Welcome to **atomworks** — a toolkit for converting, parsing, and manipulating
    api_reference
    auto_examples/index
    contributor_guide
+   mirrors

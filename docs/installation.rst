@@ -12,7 +12,7 @@ This is the easiest way to get started with atomworks.
    pip install atomworks # base installation version without torch (for only atomworks.io)
    pip install "atomworks[ml]" # with torch and ML dependencies (for atomworks.io plus atomworks.ml)
    pip install "atomworks[dev]" # with development dependencies
-   pip install "atomworks[ml,dev]" # with all dependencies
+   pip install "atomworks[ml,dev]" # with all dependencies"
 
 You can also install AtomWorks with `Open Babel <https://openbabel.org/>`_, an alternative to RDKit:
 
