@@ -39,7 +39,8 @@ from atomworks.ml.datasets.datasets import FileDataset
 
 # To setup the test pack, if not already, run `atomworks setup tests`
 dataset = FileDataset.from_directory(
-    directory="../../tests/data/ml/af2_distillation/cif", name="example_directory_dataset"
+    directory="../../tests/data/ml/af2_distillation/cif",
+    name="example_directory_dataset",
 )
 
 ########################################################################
@@ -58,7 +59,7 @@ for i, example in enumerate(dataset):
 # Understanding Dataset Requirements
 # ----------------------------------
 #
-# At a high level, to train models with AtomWorks, we need typically need a Dataset that:
+# At a high level, to train models with AtomWorks, we typically need a Dataset that:
 #
 # (1) Takes as input an item index and returns the corresponding example information; typically includes:
 #     a. Path to a structural file saved on disk (`/path/to/dataset/my_dataset_0.cif`)
@@ -84,7 +85,9 @@ def simple_loading_fn(raw_data) -> dict:
 
 
 dataset_with_loading_fn = FileDataset.from_directory(
-    directory="../../tests/data/pdb", name="example_pdb_dataset", loader=simple_loading_fn
+    directory="../../tests/data/pdb",
+    name="example_pdb_dataset",
+    loader=simple_loading_fn,
 )
 output = dataset_with_loading_fn[1]
 print(f"Output AtomArray has {len(output['atom_array'])} atoms!")
@@ -120,7 +123,10 @@ pipe = Compose(
 # Just like with the loading function, we can also pass a composed `Transform` pipeline to our datasets.
 
 dataset_with_loading_fn_and_transforms = FileDataset.from_directory(
-    directory="../../tests/data/pdb", name="example_pdb_dataset", loader=simple_loading_fn, transform=pipe
+    directory="../../tests/data/pdb",
+    name="example_pdb_dataset",
+    loader=simple_loading_fn,
+    transform=pipe,
 )
 
 ########################################################################
@@ -223,7 +229,9 @@ dataset = PandasDataset(
     data=interfaces_df,
     name="interfaces_dataset",
     # We use a pre-built loader that takes in a list of column names and returns a loader function
-    loader=create_loader_with_query_pn_units(pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"]),
+    loader=create_loader_with_query_pn_units(
+        pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"]
+    ),
     transform=pipe,
 )
 
