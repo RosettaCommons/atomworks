@@ -47,7 +47,7 @@ extensions = [
 ]
 
 templates_path = ["_templates"]
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "examples/GALLERY_HEADER.rst", "ml/preprocessing.rst"]
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
@@ -67,7 +67,7 @@ html_theme_options = {
     "navbar_end": ["theme-switcher", "navbar-icon-links"],
     "logo": {
         "image_light": "_static/atomworks_logo_light.svg",
-        "image_dark": "_static/atomworks_logo_color.svg",
+        "image_dark": "_static/atomworks_logo_dark.svg",
     },
     "navbar_start": ["navbar-logo", "version-switcher"],
     "switcher": {

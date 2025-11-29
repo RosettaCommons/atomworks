@@ -1,30 +1,40 @@
 Installation
 ============
 
-atomworks can be installed in several ways, depending on your workflow and environment. Below are the recommended methods:
+AtomWorks can be installed in several ways, depending on your workflow and environment. Below are the recommended methods:
+
+0. Prerequisites
+-----------------
+
+Before installing AtomWorks, ensure you have the following prerequisites:
+
+* Python 3.12 or higher
+* `dotenv <https://www.npmjs.com/package/dotenv>`_
 
 1. Installing via pip (recommended)
-----------------------
-This is the easiest way to get started with atomworks.
+-----------------------------------
+This is the easiest way to get started with AtomWorks.
 
 .. code-block:: bash
 
    pip install atomworks # base installation version without torch (for only atomworks.io)
    pip install "atomworks[ml]" # with torch and ML dependencies (for atomworks.io plus atomworks.ml)
    pip install "atomworks[dev]" # with development dependencies
-   pip install "atomworks[ml,dev]" # with all dependencies
+   pip install "atomworks[ml,dev]" # with all dependencies"
 
-
-2. Using the Standalone Apptainer
------------------------------------------------
-This is ideal for dataset parsing and generation in a controlled environment.
+You can also install AtomWorks with `Open Babel <https://openbabel.org/>`_, an alternative to RDKit:
 
 .. code-block:: bash
 
-   # Set up IPD-specific environment variables
-   source ./.ipd/setup.sh
-   # Use the provided apptainer image
-   ./.ipd/atomworks.sif
+   pip install "atomworks[openbabel]"
+
+or for all possible dependencies: 
+
+.. code-block:: bash
+
+   pip install "atomworks[ml,openbabel,dev]"
+
+Open Babel is not automatically installed with AtomWorks due to its larger size and additional dependencies, only install it if you plan to use it.
 
 2. Local Conda Environment
 --------------------------
@@ -51,18 +61,10 @@ To install in a fresh environment:
    make env
    pytest tests
 
-3. As a Dependency in Your Apptainer
-------------------------------------
-Add `atomworks.io/src` to your apptainer's PYTHONPATH:
-
-.. code-block:: bash
-
-   export PYTHONPATH=$PWD/src:$PYTHONPATH
-
-Or, if at IPD:
-
-.. code-block:: bash
-
-   source ./.ipd/setup.sh
-
-For new apptainers, see the apptainer.spec file for integration details. 
+#3. As a Dependency in Your Apptainer
+#------------------------------------
+#Add `atomworks.io/src` to your apptainer's PYTHONPATH:
+#
+#.. code-block:: bash
+#
+#   export PYTHONPATH=$PWD/src:$PYTHONPATH
