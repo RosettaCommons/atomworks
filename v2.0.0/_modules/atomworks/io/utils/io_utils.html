@@ -1,0 +1,1546 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>atomworks.io.utils.io_utils &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/io/utils/io_utils';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.1.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.1.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">atomworks.io.utils.io_utils</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for atomworks.io.utils.io_utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;General utility functions for working with CIF files in Biotite.&quot;&quot;&quot;</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;apply_sharding_pattern&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;build_sharding_pattern&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_structure&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;load_any&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;parse_sharding_pattern&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;read_any&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;suppress_logging_messages&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;to_cif_buffer&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;to_cif_file&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;to_cif_string&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Generator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">contextmanager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">struc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure.io.pdb</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">biotite_pdb</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">AtomArrayStack</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure.bonds</span><span class="w"> </span><span class="kn">import</span> <span class="n">connect_via_residue_names</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">mol</span><span class="p">,</span> <span class="n">pdbx</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">atomworks.io.transforms.atom_array</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ta</span>  <span class="c1"># to avoid circular import</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">exists</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">ATOMIC_NUMBER_TO_ELEMENT</span><span class="p">,</span> <span class="n">STANDARD_AA</span><span class="p">,</span> <span class="n">STANDARD_DNA</span><span class="p">,</span> <span class="n">STANDARD_RNA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChainType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.template</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_inter_residue_bonds</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.transforms.categories</span><span class="w"> </span><span class="kn">import</span> <span class="n">category_to_dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_annotation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.sequence</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_1_from_3_letter_code</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">has_ambiguous_annotation_set</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;atomworks.io&quot;</span><span class="p">)</span>
+
+<span class="n">CIF_LIKE_EXTENSIONS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;.cif&quot;</span><span class="p">,</span> <span class="s2">&quot;.pdb&quot;</span><span class="p">,</span> <span class="s2">&quot;.bcif&quot;</span><span class="p">,</span> <span class="s2">&quot;.cif.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;.pdb.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;.bcif.gz&quot;</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="suppress_logging_messages">
+<a class="viewcode-back" href="../../../../io/utils/io_utils.html#atomworks.io.utils.io_utils.suppress_logging_messages">[docs]</a>
+<span class="nd">@contextmanager</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">suppress_logging_messages</span><span class="p">(</span><span class="n">logger_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">message_pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Temporarily suppress logging messages matching a pattern.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        logger_name: Name of the logger to filter.</span>
+<span class="sd">        message_pattern: String pattern to match in log messages (substring match).</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; with suppress_logging_messages(&quot;atomworks.io&quot;, &quot;not found&quot;):</span>
+<span class="sd">        ...     # Code that generates &quot;not found&quot; warnings</span>
+<span class="sd">        ...     pass</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">target_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_func</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">LogRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">message_pattern</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">record</span><span class="o">.</span><span class="n">getMessage</span><span class="p">()</span>
+
+    <span class="n">target_logger</span><span class="o">.</span><span class="n">addFilter</span><span class="p">(</span><span class="n">filter_func</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">target_logger</span><span class="o">.</span><span class="n">removeFilter</span><span class="p">(</span><span class="n">filter_func</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_logged_in_user</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the logged in user.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The username of the logged in user, or &quot;unknown_user&quot; if unavailable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">getlogin</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;unknown_user&quot;</span>
+
+
+<div class="viewcode-block" id="load_any">
+<a class="viewcode-back" href="../../../../io/utils/io_utils.html#atomworks.io.utils.io_utils.load_any">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_any</span><span class="p">(</span>
+    <span class="n">file_or_buffer</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">,</span>
+    <span class="n">file_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;cif&quot;</span><span class="p">,</span> <span class="s2">&quot;mmcif&quot;</span><span class="p">,</span> <span class="s2">&quot;pdbx&quot;</span><span class="p">,</span> <span class="s2">&quot;pdb&quot;</span><span class="p">,</span> <span class="s2">&quot;pdb1&quot;</span><span class="p">,</span> <span class="s2">&quot;bcif&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">extra_fields</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="n">include_bonds</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">altloc</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;first&quot;</span><span class="p">,</span> <span class="s2">&quot;occupancy&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;occupancy&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArrayStack</span> <span class="o">|</span> <span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convenience function for loading a structure from a file or buffer.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file_or_buffer: Path to the file or buffer to load the structure from.</span>
+<span class="sd">        file_type: Type of the file to load. If None, it will be inferred.</span>
+<span class="sd">        extra_fields: List of extra fields to include as AtomArray annotations.</span>
+<span class="sd">            If &quot;all&quot;, all fields in the &#39;atom_site&#39; category of the file will be included.</span>
+<span class="sd">        include_bonds: Whether to include bonds in the structure.</span>
+<span class="sd">        model: The model number to use for loading the structure. If None, all models will be loaded.</span>
+<span class="sd">        altloc: The altloc ID to use for loading the structure.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The loaded structure with the specified fields and assumptions.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        `Biotite Structure I/O &lt;https://www.biotite-python.org/apidoc/biotite.structure.io.pdbx.get_structure.html#biotite.structure.io.pdbx.get_structure&gt;`_</span>
+<span class="sd">        `mmCIF Format Specification &lt;https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">file_obj</span> <span class="o">=</span> <span class="n">read_any</span><span class="p">(</span><span class="n">file_or_buffer</span><span class="p">,</span> <span class="n">file_type</span><span class="o">=</span><span class="n">file_type</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">get_structure</span><span class="p">(</span>
+        <span class="n">file_obj</span><span class="p">,</span>
+        <span class="n">extra_fields</span><span class="o">=</span><span class="n">extra_fields</span><span class="p">,</span>
+        <span class="n">include_bonds</span><span class="o">=</span><span class="n">include_bonds</span><span class="p">,</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+        <span class="n">altloc</span><span class="o">=</span><span class="n">altloc</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_add_bonds</span><span class="p">(</span>
+    <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">,</span>
+    <span class="n">cif_block</span><span class="p">:</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFBlock</span><span class="p">,</span>
+    <span class="n">add_bond_types_from_struct_conn</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;covale&quot;</span><span class="p">],</span>
+    <span class="n">fix_bond_types</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add bonds to the AtomArray and filter by a given altloc strategy.</span>
+
+<span class="sd">    Avoids the issue where spurious bonds are added due to uninformative label_seq_ids.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atom_array: The AtomArray to add bonds to. Must contain `auth_seq_id` annotation.</span>
+<span class="sd">        cif_block: The CIFBlock containing the structure data.</span>
+<span class="sd">        add_bond_types_from_struct_conn: A list of bond types to add to the structure</span>
+<span class="sd">            from the `struct_conn` category. Defaults to `[&quot;covale&quot;]`. This means that we will only</span>
+<span class="sd">            add covalent bonds to the structure (excluding metal coordination and disulfide bonds).</span>
+<span class="sd">        fix_bond_types: Whether to correct for nucleophilic additions on atoms involved in inter-residue bonds.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        AtomArray | AtomArrayStack: The AtomArray or AtomArrayStack with bonds and filtered by altloc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># If there are no uninformative res_ids, we can skip a few steps</span>
+    <span class="n">contains_uninformative_res_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">res_id</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">contains_uninformative_res_ids</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="s2">&quot;auth_seq_id&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;To ensure that bonds are added correctly when there are uninformative `label_seq_id` values present &quot;</span>
+            <span class="s2">&quot;(occurs for non-polymers), the `auth_seq_id` annotation must be given in the `AtomArray`.&quot;</span>
+            <span class="s2">&quot;This error should not occur if the `AtomArray` was loaded with `atomworks.io`, but may &quot;</span>
+            <span class="s2">&quot;occur if biotite was used directly. Please re-load the structure from CIF using `atomworks.io`.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Compute intra-residue bonds as specified in the CIF, or fallback to CCD</span>
+    <span class="n">custom_bond_dict</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="s2">&quot;chem_comp_bond&quot;</span> <span class="ow">in</span> <span class="n">cif_block</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">custom_bond_dict</span> <span class="o">=</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">_parse_intra_residue_bonds</span><span class="p">(</span><span class="n">cif_block</span><span class="p">[</span><span class="s2">&quot;chem_comp_bond&quot;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;The &#39;chem_comp_bond&#39; category has missing columns, &quot;</span>
+                <span class="s2">&quot;falling back to using Chemical Component Dictionary&quot;</span><span class="p">,</span>
+                <span class="ne">UserWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">custom_bond_dict</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">intra_residue_bonds</span><span class="p">:</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondList</span> <span class="o">=</span> <span class="n">connect_via_residue_names</span><span class="p">(</span>
+        <span class="n">atom_array</span><span class="p">,</span> <span class="n">custom_bond_dict</span><span class="o">=</span><span class="n">custom_bond_dict</span><span class="p">,</span> <span class="n">inter_residue</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">contains_uninformative_res_ids</span><span class="p">:</span>
+        <span class="c1"># Detect spurious inter-residue bonds - at this point all bonds should be intra-residue</span>
+        <span class="n">bonds_array</span> <span class="o">=</span> <span class="n">intra_residue_bonds</span><span class="o">.</span><span class="n">as_array</span><span class="p">()</span>
+        <span class="n">auth_seq_ids</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">auth_seq_id</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">is_spurious</span> <span class="o">=</span> <span class="n">auth_seq_ids</span><span class="p">[</span><span class="n">bonds_array</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]]</span> <span class="o">!=</span> <span class="n">auth_seq_ids</span><span class="p">[</span><span class="n">bonds_array</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]</span>
+        <span class="c1"># Remove spurious inter-residue bonds</span>
+        <span class="n">intra_residue_bonds</span><span class="o">.</span><span class="n">_bonds</span> <span class="o">=</span> <span class="n">intra_residue_bonds</span><span class="o">.</span><span class="n">_bonds</span><span class="p">[</span><span class="o">~</span><span class="n">is_spurious</span><span class="p">]</span>
+
+        <span class="c1"># Temporarily replace uninformative label_seq_ids with auth_seq_ids</span>
+        <span class="n">to_replace</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">res_id</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;_to_replace&quot;</span><span class="p">,</span> <span class="n">to_replace</span><span class="p">)</span>  <span class="c1"># To preserve info through leaving atom removal</span>
+        <span class="n">atom_array</span><span class="o">.</span><span class="n">res_id</span><span class="p">[</span><span class="n">to_replace</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">auth_seq_id</span><span class="p">[</span><span class="n">to_replace</span><span class="p">]</span>
+
+    <span class="c1"># Add intra-residue bonds</span>
+    <span class="n">atom_array</span><span class="o">.</span><span class="n">bonds</span> <span class="o">=</span> <span class="n">intra_residue_bonds</span>
+
+    <span class="c1"># Correctly add inter-residue bonds for each AtomArray</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">AtomArrayStack</span><span class="p">):</span>
+        <span class="n">processed_arrays</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">array</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="p">:</span>
+            <span class="n">array</span> <span class="o">=</span> <span class="n">add_inter_residue_bonds</span><span class="p">(</span>
+                <span class="n">array</span><span class="p">,</span>
+                <span class="n">struct_conn_dict</span><span class="o">=</span><span class="n">category_to_dict</span><span class="p">(</span><span class="n">cif_block</span><span class="p">,</span> <span class="s2">&quot;struct_conn&quot;</span><span class="p">),</span>
+                <span class="n">add_bond_types_from_struct_conn</span><span class="o">=</span><span class="n">add_bond_types_from_struct_conn</span><span class="p">,</span>
+                <span class="n">fix_formal_charges</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># Only works if we have True (not inferred) hydrogens</span>
+                <span class="n">fix_bond_types</span><span class="o">=</span><span class="n">fix_bond_types</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">processed_arrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">processed_arrays</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">add_inter_residue_bonds</span><span class="p">(</span>
+            <span class="n">atom_array</span><span class="p">,</span>
+            <span class="n">struct_conn_dict</span><span class="o">=</span><span class="n">category_to_dict</span><span class="p">(</span><span class="n">cif_block</span><span class="p">,</span> <span class="s2">&quot;struct_conn&quot;</span><span class="p">),</span>
+            <span class="n">add_bond_types_from_struct_conn</span><span class="o">=</span><span class="n">add_bond_types_from_struct_conn</span><span class="p">,</span>
+            <span class="n">fix_formal_charges</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># Only works if we have True (not inferred) hydrogens</span>
+            <span class="n">fix_bond_types</span><span class="o">=</span><span class="n">fix_bond_types</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">contains_uninformative_res_ids</span><span class="p">:</span>
+        <span class="c1"># Revert back to the original label_seq_id</span>
+        <span class="n">atom_array</span><span class="o">.</span><span class="n">res_id</span><span class="p">[</span><span class="n">atom_array</span><span class="o">.</span><span class="n">_to_replace</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">atom_array</span><span class="o">.</span><span class="n">del_annotation</span><span class="p">(</span><span class="s2">&quot;_to_replace&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">atom_array</span>
+
+
+<div class="viewcode-block" id="get_structure">
+<a class="viewcode-back" href="../../../../io/utils/io_utils.html#atomworks.io.utils.io_utils.get_structure">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_structure</span><span class="p">(</span>
+    <span class="n">file_obj</span><span class="p">:</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFFile</span> <span class="o">|</span> <span class="n">biotite_pdb</span><span class="o">.</span><span class="n">PDBFile</span> <span class="o">|</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">BinaryCIFFile</span> <span class="o">|</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFBlock</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">extra_fields</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="n">include_bonds</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">altloc</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;first&quot;</span><span class="p">,</span> <span class="s2">&quot;occupancy&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;first&quot;</span><span class="p">,</span>
+    <span class="n">add_bond_types_from_struct_conn</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;covale&quot;</span><span class="p">],</span>
+    <span class="n">fix_bond_types</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArrayStack</span> <span class="o">|</span> <span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load example structure into Biotite&#39;s AtomArray or AtomArrayStack using the specified fields and assumptions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - file_obj (pdbx.CIFFile | biotite_pdb.PDBFile | pdbx.BinaryCIFFile): The file object to load with Biotite.</span>
+<span class="sd">        - extra_fields (list | Literal[&quot;all&quot;]): List of extra fields to include as AtomArray annotations.</span>
+<span class="sd">            If &quot;all&quot;, all fields in the &#39;atom_site&#39; category of the file will be included.</span>
+<span class="sd">        - include_bonds (bool): Whether to include bonds in the structure. These will not be affected by the issue</span>
+<span class="sd">            where spurious bonds are added due to uninformative label_seq_ids.</span>
+<span class="sd">        - model (int): The model number to use for loading the structure.</span>
+<span class="sd">        - altloc (Literal[&quot;first&quot;, &quot;occupancy&quot;, &quot;all&quot;]): The altloc ID to use for loading the structure.</span>
+<span class="sd">            If a string is provided, it will be used as the altloc ID to filter the structure by and it is assumed</span>
+<span class="sd">            that that altloc ID is present in the file. If it is not present, an error will be raised.</span>
+<span class="sd">        - add_bond_types_from_struct_conn (list, optional): A list of bond types to add to the structure</span>
+<span class="sd">            from the `struct_conn` category. Defaults to `[&quot;covale&quot;]`. This means that we will only</span>
+<span class="sd">            add covalent bonds to the structure (excluding metal coordination and disulfide bonds).</span>
+<span class="sd">        - fix_bond_types (bool, optional): Whether to correct for nucleophilic additions on atoms involved in inter-residue bonds.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        AtomArray | AtomArrayStack: The loaded structure with the specified fields and assumptions.</span>
+
+<span class="sd">    Reference:</span>
+<span class="sd">        `Biotite documentation &lt;https://www.biotite-python.org/apidoc/biotite.structure.io.pdbx.get_structure.html#biotite.structure.io.pdbx.get_structure&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tmp_altloc</span> <span class="o">=</span> <span class="n">altloc</span> <span class="k">if</span> <span class="n">altloc</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;first&quot;</span><span class="p">,</span> <span class="s2">&quot;occupancy&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">}</span> <span class="k">else</span> <span class="s2">&quot;all&quot;</span>
+
+    <span class="k">match</span> <span class="nb">type</span><span class="p">(</span><span class="n">file_obj</span><span class="p">):</span>
+        <span class="k">case</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFFile</span> <span class="o">|</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">BinaryCIFFile</span> <span class="o">|</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFBlock</span><span class="p">:</span>
+            <span class="c1"># auth_seq_id must be included for the spurious bonds issue to be avoided</span>
+            <span class="c1"># This will be removed later if it wasn&#39;t requested</span>
+            <span class="n">remove_auth_seq_id</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">include_bonds</span> <span class="ow">and</span> <span class="n">extra_fields</span> <span class="o">!=</span> <span class="s2">&quot;all&quot;</span> <span class="ow">and</span> <span class="s2">&quot;auth_seq_id&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">extra_fields</span><span class="p">:</span>
+                <span class="n">remove_auth_seq_id</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">extra_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;auth_seq_id&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_fields</span><span class="p">]</span>
+
+            <span class="c1"># Filter extra annotations to fields that are actually present in the file</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_obj</span><span class="p">,</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFBlock</span><span class="p">):</span>
+                <span class="n">cif_block</span> <span class="o">=</span> <span class="n">file_obj</span><span class="o">.</span><span class="n">block</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cif_block</span> <span class="o">=</span> <span class="n">file_obj</span>
+            <span class="k">if</span> <span class="n">extra_fields</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+                <span class="n">extra_fields</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cif_block</span><span class="p">[</span><span class="s2">&quot;atom_site&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">extra_fields</span> <span class="o">=</span> <span class="n">_filter_extra_fields</span><span class="p">(</span><span class="n">extra_fields</span><span class="p">,</span> <span class="n">cif_block</span><span class="p">[</span><span class="s2">&quot;atom_site&quot;</span><span class="p">])</span>
+
+            <span class="n">atom_array_stack</span> <span class="o">=</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">get_structure</span><span class="p">(</span>
+                <span class="n">file_obj</span><span class="p">,</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+                <span class="n">extra_fields</span><span class="o">=</span><span class="n">extra_fields</span><span class="p">,</span>
+                <span class="n">use_author_fields</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">altloc</span><span class="o">=</span><span class="s2">&quot;first&quot;</span> <span class="k">if</span> <span class="s2">&quot;occupancy&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">extra_fields</span> <span class="k">else</span> <span class="n">tmp_altloc</span><span class="p">,</span>
+                <span class="n">include_bonds</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Add bonds and filter by altloc if requested, avoiding the spurious bonds issue</span>
+            <span class="k">if</span> <span class="n">include_bonds</span><span class="p">:</span>
+                <span class="n">atom_array_stack</span> <span class="o">=</span> <span class="n">_add_bonds</span><span class="p">(</span>
+                    <span class="n">atom_array_stack</span><span class="p">,</span>
+                    <span class="n">cif_block</span><span class="p">,</span>
+                    <span class="n">add_bond_types_from_struct_conn</span><span class="o">=</span><span class="n">add_bond_types_from_struct_conn</span><span class="p">,</span>
+                    <span class="n">fix_bond_types</span><span class="o">=</span><span class="n">fix_bond_types</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Remove the auth_seq_id annotation if it was not requested</span>
+                <span class="k">if</span> <span class="n">remove_auth_seq_id</span><span class="p">:</span>
+                    <span class="n">atom_array_stack</span><span class="o">.</span><span class="n">del_annotation</span><span class="p">(</span><span class="s2">&quot;auth_seq_id&quot;</span><span class="p">)</span>
+
+        <span class="k">case</span> <span class="n">biotite_pdb</span><span class="o">.</span><span class="n">PDBFile</span><span class="p">:</span>
+            <span class="n">atom_array_stack</span> <span class="o">=</span> <span class="n">biotite_pdb</span><span class="o">.</span><span class="n">get_structure</span><span class="p">(</span>
+                <span class="n">file_obj</span><span class="p">,</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+                <span class="n">extra_fields</span><span class="o">=</span><span class="n">extra_fields</span><span class="p">,</span>
+                <span class="n">altloc</span><span class="o">=</span><span class="n">tmp_altloc</span><span class="p">,</span>
+                <span class="n">include_bonds</span><span class="o">=</span><span class="n">include_bonds</span><span class="p">,</span>  <span class="c1"># PDB files contain only auth_seq_ids so the biotite issue does not arise</span>
+            <span class="p">)</span>
+        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported file type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">file_obj</span><span class="p">)</span><span class="si">}</span><span class="s2">. Must be a CIFFile, BinaryCIFFile, or PDBFile.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Filter down to specified altloc if requested</span>
+    <span class="k">if</span> <span class="n">altloc</span> <span class="o">!=</span> <span class="n">tmp_altloc</span><span class="p">:</span>
+        <span class="n">altloc_ids</span> <span class="o">=</span> <span class="n">get_annotation</span><span class="p">(</span><span class="n">atom_array_stack</span><span class="p">,</span> <span class="s2">&quot;altloc_id&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[])</span>
+        <span class="n">existing_altloc_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">altloc_ids</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">altloc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">existing_altloc_ids</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Altloc ID &#39;</span><span class="si">{</span><span class="n">altloc</span><span class="si">}</span><span class="s2">&#39; not found. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Available altloc IDs: </span><span class="si">{</span><span class="n">existing_altloc_ids</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;If you are using a PDB file, please ensure that the altloc ID is present in the file.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">to_keep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">altloc_ids</span><span class="p">,</span> <span class="p">[</span><span class="n">altloc</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;?&quot;</span><span class="p">])</span>  <span class="c1"># always keep default altloc IDs</span>
+        <span class="n">atom_array_stack</span> <span class="o">=</span> <span class="n">atom_array_stack</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">to_keep</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">atom_array_stack</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">infer_pdb_file_type</span><span class="p">(</span><span class="n">path_or_buffer</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;cif&quot;</span><span class="p">,</span> <span class="s2">&quot;pdb&quot;</span><span class="p">,</span> <span class="s2">&quot;bcif&quot;</span><span class="p">,</span> <span class="s2">&quot;sdf&quot;</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Infer the file type of a PDB file or buffer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Convert string paths to Path objects</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path_or_buffer</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">path_or_buffer</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path_or_buffer</span><span class="p">)</span>
+
+    <span class="c1"># Determine file type and open context</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path_or_buffer</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;bcif&quot;</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path_or_buffer</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">):</span>
+        <span class="c1"># ... if second line starts with &#39;#&#39;, it is very likely a cif file</span>
+        <span class="n">path_or_buffer</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">path_or_buffer</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>  <span class="c1"># Skip the first line</span>
+        <span class="n">second_line</span> <span class="o">=</span> <span class="n">path_or_buffer</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">path_or_buffer</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;cif&quot;</span> <span class="k">if</span> <span class="n">second_line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;pdb&quot;</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path_or_buffer</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">path_or_buffer</span><span class="o">.</span><span class="n">suffix</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;.gzip&quot;</span><span class="p">):</span>
+            <span class="n">inferred_file_type</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path_or_buffer</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">inferred_file_type</span> <span class="o">=</span> <span class="n">path_or_buffer</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Canonicalize the file type</span>
+    <span class="k">if</span> <span class="n">inferred_file_type</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;cif&quot;</span><span class="p">,</span> <span class="s2">&quot;mmcif&quot;</span><span class="p">,</span> <span class="s2">&quot;pdbx&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;cif&quot;</span>
+    <span class="k">elif</span> <span class="n">inferred_file_type</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;pdb&quot;</span><span class="p">,</span> <span class="s2">&quot;pdb1&quot;</span><span class="p">,</span> <span class="s2">&quot;ent&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;pdb&quot;</span>
+    <span class="k">elif</span> <span class="n">inferred_file_type</span> <span class="o">==</span> <span class="s2">&quot;bcif&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;bcif&quot;</span>
+    <span class="k">elif</span> <span class="n">inferred_file_type</span> <span class="o">==</span> <span class="s2">&quot;sdf&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;sdf&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported file type: </span><span class="si">{</span><span class="n">inferred_file_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="read_any">
+<a class="viewcode-back" href="../../../../io/utils/io_utils.html#atomworks.io.utils.io_utils.read_any">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_any</span><span class="p">(</span>
+    <span class="n">path_or_buffer</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">,</span>
+    <span class="n">file_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;cif&quot;</span><span class="p">,</span> <span class="s2">&quot;pdb&quot;</span><span class="p">,</span> <span class="s2">&quot;bcif&quot;</span><span class="p">,</span> <span class="s2">&quot;sdf&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFFile</span> <span class="o">|</span> <span class="n">biotite_pdb</span><span class="o">.</span><span class="n">PDBFile</span> <span class="o">|</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">BinaryCIFFile</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads any of the allowed file types into the appropriate Biotite file object.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path_or_buffer (PathLike | io.StringIO | io.BytesIO): The path to the file or a buffer to read from.</span>
+<span class="sd">            If a buffer, it&#39;s highly recommended to specify the file_type.</span>
+<span class="sd">        file_type (Literal[&quot;cif&quot;, &quot;pdb&quot;, &quot;bcif&quot;], optional): Type of the file.</span>
+<span class="sd">            If None, it will be inferred from the file extension. When using a buffer, the file type must be specified.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pdbx.CIFFile | biotite_pdb.PDBFile | pdbx.BinaryCIFFile: The loaded file object.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the file type is unsupported or cannot be determined.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Determine file type</span>
+    <span class="k">if</span> <span class="n">file_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">file_type</span> <span class="o">=</span> <span class="n">infer_pdb_file_type</span><span class="p">(</span><span class="n">path_or_buffer</span><span class="p">)</span>
+        <span class="n">open_mode</span> <span class="o">=</span> <span class="s2">&quot;rb&quot;</span> <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;bcif&quot;</span> <span class="k">else</span> <span class="s2">&quot;rt&quot;</span>
+
+    <span class="c1"># Convert string paths to Path objects and decompress if necessary</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path_or_buffer</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="n">path_or_buffer</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path_or_buffer</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">path_or_buffer</span><span class="o">.</span><span class="n">suffix</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;.gzip&quot;</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path_or_buffer</span><span class="p">,</span> <span class="n">open_mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">buffer_type</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span> <span class="k">if</span> <span class="n">open_mode</span> <span class="o">==</span> <span class="s2">&quot;rt&quot;</span> <span class="k">else</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span>
+                <span class="n">path_or_buffer</span> <span class="o">=</span> <span class="n">buffer_type</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+    <span class="c1"># Determine the appropriate file object based on file type</span>
+    <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;cif&quot;</span><span class="p">:</span>
+        <span class="n">file_cls</span> <span class="o">=</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFFile</span>
+    <span class="k">elif</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;pdb&quot;</span><span class="p">:</span>
+        <span class="n">file_cls</span> <span class="o">=</span> <span class="n">biotite_pdb</span><span class="o">.</span><span class="n">PDBFile</span>
+    <span class="k">elif</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;bcif&quot;</span><span class="p">:</span>
+        <span class="n">file_cls</span> <span class="o">=</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">BinaryCIFFile</span>
+    <span class="k">elif</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;sdf&quot;</span><span class="p">:</span>
+        <span class="n">file_cls</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">SDFile</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported file type: </span><span class="si">{</span><span class="n">file_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Load the file content</span>
+    <span class="n">file_obj</span> <span class="o">=</span> <span class="n">file_cls</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path_or_buffer</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">file_obj</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_entity_poly</span><span class="p">(</span>
+    <span class="n">atom_array</span><span class="p">:</span> <span class="n">struc</span><span class="o">.</span><span class="n">AtomArray</span> <span class="o">|</span> <span class="n">struc</span><span class="o">.</span><span class="n">AtomArrayStack</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the entity_poly category for a CIF file from an AtomArray.</span>
+
+<span class="sd">    This function processes polymer entities in the structure and generates their sequence information</span>
+<span class="sd">    in both canonical and non-canonical forms.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - atom_array: AtomArray containing the structure data with polymer chain information.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dictionary containing the entity_poly category with the following fields:</span>
+<span class="sd">        - entity_id: List of entity identifiers</span>
+<span class="sd">        - type: List of polymer types (polypeptide, polynucleotide, etc.)</span>
+<span class="sd">        - nstd_linkage: List indicating presence of non-standard linkages</span>
+<span class="sd">        - nstd_monomer: List indicating presence of non-standard monomers</span>
+<span class="sd">        - pdbx_seq_one_letter_code: List of sequences in one-letter code</span>
+<span class="sd">        - pdbx_seq_one_letter_code_can: List of canonical sequences</span>
+<span class="sd">        - pdbx_strand_id: List of chain identifiers</span>
+<span class="sd">        - pdbx_target_identifier: List of target identifiers</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_entity_poly_categories</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;entity_id&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;nstd_linkage&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;nstd_monomer&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pdbx_seq_one_letter_code&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pdbx_seq_one_letter_code_can&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pdbx_strand_id&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pdbx_target_identifier&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">struc</span><span class="o">.</span><span class="n">AtomArrayStack</span><span class="p">):</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Choose any model</span>
+
+    <span class="c1"># ... get index of the first atom of each chain</span>
+    <span class="n">chain_starts</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">get_chain_starts</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+
+    <span class="c1"># ... get chain ids, iids, entity ids, and chain types</span>
+    <span class="n">chain_ids</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">chain_id</span><span class="p">[</span><span class="n">chain_starts</span><span class="p">]</span>
+    <span class="n">chain_iids</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">chain_iid</span><span class="p">[</span><span class="n">chain_starts</span><span class="p">]</span>
+    <span class="n">entity_ids</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">chain_entity</span><span class="p">[</span><span class="n">chain_starts</span><span class="p">]</span>
+    <span class="n">is_polymer</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">is_polymer</span><span class="p">[</span><span class="n">chain_starts</span><span class="p">]</span>
+    <span class="n">chain_types</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">chain_type</span><span class="p">[</span><span class="n">chain_starts</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">is_polymer</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="n">unique_polymer_entity_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">entity_ids</span><span class="p">[</span><span class="n">is_polymer</span><span class="p">])</span>
+    <span class="n">entity_poly</span> <span class="o">=</span> <span class="p">{</span><span class="n">cat</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">_entity_poly_categories</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">entity_id</span> <span class="ow">in</span> <span class="n">unique_polymer_entity_ids</span><span class="p">:</span>
+        <span class="c1"># ... get all relevant chain ids</span>
+        <span class="n">example_chain_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">chain_ids</span><span class="p">[</span><span class="n">entity_ids</span> <span class="o">==</span> <span class="n">entity_id</span><span class="p">])</span>
+
+        <span class="c1"># ... get chain type</span>
+        <span class="n">chain_type</span> <span class="o">=</span> <span class="n">ChainType</span><span class="o">.</span><span class="n">as_enum</span><span class="p">(</span><span class="n">chain_types</span><span class="p">[</span><span class="n">entity_ids</span> <span class="o">==</span> <span class="n">entity_id</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1"># ... get sequence</span>
+        <span class="n">example_chain_iid</span> <span class="o">=</span> <span class="n">chain_iids</span><span class="p">[</span><span class="n">entity_ids</span> <span class="o">==</span> <span class="n">entity_id</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">res_starts</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">get_residue_starts</span><span class="p">(</span><span class="n">atom_array</span><span class="p">[</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_iid</span> <span class="o">==</span> <span class="n">example_chain_iid</span><span class="p">])</span>
+        <span class="n">seq</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span><span class="p">[</span><span class="n">res_starts</span><span class="p">]</span>
+        <span class="n">wrap_every_n</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">text</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">),</span> <span class="n">n</span><span class="p">))</span>  <span class="c1"># noqa: E731</span>
+        <span class="n">processed_entity_non_canonical_sequence</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">get_1_from_3_letter_code</span><span class="p">(</span><span class="n">ccd_code</span><span class="p">,</span> <span class="n">chain_type</span><span class="p">,</span> <span class="n">use_closest_canonical</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">ccd_code</span> <span class="ow">in</span> <span class="n">seq</span>
+        <span class="p">)</span>
+        <span class="n">processed_entity_non_canonical_sequence</span> <span class="o">=</span> <span class="n">wrap_every_n</span><span class="p">(</span><span class="n">processed_entity_non_canonical_sequence</span><span class="p">,</span> <span class="mi">80</span><span class="p">)</span>
+        <span class="n">processed_entity_canonical_sequence</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">get_1_from_3_letter_code</span><span class="p">(</span><span class="n">ccd_code</span><span class="p">,</span> <span class="n">chain_type</span><span class="p">,</span> <span class="n">use_closest_canonical</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">ccd_code</span> <span class="ow">in</span> <span class="n">seq</span>
+        <span class="p">)</span>
+        <span class="n">processed_entity_canonical_sequence</span> <span class="o">=</span> <span class="n">wrap_every_n</span><span class="p">(</span><span class="n">processed_entity_canonical_sequence</span><span class="p">,</span> <span class="mi">80</span><span class="p">)</span>
+
+        <span class="c1"># ... check for non-standard monomers</span>
+        <span class="n">has_non_standard_monomer</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">STANDARD_AA</span> <span class="o">+</span> <span class="n">STANDARD_RNA</span> <span class="o">+</span> <span class="n">STANDARD_DNA</span><span class="p">))</span>
+
+        <span class="c1"># ... add to entity_poly</span>
+        <span class="n">entity_poly</span><span class="p">[</span><span class="s2">&quot;entity_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entity_id</span><span class="p">)</span>
+        <span class="n">entity_poly</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chain_type</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+        <span class="n">entity_poly</span><span class="p">[</span><span class="s2">&quot;nstd_linkage&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;no&quot;</span><span class="p">)</span>
+        <span class="n">entity_poly</span><span class="p">[</span><span class="s2">&quot;nstd_monomer&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;yes&quot;</span> <span class="k">if</span> <span class="n">has_non_standard_monomer</span> <span class="k">else</span> <span class="s2">&quot;no&quot;</span><span class="p">)</span>
+        <span class="n">entity_poly</span><span class="p">[</span><span class="s2">&quot;pdbx_seq_one_letter_code&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">processed_entity_non_canonical_sequence</span><span class="p">)</span>
+        <span class="n">entity_poly</span><span class="p">[</span><span class="s2">&quot;pdbx_seq_one_letter_code_can&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">processed_entity_canonical_sequence</span><span class="p">)</span>
+        <span class="n">entity_poly</span><span class="p">[</span><span class="s2">&quot;pdbx_strand_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">example_chain_ids</span><span class="p">))</span>
+        <span class="n">entity_poly</span><span class="p">[</span><span class="s2">&quot;pdbx_target_identifier&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;?&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;entity_poly&quot;</span><span class="p">:</span> <span class="n">entity_poly</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_write_categories_to_block</span><span class="p">(</span>
+    <span class="n">block</span><span class="p">:</span> <span class="s2">&quot;pdbx.Block&quot;</span><span class="p">,</span> <span class="n">categories</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write a set of categories to a CIF block&quot;&quot;&quot;</span>
+    <span class="n">Category</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">subcomponent_class</span><span class="p">()</span>  <span class="c1"># noqa: N806</span>
+    <span class="n">Column</span> <span class="o">=</span> <span class="n">Category</span><span class="o">.</span><span class="n">subcomponent_class</span><span class="p">()</span>  <span class="c1"># noqa: N806</span>
+    <span class="k">for</span> <span class="n">category_name</span><span class="p">,</span> <span class="n">category_data</span> <span class="ow">in</span> <span class="n">categories</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">category</span> <span class="o">=</span> <span class="n">Category</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">category_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># ... skip empty columns</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;__len__&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">category</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="c1"># ... skip empty categories</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">category</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">block</span><span class="p">[</span><span class="n">category_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">category</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cif_to_bcif</span><span class="p">(</span><span class="n">cif_file</span><span class="p">:</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFFile</span> <span class="o">|</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">BinaryCIFFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">BinaryCIFFile</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a given CIF file to an optimized BCIF file.&quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">biotite.setup_ccd</span><span class="w"> </span><span class="kn">import</span> <span class="n">_concatenate_blocks_into_category</span>
+
+    <span class="n">compressed_file</span> <span class="o">=</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">BinaryCIFFile</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">block_name</span><span class="p">,</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">cif_file</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">compressed_block</span> <span class="o">=</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">BinaryCIFBlock</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">category_name</span> <span class="ow">in</span> <span class="n">block</span><span class="p">:</span>
+            <span class="n">_tmp_cif_file</span> <span class="o">=</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFFile</span><span class="p">()</span>
+            <span class="n">_tmp_cif_file</span><span class="p">[</span><span class="n">block_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span>
+            <span class="n">compressed_block</span><span class="p">[</span><span class="n">category_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span>
+                <span class="n">_concatenate_blocks_into_category</span><span class="p">(</span><span class="n">_tmp_cif_file</span><span class="p">,</span> <span class="n">category_name</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="n">compressed_file</span><span class="p">[</span><span class="n">block_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">compressed_block</span>
+    <span class="k">return</span> <span class="n">compressed_file</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_to_cif_or_bcif</span><span class="p">(</span>
+    <span class="n">structure</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;unknown_id&quot;</span><span class="p">,</span>
+    <span class="n">author</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_get_logged_in_user</span><span class="p">(),</span>
+    <span class="n">date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">time</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">include_entity_poly</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">include_nan_coords</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">include_bonds</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">extra_fields</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="n">extra_categories</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">as_bcif</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">_allow_ambiguous_bond_annotations</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFFile</span> <span class="o">|</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">BinaryCIFFile</span><span class="p">:</span>
+    <span class="n">structure</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">cif_file</span> <span class="o">=</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFFile</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">date</span><span class="p">):</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">time</span><span class="p">):</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M:%S&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_allow_ambiguous_bond_annotations</span> <span class="ow">and</span> <span class="n">has_ambiguous_annotation_set</span><span class="p">(</span><span class="n">structure</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Ambiguous bond annotations detected. This happens when there are atoms that &quot;</span>
+            <span class="s2">&quot;have the same `(chain_id, res_id, res_name, atom_id, ins_code)` identifier. &quot;</span>
+            <span class="s2">&quot;This happens for example when you have a bio-assembly with multiple copies &quot;</span>
+            <span class="s2">&quot;of a chain that only differ by `transformation_id`.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;You can fix this for example by re-naming the chains to be named uniquely.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># If elements are given as atomic numbers, convert them to (uppercase) element symbols</span>
+    <span class="n">structure</span><span class="o">.</span><span class="n">element</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">ATOMIC_NUMBER_TO_ELEMENT</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">))(</span><span class="n">structure</span><span class="o">.</span><span class="n">element</span><span class="p">)</span>
+
+    <span class="c1"># If altloc information is present but no altloc id is given, set all to &quot;.&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;altloc_id&quot;</span> <span class="ow">in</span> <span class="n">structure</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span> <span class="ow">and</span> <span class="n">structure</span><span class="o">.</span><span class="n">altloc_id</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">structure</span><span class="o">.</span><span class="n">altloc_id</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;.&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">structure</span><span class="o">.</span><span class="n">array_length</span><span class="p">()</span>
+
+    <span class="n">block</span> <span class="o">=</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">_get_or_create_block</span><span class="p">(</span><span class="n">cif_file</span><span class="p">,</span> <span class="n">block_name</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span>
+
+    <span class="c1"># Build metadata</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;entry&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">id</span><span class="p">,</span> <span class="s2">&quot;author&quot;</span><span class="p">:</span> <span class="n">author</span><span class="p">,</span> <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">date</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">time</span><span class="p">}}</span>
+    <span class="k">for</span> <span class="n">flag</span><span class="p">,</span> <span class="n">build_func</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">include_entity_poly</span><span class="p">,</span> <span class="n">_build_entity_poly</span><span class="p">),</span>
+    <span class="p">]:</span>
+        <span class="k">if</span> <span class="n">flag</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">build_func</span><span class="p">(</span><span class="n">structure</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to build `</span><span class="si">{</span><span class="n">build_func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">`: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># Write metadata to block</span>
+    <span class="n">_write_categories_to_block</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+
+    <span class="c1"># Set the structure in the CIF file</span>
+    <span class="k">if</span> <span class="n">extra_fields</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+        <span class="n">_standard_cif_annotations</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;chain_id&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;res_id&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;res_name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;atom_name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;atom_id&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;element&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ins_code&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;hetero&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;altloc_id&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;charge&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;occupancy&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;b_factor&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">extra_fields</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">structure</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">())</span> <span class="o">-</span> <span class="n">_standard_cif_annotations</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">include_nan_coords</span><span class="p">:</span>
+        <span class="n">structure</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">remove_nan_coords</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">include_bonds</span> <span class="ow">and</span> <span class="n">structure</span><span class="o">.</span><span class="n">bonds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># TODO: Switch to using the `convert_bond_type` method once we upgrade to Biotite v1.4.0</span>
+        <span class="c1"># structure.bonds.convert_bond_type(struc.bonds.BondType.COORDINATION, struc.bonds.BondType.SINGLE)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">_bonds</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">COORDINATION</span>
+        <span class="n">structure</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">_bonds</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span>
+
+    <span class="n">pdbx</span><span class="o">.</span><span class="n">set_structure</span><span class="p">(</span><span class="n">cif_file</span><span class="p">,</span> <span class="n">structure</span><span class="p">,</span> <span class="n">data_block</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span> <span class="n">include_bonds</span><span class="o">=</span><span class="n">include_bonds</span><span class="p">,</span> <span class="n">extra_fields</span><span class="o">=</span><span class="n">extra_fields</span><span class="p">)</span>
+
+    <span class="c1"># Add extra categories if provided</span>
+    <span class="n">extra_categories</span> <span class="o">=</span> <span class="n">extra_categories</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">extra_categories</span><span class="p">:</span>
+        <span class="n">_write_categories_to_block</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">extra_categories</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">as_bcif</span><span class="p">:</span>
+        <span class="n">cif_file</span> <span class="o">=</span> <span class="n">_cif_to_bcif</span><span class="p">(</span><span class="n">cif_file</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cif_file</span>
+
+
+<div class="viewcode-block" id="to_cif_buffer">
+<a class="viewcode-back" href="../../../../io/utils/io_utils.html#atomworks.io.utils.io_utils.to_cif_buffer">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_cif_buffer</span><span class="p">(</span>
+    <span class="n">structure</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;unknown_id&quot;</span><span class="p">,</span>
+    <span class="n">author</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_get_logged_in_user</span><span class="p">(),</span>
+    <span class="n">date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">time</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">include_entity_poly</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">include_nan_coords</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">include_bonds</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">extra_fields</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="n">extra_categories</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">_allow_ambiguous_bond_annotations</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">as_bcif</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an AtomArray structure to a CIF formatted StringIO buffer.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        structure (AtomArray): The atomic structure to be converted.</span>
+<span class="sd">        id (str): The ID of the entry. This will be used as the data block name.</span>
+<span class="sd">        author (str): The author of the entry.</span>
+<span class="sd">        date (str): The date of the entry.</span>
+<span class="sd">        time (str): The time of the entry.</span>
+<span class="sd">        include_entity_poly (bool): Whether to write entity_poly category in the CIF file.</span>
+<span class="sd">        include_nan_coords (bool): Whether to write NaN coordinates in the CIF file.</span>
+<span class="sd">        include_bonds (bool): Whether to write bonds in the CIF file.</span>
+<span class="sd">        extra_fields (list[str] | Literal[&quot;all&quot;]): Additional atom_array annotations to include in the CIF file.</span>
+<span class="sd">        extra_categories (dict[str, dict[str, float | int | str | list | np.ndarray]] | None, optional):</span>
+<span class="sd">            Additional CIF categories to include in data block. These must be a dict of form {category_name: {column_name: value}}.</span>
+<span class="sd">            Example: {&quot;reflns&quot;: {&quot;pdbx_reflns_number_d_mean&quot;: 1.0}, &quot;my_metadata&quot;: {&quot;hi&quot;: np.arange(10)}}</span>
+<span class="sd">        _allow_ambiguous_bond_annotations (bool, optional): Private argument, not meant for public use.</span>
+<span class="sd">            If True, allows ambiguous bond annotations.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        StringIO | BytesIO: A buffer containing the CIF/BCIF formatted string/bytes representation of the structure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">file_obj</span> <span class="o">=</span> <span class="n">_to_cif_or_bcif</span><span class="p">(</span>
+        <span class="n">structure</span><span class="p">,</span>
+        <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
+        <span class="n">author</span><span class="o">=</span><span class="n">author</span><span class="p">,</span>
+        <span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span>
+        <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
+        <span class="n">include_entity_poly</span><span class="o">=</span><span class="n">include_entity_poly</span><span class="p">,</span>
+        <span class="n">include_nan_coords</span><span class="o">=</span><span class="n">include_nan_coords</span><span class="p">,</span>
+        <span class="n">include_bonds</span><span class="o">=</span><span class="n">include_bonds</span><span class="p">,</span>
+        <span class="n">extra_fields</span><span class="o">=</span><span class="n">extra_fields</span><span class="p">,</span>
+        <span class="n">extra_categories</span><span class="o">=</span><span class="n">extra_categories</span><span class="p">,</span>
+        <span class="n">as_bcif</span><span class="o">=</span><span class="n">as_bcif</span><span class="p">,</span>
+        <span class="n">_allow_ambiguous_bond_annotations</span><span class="o">=</span><span class="n">_allow_ambiguous_bond_annotations</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span> <span class="k">if</span> <span class="n">as_bcif</span> <span class="k">else</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+    <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+    <span class="n">buffer</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">buffer</span></div>
+
+
+
+<div class="viewcode-block" id="to_cif_string">
+<a class="viewcode-back" href="../../../../io/utils/io_utils.html#atomworks.io.utils.io_utils.to_cif_string">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_cif_string</span><span class="p">(</span>
+    <span class="n">structure</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;unknown_id&quot;</span><span class="p">,</span>
+    <span class="n">author</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_get_logged_in_user</span><span class="p">(),</span>
+    <span class="n">date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">time</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">include_entity_poly</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">include_nan_coords</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">include_bonds</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">extra_fields</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="n">extra_categories</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">as_bcif</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">_allow_ambiguous_bond_annotations</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an AtomArray structure to a CIF formatted string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        structure (AtomArray): The atomic structure to be converted.</span>
+<span class="sd">        id (str): The ID of the entry. This will be used as the data block name.</span>
+<span class="sd">        author (str): The author of the entry.</span>
+<span class="sd">        date (str): The date of the entry.</span>
+<span class="sd">        time (str): The time of the entry.</span>
+<span class="sd">        include_entity_poly (bool): Whether to write entity_poly category in the CIF file.</span>
+<span class="sd">        include_nan_coords (bool): Whether to write NaN coordinates in the CIF file.</span>
+<span class="sd">        include_bonds (bool): Whether to write bonds in the CIF file.</span>
+<span class="sd">        extra_fields (list[str] | Literal[&quot;all&quot;]): Additional atom_array annotations to include in the CIF file.</span>
+<span class="sd">        extra_categories (dict[str, dict[str, float | int | str | list | np.ndarray]] | None, optional):</span>
+<span class="sd">            Additional CIF categories to include in data block. These must be a dict of form {category_name: {column_name: value}}.</span>
+<span class="sd">            Example: {&quot;reflns&quot;: {&quot;pdbx_reflns_number_d_mean&quot;: 1.0}, &quot;my_metadata&quot;: {&quot;hi&quot;: np.arange(10)}}</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str | bytes: The CIF/BCIF formatted string/bytes representation of the structure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">to_cif_buffer</span><span class="p">(</span>
+        <span class="n">structure</span><span class="p">,</span>
+        <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
+        <span class="n">author</span><span class="o">=</span><span class="n">author</span><span class="p">,</span>
+        <span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span>
+        <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
+        <span class="n">include_entity_poly</span><span class="o">=</span><span class="n">include_entity_poly</span><span class="p">,</span>
+        <span class="n">include_nan_coords</span><span class="o">=</span><span class="n">include_nan_coords</span><span class="p">,</span>
+        <span class="n">include_bonds</span><span class="o">=</span><span class="n">include_bonds</span><span class="p">,</span>
+        <span class="n">extra_fields</span><span class="o">=</span><span class="n">extra_fields</span><span class="p">,</span>
+        <span class="n">extra_categories</span><span class="o">=</span><span class="n">extra_categories</span><span class="p">,</span>
+        <span class="n">_allow_ambiguous_bond_annotations</span><span class="o">=</span><span class="n">_allow_ambiguous_bond_annotations</span><span class="p">,</span>
+        <span class="n">as_bcif</span><span class="o">=</span><span class="n">as_bcif</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_to_cif_file</span><span class="p">(</span>
+    <span class="n">file_obj</span><span class="p">:</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFFile</span> <span class="o">|</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">BinaryCIFFile</span><span class="p">,</span>
+    <span class="n">path</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
+    <span class="n">file_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;cif&quot;</span><span class="p">,</span> <span class="s2">&quot;bcif&quot;</span><span class="p">,</span> <span class="s2">&quot;cif.gz&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="c1"># turn any relative path into an absolute path</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+
+    <span class="c1"># create the directory if it doesn&#39;t exist</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">_file_type_map</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="c1"># suffix: (open_func, open_mode, path_suffix)</span>
+        <span class="s2">&quot;cif&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">open</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">,</span> <span class="s2">&quot;.cif&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;bcif&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">open</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">,</span> <span class="s2">&quot;.bcif&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;cif.gz&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">,</span> <span class="s2">&quot;.cif.gz&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;bcif.gz&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">,</span> <span class="s2">&quot;.bcif.gz&quot;</span><span class="p">),</span>
+        <span class="c1"># ... default if no suffix is provided</span>
+        <span class="s2">&quot;&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">,</span> <span class="s2">&quot;.cif.gz&quot;</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">file_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">file_type</span> <span class="o">=</span> <span class="n">file_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">file_name</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+        <span class="c1"># ... with gz suffix by fetching the pre-gz suffix</span>
+        <span class="n">file_type</span> <span class="o">=</span> <span class="n">file_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.gz&quot;</span> <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;gz&quot;</span> <span class="k">else</span> <span class="n">file_type</span>
+
+    <span class="n">open_func</span><span class="p">,</span> <span class="n">open_mode</span><span class="p">,</span> <span class="n">path_suffix</span> <span class="o">=</span> <span class="n">_file_type_map</span><span class="p">[</span><span class="n">file_type</span><span class="p">]</span>
+
+    <span class="c1"># ... check that the file ends with the correct suffix, otherwise mutate the path to end with the correct suffix</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">path_suffix</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="n">path_suffix</span>
+    <span class="c1"># ... get the name minus the suffix</span>
+    <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">path_suffix</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">open_func</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">open_mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">file_obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">path</span>
+
+
+<div class="viewcode-block" id="to_cif_file">
+<a class="viewcode-back" href="../../../../io/utils/io_utils.html#atomworks.io.utils.io_utils.to_cif_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_cif_file</span><span class="p">(</span>
+    <span class="n">structure</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
+    <span class="n">path</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">file_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;cif&quot;</span><span class="p">,</span> <span class="s2">&quot;bcif&quot;</span><span class="p">,</span> <span class="s2">&quot;cif.gz&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">author</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_get_logged_in_user</span><span class="p">(),</span>
+    <span class="n">date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">time</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">include_entity_poly</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">include_nan_coords</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">include_bonds</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">extra_fields</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="n">extra_categories</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">_allow_ambiguous_bond_annotations</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an AtomArray structure to a CIF/BCIF formatted file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        structure (AtomArray): The atomic structure to be converted.</span>
+<span class="sd">        path (os.PathLike): The file path where the CIF formatted structure will be saved.</span>
+<span class="sd">        file_type (Literal[&quot;cif&quot;, &quot;bcif&quot;, &quot;cif.gz&quot;] | None): The file type to save the structure as.</span>
+<span class="sd">            If None, the file type will be inferred from the path.</span>
+<span class="sd">        id (str | None): The ID of the entry. This will be used as the data block name.</span>
+<span class="sd">            If None, the data block name will be inferred from the path.</span>
+<span class="sd">        author (str): The author of the entry.</span>
+<span class="sd">        date (str): The date of the entry.</span>
+<span class="sd">        time (str): The time of the entry.</span>
+<span class="sd">        include_entity_poly (bool): Whether to write entity_poly category in the CIF file.</span>
+<span class="sd">        include_nan_coords (bool): Whether to write NaN coordinates in the CIF file.</span>
+<span class="sd">        include_bonds (bool): Whether to write bonds in the CIF file.</span>
+<span class="sd">        extra_fields (list[str] | Literal[&quot;all&quot;]): Additional atom_array annotations to include in the CIF file.</span>
+<span class="sd">        extra_categories (dict[str, dict[str, float | int | str | list | np.ndarray]] | None, optional):</span>
+<span class="sd">            Additional CIF categories to include in data block. These must be a dict of form {category_name: {column_name: value}}.</span>
+<span class="sd">            Example: {&quot;reflns&quot;: {&quot;pdbx_reflns_number_d_mean&quot;: 1.0}, &quot;my_metadata&quot;: {&quot;hi&quot;: np.arange(10)}}</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The file path where the CIF formatted structure was saved.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        IOError: If there&#39;s an issue writing to the specified file path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># turn any relative path into an absolute path</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">file_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.cif&quot;</span><span class="p">):</span>
+            <span class="n">file_type</span> <span class="o">=</span> <span class="s2">&quot;cif&quot;</span>
+        <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.cif.gz&quot;</span><span class="p">):</span>
+            <span class="n">file_type</span> <span class="o">=</span> <span class="s2">&quot;cif.gz&quot;</span>
+        <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.bcif&quot;</span><span class="p">):</span>
+            <span class="n">file_type</span> <span class="o">=</span> <span class="s2">&quot;bcif&quot;</span>
+        <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.bcif.gz&quot;</span><span class="p">):</span>
+            <span class="n">file_type</span> <span class="o">=</span> <span class="s2">&quot;bcif.gz&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not infer file type from path: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">file_obj</span> <span class="o">=</span> <span class="n">_to_cif_or_bcif</span><span class="p">(</span>
+        <span class="n">structure</span><span class="p">,</span>
+        <span class="nb">id</span><span class="o">=</span><span class="nb">id</span> <span class="ow">or</span> <span class="n">file_name</span><span class="p">,</span>
+        <span class="n">author</span><span class="o">=</span><span class="n">author</span><span class="p">,</span>
+        <span class="n">date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span>
+        <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
+        <span class="n">include_entity_poly</span><span class="o">=</span><span class="n">include_entity_poly</span><span class="p">,</span>
+        <span class="n">include_nan_coords</span><span class="o">=</span><span class="n">include_nan_coords</span><span class="p">,</span>
+        <span class="n">include_bonds</span><span class="o">=</span><span class="n">include_bonds</span><span class="p">,</span>
+        <span class="n">extra_fields</span><span class="o">=</span><span class="n">extra_fields</span><span class="p">,</span>
+        <span class="n">extra_categories</span><span class="o">=</span><span class="n">extra_categories</span><span class="p">,</span>
+        <span class="n">_allow_ambiguous_bond_annotations</span><span class="o">=</span><span class="n">_allow_ambiguous_bond_annotations</span><span class="p">,</span>
+        <span class="n">as_bcif</span><span class="o">=</span><span class="s2">&quot;.bcif&quot;</span> <span class="ow">in</span> <span class="n">path</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_to_cif_file</span><span class="p">(</span><span class="n">file_obj</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">file_type</span><span class="o">=</span><span class="n">file_type</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">to_pdb_buffer</span><span class="p">(</span>
+    <span class="n">structure</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an AtomArray structure to a PDB formatted StringIO buffer.</span>
+
+<span class="sd">    NOTE: It&#39;s recommended to use `to_cif_buffer` instead of this function. That function</span>
+<span class="sd">    is more flexible and can handle extra annotations and metadata that PDB does not support.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - structure (AtomArray): The atomic structure to be converted.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        StringIO: The PDB formatted StringIO buffer of the structure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Create a PDBFile object</span>
+    <span class="n">pdb_file</span> <span class="o">=</span> <span class="n">biotite_pdb</span><span class="o">.</span><span class="n">PDBFile</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">has_ambiguous_annotation_set</span><span class="p">(</span><span class="n">structure</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Ambiguous bond annotations detected. This happens when there are atoms that &quot;</span>
+            <span class="s2">&quot;have the same `(chain_id, res_id, res_name, atom_id, ins_code)` identifier. &quot;</span>
+            <span class="s2">&quot;This happens for example when you have a bio-assembly with multiple copies &quot;</span>
+            <span class="s2">&quot;of a chain that only differ by `transformation_id`.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;You can fix this for example by re-naming the chains to be named uniquely.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Set the structure and bonds</span>
+    <span class="n">pdb_file</span><span class="o">.</span><span class="n">set_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+
+    <span class="c1"># Convert to string</span>
+    <span class="n">buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+    <span class="n">pdb_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">buffer</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">to_pdb_string</span><span class="p">(</span>
+    <span class="n">structure</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert an AtomArray structure to a PDB formatted string.</span>
+
+<span class="sd">    NOTE: It&#39;s recommended to use `to_cif_string` instead of this function. That function</span>
+<span class="sd">    is more flexible and can handle extra annotations and metadata that PDB does not support.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - structure (AtomArray): The atomic structure to be converted.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The PDB formatted string representation of the structure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">to_pdb_buffer</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_filter_extra_fields</span><span class="p">(</span><span class="n">extra_fields</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">atom_site</span><span class="p">:</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFCategory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filter the extra fields to only include fields that are actually present in the file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_translate_builtin_fields</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;atom_id&quot;</span><span class="p">:</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;charge&quot;</span><span class="p">:</span> <span class="s2">&quot;pdbx_formal_charge&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;b_factor&quot;</span><span class="p">:</span> <span class="s2">&quot;B_iso_or_equiv&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;occupancy&quot;</span><span class="p">:</span> <span class="s2">&quot;occupancy&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">_fields_with_default</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;label_entity_id&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;auth_seq_id&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">filtered_extra_fields</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">extra_fields</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">_fields_with_default</span><span class="p">:</span>
+            <span class="n">filtered_extra_fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">_translate_builtin_fields</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span> <span class="ow">in</span> <span class="n">atom_site</span><span class="p">:</span>
+            <span class="n">filtered_extra_fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Field </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2"> not found in file, ignoring.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">filtered_extra_fields</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">find_files_by_extension</span><span class="p">(</span><span class="n">input_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Recursively find files with the specified extension in a directory.&quot;&quot;&quot;</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">input_dir</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;*</span><span class="si">{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">extension</span><span class="p">)]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">files</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No files with extension </span><span class="si">{</span><span class="n">extension</span><span class="si">}</span><span class="s2"> found in </span><span class="si">{</span><span class="n">input_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">files</span>
+
+
+<div class="viewcode-block" id="build_sharding_pattern">
+<a class="viewcode-back" href="../../../../io/utils/io_utils.html#atomworks.io.utils.io_utils.build_sharding_pattern">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_sharding_pattern</span><span class="p">(</span><span class="n">depth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">chars_per_dir</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a sharding pattern string from depth and characters per directory.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        depth: Number of directory levels.</span>
+<span class="sd">        chars_per_dir: Number of characters to use for each directory level.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Sharding pattern string.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; build_sharding_pattern(2, 2)</span>
+<span class="sd">        &#39;/0:2/2:4/&#39;</span>
+<span class="sd">        &gt;&gt;&gt; build_sharding_pattern(3, 1)</span>
+<span class="sd">        &#39;/0:1/1:2/2:3/&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">depth</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="n">parts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">depth</span><span class="p">):</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">chars_per_dir</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="n">chars_per_dir</span>
+        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">start</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">end</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="parse_sharding_pattern">
+<a class="viewcode-back" href="../../../../io/utils/io_utils.html#atomworks.io.utils.io_utils.parse_sharding_pattern">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_sharding_pattern</span><span class="p">(</span><span class="n">sharding_pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a sharding pattern string into directory levels.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sharding_pattern: String like ``&quot;/1:2/0:2/&quot;`` where each ``/start:end/`` defines a directory level.</span>
+<span class="sd">            ``start:end`` defines the character range to use for that directory level.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of (start, end) tuples for each directory level.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; parse_sharding_pattern(&quot;/1:2/0:2/&quot;)</span>
+<span class="sd">        [(1, 2), (0, 2)]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Find all patterns like /start:end/ using a non-consuming lookahead</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;/(\d+):(\d+)(?=/)&quot;</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">sharding_pattern</span><span class="p">):</span>
+        <span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">matches</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid sharding pattern format: </span><span class="si">{</span><span class="n">sharding_pattern</span><span class="si">}</span><span class="s2">. Expected format like &#39;/1:2/0:2/&#39;&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">matches</span></div>
+
+
+
+<div class="viewcode-block" id="apply_sharding_pattern">
+<a class="viewcode-back" href="../../../../io/utils/io_utils.html#atomworks.io.utils.io_utils.apply_sharding_pattern">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_sharding_pattern</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">sharding_pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply a sharding pattern to construct a file path.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path: The base path or identifier (e.g., PDB ID).</span>
+<span class="sd">        sharding_pattern: Pattern for organizing files in subdirectories. Examples:</span>
+<span class="sd">            - ``&quot;/0:2/&quot;``: Use first two characters for first directory level</span>
+<span class="sd">            - ``&quot;/0:2/2:4/&quot;``: Use chars 0-2 for first dir, then chars 2-4 for second dir</span>
+<span class="sd">            - ``None``: No sharding (default)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The constructed file path with sharding applied.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; apply_sharding_pattern(&quot;12as&quot;, &quot;/0:2/1:3/&quot;)</span>
+<span class="sd">        Path(&quot;12/2a/12as&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">path_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">path_str</span> <span class="ow">and</span> <span class="n">path_str</span> <span class="o">!=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;Path cannot be empty&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sharding_pattern</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">path_str</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sharding_pattern</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sharding pattern must start with &#39;/&#39;: </span><span class="si">{</span><span class="n">sharding_pattern</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">shard_ranges</span> <span class="o">=</span> <span class="n">parse_sharding_pattern</span><span class="p">(</span><span class="n">sharding_pattern</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid sharding pattern &#39;</span><span class="si">{</span><span class="n">sharding_pattern</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+
+    <span class="c1"># Validate all ranges before building path</span>
+    <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">shard_ranges</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">end</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sharding range </span><span class="si">{</span><span class="n">start</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">end</span><span class="si">}</span><span class="s2"> exceeds path length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">path_str</span><span class="p">)</span><span class="si">}</span><span class="s2"> for &#39;</span><span class="si">{</span><span class="n">path_str</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Build directory components from sharding ranges</span>
+    <span class="n">directory_parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">path_str</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span> <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="n">shard_ranges</span><span class="p">]</span>
+
+    <span class="c1"># Construct final path: directories + filename</span>
+    <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="o">*</span><span class="n">directory_parts</span><span class="p">,</span> <span class="n">path_str</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

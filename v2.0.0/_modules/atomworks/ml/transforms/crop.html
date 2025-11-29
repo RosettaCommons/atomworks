@@ -1,0 +1,1205 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>atomworks.ml.transforms.crop &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/transforms/crop';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.1.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.1.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">atomworks.ml.transforms.crop</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for atomworks.ml.transforms.crop</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClassVar</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial</span><span class="w"> </span><span class="kn">import</span> <span class="n">KDTree</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">exists</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.transforms.atom_array</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_any_coord_nan</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms._checks</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">check_atom_array_annotation</span><span class="p">,</span>
+    <span class="n">check_contains_keys</span><span class="p">,</span>
+    <span class="n">check_is_instance</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.atom_array</span><span class="w"> </span><span class="kn">import</span> <span class="n">atom_id_to_atom_idx</span><span class="p">,</span> <span class="n">atom_id_to_token_idx</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.utils.token</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">apply_token_wise</span><span class="p">,</span>
+    <span class="n">get_af3_token_center_coords</span><span class="p">,</span>
+    <span class="n">get_token_count</span><span class="p">,</span>
+    <span class="n">get_token_starts</span><span class="p">,</span>
+    <span class="n">spread_token_wise</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;atomworks.ml&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="CropTransformBase">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.crop.CropTransformBase">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CropTransformBase</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for crop-type transforms.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotate_crop_boundary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">crop_boundary_radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">6.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">annotate_crop_boundary</span> <span class="o">=</span> <span class="n">annotate_crop_boundary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">crop_boundary_radius</span> <span class="o">=</span> <span class="n">crop_boundary_radius</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Crop size must be greater than 0&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotate_crop_boundary</span><span class="p">:</span>
+            <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
+            <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;precrop_hash&quot;</span><span class="p">,</span> <span class="n">compute_local_hash</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop_boundary_radius</span><span class="p">))</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotate_crop_boundary</span><span class="p">:</span>
+            <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
+            <span class="n">postcrop_hash</span> <span class="o">=</span> <span class="n">compute_local_hash</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop_boundary_radius</span><span class="p">)</span>
+            <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;at_crop_boundary&quot;</span><span class="p">,</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">precrop_hash</span> <span class="o">!=</span> <span class="n">postcrop_hash</span><span class="p">)</span>
+            <span class="c1"># ... delete the precrop hash</span>
+            <span class="n">atom_array</span><span class="o">.</span><span class="n">del_annotation</span><span class="p">(</span><span class="s2">&quot;precrop_hash&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="compute_local_hash">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.crop.compute_local_hash">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_local_hash</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">6.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute a local hash for each atom in the atom array.</span>
+
+<span class="sd">    Currently, the hash is the number of neighbours within a given radius.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atom_array (AtomArray): The atom array to compute the local hash for.</span>
+<span class="sd">        radius (float): The radius to use for the local hash.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: A numpy array of shape (n_atoms,) containing the local hash for each atom.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># ... build kdtree</span>
+    <span class="n">n_atoms</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">()</span>
+    <span class="n">is_valid</span> <span class="o">=</span> <span class="o">~</span><span class="n">is_any_coord_nan</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+    <span class="n">kdtree</span> <span class="o">=</span> <span class="n">KDTree</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">is_valid</span><span class="p">])</span>
+
+    <span class="c1"># ... query local neighbourhoods</span>
+    <span class="n">neighbour_idxs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="n">kdtree</span><span class="o">.</span><span class="n">query_ball_tree</span><span class="p">(</span><span class="n">kdtree</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="n">radius</span><span class="p">)</span>
+
+    <span class="c1"># ... use number of neighbours as hash (# TODO: elaborate this if needed)</span>
+    <span class="n">num_neighbours</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_atoms</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">num_neighbours</span><span class="p">[</span><span class="n">is_valid</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">neighbour_idxs</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">num_neighbours</span></div>
+
+
+
+<div class="viewcode-block" id="crop_contiguous_af2_multimer">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.crop.crop_contiguous_af2_multimer">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">crop_contiguous_af2_multimer</span><span class="p">(</span><span class="n">iids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">],</span> <span class="n">instance_lens</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">crop_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Crop contiguous tokens from the given instances to reach the given crop size probabilistically.</span>
+
+<span class="sd">    Implements the `crop_contiguous` (algorithm 1 in section 7.2.1) of AF2 Multimer and section 2.7.2 of AF3.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        iids (list[int | str]): List of instance identifiers.</span>
+<span class="sd">        instance_lens (list[int]): List of lengths corresponding to each instance.</span>
+<span class="sd">        crop_size (int): Desired number of tokens to crop. Must be greater than 0.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        keep_tokens (dict[int | str, np.ndarray[bool]]): Dictionary mapping instance identifiers</span>
+<span class="sd">            (iids) to crop masks (i.e. boolean arrays) indicating which tokens to keep.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        `AF2 Multimer &lt;https://www.biorxiv.org/content/10.1101/2021.10.04.463034v2.full.pdf&gt;`_</span>
+<span class="sd">        `AF3 &lt;https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf&gt;`_</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; iids = [1, 2, 3]</span>
+<span class="sd">        &gt;&gt;&gt; instance_lens = [3, 4, 2]</span>
+<span class="sd">        &gt;&gt;&gt; crop_size = 5</span>
+<span class="sd">        &gt;&gt;&gt; result = crop_contiguous_af2_multimer(iids, instance_lens, crop_size)</span>
+<span class="sd">        &gt;&gt;&gt; print(result)</span>
+<span class="sd">        # Output might look like (probabilistic!):</span>
+<span class="sd">        # {</span>
+<span class="sd">        #     3: array([False, True]),</span>
+<span class="sd">        #     2: array([False, True, True, False]),</span>
+<span class="sd">        #     1: array([True, True, False])</span>
+<span class="sd">        # }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">iids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">iids</span><span class="p">)</span>
+    <span class="n">instance_lens</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">instance_lens</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">crop_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Crop size must be greater than 0&quot;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">iids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
+        <span class="n">instance_lens</span>
+    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Number of instance IDs (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">iids</span><span class="p">)</span><span class="si">}</span><span class="s2">) must match number of instance lengths (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">instance_lens</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">iids</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">iids</span><span class="p">)</span><span class="o">.</span><span class="n">size</span>
+    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Instance IDs must be unique, but got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">iids</span><span class="p">)</span><span class="si">}</span><span class="s2"> IDs with only </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">iids</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2"> unique values&quot;</span>
+
+    <span class="c1"># randomly permute the order of the instances to avoid cropping bias</span>
+    <span class="n">permutation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">iids</span><span class="p">))</span>
+    <span class="n">iids</span> <span class="o">=</span> <span class="n">iids</span><span class="p">[</span><span class="n">permutation</span><span class="p">]</span>
+    <span class="n">instance_lens</span> <span class="o">=</span> <span class="n">instance_lens</span><span class="p">[</span><span class="n">permutation</span><span class="p">]</span>
+
+    <span class="c1"># init variables to keep track of remaining budget</span>
+    <span class="n">n_budget</span> <span class="o">=</span> <span class="n">crop_size</span>  <span class="c1"># ... number of tokens that can still be added to the crop</span>
+    <span class="n">n_available</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">instance_lens</span><span class="p">)</span>  <span class="c1"># ... number of tokens that are still available in the remaining instances</span>
+
+    <span class="n">keep_tokens</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">iid</span><span class="p">,</span> <span class="n">instance_len</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">iids</span><span class="p">,</span> <span class="n">instance_lens</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">n_budget</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># ... early stop if budget is already exhausted</span>
+            <span class="k">break</span>
+
+        <span class="c1"># ... after cropping the current instance, n_remaining tokens are still available</span>
+        <span class="n">n_available</span> <span class="o">-=</span> <span class="n">instance_len</span>
+
+        <span class="c1"># Determine the min/max crop sizes</span>
+        <span class="c1"># ... maximally take at most</span>
+        <span class="c1">#   (1) the remaining budget or</span>
+        <span class="c1">#   (2) all tokens of the current instance,</span>
+        <span class="c1"># whichever is smaller</span>
+        <span class="n">crop_size_max</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">n_budget</span><span class="p">,</span> <span class="n">instance_len</span><span class="p">)</span>
+
+        <span class="c1"># ... take at least</span>
+        <span class="c1">#  (1) 0 if there is still more than enough tokens available to reach the budget</span>
+        <span class="c1">#  (2) how much would be needed to reach the budget if we took all remaining available tokens</span>
+        <span class="c1">#  (3) or take all tokens of the current instance if we cannot reach the budget even if</span>
+        <span class="c1">#   we take all remaining available tokens</span>
+        <span class="n">crop_size_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">instance_len</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_budget</span> <span class="o">-</span> <span class="n">n_available</span><span class="p">))</span>
+
+        <span class="c1"># ... sample a crop size for this instance and update the budget</span>
+        <span class="n">n_crop_in_instance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">crop_size_min</span><span class="p">,</span> <span class="n">crop_size_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">n_budget</span> <span class="o">-=</span> <span class="n">n_crop_in_instance</span>
+        <span class="k">assert</span> <span class="n">n_budget</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;The budget cannot be negative!&quot;</span>
+
+        <span class="c1"># ... sample a crop start position for this instance</span>
+        <span class="n">crop_start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">instance_len</span> <span class="o">-</span> <span class="n">n_crop_in_instance</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">keep_token</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">instance_len</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">keep_token</span><span class="p">[</span><span class="n">crop_start</span> <span class="p">:</span> <span class="n">crop_start</span> <span class="o">+</span> <span class="n">n_crop_in_instance</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># ... add the crop to the keep dictionary</span>
+        <span class="n">keep_tokens</span><span class="p">[</span><span class="n">iid</span><span class="p">]</span> <span class="o">=</span> <span class="n">keep_token</span>
+
+    <span class="k">return</span> <span class="n">keep_tokens</span>  <span class="c1"># dict[int | str, np.ndarray[bool]]</span></div>
+
+
+
+<div class="viewcode-block" id="get_spatial_crop_center">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.crop.get_spatial_crop_center">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_spatial_crop_center</span><span class="p">(</span>
+    <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
+    <span class="n">query_pn_unit_iids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">cutoff_distance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">15.0</span><span class="p">,</span>
+    <span class="n">raise_if_missing_query</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sample a crop center from a spatial region of the atom array.</span>
+
+<span class="sd">    Implements the selection of a crop center as described in AF3.</span>
+<span class="sd">        In this procedure, polymer residues and ligand atoms are selected that</span>
+<span class="sd">        are within close spatial distance of an interface atom. The interface</span>
+<span class="sd">        atom is selected at random from the set of token centre atoms (defined</span>
+<span class="sd">        in subsection 2.6) with a distance under 15 Å to another chain&#39;s token</span>
+<span class="sd">        centre atom. For examples coming out of the Weighted PDB or Disordered</span>
+<span class="sd">        protein PDB complex datasets, where a preferred chain or interface is</span>
+<span class="sd">        provided (subsection 2.5), the reference atom is selected at random</span>
+<span class="sd">        from interfacial token centre atoms that exist within this chain or</span>
+<span class="sd">        interface.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atom_array (AtomArray): The array containing atom information.</span>
+<span class="sd">        query_pn_unit_iids (list[str]): List of PN unit instance IDs to query.</span>
+<span class="sd">        cutoff_distance (float, optional): The distance cutoff to consider for spatial proximity. Defaults to 15.0.</span>
+<span class="sd">        raise_if_missing_query (bool): Whether to raise an Exception if no crop centers are found, e.g. if the</span>
+<span class="sd">            query pn_unit(s) are not present due to a previous filtering step. Defaults to `True`. If `False`, a random</span>
+<span class="sd">            pn_unit will be selected for the crop center.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: A boolean mask indicating the crop center.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># ... get mask for query polymer/non-polymer unit</span>
+    <span class="n">is_query_pn_unit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span><span class="p">,</span> <span class="n">query_pn_unit_iids</span><span class="p">)</span>
+
+    <span class="c1"># ... get mask for occupied atoms</span>
+    <span class="n">is_occupied</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">occupancy</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+    <span class="c1"># ... optionally provide a fallback when not all query pn_units are present</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">raise_if_missing_query</span><span class="p">:</span>
+        <span class="n">available_query_pn_unit_iids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span><span class="p">[</span><span class="n">is_query_pn_unit</span><span class="p">])</span>
+
+        <span class="c1"># If only one of the query pn_units is present, we will just use that</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">available_query_pn_unit_iids</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">query_pn_unit_iids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">query_pn_unit_iids</span> <span class="o">=</span> <span class="n">available_query_pn_unit_iids</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Falling back to only available query pn_unit (</span><span class="si">{</span><span class="n">query_pn_unit_iids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">) for the crop center.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># If none of the query pn_units are present, we will randomly select one</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">available_query_pn_unit_iids</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">all_available_pn_unit_iids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span><span class="p">)</span>
+            <span class="n">query_pn_unit_iids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">all_available_pn_unit_iids</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Falling back to randomly-selected pn_unit (</span><span class="si">{</span><span class="n">query_pn_unit_iids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">) for the crop center.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Update the mask for query pn_unit</span>
+        <span class="n">is_query_pn_unit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span><span class="p">,</span> <span class="n">query_pn_unit_iids</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">query_pn_unit_iids</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># If there&#39;s only one query unit, we don&#39;t need to check for spatial proximity,</span>
+        <span class="c1"># so we can just return the mask for the query unit.</span>
+        <span class="n">can_be_crop_center</span> <span class="o">=</span> <span class="n">is_query_pn_unit</span> <span class="o">&amp;</span> <span class="n">is_occupied</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span>
+            <span class="n">can_be_crop_center</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;No crop center found! It appears `query_pn_unit_iid` </span><span class="si">{</span><span class="n">query_pn_unit_iids</span><span class="si">}</span><span class="s2"> is not in the atom array or unresolved.&quot;</span>
+
+        <span class="k">return</span> <span class="n">can_be_crop_center</span>
+
+    <span class="n">is_at_interface</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">is_query_pn_unit</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">pn_unit_1_iid</span><span class="p">,</span> <span class="n">pn_unit_2_iid</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">query_pn_unit_iids</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="c1"># ... get mask, indices, and kdtree for pn_unit_1</span>
+        <span class="n">pn_unit_1_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span> <span class="o">==</span> <span class="n">pn_unit_1_iid</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">is_occupied</span>
+        <span class="n">pn_unit_1_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pn_unit_1_mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">_tree1</span> <span class="o">=</span> <span class="n">KDTree</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">pn_unit_1_mask</span><span class="p">])</span>
+
+        <span class="c1"># ... get mask, indices, and kdtree for pn_unit_2</span>
+        <span class="n">pn_unit_2_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span> <span class="o">==</span> <span class="n">pn_unit_2_iid</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">is_occupied</span>
+        <span class="n">pn_unit_2_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pn_unit_2_mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">_tree2</span> <span class="o">=</span> <span class="n">KDTree</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">pn_unit_2_mask</span><span class="p">])</span>
+
+        <span class="n">dists</span> <span class="o">=</span> <span class="n">_tree1</span><span class="o">.</span><span class="n">sparse_distance_matrix</span><span class="p">(</span><span class="n">_tree2</span><span class="p">,</span> <span class="n">max_distance</span><span class="o">=</span><span class="n">cutoff_distance</span><span class="p">,</span> <span class="n">output_type</span><span class="o">=</span><span class="s2">&quot;coo_matrix&quot;</span><span class="p">)</span>
+
+        <span class="c1"># ... update the interface mask (by converting the local idxs to the global idxs)</span>
+        <span class="n">is_at_interface</span><span class="p">[</span><span class="n">pn_unit_1_indices</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">dists</span><span class="o">.</span><span class="n">row</span><span class="p">)]]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">is_at_interface</span><span class="p">[</span><span class="n">pn_unit_2_indices</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">dists</span><span class="o">.</span><span class="n">col</span><span class="p">)]]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># ... assemble final crop mask</span>
+    <span class="n">can_be_crop_center</span> <span class="o">=</span> <span class="n">is_query_pn_unit</span> <span class="o">&amp;</span> <span class="n">is_at_interface</span> <span class="o">&amp;</span> <span class="n">is_occupied</span>
+
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">can_be_crop_center</span><span class="p">),</span> <span class="s2">&quot;No crop center found!&quot;</span>
+    <span class="k">return</span> <span class="n">can_be_crop_center</span></div>
+
+
+
+<div class="viewcode-block" id="get_spatial_crop_mask">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.crop.get_spatial_crop_mask">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_spatial_crop_mask</span><span class="p">(</span>
+    <span class="n">coord</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">crop_center_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">crop_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">jitter_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Crop spatial tokens around a given `crop_center` by keeping the `crop_size` nearest neighbors (with jitter).</span>
+
+<span class="sd">    Implements the `crop_spatial` (algorithm 2 in section 7.2.1) of AF2 Multimer and AF3</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        coord (np.ndarray): A 2D numpy array of shape (N, 3) representing the 3D token-level coordinates.</span>
+<span class="sd">            Coordinates are expected to be in Angstroms.</span>
+<span class="sd">        crop_center_idx (int): The index of the token to be used as the center of the crop.</span>
+<span class="sd">        crop_size (int): The number of nearest neighbors to include in the crop.</span>
+<span class="sd">        jitter_scale (float): The scale of the jitter to add to the coordinates.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        crop_mask (np.ndarray): A boolean mask of shape (N,) where True indicates that the token is within the crop.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        `AF2 Multimer &lt;https://www.biorxiv.org/content/10.1101/2021.10.04.463034v2.full.pdf&gt;`_</span>
+<span class="sd">        `AF3 &lt;https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf&gt;`_</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; coord = np.array([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0], [2.0, 2.0, 2.0], [3.0, 3.0, 3.0]])</span>
+<span class="sd">        &gt;&gt;&gt; crop_center_idx = 1</span>
+<span class="sd">        &gt;&gt;&gt; crop_size = 2</span>
+<span class="sd">        &gt;&gt;&gt; crop_mask = get_spatial_crop_mask(coord, crop_center_idx, crop_size)</span>
+<span class="sd">        &gt;&gt;&gt; print(crop_mask)</span>
+<span class="sd">        [ True  True False False]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">coord</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Expected coord to be 2-dimensional, got </span><span class="si">{</span><span class="n">coord</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2"> dimensions&quot;</span>
+    <span class="k">assert</span> <span class="n">coord</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Expected coord to have 3 coordinates per point, got </span><span class="si">{</span><span class="n">coord</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">crop_center_idx</span> <span class="o">&lt;</span> <span class="n">coord</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Crop center index </span><span class="si">{</span><span class="n">crop_center_idx</span><span class="si">}</span><span class="s2"> is out of bounds for coord array of length </span><span class="si">{</span><span class="n">coord</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">crop_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Crop size must be positive, got </span><span class="si">{</span><span class="n">crop_size</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">jitter_scale</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Jitter scale must be non-negative, got </span><span class="si">{</span><span class="n">jitter_scale</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># Add small jitter to coordinates to break ties</span>
+    <span class="k">if</span> <span class="n">jitter_scale</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">coord</span> <span class="o">=</span> <span class="n">coord</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="n">jitter_scale</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">coord</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="c1"># ... get query center</span>
+    <span class="n">query_center</span> <span class="o">=</span> <span class="n">coord</span><span class="p">[</span><span class="n">crop_center_idx</span><span class="p">]</span>
+
+    <span class="c1"># ... extract a mask for valid coordiantes (i.e. no `nan`&#39;s, which indicate unknown token centers)</span>
+    <span class="c1">#     including including unoccupied tokens in the crop</span>
+    <span class="n">is_valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">coord</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># ... build a KDTree for efficient querying, excluding invalid coordinates</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">KDTree</span><span class="p">(</span><span class="n">coord</span><span class="p">[</span><span class="n">is_valid</span><span class="p">])</span>
+
+    <span class="c1"># ... query the `crop_size` nearest neighbors of the crop center</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">nearest_neighbor_idxs</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query_center</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">crop_size</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># ... filter out missing neighbours (index equal to `tree.n`)</span>
+    <span class="n">nearest_neighbor_idxs</span> <span class="o">=</span> <span class="n">nearest_neighbor_idxs</span><span class="p">[</span><span class="n">nearest_neighbor_idxs</span> <span class="o">&lt;</span> <span class="n">tree</span><span class="o">.</span><span class="n">n</span><span class="p">]</span>
+
+    <span class="c1"># ... crop mask is True for the `crop_size` nearest neighbors of the crop center</span>
+    <span class="n">crop_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">coord</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">is_valid_and_in_crop_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">is_valid</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="n">nearest_neighbor_idxs</span><span class="p">]</span>
+    <span class="n">crop_mask</span><span class="p">[</span><span class="n">is_valid_and_in_crop_idxs</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="n">crop_mask</span></div>
+
+
+
+<div class="viewcode-block" id="CropContiguousLikeAF3">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.crop.CropContiguousLikeAF3">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CropContiguousLikeAF3</span><span class="p">(</span><span class="n">CropTransformBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A transform that performs contiguous cropping similar to AF3.</span>
+
+<span class="sd">    This class implements the contiguous cropping procedure as described in AF3. It selects a crop center</span>
+<span class="sd">    from a contiguous region of the atom array and samples a crop around this center.</span>
+
+<span class="sd">    WARNING: This transform is probabilistic if the atom array is larger than the crop size!</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        - AF3 https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf</span>
+<span class="sd">        - AF2 Multimer https://www.biorxiv.org/content/10.1101/2021.10.04.463034v2.full.pdf</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        crop_size (int): The maximum number of tokens to crop.</span>
+<span class="sd">        keep_uncropped_atom_array (bool): Whether to keep the uncropped atom array in the data.</span>
+<span class="sd">            If `True`, the uncropped atom array will be stored in the `crop_info` dictionary</span>
+<span class="sd">            under the key `&quot;atom_array&quot;`. Defaults to `False`.</span>
+<span class="sd">        max_atoms_in_crop (int | None): Maximum number of atoms allowed in a crop. If None, no resizing is performed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">requires_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AtomizeByCCDName&quot;</span><span class="p">]</span>
+    <span class="n">incompatible_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;EncodeAtomArray&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CropSpatialLikeAF3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CropContiguousLikeAF3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PlaceUnresolvedTokenOnClosestResolvedTokenInSequence&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">crop_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">keep_uncropped_atom_array</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">max_atoms_in_crop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">crop_size</span> <span class="o">=</span> <span class="n">crop_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keep_uncropped_atom_array</span> <span class="o">=</span> <span class="n">keep_uncropped_atom_array</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_atoms_in_crop</span> <span class="o">=</span> <span class="n">max_atoms_in_crop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CropContiguousLikeAF3.check_input">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.crop.CropContiguousLikeAF3.check_input">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;chain_iid&quot;</span><span class="p">,</span> <span class="s2">&quot;atomize&quot;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="CropContiguousLikeAF3.forward">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.crop.CropContiguousLikeAF3.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
+
+        <span class="n">requires_crop</span> <span class="o">=</span> <span class="n">get_token_count</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop_size</span>
+        <span class="k">if</span> <span class="n">requires_crop</span><span class="p">:</span>
+            <span class="c1"># Extract chain data</span>
+            <span class="n">chain_iids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_iid</span><span class="p">)</span>
+            <span class="n">chain_n_tokens</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">get_token_count</span><span class="p">(</span><span class="n">atom_array</span><span class="p">[</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_iid</span> <span class="o">==</span> <span class="n">chain_iid</span><span class="p">])</span> <span class="k">for</span> <span class="n">chain_iid</span> <span class="ow">in</span> <span class="n">chain_iids</span>
+            <span class="p">]</span>
+
+            <span class="c1"># Sample crop as in AF2 multimer</span>
+            <span class="n">keep_token_dict</span> <span class="o">=</span> <span class="n">crop_contiguous_af2_multimer</span><span class="p">(</span><span class="n">chain_iids</span><span class="p">,</span> <span class="n">chain_n_tokens</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop_size</span><span class="p">)</span>
+
+            <span class="c1"># Turn crop information into atom-level mask</span>
+            <span class="n">is_token_start_idxs</span> <span class="o">=</span> <span class="n">get_token_starts</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+            <span class="n">is_token_in_crop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">is_token_start_idxs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">chain_iid</span><span class="p">,</span> <span class="n">keep_token_idxs</span> <span class="ow">in</span> <span class="n">keep_token_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">chain_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">atom_array</span><span class="p">[</span><span class="n">is_token_start_idxs</span><span class="p">]</span><span class="o">.</span><span class="n">chain_iid</span> <span class="o">==</span> <span class="n">chain_iid</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">is_token_in_crop</span><span class="p">[</span><span class="n">chain_idxs</span><span class="p">[</span><span class="n">keep_token_idxs</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">is_atom_in_crop</span> <span class="o">=</span> <span class="n">spread_token_wise</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">is_token_in_crop</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># ... no need to crop since the atom array is already small enough</span>
+            <span class="n">is_atom_in_crop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+            <span class="n">is_token_in_crop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">get_token_count</span><span class="p">(</span><span class="n">atom_array</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+        <span class="n">crop_info</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="s2">&quot;requires_crop&quot;</span><span class="p">:</span> <span class="n">requires_crop</span><span class="p">,</span>
+            <span class="s2">&quot;crop_token_idxs&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">is_token_in_crop</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s2">&quot;crop_atom_idxs&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">is_atom_in_crop</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="p">}</span>
+
+        <span class="n">crop_info</span> <span class="o">=</span> <span class="n">resize_crop_info_if_too_many_atoms</span><span class="p">(</span>
+            <span class="n">crop_info</span><span class="o">=</span><span class="n">crop_info</span><span class="p">,</span>
+            <span class="n">atom_array</span><span class="o">=</span><span class="n">atom_array</span><span class="p">,</span>
+            <span class="n">max_atoms</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_atoms_in_crop</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Update data</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;crop_info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">crop_info</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_uncropped_atom_array</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;crop_info&quot;</span><span class="p">][</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_array</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">crop_info</span><span class="p">[</span><span class="s2">&quot;crop_atom_idxs&quot;</span><span class="p">]]</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="crop_spatial_like_af3">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.crop.crop_spatial_like_af3">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">crop_spatial_like_af3</span><span class="p">(</span>
+    <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
+    <span class="n">query_pn_unit_iids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">crop_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">jitter_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
+    <span class="n">crop_center_cutoff_distance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">15.0</span><span class="p">,</span>
+    <span class="n">force_crop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">raise_if_missing_query</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Crop spatial tokens around a given `crop_center` by keeping the `crop_size` nearest neighbors (with jitter).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - atom_array (AtomArray): The atom array to crop.</span>
+<span class="sd">        - query_pn_unit_iids (list[str]): List of query polymer/non-polymer unit instance IDs.</span>
+<span class="sd">        - crop_size (int): The maximum number of tokens to crop.</span>
+<span class="sd">        - jitter_scale (float, optional): Scale of jitter to apply when calculating distances.</span>
+<span class="sd">            Defaults to 1e-3.</span>
+<span class="sd">        - crop_center_cutoff_distance (float, optional): Maximum distance from query units to</span>
+<span class="sd">            consider for crop center. Defaults to 15.0 Angstroms.</span>
+<span class="sd">        - force_crop (bool, optional): Whether to force crop even if the atom array is already small enough.</span>
+<span class="sd">            Defaults to False.</span>
+<span class="sd">        - raise_if_missing_query (bool): Whether to raise an Exception if no crop centers are found, e.g. if the</span>
+<span class="sd">            query pn_unit(s) are not present due to a previous filtering step. Defaults to `True`. If `False`, a random</span>
+<span class="sd">            pn_unit will be selected for the crop center.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: A dictionary containing crop information, including:</span>
+<span class="sd">            - requires_crop (bool): Whether cropping was necessary.</span>
+<span class="sd">            - crop_center_atom_id (int or np.nan): ID of the atom chosen as crop center.</span>
+<span class="sd">            - crop_center_atom_idx (int or np.nan): Index of the atom chosen as crop center.</span>
+<span class="sd">            - crop_center_token_idx (int or np.nan): Index of the token containing the crop center.</span>
+<span class="sd">            - crop_token_idxs (np.ndarray): Indices of tokens included in the crop.</span>
+<span class="sd">            - crop_atom_idxs (np.ndarray): Indices of atoms included in the crop.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This function implements the spatial cropping procedure as described in AlphaFold 3 and AlphaFold 2 Multimer.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        - AF3 https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf</span>
+<span class="sd">        - AF2 Multimer https://www.biorxiv.org/content/10.1101/2021.10.04.463034v2.full.pdf</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">token_segments</span> <span class="o">=</span> <span class="n">get_token_starts</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">add_exclusive_stop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">n_tokens</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">token_segments</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">requires_crop</span> <span class="o">=</span> <span class="n">n_tokens</span> <span class="o">&gt;</span> <span class="n">crop_size</span>
+
+    <span class="c1"># ... get possible crop centers</span>
+    <span class="n">can_be_crop_center</span> <span class="o">=</span> <span class="n">get_spatial_crop_center</span><span class="p">(</span>
+        <span class="n">atom_array</span><span class="p">,</span> <span class="n">query_pn_unit_iids</span><span class="p">,</span> <span class="n">crop_center_cutoff_distance</span><span class="p">,</span> <span class="n">raise_if_missing_query</span><span class="o">=</span><span class="n">raise_if_missing_query</span>
+    <span class="p">)</span>
+
+    <span class="c1"># ... sample crop center atom</span>
+    <span class="n">crop_center_atom_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">atom_array</span><span class="p">[</span><span class="n">can_be_crop_center</span><span class="p">]</span><span class="o">.</span><span class="n">atom_id</span><span class="p">)</span>
+    <span class="n">crop_center_atom_idx</span> <span class="o">=</span> <span class="n">atom_id_to_atom_idx</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">crop_center_atom_id</span><span class="p">)</span>
+    <span class="n">crop_center_token_idx</span> <span class="o">=</span> <span class="n">atom_id_to_token_idx</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">crop_center_atom_id</span><span class="p">)</span>
+
+    <span class="c1"># ... sample crop</span>
+    <span class="k">if</span> <span class="n">force_crop</span> <span class="ow">or</span> <span class="n">requires_crop</span><span class="p">:</span>
+        <span class="n">token_coords</span> <span class="o">=</span> <span class="n">get_af3_token_center_coords</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+        <span class="n">is_token_in_crop</span> <span class="o">=</span> <span class="n">get_spatial_crop_mask</span><span class="p">(</span>
+            <span class="n">token_coords</span><span class="p">,</span> <span class="n">crop_center_token_idx</span><span class="p">,</span> <span class="n">crop_size</span><span class="o">=</span><span class="n">crop_size</span><span class="p">,</span> <span class="n">jitter_scale</span><span class="o">=</span><span class="n">jitter_scale</span>
+        <span class="p">)</span>
+        <span class="c1"># ... spread token-level crop mask to atom-level</span>
+        <span class="n">is_atom_in_crop</span> <span class="o">=</span> <span class="n">spread_token_wise</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">is_token_in_crop</span><span class="p">,</span> <span class="n">token_starts</span><span class="o">=</span><span class="n">token_segments</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># ... no need to crop since the atom array is already small enough</span>
+        <span class="n">is_atom_in_crop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">is_token_in_crop</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n_tokens</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;requires_crop&quot;</span><span class="p">:</span> <span class="n">requires_crop</span><span class="p">,</span>  <span class="c1"># whether cropping was necessary</span>
+        <span class="s2">&quot;crop_center_atom_id&quot;</span><span class="p">:</span> <span class="n">crop_center_atom_id</span><span class="p">,</span>  <span class="c1"># atom_id of crop center</span>
+        <span class="s2">&quot;crop_center_atom_idx&quot;</span><span class="p">:</span> <span class="n">crop_center_atom_idx</span><span class="p">,</span>  <span class="c1"># atom_idx of crop center</span>
+        <span class="s2">&quot;crop_center_token_idx&quot;</span><span class="p">:</span> <span class="n">crop_center_token_idx</span><span class="p">,</span>  <span class="c1"># token_idx of crop center</span>
+        <span class="s2">&quot;crop_token_idxs&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">is_token_in_crop</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>  <span class="c1"># token_idxs in crop</span>
+        <span class="s2">&quot;crop_atom_idxs&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">is_atom_in_crop</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>  <span class="c1"># atom_idxs in crop</span>
+    <span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="resize_crop_info_if_too_many_atoms">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.crop.resize_crop_info_if_too_many_atoms">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">resize_crop_info_if_too_many_atoms</span><span class="p">(</span>
+    <span class="n">crop_info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
+    <span class="n">max_atoms</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resizes crops that exceed the maximum allowed number of atoms by removing tokens based on the distance to the crop center.</span>
+<span class="sd">    If no crop center is provided, the center of mass of the tokens in the crop is used as center.</span>
+
+<span class="sd">    NOTE: This is mostly needed for AF3 when crops on nucleic acids have too many atoms to work with the current atom</span>
+<span class="sd">    local attention when training on GPUs with less memory.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - crop_info (dict): Dictionary containing crop information. Must include:</span>
+<span class="sd">            - crop_atom_idxs: Array of atom indices in the crop</span>
+<span class="sd">            - crop_token_idxs: Array of token indices in the crop</span>
+<span class="sd">        - atom_array (AtomArray): The atom array containing the full structure</span>
+<span class="sd">        - max_atoms(int): Maximum number of atoms allowed in a crop. If None, no resizing is performed.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Updated crop_info dictionary with resized crop indices if necessary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="s2">&quot;crop_atom_idxs&quot;</span> <span class="ow">in</span> <span class="n">crop_info</span><span class="p">,</span> <span class="s2">&quot;crop_atom_idxs not found in crop&quot;</span>
+    <span class="k">assert</span> <span class="s2">&quot;crop_token_idxs&quot;</span> <span class="ow">in</span> <span class="n">crop_info</span><span class="p">,</span> <span class="s2">&quot;crop_token_idxs not found in crop&quot;</span>
+    <span class="n">crop_atom_idxs</span> <span class="o">=</span> <span class="n">crop_info</span><span class="p">[</span><span class="s2">&quot;crop_atom_idxs&quot;</span><span class="p">]</span>
+    <span class="n">crop_token_idxs</span> <span class="o">=</span> <span class="n">crop_info</span><span class="p">[</span><span class="s2">&quot;crop_token_idxs&quot;</span><span class="p">]</span>
+    <span class="n">crop_atom_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">crop_atom_idxs</span><span class="p">]</span>
+
+    <span class="c1"># Check if resizing is needed</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">max_atoms</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">crop_atom_idxs</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">max_atoms</span><span class="p">:</span>
+        <span class="c1"># ... no resizing needed</span>
+        <span class="k">return</span> <span class="n">crop_info</span>
+
+    <span class="c1"># Calculate distances to center token</span>
+    <span class="c1"># ... get token center coordinates</span>
+    <span class="n">token_coords</span> <span class="o">=</span> <span class="n">get_af3_token_center_coords</span><span class="p">(</span><span class="n">crop_atom_array</span><span class="p">)</span>  <span class="c1"># [n_token, 3]</span>
+    <span class="k">if</span> <span class="s2">&quot;crop_center_atom_idx&quot;</span> <span class="ow">in</span> <span class="n">crop_info</span><span class="p">:</span>
+        <span class="n">crop_center_coords</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">crop_info</span><span class="p">[</span><span class="s2">&quot;crop_center_atom_idx&quot;</span><span class="p">]]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># ... use center of mass of tokens in crop as center coordinate</span>
+        <span class="n">crop_center_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">token_coords</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># ... calculate distances to center token</span>
+    <span class="n">dist_to_center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">token_coords</span> <span class="o">-</span> <span class="n">crop_center_coords</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">sort_by_distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">dist_to_center</span><span class="p">)</span>  <span class="c1"># ascending</span>
+
+    <span class="c1"># Calculate cumulative atoms find cut-off index at which we are within budget</span>
+    <span class="c1"># ... get number of atoms per token</span>
+    <span class="n">n_atoms_per_token</span> <span class="o">=</span> <span class="n">apply_token_wise</span><span class="p">(</span>
+        <span class="n">array</span><span class="o">=</span><span class="n">crop_atom_array</span><span class="p">,</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">crop_atom_idxs</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+        <span class="n">function</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">within_budget</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">n_atoms_per_token</span><span class="p">[</span><span class="n">sort_by_distance</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">max_atoms</span>
+
+    <span class="c1"># Subset to tokens within budget</span>
+    <span class="c1"># ...find the largest index that is within budget</span>
+    <span class="n">cutoff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">within_budget</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># +1 because we want to include the cutoff index</span>
+    <span class="c1"># ... get token indices within budget</span>
+    <span class="n">is_in_budget</span> <span class="o">=</span> <span class="n">sort_by_distance</span><span class="p">[:</span><span class="n">cutoff</span><span class="p">]</span>
+    <span class="n">token_idxs_in_budget</span> <span class="o">=</span> <span class="n">crop_token_idxs</span><span class="p">[</span><span class="n">is_in_budget</span><span class="p">]</span>
+
+    <span class="c1"># Update atom idxs accordingly</span>
+    <span class="c1"># ... create updated masks for chosen tokens</span>
+    <span class="n">is_chosen_token</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">get_token_count</span><span class="p">(</span><span class="n">atom_array</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">is_chosen_token</span><span class="p">[</span><span class="n">token_idxs_in_budget</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># ... get the atom indices that are within budget</span>
+    <span class="n">atom_idxs_in_budget</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">spread_token_wise</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">is_chosen_token</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Update crop info</span>
+    <span class="n">crop_info</span><span class="p">[</span><span class="s2">&quot;crop_atom_idxs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_idxs_in_budget</span>
+    <span class="n">crop_info</span><span class="p">[</span><span class="s2">&quot;crop_token_idxs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">token_idxs_in_budget</span>
+
+    <span class="k">return</span> <span class="n">crop_info</span></div>
+
+
+
+<div class="viewcode-block" id="CropSpatialLikeAF3">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.crop.CropSpatialLikeAF3">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CropSpatialLikeAF3</span><span class="p">(</span><span class="n">CropTransformBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A transform that performs spatial cropping similar to AF3 and AF2 Multimer.</span>
+
+<span class="sd">    This class implements the spatial cropping procedure as described in AF3. It selects a crop center</span>
+<span class="sd">    from a spatial region of the atom array and samples a crop around this center.</span>
+
+<span class="sd">    WARNING: This transform is probabilistic if the atom array is larger than the crop size!</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        - AF3 https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf</span>
+<span class="sd">        - AF2 Multimer https://www.biorxiv.org/content/10.1101/2021.10.04.463034v2.full.pdf</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        crop_size (int): The maximum number of tokens to crop. Must be greater than 0.</span>
+<span class="sd">        jitter_scale (float): The scale of the jitter to apply to the crop center. This is to break</span>
+<span class="sd">            ties between atoms with the same spatial distance. Defaults to 1e-3.</span>
+<span class="sd">        crop_center_cutoff_distance (float): The cutoff distance to consider for selecting crop</span>
+<span class="sd">            centers. Measured in Angstroms. Defaults to 15.0.</span>
+<span class="sd">        keep_uncropped_atom_array (bool): Whether to keep the uncropped atom array in the data.</span>
+<span class="sd">            If `True`, the uncropped atom array will be stored in the `crop_info` dictionary</span>
+<span class="sd">            under the key `&quot;atom_array&quot;`. Defaults to `False`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">requires_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AddGlobalAtomIdAnnotation&quot;</span><span class="p">,</span> <span class="s2">&quot;AtomizeByCCDName&quot;</span><span class="p">]</span>
+    <span class="n">incompatible_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;EncodeAtomArray&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CropContiguousLikeAF3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CropSpatialLikeAF3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;PlaceUnresolvedTokenOnClosestResolvedTokenInSequence&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">crop_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">jitter_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
+        <span class="n">crop_center_cutoff_distance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">15.0</span><span class="p">,</span>
+        <span class="n">keep_uncropped_atom_array</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">force_crop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">max_atoms_in_crop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">raise_if_missing_query</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the CropSpatialLikeAF3 transform.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            crop_size: The maximum number of tokens to crop. Must be greater than 0.</span>
+<span class="sd">            jitter_scale: The scale of the jitter to apply to the crop center.</span>
+<span class="sd">                This is to break ties between atoms with the same spatial distance. Defaults to 1e-3.</span>
+<span class="sd">            crop_center_cutoff_distance: The cutoff distance to consider for</span>
+<span class="sd">                selecting crop centers. Measured in Angstroms. Defaults to 15.0.</span>
+<span class="sd">            keep_uncropped_atom_array: Whether to keep the uncropped atom array in the data.</span>
+<span class="sd">                If `True`, the uncropped atom array will be stored in the `crop_info` dictionary</span>
+<span class="sd">                under the key `&quot;atom_array&quot;`. Defaults to `False`.</span>
+<span class="sd">            force_crop: Whether to force crop even if the atom array is already small enough.</span>
+<span class="sd">                Defaults to `False`.</span>
+<span class="sd">            max_atoms_in_crop (int, optional): Maximum number of atoms allowed in a crop. If None, no resizing is performed.</span>
+<span class="sd">                Defaults to None.</span>
+<span class="sd">            raise_if_missing_query (bool): Whether to raise an Exception if no crop centers are found, e.g. if the</span>
+<span class="sd">                query pn_unit(s) are not present due to a previous filtering step. Defaults to `True`. If `False`, a random</span>
+<span class="sd">                pn_unit will be selected for the crop center.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">crop_size</span> <span class="o">=</span> <span class="n">crop_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jitter_scale</span> <span class="o">=</span> <span class="n">jitter_scale</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">crop_center_cutoff_distance</span> <span class="o">=</span> <span class="n">crop_center_cutoff_distance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keep_uncropped_atom_array</span> <span class="o">=</span> <span class="n">keep_uncropped_atom_array</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">force_crop</span> <span class="o">=</span> <span class="n">force_crop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_atoms_in_crop</span> <span class="o">=</span> <span class="n">max_atoms_in_crop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">raise_if_missing_query</span> <span class="o">=</span> <span class="n">raise_if_missing_query</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CropSpatialLikeAF3.check_input">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.crop.CropSpatialLikeAF3.check_input">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">,</span> <span class="s2">&quot;atomize&quot;</span><span class="p">,</span> <span class="s2">&quot;atom_id&quot;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="CropSpatialLikeAF3.forward">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.crop.CropSpatialLikeAF3.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;query_pn_unit_iids&quot;</span><span class="p">):</span>
+            <span class="n">query_pn_units</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;query_pn_unit_iids&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">query_pn_units</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No query PN unit(s) provided for spatial crop. Randomly selecting from </span><span class="si">{</span><span class="n">query_pn_units</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="n">crop_info</span> <span class="o">=</span> <span class="n">crop_spatial_like_af3</span><span class="p">(</span>
+            <span class="n">atom_array</span><span class="o">=</span><span class="n">atom_array</span><span class="p">,</span>
+            <span class="n">query_pn_unit_iids</span><span class="o">=</span><span class="n">query_pn_units</span><span class="p">,</span>
+            <span class="n">crop_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">crop_size</span><span class="p">,</span>
+            <span class="n">jitter_scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">jitter_scale</span><span class="p">,</span>
+            <span class="n">crop_center_cutoff_distance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">crop_center_cutoff_distance</span><span class="p">,</span>
+            <span class="n">force_crop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">force_crop</span><span class="p">,</span>
+            <span class="n">raise_if_missing_query</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">raise_if_missing_query</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">crop_info</span> <span class="o">=</span> <span class="n">resize_crop_info_if_too_many_atoms</span><span class="p">(</span>
+            <span class="n">crop_info</span><span class="o">=</span><span class="n">crop_info</span><span class="p">,</span>
+            <span class="n">atom_array</span><span class="o">=</span><span class="n">atom_array</span><span class="p">,</span>
+            <span class="n">max_atoms</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_atoms_in_crop</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;crop_info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">}</span> <span class="o">|</span> <span class="n">crop_info</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">keep_uncropped_atom_array</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;crop_info&quot;</span><span class="p">][</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_array</span>
+
+        <span class="c1"># Update data with cropped atom array</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">crop_info</span><span class="p">[</span><span class="s2">&quot;crop_atom_idxs&quot;</span><span class="p">]]</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

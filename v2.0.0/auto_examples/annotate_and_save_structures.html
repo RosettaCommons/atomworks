@@ -1,0 +1,797 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Annotating and Saving Protein Structures &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/annotate_and_save_structures';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.1.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Creating Custom Transforms: Ligand Pocket Conditioning" href="pocket_conditioning_transform.html" />
+    <link rel="prev" title="Dataset Exploration and Management in AtomWorks" href="dataset_exploration.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.1.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="basics.html">Structure Manipulation Basics</a></li>
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="load_and_visualize_structures.html">Loading and Visualizing Protein Structures</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="dataset_exploration.html">Dataset Exploration and Management in AtomWorks</a></li>
+
+
+
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Annotating and Saving Protein Structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pocket_conditioning_transform.html">Creating Custom Transforms: Ligand Pocket Conditioning</a></li>
+
+
+
+
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Examples</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Annotating and Saving Protein Structures</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-annotate-and-save-structures-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="annotating-and-saving-protein-structures">
+<span id="sphx-glr-auto-examples-annotate-and-save-structures-py"></span><h1>Annotating and Saving Protein Structures<a class="headerlink" href="#annotating-and-saving-protein-structures" title="Link to this heading">#</a></h1>
+<p>This example walks through how to add custom annotations to AtomArrays, visualize them, and save them for later use.</p>
+<p><strong>Prerequisites</strong>: Familiarity with <a class="reference internal" href="load_and_visualize_structures.html"><span class="doc">Loading and Visualizing Protein Structures</span></a> for basic structure loading and exploration.</p>
+<figure class="align-default" id="id1">
+<a class="reference internal image-reference" href="../_images/annotate_and_save_structures_01.png"><img alt="Heme pocket visualization" src="../_images/annotate_and_save_structures_01.png" style="width: 400px;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Visualization of heme-binding pocket atoms (within 6Å of heme ligand) in myoglobin.</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<section id="setup-and-structure-loading">
+<h2>Setup and Structure Loading<a class="headerlink" href="#setup-and-structure-loading" title="Link to this heading">#</a></h2>
+<p>Let’s start by loading a protein structure that we’ll annotate. We’ll use the same myoglobin structure from the loading example:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">struc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.io_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">to_cif_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_pdb_path_or_buffer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.visualize</span><span class="w"> </span><span class="kn">import</span> <span class="n">view</span>
+
+<span class="c1"># sphinx_gallery_thumbnail_path = &#39;_static/examples/annotate_and_save_structures_01.png&#39;</span>
+
+<span class="c1"># Load myoglobin structure with heme</span>
+<span class="n">example_pdb_id</span> <span class="o">=</span> <span class="s2">&quot;101m&quot;</span>  <span class="c1"># Myoglobin with heme</span>
+<span class="n">pdb_path</span> <span class="o">=</span> <span class="n">get_pdb_path_or_buffer</span><span class="p">(</span><span class="n">example_pdb_id</span><span class="p">)</span>
+
+<span class="c1"># Parse the structure (no need to add missing atoms, since we would just remove them in the following step)</span>
+<span class="n">atom_array</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">pdb_path</span><span class="p">,</span> <span class="n">add_missing_atoms</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fix_formal_charges</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s2">&quot;assemblies&quot;</span><span class="p">][</span><span class="s2">&quot;1&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded structure with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span><span class="si">}</span><span class="s2"> atoms&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Chains: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_id</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Clean up coordinates (remove any NaN values, if present)</span>
+<span class="c1"># (NaN coordinates will break our later step when we create a CellList with Biotite)</span>
+<span class="n">valid_coords_mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">atom_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">valid_coords_mask</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;After removing NaN coordinates: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span><span class="si">}</span><span class="s2"> atoms&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="adding-custom-annotations">
+<h2>Adding Custom Annotations<a class="headerlink" href="#adding-custom-annotations" title="Link to this heading">#</a></h2>
+<p>Now let’s add custom annotations to mark different types of atoms. We’ll use pocket identification as an example to demonstrate how to create meaningful structural annotations for many ML and general bioinformatics applications.</p>
+<section id="step-1-identify-structural-features-pocket-identification">
+<h3>Step 1: Identify Structural Features (Pocket Identification)<a class="headerlink" href="#step-1-identify-structural-features-pocket-identification" title="Link to this heading">#</a></h3>
+<p>Let’s efficiently identify the heme-binding pocket using spatial distance cutoffs with Biotite’s <code class="docutils literal notranslate"><span class="pre">CellList</span></code> class:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Find atoms within 6 Angstroms of the heme using a spatial cell list</span>
+<span class="n">cell_list</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">CellList</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">,</span> <span class="n">cell_size</span><span class="o">=</span><span class="mf">6.0</span><span class="p">)</span>
+<span class="n">heme_coords</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span> <span class="o">==</span> <span class="s2">&quot;HEM&quot;</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">heme_coords</span><span class="p">)</span><span class="si">}</span><span class="s2"> heme atoms&quot;</span><span class="p">)</span>
+
+<span class="c1"># Get all atoms within 6Å of any heme atom</span>
+<span class="n">pocket_mask</span> <span class="o">=</span> <span class="n">cell_list</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">(</span><span class="n">heme_coords</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="n">as_mask</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">pocket_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">pocket_mask</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># Combine results for all heme atoms</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pocket_mask</span><span class="p">)</span><span class="si">}</span><span class="s2"> atoms within 6Å of heme&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Visualize the pocket region (always a helpful sanity-check, and trivial with AtomWorks)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Visualizing pocket region (all atoms within 6Å of heme):&quot;</span><span class="p">)</span>
+<span class="n">view</span><span class="p">(</span><span class="n">atom_array</span><span class="p">[</span><span class="n">pocket_mask</span><span class="p">])</span>
+</pre></div>
+</div>
+<figure class="align-default">
+<img alt="Heme pocket visualization" src="../_images/annotate_and_save_structures_01.png" />
+</figure>
+</section>
+<section id="step-2-create-annotations-from-identified-features">
+<h3>Step 2: Create Annotations from Identified Features<a class="headerlink" href="#step-2-create-annotations-from-identified-features" title="Link to this heading">#</a></h3>
+<p>Now we’ll convert our pocket identification into an explicit <code class="docutils literal notranslate"><span class="pre">AtomArray</span></code> annotation and visualize it:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Boolean annotation for pocket residues (excluding heme itself)</span>
+<span class="n">is_pocket</span> <span class="o">=</span> <span class="n">pocket_mask</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span> <span class="o">!=</span> <span class="s2">&quot;HEM&quot;</span><span class="p">)</span>
+<span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;is_hem_pocket&quot;</span><span class="p">,</span> <span class="n">is_pocket</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">))</span>
+
+<span class="c1"># Boolean annotation for heme atoms</span>
+<span class="n">is_heme</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span> <span class="o">==</span> <span class="s2">&quot;HEM&quot;</span>
+<span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;is_heme&quot;</span><span class="p">,</span> <span class="n">is_heme</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - Pocket atoms: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">is_hem_pocket</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - Heme atoms: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">is_heme</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Visualize just the pocket residues</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Visualizing annotated pocket residues:&quot;</span><span class="p">)</span>
+<span class="n">view</span><span class="p">(</span><span class="n">atom_array</span><span class="p">[</span><span class="n">atom_array</span><span class="o">.</span><span class="n">is_hem_pocket</span><span class="p">])</span>
+</pre></div>
+</div>
+<figure class="align-default">
+<img alt="Annotated pocket residues visualization" src="../_images/annotate_and_save_structures_02.png" />
+</figure>
+</section>
+</section>
+<section id="saving-annotated-structures">
+<h2>Saving Annotated Structures<a class="headerlink" href="#saving-annotated-structures" title="Link to this heading">#</a></h2>
+<p>Now let’s save our annotated structure. In many use cases we may want to save our modified <code class="docutils literal notranslate"><span class="pre">AtomArray</span></code> to disk and later load again, preserving our original annotations.</p>
+<p>AtomWorks provides two methods to do so:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p>Saving to CIF, adding extra annotations directly into the file</p></td>
+</tr>
+<tr class="row-even"><td><p>Standard Python object pickling (which may be sensitive to versions, libraries, etc.)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="saving-to-cif-files">
+<h3>Saving to CIF Files<a class="headerlink" href="#saving-to-cif-files" title="Link to this heading">#</a></h3>
+<p>CIF files are the standard for structural data and allow us to store arbitrary annotations and categories.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create temporary directory for our files</span>
+<span class="n">temp_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Working in temporary directory: </span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Save to CIF file with custom annotations specified</span>
+<span class="n">cif_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="s2">&quot;annotated_structure.cif&quot;</span><span class="p">)</span>
+<span class="n">custom_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;is_hem_pocket&quot;</span><span class="p">,</span> <span class="s2">&quot;is_heme&quot;</span><span class="p">]</span>
+
+<span class="n">saved_cif_path</span> <span class="o">=</span> <span class="n">to_cif_file</span><span class="p">(</span>
+    <span class="n">atom_array</span><span class="p">,</span>
+    <span class="n">cif_path</span><span class="p">,</span>
+    <span class="n">extra_fields</span><span class="o">=</span><span class="n">custom_fields</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saved CIF file to: </span><span class="si">{</span><span class="n">saved_cif_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File size: </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">saved_cif_path</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> KB&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="note-on-biological-assemblies-and-cif-saving">
+<h3>Note on Biological Assemblies and CIF Saving<a class="headerlink" href="#note-on-biological-assemblies-and-cif-saving" title="Link to this heading">#</a></h3>
+<p>In some cases, you may find that <code class="docutils literal notranslate"><span class="pre">to_cif_file</span></code> reports an error when the structure represents a biological assembly containing multiple copies of the asymmetric unit. The reason for this error is that <code class="docutils literal notranslate"><span class="pre">AtomWorks</span></code> builds the biological assembly and explicitly represents every atom; we can’t then reverse that process since we may be left with ambiguous bond annotations (e.g., no way to distinguish between multiple copies of “Chain A”). The best solution is to either (a) set the <code class="docutils literal notranslate"><span class="pre">chain_id</span></code> to the <code class="docutils literal notranslate"><span class="pre">chain_iid</span></code> (which resolves the ambiguity) or (b) simply save the object using a pickle.</p>
+<p>More rigorous solutions exist; a helpful place for contributions!</p>
+</section>
+<section id="alternative-storage-options">
+<h3>Alternative Storage Options<a class="headerlink" href="#alternative-storage-options" title="Link to this heading">#</a></h3>
+<p>For Python-specific workflows, you can also save structures as pickle files to preserve exact data types, though CIF files are recommended for interoperability and long-term storage.</p>
+</section>
+</section>
+<section id="loading-annotated-structures">
+<h2>Loading Annotated Structures<a class="headerlink" href="#loading-annotated-structures" title="Link to this heading">#</a></h2>
+<p>When we load pickled <code class="docutils literal notranslate"><span class="pre">AtomArray</span></code>’s, we should restore our original object out-of-the-box with all annotations preserved.</p>
+<p>When loading from CIF, however, we may need to grapple with data type issues, since within CIF files all fields are considered strings.</p>
+<p>In the future, we would like to automatically detect annotation data types during loading (and/or allow specification of data types) - we would love contributions and a PR!</p>
+<section id="loading-from-cif-files">
+<h3>Loading from CIF Files<a class="headerlink" href="#loading-from-cif-files" title="Link to this heading">#</a></h3>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.io_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_any</span>
+
+<span class="c1"># Load from CIF file</span>
+<span class="n">loaded_from_cif</span> <span class="o">=</span> <span class="n">load_any</span><span class="p">(</span><span class="n">saved_cif_path</span><span class="p">,</span> <span class="n">extra_fields</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loaded from CIF file:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Atoms: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">loaded_from_cif</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Custom annotations:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">loaded_from_cif</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">custom_fields</span><span class="p">:</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">loaded_from_cif</span><span class="p">,</span> <span class="n">annotation</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    ✓ </span><span class="si">{</span><span class="n">annotation</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="handling-data-type-conversions">
+<h3>Handling Data Type Conversions<a class="headerlink" href="#handling-data-type-conversions" title="Link to this heading">#</a></h3>
+<p>As we can see above, when boolean annotations are saved to CIF files, they become string representations (“True”/”False”). Here’s how to convert them back (we welcome contributions to automate this process and/or allow explicit specification):</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Convert string booleans back to actual boolean type</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">fix_boolean_annotation</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">struc</span><span class="o">.</span><span class="n">AtomArray</span><span class="p">,</span> <span class="n">annotation_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">struc</span><span class="o">.</span><span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert string boolean annotations back to bool type.&quot;&quot;&quot;</span>
+    <span class="n">string_values</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">annotation_name</span><span class="p">)</span>
+    <span class="n">boolean_values</span> <span class="o">=</span> <span class="n">string_values</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span>
+    <span class="n">atom_array</span><span class="o">.</span><span class="n">del_annotation</span><span class="p">(</span><span class="n">annotation_name</span><span class="p">)</span>
+    <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="n">annotation_name</span><span class="p">,</span> <span class="n">boolean_values</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">atom_array</span>
+
+
+<span class="c1"># Fix boolean annotations</span>
+<span class="n">loaded_from_cif</span> <span class="o">=</span> <span class="n">fix_boolean_annotation</span><span class="p">(</span><span class="n">loaded_from_cif</span><span class="p">,</span> <span class="s2">&quot;is_hem_pocket&quot;</span><span class="p">)</span>
+<span class="n">loaded_from_cif</span> <span class="o">=</span> <span class="n">fix_boolean_annotation</span><span class="p">(</span><span class="n">loaded_from_cif</span><span class="p">,</span> <span class="s2">&quot;is_heme&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">After conversion:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  is_hem_pocket: </span><span class="si">{</span><span class="n">loaded_from_cif</span><span class="o">.</span><span class="n">is_hem_pocket</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">loaded_from_cif</span><span class="o">.</span><span class="n">is_hem_pocket</span><span class="p">)</span><span class="si">}</span><span class="s2"> True values&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  is_heme: </span><span class="si">{</span><span class="n">loaded_from_cif</span><span class="o">.</span><span class="n">is_heme</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">loaded_from_cif</span><span class="o">.</span><span class="n">is_heme</span><span class="p">)</span><span class="si">}</span><span class="s2"> True values&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Sample values: </span><span class="si">{</span><span class="n">loaded_from_cif</span><span class="o">.</span><span class="n">is_hem_pocket</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Clean up temporary files</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+
+<span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✓ Cleaned up temporary directory: </span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✓ Successfully demonstrated structure annotation, saving, and loading!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="related-examples">
+<h2>Related Examples<a class="headerlink" href="#related-examples" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="pocket_conditioning_transform.html"><span class="doc">Creating Custom Transforms: Ligand Pocket Conditioning</span></a> - Create custom transforms for ligand pocket identification and ML feature generation</p></li>
+</ul>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-annotate-and-save-structures-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/8840f25319a29361212b5920369fcdee/annotate_and_save_structures.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">annotate_and_save_structures.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/8c1ac0495bd641e188fb6155cadba3ad/annotate_and_save_structures.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">annotate_and_save_structures.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/c8dcf3d39d3f9cf37abbb9d136c6aff9/annotate_and_save_structures.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">annotate_and_save_structures.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="dataset_exploration.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Dataset Exploration and Management in AtomWorks</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="pocket_conditioning_transform.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Creating Custom Transforms: Ligand Pocket Conditioning</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-and-structure-loading">Setup and Structure Loading</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-custom-annotations">Adding Custom Annotations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-identify-structural-features-pocket-identification">Step 1: Identify Structural Features (Pocket Identification)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-create-annotations-from-identified-features">Step 2: Create Annotations from Identified Features</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#saving-annotated-structures">Saving Annotated Structures</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#saving-to-cif-files">Saving to CIF Files</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#note-on-biological-assemblies-and-cif-saving">Note on Biological Assemblies and CIF Saving</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#alternative-storage-options">Alternative Storage Options</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-annotated-structures">Loading Annotated Structures</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-from-cif-files">Loading from CIF Files</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#handling-data-type-conversions">Handling Data Type Conversions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#related-examples">Related Examples</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/auto_examples/annotate_and_save_structures.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

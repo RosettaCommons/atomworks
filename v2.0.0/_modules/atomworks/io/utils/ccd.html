@@ -1,0 +1,1226 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>atomworks.io.utils.ccd &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/io/utils/ccd';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.1.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.1.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">atomworks.io.utils.ccd</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for atomworks.io.utils.ccd</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">struc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure.io.pdbx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pdbx</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">toolz</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">immutable_lru_cache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AA_LIKE_CHEM_TYPES</span><span class="p">,</span>
+    <span class="n">CCD_MIRROR_PATH</span><span class="p">,</span>
+    <span class="n">DNA_LIKE_CHEM_TYPES</span><span class="p">,</span>
+    <span class="n">DO_NOT_MATCH_CCD</span><span class="p">,</span>
+    <span class="n">NA_LIKE_CHEM_TYPES</span><span class="p">,</span>
+    <span class="n">RNA_LIKE_CHEM_TYPES</span><span class="p">,</span>
+    <span class="n">UNKNOWN_AA</span><span class="p">,</span>
+    <span class="n">UNKNOWN_DNA</span><span class="p">,</span>
+    <span class="n">UNKNOWN_LIGAND</span><span class="p">,</span>
+    <span class="n">UNKNOWN_RNA</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChainType</span><span class="p">,</span> <span class="n">ChainTypeInfo</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="aa_chem_comps">
+<a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.aa_chem_comps">[docs]</a>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">aa_chem_comps</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of amino acid chemical components.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Set of amino acid chemical components (e.g., {&#39;ALA&#39;, &#39;ARG&#39;, ...}).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">struc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">_get_group_members</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">AA_LIKE_CHEM_TYPES</span><span class="p">)))</span></div>
+
+
+
+<div class="viewcode-block" id="na_chem_comps">
+<a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.na_chem_comps">[docs]</a>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">na_chem_comps</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of nucleic acid chemical components.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Set of nucleic acid chemical components (e.g., {&#39;DA&#39;, &#39;DC&#39;, ...}).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">struc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">_get_group_members</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">NA_LIKE_CHEM_TYPES</span><span class="p">)))</span></div>
+
+
+
+<div class="viewcode-block" id="rna_chem_comps">
+<a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.rna_chem_comps">[docs]</a>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">rna_chem_comps</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of RNA chemical components.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Set of RNA chemical components (e.g., {&#39;A&#39;, &#39;C&#39;, ...}).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">struc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">_get_group_members</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">RNA_LIKE_CHEM_TYPES</span><span class="p">)))</span></div>
+
+
+
+<div class="viewcode-block" id="dna_chem_comps">
+<a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.dna_chem_comps">[docs]</a>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dna_chem_comps</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of DNA chemical components.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Set of DNA chemical components (e.g., {&#39;DA&#39;, &#39;DC&#39;, ...}).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">struc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">_get_group_members</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">DNA_LIKE_CHEM_TYPES</span><span class="p">)))</span></div>
+
+
+
+<div class="viewcode-block" id="chem_comp_to_one_letter">
+<a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.chem_comp_to_one_letter">[docs]</a>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">chem_comp_to_one_letter</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dictionary mapping the chemical components to their 1-letter code.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Chemical components historically used to be 3-letter codes,</span>
+<span class="sd">        but nowadays longer codes exist.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dictionary mapping chemical component names to their 1-letter codes.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        `RCSB Chemical Component Dictionary &lt;https://www.rcsb.org/ligand&gt;`_</span>
+<span class="sd">        `Biotite CCD Module &lt;https://www.biotite-python.org/apidoc/biotite.structure.info.ccd.html&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ccd</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">ccd</span><span class="o">.</span><span class="n">get_ccd</span><span class="p">()</span>
+    <span class="n">three_letter_code</span> <span class="o">=</span> <span class="n">ccd</span><span class="p">[</span><span class="s2">&quot;chem_comp&quot;</span><span class="p">][</span><span class="s2">&quot;three_letter_code&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">()</span>
+    <span class="n">one_letter_code</span> <span class="o">=</span> <span class="n">ccd</span><span class="p">[</span><span class="s2">&quot;chem_comp&quot;</span><span class="p">][</span><span class="s2">&quot;one_letter_code&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">()</span>
+
+    <span class="n">three_to_one</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">full</span><span class="p">,</span> <span class="n">one</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">three_letter_code</span><span class="p">,</span> <span class="n">one_letter_code</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">one</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">one</span> <span class="o">==</span> <span class="s2">&quot;?&quot;</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">full</span> <span class="o">==</span> <span class="s2">&quot;?&quot;</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">three_to_one</span><span class="p">[</span><span class="n">full</span><span class="p">]</span> <span class="o">=</span> <span class="n">one</span>
+
+    <span class="k">return</span> <span class="n">three_to_one</span></div>
+
+
+
+<div class="viewcode-block" id="get_available_ccd_codes_in_mirror">
+<a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.get_available_ccd_codes_in_mirror">[docs]</a>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_available_ccd_codes_in_mirror</span><span class="p">(</span><span class="n">ccd_mirror_path</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">=</span> <span class="n">CCD_MIRROR_PATH</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of all CCD codes available in the local mirror.</span>
+
+<span class="sd">    Only counts codes when they adhere to the CCD mirror layout (e.g. .../H/HEM/HEM.cif)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ccd_mirror_path: Path to the CCD mirror directory.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Set of all available CCD codes in the mirror.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        `RCSB Chemical Component Dictionary &lt;https://www.rcsb.org/ligand&gt;`_</span>
+<span class="sd">        `CCD Mirror Layout &lt;https://www.rcsb.org/ligand&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">ccd_mirror_path</span><span class="p">)</span>
+
+    <span class="c1"># Check if we have a pre-computed cache file</span>
+    <span class="n">cache_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">&quot;.ccd_codes_cache&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cache_file</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Check if cache is newer than the directory</span>
+            <span class="n">cache_mtime</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">cache_file</span><span class="p">)</span>
+            <span class="n">dir_mtime</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cache_mtime</span> <span class="o">&gt;</span> <span class="n">dir_mtime</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cache_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">codes</span> <span class="o">=</span> <span class="p">{</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()}</span>
+                    <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">codes</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="c1"># If cache is corrupted, fall back to scanning</span>
+            <span class="k">pass</span>
+
+    <span class="c1"># Fall back to filesystem scan</span>
+    <span class="n">codes</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="n">root_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">level1_dir</span> <span class="ow">in</span> <span class="n">root_path</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">level1_dir</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+            <span class="k">continue</span>
+        <span class="n">first_letter</span> <span class="o">=</span> <span class="n">level1_dir</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">first_letter</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="k">for</span> <span class="n">level2_dir</span> <span class="ow">in</span> <span class="n">level1_dir</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">level2_dir</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+                <span class="k">continue</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="n">level2_dir</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">code</span> <span class="ow">or</span> <span class="n">code</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">first_letter</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">expected_file</span> <span class="o">=</span> <span class="n">level2_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s2">.cif&quot;</span>
+            <span class="k">if</span> <span class="n">expected_file</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+                <span class="n">codes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+
+    <span class="c1"># Cache the results for next time</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cache_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">code</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">codes</span><span class="p">):</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+        <span class="c1"># If we can&#39;t write cache, that&#39;s okay</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">codes</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_available_ccd_codes_in_biotite">
+<a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.get_available_ccd_codes_in_biotite">[docs]</a>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_available_ccd_codes_in_biotite</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set of all CCD codes available in Biotite&#39;s built-in Chemical Component Dictionary.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">struc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">ccd</span><span class="o">.</span><span class="n">get_ccd</span><span class="p">()[</span><span class="s2">&quot;chem_comp&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">())</span></div>
+
+
+
+<div class="viewcode-block" id="get_available_ccd_codes">
+<a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.get_available_ccd_codes">[docs]</a>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_available_ccd_codes</span><span class="p">(</span><span class="n">ccd_mirror_path</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">CCD_MIRROR_PATH</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a frozenset of all CCD codes available.</span>
+
+<span class="sd">    If a mirror path is provided, it will be used to check the local mirror first.</span>
+<span class="sd">    Otherwise, Biotite&#39;s built-in CCD will be used.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mirror_codes</span> <span class="o">=</span> <span class="n">get_available_ccd_codes_in_mirror</span><span class="p">(</span><span class="n">ccd_mirror_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">ccd_mirror_path</span> <span class="k">else</span> <span class="nb">frozenset</span><span class="p">()</span>
+    <span class="n">biotite_codes</span> <span class="o">=</span> <span class="n">get_available_ccd_codes_in_biotite</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">mirror_codes</span> <span class="o">|</span> <span class="n">biotite_codes</span></div>
+
+
+
+<div class="viewcode-block" id="get_ccd_component_from_biotite">
+<a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.get_ccd_component_from_biotite">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_ccd_component_from_biotite</span><span class="p">(</span><span class="n">ccd_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">parse_ccd_cif_kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">struc</span><span class="o">.</span><span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieves a component from the Chemical Component Dictionary using Biotite&#39;s built-in functionality.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - ccd_code (str): The three-letter code of the chemical component to retrieve.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        - AtomArray: The atomic structure of the requested component.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">block</span> <span class="o">=</span> <span class="n">_filter_biotite_ccd_for_ccd_code</span><span class="p">(</span><span class="n">ccd_code</span><span class="p">)</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">parse_ccd_cif</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="o">**</span><span class="n">parse_ccd_cif_kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">atom_array</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No atom information found for residue &#39;</span><span class="si">{</span><span class="n">ccd_code</span><span class="si">}</span><span class="s2">&#39; in Biotite&#39;s CCD&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="check_ccd_codes_are_available">
+<a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.check_ccd_codes_are_available">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_ccd_codes_are_available</span><span class="p">(</span>
+    <span class="n">ccd_codes</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">ccd_mirror_path</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">=</span> <span class="n">CCD_MIRROR_PATH</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="s2">&quot;raise&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if the provided CCD codes are available in the local mirror.&quot;&quot;&quot;</span>
+    <span class="n">available_ccds</span> <span class="o">=</span> <span class="n">get_available_ccd_codes</span><span class="p">(</span><span class="n">ccd_mirror_path</span><span class="p">)</span>
+    <span class="n">invalid_ccds</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">ccd_codes</span><span class="p">)</span> <span class="o">-</span> <span class="n">available_ccds</span>
+    <span class="k">if</span> <span class="n">invalid_ccds</span><span class="p">:</span>
+        <span class="n">which_mirror</span> <span class="o">=</span> <span class="s2">&quot;Biotite&#39;s built-in CCD&quot;</span> <span class="k">if</span> <span class="n">ccd_mirror_path</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;the local mirror at </span><span class="si">{</span><span class="n">ccd_mirror_path</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;warn&quot;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The following CCD codes were not found in </span><span class="si">{</span><span class="n">which_mirror</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">invalid_ccds</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The following CCD codes were not found in </span><span class="si">{</span><span class="n">which_mirror</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">invalid_ccds</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">invalid_ccds</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_ccd_path</span><span class="p">(</span><span class="n">ccd_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ccd_mirror_path</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">=</span> <span class="n">CCD_MIRROR_PATH</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Constructs the file path for a Chemical Component Dictionary entry in the local mirror.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - ccd_code (str): The three-letter code of the chemical component.</span>
+<span class="sd">        - ccd_mirror_path (os.PathLike): Path to the root of the CCD mirror directory.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        - os.PathLike: Full path to the component&#39;s CIF file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ccd_mirror_path</span><span class="p">,</span> <span class="n">ccd_code</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ccd_code</span><span class="p">,</span> <span class="n">ccd_code</span> <span class="o">+</span> <span class="s2">&quot;.cif&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_filter_biotite_ccd_for_ccd_code</span><span class="p">(</span><span class="n">ccd_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFBlock</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter the Biotite CCD for a given CCD code.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ccd_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">get_available_ccd_codes_in_biotite</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CCD code `</span><span class="si">{</span><span class="n">ccd_code</span><span class="si">}</span><span class="s2">` not found in Biotite&#39;s CCD&quot;</span><span class="p">)</span>
+
+    <span class="n">ccd</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">get_ccd</span><span class="p">()</span>
+
+    <span class="c1"># Chem comp</span>
+    <span class="n">chem_comp</span> <span class="o">=</span> <span class="n">ccd</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;chem_comp&quot;</span><span class="p">)</span>
+    <span class="n">chem_comp</span> <span class="o">=</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">_filter</span><span class="p">(</span><span class="n">chem_comp</span><span class="p">,</span> <span class="n">chem_comp</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">()</span> <span class="o">==</span> <span class="n">ccd_code</span><span class="p">)</span>
+
+    <span class="c1"># Chem comp atom</span>
+    <span class="n">chem_comp_atom</span> <span class="o">=</span> <span class="n">ccd</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;chem_comp_atom&quot;</span><span class="p">)</span>
+    <span class="n">chem_comp_atom</span> <span class="o">=</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">_filter</span><span class="p">(</span><span class="n">chem_comp_atom</span><span class="p">,</span> <span class="n">chem_comp_atom</span><span class="p">[</span><span class="s2">&quot;comp_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">()</span> <span class="o">==</span> <span class="n">ccd_code</span><span class="p">)</span>
+
+    <span class="c1"># Chem comp bond</span>
+    <span class="n">chem_comp_bond</span> <span class="o">=</span> <span class="n">ccd</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;chem_comp_bond&quot;</span><span class="p">)</span>
+    <span class="n">chem_comp_bond</span> <span class="o">=</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">_filter</span><span class="p">(</span><span class="n">chem_comp_bond</span><span class="p">,</span> <span class="n">chem_comp_bond</span><span class="p">[</span><span class="s2">&quot;comp_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">()</span> <span class="o">==</span> <span class="n">ccd_code</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFBlock</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;chem_comp&quot;</span><span class="p">:</span> <span class="n">chem_comp</span><span class="p">,</span>
+            <span class="s2">&quot;chem_comp_atom&quot;</span><span class="p">:</span> <span class="n">chem_comp_atom</span><span class="p">,</span>
+            <span class="s2">&quot;chem_comp_bond&quot;</span><span class="p">:</span> <span class="n">chem_comp_bond</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="parse_ccd_cif">
+<a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.parse_ccd_cif">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_ccd_cif</span><span class="p">(</span>
+    <span class="n">cif</span><span class="p">:</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFFile</span><span class="p">,</span>
+    <span class="n">coords</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="s2">&quot;ideal_pdbx&quot;</span><span class="p">,</span> <span class="s2">&quot;ideal_rdkit&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;ideal_pdbx&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;model&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ideal_rdkit&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">add_properties</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">add_mapping</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">struc</span><span class="o">.</span><span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parses a Chemical Component Dictionary CIF file into a Biotite AtomArray structure.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cif: The CIF file containing the component data.</span>
+<span class="sd">        coords: Type of coordinates to use. Defaults to (&quot;ideal_pdbx&quot;, &quot;model&quot;, &quot;ideal_rdkit&quot;).</span>
+<span class="sd">            Can be a single coordinate type or a tuple of fallback preferences (e.g., (&quot;ideal_pdbx&quot;, &quot;model&quot;, &quot;ideal_rdkit&quot;)).</span>
+<span class="sd">            - &quot;model&quot;: Use the coordinates that are found in a random (but fixed) pdb file.</span>
+<span class="sd">            - &quot;ideal_pdbx&quot;: Use the idealized coordinates computed by the RCSB PDB (sometimes not available).</span>
+<span class="sd">            - &quot;ideal_rdkit&quot;: Use the idealized coordinates computed by RDKit (sometimes unrealistic).</span>
+<span class="sd">        add_properties: Whether to include RDKit-computed properties. Defaults to False.</span>
+<span class="sd">            Properties are available under the ``properties`` attribute of the returned ``AtomArray``.</span>
+<span class="sd">        add_mapping: Whether to include external resource mappings, such as e.g. the ChEMBL ID.</span>
+<span class="sd">            Defaults to False.</span>
+<span class="sd">            Mappings are available under the ``mapping`` attribute of the returned ``AtomArray``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        AtomArray: The parsed atomic structure with requested annotations and properties.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; cif = pdbx.CIFFile.read(&quot;path/to/ALA.cif&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; atom_array = parse_ccd_cif(cif, coords=&quot;ideal_pdbx&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; # With fallback preferences:</span>
+<span class="sd">        &gt;&gt;&gt; atom_array = parse_ccd_cif(cif, coords=[&quot;ideal_pdbx&quot;, &quot;model&quot;, &quot;ideal_rdkit&quot;])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Convert single value or list to tuple for uniform processing and hashability</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">coord_types</span> <span class="o">=</span> <span class="p">(</span><span class="n">coords</span><span class="p">,)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">coord_types</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">coord_types</span> <span class="o">=</span> <span class="p">(</span><span class="n">coords</span><span class="p">,)</span> <span class="k">if</span> <span class="n">coords</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="kc">None</span><span class="p">,)</span>
+
+    <span class="n">valid_types</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="s2">&quot;ideal_pdbx&quot;</span><span class="p">,</span> <span class="s2">&quot;ideal_rdkit&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># Validate all coord types</span>
+    <span class="k">for</span> <span class="n">coord_type</span> <span class="ow">in</span> <span class="n">coord_types</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">coord_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_types</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid coordinate type: </span><span class="si">{</span><span class="n">coord_type</span><span class="si">}</span><span class="s2">. Must be one of &#39;model&#39;, &#39;ideal_pdbx&#39;, &#39;ideal_rdkit&#39; or `None`.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="n">block</span> <span class="o">=</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">_get_block</span><span class="p">(</span><span class="n">cif</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># Extract metadata</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;chem_comp&quot;</span><span class="p">)</span>
+    <span class="n">ccd_code</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_item</span><span class="p">()</span>
+
+    <span class="c1"># Extract atom specific information</span>
+    <span class="n">atom_data</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;chem_comp_atom&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Initialize the empty array:</span>
+    <span class="n">atoms</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">AtomArray</span><span class="p">(</span><span class="n">atom_data</span><span class="o">.</span><span class="n">row_count</span><span class="p">)</span>
+
+    <span class="c1"># Fill annotations</span>
+    <span class="n">n_atoms</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_str</span><span class="p">(</span><span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get string field or return default.&quot;&quot;&quot;</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="n">atom_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">field</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> <span class="k">if</span> <span class="n">field</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">n_atoms</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_bool</span><span class="p">(</span><span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get boolean field (Y/N) or return False.&quot;&quot;&quot;</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="n">atom_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="k">if</span> <span class="n">field</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">n_atoms</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Required annotations (no defaults)</span>
+    <span class="n">atoms</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;res_name&quot;</span><span class="p">,</span> <span class="n">atom_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;comp_id&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
+    <span class="n">atoms</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;atom_name&quot;</span><span class="p">,</span> <span class="n">atom_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;atom_id&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
+    <span class="n">atoms</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;element&quot;</span><span class="p">,</span> <span class="n">atom_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type_symbol&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
+    <span class="n">atoms</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;charge&quot;</span><span class="p">,</span> <span class="n">atom_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;charge&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">))</span>
+    <span class="n">atoms</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;res_id&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">n_atoms</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># We 1-index residue IDs to be consistent with RCSB</span>
+
+    <span class="c1"># Optional annotations (with defaults)</span>
+    <span class="n">atoms</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;alt_atom_id&quot;</span><span class="p">,</span> <span class="n">_get_str</span><span class="p">(</span><span class="s2">&quot;alt_atom_id&quot;</span><span class="p">))</span>
+    <span class="n">atoms</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;stereo&quot;</span><span class="p">,</span> <span class="n">_get_str</span><span class="p">(</span><span class="s2">&quot;pdbx_stereo_config&quot;</span><span class="p">))</span>
+    <span class="n">atoms</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;is_aromatic&quot;</span><span class="p">,</span> <span class="n">_get_bool</span><span class="p">(</span><span class="s2">&quot;pdbx_aromatic_flag&quot;</span><span class="p">))</span>
+    <span class="n">atoms</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;is_leaving_atom&quot;</span><span class="p">,</span> <span class="n">_get_bool</span><span class="p">(</span><span class="s2">&quot;pdbx_leaving_atom_flag&quot;</span><span class="p">))</span>
+    <span class="n">atoms</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;is_backbone_atom&quot;</span><span class="p">,</span> <span class="n">_get_bool</span><span class="p">(</span><span class="s2">&quot;pdbx_backbone_atom_flag&quot;</span><span class="p">))</span>
+    <span class="n">atoms</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;is_n_terminal_atom&quot;</span><span class="p">,</span> <span class="n">_get_bool</span><span class="p">(</span><span class="s2">&quot;pdbx_n_terminal_atom_flag&quot;</span><span class="p">))</span>
+    <span class="n">atoms</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;is_c_terminal_atom&quot;</span><span class="p">,</span> <span class="n">_get_bool</span><span class="p">(</span><span class="s2">&quot;pdbx_c_terminal_atom_flag&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Try setting hetero flag</span>
+    <span class="n">hetero</span> <span class="o">=</span> <span class="n">ccd_code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">struc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">NON_HETERO_RESIDUES</span>
+    <span class="n">atoms</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;hetero&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">hetero</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">))</span>
+
+    <span class="c1"># Define coordinate columns for each type</span>
+    <span class="n">coordinate_columns</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;model_Cartn_x&quot;</span><span class="p">,</span> <span class="s2">&quot;model_Cartn_y&quot;</span><span class="p">,</span> <span class="s2">&quot;model_Cartn_z&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;ideal_pdbx&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;pdbx_model_Cartn_x_ideal&quot;</span><span class="p">,</span> <span class="s2">&quot;pdbx_model_Cartn_y_ideal&quot;</span><span class="p">,</span> <span class="s2">&quot;pdbx_model_Cartn_z_ideal&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;ideal_rdkit&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Cartn_x_rdkit&quot;</span><span class="p">,</span> <span class="s2">&quot;Cartn_y_rdkit&quot;</span><span class="p">,</span> <span class="s2">&quot;Cartn_z_rdkit&quot;</span><span class="p">],</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Try each coordinate type until one works</span>
+    <span class="n">coords_set</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">for</span> <span class="n">coord_type</span> <span class="ow">in</span> <span class="n">coord_types</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">coord_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Skip if None is explicitly requested in the preference list</span>
+            <span class="k">continue</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">coord_type</span> <span class="o">==</span> <span class="s2">&quot;ideal_rdkit&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">rdkit_data</span> <span class="o">:=</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pdbe_chem_comp_rdkit_conformer&quot;</span><span class="p">)):</span>
+                <span class="c1"># Special case for rdkit as it uses a different dataset</span>
+                <span class="n">rdkit_data</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pdbe_chem_comp_rdkit_conformer&quot;</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">rdkit_data</span><span class="p">[</span><span class="s2">&quot;atom_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> <span class="o">==</span> <span class="n">atoms</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="s2">&quot;atom_name&quot;</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coordinate_columns</span><span class="p">[</span><span class="n">coord_type</span><span class="p">]):</span>
+                    <span class="n">atoms</span><span class="o">.</span><span class="n">coord</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rdkit_data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Standard case for model and ideal_pdbx</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coordinate_columns</span><span class="p">[</span><span class="n">coord_type</span><span class="p">]):</span>
+                    <span class="n">atoms</span><span class="o">.</span><span class="n">coord</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+            <span class="c1"># Check if the coordinates are valid (not all zeros/NaN)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">coord</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">coord</span><span class="p">)):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Coordinate type &#39;</span><span class="si">{</span><span class="n">coord_type</span><span class="si">}</span><span class="s2">&#39; for &#39;</span><span class="si">{</span><span class="n">ccd_code</span><span class="si">}</span><span class="s2">&#39; contains only zeros/NaN, trying next option&quot;</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="n">coords_set</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="c1"># If we&#39;re not using the first preference, log a warning</span>
+            <span class="k">if</span> <span class="n">coord_type</span> <span class="o">!=</span> <span class="n">coord_types</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Using fallback coordinate type &#39;</span><span class="si">{</span><span class="n">coord_type</span><span class="si">}</span><span class="s2">&#39; for &#39;</span><span class="si">{</span><span class="n">ccd_code</span><span class="si">}</span><span class="s2">&#39; instead of &#39;</span><span class="si">{</span><span class="n">coord_types</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                <span class="p">)</span>
+            <span class="k">break</span>
+
+        <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">):</span>
+            <span class="c1"># Continue to next coordinate type if this one fails</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coordinate type &#39;</span><span class="si">{</span><span class="n">coord_type</span><span class="si">}</span><span class="s2">&#39; not available for &#39;</span><span class="si">{</span><span class="n">ccd_code</span><span class="si">}</span><span class="s2">&#39;, trying next option&quot;</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+    <span class="c1"># Log warning if no coordinates were set</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">coords_set</span> <span class="ow">and</span> <span class="n">coord_types</span> <span class="ow">and</span> <span class="n">coord_types</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;No suitable coordinates found for &#39;</span><span class="si">{</span><span class="n">ccd_code</span><span class="si">}</span><span class="s2">&#39; among preferences </span><span class="si">{</span><span class="n">coord_types</span><span class="si">}</span><span class="s2">. Coordinates will be &#39;nan&#39;.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">atoms</span><span class="o">.</span><span class="n">coord</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">),</span> <span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+    <span class="c1"># Extract bond data</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">bond_data</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;chem_comp_bond&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">bond_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">bond_dict</span> <span class="o">=</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">_parse_intra_residue_bonds</span><span class="p">(</span><span class="n">bond_data</span><span class="p">)</span>
+            <span class="n">atoms</span><span class="o">.</span><span class="n">bonds</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">connect_via_residue_names</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">custom_bond_dict</span><span class="o">=</span><span class="n">bond_dict</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Failed to extract bond data for `</span><span class="si">{</span><span class="n">ccd_code</span><span class="si">}</span><span class="s2">`: missing key </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Required fields are: comp_id, atom_id_1, atom_id_2, value_order, pdbx_aromatic_flag&quot;</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error parsing bond data for `</span><span class="si">{</span><span class="n">ccd_code</span><span class="si">}</span><span class="s2">`: </span><span class="si">{</span><span class="n">e</span><span class="si">!s}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+
+    <span class="c1"># Set general annotations:</span>
+    <span class="k">if</span> <span class="n">add_properties</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">atoms</span><span class="o">.</span><span class="n">properties</span> <span class="o">=</span> <span class="n">toolz</span><span class="o">.</span><span class="n">valmap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">as_item</span><span class="p">(),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">block</span><span class="p">[</span><span class="s2">&quot;pdbe_chem_comp_rdkit_properties&quot;</span><span class="p">]))</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No properties data found for `</span><span class="si">{</span><span class="n">ccd_code</span><span class="si">}</span><span class="s2">`. Properties will be `None`.&quot;</span><span class="p">)</span>
+            <span class="n">atoms</span><span class="o">.</span><span class="n">properties</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">add_mapping</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">mapping</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pdbe_chem_comp_external_mappings&quot;</span><span class="p">)</span>
+            <span class="n">atoms</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">mapping</span><span class="p">[</span><span class="s2">&quot;resource&quot;</span><span class="p">],</span> <span class="n">mapping</span><span class="p">[</span><span class="s2">&quot;resource_id&quot;</span><span class="p">],</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">atoms</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No mapping data found for `</span><span class="si">{</span><span class="n">ccd_code</span><span class="si">}</span><span class="s2">`. Mapping will be `None`.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">atoms</span></div>
+
+
+
+<div class="viewcode-block" id="get_ccd_component_from_mirror">
+<a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.get_ccd_component_from_mirror">[docs]</a>
+<span class="nd">@immutable_lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">20000</span><span class="p">,</span> <span class="n">copy_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_ccd_component_from_mirror</span><span class="p">(</span>
+    <span class="n">ccd_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ccd_mirror_path</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">=</span> <span class="n">CCD_MIRROR_PATH</span><span class="p">,</span> <span class="o">**</span><span class="n">parse_ccd_cif_kwargs</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">struc</span><span class="o">.</span><span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieves and parses a component from a local mirror of the Chemical Component Dictionary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ccd_code: The three-letter code of the chemical component.</span>
+<span class="sd">        ccd_mirror_path: Path to the root of the CCD mirror directory.</span>
+<span class="sd">        **parse_ccd_cif_kwargs: Additional keyword arguments passed to parse_ccd_cif():</span>
+<span class="sd">            coords: Type of coordinates to use (&quot;model&quot;, &quot;ideal_pdbx&quot;, &quot;ideal_rdkit&quot;, or None).</span>
+<span class="sd">                Defaults to &quot;ideal_pdbx&quot;.</span>
+<span class="sd">            add_properties: Whether to include RDKit-computed properties. Defaults to True.</span>
+<span class="sd">            add_mapping: Whether to include external resource mappings, such as e.g. the ChEMBL ID.</span>
+<span class="sd">                Defaults to False.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        AtomArray: The parsed atomic structure of the requested component.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; atom_array = get_ccd_component_from_mirror(&quot;ALA&quot;, coords=&quot;ideal_pdbx&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cif</span> <span class="o">=</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">CIFFile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">_get_ccd_path</span><span class="p">(</span><span class="n">ccd_code</span><span class="p">,</span> <span class="n">ccd_mirror_path</span><span class="p">))</span>
+    <span class="n">atom_array</span> <span class="o">=</span> <span class="n">parse_ccd_cif</span><span class="p">(</span><span class="n">cif</span><span class="p">,</span> <span class="o">**</span><span class="n">parse_ccd_cif_kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">atom_array</span></div>
+
+
+
+<div class="viewcode-block" id="atom_array_from_ccd_code">
+<a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.atom_array_from_ccd_code">[docs]</a>
+<span class="nd">@immutable_lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">copy_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">atom_array_from_ccd_code</span><span class="p">(</span>
+    <span class="n">ccd_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ccd_mirror_path</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">=</span> <span class="n">CCD_MIRROR_PATH</span><span class="p">,</span> <span class="o">**</span><span class="n">parse_ccd_cif_kwargs</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">struc</span><span class="o">.</span><span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieves and parses a component from the Chemical Component Dictionary.</span>
+
+<span class="sd">    First attempts to retrieve the component from a local mirror if provided and the code exists there.</span>
+<span class="sd">    Falls back to Biotite&#39;s built-in CCD if the code is not found in the local mirror or no mirror path is provided.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ccd_code: The three-letter code of the chemical component.</span>
+<span class="sd">        ccd_mirror_path: Path to the root of the CCD mirror directory.</span>
+<span class="sd">        **parse_ccd_cif_kwargs: Additional keyword arguments passed to parse_ccd_cif():</span>
+<span class="sd">            coords: Type of coordinates to use (&quot;model&quot;, &quot;ideal_pdbx&quot;, &quot;ideal_rdkit&quot;, or None).</span>
+<span class="sd">                Defaults to &quot;ideal_pdbx&quot;.</span>
+<span class="sd">            add_properties: Whether to include RDKit-computed properties. Defaults to True.</span>
+<span class="sd">            add_mapping: Whether to include external resource mappings. Defaults to False.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        struc.AtomArray: The parsed atomic structure of the requested component.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the CCD code is not found in the local mirror or Biotite&#39;s built-in CCD.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; atom_array = atom_array_from_ccd_code(&quot;ALA&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ccd_mirror_path</span> <span class="ow">and</span> <span class="n">ccd_code</span> <span class="ow">in</span> <span class="n">get_available_ccd_codes_in_mirror</span><span class="p">(</span><span class="n">ccd_mirror_path</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">get_ccd_component_from_mirror</span><span class="p">(</span><span class="n">ccd_code</span><span class="p">,</span> <span class="n">ccd_mirror_path</span><span class="p">,</span> <span class="o">**</span><span class="n">parse_ccd_cif_kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_ccd_component_from_biotite</span><span class="p">(</span><span class="n">ccd_code</span><span class="p">,</span> <span class="o">**</span><span class="n">parse_ccd_cif_kwargs</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_find_connected_components_after_removal</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span> <span class="n">node_to_remove</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Identifies connected components that would form after removing a node from a graph.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - graph (nx.Graph): The input graph.</span>
+<span class="sd">        - node_to_remove (int): The node to hypothetically remove.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        - list[list[int]]: List of lists containing node indices in each new component.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get the neighbors before removal</span>
+    <span class="n">neighbors</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">node_to_remove</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">neighbors</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="c1"># Create subgraph without the node</span>
+    <span class="n">subgraph</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">subgraph</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="o">-</span> <span class="p">{</span><span class="n">node_to_remove</span><span class="p">})</span>
+
+    <span class="c1"># Use BFS from any neighbor to find components</span>
+    <span class="n">components</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">unvisited</span> <span class="o">=</span> <span class="n">neighbors</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">while</span> <span class="n">unvisited</span><span class="p">:</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">unvisited</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">start</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">subgraph</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Find all nodes reachable from this neighbor</span>
+        <span class="n">component</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">bfs_tree</span><span class="p">(</span><span class="n">subgraph</span><span class="p">,</span> <span class="n">start</span><span class="p">))</span>
+        <span class="n">components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">component</span><span class="p">)</span>
+        <span class="n">unvisited</span> <span class="o">-=</span> <span class="nb">set</span><span class="p">(</span><span class="n">component</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">components</span>
+
+
+<div class="viewcode-block" id="get_chem_comp_leaving_atom_names">
+<a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.get_chem_comp_leaving_atom_names">[docs]</a>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_chem_comp_leaving_atom_names</span><span class="p">(</span>
+    <span class="n">ccd_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ccd_mirror_path</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">=</span> <span class="n">CCD_MIRROR_PATH</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="s2">&quot;raise&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the canonical leaving groups for a given CCD entry based on the PDBs annotation</span>
+<span class="sd">    of leaving atoms.</span>
+
+<span class="sd">    The returned dictionary maps the name of the atom to the names of the atoms that would</span>
+<span class="sd">    become disconnected if the atom were removed.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; get_chem_comp_leaving_atom_names(&quot;ALA&quot;)</span>
+<span class="sd">        {&#39;N&#39;: (&#39;H2&#39;,), &#39;C&#39;: (&#39;OXT&#39;, &#39;HXT&#39;), &#39;OXT&#39;: (&#39;HXT&#39;,)}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Skip CCD lookup for codes that shouldn&#39;t be matched against CCD (e.g., UNL, water-like codes)</span>
+    <span class="k">if</span> <span class="n">ccd_code</span> <span class="ow">in</span> <span class="n">DO_NOT_MATCH_CCD</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;warn&quot;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Skipping CCD lookup for `</span><span class="si">{</span><span class="n">ccd_code</span><span class="si">}</span><span class="s2">` as it&#39;s in DO_NOT_MATCH_CCD&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">chem_comp</span> <span class="o">=</span> <span class="n">atom_array_from_ccd_code</span><span class="p">(</span><span class="n">ccd_code</span><span class="p">,</span> <span class="n">ccd_mirror_path</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;warn&quot;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to compute leaving groups for `</span><span class="si">{</span><span class="n">ccd_code</span><span class="si">}</span><span class="s2">`: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to compute leaving groups for `</span><span class="si">{</span><span class="n">ccd_code</span><span class="si">}</span><span class="s2">`: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="s2">&quot;is_leaving_atom&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">chem_comp</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;warn&quot;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No &#39;is_leaving_atom&#39; annotation found for `</span><span class="si">{</span><span class="n">ccd_code</span><span class="si">}</span><span class="s2">`. &quot;</span>
+                <span class="s2">&quot;Cannot compute leaving groups, returning empty dictionary. &quot;</span>
+                <span class="s2">&quot;Check if your CCD mirror is up to date.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No &#39;is_leaving_atom&#39; annotation found for `</span><span class="si">{</span><span class="n">ccd_code</span><span class="si">}</span><span class="s2">`. &quot;</span>
+                <span class="s2">&quot;Cannot compute leaving groups. Check if your CCD mirror is up to date.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="c1"># ... initialize output</span>
+    <span class="n">leaving_atom_names</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="c1"># ... get relevant annotations</span>
+    <span class="n">is_leaving_atom</span> <span class="o">=</span> <span class="n">chem_comp</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="s2">&quot;is_leaving_atom&quot;</span><span class="p">)</span>
+    <span class="n">atom_name</span> <span class="o">=</span> <span class="n">chem_comp</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="s2">&quot;atom_name&quot;</span><span class="p">)</span>
+    <span class="n">element</span> <span class="o">=</span> <span class="n">chem_comp</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="s2">&quot;element&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ... skip if no atoms are annotated as leaving atoms (majority of CCD entries)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">is_leaving_atom</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="c1"># ... compute the leaving groups based on the bond graph and annotation</span>
+    <span class="n">bond_graph</span> <span class="o">=</span> <span class="n">chem_comp</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">as_graph</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">atom_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">chem_comp</span><span class="o">.</span><span class="n">array_length</span><span class="p">()):</span>
+        <span class="c1"># ... find the connected groups of atoms if the current atom were removed</span>
+        <span class="n">connected_groups</span> <span class="o">=</span> <span class="n">_find_connected_components_after_removal</span><span class="p">(</span><span class="n">bond_graph</span><span class="p">,</span> <span class="n">atom_idx</span><span class="p">)</span>
+
+        <span class="c1"># ... check if all atoms in the connected group are flagged as leaving atoms</span>
+        <span class="c1">#     by the CCD entry</span>
+        <span class="k">for</span> <span class="n">connected_group</span> <span class="ow">in</span> <span class="n">connected_groups</span><span class="p">:</span>
+            <span class="n">heavy_atoms</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">element</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="n">connected_group</span><span class="p">))</span>
+            <span class="n">is_leaving_group</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="nb">all</span><span class="p">(</span><span class="n">is_leaving_atom</span><span class="p">[</span><span class="n">heavy_atoms</span><span class="p">])</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">heavy_atoms</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">all</span><span class="p">(</span><span class="n">is_leaving_atom</span><span class="p">[</span><span class="n">connected_group</span><span class="p">])</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">is_leaving_group</span><span class="p">:</span>
+                <span class="n">leaving_atom_names</span><span class="p">[</span><span class="n">atom_name</span><span class="p">[</span><span class="n">atom_idx</span><span class="p">]]</span> <span class="o">+=</span> <span class="p">[</span><span class="n">atom_name</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">connected_group</span><span class="p">]</span>
+
+    <span class="c1"># ... turn leaving_atom_names into a dictionary of tuples</span>
+    <span class="n">leaving_atom_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">leaving_atom_names</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="k">return</span> <span class="n">leaving_atom_names</span></div>
+
+
+
+<span class="nd">@functools</span><span class="o">.</span><span class="n">cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_chem_comp_type_dict</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a dictionary of all residue names and their corresponding chemical component types.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; _chem_comp_type_dict()[&quot;ALA&quot;]</span>
+<span class="sd">        &#39;L-PEPTIDE LINKING&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ccd</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">ccd</span><span class="o">.</span><span class="n">get_ccd</span><span class="p">()</span>  <span class="c1"># NOTE: biotite caches this internally</span>
+    <span class="n">chem_comp_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">char</span><span class="o">.</span><span class="n">upper</span><span class="p">(</span><span class="n">ccd</span><span class="p">[</span><span class="s2">&quot;chem_comp&quot;</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">())</span>
+    <span class="n">chem_comp_types</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">char</span><span class="o">.</span><span class="n">upper</span><span class="p">(</span><span class="n">ccd</span><span class="p">[</span><span class="s2">&quot;chem_comp&quot;</span><span class="p">][</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">())</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">chem_comp_ids</span><span class="p">,</span> <span class="n">chem_comp_types</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="get_chem_comp_type">
+<a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.get_chem_comp_type">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_chem_comp_type</span><span class="p">(</span><span class="n">ccd_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="s2">&quot;raise&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the chemical component type for a CCD code from the Chemical Component Dictionary (CCD).</span>
+
+<span class="sd">    Can be combined with CHEM_TYPES from `atomworks.io_biotite.constants` to determine if a component is a</span>
+<span class="sd">    protein, nucleic acid, or carbohydrate.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ccd_code (str): The CCD code for the component. E.g. `ALA` for alanine, `NAP` for N-acetyl-D-glucosamine.</span>
+<span class="sd">        mode (Literal[&quot;warn&quot;, &quot;raise&quot;]): How to handle unknown chemical component types.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; get_chem_comp_type(&quot;ALA&quot;)</span>
+<span class="sd">        &#39;L-PEPTIDE LINKING&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">chem_comp_type</span> <span class="o">=</span> <span class="n">_chem_comp_type_dict</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ccd_code</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># ... handle unknown chemical component types</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">chem_comp_type</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
+            <span class="c1"># ... raise an error if we want to fail loudly</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Chemical component type for `</span><span class="si">{</span><span class="n">ccd_code</span><span class="si">=}</span><span class="s2">` not found in CCD.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;warn&quot;</span><span class="p">:</span>
+            <span class="c1"># ... otherwise set chemical component type to &quot;other&quot; - the equivalent of unknown.</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Chemical component type for `</span><span class="si">{</span><span class="n">ccd_code</span><span class="si">=}</span><span class="s2">` not found in CCD. Using &#39;other&#39;.&quot;</span><span class="p">)</span>
+            <span class="n">chem_comp_type</span> <span class="o">=</span> <span class="s2">&quot;OTHER&quot;</span>
+
+    <span class="k">return</span> <span class="n">chem_comp_type</span></div>
+
+
+
+<div class="viewcode-block" id="get_chain_type_from_chem_comp_type">
+<a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.get_chain_type_from_chem_comp_type">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_chain_type_from_chem_comp_type</span><span class="p">(</span><span class="n">chem_comp_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ChainType</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the ChainType enum corresponding to a chemical component type.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ChainTypeInfo</span><span class="o">.</span><span class="n">CHEM_COMP_TYPE_TO_ENUM</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">chem_comp_type</span><span class="p">,</span> <span class="n">ChainType</span><span class="o">.</span><span class="n">OTHER_POLYMER</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_chain_type_from_ccd_code">
+<a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.get_chain_type_from_ccd_code">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_chain_type_from_ccd_code</span><span class="p">(</span><span class="n">ccd_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ChainType</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the ChainType enum corresponding to a CCD code.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">get_chain_type_from_chem_comp_type</span><span class="p">(</span><span class="n">get_chem_comp_type</span><span class="p">(</span><span class="n">ccd_code</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="get_unknown_ccd_code_for_chem_comp_type">
+<a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.get_unknown_ccd_code_for_chem_comp_type">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_unknown_ccd_code_for_chem_comp_type</span><span class="p">(</span><span class="n">chem_comp_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the CCD code for an unknown chemical component type.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">chem_comp_type</span> <span class="ow">in</span> <span class="n">AA_LIKE_CHEM_TYPES</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">UNKNOWN_AA</span>
+    <span class="k">elif</span> <span class="n">chem_comp_type</span> <span class="ow">in</span> <span class="n">DNA_LIKE_CHEM_TYPES</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">UNKNOWN_DNA</span>
+    <span class="k">elif</span> <span class="n">chem_comp_type</span> <span class="ow">in</span> <span class="n">RNA_LIKE_CHEM_TYPES</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">UNKNOWN_RNA</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">UNKNOWN_LIGAND</span></div>
+
+
+
+<div class="viewcode-block" id="get_std_to_alt_atom_name_map">
+<a class="viewcode-back" href="../../../../io/utils/ccd.html#atomworks.io.utils.ccd.get_std_to_alt_atom_name_map">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_std_to_alt_atom_name_map</span><span class="p">(</span><span class="n">ccd_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ccd_mirror_path</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">=</span> <span class="n">CCD_MIRROR_PATH</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a map from standard atom names to alternative atom names.&quot;&quot;&quot;</span>
+    <span class="n">chem_comp</span> <span class="o">=</span> <span class="n">atom_array_from_ccd_code</span><span class="p">(</span><span class="n">ccd_code</span><span class="p">,</span> <span class="n">ccd_mirror_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">chem_comp</span><span class="o">.</span><span class="n">atom_name</span><span class="p">,</span> <span class="n">chem_comp</span><span class="o">.</span><span class="n">alt_atom_id</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

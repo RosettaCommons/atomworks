@@ -1,0 +1,605 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>atomworks.ml.transforms.covalent_modifications &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/transforms/covalent_modifications';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.1.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.1.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">atomworks.ml.transforms.covalent_modifications</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for atomworks.ml.transforms.covalent_modifications</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Transforms to handle covalent modifications&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClassVar</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.preprocessing.utils.structure_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_inter_pn_unit_bond_mask</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms._checks</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">check_atom_array_annotation</span><span class="p">,</span>
+    <span class="n">check_contains_keys</span><span class="p">,</span>
+    <span class="n">check_is_instance</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.atomize</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomizeByCCDName</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
+
+
+<div class="viewcode-block" id="flag_and_reassign_covalent_modifications">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.covalent_modifications.flag_and_reassign_covalent_modifications">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">flag_and_reassign_covalent_modifications</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Mark covalent modifications for atomization and reassign the corresponding</span>
+<span class="sd">    PN unit annotations.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atom_array (AtomArray): Current `AtomArray` within the Transform pipeline</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        AtomArray: The modified `AtomArray` with updated annotations for covalent</span>
+<span class="sd">            modifications. The `pn_unit_id` and `pn_unit_iid` of polymer atoms are</span>
+<span class="sd">            reassigned to those of the non-polymer unit they are bound to, and the</span>
+<span class="sd">            `atomize` annotation is set to `True` for these atoms. Additionally, the</span>
+<span class="sd">            entire pn_unit is marked with `is_covalent_modification = True`.</span>
+
+<span class="sd">    NOTE: If `atomize` annotation is not present in the `AtomArray`, it will be added.</span>
+<span class="sd">    NOTE: If `is_covalent_modification` annotation is not present in the `AtomArray`, it will be added.</span>
+<span class="sd">    NOTE: We do not modify the `is_polymer` annotation, which will still refer to the protein chain</span>
+<span class="sd">    for the atomized polymer atoms.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get all inter-PN unit bonds in the entry (i.e. between a polymer and a non-polymer PN unit)</span>
+    <span class="n">inter_pn_unit_bond_mask</span> <span class="o">=</span> <span class="n">get_inter_pn_unit_bond_mask</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+    <span class="n">bonds_to_check</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">as_array</span><span class="p">()[</span><span class="n">inter_pn_unit_bond_mask</span><span class="p">]</span>
+
+    <span class="c1"># Filter out bonds that are not between a polymer and a non-polymer PN unit</span>
+    <span class="n">bonds_to_check</span> <span class="o">=</span> <span class="n">bonds_to_check</span><span class="p">[</span>
+        <span class="c1"># One atom is a polymer, the other is not =&gt; must be polymer/non-polymer bond</span>
+        <span class="n">atom_array</span><span class="o">.</span><span class="n">is_polymer</span><span class="p">[</span><span class="n">bonds_to_check</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]]</span> <span class="o">!=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">is_polymer</span><span class="p">[</span><span class="n">bonds_to_check</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]</span>
+    <span class="p">]</span>
+
+    <span class="c1"># Add the atomize annotation to the AtomArray, if not already present</span>
+    <span class="k">if</span> <span class="s2">&quot;atomize&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">():</span>
+        <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;atomize&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="kc">False</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)))</span>
+
+    <span class="c1"># Add the is_covalent_modification annotation to the AtomArray, if not already present</span>
+    <span class="k">if</span> <span class="s2">&quot;is_covalent_modification&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">():</span>
+        <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;is_covalent_modification&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="kc">False</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)))</span>
+
+    <span class="c1"># Loop through inter-molecular bonds</span>
+    <span class="c1"># NOTE: There aren&#39;t likely to be many inter-molecular bonds in the entry, so vectorization is not necessary and would be less readable</span>
+    <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">bonds_to_check</span><span class="p">:</span>
+        <span class="c1"># Get the atoms involved in the inter-molecular bonds</span>
+        <span class="n">atom_a</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">bond</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">atom_b</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">bond</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+        <span class="c1"># Note which atom is in the polymer and which is in the non-polymer</span>
+        <span class="n">polymer_atom</span><span class="p">,</span> <span class="n">non_polymer_atom</span> <span class="o">=</span> <span class="p">(</span><span class="n">atom_a</span><span class="p">,</span> <span class="n">atom_b</span><span class="p">)</span> <span class="k">if</span> <span class="n">atom_a</span><span class="o">.</span><span class="n">is_polymer</span> <span class="k">else</span> <span class="p">(</span><span class="n">atom_b</span><span class="p">,</span> <span class="n">atom_a</span><span class="p">)</span>
+
+        <span class="c1"># Create a mask of the atoms in the residue that is covalently bound to the non-polymer PN unit</span>
+        <span class="c1"># We can uniquely identify a residue by its res_id, pn_unit_iid, and chain_id (or chain_iid, either works)</span>
+        <span class="n">polymer_residue_mask</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">res_id</span> <span class="o">==</span> <span class="n">polymer_atom</span><span class="o">.</span><span class="n">res_id</span><span class="p">)</span>
+            <span class="o">&amp;</span> <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">==</span> <span class="n">polymer_atom</span><span class="o">.</span><span class="n">chain_id</span><span class="p">)</span>
+            <span class="o">&amp;</span> <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span> <span class="o">==</span> <span class="n">polymer_atom</span><span class="o">.</span><span class="n">pn_unit_iid</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># For all atoms in the target polymer residue, set the pn_unit_iid and the pn_unit_id to that of the non-polymer PN unit</span>
+        <span class="n">num_residues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">polymer_residue_mask</span><span class="p">)</span>
+        <span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_id</span><span class="p">[</span><span class="n">polymer_residue_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">non_polymer_atom</span><span class="o">.</span><span class="n">pn_unit_id</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_residues</span><span class="p">)</span>
+        <span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span><span class="p">[</span><span class="n">polymer_residue_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">non_polymer_atom</span><span class="o">.</span><span class="n">pn_unit_iid</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_residues</span><span class="p">)</span>
+
+        <span class="c1"># Mark the non-polymer residue for atomization (now includes all atoms in the bonded polymer residue)</span>
+        <span class="n">atom_array</span><span class="o">.</span><span class="n">atomize</span><span class="p">[(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span> <span class="o">==</span> <span class="n">non_polymer_atom</span><span class="o">.</span><span class="n">pn_unit_iid</span><span class="p">)]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Mark the entire pn_unit as a covalent modification</span>
+        <span class="n">atom_array</span><span class="o">.</span><span class="n">is_covalent_modification</span><span class="p">[(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span> <span class="o">==</span> <span class="n">non_polymer_atom</span><span class="o">.</span><span class="n">pn_unit_iid</span><span class="p">)]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="n">atom_array</span></div>
+
+
+
+<div class="viewcode-block" id="FlagAndReassignCovalentModifications">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.covalent_modifications.FlagAndReassignCovalentModifications">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FlagAndReassignCovalentModifications</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handles covalent modifications within the AtomArray.</span>
+
+<span class="sd">    Covalent modifications, e.g., glycosylation, are handled by the following algorithm:</span>
+
+<span class="sd">    for polymer residues with atoms covalently bound to a NON-POLYMER:</span>
+<span class="sd">        for ALL atoms in the polymer residue:</span>
+<span class="sd">            set the pn_unit_iid and pn_unit_id identifying annotations to that of the NON-POLYMER polymer/non-polymer unit</span>
+<span class="sd">            set atomize = true (thus, this transform must be run before the Atomize transform)</span>
+<span class="sd">            set is_covalent_modification = true (for the entire pn_unit)</span>
+
+<span class="sd">    TODO: Break into two Transforms - one that flags, one that reassigns. Atomizing covalent modifications is a design choice</span>
+<span class="sd">    that may not be desired in all pipelines. Annotating covalent modifications, however, is broadly useful.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">incompatible_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">AtomizeByCCDName</span><span class="p">,</span> <span class="s2">&quot;AddGlobalTokenIdAnnotation&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="FlagAndReassignCovalentModifications.check_input">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.covalent_modifications.FlagAndReassignCovalentModifications.check_input">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;pn_unit_id&quot;</span><span class="p">,</span> <span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="FlagAndReassignCovalentModifications.forward">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.covalent_modifications.FlagAndReassignCovalentModifications.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flag_and_reassign_covalent_modifications</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,870 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Samplers &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'ml/samplers';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.1.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Datasets" href="datasets.html" />
+    <link rel="prev" title="Encoding Definitions" href="encoding_definitions.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.1.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">API Modules</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../core.html">Core Modules</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../core/common.html">Common Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core/constants.html">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../core/enums.html">Enumerations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../io.html">IO</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../io/parser.html">parser</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../io/tools.html">Tools</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../io/tools/fasta.html">FASTA Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../io/tools/inference.html">Inference Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../io/tools/rdkit.html">RDKit Tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../io/transforms.html">Transforms</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../io/transforms/atom_array.html">Atom Array Transforms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../io/transforms/categories.html">Category Transforms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../io/utils.html">Utilities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../io/utils/assembly.html">Assembly Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../io/utils/bonds.html">Bond Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../io/utils/ccd.html">CCD Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../io/utils/chain.html">Chain Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../io/utils/io_utils.html">I/O Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../io/utils/non_rcsb.html">Non-RCSB Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../io/utils/selection.html">Selection Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../io/utils/sequence.html">Sequence Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../io/utils/testing.html">Testing Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../io/utils/visualize.html">Visualization Utilities</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../ml.html">ML</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="encoding_definitions.html">Encoding Definitions</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Samplers</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="datasets.html">Datasets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="datasets/datasets.html">Dataset Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datasets/parsers.html">Dataset Parsers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="pipelines.html">Pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transforms.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transforms/diffusion.html">Diffusion Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transforms/dna.html">DNA Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transforms/feature_aggregation.html">Feature Aggregation Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transforms/msa.html">MSA Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">Utilities</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../api_reference.html" class="nav-link">API</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../ml.html" class="nav-link">ML</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Samplers</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="samplers">
+<h1>Samplers<a class="headerlink" href="#samplers" title="Link to this heading">#</a></h1>
+<p>This module contains various sampling strategies and utilities for data processing.</p>
+<dl class="py class" id="module-atomworks.ml.samplers">
+<dt class="sig sig-object py" id="atomworks.ml.samplers.DistributedMixedSampler">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.ml.samplers.</span></span><span class="sig-name descname"><span class="pre">DistributedMixedSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasets_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_replicas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_examples_per_epoch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_last</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/atomworks/ml/samplers.html#DistributedMixedSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.samplers.DistributedMixedSampler" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></p>
+<p>Custom DistributedSampler implementation that samples from an arbitrary list of samplers with specified probabilities.</p>
+<p>Child samplers can be any type of non-distributed sampler, including a MixedSampler.
+After gathering all indices, shards the samples across nodes, ensuring each node receives a unique slice of the dataset.</p>
+<p class="rubric">Example</p>
+<p>Imagine we have the following sampling tree:</p>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><dl>
+<dt>DistributedMixedSampler</dt><dd><div class="line-block">
+<div class="line"><br /></div>
+</div>
+</dd>
+</dl>
+<div class="line-block">
+<div class="line"><a href="#id1"><span class="problematic" id="id2">|</span></a></div>
+</div>
+</div></blockquote>
+<p>0.8                     0.2</p>
+</div></blockquote>
+<dl>
+<dt>Sampler1              MixedSampler</dt><dd><blockquote>
+<div><p>/                                          0.9       0.1</p>
+</div></blockquote>
+<p>Sampler2   Sampler3</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>If we initialized DistributedMixedSampler with <cite>n_examples_per_epoch=100</cite> and <cite>num_replicas=2</cite>, it would collect 80 samples
+from Sampler1 and 20 samples from the MixedSampler. The MixedSampler would in turn collect 18 samples from Sampler2 and 2 samples from Sampler3.
+After collecting those 100 samples, the DistributedMixedSampler would shard the samples across the two nodes, ensuring each node receives a unique slice
+of 50 examples.</p>
+<p>If any of the child samplers were distributed samples, then the DistributedMixedSampler would not receive n_examples_per_epoch indices,
+and we would raise an error.</p>
+<p>NOTE: The order of the datasets in datasets_info MUST match the order of the datasets in the ConcatDataset associated with this MixedSampler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datasets_info</strong> – List of dictionaries, where each dictionary must contain at a minimum:
+- “sampler”: Sampler object for the dataset
+- “dataset”: Dataset object associated with the sampler
+- “probability”: Probability of sampling from this dataset</p></li>
+<li><p><strong>num_replicas</strong> – Number of replicas (nodes) in the distributed setting</p></li>
+<li><p><strong>rank</strong> – Rank of the current node</p></li>
+<li><p><strong>n_examples_per_epoch</strong> – Number of examples in an epoch. Effectively, the “length” of the sampler (since we often sample with replacement).
+May be None, in which case the number of examples per epoch must be set dynamically by a parent sampler.</p></li>
+<li><p><strong>shuffle</strong> – Whether to shuffle the indices. If False, the iterator will return all sampled indices from the first dataset, then the second, etc.</p></li>
+<li><p><strong>drop_last</strong> – Whether to drop the last incomplete batch if the dataset size is not divisible by the batch size</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An iterator over indices of the dataset for the current process (of length n_samples, not n_examples_per_epoch)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>iter</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Reference:</dt><dd><p><a class="reference external" href="https://github.com/pytorch/pytorch/blob/main/torch/utils/data/distributed.py#L68">PyTorch DistributedSampler</a></p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.ml.samplers.DistributedMixedSampler.set_epoch">
+<span class="sig-name descname"><span class="pre">set_epoch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/atomworks/ml/samplers.html#DistributedMixedSampler.set_epoch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.samplers.DistributedMixedSampler.set_epoch" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="atomworks.ml.samplers.FallbackSamplerWrapper">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.ml.samplers.</span></span><span class="sig-name descname"><span class="pre">FallbackSamplerWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sampler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback_sampler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sampler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_fallback_retries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/atomworks/ml/samplers.html#FallbackSamplerWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.samplers.FallbackSamplerWrapper" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></p>
+<p>A wrapper around a sampler that allows for a fallback sampler to be used when an error occurs.</p>
+<p>Meant to be used with a FallbackDatasetWrapper.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="atomworks.ml.samplers.FallbackSamplerWrapper.set_epoch">
+<span class="sig-name descname"><span class="pre">set_epoch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/atomworks/ml/samplers.html#FallbackSamplerWrapper.set_epoch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.samplers.FallbackSamplerWrapper.set_epoch" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="atomworks.ml.samplers.LazyWeightedRandomSampler">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.ml.samplers.</span></span><span class="sig-name descname"><span class="pre">LazyWeightedRandomSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replacement</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefetch_buffer_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/atomworks/ml/samplers.html#LazyWeightedRandomSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.samplers.LazyWeightedRandomSampler" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">WeightedRandomSampler</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="atomworks.ml.samplers.LoadBalancedDistributedSampler">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.ml.samplers.</span></span><span class="sig-name descname"><span class="pre">LoadBalancedDistributedSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_to_balance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_replicas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_last</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/atomworks/ml/samplers.html#LoadBalancedDistributedSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.samplers.LoadBalancedDistributedSampler" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DistributedSampler</span></code></p>
+<p>DistributedSampler that balances large examples across replicas.</p>
+<p>Helpful for validation, where we don’t want GPUs to be idle while waiting for the slowest replica to finish.</p>
+<p>For example, we may want to avoid the scenario where one GPU receives many large examples that are slow to process,
+while another GPU receives many small examples that are quick to process.</p>
+<p>NOTE: Only useful for validation, as the order of the examples is deterministic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> – Dataset used for sampling.</p></li>
+<li><p><strong>key_to_balance</strong> – Key in the dataset data dataframe that contains the length (size) of each example.
+The dataset must have a data attribute that can be accessed like a dataframe.
+For example, if the dataset has a data attribute that is a pandas DataFrame, the key_to_balance
+should be a column in that DataFrame (i.e., “n_tokens”).</p></li>
+<li><p><strong>num_replicas</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of processes participating in
+distributed training. By default, <code class="xref py py-attr docutils literal notranslate"><span class="pre">world_size</span></code> is retrieved from the
+current distributed group.</p></li>
+<li><p><strong>rank</strong> (<em>int</em><em>, </em><em>optional</em>) – Rank of the current process within <code class="xref py py-attr docutils literal notranslate"><span class="pre">num_replicas</span></code>.
+By default, <code class="xref py py-attr docutils literal notranslate"><span class="pre">rank</span></code> is retrieved from the current distributed
+group.</p></li>
+<li><p><strong>drop_last</strong> (<em>bool</em><em>, </em><em>optional</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, then the sampler will drop the
+tail of the data to make it evenly divisible across the number of
+replicas. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the sampler will add extra indices to make
+the data evenly divisible across the replicas. Default: <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="atomworks.ml.samplers.MixedSampler">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.ml.samplers.</span></span><span class="sig-name descname"><span class="pre">MixedSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasets_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_examples_per_epoch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/atomworks/ml/samplers.html#MixedSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.samplers.MixedSampler" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#atomworks.ml.samplers.DistributedMixedSampler" title="atomworks.ml.samplers.DistributedMixedSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">DistributedMixedSampler</span></code></a></p>
+<p>A non-distributed sampler that samples from an arbitrary list of samplers with specified probabilities.</p>
+<p>This class acts like a DistributedMixedSampler with <cite>rank=0</cite> and <cite>num_replicas=1</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datasets_info</strong> – List of dictionaries, where each dictionary must contain at a minimum:
+- “sampler”: Sampler object for the dataset
+- “dataset”: Dataset object associated with the sampler
+- “probability”: Probability of sampling from this dataset</p></li>
+<li><p><strong>n_examples_per_epoch</strong> – Number of examples in an epoch. Effectively, the “length” of the sampler.</p></li>
+<li><p><strong>shuffle</strong> – Whether to shuffle the indices. If False, the iterator will return all sampled indices from the first dataset, then the second, etc.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.samplers.calculate_af3_example_weights">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.samplers.</span></span><span class="sig-name descname"><span class="pre">calculate_af3_example_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alphas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Series</span></span></span><a class="reference internal" href="../_modules/atomworks/ml/samplers.html#calculate_af3_example_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.samplers.calculate_af3_example_weights" title="Link to this definition">#</a></dt>
+<dd><p>Determines the weight of each example in the DataFrame using a methodology inspired by AF-3.</p>
+<dl>
+<dt>In AF-3, the weight of a given example is a function of:</dt><dd><ol class="arabic simple">
+<li><p>The size of the cluster to which the example belongs (specific for interfaces vs. chains)</p></li>
+<li><p>The number of proteins / nucleic acids / ligands in the example</p></li>
+<li><p>Whether the example is an interface or a chain</p></li>
+</ol>
+</dd>
+<dt>Specifically, AF3 gives the following formula (Section 2.5.1 from the AF-3 Supplementary Information):</dt><dd><p>w ∝ (β_r / N_clust) * (a_prot * n_prot + a_nuc * n_nuc + a_ligand * n_ligand)</p>
+</dd>
+<dt>Where:</dt><dd><ul class="simple">
+<li><p>w is the weight of the example</p></li>
+<li><p>β_r is a weighting hyperparameter that is distinct for interfaces and chains</p></li>
+<li><p>N_clust is the number of examples in the cluster</p></li>
+<li><p>a_prot, a_nuc, and a_ligand are the interface weight hyperparameters for proteins, nucleic acids, and ligands, respectively</p></li>
+<li><p>n_prot, n_nuc, and n_ligand are the number of proteins, nucleic acids, and ligands in the example</p></li>
+</ul>
+</dd>
+<dt>We make the following modifications to the original AF-3 formula:</dt><dd><ul class="simple">
+<li><p>We introduce n_peptide and a_peptide to better control the sampling over peptides (which were being over-sampled). We define peptides</p></li>
+</ul>
+<p>as proteins with fewer than PEPTIDE_MAX_RESIDUES residues (see <cite>atomworks.ml.preprocessing.constants</cite>).
+- We introduce an incremental a_loi weight to control the sampling of ligands of interests (LOI), also described as Subject of Investigation.</p>
+</dd>
+<dt>Thus, our full formula is:</dt><dd><p>w ∝ (β_r / N_clust) * (a_prot * n_prot + a_peptide * n_peptide + a_nuc * n_nuc + a_ligand * n_ligand + a_loi * is_loi)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em>) – DataFrame containing the PN unit or interface data</p></li>
+<li><p><strong>alphas</strong> (<em>dict</em>) – Dictionary containing the weight hyperparameters for proteins, nucleic acids, ligands, and possibly peptides (common across interfaces and chains)</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – Weighting hyperparameter (distinct for interfaces and chains)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A Series containing the calculated weights for each row in the DataFrame</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.samplers.calculate_weights_by_inverse_cluster_size">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.samplers.</span></span><span class="sig-name descname"><span class="pre">calculate_weights_by_inverse_cluster_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cluster'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../_modules/atomworks/ml/samplers.html#calculate_weights_by_inverse_cluster_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.samplers.calculate_weights_by_inverse_cluster_size" title="Link to this definition">#</a></dt>
+<dd><p>Calculate weights for each row in the DataFrame as the inverse of its cluster size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset_df</strong> (<em>pd.DataFrame</em>) – DataFrame containing the PN unit or interface data</p></li>
+<li><p><strong>cluster_column</strong> (<em>str</em>) – Column name in <cite>dataset_df</cite> corresponding to the cluster info. Default is “cluster”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tensor containing the calculated weights for each row in the DataFrame</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.samplers.calculate_weights_for_pdb_dataset_df">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.samplers.</span></span><span class="sig-name descname"><span class="pre">calculate_weights_for_pdb_dataset_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alphas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cluster'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../_modules/atomworks/ml/samplers.html#calculate_weights_for_pdb_dataset_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.samplers.calculate_weights_for_pdb_dataset_df" title="Link to this definition">#</a></dt>
+<dd><p>Calculate weights for each row in the DataFrame based on the cluster size and the AF-3 weighting methodology.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset_df</strong> (<em>pd.DataFrame</em>) – DataFrame containing the PN unit or interface data</p></li>
+<li><p><strong>alphas</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em>) – Dictionary containing alpha values for the weighting calculation (common across interfaces and chains/pn_units)</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – Beta value for the weighting calculation (distinct for interfaces and chains/pn_units)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tensor containing the calculated weights for each row in the DataFrame</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.samplers.get_cluster_sizes">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.samplers.</span></span><span class="sig-name descname"><span class="pre">get_cluster_sizes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cluster'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/atomworks/ml/samplers.html#get_cluster_sizes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.samplers.get_cluster_sizes" title="Link to this definition">#</a></dt>
+<dd><p>Generate a mapping between cluster alphanumeric IDs and the number of PN units/interfaces in each cluster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em>) – DataFrame containing the PN unit or interface data</p></li>
+<li><p><strong>cluster_column</strong> (<em>str</em>) – Name of the column containing the cluster alphanumeric IDs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary where the keys are unique cluster IDs and the values are the counts of occurrences.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.samplers.set_sampler_epoch">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.samplers.</span></span><span class="sig-name descname"><span class="pre">set_sampler_epoch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sampler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_random_offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/atomworks/ml/samplers.html#set_sampler_epoch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.samplers.set_sampler_epoch" title="Link to this definition">#</a></dt>
+<dd><p>Control the random seed for a sampler.</p>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="encoding_definitions.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Encoding Definitions</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="datasets.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Datasets</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.samplers.DistributedMixedSampler"><code class="docutils literal notranslate"><span class="pre">DistributedMixedSampler</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.samplers.DistributedMixedSampler.set_epoch"><code class="docutils literal notranslate"><span class="pre">DistributedMixedSampler.set_epoch()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.samplers.FallbackSamplerWrapper"><code class="docutils literal notranslate"><span class="pre">FallbackSamplerWrapper</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.samplers.FallbackSamplerWrapper.set_epoch"><code class="docutils literal notranslate"><span class="pre">FallbackSamplerWrapper.set_epoch()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.samplers.LazyWeightedRandomSampler"><code class="docutils literal notranslate"><span class="pre">LazyWeightedRandomSampler</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.samplers.LoadBalancedDistributedSampler"><code class="docutils literal notranslate"><span class="pre">LoadBalancedDistributedSampler</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.samplers.MixedSampler"><code class="docutils literal notranslate"><span class="pre">MixedSampler</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.samplers.calculate_af3_example_weights"><code class="docutils literal notranslate"><span class="pre">calculate_af3_example_weights()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.samplers.calculate_weights_by_inverse_cluster_size"><code class="docutils literal notranslate"><span class="pre">calculate_weights_by_inverse_cluster_size()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.samplers.calculate_weights_for_pdb_dataset_df"><code class="docutils literal notranslate"><span class="pre">calculate_weights_for_pdb_dataset_df()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.samplers.get_cluster_sizes"><code class="docutils literal notranslate"><span class="pre">get_cluster_sizes()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.samplers.set_sampler_epoch"><code class="docutils literal notranslate"><span class="pre">set_sampler_epoch()</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/ml/samplers.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

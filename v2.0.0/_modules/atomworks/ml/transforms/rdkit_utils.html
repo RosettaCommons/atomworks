@@ -1,0 +1,1266 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>atomworks.ml.transforms.rdkit_utils &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/transforms/rdkit_utils';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.1.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.1.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">atomworks.ml.transforms.rdkit_utils</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for atomworks.ml.transforms.rdkit_utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span><span class="p">,</span> <span class="n">Literal</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chem</span><span class="p">,</span> <span class="n">RDLogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdkit.Chem</span><span class="w"> </span><span class="kn">import</span> <span class="n">AllChem</span><span class="p">,</span> <span class="n">Mol</span><span class="p">,</span> <span class="n">rdDistGeom</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">default</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.tools.rdkit</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">add_hydrogens</span><span class="p">,</span>
+    <span class="n">atom_array_from_rdkit</span><span class="p">,</span>
+    <span class="n">atom_array_to_rdkit</span><span class="p">,</span>
+    <span class="n">ccd_code_to_rdkit</span><span class="p">,</span>
+    <span class="n">preserve_annotations</span><span class="p">,</span>
+    <span class="n">remove_hydrogens</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms._checks</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">check_atom_array_annotation</span><span class="p">,</span>
+    <span class="n">check_contains_keys</span><span class="p">,</span>
+    <span class="n">check_does_not_contain_keys</span><span class="p">,</span>
+    <span class="n">check_is_instance</span><span class="p">,</span>
+    <span class="n">check_nonzero_length</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">timer</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="c1"># ... disable RDKit logging</span>
+<span class="n">RDLogger</span><span class="o">.</span><span class="n">DisableLog</span><span class="p">(</span><span class="s2">&quot;rdApp.*&quot;</span><span class="p">)</span>
+
+<span class="c1"># Set default pickle properties to all properties, otherwise</span>
+<span class="c1">#  annotations get lost when pickling/unpickling molecules</span>
+<span class="c1"># https://github.com/rdkit/rdkit/issues/1320</span>
+<span class="n">Chem</span><span class="o">.</span><span class="n">SetDefaultPickleProperties</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">PropertyPickleOptions</span><span class="o">.</span><span class="n">AllProps</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_has_explicit_hydrogen</span><span class="p">(</span><span class="n">mol</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the molecule has explicit hydrogens.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumHeavyAtoms</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_random_seed</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a random seed for RDKit. This needs to be a python &#39;int&#39; to play well with RDKit.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">31</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="generate_conformers">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.rdkit_utils.generate_conformers">[docs]</a>
+<span class="nd">@preserve_annotations</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_conformers</span><span class="p">(</span>
+    <span class="n">mol</span><span class="p">:</span> <span class="n">Mol</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">n_conformers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ETKDGv3&quot;</span><span class="p">,</span>
+    <span class="n">num_threads</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">hydrogen_policy</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;infer&quot;</span><span class="p">,</span> <span class="s2">&quot;remove&quot;</span><span class="p">,</span> <span class="s2">&quot;keep&quot;</span><span class="p">,</span> <span class="s2">&quot;auto&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;remove&quot;</span><span class="p">,</span>
+    <span class="n">optimize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">attempts_with_distance_geometry</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">attempts_with_random_coordinates</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10_000</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">uff_optimize_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mol</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate conformations for the given molecule.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mol: The RDKit molecule to generate conformations for.</span>
+<span class="sd">        seed: Random seed for reproducibility. If None, a random seed is used.</span>
+<span class="sd">        n_conformers: Number of conformations to generate.</span>
+<span class="sd">        method: The method to use for conformer generation. Default is &quot;ETKDGv3&quot;.</span>
+<span class="sd">            Allowed methods are: &quot;ETDG&quot;, &quot;ETKDG&quot;, &quot;ETKDGv2&quot;, &quot;ETKDGv3&quot;, &quot;srETKDGv3&quot;</span>
+<span class="sd">            See https://rdkit.org/docs/RDKit_Book.html#conformer-generation for details.</span>
+<span class="sd">        num_threads: Number of threads to use for parallel computation. Default is 1.</span>
+<span class="sd">        hydrogen_policy: Whether to add explicit</span>
+<span class="sd">            hydrogens to the molecule. If &quot;remove&quot;, hydrogens are temporarily added for conformer</span>
+<span class="sd">            generation, but removed again before returning the molecule. If &quot;keep&quot; the molecule is</span>
+<span class="sd">            used as-is (without adding or removing hydrogens). If &quot;auto&quot;, the policy is set to &quot;keep&quot;</span>
+<span class="sd">            if the molecule already has explicit hydrogens, otherwise it is set to &quot;remove&quot;.</span>
+<span class="sd">            If &quot;infer&quot;, we follow the same behavior as &quot;remove,&quot; but do not remove added hydrogens</span>
+<span class="sd">            prior to returning the molecule.</span>
+<span class="sd">        optimize: Whether to optimize the generated conformers using UFF.</span>
+<span class="sd">            Default is True.</span>
+<span class="sd">        **uff_optimize_kwargs: Additional keyword arguments for UFF optimization:</span>
+<span class="sd">            - maxIters: Maximum number of iterations (default 200).</span>
+<span class="sd">            - vdwThresh: Used to exclude long-range van der Waals interactions</span>
+<span class="sd">              (default 10.0).</span>
+<span class="sd">            - ignoreInterfragInteractions: If True, nonbonded terms between</span>
+<span class="sd">              fragments will not be added to the forcefield (default True).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The molecule with generated conformations.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        - Optimizing conformers (optimize_conformers=True) is recommended for obtaining</span>
+<span class="sd">          more realistic and lower-energy conformations. However, it may increase</span>
+<span class="sd">          computation time.</span>
+<span class="sd">        - The ETKDGv3 method is used for conformer generation, which incorporates</span>
+<span class="sd">          torsion angle preferences and basic knowledge (e.g. aromatic rings are planar)</span>
+<span class="sd">          for improved accuracy.</span>
+<span class="sd">        - For macrocycles or complex ring systems, you may need to increase the number</span>
+<span class="sd">          of conformers generated to ensure good sampling of the conformational space</span>
+<span class="sd">          (if a representative ensemble of conformers is what you are after).</span>
+
+<span class="sd">    Best Practices:</span>
+<span class="sd">        1. Always add hydrogens before generating conformers unless you have a specific</span>
+<span class="sd">           reason not to (e.g., you&#39;re working with a protein structure where hydrogens</span>
+<span class="sd">           are already correctly placed).</span>
+<span class="sd">        2. Use a non-zero seed for reproducibility in research or production environments.</span>
+<span class="sd">        3. Generate multiple conformers (e.g., 50-100) for flexible molecules to sample</span>
+<span class="sd">           the conformational space more thoroughly.</span>
+<span class="sd">        4. Optimize conformers using UFF or MMFF94 for more realistic geometries, especially</span>
+<span class="sd">           if the conformers will be used for further calculations or analysis.</span>
+<span class="sd">        5. For very large or complex molecules, you may need to adjust parameters such as</span>
+<span class="sd">           maxIterations or use more advanced sampling techniques.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        `Conformer tutorial &lt;https://rdkit.org/docs/RDKit_Book.html#conformer-generation&gt;`_</span>
+<span class="sd">        `RDKit Cookbook &lt;https://www.rdkit.org/docs/Cookbook.html&gt;`_</span>
+<span class="sd">        Riniker and Landrum, &quot;Better Informed Distance Geometry: Using What We Know To</span>
+<span class="sd">        Improve Conformation Generation&quot;, JCIM, 2015.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Ensure that all properties are being pickled (needed when we use timeout)</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">Chem</span><span class="o">.</span><span class="n">GetDefaultPickleProperties</span><span class="p">()</span> <span class="o">==</span> <span class="n">Chem</span><span class="o">.</span><span class="n">PropertyPickleOptions</span><span class="o">.</span><span class="n">AllProps</span>
+    <span class="p">),</span> <span class="s2">&quot;Default pickle properties are not set to all properties. Annotation loss will occur.&quot;</span>
+    <span class="k">assert</span> <span class="n">attempts_with_distance_geometry</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Attempts with distance geometry must be greater than 0.&quot;</span>
+    <span class="k">assert</span> <span class="n">attempts_with_random_coordinates</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Attempts with random coordinates must be greater than 0.&quot;</span>
+
+    <span class="k">if</span> <span class="n">hydrogen_policy</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+        <span class="n">hydrogen_policy</span> <span class="o">=</span> <span class="s2">&quot;keep&quot;</span> <span class="k">if</span> <span class="n">_has_explicit_hydrogen</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;remove&quot;</span>
+    <span class="k">if</span> <span class="n">hydrogen_policy</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">,</span> <span class="s2">&quot;remove&quot;</span><span class="p">):</span>
+        <span class="n">mol</span> <span class="o">=</span> <span class="n">remove_hydrogens</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+        <span class="c1"># ... temporarily add hydrogens for more realistic conformer generation</span>
+        <span class="n">mol</span> <span class="o">=</span> <span class="n">add_hydrogens</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">hydrogen_policy</span> <span class="o">==</span> <span class="s2">&quot;keep&quot;</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid hydrogen policy: </span><span class="si">{</span><span class="n">hydrogen_policy</span><span class="si">}</span><span class="s2">. Must be one of &#39;infer&#39;, &#39;remove&#39;, or &#39;keep&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Setup the parameters for the coordinate embedding</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">rdDistGeom</span><span class="p">,</span> <span class="n">method</span><span class="p">)()</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">clearConfs</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">randomSeed</span> <span class="o">=</span> <span class="n">seed</span> <span class="ow">or</span> <span class="n">_get_random_seed</span><span class="p">()</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">enforceChirality</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">useRandomCoords</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">numThreads</span> <span class="o">=</span> <span class="n">num_threads</span>
+
+    <span class="c1"># Newer RDKit version have renamed this parameter</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="s2">&quot;maxAttempts&quot;</span><span class="p">):</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">maxAttempts</span> <span class="o">=</span> <span class="n">attempts_with_distance_geometry</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">maxIterations</span> <span class="o">=</span> <span class="n">attempts_with_distance_geometry</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">successful_cids</span> <span class="o">=</span> <span class="n">rdDistGeom</span><span class="o">.</span><span class="n">EmbedMultipleConfs</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">numConfs</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">n_conformers</span><span class="p">),</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">successful_cids</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n_conformers</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Initial conformer generation based on distance geometry failed. Successful: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">successful_cids</span><span class="p">)</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="s2">&quot;Falling back to generating a conformer starting from random coordinates.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Failed to generate enough conformers.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+        <span class="c1"># Addresses issues with bad conformers, which happens when distance embeddings fail due to</span>
+        <span class="c1">#  too many constraints or rotatable bonds, see for example:</span>
+        <span class="c1"># https://github.com/rdkit/rdkit/issues/1433#issuecomment-305097888</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">useRandomCoords</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">enforceChirality</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="s2">&quot;maxAttempts&quot;</span><span class="p">):</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">maxAttempts</span> <span class="o">=</span> <span class="n">attempts_with_random_coordinates</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">maxIterations</span> <span class="o">=</span> <span class="n">attempts_with_random_coordinates</span>
+        <span class="n">successful_cids</span> <span class="o">=</span> <span class="n">rdDistGeom</span><span class="o">.</span><span class="n">EmbedMultipleConfs</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">numConfs</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">n_conformers</span><span class="p">),</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">successful_cids</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n_conformers</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>  <span class="c1"># noqa: B904</span>
+                <span class="sa">f</span><span class="s2">&quot;Requested </span><span class="si">{</span><span class="n">n_conformers</span><span class="si">}</span><span class="s2"> conformers, but only </span><span class="si">{</span><span class="n">mol</span><span class="o">.</span><span class="n">GetNumConformers</span><span class="p">()</span><span class="si">}</span><span class="s2"> were generated.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">optimize</span><span class="p">:</span>
+        <span class="n">mol</span> <span class="o">=</span> <span class="n">optimize_conformers</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="o">**</span><span class="n">uff_optimize_kwargs</span><span class="p">)</span>
+
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">remove_hydrogens</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span> <span class="k">if</span> <span class="n">hydrogen_policy</span> <span class="o">==</span> <span class="s2">&quot;remove&quot;</span> <span class="k">else</span> <span class="n">mol</span>
+    <span class="k">return</span> <span class="n">mol</span></div>
+
+
+
+<div class="viewcode-block" id="optimize_conformers">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.rdkit_utils.optimize_conformers">[docs]</a>
+<span class="nd">@preserve_annotations</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">optimize_conformers</span><span class="p">(</span>
+    <span class="n">mol</span><span class="p">:</span> <span class="n">Mol</span><span class="p">,</span>
+    <span class="n">numThreads</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># noqa: N803</span>
+    <span class="n">maxIters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>  <span class="c1"># noqa: N803</span>
+    <span class="n">vdwThresh</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span>  <span class="c1"># noqa: N803</span>
+    <span class="n">ignoreInterfragInteractions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># noqa: N803</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mol</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Optimize the conformers of an RDKit molecule.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - mol (Mol): The RDKit molecule to optimize.</span>
+<span class="sd">        - numThreads (int): Number of threads to use for parallel computation. Default is 1.</span>
+<span class="sd">        - maxIters (int): Maximum number of iterations for UFF optimization. Defaults to 200.</span>
+<span class="sd">        - vdwThresh (float): Used to exclude long-range van der Waals interactions. Defaults to 10.0.</span>
+<span class="sd">        - ignoreInterfragInteractions (bool): If True, nonbonded terms between fragments will not be added to the</span>
+<span class="sd">            forcefield. Defaults to True.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Mol: The optimized RDKit molecule.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">success</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">UFFOptimizeMoleculeConfs</span><span class="p">(</span>
+        <span class="n">mol</span><span class="p">,</span>
+        <span class="n">numThreads</span><span class="o">=</span><span class="n">numThreads</span><span class="p">,</span>
+        <span class="n">maxIters</span><span class="o">=</span><span class="n">maxIters</span><span class="p">,</span>
+        <span class="n">vdwThresh</span><span class="o">=</span><span class="n">vdwThresh</span><span class="p">,</span>
+        <span class="n">ignoreInterfragInteractions</span><span class="o">=</span><span class="n">ignoreInterfragInteractions</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">success</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Conformer optimization did not converge.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mol</span></div>
+
+
+
+<div class="viewcode-block" id="get_chiral_centers">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.rdkit_utils.get_chiral_centers">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_chiral_centers</span><span class="p">(</span><span class="n">mol</span><span class="p">:</span> <span class="n">Mol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify and return the tetrahedral chiral centers in an RDKit molecule.</span>
+
+<span class="sd">    Finds all tetrahedral chiral centers in the given molecule</span>
+<span class="sd">    and returns their information, including the chiral center atom index and</span>
+<span class="sd">    the indices of the atoms bonded to it.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mol (rdkit.Chem.Mol): The RDKit molecule to analyze.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        - list[dict]: A list of dictionaries, where each dictionary contains:</span>
+<span class="sd">            - &quot;chiral_center_idx&quot; (int): The index of the chiral center atom.</span>
+<span class="sd">            - &quot;bonded_explicit_atom_idxs&quot; (list[int]): A list of indices of the atoms</span>
+<span class="sd">              bonded to the chiral center.</span>
+<span class="sd">            - &quot;chirality&quot; (str): The chirality of the center (&#39;R&#39; or &#39;S&#39;).</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This function will generate a 3D conformation if one is not present, as</span>
+<span class="sd">        chirality assignment requires 3D coordinates in RDKit to break the conditional</span>
+<span class="sd">        tie between multiple possible chirality centers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Infer 3D coordinates if not present</span>
+    <span class="k">if</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumConformers</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">generate_conformers</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">n_conformers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Assign chiral tags based on the 3D structure</span>
+    <span class="n">Chem</span><span class="o">.</span><span class="n">AssignAtomChiralTagsFromStructure</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+
+    <span class="c1"># Identify chiral centers</span>
+    <span class="n">chiral_centers</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">FindMolChiralCenters</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">includeUnassigned</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_should_exclude_chiral_center</span><span class="p">(</span><span class="n">atom</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Atom</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Exclude edge cases for chiral centers.&quot;&quot;&quot;</span>
+        <span class="c1"># EDGE CASE: The chiral center is a Phosphorous (P, 15) or Sulfur (S, 16) atom bonded to 2 Oxygens (O, 8)</span>
+        <span class="c1"># For an example of where this case occurs, see the CCD ligand `NAP` (e.g., in `5OCM`)</span>
+        <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">15</span> <span class="ow">or</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">16</span><span class="p">:</span>
+            <span class="c1"># ... get the atomic numbers of the bonded atoms</span>
+            <span class="n">atomic_nums_of_bonded_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">bond</span><span class="o">.</span><span class="n">GetOtherAtom</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()</span> <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetBonds</span><span class="p">()]</span>
+            <span class="c1"># ... check if there are 2 Oxygens (O, 8) bonded to the chiral center</span>
+            <span class="k">if</span> <span class="n">atomic_nums_of_bonded_atoms</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># Filter chiral centers with tetrahedral geometry</span>
+    <span class="n">tetrahedral_chiral_centers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">center</span> <span class="ow">in</span> <span class="n">chiral_centers</span><span class="p">:</span>
+        <span class="n">idx</span><span class="p">,</span> <span class="n">chirality</span> <span class="o">=</span> <span class="n">center</span>
+        <span class="n">atom</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">atom</span><span class="o">.</span><span class="n">GetChiralTag</span><span class="p">()</span> <span class="o">==</span> <span class="n">Chem</span><span class="o">.</span><span class="n">rdchem</span><span class="o">.</span><span class="n">ChiralType</span><span class="o">.</span><span class="n">CHI_TETRAHEDRAL_CW</span>
+            <span class="ow">or</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetChiralTag</span><span class="p">()</span> <span class="o">==</span> <span class="n">Chem</span><span class="o">.</span><span class="n">rdchem</span><span class="o">.</span><span class="n">ChiralType</span><span class="o">.</span><span class="n">CHI_TETRAHEDRAL_CCW</span>
+        <span class="p">):</span>
+            <span class="n">chiral_center_atom_name</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetProp</span><span class="p">(</span><span class="s2">&quot;atom_name&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">HasProp</span><span class="p">(</span><span class="s2">&quot;atom_name&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">_should_exclude_chiral_center</span><span class="p">(</span><span class="n">atom</span><span class="p">):</span>
+                <span class="n">tetrahedral_chiral_centers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;chiral_center_idx&quot;</span><span class="p">:</span> <span class="n">idx</span><span class="p">,</span>
+                        <span class="s2">&quot;bonded_explicit_atom_idxs&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">bond</span><span class="o">.</span><span class="n">GetOtherAtomIdx</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetBonds</span><span class="p">()],</span>
+                        <span class="s2">&quot;chirality&quot;</span><span class="p">:</span> <span class="n">chirality</span><span class="p">,</span>
+                        <span class="c1"># For debugging - currently unused by the pipeline</span>
+                        <span class="s2">&quot;chiral_center_atom_name&quot;</span><span class="p">:</span> <span class="n">chiral_center_atom_name</span><span class="p">,</span>
+                        <span class="s2">&quot;bonded_explicit_atom_names&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="n">mol</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">GetOtherAtomIdx</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span><span class="o">.</span><span class="n">GetProp</span><span class="p">(</span><span class="s2">&quot;atom_name&quot;</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetBonds</span><span class="p">()</span>
+                            <span class="k">if</span> <span class="n">chiral_center_atom_name</span>
+                        <span class="p">]</span>
+                        <span class="k">if</span> <span class="n">chiral_center_atom_name</span>
+                        <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+
+    <span class="c1"># Remove chiral centers that are R or S bonded to 2 O</span>
+
+    <span class="k">return</span> <span class="n">tetrahedral_chiral_centers</span></div>
+
+
+
+<div class="viewcode-block" id="find_automorphisms_with_rdkit">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.rdkit_utils.find_automorphisms_with_rdkit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_automorphisms_with_rdkit</span><span class="p">(</span>
+    <span class="n">mol</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">,</span>
+    <span class="n">max_automorphs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">timeout_strategy</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;signal&quot;</span><span class="p">,</span> <span class="s2">&quot;subprocess&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;subprocess&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find automorphisms of a given RDKit molecule.</span>
+
+<span class="sd">    This function identifies the automorphisms (symmetry-related atom swaps) of the input molecule</span>
+<span class="sd">    and returns them as a numpy array. If the search for automorphisms times out, it returns a single</span>
+<span class="sd">    automorphism representing the identity (no swaps).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mol (Chem.Mol): The RDKit molecule for which to find automorphisms.</span>
+<span class="sd">        max_automorphs (int): The maximum number of automorphisms to return. These are deterministically</span>
+<span class="sd">            set to be the first `max_automorphs` automorphisms found by RDKit.</span>
+<span class="sd">            For model training it is recommended to deterministically select the automorphisms</span>
+<span class="sd">            to be used (as done in this transform) as a model might otherwise be nudged towards a specific</span>
+<span class="sd">            automorph in one training step, but that automorph then does not show up in the next training</span>
+<span class="sd">            step, leading to a moving target problem.</span>
+<span class="sd">        timeout (float | None): The timeout for the automorphism search. If None, no timeout is applied and</span>
+<span class="sd">            the timeout strategy is ignored (no subprocesses will be spawned).</span>
+<span class="sd">        timeout_strategy (Literal[&quot;signal&quot;, &quot;subprocess&quot;]): The strategy to use for the timeout.</span>
+<span class="sd">            Defaults to &quot;subprocess&quot;.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        automorphs (np.ndarray): A numpy array of shape [n_automorphs, n_atoms, 2], where each element</span>
+<span class="sd">            represents an automorphism as list of paired atom indices (from_idx, to_idx).</span>
+<span class="sd">            If the search fails (e.g. due to running out of memory), returns an array with</span>
+<span class="sd">            a single automorphism representing the identity (no swaps).</span>
+
+<span class="sd">    Reference:</span>
+<span class="sd">        `RDKit Mailman Discussion &lt;https://sourceforge.net/p/rdkit/mailman/message/27897393/&gt;`_</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from openbabel import pybel</span>
+<span class="sd">        &gt;&gt;&gt; mol = pybel.readstring(&quot;smi&quot;, &quot;c1c(O)cccc1(O)&quot;).OBMol</span>
+<span class="sd">        &gt;&gt;&gt; automorphisms = find_automorphisms(mol)</span>
+<span class="sd">        &gt;&gt;&gt; print(automorphisms)</span>
+<span class="sd">            [[[0 0]</span>
+<span class="sd">              [1 1]</span>
+<span class="sd">              [2 2]</span>
+<span class="sd">              [3 3]</span>
+<span class="sd">              [4 4]</span>
+<span class="sd">              [5 5]</span>
+<span class="sd">              [6 6]</span>
+<span class="sd">              [7 7]]</span>
+
+<span class="sd">             [[0 0]</span>
+<span class="sd">              [1 6]</span>
+<span class="sd">              [2 7]</span>
+<span class="sd">              [3 5]</span>
+<span class="sd">              [4 4]</span>
+<span class="sd">              [5 3]</span>
+<span class="sd">              [6 1]</span>
+<span class="sd">              [7 2]]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># NOTE: We compute the automorphisms via a substructure match. This may not be the computationally most</span>
+    <span class="c1">#  efficient way, but still works well even for highly symmetric molecules (e.g. 60C).</span>
+    <span class="c1">#  (c.f. https://sourceforge.net/p/rdkit/mailman/message/27897393/)</span>
+    <span class="c1">#  The probably optimal way to do this would be to access internal symmetry labels for models</span>
+    <span class="c1">#  (c.f. https://sourceforge.net/p/rdkit/mailman/message/27902778/)</span>
+    <span class="c1">#  but this would require using an underlying graph librarly like nauty to determine the automorphisms of</span>
+    <span class="c1">#  the coloured graph. Until we run into performance issues, we will stick with the current approach.</span>
+    <span class="nd">@timer</span><span class="o">.</span><span class="n">timeout</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="n">timeout_strategy</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_find_automorphisms</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetSubstructMatches</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">uniquify</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">maxMatches</span><span class="o">=</span><span class="n">max_automorphs</span><span class="p">,</span> <span class="n">useChirality</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">automorphs_tuple</span> <span class="o">=</span> <span class="n">_find_automorphisms</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">TimeoutError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Automorphism search timed out after </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">_start</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s. Returning identity automorphism.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">automorphs_tuple</span> <span class="o">=</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">mol</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">())),)</span>
+
+    <span class="c1"># Turn the tuple of automorphisms into a numpy array of shape [n_automorphs, n_atoms, 2]</span>
+    <span class="n">automorphs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">automorphs_tuple</span><span class="p">)</span>
+    <span class="n">n_automorphs</span><span class="p">,</span> <span class="n">n_atoms</span> <span class="o">=</span> <span class="n">automorphs</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">identity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_atoms</span><span class="p">),</span> <span class="p">(</span><span class="n">n_automorphs</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">identity</span><span class="p">,</span> <span class="n">automorphs</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_auto_timeout_policy</span><span class="p">(</span><span class="n">n_conformers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span> <span class="n">slope</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.15</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">slope</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_conformers</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="sample_rdkit_conformer_for_atom_array">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.rdkit_utils.sample_rdkit_conformer_for_atom_array">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sample_rdkit_conformer_for_atom_array</span><span class="p">(</span>
+    <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
+    <span class="n">n_conformers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">),</span>
+    <span class="n">timeout_strategy</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;signal&quot;</span><span class="p">,</span> <span class="s2">&quot;subprocess&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;subprocess&quot;</span><span class="p">,</span>
+    <span class="n">return_mol</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">generate_conformers_kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sample a conformer for a Biotite AtomArray using RDKit.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atom_array: The Biotite AtomArray to sample a conformer for.</span>
+<span class="sd">        n_conformers: The number of conformers to sample.</span>
+<span class="sd">        timeout: The timeout for conformer generation. If None,</span>
+<span class="sd">            no timeout is applied. If a tuple, the first element is the offset and the</span>
+<span class="sd">            second element is the slope.</span>
+<span class="sd">        seed: The seed for conformer generation. If None, a random seed</span>
+<span class="sd">            is generated using the global numpy RNG.</span>
+<span class="sd">        timeout_strategy: The strategy to use for the timeout.</span>
+<span class="sd">            Defaults to &quot;subprocess&quot;.</span>
+<span class="sd">        **generate_conformers_kwargs: Additional keyword arguments to pass to the</span>
+<span class="sd">            generate_conformers function.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The AtomArray with updated coordinates from the sampled conformer.</span>
+<span class="sd">        The RDKit molecule with the generated conformer.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This function preserves the original atom order and properties of the input AtomArray.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span> <span class="ow">or</span> <span class="n">_get_random_seed</span><span class="p">()</span>
+    <span class="n">atom_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">atom_array_to_rdkit</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">hydrogen_policy</span><span class="o">=</span><span class="s2">&quot;remove&quot;</span><span class="p">)</span>
+    <span class="c1"># ... remove RDKit&#39;s conformer if there is one</span>
+    <span class="k">if</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumConformers</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">mol</span><span class="o">.</span><span class="n">RemoveAllConformers</span><span class="p">()</span>
+
+    <span class="n">timeout</span> <span class="o">=</span> <span class="n">_auto_timeout_policy</span><span class="p">(</span><span class="n">n_conformers</span><span class="p">,</span> <span class="o">*</span><span class="n">timeout</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">timeout</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="n">timeout</span>
+    <span class="n">generate_conformers_with_timeout</span> <span class="o">=</span> <span class="n">timer</span><span class="o">.</span><span class="n">timeout</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="n">timeout_strategy</span><span class="p">)(</span><span class="n">generate_conformers</span><span class="p">)</span>
+
+    <span class="n">set_coord_if_available</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">mol</span> <span class="o">=</span> <span class="n">generate_conformers_with_timeout</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">n_conformers</span><span class="o">=</span><span class="n">n_conformers</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="o">**</span><span class="n">generate_conformers_kwargs</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">TimeoutError</span><span class="p">,</span> <span class="ne">RuntimeError</span><span class="p">):</span>
+        <span class="n">set_coord_if_available</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Failed to generate </span><span class="si">{</span><span class="n">n_conformers</span><span class="si">}</span><span class="s2"> conformers for </span><span class="si">{</span><span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">. Falling back to zeros.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">new_atom_array</span> <span class="o">=</span> <span class="n">atom_array_from_rdkit</span><span class="p">(</span>
+        <span class="n">mol</span><span class="p">,</span>
+        <span class="n">set_coord_if_available</span><span class="o">=</span><span class="n">set_coord_if_available</span><span class="p">,</span>
+        <span class="n">remove_inferred_atoms</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">remove_hydrogens</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">new_atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">()</span> <span class="o">==</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">new_atom_array</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">new_atom_array</span><span class="o">.</span><span class="n">res_id</span> <span class="o">==</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">res_id</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">new_atom_array</span><span class="o">.</span><span class="n">res_name</span> <span class="o">==</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span><span class="p">)</span>
+    <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span> <span class="o">=</span> <span class="n">new_atom_array</span><span class="o">.</span><span class="n">coord</span>
+
+    <span class="k">if</span> <span class="n">return_mol</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">atom_array</span><span class="p">,</span> <span class="n">mol</span>
+
+    <span class="k">return</span> <span class="n">atom_array</span></div>
+
+
+
+<div class="viewcode-block" id="ccd_code_to_rdkit_with_conformers">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.rdkit_utils.ccd_code_to_rdkit_with_conformers">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ccd_code_to_rdkit_with_conformers</span><span class="p">(</span>
+    <span class="n">ccd_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">n_conformers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">),</span>
+    <span class="n">timeout_strategy</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;signal&quot;</span><span class="p">,</span> <span class="s2">&quot;subprocess&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;subprocess&quot;</span><span class="p">,</span>
+    <span class="n">skip_rdkit_conformer_generation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">generate_conformers_kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate an RDKit molecule with conformers for a given residue name.</span>
+
+<span class="sd">    This function attempts to generate the specified number of conformers for the given CCD code</span>
+<span class="sd">    using RDKit&#39;s conformer generation (based on ETKDGv3 per default).</span>
+<span class="sd">    If conformer generation fails or times out, it falls back to using the idealized conformer</span>
+<span class="sd">    from the CCD entry if one is available.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ccd_code: The CCD code to generate conformers for. E.g. &#39;ALA&#39; or &#39;GLY&#39;, &#39;9RH&#39; etc.</span>
+<span class="sd">        n_conformers: The number of conformers to generate for the given CCD code.</span>
+<span class="sd">        seed: The seed for conformer generation. If None, a random seed</span>
+<span class="sd">            is generated using the global numpy RNG.</span>
+<span class="sd">        timeout: The timeout for the automorphism search. If None, no timeout is applied and</span>
+<span class="sd">            the timeout strategy is ignored (no subprocesses will be spawned). If a tuple,</span>
+<span class="sd">            the first element is the offset and the second element is the slope.</span>
+<span class="sd">        timeout_strategy: The strategy to use for the timeout.</span>
+<span class="sd">            Defaults to &quot;subprocess&quot;.</span>
+<span class="sd">        **generate_conformers_kwargs: Additional keyword arguments to pass to the</span>
+<span class="sd">            generate_conformers function.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        An RDKit molecule with the specified number of conformers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># ... get molecule from CCD with its idealized conformer (default conformer 0)</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">ccd_code_to_rdkit</span><span class="p">(</span><span class="n">ccd_code</span><span class="p">,</span> <span class="n">hydrogen_policy</span><span class="o">=</span><span class="s2">&quot;remove&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ... get idealized conformer from CCD entry</span>
+    <span class="n">idealized_conformer</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Conformer</span><span class="p">(</span><span class="n">mol</span><span class="o">.</span><span class="n">GetConformer</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>  <span class="c1"># creates a copy</span>
+
+    <span class="c1"># ... try generating `count` conformers within a given time limit</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_rdkit_conformer_generation</span><span class="p">:</span>
+        <span class="n">timeout</span> <span class="o">=</span> <span class="n">_auto_timeout_policy</span><span class="p">(</span><span class="n">n_conformers</span><span class="p">,</span> <span class="o">*</span><span class="n">timeout</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">timeout</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="n">timeout</span>
+        <span class="n">generate_conformers_with_timeout</span> <span class="o">=</span> <span class="n">timer</span><span class="o">.</span><span class="n">timeout</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="n">timeout_strategy</span><span class="p">)(</span>
+            <span class="n">generate_conformers</span>
+        <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span> <span class="ow">or</span> <span class="n">_get_random_seed</span><span class="p">()</span>
+            <span class="n">mol</span> <span class="o">=</span> <span class="n">generate_conformers_with_timeout</span><span class="p">(</span>
+                <span class="n">mol</span><span class="p">,</span> <span class="n">n_conformers</span><span class="o">=</span><span class="n">n_conformers</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="o">**</span><span class="n">generate_conformers_kwargs</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TimeoutError</span><span class="p">,</span> <span class="ne">RuntimeError</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolSanitizeException</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Failed to generate </span><span class="si">{</span><span class="n">n_conformers</span><span class="si">}</span><span class="s2"> conformers for </span><span class="si">{</span><span class="n">ccd_code</span><span class="si">=}</span><span class="s2">. Falling back to idealized conformer from the CCD. Error message: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+    <span class="c1"># ... if conformer generation fails or is incomplete, return the idealized conformer (set `count` conformers)</span>
+    <span class="n">missing_conformers</span> <span class="o">=</span> <span class="n">n_conformers</span> <span class="o">-</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumConformers</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">missing_conformers</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">missing_conformers</span><span class="p">):</span>
+            <span class="n">mol</span><span class="o">.</span><span class="n">AddConformer</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">Conformer</span><span class="p">(</span><span class="n">idealized_conformer</span><span class="p">),</span> <span class="n">assignId</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mol</span></div>
+
+
+
+<span class="c1"># -------------------------------------------------------------------------------------------------</span>
+<span class="c1"># ---------------------  RDKit related transforms  ------------------------------------------------</span>
+<span class="c1"># -------------------------------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="AddRDKitMoleculesForAtomizedMolecules">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.rdkit_utils.AddRDKitMoleculesForAtomizedMolecules">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AddRDKitMoleculesForAtomizedMolecules</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add RDKit molecules for atomized molecules in the atom array.</span>
+
+<span class="sd">    This transform converts atomized molecules in the atom array to RDKit Mol objects and stores them in the</span>
+<span class="sd">    `data` dictionary under the &quot;rdkit&quot; key. Each molecule is identified by its `pn_unit_iid`.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This transform requires the `AtomizeByCCDName` transform to be applied previously.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (dict[str, Any]): A dictionary containing the input data, including the atom array.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict[str, Any]: The updated `data` dictionary with the added RDKit molecules under the</span>
+<span class="sd">            `&quot;rdkit&quot;` key.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; data = {</span>
+<span class="sd">        &gt;&gt;&gt;     &quot;atom_array&quot;: AtomArray(...),  # Your atom array here</span>
+<span class="sd">        &gt;&gt;&gt; }</span>
+<span class="sd">        &gt;&gt;&gt; transform = AddRDKitMoleculesForAtomizedMolecules()</span>
+<span class="sd">        &gt;&gt;&gt; data = transform(data)</span>
+<span class="sd">        &gt;&gt;&gt; print(data[&quot;rdkit&quot;])</span>
+<span class="sd">        {</span>
+<span class="sd">            &#39;A_1&#39;: &lt;rdkit.Chem.rdchem.Mol object at 0x...&gt;,</span>
+<span class="sd">            &#39;B_1&#39;: &lt;rdkit.Chem.rdchem.Mol object at 0x...&gt;,</span>
+<span class="sd">            ...</span>
+<span class="sd">        }</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">requires_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AtomizeByCCDName&quot;</span><span class="p">]</span>
+    <span class="n">incompatible_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CropContiguousLikeAF3&quot;</span><span class="p">,</span> <span class="s2">&quot;CropSpatialLikeAF3&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hydrogen_policy</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;infer&quot;</span><span class="p">,</span> <span class="s2">&quot;remove&quot;</span><span class="p">,</span> <span class="s2">&quot;keep&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;keep&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hydrogen_policy</span> <span class="o">=</span> <span class="n">hydrogen_policy</span>
+
+<div class="viewcode-block" id="AddRDKitMoleculesForAtomizedMolecules.check_input">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.rdkit_utils.AddRDKitMoleculesForAtomizedMolecules.check_input">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">check_does_not_contain_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;rdkit&quot;</span><span class="p">])</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atomize&quot;</span><span class="p">,</span> <span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">])</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_atom_array_to_rdkit_robust</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mol</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert an AtomArray to RDKit molecule with error sanitization failure handling&quot;&quot;&quot;</span>
+
+        <span class="n">conversion_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;hydrogen_policy&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydrogen_policy</span><span class="p">,</span>
+            <span class="s2">&quot;annotations_to_keep&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;chain_id&quot;</span><span class="p">,</span> <span class="s2">&quot;res_id&quot;</span><span class="p">,</span> <span class="s2">&quot;res_name&quot;</span><span class="p">,</span> <span class="s2">&quot;atom_name&quot;</span><span class="p">,</span> <span class="s2">&quot;atom_id&quot;</span><span class="p">,</span> <span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;sanitize&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># First attempt: try without fixing for better performance</span>
+            <span class="n">rdmol</span> <span class="o">=</span> <span class="n">atom_array_to_rdkit</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">attempt_fixing_corrupted_molecules</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">conversion_kwargs</span><span class="p">)</span>
+
+            <span class="c1"># Check if sanitization actually succeeded</span>
+            <span class="n">sanitization_result</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeMol</span><span class="p">(</span><span class="n">rdmol</span><span class="p">,</span> <span class="n">catchErrors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sanitization_result</span> <span class="o">!=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeFlags</span><span class="o">.</span><span class="n">SANITIZE_NONE</span><span class="p">:</span>
+                <span class="c1"># Molecule failed sanitization, retry with fixing enabled</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Molecule </span><span class="si">{</span><span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> failed sanitization (</span><span class="si">{</span><span class="n">sanitization_result</span><span class="si">}</span><span class="s2">). &quot;</span>
+                    <span class="s2">&quot;Retrying with attempt_fixing_corrupted_molecules=True.&quot;</span>
+                <span class="p">)</span>
+                <span class="n">rdmol</span> <span class="o">=</span> <span class="n">atom_array_to_rdkit</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">attempt_fixing_corrupted_molecules</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">conversion_kwargs</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">rdmol</span>
+
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Failed to convert molecule </span><span class="si">{</span><span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> to RDKit: </span><span class="si">{</span><span class="n">e</span><span class="si">!s}</span><span class="s2">. &quot;</span>
+                <span class="s2">&quot;Trying again and attempting to fix the corrupted molecule.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">atom_array_to_rdkit</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">attempt_fixing_corrupted_molecules</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">conversion_kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AddRDKitMoleculesForAtomizedMolecules.forward">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.rdkit_utils.AddRDKitMoleculesForAtomizedMolecules.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Subset to atomized molecules</span>
+        <span class="n">_atom_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atomize</span><span class="p">]</span>
+
+        <span class="c1"># Iterate over unique pn_unit_iids</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;rdkit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">pn_unit_iid</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">_atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span><span class="p">):</span>
+            <span class="n">pn_unit_mask</span> <span class="o">=</span> <span class="n">_atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span> <span class="o">==</span> <span class="n">pn_unit_iid</span>
+            <span class="n">molecule</span> <span class="o">=</span> <span class="n">_atom_array</span><span class="p">[</span><span class="n">pn_unit_mask</span><span class="p">]</span>
+            <span class="n">rdmol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_atom_array_to_rdkit_robust</span><span class="p">(</span><span class="n">molecule</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;rdkit&quot;</span><span class="p">][</span><span class="n">pn_unit_iid</span><span class="p">]</span> <span class="o">=</span> <span class="n">rdmol</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="GenerateRDKitConformers">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.rdkit_utils.GenerateRDKitConformers">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GenerateRDKitConformers</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate conformers for RDKit molecules stored in the `data[&quot;rdkit&quot;]` dictionary.</span>
+
+<span class="sd">    This transform generates conformers for each RDKit molecule in the data dictionary and updates</span>
+<span class="sd">    the molecules with the new conformers. The random seed for conformer generation is derived from</span>
+<span class="sd">    the global numpy RNG state.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (dict[str, Any]): A dictionary containing the input data, including RDKit molecules</span>
+<span class="sd">            under the `&quot;rdkit&quot;` key.</span>
+<span class="sd">        n_conformers (int): Number of conformations to generate for each molecule. Default is 1.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict[str, Any]: The updated `data` dictionary with RDKit molecules containing generated conformers.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; data = {</span>
+<span class="sd">        &gt;&gt;&gt;     &quot;rdkit&quot;: {</span>
+<span class="sd">        &gt;&gt;&gt;         &#39;A_1&#39;: &lt;rdkit.Chem.rdchem.Mol object at 0x...&gt;,</span>
+<span class="sd">        &gt;&gt;&gt;         &#39;B_1&#39;: &lt;rdkit.Chem.rdchem.Mol object at 0x...&gt;,</span>
+<span class="sd">        &gt;&gt;&gt;     }</span>
+<span class="sd">        &gt;&gt;&gt; }</span>
+<span class="sd">        &gt;&gt;&gt; transform = GenerateRDKitConformers(n_conformers=3)</span>
+<span class="sd">        &gt;&gt;&gt; data = transform(data)</span>
+<span class="sd">        &gt;&gt;&gt; print(data[&quot;rdkit&quot;][&quot;A_1&quot;].GetNumConformers())</span>
+<span class="sd">        3</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">requires_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AddRDKitMoleculesForAtomizedMolecules&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">n_conformers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">optimize_conformers</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">optimize_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_conformers</span> <span class="o">=</span> <span class="n">n_conformers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimize_conformers</span> <span class="o">=</span> <span class="n">optimize_conformers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimize_kwargs</span> <span class="o">=</span> <span class="n">default</span><span class="p">(</span><span class="n">optimize_kwargs</span><span class="p">,</span> <span class="p">{})</span>
+
+<div class="viewcode-block" id="GenerateRDKitConformers.check_input">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.rdkit_utils.GenerateRDKitConformers.check_input">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;rdkit&quot;</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;rdkit&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+        <span class="n">check_nonzero_length</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;rdkit&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GenerateRDKitConformers.forward">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.rdkit_utils.GenerateRDKitConformers.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">pn_unit_iid</span><span class="p">,</span> <span class="n">rdmol</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;rdkit&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Generate a random seed using numpy&#39;s global RNG</span>
+                <span class="n">seed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">16</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+                <span class="n">rdmol_with_conformers</span> <span class="o">=</span> <span class="n">generate_conformers</span><span class="p">(</span>
+                    <span class="n">rdmol</span><span class="p">,</span>
+                    <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+                    <span class="n">n_conformers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_conformers</span><span class="p">,</span>
+                    <span class="n">hydrogen_policy</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+                    <span class="n">optimize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optimize_conformers</span><span class="p">,</span>
+                    <span class="n">optimize_kwargs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optimize_kwargs</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;rdkit&quot;</span><span class="p">][</span><span class="n">pn_unit_iid</span><span class="p">]</span> <span class="o">=</span> <span class="n">rdmol_with_conformers</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to generate conformers for molecule </span><span class="si">{</span><span class="n">pn_unit_iid</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="get_rdkit_chiral_centers">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.rdkit_utils.get_rdkit_chiral_centers">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_rdkit_chiral_centers</span><span class="p">(</span><span class="n">rdkit_mols</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mol</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the chiral centers for a dictionary of RDKit molecules.</span>
+
+<span class="sd">    See the `GetRDKitChiralCenters` transform for more details.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">chiral_centers</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Get chiral centers for all rdkit mols</span>
+    <span class="k">for</span> <span class="n">resname</span><span class="p">,</span> <span class="n">rdmol</span> <span class="ow">in</span> <span class="n">rdkit_mols</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Get the chiral centers (returned are the indices of the chiral center atoms within the `obmol` object)</span>
+            <span class="n">chiral_centers</span><span class="p">[</span><span class="n">resname</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_chiral_centers</span><span class="p">(</span><span class="n">rdmol</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to find chiral centers for molecule </span><span class="si">{</span><span class="n">resname</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">chiral_centers</span></div>
+
+
+
+<div class="viewcode-block" id="GetRDKitChiralCenters">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.rdkit_utils.GetRDKitChiralCenters">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GetRDKitChiralCenters</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify chiral centers in the RDKit molecules stored in the data[&quot;rdkit&quot;] dictionary.</span>
+
+<span class="sd">    Returns a dictionary mapping each residue name to a list of chiral centers, e.g:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        data[&quot;chiral_centers&quot;] = {</span>
+<span class="sd">            ...</span>
+<span class="sd">            &quot;ILE&quot;: [</span>
+<span class="sd">                {&#39;chiral_center_idx&#39;: 1, &#39;bonded_explicit_atom_idxs&#39;: [0, 2, 4], &#39;chirality&#39;: &#39;S&#39;},</span>
+<span class="sd">                {&#39;chiral_center_idx&#39;: 4, &#39;bonded_explicit_atom_idxs&#39;: [1, 5, 6], &#39;chirality&#39;: &#39;S&#39;}</span>
+<span class="sd">            ],</span>
+<span class="sd">            ...</span>
+<span class="sd">        }</span>
+
+<span class="sd">    Each chiral center is a dict with a center atom index, 3 or 4 bonded atom indices, and the</span>
+<span class="sd">    RDKit-determined chirality.</span>
+
+<span class="sd">    Uses RDKit molecules first computed in GetAF3ReferenceMoleculeFeatures.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: A dictionary containing the input data, including RDKit molecules</span>
+<span class="sd">            under the &quot;rdkit&quot; key.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The updated data dictionary with chiral_centers containing chiral</span>
+<span class="sd">            centers for each molecule.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">requires_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;GetAF3ReferenceMoleculeFeatures&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="GetRDKitChiralCenters.check_input">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.rdkit_utils.GetRDKitChiralCenters.check_input">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;rdkit&quot;</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;rdkit&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+        <span class="n">check_nonzero_length</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;rdkit&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GetRDKitChiralCenters.forward">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.rdkit_utils.GetRDKitChiralCenters.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;chiral_centers&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_rdkit_chiral_centers</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;rdkit&quot;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

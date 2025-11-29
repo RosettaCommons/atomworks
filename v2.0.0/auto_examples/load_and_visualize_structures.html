@@ -1,0 +1,751 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Loading and Visualizing Protein Structures &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/load_and_visualize_structures';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.1.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Dataset Exploration and Management in AtomWorks" href="dataset_exploration.html" />
+    <link rel="prev" title="Structure Manipulation Basics" href="basics.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.1.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="basics.html">Structure Manipulation Basics</a></li>
+
+
+
+
+
+
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Loading and Visualizing Protein Structures</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="dataset_exploration.html">Dataset Exploration and Management in AtomWorks</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="annotate_and_save_structures.html">Annotating and Saving Protein Structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pocket_conditioning_transform.html">Creating Custom Transforms: Ligand Pocket Conditioning</a></li>
+
+
+
+
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Examples</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Loading and Visualizing Protein Structures</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-load-and-visualize-structures-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="loading-and-visualizing-protein-structures">
+<span id="sphx-glr-auto-examples-load-and-visualize-structures-py"></span><h1>Loading and Visualizing Protein Structures<a class="headerlink" href="#loading-and-visualizing-protein-structures" title="Link to this heading">#</a></h1>
+<p>This example demonstrates how to load protein structures from various formats and explore their content using AtomWorks.</p>
+<figure class="align-default" id="id1">
+<a class="reference internal image-reference" href="../_images/load_and_visualize_structures_01.png"><img alt="Myoglobin structure visualization" src="../_images/load_and_visualize_structures_01.png" style="width: 400px;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Interactive 3D visualization of myoglobin structure showing protein chains and heme ligand.</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="loading-structures">
+<h1>Loading Structures<a class="headerlink" href="#loading-structures" title="Link to this heading">#</a></h1>
+<p>AtomWorks provides two main functions for loading structures, each optimized for different scenarios:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">parse()</span></code>: Full processing pipeline that cleans, validates, and processes structures, typically from the RCSB PDB. Includes imputing missing atom, inferring bonds, and extensive validation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">load_any()</span></code>: Lightweight loader for structures that do not require as extensive processing, e.g., distillation examples. Much faster when you don’t need the full cleaning pipeline or missing atoms imputed.</p></li>
+</ul>
+<p>If you see output like <code class="docutils literal notranslate"><span class="pre">Environment</span> <span class="pre">variable</span> <span class="pre">CCD_MIRROR_PATH</span></code> or <code class="docutils literal notranslate"><span class="pre">PDB_MIRROR_PATH</span></code> not set, don’t worry - it just means we aren’t using local copies of the PDB and/or CCD (we can still load the examples we need with an internet connection).</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.io_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.testing</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_pdb_path_or_buffer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.visualize</span><span class="w"> </span><span class="kn">import</span> <span class="n">view</span>
+
+<span class="c1"># sphinx_gallery_thumbnail_path = &#39;_static/examples/load_and_visualize_structures_01.png&#39;</span>
+
+<span class="c1"># Load a myoglobin structure (SPERM WHALE MYOGLOBIN F46V N-BUTYL ISOCYANIDE AT PH 9.0)</span>
+<span class="n">example_pdb_id</span> <span class="o">=</span> <span class="s2">&quot;101m&quot;</span>
+<span class="n">pdb_path</span> <span class="o">=</span> <span class="n">get_pdb_path_or_buffer</span><span class="p">(</span><span class="n">example_pdb_id</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="using-parse-for-full-processing">
+<h2>Using <code class="docutils literal notranslate"><span class="pre">parse()</span></code> for Full Processing<a class="headerlink" href="#using-parse-for-full-processing" title="Link to this heading">#</a></h2>
+<p>For RCSB structures, we typically load structures with <code class="docutils literal notranslate"><span class="pre">parse()</span></code> to get clean data suitable for most downstream tasks.</p>
+<p>There are many arguments that control how the structure is processed upon parsing; see the API documentation for more detail.
+A few are:
+- <code class="docutils literal notranslate"><span class="pre">remove_waters</span></code>: Whether to remove water molecules (True by default)
+- <code class="docutils literal notranslate"><span class="pre">remove_ccds</span></code>: CCD codes to filter out (Default is a list of common crystallization aids, e.g., GOL, SO4, etc.)
+- <code class="docutils literal notranslate"><span class="pre">add_missing_atoms</span></code>: Whether to add missing (e.g., unresolved) heavy atoms (True by default)
+- <code class="docutils literal notranslate"><span class="pre">hydrogen_policy</span></code>: How to handle hydrogens (e.g., “keep”, “remove”, or “infer”). Default is “keep”.
+… and many more!</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ``parse`` returns a dictionary with several data fields; see the API docs for full details.</span>
+<span class="c1"># The loaded assembly information is stored in the &quot;assemblies&quot; key, which we use in the example below.</span>
+
+<span class="n">parse_output</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">pdb_path</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Available data keys:&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">parse_output</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+</pre></div>
+</div>
+</section>
+<section id="using-load-any-for-lightweight-loading">
+<h2>Using <code class="docutils literal notranslate"><span class="pre">load_any()</span></code> for Lightweight Loading<a class="headerlink" href="#using-load-any-for-lightweight-loading" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># For comparison: load_any() for lightweight loading (no extensive processing)</span>
+<span class="c1"># Useful when you have clean data (e.g., from distillation) and/or want to preserve all annotations</span>
+
+<span class="n">loaded_structure</span> <span class="o">=</span> <span class="n">load_any</span><span class="p">(</span><span class="n">pdb_path</span><span class="p">,</span> <span class="n">extra_fields</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>  <span class="c1"># Load with all available fields</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;load_any result type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">loaded_structure</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of models: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">loaded_structure</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># NOTE: load_any returns an AtomArrayStack directly, while parse returns a dictionary with metadata, chain info, assemblies, etc.</span>
+</pre></div>
+</div>
+</section>
+<section id="structure-visualization">
+<h2>Structure Visualization<a class="headerlink" href="#structure-visualization" title="Link to this heading">#</a></h2>
+<p>AtomWorks includes built-in 3D visualization capabilities. Let’s extract the biological assembly and explore the structure:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Extract the biological assembly (first assembly, first model)</span>
+<span class="n">atom_array</span> <span class="o">=</span> <span class="n">parse_output</span><span class="p">[</span><span class="s2">&quot;assemblies&quot;</span><span class="p">][</span><span class="s2">&quot;1&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Explore available annotations</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Available annotations:&quot;</span><span class="p">)</span>
+<span class="n">annotations</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">annotations</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">annotation</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Visualize the complete structure within an interactive viewer</span>
+<span class="n">view</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+</pre></div>
+</div>
+<figure class="align-default">
+<img alt="Myoglobin structure visualization" src="../_images/load_and_visualize_structures_01.png" />
+</figure>
+</section>
+<section id="understanding-assemblies-vs-asymmetric-units">
+<h2>Understanding Assemblies vs Asymmetric Units<a class="headerlink" href="#understanding-assemblies-vs-asymmetric-units" title="Link to this heading">#</a></h2>
+<p>The RCSB PDB draws a distinction between asymmetric units and biological assemblies; see the <a class="reference external" href="https://pdb101.rcsb.org/learn/guide-to-understanding-pdb-data/biological-assemblies">RCSB PDB 101 Guide</a> for more information.
+The <code class="docutils literal notranslate"><span class="pre">parse()</span></code> function returns both asymmetric units and biological assemblies. Let’s explore the difference:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compare asymmetric unit vs assembly</span>
+<span class="n">asym_unit</span> <span class="o">=</span> <span class="n">parse_output</span><span class="p">[</span><span class="s2">&quot;asym_unit&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># First model of asymmetric unit</span>
+<span class="n">assembly</span> <span class="o">=</span> <span class="n">parse_output</span><span class="p">[</span><span class="s2">&quot;assemblies&quot;</span><span class="p">][</span><span class="s2">&quot;1&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># First model of first assembly</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Asymmetric unit atoms: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">asym_unit</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Assembly atoms: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">assembly</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">For this structure, they are </span><span class="si">{</span><span class="s1">&#39;the same&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">asym_unit</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">assembly</span><span class="p">)</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;different&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Show available assemblies</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Available assemblies: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">parse_output</span><span class="p">[</span><span class="s1">&#39;assemblies&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="data-exploration">
+<h2>Data Exploration<a class="headerlink" href="#data-exploration" title="Link to this heading">#</a></h2>
+<p>Let’s now explore the structure composition by examining chains, residues, and other annotations:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Examine chain composition</span>
+<span class="n">unique_chains</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_id</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Chains present: </span><span class="si">{</span><span class="n">unique_chains</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Analyze what each chain contains</span>
+<span class="k">for</span> <span class="n">chain</span> <span class="ow">in</span> <span class="n">unique_chains</span><span class="p">:</span>
+    <span class="n">chain_mask</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">==</span> <span class="n">chain</span>
+    <span class="n">unique_residues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span><span class="p">[</span><span class="n">chain_mask</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Chain </span><span class="si">{</span><span class="n">chain</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">unique_residues</span><span class="p">)</span><span class="si">}</span><span class="s2"> unique residue types&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Examples: </span><span class="si">{</span><span class="n">unique_residues</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># Show first 5 residue types</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Total atoms: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">chain_mask</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="exploring-metadata-and-chain-information">
+<h2>Exploring Metadata and Chain Information<a class="headerlink" href="#exploring-metadata-and-chain-information" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">parse()</span></code> function also extracts rich metadata about the structure from the RCSB:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Explore metadata</span>
+<span class="n">metadata</span> <span class="o">=</span> <span class="n">parse_output</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Structure metadata:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s2">&quot;parse_arguments&quot;</span><span class="p">:</span>  <span class="c1"># Skip the verbose parse arguments</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Explore chain information for Chain A</span>
+<span class="n">chain_a_info</span> <span class="o">=</span> <span class="n">parse_output</span><span class="p">[</span><span class="s2">&quot;chain_info&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="p">{})</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Chain A information:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">chain_a_info</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="c1"># Show only a preview for long lists or strings</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">preview</span> <span class="o">=</span> <span class="n">value</span><span class="p">[:</span><span class="mi">15</span><span class="p">]</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="s2">&quot;...&quot;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">15</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: &#39;</span><span class="si">{</span><span class="n">preview</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="accessing-the-original-mmcif-data">
+<h2>Accessing the Original mmCIF Data<a class="headerlink" href="#accessing-the-original-mmcif-data" title="Link to this heading">#</a></h2>
+<p>If there is information contained in the mmCIF file that is <em>not</em> extracted by <cite>parse</cite>, we can still gain access
+to the original Biotite CIF block using the <code class="docutils literal notranslate"><span class="pre">keep_cif_block=True</span></code> argument to <cite>parse</cite>.
+We can then use the Biotite API to explore any additional data we might need.
+(E.g., we could write a simple <cite>Transform</cite> that extracts the necessary information)</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load with original CIF block retained</span>
+<span class="n">parse_output_with_cif</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">pdb_path</span><span class="p">,</span> <span class="n">keep_cif_block</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">cif_block</span> <span class="o">=</span> <span class="n">parse_output_with_cif</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cif_block&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="related-examples">
+<h2>Related Examples<a class="headerlink" href="#related-examples" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="annotate_and_save_structures.html"><span class="doc">Annotating and Saving Protein Structures</span></a> - Learn how to add custom annotations to structures and save them for later use</p></li>
+<li><p><a class="reference internal" href="pocket_conditioning_transform.html"><span class="doc">Creating Custom Transforms: Ligand Pocket Conditioning</span></a> - Create custom transforms for ligand pocket identification and ML feature generation</p></li>
+</ul>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-load-and-visualize-structures-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/9027056dcbb9b3b556403b836eefe6c2/load_and_visualize_structures.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">load_and_visualize_structures.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/5a21c43ad63a37e8f65ab7a868e430bb/load_and_visualize_structures.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">load_and_visualize_structures.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/50f39c48fac04d8c1127e80150bc833f/load_and_visualize_structures.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">load_and_visualize_structures.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="basics.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Structure Manipulation Basics</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="dataset_exploration.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Dataset Exploration and Management in AtomWorks</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Loading and Visualizing Protein Structures</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-structures">Loading Structures</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-parse-for-full-processing">Using <code class="docutils literal notranslate"><span class="pre">parse()</span></code> for Full Processing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-load-any-for-lightweight-loading">Using <code class="docutils literal notranslate"><span class="pre">load_any()</span></code> for Lightweight Loading</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#structure-visualization">Structure Visualization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-assemblies-vs-asymmetric-units">Understanding Assemblies vs Asymmetric Units</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-exploration">Data Exploration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-metadata-and-chain-information">Exploring Metadata and Chain Information</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#accessing-the-original-mmcif-data">Accessing the Original mmCIF Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#related-examples">Related Examples</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/auto_examples/load_and_visualize_structures.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

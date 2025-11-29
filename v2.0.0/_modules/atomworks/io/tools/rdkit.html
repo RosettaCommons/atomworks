@@ -1,0 +1,1354 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>atomworks.io.tools.rdkit &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/io/tools/rdkit';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.1.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.1.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">atomworks.io.tools.rdkit</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for atomworks.io.tools.rdkit</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Tools for using RDKit with AtomArray objects.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cache</span><span class="p">,</span> <span class="n">wraps</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">PathLike</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Final</span><span class="p">,</span> <span class="n">Literal</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">struc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">toolz</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdkit.Chem</span><span class="w"> </span><span class="kn">import</span> <span class="n">AllChem</span><span class="p">,</span> <span class="n">Mol</span><span class="p">,</span> <span class="n">rdFingerprintGenerator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdkit.Chem.MolStandardize</span><span class="w"> </span><span class="kn">import</span> <span class="n">rdMolStandardize</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdkit.DataStructs</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExplicitBitVect</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">atomworks.io.transforms.atom_array</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">exists</span><span class="p">,</span> <span class="n">immutable_lru_cache</span><span class="p">,</span> <span class="n">not_isin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BIOTITE_DEFAULT_ANNOTATIONS</span><span class="p">,</span>
+    <span class="n">CCD_MIRROR_PATH</span><span class="p">,</span>
+    <span class="n">HYDROGEN_LIKE_SYMBOLS</span><span class="p">,</span>
+    <span class="n">METAL_ELEMENTS</span><span class="p">,</span>
+    <span class="n">PDB_ISOTOPE_SYMBOL_TO_ELEMENT_SYMBOL</span><span class="p">,</span>
+    <span class="n">UNKNOWN_LIGAND</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.ccd</span><span class="w"> </span><span class="kn">import</span> <span class="n">atom_array_from_ccd_code</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="c1"># Set default pickle properties to all properties, otherwise</span>
+<span class="c1">#  annotations get lost when pickling/unpickling molecules</span>
+<span class="c1"># https://github.com/rdkit/rdkit/issues/1320</span>
+<span class="n">Chem</span><span class="o">.</span><span class="n">SetDefaultPickleProperties</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">PropertyPickleOptions</span><span class="o">.</span><span class="n">AllProps</span><span class="p">)</span>
+
+<span class="n">RDKIT_HYBRIDIZATION_TO_INT</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Chem</span><span class="o">.</span><span class="n">rdchem</span><span class="o">.</span><span class="n">HybridizationType</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">Chem</span><span class="o">.</span><span class="n">rdchem</span><span class="o">.</span><span class="n">HybridizationType</span><span class="o">.</span><span class="n">S</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">Chem</span><span class="o">.</span><span class="n">rdchem</span><span class="o">.</span><span class="n">HybridizationType</span><span class="o">.</span><span class="n">SP</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">Chem</span><span class="o">.</span><span class="n">rdchem</span><span class="o">.</span><span class="n">HybridizationType</span><span class="o">.</span><span class="n">SP2</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">Chem</span><span class="o">.</span><span class="n">rdchem</span><span class="o">.</span><span class="n">HybridizationType</span><span class="o">.</span><span class="n">SP2D</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">Chem</span><span class="o">.</span><span class="n">rdchem</span><span class="o">.</span><span class="n">HybridizationType</span><span class="o">.</span><span class="n">SP3</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="n">Chem</span><span class="o">.</span><span class="n">rdchem</span><span class="o">.</span><span class="n">HybridizationType</span><span class="o">.</span><span class="n">SP3D</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="n">Chem</span><span class="o">.</span><span class="n">rdchem</span><span class="o">.</span><span class="n">HybridizationType</span><span class="o">.</span><span class="n">SP3D2</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="n">Chem</span><span class="o">.</span><span class="n">rdchem</span><span class="o">.</span><span class="n">HybridizationType</span><span class="o">.</span><span class="n">OTHER</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="n">Chem</span><span class="o">.</span><span class="n">rdchem</span><span class="o">.</span><span class="n">HybridizationType</span><span class="o">.</span><span class="n">UNSPECIFIED</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Mapping from RDKit hybridization types to integers.</span>
+
+<span class="sd">Reference:</span>
+<span class="sd">    `RDKit Atom Documentation &lt;https://www.rdkit.org/docs/cppapi/classRDKit_1_1Atom.html#a58e40e30db6b42826243163175cac976&gt;`_</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">RDKIT_BOND_TYPE_TO_BIOTITE</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># (rdkit bond type, is_aromatic) -&gt; biotite bond type</span>
+    <span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">UNSPECIFIED</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">ANY</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">TRIPLE</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">TRIPLE</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">QUADRUPLE</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">QUADRUPLE</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">DATIVE</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">COORDINATION</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">AROMATIC_SINGLE</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">AROMATIC_DOUBLE</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">TRIPLE</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">AROMATIC_TRIPLE</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Mapping from RDKit bond types to Biotite bond types.</span>
+<span class="sd">Maps (rdkit bond type, is_aromatic) -&gt; biotite bond type</span>
+
+<span class="sd">Unspecified bonds are mapped to `ANY` bond type.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">BIOTITE_BOND_TYPE_TO_RDKIT</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># biotite bond type -&gt; (rdkit bond type, is_aromatic)</span>
+    <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">ANY</span><span class="p">:</span> <span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">UNSPECIFIED</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">:</span> <span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">:</span> <span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">TRIPLE</span><span class="p">:</span> <span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">TRIPLE</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">QUADRUPLE</span><span class="p">:</span> <span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">QUADRUPLE</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">COORDINATION</span><span class="p">:</span> <span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">DATIVE</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="c1"># NOTE: We map aromatics to single/double/triple instead of Chem.BondType.AROMATIC</span>
+    <span class="c1">#       because the PDB specified bond-order (from a kekulized form of the molecule)</span>
+    <span class="c1">#       is lost when we map to aromatic, which can lead to incorrect bond-order</span>
+    <span class="c1">#       perception in RDKit.</span>
+    <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">AROMATIC_SINGLE</span><span class="p">:</span> <span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+    <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">AROMATIC_DOUBLE</span><span class="p">:</span> <span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+    <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">AROMATIC_TRIPLE</span><span class="p">:</span> <span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">TRIPLE</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+<span class="p">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Mapping from Biotite bond types to RDKit bond types.</span>
+
+<span class="sd">Maps (biotite bond type) -&gt; (rdkit bond type, is_aromatic)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">CONVERTIBLE_RDKIT_BOND_TYPES</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">frozenset</span><span class="p">[</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span>
+    <span class="n">toolz</span><span class="o">.</span><span class="n">keymap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">RDKIT_BOND_TYPE_TO_BIOTITE</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;Set of RDKit Bond types that can be converted to Biotite bond types.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="ChEMBLNormalizer">
+<a class="viewcode-back" href="../../../../io/tools/rdkit.html#atomworks.io.tools.rdkit.ChEMBLNormalizer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ChEMBLNormalizer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Normalize an RDKit molecule like the ChEMBL structure pipeline does.</span>
+<span class="sd">    This is useful for `rescuing` molecules that failed to be sanitized by RDKit</span>
+<span class="sd">    alone.</span>
+
+<span class="sd">    Reference:</span>
+<span class="sd">        `ChEMBL Structure Pipeline &lt;https://github.com/chembl/ChEMBL_Structure_Pipeline/blob/master/chembl_structure_pipeline/standardizer.py#L33C1-L73C15&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;chembl_transformations.smirks&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_normalization_transforms</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_normalizer_params</span> <span class="o">=</span> <span class="n">rdMolStandardize</span><span class="o">.</span><span class="n">CleanupParameters</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_normalizer</span> <span class="o">=</span> <span class="n">rdMolStandardize</span><span class="o">.</span><span class="n">NormalizerFromData</span><span class="p">(</span>
+            <span class="n">paramData</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_normalization_transforms</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_normalizer_params</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="ChEMBLNormalizer.normalize_in_place">
+<a class="viewcode-back" href="../../../../io/tools/rdkit.html#atomworks.io.tools.rdkit.ChEMBLNormalizer.normalize_in_place">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalize_in_place</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mol</span><span class="p">:</span> <span class="n">Mol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mol</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_normalizer</span><span class="o">.</span><span class="n">normalizeInPlace</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mol</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="get_valence_checker">
+<a class="viewcode-back" href="../../../../io/tools/rdkit.html#atomworks.io.tools.rdkit.get_valence_checker">[docs]</a>
+<span class="nd">@cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_valence_checker</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">rdMolStandardize</span><span class="o">.</span><span class="n">RDKitValidation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cached RDKit valence checker.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">rdMolStandardize</span><span class="o">.</span><span class="n">RDKitValidation</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="get_chembl_normalizer">
+<a class="viewcode-back" href="../../../../io/tools/rdkit.html#atomworks.io.tools.rdkit.get_chembl_normalizer">[docs]</a>
+<span class="nd">@cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_chembl_normalizer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">rdMolStandardize</span><span class="o">.</span><span class="n">Normalizer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cached ChEMBL normalizer.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ChEMBLNormalizer</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="element_to_atomic_number">
+<a class="viewcode-back" href="../../../../io/tools/rdkit.html#atomworks.io.tools.rdkit.element_to_atomic_number">[docs]</a>
+<span class="nd">@cache</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">element_to_atomic_number</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert an element string or atomic number to an atomic number.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - element (str): The element symbol (e.g., &#39;C&#39;) or atomic number.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        - int: The atomic number of the element.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; element_to_atomic_number(&quot;C&quot;)</span>
+<span class="sd">        6</span>
+<span class="sd">        &gt;&gt;&gt; element_to_atomic_number(&quot;8&quot;)</span>
+<span class="sd">        8</span>
+<span class="sd">        &gt;&gt;&gt; element_to_atomic_number(1)</span>
+<span class="sd">        1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">element</span> <span class="o">=</span> <span class="n">PDB_ISOTOPE_SYMBOL_TO_ELEMENT_SYMBOL</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Chem</span><span class="o">.</span><span class="n">GetPeriodicTable</span><span class="p">()</span><span class="o">.</span><span class="n">GetAtomicNumber</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">capitalize</span><span class="p">())</span></div>
+
+
+
+<div class="viewcode-block" id="preserve_annotations">
+<a class="viewcode-back" href="../../../../io/tools/rdkit.html#atomworks.io.tools.rdkit.preserve_annotations">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">preserve_annotations</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Mol</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">Mol</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Mol</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">Mol</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decorator to copy annotations from an RDKit molecule to a new molecule.</span>
+
+<span class="sd">    This decorator ensures that any custom annotations stored in the `_annotations`</span>
+<span class="sd">    attribute of an RDKit molecule are preserved when the molecule is modified or</span>
+<span class="sd">    converted.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - func (callable): The function to be decorated. Must accept an RDKit molecule as</span>
+<span class="sd">          positional argument or keyword argument with keyword &#39;mol&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        callable: The decorated function that preserves annotations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapped</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mol</span><span class="p">:</span>
+        <span class="c1"># Find the first RDKit molecule in the arguments or keyword arguments</span>
+        <span class="k">if</span> <span class="s2">&quot;mol&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">mol</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;mol&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mol</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">arg</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">Mol</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="s2">&quot;_annotations&quot;</span><span class="p">):</span>
+            <span class="n">annotations</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">_annotations</span>
+            <span class="n">new_mol</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">new_mol</span><span class="o">.</span><span class="n">_annotations</span> <span class="o">=</span> <span class="n">annotations</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_mol</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_mol</span>
+
+    <span class="k">return</span> <span class="n">wrapped</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_has_correct_valence</span><span class="p">(</span><span class="n">mol</span><span class="p">:</span> <span class="n">Mol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if an RDKit molecule has correct valences.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mol</span><span class="o">.</span><span class="n">UpdatePropertyCache</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">get_valence_checker</span><span class="p">()</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">mol</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_calc_formal_charge_from_valence</span><span class="p">(</span><span class="n">rdatom</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Atom</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the formal charge of an atom from its valence.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">num_valence_electrons</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">GetPeriodicTable</span><span class="p">()</span><span class="o">.</span><span class="n">GetDefaultValence</span><span class="p">(</span>
+        <span class="n">rdatom</span><span class="o">.</span><span class="n">GetSymbol</span><span class="p">()</span>
+    <span class="p">)</span>  <span class="c1"># ... how many electrons are missing to full outer shell</span>
+    <span class="n">num_electrons_in_bonds</span> <span class="o">=</span> <span class="n">rdatom</span><span class="o">.</span><span class="n">GetTotalValence</span><span class="p">()</span>  <span class="c1"># Total valence (explicit + implicit)</span>
+    <span class="n">num_radicals</span> <span class="o">=</span> <span class="n">rdatom</span><span class="o">.</span><span class="n">GetNumRadicalElectrons</span><span class="p">()</span>  <span class="c1"># ... how many unpaired, radical electrons</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">num_electrons_in_bonds</span> <span class="o">+</span> <span class="n">num_radicals</span><span class="p">)</span> <span class="o">-</span> <span class="n">num_valence_electrons</span>
+
+
+<div class="viewcode-block" id="fix_charge_based_on_valence">
+<a class="viewcode-back" href="../../../../io/tools/rdkit.html#atomworks.io.tools.rdkit.fix_charge_based_on_valence">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fix_charge_based_on_valence</span><span class="p">(</span><span class="n">mol</span><span class="p">:</span> <span class="n">Mol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mol</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Attempt to fix the formal charge of an RDKit molecule by making it compatible with its valence state.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># ... record previous mol to revert if changing charges does not fix the valence</span>
+    <span class="n">previous_mol</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_has_correct_valence</span><span class="p">(</span><span class="n">mol</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">rdatom</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">():</span>
+            <span class="n">rdatom</span><span class="o">.</span><span class="n">SetFormalCharge</span><span class="p">(</span><span class="n">_calc_formal_charge_from_valence</span><span class="p">(</span><span class="n">rdatom</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">mol</span> <span class="k">if</span> <span class="n">_has_correct_valence</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span> <span class="k">else</span> <span class="n">previous_mol</span></div>
+
+
+
+<div class="viewcode-block" id="change_metal_bonds_to_dative">
+<a class="viewcode-back" href="../../../../io/tools/rdkit.html#atomworks.io.tools.rdkit.change_metal_bonds_to_dative">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">change_metal_bonds_to_dative</span><span class="p">(</span>
+    <span class="n">mol</span><span class="p">:</span> <span class="n">Mol</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">qualifying_bond_types</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">}</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mol</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Change all qualifying bonds to a metal to be dative bonds (coordination bonds).</span>
+<span class="sd">    This is useful since most bonds between metals and organic atoms are dative.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - mol (Mol): The input RDKit molecule</span>
+<span class="sd">        - qualifying_bond_types (set[Chem.BondType]): The bond types to qualify as dative bonds.</span>
+<span class="sd">            By default, only single bonds qualify for conversion.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Mol: The molecule with metal bonds converted to dative bonds</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">RWMol</span><span class="p">):</span>
+        <span class="c1"># ... create a writable copy of the molecule if not writable in-place</span>
+        <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">RWMol</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+
+    <span class="n">metal_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">GetIdx</span><span class="p">()</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">()</span> <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">GetSymbol</span><span class="p">()</span> <span class="ow">in</span> <span class="n">METAL_ELEMENTS</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">metal_idx</span> <span class="ow">in</span> <span class="n">metal_indices</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">metal_idx</span><span class="p">)</span><span class="o">.</span><span class="n">GetBonds</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetBondType</span><span class="p">()</span> <span class="ow">in</span> <span class="n">qualifying_bond_types</span><span class="p">:</span>
+                <span class="n">other_idx</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetOtherAtomIdx</span><span class="p">(</span><span class="n">metal_idx</span><span class="p">)</span>
+                <span class="n">mol</span><span class="o">.</span><span class="n">RemoveBond</span><span class="p">(</span><span class="n">metal_idx</span><span class="p">,</span> <span class="n">other_idx</span><span class="p">)</span>
+                <span class="n">mol</span><span class="o">.</span><span class="n">AddBond</span><span class="p">(</span><span class="n">other_idx</span><span class="p">,</span> <span class="n">metal_idx</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">DATIVE</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mol</span></div>
+
+
+
+<div class="viewcode-block" id="fix_mol">
+<a class="viewcode-back" href="../../../../io/tools/rdkit.html#atomworks.io.tools.rdkit.fix_mol">[docs]</a>
+<span class="nd">@preserve_annotations</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">fix_mol</span><span class="p">(</span>
+    <span class="n">mol</span><span class="p">:</span> <span class="n">Mol</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">attempt_fix_by_calculating_charge_from_valence</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">attempt_fix_by_normalizing_like_chembl</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">attempt_fix_by_normalizing_like_rdkit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">in_place</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">raise_on_failure</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mol</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fix an RDKit molecule (in-place).</span>
+
+<span class="sd">    This function attempts to infer aromaticity, valences, implicit hydrogens, and</span>
+<span class="sd">    formal charges to result in a molecule that can be successfully sanitized. It</span>
+<span class="sd">    does **not** change the heavy atoms or bonds in the molecule.</span>
+
+<span class="sd">    # TODO:</span>
+<span class="sd">    #  - Add sanitization for aromatic systems with incorrect formal charges (that cannot be kekulized) (https://github.com/datamol-io/datamol/issues/231)</span>
+<span class="sd">    #    - This may be done via Hueckel&#39;s rule (https://en.wikipedia.org/wiki/H%C3%BCckel%27s_rule): Find all aromatic systems, compute Hueckel&#39;s rule,</span>
+<span class="sd">    #      if the number of pi electrons is not equal to 4*n+2, where n is an integer, then the aromatic system is not valid with the given formal charges.</span>
+<span class="sd">    #      Try to adjust the formal charges on non-carbon atoms to make the aromatic system valid.</span>
+<span class="sd">    #  - Add sanifix4 style sanitization (https://github.com/datamol-io/datamol/blob/0312388b956e2b4eeb72d791167cfdb873c7beab/datamol/_sanifix4.py#L114)</span>
+<span class="sd">    #  - Add attempt to fix valences by changing the bond orders (c.f. https://github.com/datamol-io/datamol)</span>
+<span class="sd">    #  - Add further ChEMBL style sanitization: https://github.com/chembl/ChEMBL_Structure_Pipeline/blob/master/chembl_structure_pipeline/standardizer.py#L33C1-L73C15</span>
+
+
+<span class="sd">    References:</span>
+<span class="sd">        `RDKit Molecular Sanitization &lt;https://www.rdkit.org/docs/RDKit_Book.html#molecular-sanitization&gt;`_</span>
+<span class="sd">        `ChEMBL Structure Pipeline &lt;https://github.com/chembl/ChEMBL_Structure_Pipeline/blob/master/chembl_structure_pipeline/standardizer.py&gt;`_</span>
+<span class="sd">        `datamol mol.py &lt;https://github.com/datamol-io/datamol/blob/0312388b956e2b4eeb72d791167cfdb873c7beab/datamol/mol.py&gt;`_</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">in_place</span><span class="p">:</span>
+        <span class="n">mol</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+
+    <span class="c1"># ... try to fixe the molecule by automatically performing some standardization</span>
+    <span class="c1">#  steps to infer formal charges and perceive aromaticity</span>
+    <span class="n">sanitize_result</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeMol</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">catchErrors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">sanitize_result</span> <span class="o">==</span> <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeFlags</span><span class="o">.</span><span class="n">SANITIZE_NONE</span><span class="p">:</span>
+        <span class="c1"># ... do not fix molecules that are not broken</span>
+        <span class="k">return</span> <span class="n">mol</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Molecule failed sanitization: </span><span class="si">{</span><span class="n">sanitize_result</span><span class="si">}</span><span class="s2">. Attempting to fix by inferring valences and aromaticity.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="c1"># ... recompute current valences</span>
+    <span class="n">mol</span><span class="o">.</span><span class="n">UpdatePropertyCache</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">attempt_fix_by_normalizing_like_chembl</span><span class="p">:</span>
+        <span class="c1"># ... perform normalization steps recommended by the ChEMBL team to &quot;rescue&quot;</span>
+        <span class="n">get_chembl_normalizer</span><span class="p">()</span><span class="o">.</span><span class="n">normalize_in_place</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+        <span class="c1"># ... recompute valences after attempted fixing</span>
+        <span class="n">mol</span><span class="o">.</span><span class="n">UpdatePropertyCache</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">sanitize_result</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeMol</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">catchErrors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sanitize_result</span> <span class="o">==</span> <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeFlags</span><span class="o">.</span><span class="n">SANITIZE_NONE</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">mol</span>
+
+    <span class="k">if</span> <span class="n">attempt_fix_by_normalizing_like_rdkit</span><span class="p">:</span>
+        <span class="c1"># ... perform normalization steps recommended by the RDKit team.</span>
+        <span class="n">rdMolStandardize</span><span class="o">.</span><span class="n">NormalizeInPlace</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+        <span class="c1"># ... recompute valences after attempted fixing</span>
+        <span class="n">mol</span><span class="o">.</span><span class="n">UpdatePropertyCache</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">sanitize_result</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeMol</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">catchErrors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sanitize_result</span> <span class="o">==</span> <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeFlags</span><span class="o">.</span><span class="n">SANITIZE_NONE</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">mol</span>
+
+    <span class="k">if</span> <span class="n">attempt_fix_by_calculating_charge_from_valence</span><span class="p">:</span>
+        <span class="n">fix_charge_based_on_valence</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+        <span class="n">mol</span><span class="o">.</span><span class="n">UpdatePropertyCache</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">sanitize_result</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeMol</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">catchErrors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sanitize_result</span> <span class="o">==</span> <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeFlags</span><span class="o">.</span><span class="n">SANITIZE_NONE</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">mol</span>
+
+    <span class="k">if</span> <span class="n">sanitize_result</span> <span class="o">!=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeFlags</span><span class="o">.</span><span class="n">SANITIZE_NONE</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not fix molecule, final sanitization result: </span><span class="si">{</span><span class="n">sanitize_result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">raise_on_failure</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolSanitizeException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Molecule failed sanitization: </span><span class="si">{</span><span class="n">sanitize_result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mol</span></div>
+
+
+
+<div class="viewcode-block" id="add_hydrogens">
+<a class="viewcode-back" href="../../../../io/tools/rdkit.html#atomworks.io.tools.rdkit.add_hydrogens">[docs]</a>
+<span class="nd">@preserve_annotations</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_hydrogens</span><span class="p">(</span><span class="n">mol</span><span class="p">:</span> <span class="n">Mol</span><span class="p">,</span> <span class="n">add_coords</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mol</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add explicit hydrogens to an RDKit molecule.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Chem</span><span class="o">.</span><span class="n">AddHs</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">addCoords</span><span class="o">=</span><span class="n">add_coords</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="remove_hydrogens">
+<a class="viewcode-back" href="../../../../io/tools/rdkit.html#atomworks.io.tools.rdkit.remove_hydrogens">[docs]</a>
+<span class="nd">@preserve_annotations</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_hydrogens</span><span class="p">(</span><span class="n">mol</span><span class="p">:</span> <span class="n">Mol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mol</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove explicit hydrogens from an RDKit molecule.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Chem</span><span class="o">.</span><span class="n">RemoveHs</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_morgan_fingerprint_from_rdkit_mol">
+<a class="viewcode-back" href="../../../../io/tools/rdkit.html#atomworks.io.tools.rdkit.get_morgan_fingerprint_from_rdkit_mol">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_morgan_fingerprint_from_rdkit_mol</span><span class="p">(</span><span class="n">mol</span><span class="p">:</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n_bits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2048</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ExplicitBitVect</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates the Morgan fingerprint for an RDKit molecule. Useful for calculating Tanimoto</span>
+<span class="sd">    similarity between molecules, e.g. for similarity searches.</span>
+
+<span class="sd">    Default parameters are based on the AF-3 supplementary material:</span>
+<span class="sd">        &gt; We measure ligand Tanimoto similarity using RDKit v.2023_03_3 Morgan fingerprints (radius 2, 2048 bits)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - mol (Chem.Mol): The RDKit molecule to generate a fingerprint for.</span>
+<span class="sd">        - radius (int): The radius of the fingerprint. Default is 2.</span>
+<span class="sd">        - n_bits (int): The number of bits in the fingerprint. Default is 2048.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        - ExplicitBitVect: The Morgan fingerprint for the input molecule.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        AF-3 Supplement</span>
+<span class="sd">        `RDKit Fingerprint Generator Tutorial &lt;https://greglandrum.github.io/rdkit-blog/posts/2023-01-18-fingerprint-generator-tutorial.html&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">morgan_fingerprint_generator</span> <span class="o">=</span> <span class="n">rdFingerprintGenerator</span><span class="o">.</span><span class="n">GetMorganGenerator</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">fpSize</span><span class="o">=</span><span class="n">n_bits</span><span class="p">)</span>
+    <span class="n">fingerprint</span> <span class="o">=</span> <span class="n">morgan_fingerprint_generator</span><span class="o">.</span><span class="n">GetFingerprint</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fingerprint</span></div>
+
+
+
+<div class="viewcode-block" id="smiles_to_rdkit">
+<a class="viewcode-back" href="../../../../io/tools/rdkit.html#atomworks.io.tools.rdkit.smiles_to_rdkit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">smiles_to_rdkit</span><span class="p">(</span><span class="n">smiles</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">sanitize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">generate_conformers</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mol</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate an RDKit molecule from a SMILES string.</span>
+
+<span class="sd">    This function creates an RDKit molecule object from a SMILES string,</span>
+<span class="sd">    performs sanitization, and perceives aromaticity.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - smiles (str): The SMILES string representing the molecule.</span>
+<span class="sd">        - sanitize (bool): Whether to sanitize the molecule.</span>
+<span class="sd">        - timeout (int): The timeout for the conformer generation.</span>
+<span class="sd">        - generate_conformers (bool): Whether to generate and minimize conformers.</span>
+<span class="sd">            If False, returns the molecule immediately after SMILES parsing.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        - rdkit.Chem.Mol: The RDKit molecule generated from the SMILES string.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        The returned molecule is sanitized and has aromaticity perceived.</span>
+<span class="sd">        If generate_conformers=True, the molecule will also have (implicit) hydrogens added</span>
+<span class="sd">        and conformers generated with UFF minimization.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">,</span> <span class="n">sanitize</span><span class="o">=</span><span class="n">sanitize</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolSanitizeException</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Failed to create molecule from SMILES string: </span><span class="si">{</span><span class="n">smiles</span><span class="si">}</span><span class="s2">. Try setting `sanitize=False`.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">generate_conformers</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mol</span>
+
+    <span class="c1"># Conformer generation parameters</span>
+    <span class="n">_optimizer_force_tol</span> <span class="o">=</span> <span class="mf">1e-3</span>
+    <span class="n">_max_its</span> <span class="o">=</span> <span class="mi">500</span>
+    <span class="n">_energy_tol</span> <span class="o">=</span> <span class="mf">1e-7</span>
+
+    <span class="c1"># ... add hydrogens (needed for accurate conformer generation)</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">AddHs</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+
+    <span class="c1"># ... generate a conformer to keep the stereochemistry encoded in the SMILES</span>
+    <span class="c1"># (We later re-generate a conformer; however, we need coordinates to ensure we preserve the stereochemistry)</span>
+    <span class="n">etkdg</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">ETKDGv3</span><span class="p">()</span>
+    <span class="n">etkdg</span><span class="o">.</span><span class="n">useRandomCoords</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">etkdg</span><span class="o">.</span><span class="n">optimizerForceTol</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">_optimizer_force_tol</span><span class="p">)</span>
+    <span class="n">etkdg</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+    <span class="n">AllChem</span><span class="o">.</span><span class="n">EmbedMolecule</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">etkdg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumConformers</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># (Extra step to ensure we get the best conformer)</span>
+        <span class="n">ff</span> <span class="o">=</span> <span class="n">AllChem</span><span class="o">.</span><span class="n">UFFGetMoleculeForceField</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+        <span class="n">ff</span><span class="o">.</span><span class="n">Initialize</span><span class="p">()</span>
+        <span class="n">ff</span><span class="o">.</span><span class="n">Minimize</span><span class="p">(</span><span class="n">energyTol</span><span class="o">=</span><span class="n">_energy_tol</span><span class="p">,</span> <span class="n">maxIts</span><span class="o">=</span><span class="n">_max_its</span><span class="p">)</span>
+
+    <span class="c1"># ... remove hydrogens again, since we no longer need them</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">remove_hydrogens</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mol</span></div>
+
+
+
+<div class="viewcode-block" id="sdf_to_rdkit">
+<a class="viewcode-back" href="../../../../io/tools/rdkit.html#atomworks.io.tools.rdkit.sdf_to_rdkit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sdf_to_rdkit</span><span class="p">(</span><span class="n">sdf_path_or_buffer</span><span class="p">:</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span> <span class="o">|</span> <span class="n">PathLike</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">sanitize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mol</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate an RDKit molecule from an SDF file or buffer.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - sdf_path_or_buffer (io.StringIO | PathLike): Either a path to an SDF file or a StringIO buffer containing</span>
+<span class="sd">            SDF-formatted molecule data</span>
+<span class="sd">        - sanitize (bool): Whether to sanitize the molecule during parsing. Default is True.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        - Mol: The RDKit molecule generated from the SDF data</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        - ValueError: If no valid molecule could be parsed from the input</span>
+<span class="sd">        - TypeError: If the input is neither a StringIO buffer nor a valid path</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sdf_path_or_buffer</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">PathLike</span><span class="p">):</span>
+        <span class="n">supplier</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">SDMolSupplier</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">sdf_path_or_buffer</span><span class="p">),</span> <span class="n">sanitize</span><span class="o">=</span><span class="n">sanitize</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sdf_path_or_buffer</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">):</span>
+        <span class="n">supplier</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">SDMolSupplier</span><span class="p">(</span><span class="n">sdf_path_or_buffer</span><span class="p">,</span> <span class="n">sanitize</span><span class="o">=</span><span class="n">sanitize</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Input must be either a path or a StringIO buffer&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">mol</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">supplier</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No valid molecule found in SDF input&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">mol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Failed to parse molecule from SDF input&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">mol</span></div>
+
+
+
+<div class="viewcode-block" id="atom_array_from_rdkit">
+<a class="viewcode-back" href="../../../../io/tools/rdkit.html#atomworks.io.tools.rdkit.atom_array_from_rdkit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">atom_array_from_rdkit</span><span class="p">(</span>
+    <span class="n">mol</span><span class="p">:</span> <span class="n">Mol</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">set_coord_if_available</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">conformer_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">remove_hydrogens</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">remove_inferred_atoms</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an RDKit molecule to a Biotite AtomArray object.</span>
+
+<span class="sd">    This function takes an RDKit Mol object and converts it into a Biotite AtomArray object,</span>
+<span class="sd">    matching and preserving the (optional) atom-level annotations in `mol._annotations` and</span>
+<span class="sd">    bond information.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - mol: The RDKit molecule to convert.</span>
+<span class="sd">        - set_coord_if_available: Whether to set the coordinates from the RDKit molecule if</span>
+<span class="sd">            a conformer is available.</span>
+<span class="sd">        - conformer_id: The conformer ID to use for coordinates. If None, the first</span>
+<span class="sd">          conformer is used.</span>
+<span class="sd">        - remove_hydrogens: Whether to remove any explicit hydrogen atoms.</span>
+<span class="sd">        - remove_inferred_atoms: Whether to remove any atoms that do not carry the `rdkit_atom_id` annotation.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        - An AtomArray containing the atoms and bonds from the input Mol object.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; mol = Chem.MolFromSmiles(&quot;CCO&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; atom_array = atom_array_from_rdkit(mol)</span>
+<span class="sd">        &gt;&gt;&gt; print(atom_array)</span>
+<span class="sd">        AtomArray([Atom(element=&#39;6&#39;, coord=array([0.0, 0.0, 0.0]), ...)])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+
+    <span class="n">n_atoms</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">()</span>
+
+    <span class="c1"># Get coordinates (if available)</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">mol</span><span class="o">.</span><span class="n">GetNumAtoms</span><span class="p">(),</span> <span class="mi">3</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="n">n_conformers</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumConformers</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">set_coord_if_available</span> <span class="ow">and</span> <span class="n">n_conformers</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">conformer_id</span> <span class="o">=</span> <span class="n">conformer_id</span> <span class="k">if</span> <span class="n">conformer_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="n">conformer_id</span> <span class="o">&gt;=</span> <span class="n">n_conformers</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Conformer ID </span><span class="si">{</span><span class="n">conformer_id</span><span class="si">}</span><span class="s2"> out of range for molecule with </span><span class="si">{</span><span class="n">n_conformers</span><span class="si">}</span><span class="s2"> conformers&quot;</span><span class="p">)</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetConformer</span><span class="p">(</span><span class="n">conformer_id</span><span class="p">)</span><span class="o">.</span><span class="n">GetPositions</span><span class="p">()</span>
+
+    <span class="c1"># Set atoms</span>
+    <span class="n">atoms</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">element_counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">rdatom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mol</span><span class="o">.</span><span class="n">GetAtoms</span><span class="p">()):</span>
+        <span class="n">element_occurence</span> <span class="o">=</span> <span class="n">element_counter</span><span class="p">[</span><span class="n">rdatom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()]</span>
+        <span class="n">element_counter</span><span class="p">[</span><span class="n">rdatom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">struc</span><span class="o">.</span><span class="n">Atom</span><span class="p">(</span>
+                <span class="n">element</span><span class="o">=</span><span class="n">rdatom</span><span class="o">.</span><span class="n">GetSymbol</span><span class="p">(),</span>
+                <span class="n">atomic_number</span><span class="o">=</span><span class="n">rdatom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">(),</span>
+                <span class="n">coord</span><span class="o">=</span><span class="n">coords</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
+                <span class="n">charge</span><span class="o">=</span><span class="n">rdatom</span><span class="o">.</span><span class="n">GetFormalCharge</span><span class="p">(),</span>
+                <span class="n">hyb</span><span class="o">=</span><span class="n">RDKIT_HYBRIDIZATION_TO_INT</span><span class="p">[</span><span class="n">rdatom</span><span class="o">.</span><span class="n">GetHybridization</span><span class="p">()],</span>
+                <span class="n">nhyd</span><span class="o">=</span><span class="n">rdatom</span><span class="o">.</span><span class="n">GetTotalNumHs</span><span class="p">(),</span>
+                <span class="n">hvydeg</span><span class="o">=</span><span class="n">rdatom</span><span class="o">.</span><span class="n">GetDegree</span><span class="p">()</span> <span class="o">-</span> <span class="n">rdatom</span><span class="o">.</span><span class="n">GetTotalNumHs</span><span class="p">(),</span>
+                <span class="n">rdkit_atom_id</span><span class="o">=</span><span class="n">rdatom</span><span class="o">.</span><span class="n">GetIntProp</span><span class="p">(</span><span class="s2">&quot;rdkit_atom_id&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">rdatom</span><span class="o">.</span><span class="n">HasProp</span><span class="p">(</span><span class="s2">&quot;rdkit_atom_id&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">hetero</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># per default, set all atoms to be hetero atoms</span>
+                <span class="n">atom_name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rdatom</span><span class="o">.</span><span class="n">GetSymbol</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}{</span><span class="n">element_occurence</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>  <span class="c1"># per default, set atom name to be element symbol + index</span>
+                <span class="n">res_name</span><span class="o">=</span><span class="n">UNKNOWN_LIGAND</span><span class="p">,</span>  <span class="c1"># per default, set residue name to UNL (unknown ligand)</span>
+                <span class="n">chiral_tag</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">rdatom</span><span class="o">.</span><span class="n">GetChiralTag</span><span class="p">()),</span>
+                <span class="n">is_aromatic</span><span class="o">=</span><span class="n">rdatom</span><span class="o">.</span><span class="n">GetIsAromatic</span><span class="p">(),</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="n">atom_array</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+
+    <span class="c1"># Set bonds</span>
+    <span class="c1"># ... kekulize to ensure aromaticity is perceived correctly and assign integer bond orders (aromatic flag is not cleared!)</span>
+    <span class="n">Chem</span><span class="o">.</span><span class="n">Kekulize</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="c1"># ... create bond list with integer bond orders</span>
+    <span class="n">bond_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetBonds</span><span class="p">():</span>
+        <span class="n">rdkit_bond_type</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetBondType</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">rdkit_bond_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">CONVERTIBLE_RDKIT_BOND_TYPES</span><span class="p">:</span>
+            <span class="c1"># ... skip undesired bonds, e.g. dative bonds (=metal coordination bonds)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Skipping </span><span class="si">{</span><span class="n">rdkit_bond_type</span><span class="si">=}</span><span class="s2">. Not in convertible bond types.&quot;</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="n">begin_atom_idx</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetBeginAtomIdx</span><span class="p">()</span>
+        <span class="n">end_atom_idx</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetEndAtomIdx</span><span class="p">()</span>
+        <span class="n">is_bond_aromatic</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">GetIsAromatic</span><span class="p">()</span>
+        <span class="c1"># ... after kekulize, order is guaranteed to be integer</span>
+        <span class="n">bond_type</span> <span class="o">=</span> <span class="n">RDKIT_BOND_TYPE_TO_BIOTITE</span><span class="p">[(</span><span class="n">bond</span><span class="o">.</span><span class="n">GetBondType</span><span class="p">(),</span> <span class="n">is_bond_aromatic</span><span class="p">)]</span>
+        <span class="n">bond_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">begin_atom_idx</span><span class="p">,</span> <span class="n">end_atom_idx</span><span class="p">,</span> <span class="n">bond_type</span><span class="p">))</span>
+    <span class="n">atom_array</span><span class="o">.</span><span class="n">bonds</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondList</span><span class="p">(</span><span class="n">n_atoms</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bond_list</span><span class="p">))</span>
+
+    <span class="c1"># Set extra annotations</span>
+    <span class="n">annotations</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">_annotations</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="s2">&quot;_annotations&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">annotations</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Create mapping of array idx &lt;&gt; annotation idx via the openbabel atom id:</span>
+        <span class="n">_rdkit_id_to_annotation_idx</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">rdkit_atom_id</span><span class="p">:</span> <span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">rdkit_atom_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">annotations</span><span class="p">[</span><span class="s2">&quot;rdkit_atom_id&quot;</span><span class="p">])</span>
+        <span class="p">}</span>
+
+        <span class="n">array_idx_to_annotation_idx</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">rdkit_atom_id</span> <span class="ow">in</span> <span class="n">_rdkit_id_to_annotation_idx</span><span class="p">:</span>
+                <span class="n">array_idx_to_annotation_idx</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">idx</span><span class="p">,</span> <span class="n">_rdkit_id_to_annotation_idx</span><span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">rdkit_atom_id</span><span class="p">]))</span>
+        <span class="n">array_idx_to_annotation_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">array_idx_to_annotation_idx</span><span class="p">)</span>
+
+        <span class="c1"># Exit if there are no annotations to set</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">array_idx_to_annotation_idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;No rdkit atoms match any annotation. You may want to check that you are &quot;</span>
+                <span class="s2">&quot;using the @preserve_annotations decorator correctly. And set the &quot;</span>
+                <span class="s2">&quot;rdkit pickle options to preserve properties. Returning.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">atom_array</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">annotations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;coord&quot;</span><span class="p">,</span> <span class="s2">&quot;charge&quot;</span><span class="p">]:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Found built-in annotation: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> as custom annotation. &quot;</span>
+                    <span class="s2">&quot;Using re-calculated values from RDKit instead.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">unsignedinteger</span><span class="p">):</span>
+                    <span class="c1"># Use max value for unsigned integers since they can&#39;t hold -1</span>
+                    <span class="n">default</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">max</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">default</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">):</span>
+                <span class="n">default</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">str_</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">default</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                <span class="n">default</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported annotation dtype: </span><span class="si">{</span><span class="n">val</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> for annotation: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">. Skipping.&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">),</span> <span class="n">default</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">val</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">vals</span><span class="p">[</span><span class="n">array_idx_to_annotation_idx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">annotations</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">array_idx_to_annotation_idx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]</span>
+            <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">vals</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">remove_hydrogens</span><span class="p">:</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">not_isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">element</span><span class="p">,</span> <span class="n">HYDROGEN_LIKE_SYMBOLS</span><span class="p">)]</span>
+
+    <span class="k">if</span> <span class="n">remove_inferred_atoms</span><span class="p">:</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">atom_array</span><span class="o">.</span><span class="n">rdkit_atom_id</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">atom_array</span></div>
+
+
+
+<div class="viewcode-block" id="atom_array_to_rdkit">
+<a class="viewcode-back" href="../../../../io/tools/rdkit.html#atomworks.io.tools.rdkit.atom_array_to_rdkit">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">atom_array_to_rdkit</span><span class="p">(</span>
+    <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">set_coord</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">hydrogen_policy</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;infer&quot;</span><span class="p">,</span> <span class="s2">&quot;remove&quot;</span><span class="p">,</span> <span class="s2">&quot;keep&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;keep&quot;</span><span class="p">,</span>
+    <span class="n">annotations_to_keep</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">BIOTITE_DEFAULT_ANNOTATIONS</span><span class="p">,</span>
+    <span class="n">sanitize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">attempt_fixing_corrupted_molecules</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">assume_metal_bonds_are_dative</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mol</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate an RDKit molecule from a Biotite AtomArray object.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        - atom_array (biotite.structure.AtomArray): The Biotite AtomArray to convert.</span>
+<span class="sd">        - set_coord (bool | None): Whether to set atomic coordinates in the RDKit molecule.</span>
+<span class="sd">            If None, coordinates are only set if they are not NaN.</span>
+<span class="sd">        - hydrogen_policy (Literal[&quot;infer&quot;, &quot;remove&quot;, &quot;keep&quot;]): Whether to infer hydrogens in the RDKit molecule.</span>
+<span class="sd">        - annotations_to_keep (list[str]): List of atom annotations to preserve from the AtomArray.</span>
+<span class="sd">        - sanitize (bool): Whether to sanitize the molecule during conversion. Default is True.</span>
+<span class="sd">        - attempt_fixing_corrupted_molecules (bool): Whether to attempt fixing corrupted molecules during conversion. Default is True.</span>
+<span class="sd">        - assume_metal_bonds_are_dative (bool): Whether to assume that all bonds with metals are dative bonds. Default is False.</span>
+<span class="sd">            WARNING: This messes up RDKit conformer generation.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        - rdkit.Chem.Mol: RDKit Molecule generated from the AtomArray.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Aromaticity, hybridization states, and other properties are automatically</span>
+<span class="sd">        perceived by RDKit&#39;s SanitizeMol during the conversion process.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Initialize the RDKit molecule; copy AtomArray to avoid modifying the original</span>
+    <span class="n">atom_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">RWMol</span><span class="p">()</span>
+
+    <span class="c1"># Set atoms</span>
+    <span class="c1"># ... we use an internal `rdkit_atom_id` property to keep track of atoms that were originally</span>
+    <span class="c1">#     in the AtomArray from atoms that might have been added by RDKit implicitly later</span>
+    <span class="c1">#     (implicit hydrogens)</span>
+    <span class="n">rdkit_atom_ids</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">hydrogen_policy</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">,</span> <span class="s2">&quot;remove&quot;</span><span class="p">):</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">remove_hydrogens</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">hydrogen_policy</span> <span class="o">==</span> <span class="s2">&quot;keep&quot;</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid hydrogen policy: </span><span class="si">{</span><span class="n">hydrogen_policy</span><span class="si">}</span><span class="s2">. Must be &#39;infer&#39;, &#39;remove&#39;, or &#39;keep&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">atom_id</span><span class="p">,</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atom_array</span><span class="p">):</span>
+        <span class="n">atomic_number</span> <span class="o">=</span> <span class="n">element_to_atomic_number</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">element</span><span class="p">)</span>
+
+        <span class="n">rdatom</span> <span class="o">=</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Atom</span><span class="p">(</span><span class="n">atomic_number</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">atom</span><span class="p">,</span> <span class="s2">&quot;charge&quot;</span><span class="p">):</span>
+            <span class="c1"># ... set formal charge if available (otherwise RDKit will assume it is 0</span>
+            <span class="c1">#  and assign a charge state in SanitizeMol if it is required to satisfy</span>
+            <span class="c1">#  valence constraints)</span>
+            <span class="n">rdatom</span><span class="o">.</span><span class="n">SetFormalCharge</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">charge</span><span class="p">))</span>
+
+        <span class="n">rdatom</span><span class="o">.</span><span class="n">SetIntProp</span><span class="p">(</span><span class="s2">&quot;rdkit_atom_id&quot;</span><span class="p">,</span> <span class="n">atom_id</span><span class="p">)</span>
+        <span class="n">rdatom</span><span class="o">.</span><span class="n">SetProp</span><span class="p">(</span><span class="s2">&quot;atom_name&quot;</span><span class="p">,</span> <span class="n">atom</span><span class="o">.</span><span class="n">atom_name</span><span class="p">)</span>
+        <span class="n">rdkit_atom_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom_id</span><span class="p">)</span>
+        <span class="n">mol</span><span class="o">.</span><span class="n">AddAtom</span><span class="p">(</span><span class="n">rdatom</span><span class="p">)</span>
+
+    <span class="c1"># Set coordinates first</span>
+    <span class="n">set_coord</span> <span class="o">=</span> <span class="n">set_coord</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">set_coord</span><span class="p">:</span>
+        <span class="c1"># ... add conformer (at id 0)</span>
+        <span class="n">conf_id</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">AddConformer</span><span class="p">(</span><span class="n">Chem</span><span class="o">.</span><span class="n">Conformer</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)),</span> <span class="n">assignId</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># ... fill in coordinates</span>
+        <span class="k">for</span> <span class="n">atom_id</span><span class="p">,</span> <span class="n">atom_coord</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">):</span>
+            <span class="n">mol</span><span class="o">.</span><span class="n">GetConformer</span><span class="p">(</span><span class="n">conf_id</span><span class="p">)</span><span class="o">.</span><span class="n">SetAtomPosition</span><span class="p">(</span><span class="n">atom_id</span><span class="p">,</span> <span class="n">atom_coord</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+
+    <span class="c1"># Set bonds from existing bonds in atom_array</span>
+    <span class="n">_should_be_aromatic</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">bonds</span><span class="p">):</span>
+        <span class="c1"># Use existing bonds from atom_array</span>
+        <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">as_array</span><span class="p">():</span>
+            <span class="n">atom1</span><span class="p">,</span> <span class="n">atom2</span><span class="p">,</span> <span class="n">bond_type</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">bond</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">bond_type</span> <span class="o">==</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">ANY</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Encountered BondType.ANY. Interpreting as single bond.&quot;</span><span class="p">)</span>
+
+            <span class="n">bond_order</span><span class="p">,</span> <span class="n">bond_is_aromatic</span> <span class="o">=</span> <span class="n">BIOTITE_BOND_TYPE_TO_RDKIT</span><span class="p">[</span><span class="n">bond_type</span><span class="p">]</span>
+            <span class="n">mol</span><span class="o">.</span><span class="n">AddBond</span><span class="p">(</span><span class="n">atom1</span><span class="p">,</span> <span class="n">atom2</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">bond_order</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">bond_is_aromatic</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">attempt_fixing_corrupted_molecules</span><span class="p">:</span>
+                <span class="n">mol</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">atom1</span><span class="p">)</span><span class="o">.</span><span class="n">SetIsAromatic</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">mol</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span><span class="n">atom2</span><span class="p">)</span><span class="o">.</span><span class="n">SetIsAromatic</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="n">_should_be_aromatic</span><span class="o">.</span><span class="n">union</span><span class="p">({</span><span class="n">atom1</span><span class="p">,</span> <span class="n">atom2</span><span class="p">})</span>
+
+    <span class="c1"># Assign stereochemistry (requires 3D coordinates and bonds)</span>
+    <span class="k">if</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetNumConformers</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">Chem</span><span class="o">.</span><span class="n">AssignStereochemistryFrom3D</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Failed to assign stereochemistry to molecule.&quot;</span><span class="p">)</span>
+            <span class="k">pass</span>
+
+    <span class="c1"># Clean up organometallics:</span>
+    <span class="c1"># TODO: The CCD unfortunately only supplies all metal bonds as single bonds. For now we assume</span>
+    <span class="c1">#  all bonds with metals are coordination bonds in the PDB. This will</span>
+    <span class="c1">#  likely be true for most ligands but not all. Revisit this later.</span>
+    <span class="c1"># Change all bonds to a metal to be dative bonds (= coordination bonds)</span>
+    <span class="k">if</span> <span class="n">assume_metal_bonds_are_dative</span><span class="p">:</span>
+        <span class="n">mol</span> <span class="o">=</span> <span class="n">change_metal_bonds_to_dative</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">attempt_fixing_corrupted_molecules</span><span class="p">:</span>
+        <span class="c1"># ... fix_mol has no effect if the molecule is already sanitized</span>
+        <span class="n">mol</span> <span class="o">=</span> <span class="n">fix_mol</span><span class="p">(</span>
+            <span class="n">mol</span><span class="p">,</span>
+            <span class="n">attempt_fix_by_normalizing_like_chembl</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">attempt_fix_by_normalizing_like_rdkit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">attempt_fix_by_calculating_charge_from_valence</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">in_place</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">raise_on_failure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Clean up the molecule and infer various properties</span>
+    <span class="c1"># (We always sanitize when attempting to fix corrupted molecules)</span>
+    <span class="k">if</span> <span class="n">sanitize</span> <span class="ow">or</span> <span class="n">attempt_fixing_corrupted_molecules</span><span class="p">:</span>
+        <span class="c1"># ... verify validity of the molecule (according to Lewis octet rule)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">Chem</span><span class="o">.</span><span class="n">SanitizeMol</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolSanitizeException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Failed final sanitzation of molecule with error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">! It may not satisfy the octet rule, for example. Catching error and ignoring...&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># ... verify that atoms that are labelled as `_should_be_aromatic` are aromatic</span>
+        <span class="k">for</span> <span class="n">atom_idx</span> <span class="ow">in</span> <span class="n">_should_be_aromatic</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetAtomWithIdx</span><span class="p">(</span>
+                <span class="n">atom_idx</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">GetIsAromatic</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">&quot;Atom </span><span class="si">{</span><span class="n">atom_idx</span><span class="si">}</span><span class="s2"> is not aromatic but was labelled as aromatic.&quot;</span>
+
+    <span class="c1"># Turn into a non-editable molecule</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">GetMol</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">RWMol</span><span class="p">)</span> <span class="k">else</span> <span class="n">mol</span>
+
+    <span class="c1"># Attach custom atom-level annotations from the atom array</span>
+    <span class="n">mol</span><span class="o">.</span><span class="n">_annotations</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;rdkit_atom_id&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rdkit_atom_ids</span><span class="p">)}</span>
+    <span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">annotations_to_keep</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">():</span>
+            <span class="n">mol</span><span class="o">.</span><span class="n">_annotations</span><span class="p">[</span><span class="n">annotation</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">_annot</span><span class="p">[</span><span class="n">annotation</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">hydrogen_policy</span> <span class="o">==</span> <span class="s2">&quot;infer&quot;</span><span class="p">:</span>
+        <span class="n">mol</span> <span class="o">=</span> <span class="n">add_hydrogens</span><span class="p">(</span><span class="n">mol</span><span class="p">,</span> <span class="n">add_coords</span><span class="o">=</span><span class="n">set_coord</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mol</span></div>
+
+
+
+<div class="viewcode-block" id="ccd_code_to_rdkit">
+<a class="viewcode-back" href="../../../../io/tools/rdkit.html#atomworks.io.tools.rdkit.ccd_code_to_rdkit">[docs]</a>
+<span class="nd">@immutable_lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">ccd_code_to_rdkit</span><span class="p">(</span>
+    <span class="n">ccd_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">ccd_mirror_path</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">CCD_MIRROR_PATH</span><span class="p">,</span>
+    <span class="n">hydrogen_policy</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;infer&quot;</span><span class="p">,</span> <span class="s2">&quot;remove&quot;</span><span class="p">,</span> <span class="s2">&quot;keep&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;keep&quot;</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">atom_array_to_rdkit_kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mol</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a CCD residue name to an RDKit molecule.</span>
+
+<span class="sd">    This function retrieves an RDKit molecule corresponding to a given CCD residue name.</span>
+<span class="sd">    If `ccd_dir` is not provided, Biotite&#39;s internal CCD is used. Otherwise, the specified local CCD directory is used.</span>
+
+<span class="sd">    By default, the function returns the &#39;ideal&#39; conformer from the CCD entry.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ccd_code (str): The CCD code to convert. I.e, &#39;ALA&#39;, &#39;GLY&#39;, &#39;9RH&#39;, etc.</span>
+<span class="sd">        ccd_mirror_path (PathLike): Path to the local CCD directory. If None, Biotite&#39;s internal CCD is used.</span>
+<span class="sd">        hydrogen_policy (Literal[&quot;infer&quot;, &quot;remove&quot;, &quot;keep&quot;]): Whether to infer hydrogens in the RDKit molecule.</span>
+<span class="sd">        **atom_array_to_rdkit_kwargs: Additional keyword arguments passed to the `atom_array_to_rdkit` function.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Mol: The RDKit molecule corresponding to the given residue name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">atom_array</span> <span class="o">=</span> <span class="n">atom_array_from_ccd_code</span><span class="p">(</span><span class="n">ccd_code</span><span class="p">,</span> <span class="n">ccd_mirror_path</span><span class="p">)</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">atom_array_to_rdkit</span><span class="p">(</span>
+        <span class="n">atom_array</span><span class="p">,</span>
+        <span class="n">set_coord</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># ... coordinate needed for stereochemistry assignment</span>
+        <span class="n">hydrogen_policy</span><span class="o">=</span><span class="n">hydrogen_policy</span><span class="p">,</span>  <span class="c1"># ... hydrogens needed for stereochemistry assignment</span>
+        <span class="o">**</span><span class="n">atom_array_to_rdkit_kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># ... assign stereochemistry</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Chem</span><span class="o">.</span><span class="n">AssignStereochemistryFrom3D</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to assign stereochemistry to </span><span class="si">{</span><span class="n">ccd_code</span><span class="si">}</span><span class="s2">. Returning unstereochem molecule.&quot;</span><span class="p">)</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">mol</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
