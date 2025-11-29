@@ -747,7 +747,7 @@
 <span class="sd">        `struct_conn.conn_type_id &lt;https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/Items/_struct_conn.conn_type_id.html&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">match_or_wildcard</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">match_or_wildcard</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">array</span> <span class="o">==</span> <span class="n">value</span>
@@ -834,7 +834,7 @@
         <span class="c1"># For non-polymers, we use the auth_seq_id if available and valid (i.e., not &quot;.&quot; or &quot;?&quot;); otherwise we use the label_seq_id</span>
         <span class="c1"># (Required to avoid ambiguity, since if using `label` only we may have multiple residue within a</span>
         <span class="c1"># chain with the same label_seq_id and the same res_name; see: 6MUB)</span>
-        
+
         <span class="n">res_id1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
             <span class="n">row</span><span class="p">[</span><span class="s2">&quot;ptnr1_label_seq_id&quot;</span><span class="p">]</span>
             <span class="k">if</span> <span class="p">((</span><span class="n">chain_id1</span> <span class="ow">in</span> <span class="n">relevant_polymer_chain_identifiers</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;ptnr1_auth_seq_id&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">row</span><span class="p">))</span>

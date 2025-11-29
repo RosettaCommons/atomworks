@@ -305,7 +305,7 @@ For our purposes, note that we have a `path` column that points to a `.cif` file
 
 **NOTE**: Because a given PDB ID may contain many interfaces and thus may appear multiple times in our dataset, we must also incorporate the `assembly_id` and the `pn_unit_iids` of the two interacting chains within the `example_id`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 226-242
+.. GENERATED FROM PYTHON SOURCE LINES 226-240
 
 .. code-block:: Python
 
@@ -317,16 +317,14 @@ For our purposes, note that we have a `path` column that points to a `.cif` file
         data=interfaces_df,
         name="interfaces_dataset",
         # We use a pre-built loader that takes in a list of column names and returns a loader function
-        loader=create_loader_with_query_pn_units(
-            pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"]
-        ),
+        loader=create_loader_with_query_pn_units(pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"]),
         transform=pipe,
     )
 
     print(f"Created PandasDataset with {len(dataset)} examples")
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 243-249
+.. GENERATED FROM PYTHON SOURCE LINES 241-247
 
 Related Examples
 ---------------
