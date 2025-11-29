@@ -56,7 +56,7 @@ The simplest way to use AtomWorks with a Dataset is to create a `Dataset` and `S
 
 **NOTE**: All AtomWorks Datasets require a `name` attribute to support many of the logging/debugging features that are supplied out-of-the-box.
 
-.. GENERATED FROM PYTHON SOURCE LINES 37-45
+.. GENERATED FROM PYTHON SOURCE LINES 37-46
 
 .. code-block:: Python
 
@@ -65,15 +65,16 @@ The simplest way to use AtomWorks with a Dataset is to create a `Dataset` and `S
 
     # To setup the test pack, if not already, run `atomworks setup tests`
     dataset = FileDataset.from_directory(
-        directory="../../tests/data/ml/af2_distillation/cif", name="example_directory_dataset"
+        directory="../../tests/data/ml/af2_distillation/cif",
+        name="example_directory_dataset",
     )
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 46-47
+.. GENERATED FROM PYTHON SOURCE LINES 47-48
 
 Let's explore the dataset a tiny bit.
 
-.. GENERATED FROM PYTHON SOURCE LINES 47-57
+.. GENERATED FROM PYTHON SOURCE LINES 48-58
 
 .. code-block:: Python
 
@@ -88,12 +89,12 @@ Let's explore the dataset a tiny bit.
         print(f"Example {i + 1}: {example}")
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 58-76
+.. GENERATED FROM PYTHON SOURCE LINES 59-77
 
 Understanding Dataset Requirements
 ----------------------------------
 
-At a high level, to train models with AtomWorks, we need typically need a Dataset that:
+At a high level, to train models with AtomWorks, we typically need a Dataset that:
 
 (1) Takes as input an item index and returns the corresponding example information; typically includes:
     a. Path to a structural file saved on disk (`/path/to/dataset/my_dataset_0.cif`)
@@ -109,7 +110,7 @@ To accomplish (2), we can additionally pass a loading function at dataset initia
 
 In most cases, this will involve using `parse` or `load_any` from `AtomWorks.io` to build an `AtomArray`, which is the common language of our `Transform` library.
 
-.. GENERATED FROM PYTHON SOURCE LINES 76-92
+.. GENERATED FROM PYTHON SOURCE LINES 77-95
 
 .. code-block:: Python
 
@@ -124,20 +125,22 @@ In most cases, this will involve using `parse` or `load_any` from `AtomWorks.io`
 
 
     dataset_with_loading_fn = FileDataset.from_directory(
-        directory="../../tests/data/pdb", name="example_pdb_dataset", loader=simple_loading_fn
+        directory="../../tests/data/pdb",
+        name="example_pdb_dataset",
+        loader=simple_loading_fn,
     )
     output = dataset_with_loading_fn[1]
     print(f"Output AtomArray has {len(output['atom_array'])} atoms!")
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 93-97
+.. GENERATED FROM PYTHON SOURCE LINES 96-100
 
 Adding Transform Pipelines
 ---------------------------
 
 Next up is adding in a pipeline. Let's create a simple one with a dramatic crop.
 
-.. GENERATED FROM PYTHON SOURCE LINES 97-119
+.. GENERATED FROM PYTHON SOURCE LINES 100-122
 
 .. code-block:: Python
 
@@ -164,28 +167,31 @@ Next up is adding in a pipeline. Let's create a simple one with a dramatic crop.
     )
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 120-121
+.. GENERATED FROM PYTHON SOURCE LINES 123-124
 
 Just like with the loading function, we can also pass a composed `Transform` pipeline to our datasets.
 
-.. GENERATED FROM PYTHON SOURCE LINES 121-126
+.. GENERATED FROM PYTHON SOURCE LINES 124-132
 
 .. code-block:: Python
 
 
     dataset_with_loading_fn_and_transforms = FileDataset.from_directory(
-        directory="../../tests/data/pdb", name="example_pdb_dataset", loader=simple_loading_fn, transform=pipe
+        directory="../../tests/data/pdb",
+        name="example_pdb_dataset",
+        loader=simple_loading_fn,
+        transform=pipe,
     )
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 127-131
+.. GENERATED FROM PYTHON SOURCE LINES 133-137
 
 Visualizing the Results
 ------------------------
 
 Let's visualize the result of our transform pipeline:
 
-.. GENERATED FROM PYTHON SOURCE LINES 131-140
+.. GENERATED FROM PYTHON SOURCE LINES 137-146
 
 .. code-block:: Python
 
@@ -199,12 +205,12 @@ Let's visualize the result of our transform pipeline:
     view(pipeline_output["atom_array"])
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 141-143
+.. GENERATED FROM PYTHON SOURCE LINES 147-149
 
 .. figure:: /_static/examples/dataset_exploration_01.png
   :alt: Cropped structure visualization
 
-.. GENERATED FROM PYTHON SOURCE LINES 145-150
+.. GENERATED FROM PYTHON SOURCE LINES 151-156
 
 And indeed, we have a cropped example!
 
@@ -212,7 +218,7 @@ We will then sample uniformly (with or without replacement) from this dataset du
 
 The only "gotcha" outside of normal PyTorch sampling is that you'll need to implement a default collate function (which could simply be the identity) so long as your output dictionary contains an `AtomArray`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 150-166
+.. GENERATED FROM PYTHON SOURCE LINES 156-172
 
 .. code-block:: Python
 
@@ -233,11 +239,11 @@ The only "gotcha" outside of normal PyTorch sampling is that you'll need to impl
             break
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 167-168
+.. GENERATED FROM PYTHON SOURCE LINES 173-174
 
 For more complicated sampling strategies, including distributed sampling for multi-GPU training, see the API documentation for `samplers.py`, and the tests in `test_samplers.py`
 
-.. GENERATED FROM PYTHON SOURCE LINES 170-178
+.. GENERATED FROM PYTHON SOURCE LINES 176-184
 
 Tabular Datasets
 =================
@@ -248,7 +254,7 @@ We thus support instantiating datasets from tabular sources stored on disk.
 
 We have implemented a `PandasDataset` class for this purpose; however, any tabular format (e.g., `PolarsDataset`) could be similarly implemented without difficulty should the need arise (PR's welcome!)
 
-.. GENERATED FROM PYTHON SOURCE LINES 180-194
+.. GENERATED FROM PYTHON SOURCE LINES 186-200
 
 PandasDataset
 --------------
@@ -265,11 +271,11 @@ There's also a few other `PandasDataset`-specific arguments to note:
 - `filters`: Optional list of pandas query strings to filter the data. Applied in order during initialization.
 - `columns_to_load`: Optional list of column names to load when reading from a file. If None, all columns are loaded. Can dramatically reduce memory usage and load time if loading from a columnar format like Parquet.
 
-.. GENERATED FROM PYTHON SOURCE LINES 196-197
+.. GENERATED FROM PYTHON SOURCE LINES 202-203
 
 We will start by exploring an example metadata dataframe, then load it into a `PandasDataset`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 197-207
+.. GENERATED FROM PYTHON SOURCE LINES 203-213
 
 .. code-block:: Python
 
@@ -284,7 +290,7 @@ We will start by exploring an example metadata dataframe, then load it into a `P
     print(interfaces_df.head())
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 208-218
+.. GENERATED FROM PYTHON SOURCE LINES 214-224
 
 Understanding the Metadata
 ---------------------------
@@ -297,7 +303,7 @@ For our purposes, note that we have a `path` column that points to a `.cif` file
 
 **NOTE**: Because a given PDB ID may contain many interfaces and thus may appear multiple times in our dataset, we must also incorporate the `assembly_id` and the `pn_unit_iids` of the two interacting chains within the `example_id`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 218-232
+.. GENERATED FROM PYTHON SOURCE LINES 224-240
 
 .. code-block:: Python
 
@@ -309,14 +315,16 @@ For our purposes, note that we have a `path` column that points to a `.cif` file
         data=interfaces_df,
         name="interfaces_dataset",
         # We use a pre-built loader that takes in a list of column names and returns a loader function
-        loader=create_loader_with_query_pn_units(pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"]),
+        loader=create_loader_with_query_pn_units(
+            pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"]
+        ),
         transform=pipe,
     )
 
     print(f"Created PandasDataset with {len(dataset)} examples")
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 233-239
+.. GENERATED FROM PYTHON SOURCE LINES 241-247
 
 Related Examples
 ---------------

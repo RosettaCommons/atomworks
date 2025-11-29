@@ -94,7 +94,7 @@ resolved_atom_array = assembly[assembly.occupancy > 0]
 cell_list = struc.CellList(resolved_atom_array, cell_size=5.0)
 
 near_atoms = cell_list.get_atoms(resolved_atom_array[0].coord, radius=4)
-print(f"Number of atoms within 7 Å of the first atom: {near_atoms.shape[0]}")
+print(f"Number of atoms within 4 Å of the first atom: {near_atoms.shape[0]}")
 print(f"Atom indices: {near_atoms}")
 print(f"Chain IDs: {resolved_atom_array.chain_id[near_atoms]}")
 print(f"Residue IDs: {resolved_atom_array.res_id[near_atoms]}")

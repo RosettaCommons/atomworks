@@ -470,7 +470,8 @@ to download the full example code.</p>
 
 <span class="c1"># To setup the test pack, if not already, run `atomworks setup tests`</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">FileDataset</span><span class="o">.</span><span class="n">from_directory</span><span class="p">(</span>
-    <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;../../tests/data/ml/af2_distillation/cif&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;example_directory_dataset&quot;</span>
+    <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;../../tests/data/ml/af2_distillation/cif&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;example_directory_dataset&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -488,7 +489,7 @@ to download the full example code.</p>
 </section>
 <section id="understanding-dataset-requirements">
 <h2>Understanding Dataset Requirements<a class="headerlink" href="#understanding-dataset-requirements" title="Link to this heading">#</a></h2>
-<p>At a high level, to train models with AtomWorks, we need typically need a Dataset that:</p>
+<p>At a high level, to train models with AtomWorks, we typically need a Dataset that:</p>
 <ol class="arabic simple">
 <li><p>Takes as input an item index and returns the corresponding example information; typically includes:
 a. Path to a structural file saved on disk (<cite>/path/to/dataset/my_dataset_0.cif</cite>)
@@ -509,7 +510,9 @@ b. Additional item-specific metadata (e.g., class labels)</p></li>
 
 
 <span class="n">dataset_with_loading_fn</span> <span class="o">=</span> <span class="n">FileDataset</span><span class="o">.</span><span class="n">from_directory</span><span class="p">(</span>
-    <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;../../tests/data/pdb&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;example_pdb_dataset&quot;</span><span class="p">,</span> <span class="n">loader</span><span class="o">=</span><span class="n">simple_loading_fn</span>
+    <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;../../tests/data/pdb&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;example_pdb_dataset&quot;</span><span class="p">,</span>
+    <span class="n">loader</span><span class="o">=</span><span class="n">simple_loading_fn</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">output</span> <span class="o">=</span> <span class="n">dataset_with_loading_fn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output AtomArray has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;atom_array&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2"> atoms!&quot;</span><span class="p">)</span>
@@ -543,7 +546,10 @@ b. Additional item-specific metadata (e.g., class labels)</p></li>
 </div>
 <p>Just like with the loading function, we can also pass a composed <cite>Transform</cite> pipeline to our datasets.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset_with_loading_fn_and_transforms</span> <span class="o">=</span> <span class="n">FileDataset</span><span class="o">.</span><span class="n">from_directory</span><span class="p">(</span>
-    <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;../../tests/data/pdb&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;example_pdb_dataset&quot;</span><span class="p">,</span> <span class="n">loader</span><span class="o">=</span><span class="n">simple_loading_fn</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">pipe</span>
+    <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;../../tests/data/pdb&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;example_pdb_dataset&quot;</span><span class="p">,</span>
+    <span class="n">loader</span><span class="o">=</span><span class="n">simple_loading_fn</span><span class="p">,</span>
+    <span class="n">transform</span><span class="o">=</span><span class="n">pipe</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -626,7 +632,9 @@ b. Additional item-specific metadata (e.g., class labels)</p></li>
     <span class="n">data</span><span class="o">=</span><span class="n">interfaces_df</span><span class="p">,</span>
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;interfaces_dataset&quot;</span><span class="p">,</span>
     <span class="c1"># We use a pre-built loader that takes in a list of column names and returns a loader function</span>
-    <span class="n">loader</span><span class="o">=</span><span class="n">create_loader_with_query_pn_units</span><span class="p">(</span><span class="n">pn_unit_iid_colnames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pn_unit_1_iid&quot;</span><span class="p">,</span> <span class="s2">&quot;pn_unit_2_iid&quot;</span><span class="p">]),</span>
+    <span class="n">loader</span><span class="o">=</span><span class="n">create_loader_with_query_pn_units</span><span class="p">(</span>
+        <span class="n">pn_unit_iid_colnames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pn_unit_1_iid&quot;</span><span class="p">,</span> <span class="s2">&quot;pn_unit_2_iid&quot;</span><span class="p">]</span>
+    <span class="p">),</span>
     <span class="n">transform</span><span class="o">=</span><span class="n">pipe</span><span class="p">,</span>
 <span class="p">)</span>
 
