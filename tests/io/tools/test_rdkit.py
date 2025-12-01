@@ -13,7 +13,6 @@ from atomworks.io.tools.rdkit import (
     get_morgan_fingerprint_from_rdkit_mol,
     smiles_to_rdkit,
 )
-from atomworks.io.utils.ccd import atom_array_from_ccd_code
 from atomworks.io.utils.io_utils import load_any
 from tests.io.conftest import TEST_DATA_IO
 
@@ -228,8 +227,6 @@ def test_chriality_in_spoofed_rdkit_molecules():
     atom_array.coord = dal_coord
     mol_ala_inverted = atom_array_to_rdkit(atom_array)
     assert Chem.FindMolChiralCenters(mol_ala_inverted) == [(1, "R")]
-
-
 
 
 if __name__ == "__main__":

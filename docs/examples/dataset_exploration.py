@@ -231,9 +231,7 @@ dataset = PandasDataset(
     data=interfaces_df,
     name="interfaces_dataset",
     # We use a pre-built loader that takes in a list of column names and returns a loader function
-    loader=create_loader_with_query_pn_units(
-        pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"]
-    ),
+    loader=create_loader_with_query_pn_units(pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"]),
     transform=pipe,
 )
 
