@@ -45,7 +45,18 @@ from atomworks.io.utils.testing import has_ambiguous_annotation_set
 
 logger = logging.getLogger("atomworks.io")
 
-CIF_LIKE_EXTENSIONS = {".cif", ".pdb", ".bcif", ".cif.gz", ".pdb.gz", ".bcif.gz", ".json", ".json.gz"}
+CIF_LIKE_EXTENSIONS = {
+    ".cif",
+    ".pdb",
+    ".bcif",
+    ".cif.gz",
+    ".pdb.gz",
+    ".bcif.gz",
+    ".json",
+    ".json.gz",
+    ".mmjson",
+    ".mmjson.gz",
+}
 
 
 @contextmanager
@@ -365,7 +376,7 @@ def infer_pdb_file_type(
         return "bcif"
     elif inferred_file_type == "sdf":
         return "sdf"
-    elif inferred_file_type == "json":
+    elif inferred_file_type in ("json", "mmjson"):
         return "mmjson"
     else:
         raise ValueError(f"Unsupported file type: {inferred_file_type}")
