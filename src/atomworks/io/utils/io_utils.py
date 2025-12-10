@@ -15,6 +15,7 @@ __all__ = [
 
 import gzip
 import io
+import json
 import logging
 import os
 import re
@@ -44,7 +45,7 @@ from atomworks.io.utils.testing import has_ambiguous_annotation_set
 
 logger = logging.getLogger("atomworks.io")
 
-CIF_LIKE_EXTENSIONS = {".cif", ".pdb", ".bcif", ".cif.gz", ".pdb.gz", ".bcif.gz"}
+CIF_LIKE_EXTENSIONS = {".cif", ".pdb", ".bcif", ".cif.gz", ".pdb.gz", ".bcif.gz", ".json", ".json.gz"}
 
 
 @contextmanager
@@ -86,7 +87,7 @@ def _get_logged_in_user() -> str:
 
 def load_any(
     file_or_buffer: os.PathLike | io.StringIO | io.BytesIO,
-    file_type: Literal["cif", "mmcif", "pdbx", "pdb", "pdb1", "bcif"] | None = None,
+    file_type: Literal["cif", "mmcif", "pdbx", "pdb", "pdb1", "bcif", "mmjson"] | None = None,
     *,
     extra_fields: list[str] | Literal["all"] = [],
     include_bonds: bool = True,
@@ -320,7 +321,9 @@ def get_structure(
     return atom_array_stack
 
 
-def infer_pdb_file_type(path_or_buffer: os.PathLike | io.StringIO | io.BytesIO) -> Literal["cif", "pdb", "bcif", "sdf"]:
+def infer_pdb_file_type(
+    path_or_buffer: os.PathLike | io.StringIO | io.BytesIO,
+) -> Literal["cif", "pdb", "bcif", "sdf", "mmjson"]:
     """
     Infer the file type of a PDB file or buffer.
     """
@@ -337,7 +340,16 @@ def infer_pdb_file_type(path_or_buffer: os.PathLike | io.StringIO | io.BytesIO) 
         path_or_buffer.readline()  # Skip the first line
         second_line = path_or_buffer.readline().strip()
         path_or_buffer.seek(0)
-        return "cif" if second_line.startswith("#") else "pdb"
+        path_or_buffer.seek(0)
+        if second_line.startswith("#"):
+            return "cif"
+        # Check for JSON start
+        path_or_buffer.seek(0)
+        first_char = path_or_buffer.read(1)
+        path_or_buffer.seek(0)
+        if first_char == "{":
+            return "mmjson"
+        return "pdb"
     elif isinstance(path_or_buffer, Path):
         if path_or_buffer.suffix in (".gz", ".gzip"):
             inferred_file_type = Path(path_or_buffer.stem).suffix.lstrip(".")
@@ -353,13 +365,32 @@ def infer_pdb_file_type(path_or_buffer: os.PathLike | io.StringIO | io.BytesIO) 
         return "bcif"
     elif inferred_file_type == "sdf":
         return "sdf"
+    elif inferred_file_type == "json":
+        return "mmjson"
     else:
         raise ValueError(f"Unsupported file type: {inferred_file_type}")
 
 
+def _read_mmjson(file_obj: io.StringIO | io.BytesIO | io.TextIOWrapper) -> pdbx.CIFFile:
+    """Read an mmjson file into a CIFFile object."""
+    data = json.load(file_obj)
+    cif_file = pdbx.CIFFile()
+    for block_name, block_data in data.items():
+        cif_block = pdbx.CIFBlock()
+        for cat_name, cat_data in block_data.items():
+            cif_category = pdbx.CIFCategory()
+            for col_name, col_data in cat_data.items():
+                # Convert None to "?" and ensure all elements are strings
+                processed_data = [str(x) if x is not None else "?" for x in col_data]
+                cif_category[col_name] = pdbx.CIFColumn(processed_data)
+            cif_block[cat_name] = cif_category
+        cif_file[block_name] = cif_block
+    return cif_file
+
+
 def read_any(
     path_or_buffer: os.PathLike | io.StringIO | io.BytesIO,
-    file_type: Literal["cif", "pdb", "bcif", "sdf"] | None = None,
+    file_type: Literal["cif", "pdb", "bcif", "sdf", "mmjson"] | None = None,
 ) -> pdbx.CIFFile | biotite_pdb.PDBFile | pdbx.BinaryCIFFile:
     """
     Reads any of the allowed file types into the appropriate Biotite file object.
@@ -367,7 +398,7 @@ def read_any(
     Args:
         path_or_buffer (PathLike | io.StringIO | io.BytesIO): The path to the file or a buffer to read from.
             If a buffer, it's highly recommended to specify the file_type.
-        file_type (Literal["cif", "pdb", "bcif"], optional): Type of the file.
+        file_type (Literal["cif", "pdb", "bcif", "mmjson"], optional): Type of the file.
             If None, it will be inferred from the file extension. When using a buffer, the file type must be specified.
 
     Returns:
@@ -379,7 +410,8 @@ def read_any(
     # Determine file type
     if file_type is None:
         file_type = infer_pdb_file_type(path_or_buffer)
-        open_mode = "rb" if file_type == "bcif" else "rt"
+    
+    open_mode = "rb" if file_type == "bcif" else "rt"
 
     # Convert string paths to Path objects and decompress if necessary
     if isinstance(path_or_buffer, str | Path):
@@ -398,6 +430,13 @@ def read_any(
         file_cls = pdbx.BinaryCIFFile
     elif file_type == "sdf":
         file_cls = mol.SDFile
+    elif file_type == "mmjson":
+        # Special handling for mmjson
+        if isinstance(path_or_buffer, io.StringIO | io.BytesIO):
+            return _read_mmjson(path_or_buffer)
+        else:
+            with open(path_or_buffer, "r") as f:
+                return _read_mmjson(f)
     else:
         raise ValueError(f"Unsupported file type: {file_type}")
 

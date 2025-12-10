@@ -125,7 +125,7 @@ def _build_cache_file_path(
 def parse(
     filename: os.PathLike | io.StringIO | io.BytesIO,
     *,
-    file_type: Literal["cif", "pdb"] | None = None,
+    file_type: Literal["cif", "pdb", "mmjson"] | None = None,
     ccd_mirror_path: os.PathLike | None = CCD_MIRROR_PATH,
     cache_dir: os.PathLike | None = None,
     save_to_cache: bool = False,
@@ -163,7 +163,7 @@ def parse(
             atomic-level structure (e.g. .cif, .bcif, .cif.gz, .pdb), although .cif files are strongly recommended.
 
         **Wrapper arguments:**
-        file_type (Literal["cif", "pdb"] | None, optional): The file type of the structure file.
+        file_type (Literal["cif", "pdb", "mmjson"] | None, optional): The file type of the structure file.
             If not provided, the file type will be inferred automatically.
         load_from_cache (bool, optional): Whether to load pre-compiled results from cache. Defaults to False.
         cache_dir (PathLike, optional): Directory path to save pre-compiled results. Defaults to None.
@@ -329,9 +329,10 @@ def parse(
             build_assembly=build_assembly,
             extra_fields=extra_fields,
         )
-    elif file_type in ("cif", "bcif"):
+    elif file_type in ("cif", "bcif", "mmjson"):
         result = _parse_from_cif(
             filename=filename,
+            file_type=file_type,
             ccd_mirror_path=ccd_mirror_path,
             add_missing_atoms=add_missing_atoms,
             add_id_and_entity_annotations=add_id_and_entity_annotations,
@@ -684,7 +685,9 @@ def parse_atom_array(
     return data_dict
 
 
-def _parse_from_cif(filename: os.PathLike | io.StringIO | io.BytesIO, **kwargs) -> dict[str, Any]:
+def _parse_from_cif(
+    filename: os.PathLike | io.StringIO | io.BytesIO, file_type: str | None = None, **kwargs
+) -> dict[str, Any]:
     """Parse the CIF file.
 
     Return chain information, residue information, atom array, and metadata.
@@ -696,7 +699,7 @@ def _parse_from_cif(filename: os.PathLike | io.StringIO | io.BytesIO, **kwargs) 
     data_dict = {"extra_info": {}}
 
     # ... read the CIF file into the dictionary (we will clean up the dictionary before returning)
-    cif_file = read_any(filename)
+    cif_file = read_any(filename, file_type=file_type)
     data_dict["cif_block"] = cif_file.block
 
     # ... load metadata into "metadata" key (either from RCSB standard fields, or from the custom `extra_metadata` field)
