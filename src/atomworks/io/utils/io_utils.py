@@ -332,6 +332,25 @@ def get_structure(
     return atom_array_stack
 
 
+def _infer_file_type_from_buffer(buffer: io.BytesIO | io.StringIO) -> str:
+    """Infer file type from buffer contents."""
+    if isinstance(buffer, io.BytesIO):
+        return "bcif"
+
+    # StringIO - peek at contents to determine format
+    buffer.seek(0)
+    first_char = buffer.read(1)
+    buffer.readline()  # finish first line
+    second_line = buffer.readline()
+    buffer.seek(0)
+
+    if first_char == "{":
+        return "mmjson"
+    if second_line.startswith("#"):
+        return "cif"
+    return "pdb"
+
+
 def infer_pdb_file_type(
     path_or_buffer: os.PathLike | io.StringIO | io.BytesIO,
 ) -> Literal["cif", "pdb", "bcif", "sdf", "mmjson"]:
@@ -343,24 +362,8 @@ def infer_pdb_file_type(
         path_or_buffer = Path(path_or_buffer)
 
     # Determine file type and open context
-    if isinstance(path_or_buffer, io.BytesIO):
-        return "bcif"
-    elif isinstance(path_or_buffer, io.StringIO):
-        # ... if second line starts with '#', it is very likely a cif file
-        path_or_buffer.seek(0)
-        path_or_buffer.readline()  # Skip the first line
-        second_line = path_or_buffer.readline().strip()
-        path_or_buffer.seek(0)
-        path_or_buffer.seek(0)
-        if second_line.startswith("#"):
-            return "cif"
-        # Check for JSON start
-        path_or_buffer.seek(0)
-        first_char = path_or_buffer.read(1)
-        path_or_buffer.seek(0)
-        if first_char == "{":
-            return "mmjson"
-        return "pdb"
+    if isinstance(path_or_buffer, io.StringIO | io.BytesIO):
+        return _infer_file_type_from_buffer(path_or_buffer)
     elif isinstance(path_or_buffer, Path):
         if path_or_buffer.suffix in (".gz", ".gzip"):
             inferred_file_type = Path(path_or_buffer.stem).suffix.lstrip(".")
@@ -421,7 +424,7 @@ def read_any(
     # Determine file type
     if file_type is None:
         file_type = infer_pdb_file_type(path_or_buffer)
-    
+
     open_mode = "rb" if file_type == "bcif" else "rt"
 
     # Convert string paths to Path objects and decompress if necessary
@@ -446,7 +449,7 @@ def read_any(
         if isinstance(path_or_buffer, io.StringIO | io.BytesIO):
             return _read_mmjson(path_or_buffer)
         else:
-            with open(path_or_buffer, "r") as f:
+            with open(path_or_buffer) as f:
                 return _read_mmjson(f)
     else:
         raise ValueError(f"Unsupported file type: {file_type}")
