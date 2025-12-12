@@ -1,17 +1,14 @@
-from pathlib import Path
 
 from atomworks.io.parser import parse
 from atomworks.io.utils.io_utils import infer_pdb_file_type
 from atomworks.io.utils.testing import assert_same_atom_array
 
-# Tests should look for data relative to their location or use a fixture
-# Based on project structure, tests/data is likely where we moved the files
-TEST_DATA_DIR = Path(__file__).parent.parent.parent / "data" / "io"
+from tests.conftest import TEST_DATA_DIR
 
 
 def test_mmjson_inference_and_parsing():
-    json_path = TEST_DATA_DIR / "2hhb.json.gz"
-    cif_path = TEST_DATA_DIR / "2hhb.cif.gz"
+    json_path = TEST_DATA_DIR / "io" / "2hhb.json.gz"
+    cif_path = TEST_DATA_DIR / "io" / "2hhb.cif.gz"
 
     assert json_path.exists(), f"mmJSON file not found at {json_path}"
     assert cif_path.exists(), f"CIF file not found at {cif_path}"
