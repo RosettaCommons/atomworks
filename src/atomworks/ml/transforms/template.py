@@ -153,9 +153,9 @@ class RF2AATemplate:
         return self
 
     def to_atom_array(self, template_idx: int) -> AtomArray:
-        assert (
-            isinstance(template_idx, int) and 0 <= template_idx <= self.n_templates - 1
-        ), f"template_idx must be an int between 0 and {self.n_templates - 1}, got {template_idx}"
+        assert isinstance(template_idx, int) and 0 <= template_idx <= self.n_templates - 1, (
+            f"template_idx must be an int between 0 and {self.n_templates - 1}, got {template_idx}"
+        )
 
         # Get pdb_id and chain_id
         template_id = self.ids[template_idx]
@@ -354,18 +354,18 @@ class AddRFTemplates(Transform):
             AssertionError: If `n_template` is not a positive integer.
             AssertionError: If `min_template_length` is not a non-negative integer.
         """
-        assert (
-            0.0 <= min_seq_similarity <= 100.0
-        ), f"min_seq_similarity must be between 0.0 and 100.0, got {min_seq_similarity}"
-        assert (
-            0.0 <= max_seq_similarity <= 100.0
-        ), f"max_seq_similarity must be between 0.0 and 100.0, got {max_seq_similarity}"
-        assert (
-            isinstance(max_n_template, int) and max_n_template > 0
-        ), f"max_n_template must be a positive integer, got {max_n_template}"
-        assert (
-            isinstance(min_template_length, int) and min_template_length >= 0
-        ), f"min_template_length must be a non-negative integer, got {min_template_length}"
+        assert 0.0 <= min_seq_similarity <= 100.0, (
+            f"min_seq_similarity must be between 0.0 and 100.0, got {min_seq_similarity}"
+        )
+        assert 0.0 <= max_seq_similarity <= 100.0, (
+            f"max_seq_similarity must be between 0.0 and 100.0, got {max_seq_similarity}"
+        )
+        assert isinstance(max_n_template, int) and max_n_template > 0, (
+            f"max_n_template must be a positive integer, got {max_n_template}"
+        )
+        assert isinstance(min_template_length, int) and min_template_length >= 0, (
+            f"min_template_length must be a non-negative integer, got {min_template_length}"
+        )
 
         self.n_template = max_n_template
         self.pick_top = pick_top
@@ -511,18 +511,18 @@ class FeaturizeTemplatesLikeRF2AA(Transform):
             AssertionError: If `init_coords` is a tensor and its dimensions do not match the expected shape.
             AssertionError: If `allowed_chain_types` is not a list or contains any elements that are not instances of `ChainType`.
         """
-        assert (
-            isinstance(n_template, int) and n_template > 0
-        ), f"n_template must be a positive integer, got {n_template}"
-        assert isinstance(
-            encoding, TokenEncoding
-        ), f"encoding must be an instance of TokenEncoding, got {type(encoding)}"
-        assert (
-            isinstance(allowed_chain_types, list) and len(allowed_chain_types) > 0
-        ), f"allowed_chain_types must be a non-empty list, got {allowed_chain_types}"
-        assert np.isin(
-            allowed_chain_types, ChainType
-        ).all(), f"Allowed chain types must be a list of ChainType enums. Got {allowed_chain_types=}."
+        assert isinstance(n_template, int) and n_template > 0, (
+            f"n_template must be a positive integer, got {n_template}"
+        )
+        assert isinstance(encoding, TokenEncoding), (
+            f"encoding must be an instance of TokenEncoding, got {type(encoding)}"
+        )
+        assert isinstance(allowed_chain_types, list) and len(allowed_chain_types) > 0, (
+            f"allowed_chain_types must be a non-empty list, got {allowed_chain_types}"
+        )
+        assert np.isin(allowed_chain_types, ChainType).all(), (
+            f"Allowed chain types must be a list of ChainType enums. Got {allowed_chain_types=}."
+        )
         self.n_template = n_template
         self.mask_token_idx = mask_token_idx
         self.init_coords = init_coords
@@ -535,9 +535,9 @@ class FeaturizeTemplatesLikeRF2AA(Transform):
 
             if init_coords.ndim >= 2:
                 n_token = init_coords.shape[-2]
-                assert (
-                    n_token == encoding.n_atoms_per_token
-                ), f"init_coords must have {encoding.n_atoms_per_token} tokens, got {n_token}"
+                assert n_token == encoding.n_atoms_per_token, (
+                    f"init_coords must have {encoding.n_atoms_per_token} tokens, got {n_token}"
+                )
 
     def check_input(self, data: dict[str, Any]) -> None:
         check_contains_keys(data, ["template", "atom_array"])

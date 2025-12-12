@@ -83,15 +83,15 @@ class TokenEncoding:
         # Ensure all values are of type `np.ndarray` and have the same 1-dimensional shape
         _target_len = len(next(iter(self.token_atoms.values())))
         for token, atoms in self.token_atoms.items():
-            assert isinstance(
-                atoms, np.ndarray
-            ), f"Expected `atoms` to be a `np.ndarray`, but got {type(atoms)} for token {token}."
-            assert (
-                atoms.ndim == 1
-            ), f"Expected `atoms` to be a 1-dimensional array, but got {atoms.ndim} dimensions for token {token}."
-            assert (
-                len(atoms) == _target_len
-            ), f"Expected all atoms to have length {_target_len}, but got {len(atoms)} for token {token}."
+            assert isinstance(atoms, np.ndarray), (
+                f"Expected `atoms` to be a `np.ndarray`, but got {type(atoms)} for token {token}."
+            )
+            assert atoms.ndim == 1, (
+                f"Expected `atoms` to be a 1-dimensional array, but got {atoms.ndim} dimensions for token {token}."
+            )
+            assert len(atoms) == _target_len, (
+                f"Expected all atoms to have length {_target_len}, but got {len(atoms)} for token {token}."
+            )
 
         # Define mapping of unknown `chemcomp_type` to unknown token names
         if not exists(self.chemcomp_type_to_unknown):
@@ -112,9 +112,9 @@ class TokenEncoding:
         # NOTE: This is set here to use caching.
         @lru_cache(maxsize=10000)
         def resolve_unknown_token_name(token_name: str | int, token_is_atom: bool) -> str:
-            assert isinstance(
-                token_name, str | int | np.integer
-            ), f"Expected `token_name` to be a string or int, but got {type(token_name)}: token_name={token_name}, token_is_atom={token_is_atom}."
+            assert isinstance(token_name, str | int | np.integer), (
+                f"Expected `token_name` to be a string or int, but got {type(token_name)}: token_name={token_name}, token_is_atom={token_is_atom}."
+            )
 
             # Case 1: Token is known & valid
             if token_name in self.token_atoms:

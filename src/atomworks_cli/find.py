@@ -145,7 +145,7 @@ def find(
         )
         typer.secho(f"  Found MSAs: {found_count:,} ({coverage_percent:.1f}%)", fg=found_color)
         typer.secho(
-            f"  Missing MSAs: {missing_count:,} ({100-coverage_percent:.1f}%)",
+            f"  Missing MSAs: {missing_count:,} ({100 - coverage_percent:.1f}%)",
             fg=typer.colors.RED if missing_count > 0 else typer.colors.GREEN,
         )
 

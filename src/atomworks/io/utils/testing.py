@@ -189,12 +189,12 @@ def assert_same_atom_array(
     Raises:
         AssertionError: If the AtomArray objects are not equal.
     """
-    assert isinstance(
-        arr1, AtomArray | AtomArrayStack
-    ), f"arr1 is not an AtomArray or AtomArrayStack but has type {type(arr1)}"
-    assert isinstance(
-        arr2, AtomArray | AtomArrayStack
-    ), f"arr2 is not an AtomArray or AtomArrayStack but has type {type(arr2)}"
+    assert isinstance(arr1, AtomArray | AtomArrayStack), (
+        f"arr1 is not an AtomArray or AtomArrayStack but has type {type(arr1)}"
+    )
+    assert isinstance(arr2, AtomArray | AtomArrayStack), (
+        f"arr2 is not an AtomArray or AtomArrayStack but has type {type(arr2)}"
+    )
 
     # Copy both arrays to avoid modifying the original arrays
     arr1 = arr1.copy()
@@ -231,9 +231,9 @@ def assert_same_atom_array(
         raise AssertionError(msg)
 
     if compare_coords:
-        assert (
-            arr1.coord.shape == arr2.coord.shape
-        ), f"Coord shapes do not match: {arr1.coord.shape} != {arr2.coord.shape}"
+        assert arr1.coord.shape == arr2.coord.shape, (
+            f"Coord shapes do not match: {arr1.coord.shape} != {arr2.coord.shape}"
+        )
         if not np.allclose(arr1.coord, arr2.coord, equal_nan=True, atol=1e-3, rtol=1e-3):
             mismatch_idxs = np.where(arr1.coord != arr2.coord)[0]
             msg = f"Coords do not match at {len(mismatch_idxs)} indices. First few mismatches:" + "\n"

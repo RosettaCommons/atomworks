@@ -178,18 +178,18 @@ def test_regenerate_and_add_chain_entity_annotation(test_case):
 
         # ... that no other chains have the same chain_entity
         other_chain_atom_array = atom_array[not_isin(atom_array.chain_id, equivalent_chains)]
-        assert not np.any(
-            other_chain_atom_array.chain_entity == chain_entity
-        ), f"Chains {equivalent_chains} share chain_entity with other chains"
+        assert not np.any(other_chain_atom_array.chain_entity == chain_entity), (
+            f"Chains {equivalent_chains} share chain_entity with other chains"
+        )
 
         # ... and that all chains with the same chain_entity have the same sequence
         sequences = [
             chain_entity_atom_array[chain_entity_atom_array.chain_id == chain_id].res_name
             for chain_id in equivalent_chains
         ]
-        assert all(
-            np.array_equal(sequences[0], arr) for arr in sequences[1:]
-        ), "Sequences are not equal within an entity."
+        assert all(np.array_equal(sequences[0], arr) for arr in sequences[1:]), (
+            "Sequences are not equal within an entity."
+        )
 
 
 if __name__ == "__main__":

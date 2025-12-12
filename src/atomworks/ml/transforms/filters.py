@@ -121,9 +121,9 @@ def remove_unsupported_chain_types(
         query_pn_unit_chain_types = np.unique(
             atom_array.chain_type[np.isin(atom_array.pn_unit_iid, query_pn_unit_iids)]
         )
-        assert np.all(
-            np.isin(query_pn_unit_chain_types, supported_chain_types)
-        ), f"Query PN unit has an unsupported chain type: {query_pn_unit_chain_types}"
+        assert np.all(np.isin(query_pn_unit_chain_types, supported_chain_types)), (
+            f"Query PN unit has an unsupported chain type: {query_pn_unit_chain_types}"
+        )
 
     # Then, we filter out chains with unsupported chain types
     is_supported_chain_type = np.isin(atom_array.chain_type, supported_chain_types)

@@ -184,7 +184,7 @@ def _update_array() -> None:
         for i, atom in enumerate(atoms):
             if sorted(atom._annot.keys()) != names:
                 raise ValueError(
-                    f"The atom at index {i} does not share the same " f"annotation categories as the atom at index 0"
+                    f"The atom at index {i} does not share the same annotation categories as the atom at index 0"
                 )
         array = AtomArray(len(atoms))
 

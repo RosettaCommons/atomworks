@@ -308,9 +308,9 @@ def join_two_msas_by_tax_id(
         assert np.all(residue_is_paired[all_paired, :]), "Residues in all_paired rows should all be paired"
 
     # ...and assert that the first row is still the query sequence as a sanity check
-    assert np.all(
-        msa[0] == np.concatenate([msa_a["msa"][0], msa_b["msa"][0]])
-    ), "Query sequence must be the first row of the MSA"
+    assert np.all(msa[0] == np.concatenate([msa_a["msa"][0], msa_b["msa"][0]])), (
+        "Query sequence must be the first row of the MSA"
+    )
 
     result = {
         "msa": msa,

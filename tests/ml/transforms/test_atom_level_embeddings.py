@@ -51,9 +51,9 @@ def test_featurize_with_unknown_residue(cache_dir, subsampled_cached_residue_dat
     has_embedding = result["has_atom_level_embedding"]
 
     # All atoms in the modified residue should have False in the mask
-    assert not has_embedding[
-        res_mask
-    ].any(), f"Unknown residue {unknown_res_name} should have False mask for all its atoms"
+    assert not has_embedding[res_mask].any(), (
+        f"Unknown residue {unknown_res_name} should have False mask for all its atoms"
+    )
 
     # Verify embeddings for unknown residue are all zeros
     embeddings = result["atom_level_embedding"]  # Shape: (n_conformers, L, D)
@@ -109,9 +109,9 @@ def test_featurize_with_ignore_residues(cache_dir, subsampled_cached_residue_dat
     ignored_mask = atom_array.res_name == ignore_res_name
 
     if ignored_mask.any():
-        assert not has_embedding[
-            ignored_mask
-        ].any(), f"Ignored residue {ignore_res_name} should have False mask for all its atoms"
+        assert not has_embedding[ignored_mask].any(), (
+            f"Ignored residue {ignore_res_name} should have False mask for all its atoms"
+        )
 
 
 if __name__ == "__main__":

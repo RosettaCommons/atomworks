@@ -376,9 +376,9 @@ def grouped_count(
 
     # Check input validity
     assert len(groups) == data.dim(), "Number of groups must match the number of dimensions in the data tensor."
-    assert all(
-        len(group) == shape for group, shape in zip(groups, data.shape, strict=True)
-    ), "The i-th assignments `groups` must have the same length as the i-th dimension of the data tensor."
+    assert all(len(group) == shape for group, shape in zip(groups, data.shape, strict=True)), (
+        "The i-th assignments `groups` must have the same length as the i-th dimension of the data tensor."
+    )
 
     # Infer the group sizes (= number of unique groups in each dimension)
     group_sizes = [max(group) + 1 for group in groups]

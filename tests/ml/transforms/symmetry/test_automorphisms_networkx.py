@@ -117,17 +117,17 @@ def test_find_automorphisms_within_entire_structure(pdb_id: str):
             assert len(automorphism) == 2, "Arginine should have 2 automorphisms."
             changing_column_indices = get_indices_of_non_constant_columns(automorphism)
             n_element = ELEMENT_NAME_TO_ATOMIC_NUMBER["N"]
-            assert np.all(
-                residue.atomic_number[changing_column_indices] == n_element
-            ), "All automorphisms of Arginine should involve nitrogens."
+            assert np.all(residue.atomic_number[changing_column_indices] == n_element), (
+                "All automorphisms of Arginine should involve nitrogens."
+            )
         # ...if it's a tyrosine, there should be 2 automorphisms, all involving carbons
         if residue_name == "TYR":
             assert len(automorphism) == 2, "Tyrosine should have 2 automorphisms (carbons must swap together)"
             changing_column_indices = get_indices_of_non_constant_columns(automorphism)
             n_element = ELEMENT_NAME_TO_ATOMIC_NUMBER["C"]
-            assert np.all(
-                residue.atomic_number[changing_column_indices] == n_element
-            ), "All automorphisms of Tyrosine should involve carbons."
+            assert np.all(residue.atomic_number[changing_column_indices] == n_element), (
+                "All automorphisms of Tyrosine should involve carbons."
+            )
         # ...isoleucine should have no automorphisms
         if residue_name == "ILE":
             assert len(automorphism) == 1, "Isoleucine should have no automorphisms."
@@ -135,18 +135,18 @@ def test_find_automorphisms_within_entire_structure(pdb_id: str):
         # ...calculate automorphisms
         local_automorphisms = generate_automorphisms_from_atom_array_with_networkx(residue)
 
-        assert len(local_automorphisms) == len(
-            automorphism
-        ), "Unequal automorphism numbers; likely due to incorrect indexing."
+        assert len(local_automorphisms) == len(automorphism), (
+            "Unequal automorphism numbers; likely due to incorrect indexing."
+        )
 
         for local_automorphism in local_automorphisms:
             # ...map to the global frame, as given by the first row of the automorphism
             mapped_automorphism = automorphism[0][local_automorphism]
 
             # ...check that the automorphism is present
-            assert array_in_list(
-                mapped_automorphism, automorphism
-            ), "Automorphism not found in global automorphism list."
+            assert array_in_list(mapped_automorphism, automorphism), (
+                "Automorphism not found in global automorphism list."
+            )
 
 
 @pytest.mark.benchmark(group="find_automorphisms")

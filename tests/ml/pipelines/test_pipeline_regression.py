@@ -145,17 +145,17 @@ def _assert_features_equal(feats: dict, expected_feats: dict, example_name: str,
             # rdkit versions seem to be compiled differently on different operating systems, making
             #  this an operating system dependent test. Instead of the values, we just check the
             #  shapes
-            assert (
-                feats[key].shape == expected_feats[key].shape
-            ), f"Feature {key} shape mismatch for {example_name} in {mode} mode: {feats[key].shape} vs {expected_feats[key].shape}"
+            assert feats[key].shape == expected_feats[key].shape, (
+                f"Feature {key} shape mismatch for {example_name} in {mode} mode: {feats[key].shape} vs {expected_feats[key].shape}"
+            )
             continue
         feat = feats[key]
         expected_feat = expected_feats[key]
 
         # Check shapes
-        assert (
-            feat.shape == expected_feat.shape
-        ), f"Feature {key} shape mismatch for {example_name} in {mode} mode: {feat.shape} vs {expected_feat.shape}"
+        assert feat.shape == expected_feat.shape, (
+            f"Feature {key} shape mismatch for {example_name} in {mode} mode: {feat.shape} vs {expected_feat.shape}"
+        )
 
         # Check values with tolerance
         _assert_tensor_or_array_equal(

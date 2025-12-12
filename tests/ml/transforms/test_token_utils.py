@@ -75,9 +75,9 @@ def test_add_global_token_id_annotation_when_fully_atomized(pdb_id):
 
     assert "atom_id" in atom_array.get_annotation_categories()
     assert "token_id" in atom_array.get_annotation_categories()
-    assert np.all(
-        atom_array.atom_id == atom_array.token_id
-    ), "atom_id and token_id should be the same for a fully atomized atom_array"
+    assert np.all(atom_array.atom_id == atom_array.token_id), (
+        "atom_id and token_id should be the same for a fully atomized atom_array"
+    )
 
     # cross check by iterating over the tokens
     # ... via token starts
@@ -252,19 +252,19 @@ def test_add_global_res_id_annotation():
 
     # Check that res_id_global values are in the expected range
     unique_global_res_ids = np.unique(atom_array.res_id_global)
-    assert (
-        len(unique_global_res_ids) == expected_n_residues
-    ), f"Expected {expected_n_residues} unique residue IDs, got {len(unique_global_res_ids)}"
-    assert np.all(
-        unique_global_res_ids == np.arange(expected_n_residues)
-    ), "Global residue IDs should be 0-indexed and continuous"
+    assert len(unique_global_res_ids) == expected_n_residues, (
+        f"Expected {expected_n_residues} unique residue IDs, got {len(unique_global_res_ids)}"
+    )
+    assert np.all(unique_global_res_ids == np.arange(expected_n_residues)), (
+        "Global residue IDs should be 0-indexed and continuous"
+    )
 
     # Check that residues have consistent res_id_global values
     for counter, residue in enumerate(struc.residue_iter(atom_array)):
         assert len(residue) >= 1, f"Residue should have length at least 1 but has length {len(residue)}"
-        assert np.all(
-            residue.res_id_global == counter
-        ), f"All atoms in residue should have res_id_global {counter} but got {residue.res_id_global}"
+        assert np.all(residue.res_id_global == counter), (
+            f"All atoms in residue should have res_id_global {counter} but got {residue.res_id_global}"
+        )
 
 
 if __name__ == "__main__":

@@ -25,9 +25,9 @@ class CenterRandomAugmentation(Transform):
         check_contains_keys(data, ["coord_atom_lvl_to_be_noised"])
         check_contains_keys(data["ground_truth"], ["coord_atom_lvl", "mask_atom_lvl"])
 
-        assert (
-            data["coord_atom_lvl_to_be_noised"].shape[0] == self.batch_size
-        ), "Must batch coordinates to be noised before applying this transform"
+        assert data["coord_atom_lvl_to_be_noised"].shape[0] == self.batch_size, (
+            "Must batch coordinates to be noised before applying this transform"
+        )
 
     def forward(self, data: dict) -> dict:
         centered_coord_atom_lvl_to_be_noised = data["coord_atom_lvl_to_be_noised"]  # (batch_size, n_atoms, 3)

@@ -38,12 +38,12 @@ def select_data_by_id(
                [8., 8., 8., 8., 8., 8.],
                [1., 1., 1., 1., 1., 1.]])
     """
-    assert data.shape[axis] == len(
-        data_ids
-    ), f"`data` must have `len(data_ids)` along axis `{axis}`, but got shape: {data.shape}"
-    assert np.unique(data_ids).size == len(
-        data_ids
-    ), f"`data_ids` must be unique. Got duplicates ({np.unique(data_ids)}) in {data_ids}"
+    assert data.shape[axis] == len(data_ids), (
+        f"`data` must have `len(data_ids)` along axis `{axis}`, but got shape: {data.shape}"
+    )
+    assert np.unique(data_ids).size == len(data_ids), (
+        f"`data_ids` must be unique. Got duplicates ({np.unique(data_ids)}) in {data_ids}"
+    )
 
     id_to_idx = np.vectorize({id_: idx for idx, id_ in enumerate(data_ids)}.__getitem__, otypes=[data_ids.dtype])
     idxs_to_select = id_to_idx(select_ids)

@@ -220,9 +220,9 @@ def get_isomorphisms_from_symmetry_groups(
         # Determine tile size and number of tiles needed to fill the array
         tile_size = n_perm * n_reps  # ... each tile has the permutation repeated n_reps times
         n_tile = math.ceil(n_isomorphisms / tile_size)  # ... number of tiles needed to fill the array
-        assert (n_isomorphisms <= get_perm_count(permutations)) or (
-            n_tile * tile_size == n_isomorphisms
-        ), f"{n_tile} * {tile_size} != {n_isomorphisms} (={n_tile * tile_size})"
+        assert (n_isomorphisms <= get_perm_count(permutations)) or (n_tile * tile_size == n_isomorphisms), (
+            f"{n_tile} * {tile_size} != {n_isomorphisms} (={n_tile * tile_size})"
+        )
 
         # Fill the isomorphisms array with `n_tile` copies of `perm`, each of which is repeated `n_reps` times
         isomorphisms[:, start_idx : start_idx + n_instances] = np.tile(np.repeat(perm, n_reps, axis=0), (n_tile, 1))[

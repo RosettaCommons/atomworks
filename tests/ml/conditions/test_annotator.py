@@ -45,9 +45,9 @@ def test_ensure_annotations_basic(atom_array):
 
         # Check that annotation has correct shape
         annotation_data = atom_array.get_annotation(annot)
-        assert (
-            len(annotation_data) == atom_array.array_length()
-        ), f"Annotation '{annot}' should have same length as atom array"
+        assert len(annotation_data) == atom_array.array_length(), (
+            f"Annotation '{annot}' should have same length as atom array"
+        )
         assert isinstance(annotation_data, np.ndarray), f"Annotation '{annot}' should be a numpy array"
 
 

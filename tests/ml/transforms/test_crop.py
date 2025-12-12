@@ -163,9 +163,9 @@ def test_af3_like_spatial_crop_transform(
 
         # Ensure every query pn_unit is in the crop
         pn_unit_iids = np.unique(post_crop_atom_array.pn_unit_iid)
-        assert np.all(
-            np.isin(data["query_pn_unit_iids"], pn_unit_iids)
-        ), f"Query molecules {data['query_pn_unit_iids']} not in crop {pn_unit_iids}."
+        assert np.all(np.isin(data["query_pn_unit_iids"], pn_unit_iids)), (
+            f"Query molecules {data['query_pn_unit_iids']} not in crop {pn_unit_iids}."
+        )
 
         # Eval if no crop was performed
         if not data["crop_info"]["requires_crop"]:
@@ -187,9 +187,9 @@ def test_af3_like_spatial_crop_transform(
         # Ensure correct, expected token count
         valid_pre_crop_tokens = get_token_count(pre_crop_atom_array[pre_crop_atom_array.occupancy > 0])
         expected_token_count = min(crop_size, valid_pre_crop_tokens)
-        assert (
-            get_token_count(post_crop_atom_array) == expected_token_count
-        ), f"Cropped atom array has {get_token_count(post_crop_atom_array)} tokens but expected {expected_token_count}."
+        assert get_token_count(post_crop_atom_array) == expected_token_count, (
+            f"Cropped atom array has {get_token_count(post_crop_atom_array)} tokens but expected {expected_token_count}."
+        )
 
         # Ensure there are no unoccupied atoms in the spatial crop
         assert np.all(
@@ -198,19 +198,19 @@ def test_af3_like_spatial_crop_transform(
 
         # Check crop center atom
         crop_center_atom_id = data["crop_info"]["crop_center_atom_id"]
-        assert np.isin(
-            crop_center_atom_id, pre_crop_atom_array.atom_id
-        ), f"Crop center atom {crop_center_atom_id} not in pre-crop atom array."
-        assert np.isin(
-            crop_center_atom_id, post_crop_atom_array.atom_id
-        ), f"Crop center atom {crop_center_atom_id} not in post-crop atom array."
+        assert np.isin(crop_center_atom_id, pre_crop_atom_array.atom_id), (
+            f"Crop center atom {crop_center_atom_id} not in pre-crop atom array."
+        )
+        assert np.isin(crop_center_atom_id, post_crop_atom_array.atom_id), (
+            f"Crop center atom {crop_center_atom_id} not in post-crop atom array."
+        )
         # ... check that there is only one crop center
         crop_center = post_crop_atom_array[post_crop_atom_array.atom_id == crop_center_atom_id]
         assert len(crop_center) == 1, f"Expected exactly one crop center, got {len(crop_center)}."
         # ... check that crop center is occupied
-        assert (
-            crop_center.occupancy[0] > 0
-        ), f"Crop center atom {crop_center_atom_id} is not occupied in the cropped atom array."
+        assert crop_center.occupancy[0] > 0, (
+            f"Crop center atom {crop_center_atom_id} is not occupied in the cropped atom array."
+        )
         # ... check that crop center remains unchanged
         assert pre_crop_atom_array[pre_crop_atom_array.atom_id == crop_center_atom_id] == crop_center
 
@@ -219,16 +219,16 @@ def test_af3_like_spatial_crop_transform(
         token_idx = atom_id_to_token_idx(post_crop_atom_array, crop_center_atom_id)
         post_crop_token = post_crop_atom_array[token_start_end_idxs[token_idx] : token_start_end_idxs[token_idx + 1]]
         # ... ensure atom id is inside token
-        assert np.isin(
-            crop_center_atom_id, post_crop_token.atom_id
-        ), f"Crop center atom {crop_center_atom_id} not in crop center token."
+        assert np.isin(crop_center_atom_id, post_crop_token.atom_id), (
+            f"Crop center atom {crop_center_atom_id} not in crop center token."
+        )
         # ... ensure token is unchanged
         token_start_end_idxs = get_token_starts(pre_crop_atom_array, add_exclusive_stop=True)
         token_idx = atom_id_to_token_idx(pre_crop_atom_array, crop_center_atom_id)
         pre_crop_token = pre_crop_atom_array[token_start_end_idxs[token_idx] : token_start_end_idxs[token_idx + 1]]
-        assert (
-            pre_crop_token == post_crop_token
-        ), f"Crop center token {token_idx} changed: {pre_crop_token} -> {post_crop_token}"
+        assert pre_crop_token == post_crop_token, (
+            f"Crop center token {token_idx} changed: {pre_crop_token} -> {post_crop_token}"
+        )
 
 
 @pytest.mark.parametrize("example_id", BENCHMARK_EXAMPLE_IDS)
@@ -262,9 +262,9 @@ def test_af3_like_contiguous_crop_transform(
 
         # Ensure correct, expected token count (in principle could be lower than 160 if there are fewer than 160 tokens in the full atom array)
         expected_token_count = min(crop_size, get_token_count(pre_crop_atom_array))
-        assert (
-            get_token_count(post_crop_atom_array) == expected_token_count
-        ), f"Cropped atom array has {get_token_count(post_crop_atom_array)} tokens but expected {expected_token_count}."
+        assert get_token_count(post_crop_atom_array) == expected_token_count, (
+            f"Cropped atom array has {get_token_count(post_crop_atom_array)} tokens but expected {expected_token_count}."
+        )
 
         if not data["crop_info"]["requires_crop"]:
             # ... no crop was performed
@@ -283,9 +283,9 @@ def test_af3_like_contiguous_crop_transform(
 
             # Check that the molecule is contiguous (=fully connected by covalent bonds)
             submolecules = list(struc.molecule_iter(chain))
-            assert (
-                len(submolecules) == 1
-            ), f"Chain {chain_iid} is not contiguous but has {len(submolecules)} connected components."
+            assert len(submolecules) == 1, (
+                f"Chain {chain_iid} is not contiguous but has {len(submolecules)} connected components."
+            )
 
 
 @pytest.mark.parametrize("example", BENCHMARK_EXAMPLES)
@@ -360,9 +360,9 @@ def test_resize_crops_with_too_many_atoms(pdb_id, np_seed=1):
         data = prep_pipe(data)
         data = spatial_crop_pipe(data)
         post_crop_atom_array = data["atom_array"]
-        assert (
-            len(post_crop_atom_array) < 3000
-        ), f"Expected spatial crop to be resized to less than 3000 atoms, got {len(post_crop_atom_array)} atoms."
+        assert len(post_crop_atom_array) < 3000, (
+            f"Expected spatial crop to be resized to less than 3000 atoms, got {len(post_crop_atom_array)} atoms."
+        )
 
     # Test contiguous crop
     contiguous_crop_pipe = CropContiguousLikeAF3(crop_size=crop_size, max_atoms_in_crop=3000)
@@ -371,9 +371,9 @@ def test_resize_crops_with_too_many_atoms(pdb_id, np_seed=1):
         data = prep_pipe(data)
         data = contiguous_crop_pipe(data)
         post_crop_atom_array = data["atom_array"]
-        assert (
-            len(post_crop_atom_array) < 3000
-        ), f"Expected contiguous crop to be resized to less than 3000 atoms, got {len(post_crop_atom_array)} atoms."
+        assert len(post_crop_atom_array) < 3000, (
+            f"Expected contiguous crop to be resized to less than 3000 atoms, got {len(post_crop_atom_array)} atoms."
+        )
 
 
 def test_compute_local_hash():
@@ -408,9 +408,9 @@ def test_compute_local_hash():
         hash_post = compute_local_hash(post_crop)
         post_crop.set_annotation("hash_post", hash_post)
 
-        assert np.all(
-            post_crop.hash_pre == post_crop.hash_post
-        ), "Hash mismatch between pre- and post-crop despite not cropping."
+        assert np.all(post_crop.hash_pre == post_crop.hash_post), (
+            "Hash mismatch between pre- and post-crop despite not cropping."
+        )
 
     # Test 2: Spatial cropping
     crop_pipe = CropSpatialLikeAF3(crop_size=32)

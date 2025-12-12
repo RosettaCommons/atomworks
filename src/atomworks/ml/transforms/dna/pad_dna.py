@@ -683,9 +683,9 @@ class PadDNA(Transform):
                 seq2_rhs = "".join(chain2["canonical_seq"][-chain2_overhang[1] :])
 
             try:
-                assert seq1_paired == to_reverse_complement(
-                    seq2_paired
-                ), "sequences to be joined must be reverse-complements of each other"
+                assert seq1_paired == to_reverse_complement(seq2_paired), (
+                    "sequences to be joined must be reverse-complements of each other"
+                )
                 assert seq1_lhs == "" or seq2_rhs == "", "overhang1_lhs and overhang1_rhs are mutually exclusive"
                 assert seq1_rhs == "" or seq2_lhs == "", "overhang2_lhs and overhang2_rhs are mutually exclusive"
             except AssertionError:

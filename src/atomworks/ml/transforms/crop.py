@@ -119,12 +119,12 @@ def crop_contiguous_af2_multimer(iids: list[int | str], instance_lens: list[int]
     instance_lens = np.asarray(instance_lens)
 
     assert crop_size > 0, "Crop size must be greater than 0"
-    assert len(iids) == len(
-        instance_lens
-    ), f"Number of instance IDs ({len(iids)}) must match number of instance lengths ({len(instance_lens)})"
-    assert (
-        len(iids) == np.unique(iids).size
-    ), f"Instance IDs must be unique, but got {len(iids)} IDs with only {np.unique(iids).size} unique values"
+    assert len(iids) == len(instance_lens), (
+        f"Number of instance IDs ({len(iids)}) must match number of instance lengths ({len(instance_lens)})"
+    )
+    assert len(iids) == np.unique(iids).size, (
+        f"Instance IDs must be unique, but got {len(iids)} IDs with only {np.unique(iids).size} unique values"
+    )
 
     # randomly permute the order of the instances to avoid cropping bias
     permutation = np.random.permutation(len(iids))
@@ -236,9 +236,9 @@ def get_spatial_crop_center(
         # If there's only one query unit, we don't need to check for spatial proximity,
         # so we can just return the mask for the query unit.
         can_be_crop_center = is_query_pn_unit & is_occupied
-        assert np.any(
-            can_be_crop_center
-        ), f"No crop center found! It appears `query_pn_unit_iid` {query_pn_unit_iids} is not in the atom array or unresolved."
+        assert np.any(can_be_crop_center), (
+            f"No crop center found! It appears `query_pn_unit_iid` {query_pn_unit_iids} is not in the atom array or unresolved."
+        )
 
         return can_be_crop_center
 
@@ -299,9 +299,9 @@ def get_spatial_crop_mask(
     """
     assert coord.ndim == 2, f"Expected coord to be 2-dimensional, got {coord.ndim} dimensions"
     assert coord.shape[1] == 3, f"Expected coord to have 3 coordinates per point, got {coord.shape[1]}"
-    assert (
-        crop_center_idx < coord.shape[0]
-    ), f"Crop center index {crop_center_idx} is out of bounds for coord array of length {coord.shape[0]}"
+    assert crop_center_idx < coord.shape[0], (
+        f"Crop center index {crop_center_idx} is out of bounds for coord array of length {coord.shape[0]}"
+    )
     assert crop_size > 0, f"Crop size must be positive, got {crop_size}"
     assert jitter_scale >= 0, f"Jitter scale must be non-negative, got {jitter_scale}"
 

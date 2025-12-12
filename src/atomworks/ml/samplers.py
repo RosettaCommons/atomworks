@@ -319,9 +319,9 @@ class DistributedMixedSampler(Sampler):
             # ... and assert that either we have more than n_examples_per_epoch examples or we are sampling with replacement
             sampler_has_enough_data = len(sampler) >= n_examples
             sampler_is_replacement = getattr(sampler, "replacement", False)
-            assert (
-                sampler_has_enough_data or sampler_is_replacement
-            ), "Must either have enough data or be sampling with replacement"
+            assert sampler_has_enough_data or sampler_is_replacement, (
+                "Must either have enough data or be sampling with replacement"
+            )
 
     def __iter__(self):
         # Trigger the __iter__ of each sampler upfront (generates a list of local indices based on the sampling scheme)

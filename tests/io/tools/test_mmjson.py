@@ -1,8 +1,6 @@
-
 from atomworks.io.parser import parse
 from atomworks.io.utils.io_utils import infer_pdb_file_type
 from atomworks.io.utils.testing import assert_same_atom_array
-
 from tests.conftest import TEST_DATA_DIR
 
 

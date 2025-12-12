@@ -158,9 +158,9 @@ def get_metadata_from_category(cif_block: CIFBlock, fallback_id: str | None = No
     metadata = {}
 
     # Assert that if the "entry.id" field is NOT present, a fallback ID is provided
-    assert (
-        "entry" in cif_block and "id" in cif_block["entry"]
-    ) or fallback_id is not None, "No ID found in CIF block or provided as fallback."
+    assert ("entry" in cif_block and "id" in cif_block["entry"]) or fallback_id is not None, (
+        "No ID found in CIF block or provided as fallback."
+    )
 
     # Set the ID field, using the fallback if necessary
     metadata["id"] = (

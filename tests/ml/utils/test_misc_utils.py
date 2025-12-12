@@ -29,9 +29,9 @@ GROUPED_SUM_TEST_CASES = [
 @pytest.mark.parametrize("test_case", GROUPED_SUM_TEST_CASES)
 def test_grouped_sum(test_case):
     output = grouped_sum(test_case["data"], test_case["assignment"], test_case["num_groups"])
-    assert torch.equal(
-        output, test_case["expected_output"]
-    ), f"Expected {test_case['expected_output']}, but got {output}"
+    assert torch.equal(output, test_case["expected_output"]), (
+        f"Expected {test_case['expected_output']}, but got {output}"
+    )
 
 
 # Test cases for masked_mean
@@ -68,6 +68,6 @@ def test_masked_mean(test_case):
         axis=test_case["axis"],
         drop_mask_channel=test_case["drop_mask_channel"],
     )
-    assert torch.allclose(
-        output, test_case["expected_output"], atol=1e-6
-    ), f"Expected {test_case['expected_output']}, but got {output}"
+    assert torch.allclose(output, test_case["expected_output"], atol=1e-6), (
+        f"Expected {test_case['expected_output']}, but got {output}"
+    )

@@ -83,9 +83,9 @@ def test_is_same_in_segment():
     segment_start_stop = np.array([0, 3, 6, 8])  # 3 segments
     data = np.array([1, 1, 1, 2, 2, 2, 3, 3, 3])  # Each segment has same value
     result = is_same_in_segment(segment_start_stop, data)
-    assert np.array_equal(
-        result, np.array([True, True, True])
-    ), f"Failed simple segments test. Expected {np.array([True, True, True])}, got {result}"
+    assert np.array_equal(result, np.array([True, True, True])), (
+        f"Failed simple segments test. Expected {np.array([True, True, True])}, got {result}"
+    )
     result_group = is_same_in_group(groups, data)
     assert np.array_equal(result_group, np.array([True, True, True]))
 
