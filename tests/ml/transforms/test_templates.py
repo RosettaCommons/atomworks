@@ -54,9 +54,9 @@ def test_add_rf_templates(test_case: dict):
     )(data)
 
     for chain, n_templates in test_case["n_templates"].items():
-        assert len(data["template"][chain]) == n_templates, (
-            f"For {pdb_id}-{chain}: Expected {n_templates} templates, got {len(data['template'][chain])}"
-        )
+        assert (
+            len(data["template"][chain]) == n_templates
+        ), f"For {pdb_id}-{chain}: Expected {n_templates} templates, got {len(data['template'][chain])}"
 
 
 @pytest.mark.parametrize("test_case", TEST_CASES)
@@ -90,9 +90,9 @@ def test_subsample_template(test_case: dict):
     assert all(count <= 10 for count in template_counts), "Expected no template to have more than 10 templates"
 
     # Assert the mean is what we would expect (~7.5 = 0.5 * 10 + 0.5 * 5)
-    assert 7.5 - 1 < sum(template_counts) / len(template_counts) < 7.5 + 1, (
-        f"Expected mean to be around 7.5. Found {sum(template_counts) / len(template_counts)}. This is a stochastic test, so running again may fix this."
-    )
+    assert (
+        7.5 - 1 < sum(template_counts) / len(template_counts) < 7.5 + 1
+    ), f"Expected mean to be around 7.5. Found {sum(template_counts) / len(template_counts)}. This is a stochastic test, so running again may fix this."
 
 
 @pytest.mark.parametrize("test_case", TEST_CASES)
@@ -118,12 +118,12 @@ def test_add_rf_templates_filters(
         assert len(templates) > 0, f"No templates found for {pdb_id}-{chain}"
         assert len(templates) <= 5, f"Expected 5 templates, got {len(templates)} for {pdb_id}-{chain}"
         for template in templates:
-            assert min_seq_similarity <= template["seq_similarity"] <= max_seq_similarity, (
-                f"Expected seq similarity between {min_seq_similarity} and {max_seq_similarity}, got {template['seq_similarity']} for {pdb_id}-{chain}-{template['id']}"
-            )
-            assert template["n_res"] >= min_template_length, (
-                f"Expected at least {min_template_length} residues, got {template['n_res']} for {pdb_id}-{chain}-{template['id']}"
-            )
+            assert (
+                min_seq_similarity <= template["seq_similarity"] <= max_seq_similarity
+            ), f"Expected seq similarity between {min_seq_similarity} and {max_seq_similarity}, got {template['seq_similarity']} for {pdb_id}-{chain}-{template['id']}"
+            assert (
+                template["n_res"] >= min_template_length
+            ), f"Expected at least {min_template_length} residues, got {template['n_res']} for {pdb_id}-{chain}-{template['id']}"
 
 
 @pytest.mark.parametrize("test_case", TEST_CASES)
@@ -186,15 +186,15 @@ def test_featurize_rf_templates(test_case: dict, encoding: TokenEncoding, n_temp
     assert t1d_template[0].shape == seq_encoded.shape
 
     # Check that the t1d last axis adds up to one when excluding the last dimension
-    assert torch.all(t1d_template[..., :-1].sum(dim=-1) == 1), (
-        f"Expected t1d last axis to add up to one (one-hot encoded), but got {t1d_template[..., :-1].sum(dim=-1)}"
-    )
+    assert torch.all(
+        t1d_template[..., :-1].sum(dim=-1) == 1
+    ), f"Expected t1d last axis to add up to one (one-hot encoded), but got {t1d_template[..., :-1].sum(dim=-1)}"
 
     # Check that alignment confidences exist for all non-masked tokens
     is_masked = t1d_template[..., 21] == 1
-    assert torch.all(t1d_template[..., -1][~is_masked] > 0), (
-        "Expected t1d last axis to be greater than zero (alignment confidence)"
-    )
+    assert torch.all(
+        t1d_template[..., -1][~is_masked] > 0
+    ), "Expected t1d last axis to be greater than zero (alignment confidence)"
 
     # Check that all not-masked tokens have finite coordinates
     assert torch.all(torch.isfinite(xyz_template[mask_template])), "Expected non-masked template xyz to be finite"
@@ -238,9 +238,7 @@ def test_add_input_file_template(test_case: dict):
     assert (
         set(input_file_template[chosen_chain_to_template][0].keys())
         == training_pipeline_template[chosen_chain_to_template][0].keys()
-    ), (
-        f"Expected input file template to have the same keys as the training pipeline template, but got {set(input_file_template[chosen_chain_to_template][0].keys())} and {set(training_pipeline_template[chosen_chain_to_template][0].keys())}"
-    )
+    ), f"Expected input file template to have the same keys as the training pipeline template, but got {set(input_file_template[chosen_chain_to_template][0].keys())} and {set(training_pipeline_template[chosen_chain_to_template][0].keys())}"
 
     # check that the template has the same fields as the template from AddRFTemplates
     required_annotations = [
@@ -253,28 +251,30 @@ def test_add_input_file_template(test_case: dict):
     training_pipeline_template_annotations = training_pipeline_template[chosen_chain_to_template][0][
         "atom_array"
     ].get_annotation_categories()
-    assert set(required_annotations).issubset(input_file_template_annotations), (
-        f"Input file template is missing the following annotations: {set(required_annotations) - set(input_file_template_annotations)}"
-    )
-    assert set(required_annotations).issubset(training_pipeline_template_annotations), (
-        f"Training pipeline template is missing the following annotations: {set(required_annotations) - set(training_pipeline_template_annotations)}"
-    )
+    assert set(
+        required_annotations
+    ).issubset(
+        input_file_template_annotations
+    ), f"Input file template is missing the following annotations: {set(required_annotations) - set(input_file_template_annotations)}"
+    assert set(
+        required_annotations
+    ).issubset(
+        training_pipeline_template_annotations
+    ), f"Training pipeline template is missing the following annotations: {set(required_annotations) - set(training_pipeline_template_annotations)}"
 
     # check that one template has added for the first polymer chain
-    assert len(input_file_template[chosen_chain_to_template]) == 1, (
-        f"Expected input file template to have one template, but got {len(input_file_template[chosen_chain_to_template])}"
-    )
+    assert (
+        len(input_file_template[chosen_chain_to_template]) == 1
+    ), f"Expected input file template to have one template, but got {len(input_file_template[chosen_chain_to_template])}"
 
-    assert np.all(input_file_template[chosen_chain_to_template][0]["atom_array"].alignment_confidence == 1), (
-        f"Expected input file template to have template confidence of 1, but got {input_file_template[chosen_chain_to_template][0]['atom_array'].alignment_confidence}"
-    )
+    assert np.all(
+        input_file_template[chosen_chain_to_template][0]["atom_array"].alignment_confidence == 1
+    ), f"Expected input file template to have template confidence of 1, but got {input_file_template[chosen_chain_to_template][0]['atom_array'].alignment_confidence}"
 
     assert np.all(
         input_file_template[chosen_chain_to_template][0]["atom_array"].aligned_query_res_idx
         == input_file_template[chosen_chain_to_template][0]["atom_array"].res_id
-    ), (
-        f"Expected input file template to have aligned query res idx equal to res id, but got {input_file_template[chosen_chain_to_template][0]['atom_array'].aligned_query_res_idx} and {input_file_template[chosen_chain_to_template][0]['atom_array'].res_id}"
-    )
+    ), f"Expected input file template to have aligned query res idx equal to res id, but got {input_file_template[chosen_chain_to_template][0]['atom_array'].aligned_query_res_idx} and {input_file_template[chosen_chain_to_template][0]['atom_array'].res_id}"
 
 
 @pytest.mark.parametrize("test_case", TEST_CASES)
@@ -312,6 +312,6 @@ def test_featurize_input_templates(test_case):
         "template_distogram",
         "template_unit_vector",
     ]
-    assert set(expected_template_features).issubset(data["feats"].keys()), (
-        f"Expected template features to be present, but got {set(data['feats'].keys())} instead"
-    )
+    assert set(expected_template_features).issubset(
+        data["feats"].keys()
+    ), f"Expected template features to be present, but got {set(data['feats'].keys())} instead"

@@ -59,9 +59,9 @@ def test_save_and_load_atom_array_with_defaults(atom_array: AtomArray):
     existing = set(
         get_annotation_categories(loaded_atom_array, n_body=1) + get_annotation_categories(loaded_atom_array, n_body=2)
     )
-    assert possible.issubset(existing), (
-        f"Some possible annotations are not found in loaded_atom_array: {possible - existing}"
-    )
+    assert possible.issubset(
+        existing
+    ), f"Some possible annotations are not found in loaded_atom_array: {possible - existing}"
 
     for condition_cls in CONDITIONS:
         default_mask = condition_cls.default_mask(atom_array)
@@ -179,16 +179,14 @@ def test_save_and_load_atom_array_with_conditions(atom_array: AtomArray):
             target_annotation = target_annotation.as_dense_array()
             loaded_annotation = loaded_annotation.as_dense_array()
 
-        assert np.array_equal(target_mask, loaded_mask, equal_nan=True), (
-            f"Mismatch for {condition_cls.full_name}: {np.where(target_mask)} != {np.where(loaded_mask)}"
-        )
+        assert np.array_equal(
+            target_mask, loaded_mask, equal_nan=True
+        ), f"Mismatch for {condition_cls.full_name}: {np.where(target_mask)} != {np.where(loaded_mask)}"
         assert np.array_equal(
             target_annotation[target_mask],
             loaded_annotation[loaded_mask],
             equal_nan=np.issubdtype(condition_cls.dtype, np.floating),
-        ), (
-            f"Mismatch for {condition_cls.full_name}: {target_annotation[target_mask]} != {loaded_annotation[loaded_mask]}"
-        )
+        ), f"Mismatch for {condition_cls.full_name}: {target_annotation[target_mask]} != {loaded_annotation[loaded_mask]}"
 
 
 if __name__ == "__main__":

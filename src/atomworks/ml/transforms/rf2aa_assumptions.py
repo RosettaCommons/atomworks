@@ -157,22 +157,22 @@ def assert_satisfies_rf2aa_assumptions(sample: dict[str, Any]) -> None:
     # Assert that the correspondence between chains is the same in ch_label and same_chain is valid
     ch_label_diffs = np.where(ch_label.diff())[0]
     same_chain_diffs = np.unique(np.where(same_chain.diff())[1])
-    assert np.all(np.isin(ch_label_diffs, same_chain_diffs)), (
-        f"{item}: ch_label_diffs: {ch_label_diffs}, same_chain_diffs: {same_chain_diffs}"
-    )
+    assert np.all(
+        np.isin(ch_label_diffs, same_chain_diffs)
+    ), f"{item}: ch_label_diffs: {ch_label_diffs}, same_chain_diffs: {same_chain_diffs}"
 
     # Assert that there are polymer tokens in the example:
     num_res_tokens = ((~_is_atom(seq[0])).sum()).item()
-    assert num_res_tokens > 0, (
-        f"{item}: num_res_tokens: {num_res_tokens}. No polymer tokens at all. This would lead RF2AA to crash."
-    )
+    assert (
+        num_res_tokens > 0
+    ), f"{item}: num_res_tokens: {num_res_tokens}. No polymer tokens at all. This would lead RF2AA to crash."
     assert num_res_tokens + num_atoms == L, f"{item}: num_res_tokens: {num_res_tokens}, num_atoms: {num_atoms}, L: {L}"
 
     if num_atoms > 0:
         # Assert that `same_chain` is block diagonal in the non-poly sector:
-        assert _is_block_diagonal_with_full_blocks(same_chain[num_res_tokens:, num_res_tokens:]), (
-            f"{item}: non-poly sector of `same_chain` is not block diagonal"
-        )
+        assert _is_block_diagonal_with_full_blocks(
+            same_chain[num_res_tokens:, num_res_tokens:]
+        ), f"{item}: non-poly sector of `same_chain` is not block diagonal"
 
         # Assert that in the non-poly sector,
         for label in np.unique(ch_label[num_res_tokens:]):
@@ -182,24 +182,24 @@ def assert_satisfies_rf2aa_assumptions(sample: dict[str, Any]) -> None:
             # NOTE: This will currently fail (on purpose) for cropped covalent modifications,
             #       where this assumption cannot be guaranteed with an AF3 like cropping strategy.
             same_chain_block = same_chain[num_res_tokens:, num_res_tokens:][np.ix_(idxs, idxs)]
-            assert _are_all_blocks_the_same_size(same_chain_block), (
-                f"{item}: `same_chain` block {label} is not the same size"
-            )
+            assert _are_all_blocks_the_same_size(
+                same_chain_block
+            ), f"{item}: `same_chain` block {label} is not the same size"
 
             # ... ensure there is no entirely unresolved `ch_label` segment in
             #     the non-poly sector:
-            assert (mask_crds[0, idxs + num_res_tokens, :]).any(), (
-                f"{item}: Entity with `chain_label` {label} is entirely unresolved in the non-poly sector."
-            )
+            assert (
+                mask_crds[0, idxs + num_res_tokens, :]
+            ).any(), f"{item}: Entity with `chain_label` {label} is entirely unresolved in the non-poly sector."
 
             # ... ensure there is at least one resolved coordinate for each chain in each entity
             _block_size = same_chain_block[0].sum()
             assert len(idxs) % _block_size == 0
             for chain_idx in range(len(idxs) // _block_size):
                 idxs_in_subblock = idxs[chain_idx * _block_size : (chain_idx + 1) * _block_size]
-                assert (mask_crds[0, idxs_in_subblock + num_res_tokens, :]).any(), (
-                    f"{item}: Chain {chain_idx} in block with `chain_label` {label} has no resolved coordinates in the non-poly sector."
-                )
+                assert (
+                    mask_crds[0, idxs_in_subblock + num_res_tokens, :]
+                ).any(), f"{item}: Chain {chain_idx} in block with `chain_label` {label} has no resolved coordinates in the non-poly sector."
 
     # Assert that there are no masks in `msa`:
     assert not (msa == 21).any(), f"{item}: There are masks in the ground truth `msa`."
@@ -207,21 +207,21 @@ def assert_satisfies_rf2aa_assumptions(sample: dict[str, Any]) -> None:
     # Assert that there are no entirely unresolved chains in the poly sector:
     for label in np.unique(ch_label[:num_res_tokens]):
         idxs = np.where(ch_label[:num_res_tokens] == label)[0]
-        assert (mask_crds[0, idxs, :]).any(), (
-            f"{item}: Entity with `chain_label` {label} is entirely unresolved in the poly sector."
-        )
+        assert (
+            mask_crds[0, idxs, :]
+        ).any(), f"{item}: Entity with `chain_label` {label} is entirely unresolved in the poly sector."
 
     # Ensure there is at least one resolved coordinate for each symmetry copy:
     #  mask_crds: (N_symm, L, NTOTAL)
-    assert mask_crds.any(dim=(1, 2)).all(), (
-        f"{item}: There are no resolved coordinates for at least one symmetry copy (neither poly nor non-poly)."
-    )
+    assert mask_crds.any(
+        dim=(1, 2)
+    ).all(), f"{item}: There are no resolved coordinates for at least one symmetry copy (neither poly nor non-poly)."
 
     # Ensure there is at least one resolved coordinate for each symmetry copy in the poly sector (excluding padding):
     n_symm_poly = mask_crds[:, :num_res_tokens].any(dim=(1, 2)).max().item()
-    assert n_symm_poly > 0, (
-        f"{item}: There are no resolved coordinates for the poly sector of at least one symmetry copy (excluding padding)."
-    )
+    assert (
+        n_symm_poly > 0
+    ), f"{item}: There are no resolved coordinates for the poly sector of at least one symmetry copy (excluding padding)."
 
     # If the given symmetry copy has a poly swap, check that the N-CA-C of at least one residue is resolved, which
     #  is needed to construct the poly frames.
@@ -229,9 +229,9 @@ def assert_satisfies_rf2aa_assumptions(sample: dict[str, Any]) -> None:
         dim=1
     )
     problems = np.where(~symm_copies_has_at_least_one_resolved_N_CA_C)[0]
-    assert len(problems) == 0, (
-        f"{item}: The following symmetry copies have no resolved N-CA-C coordinates for the poly sector: {problems}"
-    )
+    assert (
+        len(problems) == 0
+    ), f"{item}: The following symmetry copies have no resolved N-CA-C coordinates for the poly sector: {problems}"
 
 
 class AssertRF2AAAssumptions(Transform):

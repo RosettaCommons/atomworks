@@ -104,12 +104,12 @@ def test_add_is_real_atom(test_case: dict[str, Any]):
 
     confidence_data = add_is_real_atom_pipeline(prepared_data)
 
-    assert confidence_data["is_real_atom"].sum() == len(confidence_data["atom_array"]), (
-        "is_real_atom must account for all atoms in the atom array"
-    )
-    assert confidence_data["is_real_atom"].shape == EXPECTED_OUTPUT_SHAPES[pdb_id]["is_real_atom"], (
-        "is_real_atom shape should be [n_residues, 36]"
-    )
+    assert confidence_data["is_real_atom"].sum() == len(
+        confidence_data["atom_array"]
+    ), "is_real_atom must account for all atoms in the atom array"
+    assert (
+        confidence_data["is_real_atom"].shape == EXPECTED_OUTPUT_SHAPES[pdb_id]["is_real_atom"]
+    ), "is_real_atom shape should be [n_residues, 36]"
 
 
 @pytest.mark.parametrize("test_case", CONFIDENCE_MODIFICATION_TEST_CASES)

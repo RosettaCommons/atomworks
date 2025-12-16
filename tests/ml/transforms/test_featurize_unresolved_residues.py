@@ -155,9 +155,9 @@ def test_place_unresolved_token_on_closest_resolved_token_in_sequence(pdb_id):
     )(output)
     output_atom_array = output["atom_array"]
 
-    assert not np.isnan(output_atom_array.coord_to_be_noised).any(), (
-        "There should be no NaNs in the output coordinates!"
-    )
+    assert not np.isnan(
+        output_atom_array.coord_to_be_noised
+    ).any(), "There should be no NaNs in the output coordinates!"
 
     for chain_id in np.unique(output_atom_array.chain_id):
         chain_atom_array = output_atom_array[output_atom_array.chain_id == chain_id]

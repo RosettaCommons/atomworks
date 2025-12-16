@@ -463,9 +463,9 @@ class GrowToSegmentIsland(GrowMask):
         region_starts = regions[:-1]
         region_stops = regions[1:]
         seed_region_idx = np.searchsorted(region_starts, seed_idx, side="right") - 1
-        assert region_starts[seed_region_idx] <= seed_idx < region_stops[seed_region_idx], (
-            f"{seed_idx=} is not within the allowed region ({region_starts[seed_region_idx]}-{region_stops[seed_region_idx]})"
-        )
+        assert (
+            region_starts[seed_region_idx] <= seed_idx < region_stops[seed_region_idx]
+        ), f"{seed_idx=} is not within the allowed region ({region_starts[seed_region_idx]}-{region_stops[seed_region_idx]})"
         region_start = region_starts[seed_region_idx]
         region_stop = region_stops[seed_region_idx]
 
@@ -481,9 +481,9 @@ class GrowToSegmentIsland(GrowMask):
         # ... check that the region contains segments and that the seed is within the region
         assert len(segment_starts) > 0, "No candidate segments found"
         seed_segment_idx = np.searchsorted(segment_starts, seed_idx, side="right") - 1
-        assert segment_starts[seed_segment_idx] <= seed_idx < segment_stops[seed_segment_idx], (
-            f"{seed_idx=} is not within the allowed region ({segment_starts[seed_segment_idx]}-{segment_stops[seed_segment_idx]})"
-        )
+        assert (
+            segment_starts[seed_segment_idx] <= seed_idx < segment_stops[seed_segment_idx]
+        ), f"{seed_idx=} is not within the allowed region ({segment_starts[seed_segment_idx]}-{segment_stops[seed_segment_idx]})"
 
         # Sample island size and start position (to include the seed)
         n_candidate_segments = len(segment_starts)
@@ -650,9 +650,9 @@ class CheckAtomBudget(CheckBudget):
     def __init__(self, n_min_atoms: int, n_max_atoms: int):
         self.n_min_atoms = n_min_atoms
         self.n_max_atoms = n_max_atoms
-        assert self.n_min_atoms <= self.n_max_atoms, (
-            f"Can never satisfy budget with {self.n_min_atoms=}<= {self.n_max_atoms=}"
-        )
+        assert (
+            self.n_min_atoms <= self.n_max_atoms
+        ), f"Can never satisfy budget with {self.n_min_atoms=}<= {self.n_max_atoms=}"
 
     def __call__(self, atom_array: AtomArray, total_mask: np.ndarray, all_masks: list[np.ndarray]) -> bool:
         n_atoms = len(total_mask)
@@ -677,9 +677,9 @@ class CheckResidueBudget(CheckBudget):
     ):
         self.n_min_residues = n_min_residues
         self.n_max_residues = n_max_residues
-        assert self.n_min_residues <= self.n_max_residues, (
-            f"Can never satisfy budget with {self.n_min_residues=}<= {self.n_max_residues=}"
-        )
+        assert (
+            self.n_min_residues <= self.n_max_residues
+        ), f"Can never satisfy budget with {self.n_min_residues=}<= {self.n_max_residues=}"
         self.reduce = reduce
 
     def __call__(self, atom_array: AtomArray, total_mask: np.ndarray, all_masks: list[np.ndarray]) -> bool:
@@ -704,9 +704,9 @@ class CheckTokenBudget(CheckBudget):
     def __init__(self, n_min_tokens: int, n_max_tokens: int):
         self.n_min_tokens = n_min_tokens
         self.n_max_tokens = n_max_tokens
-        assert self.n_min_tokens <= self.n_max_tokens, (
-            f"Can never satisfy budget with {self.n_min_tokens=}<= {self.n_max_tokens=}"
-        )
+        assert (
+            self.n_min_tokens <= self.n_max_tokens
+        ), f"Can never satisfy budget with {self.n_min_tokens=}<= {self.n_max_tokens=}"
 
     def __call__(self, atom_array: AtomArray, total_mask: np.ndarray, all_masks: list[np.ndarray]) -> bool:
         token_starts = get_token_starts(atom_array)
@@ -809,9 +809,9 @@ def sample_mask_via_seed_grow_merge(
             # ... grow nothing, just set `this_mask[seed_idx] = True`
             this_mask = np.zeros(n_atoms, dtype=bool)
             this_mask[seed_idx] = True
-        assert this_mask.shape == (n_atoms,), (
-            f"this_mask must be a boolean array of shape ({n_atoms=},). Got {this_mask.shape}"
-        )
+        assert this_mask.shape == (
+            n_atoms,
+        ), f"this_mask must be a boolean array of shape ({n_atoms=},). Got {this_mask.shape}"
         assert this_mask.dtype == bool, f"this_mask must be a boolean array. Got {this_mask.dtype}"
 
         # Merge masks if function provided

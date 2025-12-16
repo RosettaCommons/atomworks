@@ -187,9 +187,9 @@ def _assert_ref_pos_matches_ground_truth(
     mask: np.ndarray,
 ) -> None:
     """Assert that the reference positions are correctly aligned with the ground truth."""
-    assert not np.any(np.isclose(ref_pos, ground_truth_coord)), (
-        "Reference positions should differ from atom array coordinates under a transformation."
-    )
+    assert not np.any(
+        np.isclose(ref_pos, ground_truth_coord)
+    ), "Reference positions should differ from atom array coordinates under a transformation."
 
     # Assert similar distances in masked positions
     dist1 = np.linalg.norm(ground_truth_coord[mask][:, None] - ground_truth_coord[mask], axis=2)
@@ -243,17 +243,16 @@ def test_random_apply_ground_truth_conformer_by_chain_type(seed: int = 42):
 
     # Assert that all polymer atoms have the IGNORE policy
     polymer_mask = atom_array.is_polymer
-    assert np.all(atom_array.ground_truth_conformer_policy[polymer_mask] == GroundTruthConformerPolicy.IGNORE), (
-        f"Expected all polymer atoms to have IGNORE policy, but got {atom_array.ground_truth_conformer_policy[polymer_mask]}"
-    )
+    assert np.all(
+        atom_array.ground_truth_conformer_policy[polymer_mask] == GroundTruthConformerPolicy.IGNORE
+    ), f"Expected all polymer atoms to have IGNORE policy, but got {atom_array.ground_truth_conformer_policy[polymer_mask]}"
 
     # Assert that most non-polymer atoms have the REPLACE policy...
     non_polymer_mask = ~polymer_mask
-    assert np.sum(
-        atom_array.ground_truth_conformer_policy[non_polymer_mask] == GroundTruthConformerPolicy.REPLACE
-    ) > 0.5 * np.sum(non_polymer_mask), (
-        f"Expected most non-polymer atoms to have REPLACE policy, but got {np.sum(atom_array.ground_truth_conformer_policy[non_polymer_mask] == GroundTruthConformerPolicy.REPLACE)}"
-    )
+    assert (
+        np.sum(atom_array.ground_truth_conformer_policy[non_polymer_mask] == GroundTruthConformerPolicy.REPLACE)
+        > 0.5 * np.sum(non_polymer_mask)
+    ), f"Expected most non-polymer atoms to have REPLACE policy, but got {np.sum(atom_array.ground_truth_conformer_policy[non_polymer_mask] == GroundTruthConformerPolicy.REPLACE)}"
     # ... but not all
     assert np.any(atom_array.ground_truth_conformer_policy[non_polymer_mask] == GroundTruthConformerPolicy.IGNORE)
 
@@ -356,9 +355,9 @@ def test_ref_space_uid():
     pipe = GetAF3ReferenceMoleculeFeatures(apply_random_rotation_and_translation=True)
     out = pipe({"atom_array": atom_array})
 
-    assert np.all(out["feats"]["ref_space_uid"] == expected_ref_space_uid), (
-        f"{out['feats']['ref_space_uid']}, but expected {expected_ref_space_uid}"
-    )
+    assert np.all(
+        out["feats"]["ref_space_uid"] == expected_ref_space_uid
+    ), f"{out['feats']['ref_space_uid']}, but expected {expected_ref_space_uid}"
 
 
 def test_max_conformers_per_residue_functionality():
@@ -425,9 +424,9 @@ def test_af3_reference_molecule_features_with_cached_conformers(cache_dir):
     _ = transform_no_cache(data_no_cache)
     no_cache_time = time.time() - start_time
 
-    assert cached_time < 0.8 * no_cache_time, (
-        f"Cached version should be faster than no cache version, but got {cached_time} vs {no_cache_time}"
-    )
+    assert (
+        cached_time < 0.8 * no_cache_time
+    ), f"Cached version should be faster than no cache version, but got {cached_time} vs {no_cache_time}"
 
     feats = result_data_cached["feats"]
     assert not np.any(np.isnan(feats["ref_pos"]))
@@ -496,9 +495,9 @@ def test_af3_reference_molecule_features_with_subsampled_conformers(data_with_su
         actual_ref_mask = feats["ref_mask"][res_start:res_end]
 
         assert np.array_equal(actual_ref_mask, expected_ref_mask), "Reference masks don't match"
-        assert np.allclose(expected_ref_pos[expected_ref_mask], actual_ref_pos[actual_ref_mask], atol=1e-6), (
-            "Reference coordinates don't match"
-        )
+        assert np.allclose(
+            expected_ref_pos[expected_ref_mask], actual_ref_pos[actual_ref_mask], atol=1e-6
+        ), "Reference coordinates don't match"
 
 
 def test_chiral_centers_with_cached_conformers(cache_dir, data_with_subsampled_conformers):

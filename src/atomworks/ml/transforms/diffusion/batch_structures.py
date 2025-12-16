@@ -34,9 +34,9 @@ class BatchStructuresForDiffusionNoising(Transform):
         check_contains_keys(data["ground_truth"], ["coord_atom_lvl", "mask_atom_lvl"])
 
         if "coord_atom_lvl_to_be_noised" in data:
-            assert len(data["coord_atom_lvl_to_be_noised"]) == len(data["atom_array"]), (
-                "structure must not be batched yet"
-            )
+            assert len(data["coord_atom_lvl_to_be_noised"]) == len(
+                data["atom_array"]
+            ), "structure must not be batched yet"
 
     def forward(self, data: dict[str, Any]) -> dict[str, Any]:
         if "coord_atom_lvl_to_be_noised" in data:

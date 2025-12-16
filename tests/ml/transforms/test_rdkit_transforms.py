@@ -86,9 +86,9 @@ def test_add_rdkit_molecules_for_atomized_molecules(test_case):
         expected_num_atoms = np.sum(pn_unit_mask)
         assert rdmol.GetNumAtoms() > 0, f"RDKit molecule {pn_unit_iid} has no atoms"
         assert rdmol.GetNumAtoms() == expected_num_atoms, f"RDKit molecule {pn_unit_iid} has the wrong number of atoms"
-        assert Chem.SanitizeMol(rdmol, catchErrors=True) == Chem.SanitizeFlags.SANITIZE_NONE, (
-            f"RDKit molecule {pn_unit_iid} failed sanitization"
-        )
+        assert (
+            Chem.SanitizeMol(rdmol, catchErrors=True) == Chem.SanitizeFlags.SANITIZE_NONE
+        ), f"RDKit molecule {pn_unit_iid} failed sanitization"
 
         _mol_array = atom_array_from_rdkit(
             rdmol, set_coord_if_available=True, remove_hydrogens=True, remove_inferred_atoms=False

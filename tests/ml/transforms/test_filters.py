@@ -203,9 +203,9 @@ def test_remove_unsupported_chain_types(pdb_id: str, pn_units_df: pd.DataFrame):
             num_unsupported_atoms = len(original_atom_array) - len(atom_array)
             assert num_unsupported_atoms > 0, "There should be some atoms removed"
             chain_types = np.unique(atom_array.chain_type)
-            assert np.all(np.isin(chain_types, TRAINING_SUPPORTED_CHAIN_TYPES)), (
-                "All remaining chain types should be supported"
-            )
+            assert np.all(
+                np.isin(chain_types, TRAINING_SUPPORTED_CHAIN_TYPES)
+            ), "All remaining chain types should be supported"
 
 
 def test_handle_undesired_res_single():
@@ -393,9 +393,9 @@ def test_randomly_remove_ligands():
             delete_probability=0.0,
         )
     categories_0_percent = _categorize_pn_units(result_0_percent)
-    assert categories_0_percent["all"] == original_categories["all"], (
-        f"With 0% probability, all pn_units should remain. Expected {original_categories['counts']['all']}, got {categories_0_percent['counts']['all']}"
-    )
+    assert (
+        categories_0_percent["all"] == original_categories["all"]
+    ), f"With 0% probability, all pn_units should remain. Expected {original_categories['counts']['all']}, got {categories_0_percent['counts']['all']}"
 
     # Test with 100% probability - all free-floating ligands should be removed
     with rng_state(create_rng_state_from_seeds(np_seed=42)):
@@ -407,9 +407,9 @@ def test_randomly_remove_ligands():
     categories_100_percent = _categorize_pn_units(result_100_percent)
 
     expected_remaining_100_percent = original_categories["all"] - original_categories["free_floating_ligand"]
-    assert categories_100_percent["all"] == expected_remaining_100_percent, (
-        f"With 100% probability, only free-floating ligands should be removed. Expected {len(expected_remaining_100_percent)}, got {categories_100_percent['counts']['all']}"
-    )
+    assert (
+        categories_100_percent["all"] == expected_remaining_100_percent
+    ), f"With 100% probability, only free-floating ligands should be removed. Expected {len(expected_remaining_100_percent)}, got {categories_100_percent['counts']['all']}"
 
     # Test with 50% probability multiple times to verify randomness works
     results_50_percent = []
@@ -424,14 +424,14 @@ def test_randomly_remove_ligands():
         results_50_percent.append(categories_50_percent["all"])
 
         # Verify that the remaining pn_units are a subset of the original
-        assert categories_50_percent["all"].issubset(original_categories["all"]), (
-            f"Remaining pn_units should be a subset of original (seed {seed})"
-        )
+        assert categories_50_percent["all"].issubset(
+            original_categories["all"]
+        ), f"Remaining pn_units should be a subset of original (seed {seed})"
 
         # Verify that polymer pn_units are always preserved (they don't match the query)
-        assert categories_50_percent["polymer"] == original_categories["polymer"], (
-            f"Polymer pn_units should always be preserved (seed {seed})"
-        )
+        assert (
+            categories_50_percent["polymer"] == original_categories["polymer"]
+        ), f"Polymer pn_units should always be preserved (seed {seed})"
 
     # Verify that we get different results across different seeds (randomness check)
     unique_results = {frozenset(result) for result in results_50_percent}

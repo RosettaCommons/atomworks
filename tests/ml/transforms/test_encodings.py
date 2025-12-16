@@ -46,9 +46,9 @@ def test_encoding_af2_atom37_encoding(pdb_id: str):
     assert n_token_seq == n_token_struc, f"n_token_seq={n_token_seq} != n_token_struc={n_token_struc}"
     assert n_token_seq == n_token_mask, f"n_token_seq={n_token_seq} != n_token_mask={n_token_mask}"
     assert n_token_seq == n_token_array, f"n_token_seq={n_token_seq} != n_token_array={n_token_array}"
-    assert n_res == n_token_array, (
-        f"n_res={n_res} != n_token_array={n_token_array} -- this should be case when not atomizing"
-    )
+    assert (
+        n_res == n_token_array
+    ), f"n_res={n_res} != n_token_array={n_token_array} -- this should be case when not atomizing"
 
 
 @pytest.mark.parametrize("pdb_id", ["5ocm", "5ocn"])
@@ -84,9 +84,9 @@ def test_encoding_atom14_proteins_only(pdb_id: str, encoding: TokenEncoding):
     assert n_token_seq == n_token_struc, f"n_token_seq={n_token_seq} != n_token_struc={n_token_struc}"
     assert n_token_seq == n_token_mask, f"n_token_seq={n_token_seq} != n_token_mask={n_token_mask}"
     assert n_token_seq == n_token_array, f"n_token_seq={n_token_seq} != n_token_array={n_token_array}"
-    assert n_res == n_token_array, (
-        f"n_res={n_res} != n_token_array={n_token_array} -- this should be case when not atomizing"
-    )
+    assert (
+        n_res == n_token_array
+    ), f"n_res={n_res} != n_token_array={n_token_array} -- this should be case when not atomizing"
 
 
 @pytest.mark.parametrize("pdb_id", ["5ocm"])
@@ -123,9 +123,9 @@ def test_all_atom_encoding(
     assert n_token_seq == n_token_struc, f"n_token_seq={n_token_seq} != n_token_struc={n_token_struc}"
     assert n_token_seq == n_token_mask, f"n_token_seq={n_token_seq} != n_token_mask={n_token_mask}"
     assert n_token_seq == n_token_array, f"n_token_seq={n_token_seq} != n_token_array={n_token_array}"
-    assert n_res < n_token_array, (
-        f"n_res={n_res} > n_token_array={n_token_array} -- there should be more tokens than residues when atomizing"
-    )
+    assert (
+        n_res < n_token_array
+    ), f"n_res={n_res} > n_token_array={n_token_array} -- there should be more tokens than residues when atomizing"
 
 
 MOLECULE_TEST_CASES = [
@@ -173,30 +173,30 @@ def test_extra_annotations(test_case: dict):
 
     # Check `chain_id` annotations
     assert "chain_id" in data["encoded"], "chain_id not in encoded"
-    assert len(data["encoded"]["chain_id"]) == n_token, (
-        f"chain_id length={len(data['encoded']['chain_id'])} != n_token={n_token}"
-    )
+    assert (
+        len(data["encoded"]["chain_id"]) == n_token
+    ), f"chain_id length={len(data['encoded']['chain_id'])} != n_token={n_token}"
 
     # Check `molecule_iid` annotations
     assert "molecule_iid" in data["encoded"], "molecule_iid not in encoded"
-    assert len(data["encoded"]["molecule_iid"]) == n_token, (
-        f"molecule_iid length={len(data['encoded']['molecule_iid'])} != n_token={n_token}"
-    )
-    assert len(data["encoded"]["molecule_iid_to_int"]) == test_case["num_molecules"], (
-        f"molecule_iid_to_int length={len(data['encoded']['molecule_iid_to_int'])} != num_molecules={test_case['num_molecules']}"
-    )
-    assert np.all(sorted(np.unique(data["encoded"]["molecule_iid"])) == np.arange(test_case["num_molecules"])), (
-        f"molecule_iid unique values={np.unique(data['encoded']['molecule_iid'])} != num_molecules={test_case['num_molecules']}"
-    )
+    assert (
+        len(data["encoded"]["molecule_iid"]) == n_token
+    ), f"molecule_iid length={len(data['encoded']['molecule_iid'])} != n_token={n_token}"
+    assert (
+        len(data["encoded"]["molecule_iid_to_int"]) == test_case["num_molecules"]
+    ), f"molecule_iid_to_int length={len(data['encoded']['molecule_iid_to_int'])} != num_molecules={test_case['num_molecules']}"
+    assert np.all(
+        sorted(np.unique(data["encoded"]["molecule_iid"])) == np.arange(test_case["num_molecules"])
+    ), f"molecule_iid unique values={np.unique(data['encoded']['molecule_iid'])} != num_molecules={test_case['num_molecules']}"
 
     for molecule_iid, molecule_iidx in data["encoded"]["molecule_iid_to_int"].items():
         raw_coords = atom_array[(atom_array.occupancy > 0) & (atom_array.molecule_iid == molecule_iid)].coord
         encoded_coords = data["encoded"]["xyz"][
             (data["encoded"]["molecule_iid"] == molecule_iidx).reshape(-1, 1) & (data["encoded"]["mask"])
         ]
-        assert raw_coords.shape == encoded_coords.shape, (
-            f"raw_coords shape={raw_coords.shape} != encoded_coords shape={encoded_coords.shape}"
-        )
+        assert (
+            raw_coords.shape == encoded_coords.shape
+        ), f"raw_coords shape={raw_coords.shape} != encoded_coords shape={encoded_coords.shape}"
 
 
 # TODO:

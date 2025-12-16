@@ -59,9 +59,9 @@ def test_get_atom_mask_from_cell_list(mock_data):
     chunk_size = 1000  # Small chunk_size
     result = get_atom_mask_from_cell_list(large_query_coords, cell_list, cell_list_size, clash_distance, chunk_size)
     expected = cell_list.get_atoms(large_query_coords, clash_distance, as_mask=True)
-    assert np.array_equal(result, expected), (
-        "Result with large coord array and small chunk_size does not match expected output."
-    )
+    assert np.array_equal(
+        result, expected
+    ), "Result with large coord array and small chunk_size does not match expected output."
 
     # Non-divisible chunk_size
     chunk_size = 1507  # Non-divisible chunk_size

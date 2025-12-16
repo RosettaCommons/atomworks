@@ -65,9 +65,9 @@ def featurize_atom_level_embeddings(
         )
         _has_descriptors = True
     except (StopIteration, ValueError):
-        assert embedding_dim is not None and n_conformers is not None, (
-            "embedding_dim and n_conformers must be provided if no descriptors are available"
-        )
+        assert (
+            embedding_dim is not None and n_conformers is not None
+        ), "embedding_dim and n_conformers must be provided if no descriptors are available"
         _has_descriptors = False
 
     default_return = {

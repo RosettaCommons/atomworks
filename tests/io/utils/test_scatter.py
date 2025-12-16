@@ -62,9 +62,9 @@ def test_apply_group_wise_2d_sum():
     data = np.array([[1, 1], [2, 2], [3, 3], [4, 4]])
     result = apply_group_wise(groups, data, lambda arr: np.sum(arr, axis=0))
     expected = np.array([[4, 4], [6, 6]])
-    assert np.array_equal(np.stack(result), expected), (
-        f"Failed 2D sum test. Expected {expected}, got {np.stack(result)}"
-    )
+    assert np.array_equal(
+        np.stack(result), expected
+    ), f"Failed 2D sum test. Expected {expected}, got {np.stack(result)}"
 
 
 def test_spread_group_wise_basic():
@@ -99,9 +99,9 @@ def test_get_segments_docstring():
     result_from_groups = get_segments(result_groups, add_exclusive_stop=True)
     expected = np.array([0, 2, 3, 4, 5])
     assert np.array_equal(result, expected), f"Failed docstring test. Expected {expected}, got {result}"
-    assert np.array_equal(result_from_groups, expected), (
-        f"Failed docstring test. Expected {expected}, got {result_from_groups}"
-    )
+    assert np.array_equal(
+        result_from_groups, expected
+    ), f"Failed docstring test. Expected {expected}, got {result_from_groups}"
 
 
 def test_get_segments_single_array():
@@ -111,9 +111,9 @@ def test_get_segments_single_array():
     result_from_groups = get_segments(result_groups, add_exclusive_stop=True)
     expected = np.array([0, 2, 4, 5])
     assert np.array_equal(result, expected), f"Failed single array test. Expected {expected}, got {result}"
-    assert np.array_equal(result_from_groups, expected), (
-        f"Failed single array test. Expected {expected}, got {result_from_groups}"
-    )
+    assert np.array_equal(
+        result_from_groups, expected
+    ), f"Failed single array test. Expected {expected}, got {result_from_groups}"
 
 
 def test_get_segments_no_changes():
@@ -123,9 +123,9 @@ def test_get_segments_no_changes():
     result_from_groups = get_segments(result_groups, add_exclusive_stop=True)
     expected = np.array([0, 5])
     assert np.array_equal(result, expected), f"Failed no-change test. Expected {expected}, got {result}"
-    assert np.array_equal(result_from_groups, expected), (
-        f"Failed no-change test. Expected {expected}, got {result_from_groups}"
-    )
+    assert np.array_equal(
+        result_from_groups, expected
+    ), f"Failed no-change test. Expected {expected}, got {result_from_groups}"
 
 
 def test_get_segments_all_changes():
@@ -135,9 +135,9 @@ def test_get_segments_all_changes():
     result_from_groups = get_segments(result_groups, add_exclusive_stop=True)
     expected = np.array([0, 1, 2, 3, 4, 5])
     assert np.array_equal(result, expected), f"Failed all-changes test. Expected {expected}, got {result}"
-    assert np.array_equal(result_from_groups, expected), (
-        f"Failed all-changes test. Expected {expected}, got {result_from_groups}"
-    )
+    assert np.array_equal(
+        result_from_groups, expected
+    ), f"Failed all-changes test. Expected {expected}, got {result_from_groups}"
 
 
 def test_apply_and_spread_segment_wise_sum_and_mean():
@@ -150,18 +150,18 @@ def test_apply_and_spread_segment_wise_sum_and_mean():
     result_sum_groups = apply_and_spread_group_wise(groups, data, np.sum)
     expected_sum = np.array([30, 30, 120, 120, 120, 60])
     assert np.array_equal(result_sum, expected_sum), f"Failed sum test. Expected {expected_sum}, got {result_sum}"
-    assert np.array_equal(result_sum_groups, expected_sum), (
-        f"Failed sum test. Expected {expected_sum}, got {result_sum_groups}"
-    )
+    assert np.array_equal(
+        result_sum_groups, expected_sum
+    ), f"Failed sum test. Expected {expected_sum}, got {result_sum_groups}"
 
     # Test with np.mean
     result_mean = apply_and_spread_segment_wise(segments, data, np.mean)
     result_mean_groups = apply_and_spread_group_wise(groups, data, np.mean)
     expected_mean = np.array([15.0, 15.0, 40.0, 40.0, 40.0, 60.0])
     assert np.allclose(result_mean, expected_mean), f"Failed mean test. Expected {expected_mean}, got {result_mean}"
-    assert np.allclose(result_mean_groups, expected_mean), (
-        f"Failed mean test. Expected {expected_mean}, got {result_mean_groups}"
-    )
+    assert np.allclose(
+        result_mean_groups, expected_mean
+    ), f"Failed mean test. Expected {expected_mean}, got {result_mean_groups}"
 
 
 if __name__ == "__main__":

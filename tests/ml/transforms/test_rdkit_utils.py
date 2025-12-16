@@ -167,13 +167,13 @@ def test_chirality_in_rdkit_conformer_generation(ccd_code, target_chirality, str
     for i in range(n_iterations):
         mol = ccd_code_to_rdkit_with_conformers(ccd_code, n_conformers=1, timeout=2, timeout_strategy=strategy)
         coord = mol.GetConformer(0).GetPositions()[0][0]
-        assert coord != prev_coord, (
-            f"Conformer {i} has the same coordinate as the previous conformer: {coord} at iteration {i}/{n_iterations}."
-        )
+        assert (
+            coord != prev_coord
+        ), f"Conformer {i} has the same coordinate as the previous conformer: {coord} at iteration {i}/{n_iterations}."
         prev_coord = coord
-        assert Chem.FindMolChiralCenters(mol) == target_chirality, (
-            f"Chiral center assignment is incorrect for {ccd_code} at iteration {i}/{n_iterations}."
-        )
+        assert (
+            Chem.FindMolChiralCenters(mol) == target_chirality
+        ), f"Chiral center assignment is incorrect for {ccd_code} at iteration {i}/{n_iterations}."
 
 
 @pytest.mark.filterwarnings("ignore: This process")

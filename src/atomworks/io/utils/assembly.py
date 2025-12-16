@@ -119,9 +119,9 @@ def _build_bioassembly_from_asym_unit(
         to_build = available_assembly_ids
     else:
         # Assert that the given `assembly_ids` are valid
-        assert isinstance(assembly_ids, list | tuple) and all(isinstance(_id, str) for _id in assembly_ids), (
-            "Invalid `build_assembly` option. Must be 'first', 'all', or a list/tuple of assembly IDs as strings."
-        )
+        assert isinstance(assembly_ids, list | tuple) and all(
+            isinstance(_id, str) for _id in assembly_ids
+        ), "Invalid `build_assembly` option. Must be 'first', 'all', or a list/tuple of assembly IDs as strings."
         to_build = assembly_ids
 
     # ensure instructions for each requested assembly id exist

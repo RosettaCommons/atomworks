@@ -342,9 +342,9 @@ class Transform(ABC):
 
         # apply the transformation
         data = self.forward(data, *args, **kwargs)
-        assert isinstance(data, dict), (
-            f"`forward` method of {self.__class__.__name__} must return a dictionary, not {type(data)}."
-        )
+        assert isinstance(
+            data, dict
+        ), f"`forward` method of {self.__class__.__name__} must return a dictionary, not {type(data)}."
 
         # restore the transform history if `data` was copied (which loses the transform history)
         data = self._ensure_has_transform_history(data)
@@ -798,9 +798,9 @@ class RandomRoute(Transform):
             f"Number of transforms must match number of probabilities. "
             f"Got {len(transforms)} transforms and {len(probs)} probabilities."
         )
-        assert np.isclose(np.sum(probs), 1) or np.isclose(np.sum(probs), 0), (
-            f"Probabilities must sum to 1 or 0. Got {np.sum(probs)}"
-        )
+        assert np.isclose(np.sum(probs), 1) or np.isclose(
+            np.sum(probs), 0
+        ), f"Probabilities must sum to 1 or 0. Got {np.sum(probs)}"
         assert all(isinstance(t, Transform) for t in transforms), (
             f"All elements in transforms must be Transform instances. "
             f"Got {type(next(t for t in transforms if not isinstance(t, Transform)))}"

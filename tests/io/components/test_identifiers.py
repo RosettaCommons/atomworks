@@ -98,9 +98,9 @@ def test_identifiers(test_case):
     generated_pn_unit_iids = sorted(np.unique(atom_array.pn_unit_iid.astype(str)))
     reference_pn_unit_iids = sorted(test_case["pn_unit_iids"])
 
-    assert generated_pn_unit_iids == reference_pn_unit_iids, (
-        f"Generated PN unit instance IDs do not match reference PN unit IIDs for PDB ID {test_case['pdb_id']} and assembly_id {test_case['assembly_id']}."
-    )
+    assert (
+        generated_pn_unit_iids == reference_pn_unit_iids
+    ), f"Generated PN unit instance IDs do not match reference PN unit IIDs for PDB ID {test_case['pdb_id']} and assembly_id {test_case['assembly_id']}."
 
 
 MOLECULE_TEST_CASES = [

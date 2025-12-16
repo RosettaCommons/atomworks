@@ -206,15 +206,15 @@ def test_fill_full_msa_from_encoded(pdb_id):
     for index, token_atom_array in enumerate(token_iter(atom_array)):
         if token_atom_array.atomize[0]:
             # If this residue is atomized, ensure that the entire MSA column (other than the query sequence) is padding...
-            assert np.all(output["encoded"]["msa"][1:, index] == pad_token), (
-                f"MSA column for atomized residue {index} is not padding"
-            )
+            assert np.all(
+                output["encoded"]["msa"][1:, index] == pad_token
+            ), f"MSA column for atomized residue {index} is not padding"
 
             # ...and the padding is represented in the full MSA details
             assert not output["full_msa_details"]["token_idx_has_msa"][index], "Token index has MSA when it should not"
-            assert np.all(output["full_msa_details"]["msa_is_padded_mask"][1:, index]), (
-                "MSA is not padded when it should be"
-            )
+            assert np.all(
+                output["full_msa_details"]["msa_is_padded_mask"][1:, index]
+            ), "MSA is not padded when it should be"
             atomized_indices.append(index)
         else:
             # If this residue is not atomized, ensure that the MSA matches with the pre-atomized MSA...
@@ -223,14 +223,14 @@ def test_fill_full_msa_from_encoded(pdb_id):
             encoded_old_msa = output["polymer_msas_by_chain_id"][chain_id]["encoded_msa"]
             msa_column_old = encoded_old_msa[:, within_poly_res_idx]
             msa_column_new = output["encoded"]["msa"][:, index]
-            assert np.array_equal(msa_column_old, msa_column_new), (
-                f"MSA column for non-atomized residue {index} does not match"
-            )
+            assert np.array_equal(
+                msa_column_old, msa_column_new
+            ), f"MSA column for non-atomized residue {index} does not match"
 
             # ...and that we are noting that this token has MSA
-            assert output["full_msa_details"]["token_idx_has_msa"][index], (
-                "Token index does not have MSA when it should"
-            )
+            assert output["full_msa_details"]["token_idx_has_msa"][
+                index
+            ], "Token index does not have MSA when it should"
 
     # Check that there are no insertions where there is MSA padding...
     msa_raw_ins = output["full_msa_details"]["msa_raw_ins"]
@@ -238,9 +238,9 @@ def test_fill_full_msa_from_encoded(pdb_id):
     assert np.sum(msa_raw_ins * msa_is_padded_mask) == 0, "There should be no insertions where there is MSA padding"
 
     # ...AND that there are no insertions where there are atomized tokens
-    assert np.sum(msa_raw_ins[:, atomized_indices]) == 0, (
-        "There should be no insertions where there are atomized tokens"
-    )
+    assert (
+        np.sum(msa_raw_ins[:, atomized_indices]) == 0
+    ), "There should be no insertions where there are atomized tokens"
 
 
 ASSIGN_EXTRA_ROWS_TEST_CASES = [
@@ -415,12 +415,12 @@ def test_summarize_clusters(test_case):
         n_tokens=3,
     )
 
-    assert torch.allclose(msa_cluster_profiles, expected_profiles, atol=1e-4), (
-        f"Expected profiles {expected_profiles}, but got {msa_cluster_profiles}"
-    )
-    assert torch.allclose(msa_cluster_ins, expected_insertions, atol=1e-4), (
-        f"Expected insertions {expected_insertions}, but got {msa_cluster_ins}"
-    )
+    assert torch.allclose(
+        msa_cluster_profiles, expected_profiles, atol=1e-4
+    ), f"Expected profiles {expected_profiles}, but got {msa_cluster_profiles}"
+    assert torch.allclose(
+        msa_cluster_ins, expected_insertions, atol=1e-4
+    ), f"Expected insertions {expected_insertions}, but got {msa_cluster_ins}"
 
 
 def test_mask_msa_like_bert():
@@ -624,9 +624,9 @@ def test_msa_featurize_like_rf2aa_full_pipeline(pdb_id):
         # For each key in the dictionary, check that the values match
         for key, old_values in old_results.items():
             new_values = output["features_per_recycle_dict"][key]
-            assert torch.allclose(torch.stack(new_values), torch.stack(old_values), atol=1e-4, rtol=1e-4), (
-                f"Failed at key: {key}. Difference: {set(new_values) - set(old_values)}"
-            )
+            assert torch.allclose(
+                torch.stack(new_values), torch.stack(old_values), atol=1e-4, rtol=1e-4
+            ), f"Failed at key: {key}. Difference: {set(new_values) - set(old_values)}"
 
 
 @pytest.mark.parametrize("pdb_id", MSA_FEATURIZE_PIPELINE_TEST_CASES)
@@ -689,14 +689,14 @@ def test_msa_featurize_like_af3_full_pipeline(pdb_id):
         )
 
         # Assert that has_insertion is a boolean tensor...
-        assert msa_features_per_recycle_dict["has_insertion"][0].dtype == torch.bool, (
-            "has_insertion must be of boolean dtype"
-        )
+        assert (
+            msa_features_per_recycle_dict["has_insertion"][0].dtype == torch.bool
+        ), "has_insertion must be of boolean dtype"
 
         # ...and that there's at least one
-        assert torch.any(msa_features_per_recycle_dict["has_insertion"][0]), (
-            "There must be at least one insertion, if we're using examples with MSA's"
-        )
+        assert torch.any(
+            msa_features_per_recycle_dict["has_insertion"][0]
+        ), "There must be at least one insertion, if we're using examples with MSA's"
 
         ############## Regression test ##############
 
@@ -714,15 +714,15 @@ def test_msa_featurize_like_af3_full_pipeline(pdb_id):
         # For each key in the features that change across recycles, check that the values match...
         for key, old_values in old_results["msa_features_per_recycle_dict"].items():
             new_values = msa_features_per_recycle_dict[key]
-            assert torch.allclose(torch.stack(new_values), torch.stack(old_values), atol=1e-4, rtol=1e-4), (
-                f"Failed at key: {key}. Difference: {set(new_values) - set(old_values)}"
-            )
+            assert torch.allclose(
+                torch.stack(new_values), torch.stack(old_values), atol=1e-4, rtol=1e-4
+            ), f"Failed at key: {key}. Difference: {set(new_values) - set(old_values)}"
         # ... and for the static features as well
         for key, old_value in old_results["msa_static_features_dict"].items():
             new_value = msa_static_features_dict[key]
-            assert torch.allclose(new_value, old_value, atol=1e-4, rtol=1e-4), (
-                f"Failed at key: {key}. Difference: {new_value - old_value}"
-            )
+            assert torch.allclose(
+                new_value, old_value, atol=1e-4, rtol=1e-4
+            ), f"Failed at key: {key}. Difference: {new_value - old_value}"
 
 
 # Define a simple TokenEncoding class for testing

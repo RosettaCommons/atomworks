@@ -49,9 +49,9 @@ class SampleEDMNoise(Transform):
 
     def check_input(self, data: dict[str, Any]) -> None:
         check_contains_keys(data, ["coord_atom_lvl_to_be_noised"])
-        assert data["coord_atom_lvl_to_be_noised"].shape[0] == self.diffusion_batch_size, (
-            "Must batch coordinates to be noised before applying this transform"
-        )
+        assert (
+            data["coord_atom_lvl_to_be_noised"].shape[0] == self.diffusion_batch_size
+        ), "Must batch coordinates to be noised before applying this transform"
 
     def forward(self, data: dict) -> dict:
         """

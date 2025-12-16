@@ -547,9 +547,9 @@ class FillFullMSAFromEncoded(Transform):
         existing_pad_tokens = data["polymer_msas_by_chain_id"][first_chain_id]["msa_is_padded_mask"] * first_encoded_msa
         if np.any(existing_pad_tokens):
             token = existing_pad_tokens.flat[np.flatnonzero(existing_pad_tokens)[0]]
-            assert token == self.PAD_TOKEN, (
-                f"Given padding token {self.PAD_TOKEN} does not match existing padding token {token}"
-            )
+            assert (
+                token == self.PAD_TOKEN
+            ), f"Given padding token {self.PAD_TOKEN} does not match existing padding token {token}"
 
         # Set up empty encoded msa (purely padded) for encoded msa
         token_count = get_token_count(atom_array)

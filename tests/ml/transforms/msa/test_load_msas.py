@@ -63,25 +63,25 @@ def _validate_msa_results(test_case: dict[str, Any], result: dict[str, Any], cha
     spot_check_index = test_case["spot_check"]["index"]
 
     assert result["msa"].shape[0] >= test_case["min_sequences_in_msa"], "MSA has too few sequences"
-    assert np.all(result["msa"][0] == _encode_sequence(test_case["sequence"], chain_type)), (
-        "Query sequence is incorrect"
-    )
+    assert np.all(
+        result["msa"][0] == _encode_sequence(test_case["sequence"], chain_type)
+    ), "Query sequence is incorrect"
 
     # Spot check assertions
     assert np.all(
         result["msa"][spot_check_index] == _encode_sequence(test_case["spot_check"]["sequence"], chain_type)
     ), "Spot check sequence is incorrect"
-    assert np.sum(result["ins"][spot_check_index]) == test_case["spot_check"]["num_insertions"], (
-        "Incorrect number of insertions"
-    )
+    assert (
+        np.sum(result["ins"][spot_check_index]) == test_case["spot_check"]["num_insertions"]
+    ), "Incorrect number of insertions"
     assert result["ins"][spot_check_index].shape[0] == len(result["msa"][spot_check_index]), "Incorrect insertion shape"
     assert result["tax_ids"][spot_check_index].item() == str(test_case["spot_check"]["tax_id"]), "Incorrect tax ID"
 
     # Sequence similarity sanity checks
     calculated_sequence_similarity = np.mean(result["msa"][spot_check_index] == result["msa"][0])
-    assert calculated_sequence_similarity == result["sequence_similarity"][spot_check_index], (
-        "Incorrect sequence similarity"
-    )
+    assert (
+        calculated_sequence_similarity == result["sequence_similarity"][spot_check_index]
+    ), "Incorrect sequence similarity"
     assert result["sequence_similarity"][0] == 1.0, "Query sequence should have 100% similarity with itself"
 
 
@@ -195,9 +195,9 @@ def _check_coverage_for_pdb_id(
 def test_msas_with_mse():
     """Check that we correctly find MSAs for proteins with selenomethisone residues."""
     results = _check_coverage_for_pdb_id("7dsu", PROTEIN_MSA_DIRS, RNA_MSA_DIRS)
-    assert results["n_proteins_with_msas"] == results["n_proteins"], (
-        "All proteins should have MSAs after MSE conversion"
-    )
+    assert (
+        results["n_proteins_with_msas"] == results["n_proteins"]
+    ), "All proteins should have MSAs after MSE conversion"
 
 
 @pytest.mark.parametrize("test_case", MSA_TEST_CASES)

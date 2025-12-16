@@ -928,9 +928,9 @@ def insert_atoms(
     The function is robust to both AtomArray and AtomArrayPlus, and preserves 2D annotations and bonds.
     """
     n_atoms_orig = arr.array_length()
-    assert isinstance(new_atoms, list) and isinstance(new_atoms[0], AtomArray | AtomArrayPlus | struc.Atom), (
-        "new_atoms must be a list of AtomArray, AtomArrayPlus, or Atom objects."
-    )
+    assert isinstance(new_atoms, list) and isinstance(
+        new_atoms[0], AtomArray | AtomArrayPlus | struc.Atom
+    ), "new_atoms must be a list of AtomArray, AtomArrayPlus, or Atom objects."
     assert len(new_atoms) == len(insert_positions), "Each new atom must have a corresponding insert position."
     arr_all = concatenate_any([arr, *new_atoms])
 
@@ -954,9 +954,9 @@ def insert_atoms(
         if pos < n_atoms_orig:
             result_indices.append(orig_idx)
             orig_idx += 1
-    assert len(result_indices) == arr_all.array_length(), (
-        "Result indices must match the length of the concatenated array"
-    )
+    assert (
+        len(result_indices) == arr_all.array_length()
+    ), "Result indices must match the length of the concatenated array"
 
     return arr_all[result_indices]
 

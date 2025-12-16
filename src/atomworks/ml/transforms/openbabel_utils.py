@@ -440,9 +440,9 @@ def find_automorphisms(obmol: openbabel.OBMol, max_automorphs: int = 1000, max_m
               [7 2]]]
     """
     n_atoms = obmol.NumAtoms()
-    assert n_atoms == obmol.NumHvyAtoms(), (
-        f"Found {n_atoms - obmol.NumHvyAtoms()} explicit hydrogens. This function assumes that the input molecule has no explicit hydrogens. Please remove."
-    )
+    assert (
+        n_atoms == obmol.NumHvyAtoms()
+    ), f"Found {n_atoms - obmol.NumHvyAtoms()} explicit hydrogens. This function assumes that the input molecule has no explicit hydrogens. Please remove."
 
     # ... initialize a vector container to store automorphs
     automorphs = openbabel.vvpairUIntUInt()  # vector<vector<pair<unsigned int, unsigned int>>>

@@ -170,9 +170,9 @@ def test_create_rf2aa_bond_features_matrix(test_case):
     output = _create_rf2aa_bond_features_matrix(
         test_case["token_bond_adjacency"], test_case["token_is_atom"], test_case["atom_biotite_bond_type_matrix"]
     )
-    assert np.array_equal(output, test_case["expected_output"]), (
-        f"Expected {test_case['expected_output']}, but got {output}"
-    )
+    assert np.array_equal(
+        output, test_case["expected_output"]
+    ), f"Expected {test_case['expected_output']}, but got {output}"
 
 
 @pytest.mark.parametrize("pdb_id", ["6wjc"])
@@ -271,12 +271,12 @@ def test_generate_rf2aa_traversal_distance_matrix(test_case):
     result = transform(data)
 
     # Check if the result matches the expected output, which matches the networkx output
-    assert np.allclose(result["rf2aa_traversal_distance_matrix"], expected), (
-        f"Expected {expected}, but got {result['rf2aa_traversal_distance_matrix']}"
-    )
-    assert np.allclose(result["rf2aa_traversal_distance_matrix"], expected_from_nx), (
-        f"Expected {expected_from_nx}, but got {result['rf2aa_traversal_distance_matrix']}"
-    )
+    assert np.allclose(
+        result["rf2aa_traversal_distance_matrix"], expected
+    ), f"Expected {expected}, but got {result['rf2aa_traversal_distance_matrix']}"
+    assert np.allclose(
+        result["rf2aa_traversal_distance_matrix"], expected_from_nx
+    ), f"Expected {expected_from_nx}, but got {result['rf2aa_traversal_distance_matrix']}"
 
 
 AF3_TOKEN_BOND_FEATURES_TEST_CASES = [

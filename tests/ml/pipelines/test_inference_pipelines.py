@@ -52,9 +52,9 @@ def test_af3_confidence_pipeline_from_chai_fasta():
     assert "confidence_feats" in transformed_data, "Missing feats in pipeline output."
     # Check that none of the feats is `nan`
     for feat_name, feat in transformed_data["feats"].items():
-        assert feat.isfinite().all() if isinstance(feat, torch.Tensor) else True, (
-            f"Found NaN in feats: {feat_name=}, {feat=}"
-        )
+        assert (
+            feat.isfinite().all() if isinstance(feat, torch.Tensor) else True
+        ), f"Found NaN in feats: {feat_name=}, {feat=}"
 
 
 @skip_if_on_github_runner
@@ -91,9 +91,9 @@ def test_af3_pipeline_from_chai_fasta():
     assert "feats" in transformed_data, "Missing feats in pipeline output."
     # Check that none of the feats is `nan`
     for feat_name, feat in transformed_data["feats"].items():
-        assert feat.isfinite().all() if isinstance(feat, torch.Tensor) else True, (
-            f"Found NaN in feats: {feat_name=}, {feat=}"
-        )
+        assert (
+            feat.isfinite().all() if isinstance(feat, torch.Tensor) else True
+        ), f"Found NaN in feats: {feat_name=}, {feat=}"
 
 
 AF3_PIPELINE_FROM_COMPONENTS_TEST_CASES = [
@@ -156,9 +156,9 @@ def test_af3_pipeline_from_sequence_and_smiles(inference_components):
 
     # Check that none of the feats is `nan`
     for feat_name, feat in transformed_data["feats"].items():
-        assert feat.isfinite().all() if isinstance(feat, torch.Tensor) else True, (
-            f"Found NaN in feats: {feat_name=}, {feat=}"
-        )
+        assert (
+            feat.isfinite().all() if isinstance(feat, torch.Tensor) else True
+        ), f"Found NaN in feats: {feat_name=}, {feat=}"
 
     # Check that we successfully generated a reference conformer for the ligand
     assert not torch.any(torch.all(transformed_data["feats"]["ref_pos"] == 0, dim=1))

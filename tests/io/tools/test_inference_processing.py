@@ -367,9 +367,9 @@ def test_full_components_input(dict_inputs, custom_residues):
     for index, chain_id in enumerate(extracted_chain_ids):
         if chain_id:
             chain_id_from_component = components[index].chain_id
-            assert chain_id == chain_id_from_component, (
-                f"Mismatch at index {index}: {chain_id} != {chain_id_from_component}"
-            )
+            assert (
+                chain_id == chain_id_from_component
+            ), f"Mismatch at index {index}: {chain_id} != {chain_id_from_component}"
 
     # Sanity check outputs
     assert isinstance(atom_array, AtomArray)

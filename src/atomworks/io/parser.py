@@ -637,9 +637,9 @@ def parse_atom_array(
 
     # ... build assemblies and add assembly-specific annotations (instance IDs like `chain_iid`, `pn_unit_iid`, `molecule_iid`)
     if exists(build_assembly):
-        assert build_assembly in ["first", "all"] or isinstance(build_assembly, list | tuple), (
-            "Invalid `build_assembly` option. Must be 'first', 'all', or a list/tuple of assembly IDs as strings."
-        )
+        assert build_assembly in ["first", "all"] or isinstance(
+            build_assembly, list | tuple
+        ), "Invalid `build_assembly` option. Must be 'first', 'all', or a list/tuple of assembly IDs as strings."
 
     # Determine assembly categories: use CIF data if build_assembly is set, otherwise identity operations
     if exists(build_assembly) and exists(_cif_file) and "pdbx_struct_assembly" in data_dict["cif_block"]:

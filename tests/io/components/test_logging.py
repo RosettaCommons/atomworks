@@ -20,9 +20,9 @@ def test_atomworks_logging_level():
     atomworks_logger = logging.getLogger("atomworks")
 
     # Assert that the current logging level matches the expected level
-    assert atomworks_logger.level == expected_level, (
-        f"Expected atomworks.logging level to be {logging.getLevelName(expected_level)}, but it was {logging.getLevelName(atomworks_logger.level)}"
-    )
+    assert (
+        atomworks_logger.level == expected_level
+    ), f"Expected atomworks.logging level to be {logging.getLevelName(expected_level)}, but it was {logging.getLevelName(atomworks_logger.level)}"
 
 
 def test_atomworks_logging_level_env_var():
@@ -43,9 +43,9 @@ def test_atomworks_logging_level_env_var():
         atomworks_logger = logging.getLogger("atomworks")
 
         # Assert that the current logging level matches the set environment variable
-        assert atomworks_logger.level == logging.DEBUG, (
-            f"Expected atomworks.logging level to be DEBUG, but it was {logging.getLevelName(atomworks_logger.level)}"
-        )
+        assert (
+            atomworks_logger.level == logging.DEBUG
+        ), f"Expected atomworks.logging level to be DEBUG, but it was {logging.getLevelName(atomworks_logger.level)}"
 
     finally:
         # Clean up: restore the original environment variable

@@ -30,9 +30,9 @@ def test_resolution_filter(rf2aa_pn_units_dataset):
 def test_method_filter(rf2aa_pn_units_dataset):
     # Check that the method filter was applied correctly
     filtered_data = rf2aa_pn_units_dataset.data
-    assert filtered_data["method"].isin(["X-RAY_DIFFRACTION", "ELECTRON_MICROSCOPY"]).all(), (
-        "Method filter did not work correctly"
-    )
+    assert (
+        filtered_data["method"].isin(["X-RAY_DIFFRACTION", "ELECTRON_MICROSCOPY"]).all()
+    ), "Method filter did not work correctly"
 
 
 def test_af3_excluded_ligands_filter(rf2aa_pn_units_dataset, rf2aa_interfaces_dataset):
@@ -41,20 +41,20 @@ def test_af3_excluded_ligands_filter(rf2aa_pn_units_dataset, rf2aa_interfaces_da
     filtered_interfaces_data = rf2aa_interfaces_dataset.data
 
     # ... check query PN Units
-    assert np.any(filtered_pn_units_data.example_id == "{['pdb', 'pn_units']}{2pno}{3}{['G_1']}"), (
-        "Entry removed that contained valid PN Units"
-    )
-    assert not np.any(filtered_pn_units_data.example_id == "{['pdb', 'pn_units']}{2pno}{3}{['DB_1']}"), (
-        "Entry remained that contains AF-3 excluded ligands as query PN Units"
-    )
+    assert np.any(
+        filtered_pn_units_data.example_id == "{['pdb', 'pn_units']}{2pno}{3}{['G_1']}"
+    ), "Entry removed that contained valid PN Units"
+    assert not np.any(
+        filtered_pn_units_data.example_id == "{['pdb', 'pn_units']}{2pno}{3}{['DB_1']}"
+    ), "Entry remained that contains AF-3 excluded ligands as query PN Units"
 
     # ... check interfaces
-    assert not np.any(filtered_interfaces_data.pdb_id == "{['pdb', 'interfaces']}{2pno}{3}{['DB_1', 'G_1']}"), (
-        "Entry remained that contains AF-3 excluded ligands as query PN Units"
-    )
-    assert np.any(filtered_interfaces_data.example_id == "{['pdb', 'interfaces']}{2pno}{3}{['G_1', 'H_1']}"), (
-        "Entry removed that contained valid PN Units"
-    )
+    assert not np.any(
+        filtered_interfaces_data.pdb_id == "{['pdb', 'interfaces']}{2pno}{3}{['DB_1', 'G_1']}"
+    ), "Entry remained that contains AF-3 excluded ligands as query PN Units"
+    assert np.any(
+        filtered_interfaces_data.example_id == "{['pdb', 'interfaces']}{2pno}{3}{['G_1', 'H_1']}"
+    ), "Entry removed that contained valid PN Units"
 
 
 def test_filter_no_impact(caplog, pn_units_df):

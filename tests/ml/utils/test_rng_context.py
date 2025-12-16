@@ -41,24 +41,24 @@ def test_rng_state():
     torch_inside_expected = torch.tensor([0.88226926, 0.91500396, 0.38286376])
     python_inside_expected = [0.6394267984578837, 0.025010755222666936, 0.27502931836911926]
 
-    assert not np.array_equal(initial_numpy, final_numpy), (
-        "NumPy values should be different outside the context manager"
-    )
+    assert not np.array_equal(
+        initial_numpy, final_numpy
+    ), "NumPy values should be different outside the context manager"
     assert not torch.equal(initial_torch, final_torch), "PyTorch values should be different outside the context manager"
     assert initial_python != final_python, "Python random values should be different outside the context manager"
 
-    assert np.array_equal(numpy_inside, numpy_inside_again), (
-        "NumPy values should be the same inside the context manager"
-    )
+    assert np.array_equal(
+        numpy_inside, numpy_inside_again
+    ), "NumPy values should be the same inside the context manager"
     assert torch.equal(torch_inside, torch_inside_again), "PyTorch values should be the same inside the context manager"
     assert python_inside == python_inside_again, "Python random values should be the same inside the context manager"
 
-    assert np.allclose(numpy_inside, numpy_inside_expected), (
-        "NumPy values should be the same inside the context manager"
-    )
-    assert torch.allclose(torch_inside, torch_inside_expected), (
-        "PyTorch values should be the same inside the context manager"
-    )
+    assert np.allclose(
+        numpy_inside, numpy_inside_expected
+    ), "NumPy values should be the same inside the context manager"
+    assert torch.allclose(
+        torch_inside, torch_inside_expected
+    ), "PyTorch values should be the same inside the context manager"
     assert python_inside == python_inside_expected, "Python random values should be the same inside the context manager"
 
 

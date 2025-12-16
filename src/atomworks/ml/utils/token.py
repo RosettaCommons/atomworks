@@ -214,9 +214,9 @@ def apply_segment_wise_2d(array: np.ndarray, segment_start_end_idxs: np.ndarray,
     assert array.ndim == 2, "Array must be 2D"
     assert segment_start_end_idxs.ndim == 1, "Group start end idxs must be 1D"
     assert segment_start_end_idxs[0] == 0, "Group start end idxs must start with 0"
-    assert segment_start_end_idxs[-1] == array.shape[0], (
-        "Group start end idxs must end with the number of rows in the array"
-    )
+    assert (
+        segment_start_end_idxs[-1] == array.shape[0]
+    ), "Group start end idxs must end with the number of rows in the array"
     assert np.all(np.diff(segment_start_end_idxs) > 0), "Group start end idxs must be strictly increasing"
 
     # reduce along rows
@@ -248,9 +248,9 @@ def get_af3_token_representative_masks(atom_array: AtomArray, enforce_one_per_to
     Returns:
         np.ndarray: A boolean mask indicating the representative atoms of the tokens in the atom array.
     """
-    assert "atomize" in atom_array.get_annotation_categories(), (
-        "Atomize annotation is missing. Run AtomizeByCCDName Transform for magical atomization of ligands"
-    )
+    assert (
+        "atomize" in atom_array.get_annotation_categories()
+    ), "Atomize annotation is missing. Run AtomizeByCCDName Transform for magical atomization of ligands"
     pyrimidine_representative_atom = is_pyrimidine(atom_array.res_name) & (atom_array.atom_name == "C2")
     purine_representative_atom = is_purine(atom_array.res_name) & (atom_array.atom_name == "C4")
     unknown_na_representative_atom = is_unknown_nucleotide(atom_array.res_name) & (atom_array.atom_name == "C4")
@@ -336,9 +336,9 @@ def get_af3_token_center_masks(atom_array: AtomArray, enforce_one_per_token: boo
         `AF3 Supplementary Information <https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf>`_
 
     """
-    assert "atomize" in atom_array.get_annotation_categories(), (
-        "Atomize annotation is missing. Run AtomizeByCCDName Transform first!"
-    )
+    assert (
+        "atomize" in atom_array.get_annotation_categories()
+    ), "Atomize annotation is missing. Run AtomizeByCCDName Transform first!"
 
     is_center_atom = (
         atom_array.atomize  # the atom itself for un-atomized tokens

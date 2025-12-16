@@ -95,9 +95,9 @@ class AddSpatialKNNMask(Transform):
         check_is_instance(data, "atom_array", AtomArray)
         check_atom_array_annotation(data, ["chain_iid"])
 
-        assert len(data["atom_array"].coord) < self.max_atoms_in_crop, (
-            "Number of atoms in the atom array exceeds the maximum number of atoms in the crop"
-        )
+        assert (
+            len(data["atom_array"].coord) < self.max_atoms_in_crop
+        ), "Number of atoms in the atom array exceeds the maximum number of atoms in the crop"
 
     def forward(self, data: dict[str, Any]) -> dict[str, Any]:
         """

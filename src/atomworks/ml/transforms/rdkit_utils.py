@@ -119,9 +119,9 @@ def generate_conformers(
         Improve Conformation Generation", JCIM, 2015.
     """
     # Ensure that all properties are being pickled (needed when we use timeout)
-    assert Chem.GetDefaultPickleProperties() == Chem.PropertyPickleOptions.AllProps, (
-        "Default pickle properties are not set to all properties. Annotation loss will occur."
-    )
+    assert (
+        Chem.GetDefaultPickleProperties() == Chem.PropertyPickleOptions.AllProps
+    ), "Default pickle properties are not set to all properties. Annotation loss will occur."
     assert attempts_with_distance_geometry > 0, "Attempts with distance geometry must be greater than 0."
     assert attempts_with_random_coordinates > 0, "Attempts with random coordinates must be greater than 0."
 

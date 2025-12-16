@@ -69,9 +69,9 @@ def test_loi_extraction(test_case: dict[str, Any]):
                 structure[(np.isin(structure.chain_id, chain_ids)) & (structure.occupancy > 0)].res_name
             )
             if test_case.get("has_covalently_bonded_loi", False):
-                assert any(res in loi_set for res in res_names), (
-                    f"No LOI molecule found for {row.q_pn_unit_iid} in {res_names}. LOIs: {loi_set}"
-                )
+                assert any(
+                    res in loi_set for res in res_names
+                ), f"No LOI molecule found for {row.q_pn_unit_iid} in {res_names}. LOIs: {loi_set}"
                 for res in res_names:
                     if res in loi_set:
                         loi_seen[res] += 1

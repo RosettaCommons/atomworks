@@ -176,12 +176,12 @@ def test_chirality_detection_from_ccd():
             assert Chem.FindMolChiralCenters(ccd_code_to_rdkit(aa)) == [(1, "S")]
 
     # Check a handful of non-standard amino acids
-    assert Chem.FindMolChiralCenters(ccd_code_to_rdkit("DAL")) == [(1, "R")], (
-        "D-alanine should have a R configuration at the CA atom"
-    )
-    assert Chem.FindMolChiralCenters(ccd_code_to_rdkit("DCY")) == [(1, "S")], (
-        "D-cystine should have a S configuration at the CA atom"
-    )
+    assert Chem.FindMolChiralCenters(ccd_code_to_rdkit("DAL")) == [
+        (1, "R")
+    ], "D-alanine should have a R configuration at the CA atom"
+    assert Chem.FindMolChiralCenters(ccd_code_to_rdkit("DCY")) == [
+        (1, "S")
+    ], "D-cystine should have a S configuration at the CA atom"
     assert Chem.FindMolChiralCenters(ccd_code_to_rdkit("DTH")) == [
         (1, "R"),
         (2, "S"),

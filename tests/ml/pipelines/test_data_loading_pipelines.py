@@ -84,16 +84,16 @@ def test_data_loading_pipelines_with_random_examples(datasets_to_test, dataset_t
             ]  # Check if we can reverse-engineer the row from the example_id
             assert row is not None, f"Failed to get row from example_id for example_id: {example_id}"
             assert sample is not None, f"Sample is None, with example_id: {example_id}"
-            assert row["example_id"] == example_id, (
-                f"Row example_id does not match example_id for example_id: {example_id}"
-            )
+            assert (
+                row["example_id"] == example_id
+            ), f"Row example_id does not match example_id for example_id: {example_id}"
 
             # For validation datasets, also check that the "ground_truth" key contains information on which chains/interfaces to score, and the map from token index to `chain_iid`
             if dataset_type == "validation":
                 assert "ground_truth" in sample, f"Missing 'ground_truth' key in sample with example_id: {example_id}"
-                assert "chain_iid_token_lvl" in sample["ground_truth"], (
-                    f"Missing 'chain_iid_token_lvl' key in sample with example_id: {example_id}"
-                )
+                assert (
+                    "chain_iid_token_lvl" in sample["ground_truth"]
+                ), f"Missing 'chain_iid_token_lvl' key in sample with example_id: {example_id}"
 
 
 if __name__ == "__main__":

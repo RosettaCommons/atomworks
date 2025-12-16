@@ -61,13 +61,13 @@ def test_chain_types(test_case: dict[str, Any]):
             # Check ChainType
             got_chain_type = ChainType.as_enum(pn_unit_atom_array.chain_type[0])
             expected_chain_type = test_case["chain_types"][pn_unit_id]
-            assert got_chain_type == expected_chain_type, (
-                f"Mismatch for {pn_unit_id=}: {got_chain_type=}, {expected_chain_type=}"
-            )
+            assert (
+                got_chain_type == expected_chain_type
+            ), f"Mismatch for {pn_unit_id=}: {got_chain_type=}, {expected_chain_type=}"
 
             # Check is_polymer
             got_is_polymer = pn_unit_atom_array.is_polymer[0]
             expected_is_polymer = expected_chain_type.is_polymer()
-            assert got_is_polymer == expected_is_polymer, (
-                f"Mismatch for {pn_unit_id=}: {got_is_polymer=}, {expected_is_polymer=}"
-            )
+            assert (
+                got_is_polymer == expected_is_polymer
+            ), f"Mismatch for {pn_unit_id=}: {got_is_polymer=}, {expected_is_polymer=}"

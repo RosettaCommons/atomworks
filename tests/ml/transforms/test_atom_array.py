@@ -58,12 +58,12 @@ def test_annotate_protein_termini(pdb_id: str):
     res_c_terminus = data["atom_array"][data["atom_array"].is_C_terminus]
     n_ntermini = struc.get_residue_count(res_n_terminus)
     n_ctermini = struc.get_residue_count(res_c_terminus)
-    assert n_protein_chains == n_ntermini, (
-        f"Found {n_protein_chains} protein chains, but {n_ntermini} N-termini were annotated"
-    )
-    assert n_protein_chains == n_ctermini, (
-        f"Found {n_protein_chains} protein chains, but {n_ctermini} C-termini were annotated"
-    )
+    assert (
+        n_protein_chains == n_ntermini
+    ), f"Found {n_protein_chains} protein chains, but {n_ntermini} N-termini were annotated"
+    assert (
+        n_protein_chains == n_ctermini
+    ), f"Found {n_protein_chains} protein chains, but {n_ctermini} C-termini were annotated"
 
 
 @pytest.mark.parametrize("pdb_id", MSA_PAIRING_PIPELINE_TEST_CASES)
@@ -88,9 +88,9 @@ def test_add_within_poly_res_idx_annotation(pdb_id: str):
 
     # Check that all non-polymers have empty within_poly_res_idx
     non_polymer_chains = atom_array[~atom_array.is_polymer]
-    assert all(non_polymer_chains.within_poly_res_idx == -1), (
-        "Non-polymer chains should have within_poly_res_idx set -1"
-    )
+    assert all(
+        non_polymer_chains.within_poly_res_idx == -1
+    ), "Non-polymer chains should have within_poly_res_idx set -1"
 
     # Check that we can use the within_poly_res_idx to index the MSA
     # Check that when we use `within_poly_res_idx` to index into the MSA, we get the same sequence as when we re-construct the one-letter sequence from the atom array

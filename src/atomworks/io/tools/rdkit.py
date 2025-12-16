@@ -762,9 +762,9 @@ def atom_array_to_rdkit(
 
         # ... verify that atoms that are labelled as `_should_be_aromatic` are aromatic
         for atom_idx in _should_be_aromatic:
-            assert mol.GetAtomWithIdx(atom_idx).GetIsAromatic(), (
-                f"Atom {atom_idx} is not aromatic but was labelled as aromatic."
-            )
+            assert mol.GetAtomWithIdx(
+                atom_idx
+            ).GetIsAromatic(), f"Atom {atom_idx} is not aromatic but was labelled as aromatic."
 
     # Turn into a non-editable molecule
     mol = mol.GetMol() if isinstance(mol, Chem.RWMol) else mol
