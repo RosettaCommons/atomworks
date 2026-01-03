@@ -30,7 +30,7 @@ def generate(
         dir_okay=False,
         readable=True,
         resolve_path=True,
-        help="CSV file containing protein sequences",
+        help="Path to and file name of the CSV file containing protein sequences.",
     ),
     output_dir: Path = typer.Argument(
         ...,
@@ -39,77 +39,79 @@ def generate(
         dir_okay=True,
         writable=True,
         resolve_path=True,
-        help="Output directory for generated MSA files",
+        help="Output directory for generated MSA files.",
     ),
     sequence_column: str | None = typer.Option(
         None,
         "--sequence-column",
         "-c",
-        help="Name of column containing sequences (required if CSV has multiple columns)",
+        help="Name of column containing sequences (required if CSV has multiple columns).",
     ),
     # MSAGenerationConfig parameters
     sharding_pattern: str = typer.Option(
         "/0:2/",
         "--sharding-pattern",
         "-s",
-        help="Directory sharding pattern (e.g., '/0:2/')",
+        help="Directory sharding pattern (e.g., '/0:2/').",
     ),
     output_extension: str = typer.Option(
         MSAFileExtension.A3M_GZ.value,
         "--output-extension",
         "-o",
-        help="Output file extension (.a3m, .a3m.gz, .a3m.zst, .afa, .afa.gz, .afa.zst)",
+        help="Output file extension (.a3m, .a3m.gz, .a3m.zst, .afa, .afa.gz, .afa.zst).",
     ),
     gpu: bool | None = typer.Option(
         None,
         "--gpu/--no-gpu",
-        help="Use GPU acceleration (auto-detects if not specified)",
+        help="Use GPU acceleration (auto-detects if not specified).",
     ),
     num_iterations: int = typer.Option(
         3,
         "--num-iterations",
         "-n",
-        help="Number of MMseqs2 search iterations",
+        help="Number of MMseqs2 search iterations.",
     ),
     max_final_sequences: int = typer.Option(
         10_000,
         "--max-final-sequences",
-        help="Maximum number of sequences in final MSAs",
+        help="Maximum number of sequences in final MSAs.",
     ),
     use_env: bool = typer.Option(
         True,
         "--use-env/--no-env",
-        help="Include environmental (metagenomic) database",
+        help="Include environmental (metagenomic) database.",
     ),
     num_workers: int = typer.Option(
         32,
         "--num-workers",
         "-j",
-        help="Number of CPU threads",
+        help="Number of CPU threads.",
     ),
     sensitivity: float | None = typer.Option(
         8.0,
         "--sensitivity",
-        help="MMseqs2 sensitivity (lower = faster, sparser MSAs)",
+        help="MMseqs2 sensitivity (lower = faster, sparser MSAs).",
     ),
     verbose: bool = typer.Option(
         False,
         "--verbose",
         "-v",
-        help="Enable verbose logging",
+        help="Enable verbose logging.",
     ),
     check_existing: bool = typer.Option(
         False,
         "--check-existing/--no-check-existing",
-        help="Check for existing MSAs before generation",
+        help="Check for existing MSAs before generation.",
     ),
     existing_msa_dirs: str | None = typer.Option(
         None,
         "--existing-msa-dirs",
-        help="Comma-separated MSA directories to check (uses LOCAL_MSA_DIRS env var if not specified)",
+        help="Comma-separated list of MSA directories to check (uses LOCAL_MSA_DIRS env var if not specified).",
     ),
 ) -> None:
     """Generate MSAs from sequences in a CSV file using MMseqs2.
+
+    Before using this command users must first install MMseqs2.
 
     Examples:
         # Single-column CSV

@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 def filter(
     input_dir: str = typer.Argument(
         ...,
-        help="Source directory containing MSA files to filter (supports glob patterns like '0*')",
+        help="Source directory containing MSA files to filter (supports glob patterns like '0*'),",
     ),
     output_dir: Path = typer.Argument(
         None,
@@ -30,49 +30,49 @@ def filter(
         dir_okay=True,
         writable=True,
         resolve_path=True,
-        help="Destination directory for filtered files. If not provided uses the input paths with the specified output extension.",
+        help="Destination directory for filtered files. If not provided, this uses the input paths with the specified output extension.",
     ),
     input_extension: str = typer.Option(
         MSAFileExtension.A3M_GZ.value,
         "--input-extension",
         "-i",
-        help="File extension for input MSA files (e.g., .a3m, .a3m.gz, .a3m.zst, .afa, .afa.gz, .afa.zst)",
+        help="File extension for input MSA files (e.g., .a3m, .a3m.gz, .a3m.zst, .afa, .afa.gz, .afa.zst).",
     ),
     output_extension: str = typer.Option(
         MSAFileExtension.A3M_GZ.value,
         "--output-extension",
         "-o",
-        help="File extension for output MSA files (e.g., .a3m, .a3m.gz, .a3m.zst, .afa, .afa.gz, .afa.zst)",
+        help="File extension for output MSA files (e.g., .a3m, .a3m.gz, .a3m.zst, .afa, .afa.gz, .afa.zst).",
     ),
     max_sequences: int = typer.Option(
         10_000,
         "--max-sequences",
         "--maxseq",
-        help="Maximum number of sequences to keep in each MSA",
+        help="Maximum number of sequences to keep in each MSA.",
     ),
     max_identity: float = typer.Option(
         90.0,
         "--max-identity",
         "--id",
-        help="Maximum pairwise sequence identity (%)",
+        help="Maximum pairwise sequence identity (%).",
     ),
     min_coverage: float = typer.Option(
         50.0,
         "--min-coverage",
         "--cov",
-        help="Minimum coverage with query (%)",
+        help="Minimum coverage with query (%).",
     ),
     num_workers: int | None = typer.Option(
         None,
         "--num-workers",
         "-j",
-        help="Number of parallel workers (defaults to min(CPU_COUNT, 16))",
+        help="Number of parallel workers (defaults to min(CPU_COUNT, 16)).",
     ),
     verbose: bool = typer.Option(
         False,
         "--verbose",
         "-v",
-        help="Enable verbose logging",
+        help="Enable verbose logging.",
     ),
 ) -> None:
     """Filter MSA files using HHfilter to reduce sequence count and redundancy.
@@ -84,6 +84,8 @@ def filter(
 
     Can be applied to organized MSA files or any directory of MSA files.
     Automatic compression/decompression is applied based on the input and output file extensions.
+
+    Before using this command users must have HH-Filter installed and the path set. HH-Filter is part of the HH-suite package.
 
     Examples:
         # Filter files in a separate output directory

@@ -25,7 +25,7 @@ def organize(
         dir_okay=True,
         readable=True,
         resolve_path=True,
-        help="Source directory containing MSA files to organize",
+        help="Source directory containing MSA files to organize.",
     ),
     output_dir: Path = typer.Argument(
         ...,
@@ -34,19 +34,19 @@ def organize(
         dir_okay=True,
         writable=True,
         resolve_path=True,
-        help="Destination directory for organized MSA files",
+        help="Destination directory for organized MSA files.",
     ),
     input_extension: str = typer.Option(
         MSAFileExtension.A3M_GZ.value,
         "--input-extension",
         "-i",
-        help="File extension for input MSA files (e.g., .a3m, .a3m.gz, .a3m.zst, .afa, .afa.gz, .afa.zst)",
+        help="File extension for input MSA files (e.g., .a3m, .a3m.gz, .a3m.zst, .afa, .afa.gz, .afa.zst).",
     ),
     output_extension: str = typer.Option(
         MSAFileExtension.A3M_GZ.value,
         "--output-extension",
         "-o",
-        help="File extension for output MSA files (e.g., .a3m, .a3m.gz, .a3m.zst, .afa, .afa.gz, .afa.zst)",
+        help="File extension for output MSA files (e.g., .a3m, .a3m.gz, .a3m.zst, .afa, .afa.gz, .afa.zst).",
     ),
     sharding_pattern: str | None = typer.Option(
         "/0:2/",
@@ -57,29 +57,29 @@ def organize(
     copy_files: bool = typer.Option(
         True,
         "--copy/--move",
-        help="Whether to copy (--copy) or move (--move) input files",
+        help="Whether to copy (--copy) or move (--move) input files.",
     ),
     num_workers: int | None = typer.Option(
         None,
         "--num-workers",
         "-j",
-        help="Number of parallel workers (defaults to min(CPU_COUNT, 16))",
+        help="Number of parallel workers (defaults to min(CPU_COUNT, 16)).",
     ),
     check_existing: bool = typer.Option(
         False,
         "--check-existing",
-        help="Check for existing MSAs before organization",
+        help="Check for existing MSAs before organization.",
     ),
     existing_msa_dirs: str | None = typer.Option(
         None,
         "--existing-msa-dirs",
-        help="Comma-separated MSA directories to check (uses LOCAL_MSA_DIRS env var if not specified)",
+        help="Comma-separated MSA directories to check (uses LOCAL_MSA_DIRS env var if not specified).",
     ),
     verbose: bool = typer.Option(
         False,
         "--verbose",
         "-v",
-        help="Enable verbose logging",
+        help="Enable verbose logging.",
     ),
 ) -> None:
     """Organize MSA files into a standardized directory structure and naming convention.
