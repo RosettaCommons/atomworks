@@ -369,6 +369,7 @@ def get_struct_conn_bonds(
     global_atom_idx = np.arange(atom_array.array_length())
     alt_atom_ids = get_annotation(atom_array, "alt_atom_id", default=atom_names)
     uses_alt_atom_id = get_annotation(atom_array, "uses_alt_atom_id", default=np.zeros(len(atom_array), dtype=bool))
+    auth_seq_ids = get_annotation(atom_array, "auth_seq_id", default=None)
 
     all_res_names = np.append(np.unique(res_names), "*")
     all_chain_ids = np.unique(chain_ids)
@@ -424,35 +425,38 @@ def get_struct_conn_bonds(
         # For non-polymers, we use the auth_seq_id if available and valid (i.e., not "." or "?"); otherwise we use the label_seq_id
         # (Required to avoid ambiguity, since if using `label` only we may have multiple residue within a
         # chain with the same label_seq_id and the same res_name; see: 6MUB)
-
-        res_id1 = int(
-            row["ptnr1_label_seq_id"]
-            if ((chain_id1 in relevant_polymer_chain_identifiers) or ("ptnr1_auth_seq_id" not in row))
+        # We track which partner uses auth_seq_id so we can use the correct array for matching below.
+        use_auth_seq_id1 = not (
+            ((chain_id1 in relevant_polymer_chain_identifiers) or ("ptnr1_auth_seq_id" not in row))
             and row["ptnr1_label_seq_id"] != "."
-            else row["ptnr1_auth_seq_id"]
         )
-        res_id2 = int(
-            row["ptnr2_label_seq_id"]
-            if ((chain_id2 in relevant_polymer_chain_identifiers) or ("ptnr2_auth_seq_id" not in row))
+        use_auth_seq_id2 = not (
+            ((chain_id2 in relevant_polymer_chain_identifiers) or ("ptnr2_auth_seq_id" not in row))
             and row["ptnr2_label_seq_id"] != "."
-            else row["ptnr2_auth_seq_id"]
         )
+
+        res_id1 = int(row["ptnr1_auth_seq_id"] if use_auth_seq_id1 else row["ptnr1_label_seq_id"])
+        res_id2 = int(row["ptnr2_auth_seq_id"] if use_auth_seq_id2 else row["ptnr2_label_seq_id"])
 
         ins_code1 = row.get("pdbx_ptnr1_PDB_ins_code", "")
         ins_code2 = row.get("pdbx_ptnr2_PDB_ins_code", "")
         ins_code1 = "" if ins_code1 in (".", "?") else ins_code1
         ins_code2 = "" if ins_code2 in (".", "?") else ins_code2
 
+        # Use auth_seq_ids for matching when auth_seq_id fallback was used above
+        res_ids_for_match1 = auth_seq_ids.astype(int) if (use_auth_seq_id1 and auth_seq_ids is not None) else res_ids
+        res_ids_for_match2 = auth_seq_ids.astype(int) if (use_auth_seq_id2 and auth_seq_ids is not None) else res_ids
+
         # ... get masks for the residues to which atoms 1 & 2 belong
         in_res1 = (
             (relevant_chain_identifiers == chain_id1)
-            & (res_ids == res_id1)
+            & (res_ids_for_match1 == res_id1)
             & match_or_wildcard(res_names, res_name1)
             & (ins_codes == ins_code1)
         )
         in_res2 = (
             (relevant_chain_identifiers == chain_id2)
-            & (res_ids == res_id2)
+            & (res_ids_for_match2 == res_id2)
             & match_or_wildcard(res_names, res_name2)
             & (ins_codes == ins_code2)
         )
