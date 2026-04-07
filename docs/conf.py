@@ -95,3 +95,7 @@ sphinx_gallery_conf = {
     "thumbnail_size": (350, 350),
     "default_thumb_file": "./_static/atomworks_logo_color.svg",
 }
+
+html_js_files = [
+     ('https://scripts.simpleanalyticscdn.com/latest.js', {'async': 'async', 'defer': 'defer'}),
+]
