@@ -71,6 +71,23 @@ Basic Usage Examples
        )
    )
 
+**ASE LMDB datasets** (for OMol25/OPoly26-style ``*.aselmdb`` shards):
+
+.. code-block:: python
+
+   from atomworks.ml.datasets import ASELMDBDataset
+   from atomworks.ml.datasets.loaders import create_ase_atoms_loader
+
+   dataset = ASELMDBDataset.from_directory(
+       directory="/path/to/omol25/train",
+       name="omol25_train",
+       loader=create_ase_atoms_loader(),
+   )
+
+   example = dataset[0]
+   atoms = example["atoms"]            # ASE Atoms
+   atom_array = example["atom_array"]  # Biotite AtomArray
+
 **Custom loaders** for specialized use cases:
 
 .. code-block:: python
