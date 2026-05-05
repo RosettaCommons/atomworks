@@ -290,6 +290,3 @@ def test_ase_materials_loader_reads_real_omat24_rattled_subset():
     assert {"energy", "forces", "stress"}.issubset(first_record["calculator_results"])
 
     dataset.close()
-
-if __name__ == "__main__":
-    test_ase_materials_loader_reads_real_omat24_rattled_subset()
