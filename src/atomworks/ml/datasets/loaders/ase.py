@@ -1,6 +1,7 @@
 """ASE-based loader utilities."""
 
 import functools
+import re
 from collections.abc import Callable, Mapping
 from typing import Any
 
@@ -16,6 +17,19 @@ _ASE_IMPORT_ERROR = (
     "ASE loader support requires the optional ASE dependencies. "
     'Install them with `pip install "atomworks[ase]"` or `uv pip install "atomworks[ase]"`.'
 )
+
+_SPACE_GROUP_KEYS = (
+    "space_group",
+    "spacegroup",
+    "space_group_number",
+    "spacegroup_number",
+    "spg",
+    "spg_num",
+    "sg",
+    "sg_number",
+)
+
+_PARENT_SPACE_GROUP_KEYS = tuple(f"parent_{key}" for key in _SPACE_GROUP_KEYS)
 
 
 def _require_ase_atoms_type() -> type:
@@ -75,6 +89,102 @@ def _extract_ase_atoms(raw_data: Any) -> Any:
     )
 
 
+def _as_plain_dict(value: Any) -> dict[str, Any]:
+    """Convert mapping-like metadata to a plain dictionary."""
+    if isinstance(value, Mapping):
+        return dict(value)
+    return {}
+
+
+def _extract_metadata(raw_data: Any, atoms: Any) -> dict[str, Any]:
+    """Collect metadata from an ASE row/record and the corresponding Atoms object."""
+    metadata: dict[str, Any] = {}
+
+    info_data = atoms.info.get("data", {}) if hasattr(atoms, "info") else {}
+    metadata.update(_as_plain_dict(info_data))
+    if hasattr(atoms, "info"):
+        metadata.update({key: val for key, val in atoms.info.items() if key != "data"})
+
+    if isinstance(raw_data, Mapping):
+        metadata.update(_as_plain_dict(raw_data.get("key_value_pairs", {})))
+        metadata.update(_as_plain_dict(raw_data.get("data", {})))
+        metadata.update(_as_plain_dict(raw_data.get("extra_info", {})))
+    else:
+        metadata.update(_as_plain_dict(getattr(raw_data, "key_value_pairs", {})))
+        if hasattr(raw_data, "get"):
+            metadata.update(_as_plain_dict(raw_data.get("data", {})))
+
+    return metadata
+
+
+def _coerce_space_group_number(value: Any) -> int | None:
+    """Convert a metadata value into an integer space-group number when possible."""
+    if value is None:
+        return None
+    if isinstance(value, np.generic):
+        value = value.item()
+    if isinstance(value, int):
+        return value
+    if isinstance(value, float) and value.is_integer():
+        return int(value)
+    if isinstance(value, str):
+        match = re.search(r"\d+", value)
+        if match is not None:
+            return int(match.group(0))
+    return None
+
+
+def _parse_space_group_from_prototype_label(prototype_label: Any) -> int | None:
+    """Parse AFLOW-style prototype labels such as ``A6B_aP14_1_12a_2a:B-Na``."""
+    if not isinstance(prototype_label, str):
+        return None
+    label = prototype_label.split(":", maxsplit=1)[0]
+    label_parts = label.split("_")
+    if len(label_parts) < 3:
+        return None
+    return _coerce_space_group_number(label_parts[2])
+
+
+def _parse_space_group_from_parent_id(parent_id: Any) -> int | None:
+    """Parse parent IDs containing fragments such as ``spg221``."""
+    if not isinstance(parent_id, str):
+        return None
+    match = re.search(r"(?:^|_)spg(?P<space_group>\d+)(?:_|$)", parent_id)
+    if match is None:
+        return None
+    return int(match.group("space_group"))
+
+
+def _infer_space_group_number(metadata: Mapping[str, Any]) -> int | None:
+    """Infer the current structure space-group number from metadata."""
+    for key in _SPACE_GROUP_KEYS:
+        if key in metadata:
+            space_group = _coerce_space_group_number(metadata[key])
+            if space_group is not None:
+                return space_group
+
+    space_group = _parse_space_group_from_prototype_label(metadata.get("prototype_label"))
+    if space_group is not None:
+        return space_group
+
+    return _infer_parent_space_group_number(metadata)
+
+
+def _infer_parent_space_group_number(metadata: Mapping[str, Any]) -> int | None:
+    """Infer the parent/source structure space-group number from metadata."""
+    for key in _PARENT_SPACE_GROUP_KEYS:
+        if key in metadata:
+            space_group = _coerce_space_group_number(metadata[key])
+            if space_group is not None:
+                return space_group
+
+    space_group = _parse_space_group_from_prototype_label(metadata.get("parent_prototype_label"))
+    if space_group is not None:
+        return space_group
+
+    return _parse_space_group_from_parent_id(metadata.get("parent_id"))
+
+
 def ase_atoms_to_atom_array(
     atoms: Any,
     *,
@@ -120,6 +230,49 @@ def ase_atoms_to_atom_array(
     atom_array.bonds = struc.BondList(n_atoms, np.empty((0, 3), dtype=int))
 
     return atom_array
+
+
+def ase_atoms_to_material_dict(
+    atoms: Any,
+    *,
+    metadata: Mapping[str, Any] | None = None,
+    wrap_fractional_coordinates: bool = False,
+) -> dict[str, Any]:
+    """Parse materials-science features from an ASE ``Atoms`` object.
+
+    Args:
+        atoms: ASE ``Atoms`` object with a periodic cell.
+        metadata: Optional row metadata used to infer space-group labels.
+        wrap_fractional_coordinates: Whether to wrap scaled positions into the
+            unit cell before returning them.
+
+    Returns:
+        Dictionary containing fractional coordinates, lattice vectors, lattice
+        lengths, lattice angles, combined cell parameters, volume, atomic
+        numbers, chemical symbols, and inferred space-group metadata.
+    """
+    atoms_type = _require_ase_atoms_type()
+    if not isinstance(atoms, atoms_type):
+        raise TypeError(f"Expected ASE Atoms, got {type(atoms)}.")
+
+    metadata = metadata or {}
+    lattice_lengths = np.asarray(atoms.cell.lengths(), dtype=float)
+    lattice_angles = np.asarray(atoms.cell.angles(), dtype=float)
+
+    return {
+        "fractional_coordinates": np.asarray(atoms.get_scaled_positions(wrap=wrap_fractional_coordinates), dtype=float),
+        "cartesian_coordinates": np.asarray(atoms.get_positions(), dtype=float),
+        "lattice_vectors": np.asarray(atoms.cell, dtype=float),
+        "lattice_lengths": lattice_lengths,
+        "lattice_angles": lattice_angles,
+        "cell_parameters": np.concatenate([lattice_lengths, lattice_angles]),
+        "cell_volume": float(atoms.cell.volume),
+        "pbc": np.asarray(atoms.pbc, dtype=bool),
+        "atomic_numbers": np.asarray(atoms.get_atomic_numbers(), dtype=int),
+        "chemical_symbols": np.asarray(atoms.get_chemical_symbols(), dtype="<U3"),
+        "space_group": _infer_space_group_number(metadata),
+        "parent_space_group": _infer_parent_space_group_number(metadata),
+    }
 
 
 def _ase_atoms_loader_function(
@@ -177,6 +330,89 @@ def create_ase_atoms_loader(
     """
     return functools.partial(
         _ase_atoms_loader_function,
+        chain_id=chain_id,
+        res_name=res_name,
+        res_id=res_id,
+        chain_type=chain_type,
+        is_polymer=is_polymer,
+        include_chain_info=include_chain_info,
+        keep_ase_atoms=keep_ase_atoms,
+    )
+
+
+def _ase_materials_loader_function(
+    raw_data: Any,
+    wrap_fractional_coordinates: bool,
+    include_atom_array: bool,
+    chain_id: str,
+    res_name: str,
+    res_id: int,
+    chain_type: ChainType | str | int,
+    is_polymer: bool,
+    include_chain_info: bool,
+    keep_ase_atoms: bool,
+) -> dict[str, Any]:
+    """Loader implementation for periodic ASE materials records."""
+    atoms = _extract_ase_atoms(raw_data)
+    metadata = _extract_metadata(raw_data, atoms)
+    material_dict = ase_atoms_to_material_dict(
+        atoms,
+        metadata=metadata,
+        wrap_fractional_coordinates=wrap_fractional_coordinates,
+    )
+
+    if isinstance(raw_data, Mapping):
+        result = dict(raw_data)
+    else:
+        result = {}
+
+    result.update(material_dict)
+
+    if include_atom_array:
+        atom_array = ase_atoms_to_atom_array(
+            atoms,
+            chain_id=chain_id,
+            res_name=res_name,
+            res_id=res_id,
+            chain_type=chain_type,
+            is_polymer=is_polymer,
+        )
+        result["atom_array"] = atom_array
+        if include_chain_info:
+            result["chain_info"] = initialize_chain_info_from_atom_array(atom_array)
+
+    if keep_ase_atoms:
+        result.setdefault("atoms", atoms)
+    else:
+        result.pop("atoms", None)
+        result.pop("ase_atoms", None)
+
+    return result
+
+
+def create_ase_materials_loader(
+    *,
+    wrap_fractional_coordinates: bool = False,
+    include_atom_array: bool = False,
+    chain_id: str = "A",
+    res_name: str = UNKNOWN_LIGAND,
+    res_id: int = 1,
+    chain_type: ChainType | str | int = ChainType.NON_POLYMER,
+    is_polymer: bool = False,
+    include_chain_info: bool = True,
+    keep_ase_atoms: bool = True,
+) -> Callable[[Any], dict[str, Any]]:
+    """Create a loader for periodic materials records stored as ASE ``Atoms``.
+
+    The loader adds crystal/material fields such as fractional coordinates,
+    lattice lengths and angles, and parsed space-group numbers. It accepts ASE
+    ``Atoms``, ASE ``AtomsRow`` objects, or records emitted by
+    :class:`atomworks.ml.datasets.ASELMDBDataset`.
+    """
+    return functools.partial(
+        _ase_materials_loader_function,
+        wrap_fractional_coordinates=wrap_fractional_coordinates,
+        include_atom_array=include_atom_array,
         chain_id=chain_id,
         res_name=res_name,
         res_id=res_id,

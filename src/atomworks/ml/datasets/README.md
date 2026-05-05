@@ -49,9 +49,9 @@ dataset = PandasDataset(
 
 ```python
 from atomworks.ml.datasets import ASELMDBDataset
-from atomworks.ml.datasets.loaders import create_ase_atoms_loader
+from atomworks.ml.datasets.loaders import create_ase_atoms_loader, create_ase_materials_loader
 
-# OMol25-style datasets are ASE DB-compatible LMDB files (*.aselmdb).
+# OMol25/OMat24-style datasets are ASE DB-compatible LMDB files (*.aselmdb).
 dataset = ASELMDBDataset.from_directory(
     directory="/path/to/omol25/train",
     name="omol25_train",
@@ -61,6 +61,17 @@ dataset = ASELMDBDataset.from_directory(
 example = dataset[0]
 atoms = example["atoms"]          # ASE Atoms object with flattened atoms.info metadata
 atom_array = example["atom_array"]  # Biotite AtomArray created by the loader
+
+materials_dataset = ASELMDBDataset.from_directory(
+    directory="/path/to/omat24/rattled-300-subsampled",
+    name="omat24_rattled",
+    loader=create_ase_materials_loader(),
+)
+material = materials_dataset[0]
+fractional_coordinates = material["fractional_coordinates"]
+lattice_lengths = material["lattice_lengths"]
+lattice_angles = material["lattice_angles"]
+space_group = material["space_group"]
 ```
 
 ## Core Concepts
@@ -145,7 +156,7 @@ dataset = PandasDataset(
 
 #### `ASELMDBDataset`
 
-For ASE DB-compatible LMDB shards, including FAIR Chemistry datasets such as OMol25 and OPoly26.
+For ASE DB-compatible LMDB shards, including FAIR Chemistry datasets such as OMol25, OMat24, and OPoly26.
 
 ```python
 dataset = ASELMDBDataset(
@@ -160,6 +171,8 @@ dataset = ASELMDBDataset(
 **Record output:** The default output is a dictionary containing `atoms` (ASE `Atoms`), `key_value_pairs`, `data`, `calculator_results`, and `extra_info`.
 
 **ID Mapping:** By default, IDs are generated as `<shard_id>:<ase_row_id>` for fast reversible lookup. To use an OMol/OPoly metadata field such as `sid`, pass `example_id_key="sid"` and `build_id_index=True`.
+
+**Materials loading:** Use `create_ase_materials_loader()` for periodic materials datasets. It adds `fractional_coordinates`, `lattice_vectors`, `lattice_lengths`, `lattice_angles`, `cell_parameters`, `space_group`, and `parent_space_group`.
 
 **Optional dependencies:** Install with `atomworks[ase]` to enable ASE LMDB support.
 

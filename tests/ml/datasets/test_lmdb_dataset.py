@@ -12,9 +12,10 @@ from ase.calculators.singlepoint import SinglePointCalculator
 from ase.db import connect
 
 from atomworks.ml.datasets import ASELMDBDataset, LMDBDataset
-from atomworks.ml.datasets.loaders import create_ase_atoms_loader
+from atomworks.ml.datasets.loaders import create_ase_atoms_loader, create_ase_materials_loader
 
 OMOL25_TEST_DIR = Path("data/omol25/raw/test")
+OMAT24_RATTLED_DIR = Path("data/omat24/raw/train/rattled-300-subsampled")
 
 
 def _write_lmdb(path, rows):
@@ -33,10 +34,14 @@ def _write_lmdb(path, rows):
                 energy=row["energy"],
                 forces=np.asarray(row["forces"], dtype=float),
             )
+            key_value_pairs = {"sid": row["sid"], "split": row["split"]}
+            key_value_pairs.update(row.get("key_value_pairs", {}))
+            data = {"charge": row["charge"], "spin": row["spin"]}
+            data.update(row.get("data", {}))
             db.write(
                 atoms,
-                key_value_pairs={"sid": row["sid"], "split": row["split"]},
-                data={"charge": row["charge"], "spin": row["spin"]},
+                key_value_pairs=key_value_pairs,
+                data=data,
             )
 
 
@@ -172,6 +177,53 @@ def test_ase_atoms_loader_converts_records_to_atom_array(ase_lmdb_paths):
     dataset.close()
 
 
+def test_ase_materials_loader_parses_crystal_features(tmp_path):
+    """Test that the ASE materials loader extracts crystal features from periodic ASE LMDB records."""
+    path = tmp_path / "materials.aselmdb"
+    _write_lmdb(
+        path,
+        [
+            {
+                "sid": "material-0",
+                "split": "train",
+                "symbols": "NaCl",
+                "positions": [(0.0, 0.0, 0.0), (1.0, 2.0, 3.0)],
+                "cell": [2.0, 4.0, 6.0],
+                "pbc": [True, True, True],
+                "forces": np.zeros((2, 3)),
+                "energy": -1.0,
+                "charge": 0,
+                "spin": 1,
+                "data": {
+                    "prototype_label": "AB_cF8_225_a_b:Cl-Na",
+                    "parent_id": "example_AB_1_spg221",
+                    "parent_prototype_label": "AB_cP2_221_a_b:Cl-Na",
+                },
+            },
+        ],
+    )
+    dataset = ASELMDBDataset(
+        paths=path,
+        name="materials",
+        loader=create_ase_materials_loader(keep_ase_atoms=False),
+    )
+
+    loaded = dataset[0]
+
+    assert "atoms" not in loaded
+    np.testing.assert_allclose(loaded["fractional_coordinates"], np.array([[0.0, 0.0, 0.0], [0.5, 0.5, 0.5]]))
+    np.testing.assert_allclose(loaded["lattice_lengths"], np.array([2.0, 4.0, 6.0]))
+    np.testing.assert_allclose(loaded["lattice_angles"], np.array([90.0, 90.0, 90.0]))
+    np.testing.assert_allclose(loaded["cell_parameters"], np.array([2.0, 4.0, 6.0, 90.0, 90.0, 90.0]))
+    np.testing.assert_array_equal(loaded["pbc"], np.array([True, True, True]))
+    np.testing.assert_array_equal(loaded["atomic_numbers"], np.array([11, 17]))
+    assert loaded["chemical_symbols"].tolist() == ["Na", "Cl"]
+    assert loaded["space_group"] == 225
+    assert loaded["parent_space_group"] == 221
+
+    dataset.close()
+
+
 @pytest.mark.skipif(
     not OMOL25_TEST_DIR.exists(),
     reason="OMol25 test partition is not available at data/omol25/raw/test",
@@ -202,3 +254,42 @@ def test_ase_lmdb_dataset_reads_real_omol25_test_partition():
     assert dataset.id_to_idx(last_example_id) == last_idx
 
     dataset.close()
+
+
+@pytest.mark.skipif(
+    not OMAT24_RATTLED_DIR.exists(),
+    reason="OMat24 rattled-300-subsampled subset is not available at data/omat24/raw/train/rattled-300-subsampled",
+)
+def test_ase_materials_loader_reads_real_omat24_rattled_subset():
+    """Test that ASELMDBDataset and the materials loader can read real OMat24 structures."""
+    dataset = ASELMDBDataset.from_directory(
+        directory=OMAT24_RATTLED_DIR,
+        name="omat24_rattled",
+        loader=create_ase_materials_loader(),
+    )
+
+    assert len(dataset.paths) == 473
+    assert len(dataset) == sum(
+        len(np.load(path, allow_pickle=True)["natoms"]) for path in OMAT24_RATTLED_DIR.glob("metadata_db_*.npz")
+    )
+
+    first_record = dataset[0]
+    first_metadata = np.load(OMAT24_RATTLED_DIR / "metadata_db_0.npz", allow_pickle=True)
+
+    assert first_record["example_id"] == "db_0:1"
+    assert first_record["db_path"] == OMAT24_RATTLED_DIR / "db_0.aselmdb"
+    assert first_record["data"]["sid"] == "agm000999976_AB6_21_spg221_3_0_rattled-300-subsampled_tyy8pf"
+    assert len(first_record["atoms"]) == int(first_metadata["natoms"][0])
+    assert first_record["fractional_coordinates"].shape == (len(first_record["atoms"]), 3)
+    assert first_record["lattice_lengths"].shape == (3,)
+    assert first_record["lattice_angles"].shape == (3,)
+    assert first_record["cell_parameters"].shape == (6,)
+    np.testing.assert_allclose(first_record["lattice_angles"], np.array([90.0, 90.0, 90.0]))
+    assert first_record["space_group"] == 1
+    assert first_record["parent_space_group"] == 221
+    assert {"energy", "forces", "stress"}.issubset(first_record["calculator_results"])
+
+    dataset.close()
+
+if __name__ == "__main__":
+    test_ase_materials_loader_reads_real_omat24_rattled_subset()
