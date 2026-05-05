@@ -1,4 +1,5 @@
 import pickle
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -12,6 +13,8 @@ from ase.db import connect
 
 from atomworks.ml.datasets import ASELMDBDataset, LMDBDataset
 from atomworks.ml.datasets.loaders import create_ase_atoms_loader
+
+OMOL25_TEST_DIR = Path("data/omol25/raw/test")
 
 
 def _write_lmdb(path, rows):
@@ -165,5 +168,37 @@ def test_ase_atoms_loader_converts_records_to_atom_array(ase_lmdb_paths):
     assert atom_array.element.tolist() == ["H", "H", "O"]
     np.testing.assert_array_equal(atom_array.atomic_number, np.array([1, 1, 8]))
     assert loaded["chain_info"]["M"]["chain_type"].is_non_polymer()
+
+    dataset.close()
+
+
+@pytest.mark.skipif(
+    not OMOL25_TEST_DIR.exists(),
+    reason="OMol25 test partition is not available at data/omol25/raw/test",
+)
+def test_ase_lmdb_dataset_reads_real_omol25_test_partition():
+    """Test that ASELMDBDataset can read records from the real OMol25 test partition and that the generated example IDs and metadata match expected values."""
+    dataset = ASELMDBDataset.from_directory(directory=OMOL25_TEST_DIR, name="omol25_test")
+    metadata = np.load(OMOL25_TEST_DIR / "metadata.npz", allow_pickle=True)
+
+    assert len(dataset.paths) == 80
+    assert len(dataset) == len(metadata["natoms"]) == len(metadata["data_ids"])
+
+    first_record = dataset[0]
+    first_atom_array = create_ase_atoms_loader(chain_id="M", keep_ase_atoms=False)(first_record)["atom_array"]
+
+    assert first_record["example_id"] == "data0000:1"
+    assert first_record["db_path"] == OMOL25_TEST_DIR / "data0000.aselmdb"
+    assert len(first_record["atoms"]) == int(metadata["natoms"][0])
+    assert first_record["data"]["data_id"] == metadata["data_ids"][0]
+    assert {"charge", "spin", "composition", "source"}.issubset(first_record["data"])
+    assert first_record["calculator_results"] == {}
+    assert first_atom_array.array_length() == len(first_record["atoms"])
+    assert first_atom_array.chain_id.tolist() == ["M"] * len(first_record["atoms"])
+
+    last_idx = len(dataset) - 1
+    last_example_id = dataset.idx_to_id(last_idx)
+    assert last_example_id == "data0079:35063"
+    assert dataset.id_to_idx(last_example_id) == last_idx
 
     dataset.close()
