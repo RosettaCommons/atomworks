@@ -227,6 +227,14 @@ def ase_atoms_to_atom_array(
     atom_array.set_annotation("chain_type", np.full(n_atoms, int(ChainType.as_enum(chain_type)), dtype=int))
     atom_array.set_annotation("stereo", np.full(n_atoms, "N", dtype="<U1"))
     atom_array.set_annotation("is_backbone_atom", np.full(n_atoms, False, dtype=bool))
+    atom_array.set_annotation("transformation_id", np.full(n_atoms, "1", dtype="<U8"))
+    atom_array.set_annotation("chain_iid", np.full(n_atoms, f"{chain_id}_1", dtype="<U16"))
+    atom_array.set_annotation("chain_entity", np.full(n_atoms, chain_id, dtype="<U8"))
+    atom_array.set_annotation("molecule_entity", np.full(n_atoms, chain_id, dtype="<U8"))
+    atom_array.set_annotation("molecule_iid", np.full(n_atoms, f"{chain_id}_1", dtype="<U16"))
+    atom_array.set_annotation("pn_unit_id", np.full(n_atoms, chain_id, dtype="<U8"))
+    atom_array.set_annotation("pn_unit_entity", np.full(n_atoms, chain_id, dtype="<U8"))
+    atom_array.set_annotation("pn_unit_iid", np.full(n_atoms, f"{chain_id}_1", dtype="<U16"))
     atom_array.bonds = struc.BondList(n_atoms, np.empty((0, 3), dtype=int))
 
     return atom_array
