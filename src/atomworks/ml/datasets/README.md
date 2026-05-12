@@ -170,6 +170,8 @@ dataset = ASELMDBDataset(
 
 **Record output:** The default output is a dictionary containing `atoms` (ASE `Atoms`), `key_value_pairs`, `data`, `calculator_results`, and `extra_info`.
 
+**AtomArray loading:** Use `create_ase_atoms_loader()` when ASE molecule records need to flow through AtomWorks transform pipelines.
+
 **ID Mapping:** By default, IDs are generated as `<shard_id>:<ase_row_id>` for fast reversible lookup. To use an OMol/OPoly metadata field such as `sid`, pass `example_id_key="sid"` and `build_id_index=True`.
 
 **Materials loading:** Use `create_ase_materials_loader()` for periodic materials datasets. It adds `fractional_coordinates`, `lattice_vectors`, `lattice_lengths`, `lattice_angles`, `cell_parameters`, `space_group`, and `parent_space_group`.
