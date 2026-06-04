@@ -17,7 +17,7 @@ Welcome to **atomworks** — a toolkit for converting, parsing, and manipulating
    :maxdepth: 1
    :caption: Building a Model with AtomWorks
 
-   how_to_build_a_model.md
+   how_to_build_a_model/how_to_build_a_model.md
 
 .. toctree::
    :maxdepth: 2

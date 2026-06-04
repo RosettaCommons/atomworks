@@ -18,7 +18,7 @@ from atomworks.ml.datasets.loaders import create_loader_with_query_pn_units
 from atomworks.ml.transforms.filters import RemoveHydrogens, RemoveUnresolvedAtoms
 from atomworks.ml.transforms.base import Compose
 
-from transforms import CropToPocket, FeaturizeForDocking
+from docs.how_to_build_a_model.scripts.transforms import CropToPocket, FeaturizeForDocking
 
 # Load in the training data as a Pandas data frame
 df_train = pd.read_parquet("splits/train.parquet")
