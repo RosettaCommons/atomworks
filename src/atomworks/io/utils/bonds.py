@@ -337,7 +337,7 @@ def get_struct_conn_bonds(
         `struct_conn.conn_type_id <https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/Items/_struct_conn.conn_type_id.html>`_
     """
 
-    def match_or_wildcard(array, value):
+    def match_or_wildcard(array: np.ndarray, value: str) -> np.ndarray:
         if value == "*":
             return np.ones_like(array, dtype=bool)
         return array == value
@@ -424,7 +424,7 @@ def get_struct_conn_bonds(
         # For non-polymers, we use the auth_seq_id if available and valid (i.e., not "." or "?"); otherwise we use the label_seq_id
         # (Required to avoid ambiguity, since if using `label` only we may have multiple residue within a
         # chain with the same label_seq_id and the same res_name; see: 6MUB)
-        
+
         res_id1 = int(
             row["ptnr1_label_seq_id"]
             if ((chain_id1 in relevant_polymer_chain_identifiers) or ("ptnr1_auth_seq_id" not in row))

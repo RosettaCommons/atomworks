@@ -4,7 +4,7 @@ import copy
 import io
 import logging
 from collections import Counter
-from collections.abc import Callable, Generator
+from collections.abc import Callable
 from functools import cache, wraps
 from os import PathLike
 from pathlib import Path
