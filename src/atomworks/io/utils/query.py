@@ -200,7 +200,7 @@ class QueryExpression:
         # Check length
         if len(mask) != expected_length:
             raise ValueError(
-                f"Query resulted in mask of length {len(mask)}, " f"but AtomArray has length {expected_length}"
+                f"Query resulted in mask of length {len(mask)}, but AtomArray has length {expected_length}"
             )
 
         return mask

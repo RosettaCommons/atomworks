@@ -26,3 +26,42 @@ Utilities
    :members:
    :undoc-members:
    :show-inheritance: 
+   
+
+MSA
+---
+
+Note that the following functions can be called via the command line. See :doc:`../msa`
+for more details.
+
+Finding
+^^^^^^^
+
+.. automodule:: atomworks.ml.preprocessing.msa.finding
+   :members:
+   :undoc-members:
+   :show-inheritance: 
+   
+Filtering
+^^^^^^^^^
+
+.. automodule:: atomworks.ml.preprocessing.msa.filtering
+   :members:
+   :undoc-members:
+   :show-inheritance: 
+
+Generating
+^^^^^^^^^^
+
+.. automodule:: atomworks.ml.preprocessing.msa.generating
+   :members:
+   :undoc-members:
+   :show-inheritance: 
+
+Organizing
+^^^^^^^^^^
+
+.. automodule:: atomworks.ml.preprocessing.msa.organizing
+   :members:
+   :undoc-members:
+   :show-inheritance: 

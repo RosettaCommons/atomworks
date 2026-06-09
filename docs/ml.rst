@@ -11,7 +11,7 @@ Core Modules
    ml/samplers
 
 Data Processing Modules
-----------------------
+-----------------------
 
 .. toctree::
    :maxdepth: 2
@@ -24,3 +24,4 @@ Data Processing Modules
    ml/transforms/feature_aggregation
    ml/transforms/msa
    ml/utils
+   ml/preprocessing

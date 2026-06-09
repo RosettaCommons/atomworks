@@ -110,7 +110,7 @@ def _build_msa_file_paths(
 
     for shard_depth in shard_depths:
         # Build shard path like "ab/cd/" for depth 2 with hash "abcd123..."
-        shard_path = "".join([f"{sequence_hash[(i*2):(i+1)*2]}/" for i in range(shard_depth)])
+        shard_path = "".join([f"{sequence_hash[(i * 2) : (i + 1) * 2]}/" for i in range(shard_depth)])
 
         for extension in extensions:
             file_path = msa_dir / shard_path / f"{sequence_hash}{extension}"

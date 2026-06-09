@@ -222,7 +222,7 @@ class FallbackDatasetWrapper(Dataset):
 
         for i, idx in enumerate(idxs):
             dataset = self.dataset if i == 0 else self.fallback_dataset
-            dataset_name = "Primary dataset" if i == 0 else f"Fallback {i}/{len(idxs)-1}"
+            dataset_name = "Primary dataset" if i == 0 else f"Fallback {i}/{len(idxs) - 1}"
 
             try:
                 return dataset[idx]
@@ -238,11 +238,11 @@ class FallbackDatasetWrapper(Dataset):
 
                 # Log fallback attempt if not the last one
                 if i < len(idxs) - 1:
-                    logger.warning(f"({dataset_name}): Trying fallback index {idxs[i+1]}.{example_id}")
+                    logger.warning(f"({dataset_name}): Trying fallback index {idxs[i + 1]}.{example_id}")
 
         # All attempts failed
         logger.error(
-            f"(Exceeded all {len(idxs)-1} fallbacks. Training will crash now. Errors: {error_list} for examples: {example_id_list})"
+            f"(Exceeded all {len(idxs) - 1} fallbacks. Training will crash now. Errors: {error_list} for examples: {example_id_list})"
         )
         raise RuntimeError(f"All attempts failed for indices {idxs}. See error_list for details.") from ExceptionGroup(
             "All fallback attempts failed", error_list

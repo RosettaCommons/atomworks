@@ -82,7 +82,7 @@ atom_array = parse_output["assemblies"]["1"][0]
 print("Available annotations:")
 annotations = atom_array.get_annotation_categories()
 for i, annotation in enumerate(annotations):
-    print(f"  {i+1:2d}. {annotation}")
+    print(f"  {i + 1:2d}. {annotation}")
 
 
 # %%

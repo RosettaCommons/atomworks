@@ -11,6 +11,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath("../src"))
 
+
 import atomworks
 
 project = "atomworks"
@@ -44,11 +45,17 @@ extensions = [
     "sphinx.ext.viewcode",  # Add source code links
     "sphinx.ext.napoleon",  # Google/NumPy style docstrings
     "sphinx_gallery.gen_gallery",  # Generates auto_examples/ from examples/
+    #"sphinx_click",
+    "sphinxcontrib.typer"
 ]
 
 templates_path = ["_templates"]
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "examples/GALLERY_HEADER.rst", "ml/preprocessing.rst"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "examples/GALLERY_HEADER.rst"]#, "ml/preprocessing.rst"]
 
+#autodoc_mock_imports = [
+#    "zstandard",
+#    "torch",
+#]
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 

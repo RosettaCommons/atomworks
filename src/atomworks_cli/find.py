@@ -25,40 +25,43 @@ def find(
         dir_okay=False,
         readable=True,
         resolve_path=True,
-        help="CSV file containing protein sequences",
+        help="Path and file name for a CSV file containing protein sequences.",
     ),
     sequence_column: str | None = typer.Option(
         None,
         "--sequence-column",
         "-c",
-        help="Name of column containing sequences (required if CSV has multiple columns)",
+        help="Name of column containing sequences (required if CSV has multiple columns).",
     ),
     existing_msa_dirs: str | None = typer.Option(
         None,
         "--existing-msa-dirs",
-        help="Comma-separated MSA directories to find (uses LOCAL_MSA_DIRS env var if not specified)",
+        help="Comma-separated list of directories containing MSA information. (Uses LOCAL_MSA_DIRS env var if not specified.)",
     ),
     missing_output: Path | None = typer.Option(
         None,
         "--missing-output",
-        help="Optional path to save CSV with missing sequences",
+        help="Optional path and file name to save CSV with missing sequences.",
     ),
     found_output: Path | None = typer.Option(
         None,
         "--found-output",
-        help="Optional path to save CSV with found sequences and their MSA paths",
+        help="Optional path and file name to save CSV with found sequences and their MSA paths.",
     ),
     verbose: bool = typer.Option(
         False,
         "--verbose",
         "-v",
-        help="Enable verbose logging",
+        help="Enable verbose logging.",
     ),
 ) -> None:
     """Find MSA files for sequences in a CSV file.
 
     Analyzes a CSV file to find existing MSA files for sequences and
     optionally saves missing and found sequences to separate CSV files.
+
+    You will need to set the LOCAL_MSA_DIRS environment variable to the directory
+    where your MSA information is stored.
 
     Examples:
         # Find MSAs for single-column CSV
@@ -145,7 +148,7 @@ def find(
         )
         typer.secho(f"  Found MSAs: {found_count:,} ({coverage_percent:.1f}%)", fg=found_color)
         typer.secho(
-            f"  Missing MSAs: {missing_count:,} ({100-coverage_percent:.1f}%)",
+            f"  Missing MSAs: {missing_count:,} ({100 - coverage_percent:.1f}%)",
             fg=typer.colors.RED if missing_count > 0 else typer.colors.GREEN,
         )
 

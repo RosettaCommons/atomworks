@@ -85,7 +85,7 @@ class SampleDesignTask(Transform):
 
         if not design_tasks_to_use:
             logger.warning(
-                "No design tasks with non-zero frequency found. " "SampleDesignTask will act as an identity transform."
+                "No design tasks with non-zero frequency found. SampleDesignTask will act as an identity transform."
             )
 
         self.design_tasks = design_tasks_to_use
