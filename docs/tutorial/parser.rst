@@ -76,9 +76,9 @@ Parsing Arguments
      - False
      - Convert selenomethionine (MSE) to methionine (MET).
    * - hydrogen_policy
-      - "keep" / "remove" / "infer"
-      - "keep"
-      - Whether to keep, remove, or infer hydrogens.
+     - "keep" / "remove" / "infer"
+     - "keep"
+     - Whether to keep, remove, or infer hydrogens.
    * - model
      - int or None
      - None
@@ -91,6 +91,7 @@ Parsing Arguments
      - list[str] / "all" / None
      - None
      - Extra fields to include in the AtomArrayStack.
+
 
 Wrapper Arguments
 -----------------
