@@ -7,5 +7,5 @@ Example Usage
 -------------
 .. code-block:: python
 
-   from atomworks.io.transforms.atom_array import rotate_structure
-   rotated = rotate_structure(atom_array, angle=90, axis="z")
+   from atomworks.io.transforms.atom_array import remove_ccd_components
+   cleaned = remove_ccd_components(atom_array)
