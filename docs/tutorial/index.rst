@@ -21,6 +21,5 @@ Quick Install:
    :caption: Main Concepts
 
    parser
-   tools
    transforms
    utils 
