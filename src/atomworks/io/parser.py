@@ -145,6 +145,7 @@ def parse(
     build_assembly: Literal["first", "all"] | list[str] | tuple[str] | None = "all",
     extra_fields: list[str] | Literal["all"] | None = None,
     keep_cif_block: bool = False,
+    altloc: Literal["first", "occupancy", "all"] | str = "first",
 ) -> dict[str, Any]:
     """Entrypoint for general parsing of atomic-level structure files.
 
@@ -204,6 +205,9 @@ def parse(
         extra_fields (list, optional): A list of extra fields to include in the AtomArrayStack. Defaults to None. "all" includes all fields.
             Only supports mmCIF files.
         keep_cif_block (bool, optional): Whether to keep the CIF block in the result. Defaults to False.
+        altloc (Literal['first', 'occupancy', 'all'] | str, optional): How to handle alternate location indicators.
+            Options are 'first' (keep the first altloc), 'occupancy' (keep the altloc with highest occupancy),
+            'all' (keep all altlocs), or a specific altloc identifier (e.g., 'A' to keep only altloc 'A'). Defaults to 'first'.
 
     Returns:
         dict: A dictionary containing the following keys:
@@ -249,6 +253,20 @@ def parse(
             "We can't fix formal charges without building from templates, as we need to know the true number of "
             "hydrogens bonded to a given atom, not the inferred number. This may lead to occasional inaccuracies "
             "after adding inter-residue bonds. To avoid this and fix formal charges, set `add_missing_atoms = True`."
+        )
+
+    if altloc == "all" and add_missing_atoms:
+        raise ValueError(
+            "altloc='all' is not compatible with add_missing_atoms=True. "
+            "Template matching requires unique atom names per residue, which is not guaranteed with multiple altlocs. "
+            "Use altloc='first' (default) with add_missing_atoms=True, or set add_missing_atoms=False to preserve all altlocs."
+        )
+
+    if altloc == "all" and fix_bond_types:
+        logger.warning(
+            "altloc='all' with fix_bond_types=True may produce incorrect bond corrections. "
+            "Multiple altlocs cause atoms to appear with higher degree than expected, triggering spurious corrections. "
+            "Consider using fix_bond_types=False when preserving all altlocs."
         )
 
     file_type = file_type or infer_pdb_file_type(filename)
@@ -328,6 +346,7 @@ def parse(
             model=model,
             build_assembly=build_assembly,
             extra_fields=extra_fields,
+            altloc=altloc,
         )
     elif file_type in ("cif", "bcif", "mmjson"):
         result = _parse_from_cif(
@@ -349,6 +368,7 @@ def parse(
             build_assembly=build_assembly,
             extra_fields=extra_fields,
             keep_cif_block=keep_cif_block,
+            altloc=altloc,
         )
     else:
         raise ValueError(f"Unsupported file type: {filename}")
@@ -637,9 +657,9 @@ def parse_atom_array(
 
     # ... build assemblies and add assembly-specific annotations (instance IDs like `chain_iid`, `pn_unit_iid`, `molecule_iid`)
     if exists(build_assembly):
-        assert build_assembly in ["first", "all"] or isinstance(
-            build_assembly, list | tuple
-        ), "Invalid `build_assembly` option. Must be 'first', 'all', or a list/tuple of assembly IDs as strings."
+        assert build_assembly in ["first", "all"] or isinstance(build_assembly, list | tuple), (
+            "Invalid `build_assembly` option. Must be 'first', 'all', or a list/tuple of assembly IDs as strings."
+        )
 
     # Determine assembly categories: use CIF data if build_assembly is set, otherwise identity operations
     if exists(build_assembly) and exists(_cif_file) and "pdbx_struct_assembly" in data_dict["cif_block"]:
@@ -732,6 +752,7 @@ def _parse_from_cif(
             model=kwargs["model"],
             add_bond_types_from_struct_conn=kwargs["add_bond_types_from_struct_conn"],
             fix_bond_types=kwargs["fix_bond_types"],
+            altloc=kwargs.get("altloc", "first"),
         )
     except InvalidFileError:
         logger.info("Invalid file error encountered; loading with only one model")
@@ -742,10 +763,11 @@ def _parse_from_cif(
             model=1,
             add_bond_types_from_struct_conn=kwargs["add_bond_types_from_struct_conn"],
             fix_bond_types=kwargs["fix_bond_types"],
+            altloc=kwargs.get("altloc", "first"),
         )
 
     # process the asym_unit_stack according to the given keyword arguments
-    kwargs_to_pass = {k: v for k, v in kwargs.items() if k not in ["model", "file_type", "keep_cif_block"]}
+    kwargs_to_pass = {k: v for k, v in kwargs.items() if k not in ["model", "file_type", "keep_cif_block", "altloc"]}
     data_dict = parse_atom_array(asym_unit_stack, data_dict=data_dict, _cif_file=cif_file, **kwargs_to_pass)
 
     # Extract the asym_unit_stack from the returned data_dict
@@ -788,7 +810,7 @@ def _parse_from_pdb(filename: os.PathLike, **parse_from_cif_kwargs) -> dict[str,
     pdb_file = read_any(filename)
     atom_array_stack = pdb_file.get_structure(
         model=parse_from_cif_kwargs["model"],
-        altloc="first",
+        altloc=parse_from_cif_kwargs.get("altloc", "first"),
         extra_fields=["b_factor", "occupancy", "charge", "atom_id"],
         include_bonds=True,
     )
@@ -825,7 +847,7 @@ def _parse_from_pdb(filename: os.PathLike, **parse_from_cif_kwargs) -> dict[str,
     # PDB files use identity assembly, so "all" builds just the single identity assembly
     parse_from_cif_kwargs["build_assembly"] = "all"
 
-    kwargs_to_pass = {k: v for k, v in parse_from_cif_kwargs.items() if k not in ["model", "file_type"]}
+    kwargs_to_pass = {k: v for k, v in parse_from_cif_kwargs.items() if k not in ["model", "file_type", "altloc"]}
     data_dict = parse_atom_array(atom_array_stack, _cif_file=None, **kwargs_to_pass)
     data_dict["metadata"]["id"] = Path(filename).stem.lower()
 
