@@ -44,7 +44,10 @@ extensions = [
     "sphinx.ext.viewcode",  # Add source code links
     "sphinx.ext.napoleon",  # Google/NumPy style docstrings
     "sphinx_gallery.gen_gallery",  # Generates auto_examples/ from examples/
+    "myst_parser", # Support for Markdown files
+    "sphinx_design", # For better layout and design components
 ]
+
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "examples/GALLERY_HEADER.rst", "ml/preprocessing.rst"]
