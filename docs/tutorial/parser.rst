@@ -12,13 +12,13 @@ Example Usage
    result = parse(filename="/databases/rcsb/cif/ne/3nez.cif.gz")
    print(result["chain_info"])
 
-Returned Dictionary
--------------------
+What's in the Dictionary Returned by the Parser?
+------------------------------------------------
 - **chain_info**: Mapping of chain IDs to sequence, type, and metadata
-- **ligand_info**: Information about ligands in the structure
-- **asym_unit**: AtomArrayStack of the asymmetric unit
+- **ligand_info**: Information about ligands in the structure, if there are any
+- **asym_unit**: AtomArrayStack of the asymmetric unit, contains similar information to what is contained in a PDB file
 - **assemblies**: Mapping of assembly IDs to AtomArrayStacks
-- **metadata**: Structure-level metadata
+- **metadata**: Structure-level metadata, such as crystallization details, the method used to determine the structure, resolution, etc.
 - **extra_info**: Internal-use information for caching and compatibility
 
 Parsing Arguments
@@ -67,14 +67,14 @@ Parsing Arguments
      - bool
      - True
      - Fix formal charges on atoms involved in inter-residue bonds.
+   * - fix_bond_types
+     - bool
+     - True
+     - Whether to correct for nucleophilic additions on atoms involved in inter-residue bonds.
    * - convert_mse_to_met
      - bool
      - False
      - Convert selenomethionine (MSE) to methionine (MET).
-   * - remove_hydrogens
-     - bool or None
-     - None
-     - Remove hydrogens from structure. Deprecated; use hydrogen_policy instead.
    * - hydrogen_policy
      - "keep" / "remove" / "infer"
      - "keep"
@@ -92,7 +92,8 @@ Parsing Arguments
      - None
      - Extra fields to include in the AtomArrayStack.
 
-Caching Arguments
+
+Wrapper Arguments
 -----------------
 
 .. list-table::
@@ -102,6 +103,14 @@ Caching Arguments
      - Type
      - Default
      - Description
+   * - file_type
+     - "cif" / "pdb" / "mmjson" / None
+     - None
+     - File type to parse. If None, inferred from filename extension.
+   * - ccd_mirror_path
+     - PathLike / None
+     - None
+     - Path to local mirror of the Chemical Component Dictionary. (Recommended)
    * - load_from_cache
      - bool
      - False

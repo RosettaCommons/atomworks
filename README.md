@@ -4,6 +4,9 @@
 [![Documentation Status](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://rosettacommons.github.io/atomworks/latest/)
 [![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
+> [!Warning]
+> A vulnerability from pyarrow (an AtomWorks dependency) has been identified, you can read more about it [here](https://advisories.gitlab.com/pypi/pyarrow/CVE-2026-25087/). If your system can use pyarrow>=23.0.1, update the `pyproject.toml` a newer version before installing the AtomWorks package. 
+
 <div align="center">
   <img src="docs/_static/atomworks_logo_color.svg" width="450" alt="atomworks logo">
 </div>
