@@ -18,6 +18,7 @@ Welcome to **atomworks** — a toolkit for converting, parsing, and manipulating
    :caption: Navigation
 
    tutorial/index
+   cookbook
    installation
    glossary
    api_reference
