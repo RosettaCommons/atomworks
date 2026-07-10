@@ -14,10 +14,10 @@ Welcome to **atomworks** — a toolkit for converting, parsing, and manipulating
 
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Building a Model with AtomWorks
 
-   how_to_build_a_model/how_to_build_a_model.md
+   how_to_build_a_model/index
 
 .. toctree::
    :maxdepth: 2

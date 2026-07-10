@@ -1,5 +1,5 @@
 Assembly Utilities
-=================
+==================
 
 .. automodule:: atomworks.io.utils.assembly
    :members:

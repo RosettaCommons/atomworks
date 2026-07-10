@@ -1,13 +1,12 @@
-# How to Build a Model Using AtomWorks
-## Part 1: Cleaning the Data
+# Part 1: Cleaning the Data
 
-### Table of Contents
+## Table of Contents
 
 (aw_build_model_p1_intro)=
-### Introduction
+## Introduction
 This is the first in a series of tutorials that walks you through how to use AtomWorks to build a machine learning model for protein design from start to finish. 
 
-**In this installment, you will learn how to use the [IO functionalities in AtomWorks] to prepare your data for use in a machine learning model.**
+**In this installment, you will learn how to use the [IO functionalities in AtomWorks]() to prepare your data for use in a machine learning model.**
 
 By the end of this tutorial series you will have cleaned data and built a graph neural network to create plausible bound poses between a ligand and a protein pocket. 
 
@@ -20,7 +19,7 @@ If you would like to see the full script, it is provided in the tutorial files. 
 ```
 
 (aw_build_model_p1_prereq)=
-### Prerequisites
+## Prerequisites
 Before starting this tutorial it is assumed that you have:
 - An intermediate knowledge of Python and the Pandas library.
 - A working installation of AtomWorks. Only the `io` side will be used for this part of the How to Build a Model tutorial series, however other parts will require the `ml` side.
@@ -32,7 +31,7 @@ If you do not have over 100GB of space on your computing system, you can use a s
 ```
 
 (aw_build_model_p1_setup)=
-### Setup 
+## Setup 
 AtomWorks provides a few parquet files that already contains various pieces of metadata about the various structures included in the PDB. We will use these as our starting point.
 
 Download and decompress the parquet files via: 
@@ -52,10 +51,10 @@ We will only use `interfaces.parquet` and `pn_units.parquet` in this tutorial.
 Later on you will also need a mirror to at least a subset of the PDB so that AtomWorks is able to find the related structure when training your model. You can learn how to set up a PDB mirror using AtomWorks [here](../mirrors.rst). This document also provides further information on the parquet files. 
 
 (aw_build_model_p1_tutorial)=
-### Creating Cleaned Parquet Files
+## Creating Cleaned Parquet Files
 
 (aw_build_model_p1_load)=
-#### Loading the parquet file using Pandas
+### Loading the parquet file using Pandas
 Let's first take a look at the information contained in the parquet file. Parquet files are not human parsable, but we can use [Pandas](https://pandas.pydata.org/) to inspect it. 
 
 ````{dropdown} Click to see the code
@@ -108,7 +107,7 @@ interfaces[["is_inter_molecule"]].dtype
 ````
 
 (aw_build_model_p1_merge)=
-#### Merging Datasets
+### Merging Datasets
 While the interfaces parquet has most of the data we need to train our model to predict poses for ligands binding to protein pockets, we need the information stored in the `is_polymer` and `num_resolved_residues` columns in the PN units dataset as well. We will use the information in `is_polymer` to ensure that the interfaces we are looking at are between a protein (polymer) and ligand (non-polymer). We will use the information in `num_resolved_residues` to make sure our dataset remains small enough to train our model on a single GPU. 
 
 We will need to merge this information with the interfaces dataset twice, one for each PN unit involved in each interface. Keep in mind that you need the information in `pdb_id`, `assembly_id`, and `pn_unit_iid` to uniquely identify a structure!
@@ -142,7 +141,7 @@ df = df.merge(u2_cols, on=["pdb_id", "assembly_id", "pn_unit_2_iid"], how="inner
 Check that the merge occurred correctly by printing out the columns of the new data frame, inspecting the first few rows of the new data frame, etc. 
 
 (aw_build_model_p1_clean)=
-#### Cleaning the Data
+### Cleaning the Data
 For the purposes of this tutorial, we want to remove rows where `involves_covalent_modification` is True and where the interface involves non-protein and non-ligand chains since we're looking for interfaces that are between a protein and a ligand.
 
 This means we only want to keep rows where:
@@ -187,7 +186,7 @@ You can check to make sure these filters are actually being applied to your data
 To make sure the filter is doing what you expect, you can try running this procedure on a small subset of the data or locating specific rows in the larger dataset that should/should not be impacted by each filtering step. 
 
 (aw_build_model_p1_new_cols)=
-#### Adding New Columns
+### Adding New Columns
 It will be useful later on if one row contains unique labels for each remaining interface. Right now information from four rows (`pdb_id`, `assembly_id`, `pn_unit_1_iid`, and `pn_unit_2_iid`) are required to uniquely identify an interface in our dataset. Let's add a new column to our dataframe and store our custom lable there. 
 
 ````{dropdown} Click to see the code.
@@ -221,7 +220,7 @@ assert df["example_id"].nunique() == len(df), "example_id is not unique!"
 ````
 
 (aw_build_model_p1_split)=
-#### Training, Testing, and Validation Sets
+### Training, Testing, and Validation Sets
 Now that we have the data, we need to split it up into three sets: `test`, `train`, and `val` (short for validation). There are many ways to do this and which is best will depend on your data and what you are trying to accomplish with your model. 
 
 Here, we will use the `protein_cluster_30` column in the PN units data frame to split up our data. This column groups proteins by 30% sequence identity - it contains hash-based IDs that uniquely identify a cluster of proteins sharing more than 30% sequence identity. We will do an 80/10/10 split - 80% of the data will be in training, 10% in test, and 10% in validation. <!-- TODO: what algorithm was used to calculated these values -->
@@ -281,7 +280,7 @@ df = df[df["protein_cluster"].notna()].reset_index(drop=True)
 ```
 ````
 
-Before splitting the data up, let's shuffle the unique clusters. We use a see of 42 for reproducibility. Use this seed if you want to exactly replicate what was produced in this segment of the tutorial. 
+Before splitting the data up, let's shuffle the unique clusters. We use a seed of 42 for reproducibility. Use this seed if you want to exactly replicate what was produced in this segment of the tutorial. 
 ````{dropdown} Click to see the code.
 ```python
 unique_clusters = df["protein_cluster"].unique()
@@ -324,12 +323,12 @@ df_test.to_parquet("splits/test.parquet",   index=False)
 You now have created the datasets you need to train, test, and validate the machine learning model you'll create as you continue to go through the **How to Build a Model Using AtomWorks** tutorial series. 
 
 (aw_build_model_p1_next)=
-### What Next? 
+## What Next? 
 <!-- TODO  -->
 <!-- You can find the next portion of the tutorial here. -->
 
 (aw_build_model_p1_glossary)=
-### Glossary
+## Glossary
 
 parquet
 PN units - this is actually in the docs [glossary](https://rosettacommons.github.io/atomworks/latest/glossary.html#chains-pn-units-and-molecules)
