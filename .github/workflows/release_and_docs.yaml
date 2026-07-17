@@ -56,7 +56,10 @@ jobs:
           PYPI_REPO_URL: https://upload.pypi.org/legacy/
         run: |
           npx semantic-release
-          VERSION=$(git describe --tags --abbrev=0 --match "v*" 2>/dev/null || echo "no-version")
+          # Only publish docs when semantic-release tagged this exact commit.
+          # Using the newest historical tag here would overwrite immutable
+          # version docs after a non-release production push.
+          VERSION=$(git describe --tags --exact-match --match "v*" HEAD 2>/dev/null || echo "no-version")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Released version: $VERSION"
 
