@@ -71,7 +71,7 @@ html_theme_options = {
     },
     "navbar_start": ["navbar-logo", "version-switcher"],
     "switcher": {
-        "json_url": "https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json",
+        "json_url": "https://rosettacommons.github.io/atomworks/latest/_static/switcher.json",
         "version_match": switcher_version,
     },
     "favicons": [
