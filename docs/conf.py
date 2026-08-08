@@ -97,5 +97,5 @@ sphinx_gallery_conf = {
 }
 
 html_js_files = [
-     ('https://scripts.simpleanalyticscdn.com/latest.js', {'async': 'async', 'defer': 'defer'}),
+    ("https://scripts.simpleanalyticscdn.com/latest.js", {"async": "async", "defer": "defer"}),
 ]
