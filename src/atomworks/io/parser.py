@@ -13,6 +13,7 @@ from __future__ import annotations
 import io
 import logging
 import os
+import socket
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Literal
@@ -167,7 +168,10 @@ def parse(
             If not provided, the file type will be inferred automatically.
         load_from_cache (bool, optional): Whether to load pre-compiled results from cache. Defaults to False.
         cache_dir (PathLike, optional): Directory path to save pre-compiled results. Defaults to None.
-        save_to_cache (bool, optional): Whether to save the results to cache when building the structure. Defaults to False.
+        save_to_cache (bool, optional): Whether to save the results to cache when building the structure.
+            Defaults to False. An entry is written to a temporary file and then moved into place, so a
+            process interrupted while writing leaves no partial entry behind, and several processes may
+            fill a shared cache directory concurrently. An entry that already exists is not rewritten.
 
         **Parsing arguments:**
         ccd_mirror_path (str, optional): Path to the local mirror of the Chemical Component Dictionary (recommended).
@@ -367,9 +371,33 @@ def parse(
         # Ensure all parent directories exist
         cache_file_path.parent.mkdir(parents=True, exist_ok=True)
 
-        # Save the result to the cache, excluding the assemblies
+        # Save the result to the cache, excluding the assemblies.
+        #
+        # The write goes to a temporary file that is then moved into place, rather than
+        # directly to the target path. A process interrupted while writing -- a worker
+        # hitting a wall-clock limit or being preempted, which is routine when the cache is
+        # filled from a batch scheduler -- would otherwise leave a truncated file behind
+        # that later runs treat as a valid cache entry. The temporary name includes host and
+        # process id so that several workers sharing a cache directory, possibly on a
+        # network filesystem, cannot overwrite each other's partial writes.
+        #
+        # An existing entry is not normally rewritten, but two workers can pass that check
+        # at the same time and both proceed, so the move has to tolerate an occupied
+        # destination; Path.replace does, whereas Path.rename raises on Windows in that case.
+        #
+        # Compression is passed explicitly because pandas would otherwise infer it from the
+        # file name, and the temporary name does not carry the suffix the destination has.
+        # Deriving it from the destination keeps the stored format exactly as before.
         result_to_cache = {k: v for k, v in result.items() if k != "assemblies"}
-        pd.to_pickle(result_to_cache, cache_file_path)
+        compression = "gzip" if cache_file_path.suffix == ".gz" else "infer"
+        node = socket.gethostname().replace(os.sep, "_")
+        tmp_path = cache_file_path.with_name(f"{cache_file_path.name}.{node}.{os.getpid()}.tmp")
+        try:
+            pd.to_pickle(result_to_cache, tmp_path, compression=compression)
+            tmp_path.replace(cache_file_path)
+        except BaseException:
+            tmp_path.unlink(missing_ok=True)
+            raise
 
     return result
 
