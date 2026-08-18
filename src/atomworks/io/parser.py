@@ -373,21 +373,9 @@ def parse(
 
         # Save the result to the cache, excluding the assemblies.
         #
-        # The write goes to a temporary file that is then moved into place, rather than
-        # directly to the target path. A process interrupted while writing -- a worker
-        # hitting a wall-clock limit or being preempted, which is routine when the cache is
-        # filled from a batch scheduler -- would otherwise leave a truncated file behind
-        # that later runs treat as a valid cache entry. The temporary name includes host and
-        # process id so that several workers sharing a cache directory, possibly on a
-        # network filesystem, cannot overwrite each other's partial writes.
-        #
-        # An existing entry is not normally rewritten, but two workers can pass that check
-        # at the same time and both proceed, so the move has to tolerate an occupied
-        # destination; Path.replace does, whereas Path.rename raises on Windows in that case.
-        #
-        # Compression is passed explicitly because pandas would otherwise infer it from the
-        # file name, and the temporary name does not carry the suffix the destination has.
-        # Deriving it from the destination keeps the stored format exactly as before.
+        # Write to a temp file (named with host and pid to avoid collisions between
+        # workers sharing the cache) and atomically move it into place, so an interrupted
+        # write can't leave a corrupt cache entry
         result_to_cache = {k: v for k, v in result.items() if k != "assemblies"}
         compression = "gzip" if cache_file_path.suffix == ".gz" else "infer"
         node = socket.gethostname().replace(os.sep, "_")

@@ -10,8 +10,6 @@ from atomworks.io.parser import parse
 from atomworks.io.utils.testing import assert_same_atom_array
 from tests.io.conftest import TEST_DATA_IO, get_pdb_path
 
-# A small structure that ships with the test data, so the cache tests below do not depend
-# on a local PDB mirror.
 STRUCTURE = TEST_DATA_IO / "2hhb.cif.gz"
 
 TEST_CASES = [
