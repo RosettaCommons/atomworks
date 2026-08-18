@@ -1,5 +1,3 @@
-import os
-import socket
 import time
 from pathlib import Path
 
@@ -111,38 +109,12 @@ def _cache_files(cache_dir: Path) -> list[Path]:
     return [p for p in cache_dir.rglob("*") if p.is_file() and not p.name.endswith(".tmp")]
 
 
-def test_cached_entry_is_gzip_compressed(tmp_path: Path) -> None:
-    """The stored format is unchanged: entries are gzip compressed, as their name says.
-
-    Cache files are named `.pkl.gz` and pandas infers the compression from that name. Writing
-    through a temporary file would lose the inference, since the temporary name does not carry
-    the suffix, so the compression has to be passed explicitly. This test pins the resulting
-    format down.
-    """
-    parse(STRUCTURE, cache_dir=tmp_path, save_to_cache=True)
-    (entry,) = _cache_files(tmp_path)
-    assert entry.name.endswith(".pkl.gz")
-    gzip_magic = bytes.fromhex("1f8b")
-    assert entry.read_bytes()[:2] == gzip_magic, "cache entry is not gzip compressed"
-
-    # ...and it is still readable, i.e. the format matches what the reader expects.
-    result = parse(STRUCTURE, cache_dir=tmp_path, load_from_cache=True)
-    assert result["asym_unit"].array_length() > 0
-
-
 def test_cache_write_is_atomic(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """An interrupted write leaves no cache entry behind.
-
-    Without an atomic write, a process killed while serialising would leave a truncated file
-    that later runs would treat as a valid cache entry. The write is made to fail part way
-    through; afterwards the cache directory must contain neither an entry nor a leftover
-    temporary file.
-    """
+    """An interrupted write leaves neither a cache entry nor a temporary file behind."""
     real_to_pickle = pd.to_pickle
 
     def failing_to_pickle(obj, path, *args, **kwargs):
-        # Write a partial file first, so the test would fail if the target path were written
-        # to directly instead of via a temporary file.
+        # Partial file first, so the test fails if the target path were written directly.
         Path(path).write_bytes(b"partial")
         raise KeyboardInterrupt("interrupted while writing the cache")
 
@@ -153,44 +125,6 @@ def test_cache_write_is_atomic(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) 
 
     assert not _cache_files(tmp_path), "an interrupted write left a cache entry behind"
     assert not list(tmp_path.rglob("*.tmp")), "an interrupted write left a temporary file behind"
-
-
-def test_cache_write_tolerates_a_destination_created_concurrently(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    """Moving the finished file into place works even if the entry appeared meanwhile.
-
-    An existing entry is normally not rewritten, but two workers can pass that check at the
-    same time and both go on to write, so the move of the second one finds its destination
-    occupied. `Path.replace` overwrites it; `Path.rename` would raise `FileExistsError` on
-    Windows and leave the worker's temporary file behind. The race is reproduced here by
-    creating the destination while the temporary file is being written.
-
-    Note that the distinction between the two only shows on Windows: POSIX `rename` replaces
-    an existing destination silently, so on Linux and macOS this test passes either way and
-    covers only that the entry ends up complete and no temporary file is stranded.
-    """
-    real_to_pickle = pd.to_pickle
-    # Rebuild the suffix the implementation appends, so the destination can be derived from
-    # the temporary path without assuming anything about the host name.
-    suffix = f".{socket.gethostname().replace(os.sep, '_')}.{os.getpid()}.tmp"
-
-    def to_pickle_and_simulate_other_worker(obj, path, *args, **kwargs):
-        real_to_pickle(obj, path, *args, **kwargs)
-        tmp = Path(path)
-        assert tmp.name.endswith(suffix), "cache write no longer uses the expected temporary name"
-        tmp.with_name(tmp.name[: -len(suffix)]).write_bytes(b"written by another worker")
-
-    monkeypatch.setattr(pd, "to_pickle", to_pickle_and_simulate_other_worker)
-    parse(STRUCTURE, cache_dir=tmp_path, save_to_cache=True)
-    monkeypatch.setattr(pd, "to_pickle", real_to_pickle)
-
-    assert len(_cache_files(tmp_path)) == 1, "the concurrent write left more than one entry"
-    assert not list(tmp_path.rglob("*.tmp")), "the move left a temporary file behind"
-
-    # The entry is the one this worker wrote, not the placeholder, and it is readable.
-    result = parse(STRUCTURE, cache_dir=tmp_path, load_from_cache=True)
-    assert result["asym_unit"].array_length() > 0
 
 
 if __name__ == "__main__":

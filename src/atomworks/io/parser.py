@@ -86,6 +86,10 @@ This dictionary exists to provide a convenient import for the standard parameter
 _CACHE_SHARDING_DEPTH = 2  # Use 2-level sharding by default (e.g., ab/cd/abcdef123456/)
 _CACHE_SHARDING_CHARS_PER_DIR = 2  # Number of characters per directory level
 
+# Cache-file suffix -> pandas compression, covering what `utils.compression` recognises.
+# Note pandas infers `.gz` and `.zst` but not `.gzip`.
+_CACHE_COMPRESSION = {".gz": "gzip", ".gzip": "gzip", ".zst": "zstd"}
+
 
 def _get_atomworks_version() -> str:
     """Lazy import of atomworks version to avoid circular imports."""
@@ -377,11 +381,13 @@ def parse(
         # workers sharing the cache) and atomically move it into place, so an interrupted
         # write can't leave a corrupt cache entry
         result_to_cache = {k: v for k, v in result.items() if k != "assemblies"}
-        compression = "gzip" if cache_file_path.suffix == ".gz" else "infer"
+        # Explicit: pandas would infer compression from the temp name, which has no suffix
+        compression = _CACHE_COMPRESSION.get(cache_file_path.suffix, "infer")
         node = socket.gethostname().replace(os.sep, "_")
         tmp_path = cache_file_path.with_name(f"{cache_file_path.name}.{node}.{os.getpid()}.tmp")
         try:
             pd.to_pickle(result_to_cache, tmp_path, compression=compression)
+            # replace() not rename(): two workers can race here, and rename() raises on Windows
             tmp_path.replace(cache_file_path)
         except BaseException:
             tmp_path.unlink(missing_ok=True)
