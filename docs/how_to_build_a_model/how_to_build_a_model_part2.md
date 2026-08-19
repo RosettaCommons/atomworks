@@ -549,7 +549,7 @@ class FeaturizeForDocking(Transform):
 ##### Write the `featurize_for_docking` Function
 Instead of starting with a copy of the `AtomArray`, start with just returning an empty dictionary. 
 
-Also write the `forward()` function. Have it 
+Also update the `forward()` function. Have it update the `data` dictionary with the dictionary features the `featureize_for_docking` function will eventually create. 
 
 ````{dropdown} Click to see the code
 ```{code-block} python
@@ -567,7 +567,7 @@ class FeaturizeForDocking(Transform):
 ```
 ````
 
-### Add the `is_ligand` mask and target coordinates
+##### Add the `is_ligand` Mask and Target Coordinates
 `target_coords` are the ground-truth coordinates the model must reproduce.
 
 ````{dropdown} Click to see the code
@@ -597,7 +597,7 @@ assert example["target_coords"].shape[1] == 3
 ```
 ````
 
-### Add `input_coords` with the ligand zeroed out
+##### Add `input_coords` with the ligand zeroed out
 This is the heart of the task. We keep the real pocket coordinates but zero out the ligand coordinates — the model must learn to place the ligand.
 
 ````{dropdown} Click to see the code
@@ -619,7 +619,7 @@ def featurize_for_docking(atom_array: AtomArray) -> dict:
 ```
 ````
 
-### Add `atomic_numbers`
+##### Add `atomic_numbers`
 Encode each atom's element as an integer atomic number using the AtomWorks lookup table. These integers will feed an embedding layer in the model.
 
 ````{dropdown} Click to see the code
@@ -650,8 +650,8 @@ def featurize_for_docking(atom_array: AtomArray) -> dict:
 Elements not found in the lookup table map to `0`, which acts as an "unknown atom" index in the embedding table.
 ````
 
-### Add `edge_index` from the bond graph
-`edge_index` is the bond graph in COO (coordinate) format: a `[2, E]` integer array where each column is a bonded pair of atoms.
+##### Add Bonds Via an `edge_index` 
+`edge_index` is the bond graph in COO (coordinate) format: a `[2, <number of bonds>]` integer array where each column is a bonded pair of atoms.
 
 ````{dropdown} Click to see the code
 ```{code-block} python
@@ -670,6 +670,7 @@ def featurize_for_docking(atom_array: AtomArray) -> dict:
     )
 
     bonds = atom_array.bonds.as_array()
+    # we only need the first two columns, the last one is the number of bonds
     edge_index = bonds[:, :2].T.astype(np.int64)
 
     return {
