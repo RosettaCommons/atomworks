@@ -1,10 +1,10 @@
 How to Build a Model with AtomWorks
 ===================================
 
-This tutorial series shows an example of how to build a model from scratch using AtomWorks. 
+In this tutorial you will learn how to use AtomWorks to build a graph neural network that predicts the bound pose of a ligand within a fixed protein pocket. 
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
     :caption: Sections
 
     how_to_build_a_model_part1

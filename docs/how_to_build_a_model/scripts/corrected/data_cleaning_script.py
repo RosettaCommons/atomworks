@@ -16,6 +16,7 @@ import sys
 
 import numpy as np  # BUGFIX: np was used (np.where, np.random) but never imported.
 import pandas as pd
+import numpy as np
 
 
 def read_in_parquet_file(path_to_parquets: str | os.PathLike, parquet_file: str) -> pd.DataFrame:

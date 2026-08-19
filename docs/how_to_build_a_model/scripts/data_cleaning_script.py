@@ -28,11 +28,9 @@ def read_in_parquet_file(path_to_parquets: str | os.PathLike, parquet_file: str)
     return mydf  
 
 path_to_parquets = None
-PDB_MIRROR_PATH = None
 
 if len(sys.argv) > 2:
     path_to_parquets = sys.argv[1]
-    PDB_MIRROR_PATH = sys.argv[2]
 else:
     print("To use this script, please provide the path to the parquet files and the path to your PDB mirror as command line arguments.")
     sys.exit(1)

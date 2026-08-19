@@ -2,6 +2,24 @@
 
 ## Table of Contents
 
+- {ref}`aw_build_model_p4_intro`
+- {ref}`aw_build_model_p4_prereq`
+- {ref}`aw_build_model_p4_overview`
+- {ref}`aw_build_model_p4_imports`
+- {ref}`aw_build_model_p4_config`
+- {ref}`aw_build_model_p4_keys`
+- {ref}`aw_build_model_p4_robust`
+- {ref}`aw_build_model_p4_collate`
+- {ref}`aw_build_model_p4_pipeline`
+- {ref}`aw_build_model_p4_factories`
+- {ref}`aw_build_model_p4_build`
+- {ref}`aw_build_model_p4_model`
+- {ref}`aw_build_model_p4_callbacks`
+- {ref}`aw_build_model_p4_trainer`
+- {ref}`aw_build_model_p4_fit`
+- {ref}`aw_build_model_p4_wrap`
+- {ref}`aw_build_model_p4_glossary`
+
 (aw_build_model_p4_intro)=
 ## Introduction
 This is the fourth and final tutorial in the **How to Build a Model Using AtomWorks** series. By now you have:

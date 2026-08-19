@@ -1,36 +1,58 @@
-# Part 2: The Transform Pipeline
+# Part 2: Creating a Transform Pipeline
 
 ## Table of Contents
 
+- {ref}`aw_build_model_p2_intro`
+- {ref}`aw_build_model_p2_prereq`
+- {ref}`aw_build_model_p2_goal`
+- {ref}`aw_build_model_p2_wire`
+- {ref}`aw_build_model_p2_compose`
+- {ref}`aw_build_model_p2_crop`
+- {ref}`aw_build_model_p2_featurize`
+- {ref}`aw_build_model_p2_smoke`
+- {ref}`aw_build_model_p2_next`
+- {ref}`aw_build_model_p2_glossary`
+
 (aw_build_model_p2_intro)=
 ## Introduction
-This is the second tutorial in the **How to Build a Model Using AtomWorks** series. In [Part 1](how_to_build_a_model.md) you cleaned the PDB metadata and saved `train`/`val`/`test` parquet splits.
+This is the second tutorial in the **How to Build a Model with AtomWorks** series. In [Part 1](how_to_build_a_model_part1.md) you cleaned the PDB metadata and saved `train`/`val`/`test` parquet splits.
 
-**In this installment, you will learn how to turn each parquet row into model-ready tensors by wiring up a `PandasDataset`, a loader, and a pipeline of transforms — including two custom transforms of your own: `CropToPocket` and `FeaturizeForDocking`.**
+**In this installment, you will learn how to transform each parquet file into tensors that can be used in a machine learning model.**
 
-By the end of this part you will have a `smoke_test.py` that loads a single example, crops it to the binding pocket, and produces the five tensors your model will consume in Part 3.
+More specifically, you will learn how to: 
+- create custom transforms
+- create a transform pipeline
+- utilize the `PandasDataset` class to go from parquets to trainable tensors
+
+By the end of this part of the tutorial series you will have to python files: 
+- `transforms.py`: Definition of custom tensors
+- `smoke_test.py`: Testing the pipeline by loading a single example
 
 ```{important}
-This tutorial continues to build a script using the AtomWorks API.
+This tutorial will walk you through the creation of these two scripts. 
 
-For those who want to use the tutorial text as structure and hints to write your own code, the solutions are hidden in collapsible cells. If you would like to see the full scripts, they are provided in the tutorial files.
+For those who want to use the tutorial text as structure and hints to write your own code, the solutions are hidden in collapsible cells. The new code in cells with repeated code is highlighted. 
+
+If you would like to see the full scripts, they are provided in the tutorial files. <!-- TODO: link the tutorial files -->
 ```
 
 (aw_build_model_p2_prereq)=
 ## Prerequisites
 Before starting this part it is assumed that you have:
-- Completed [Part 1](how_to_build_a_model.md) and saved `splits/train.parquet`, `splits/val.parquet`, and `splits/test.parquet`.
+- Completed [Part 1](how_to_build_a_model_part1.md) and saved `splits/train.parquet`, `splits/val.parquet`, and `splits/test.parquet`.
 - A working installation of AtomWorks, including the `ml` side.
-- A PDB mirror set up so the loader can find the structure file for each row (see [Data Mirrors](../mirrors.rst)).
+- A (partial) PDB mirror set up so the loader can find the structure file for each row (see [Data Mirrors](../mirrors.rst)).
 - Familiarity with `biotite.structure.AtomArray`, NumPy, and SciPy.
 
 ```{note}
-The transforms you write here operate on a `biotite` `AtomArray`. If you have not worked with `AtomArray` objects before, it helps to skim the [Biotite structure documentation](https://www.biotite-python.org/) so the coordinate and annotation access patterns below feel familiar.
+The transforms you write here operate on a `biotite` `AtomArray`. If you have not worked with `AtomArray` objects before, it helps to skim the [Biotite structure documentation](https://www.biotite-python.org/latest/apidoc/biotite.structure.AtomArray.html) so the coordinate and annotation access patterns below feel familiar.
 ```
 
 (aw_build_model_p2_goal)=
 ## The Goal of the Pipeline
-Our task is pose generation: given a protein pocket and a small-molecule ligand, predict plausible bound cartesian coordinates for every atom. To get there, each raw structure needs to be reduced to just the binding pocket and converted into tensors.
+Our task is pose generation: given a protein pocket and a small-molecule ligand (from the parquet files we generated in [Part 1](how_to_build_a_model_part1.md)), predict plausible bound cartesian coordinates for every atom. To get there, each raw structure needs to be reduced to just the binding pocket and converted into tensors.
+
+We will create a transform pipeline that can take protein/ligand pairs from the parquet files we created in [Part 1](how_to_build_a_model_part1.md), reduce the information to just the binding pocket, and convert them into tensors that can be used in the training of our machine learning model. 
 
 We will apply four transforms in order, two that already exist in AtomWorks and two that we will write ourselves:
 
@@ -45,10 +67,10 @@ A fifth transform, `ConvertToTorch`, converts the NumPy features into `torch` te
 ## Wiring Up the Dataset and Loader
 Before writing any transforms, let's confirm we can load a single example. AtomWorks provides two pieces we need:
 
-- **`PandasDataset`** wraps a parquet/DataFrame and applies a loader and transform to each row.
-- **`create_loader_with_query_pn_units()`** returns a picklable loader that parses the CIF file for each row and attaches the *query* PN unit IIDs to the example, so we know which chain(s) the interface of interest involves.
+- {py:class}`~atomworks.ml.datasets.PandasDataset` wraps a parquet/DataFrame and applies a loader and transform to each row.
+- {py:func}`~atomworks.ml.datasets.loaders.create_loader_with_query_pn_units` returns a picklable loader that parses the CIF file for each row and attaches the *query* PN unit IIDs to the example, so we know which chain(s) the interface of interest involves.
 
-It is worth reading the documentation for both before using them. You can search the API docs, or use `help()` at a Python prompt. There is also more detail on `PandasDataset` in the *Dataset Exploration and Management in AtomWorks* example.
+It is worth reading the documentation for both (linked above) before using them. You can search the API docs, or use `help()` at a Python prompt. There is also more detail on `PandasDataset` in the {ref}`sphx_glr_auto_examples_dataset_exploration.py` example.
 
 ````{dropdown} Click to see how to inspect the documentation
 ```python
@@ -60,7 +82,13 @@ help(create_loader_with_query_pn_units)
 ```
 ````
 
-As a quick check that everything fits together, write a script that reads `train.parquet`, builds a `PandasDataset` from it, and uses `create_loader_with_query_pn_units` as the loader.
+Let's create our PandasDataset. We need to supply it with
+- `data`: let's use train.parquet
+- `name`: however you want to label this structure, in the tutorial we'll call it `docking_train`
+- `id_column`: The column that has the unique identifier for each of piece of data, `example_id`
+- `loader`: we will use `create_loader_with_query_pn_units` here
+
+As a quick check that everything fits together, write a script (`smoke_test.py`) that reads `train.parquet`, builds a `PandasDataset` from it, and uses `create_loader_with_query_pn_units` as the loader.
 
 ````{dropdown} Click to see the code
 ```python
@@ -79,10 +107,10 @@ dataset = PandasDataset(
     ),
 )
 ```
-Note that `id_column="example_id"` reuses the unique identifier you created in Part 1, and the loader is told which columns hold the query PN unit IIDs.
+Note that loader is told which columns hold the query PN unit IIDs.
 ````
 
-Now load one example and inspect it. This tells us what keys the loader attaches and confirms the parquet, the loader, and your PDB mirror are all talking to each other.
+Now load one example and inspect it. This tells us what keys <!-- TODO replace keys with something more descriptive --> the loader attaches and confirms the parquet, the loader, and your PDB mirror are all talking to each other.
 
 ````{dropdown} Click to see the code
 ```python
@@ -102,14 +130,30 @@ else:
 ```
 ````
 
-Among the keys you should see `atom_array`, `query_pn_unit_iids`, and `chain_info` — the three inputs the `CropToPocket` transform will rely on.
+You should see that the example `type` is `<class 'atomworks.ml.transforms.base.TransformedDict'>`. 
+
+Among the keys you should see `atom_array`, `query_pn_unit_iids`, and `chain_info`. These are the pieces of information that At
+omWorks has pulled from the parquet files that we will use in our transforms pipeline:
+
+- **`atom_array`** is the {py:class}`~biotite.structure.AtomArray` for this structure. Every atom carries a `pn_unit_iid` annotation (`atom_array.pn_unit_iid`), tagging it with the PN unit it belongs to, using the same string format as `query_pn_unit_iids` below.
+- **`query_pn_unit_iids`** is a list of PN unit IID strings, one per column named in `pn_unit_iid_colnames`. Each IID has the form `"{chain_id}_{transformation_id}"` (e.g. `"A_1"`), or a comma-joined list of such tokens for a covalently-linked, multi-chain unit (e.g. `"G_1,R_1"`). Since we asked for two columns (`pn_unit_1_iid` and `pn_unit_2_iid`), this list has two entries — the two sides of the interface we are studying.
+- **`chain_info`** is a dictionary keyed by `chain_id` (e.g. `"A"` — note this is just the chain id, not the full PN unit IID), where each value is a dict of per-chain metadata parsed from the CIF file, including `is_polymer` (bool), `chain_type`, and the chain's sequence. `CropToPocket` will use `is_polymer` to work out which side of the interface is the ligand.
+
+```{tip}
+The loader also attaches other keys to `example`, such as `example_id`, `metadata`, and `ligand_info`, however the three listed above are the ones this tutorial's transforms rely on.
+```
 
 (aw_build_model_p2_compose)=
 ## Building the Transform Pipeline
-Transforms are chained together with `Compose`. Let's start with the two transforms that already exist in AtomWorks and add them to the dataset via the `transform` argument. The *Dataset Exploration and Management in AtomWorks* example also shows how to feed a `Compose` pipeline into `PandasDataset`.
+We can start creating our pipeline by adding to the code in our `smoke_test.py` file. We will use the {py:class}`~atomworks.ml.transforms.base.Compose` class to store the transforms, in an object we'll call `pipe`, in the order we want them to be applied and then add that object to our `dataset`.
+
+Let's start with the two transforms that are native to AtomWorks, {py:class}`~atomworks.ml.transforms.filters.RemoveHydrogens` and {py:class}`~atomworks.ml.transforms.filters.RemoveUnresolvedAtoms`:
+
 
 ````{dropdown} Click to see the code
-```python
+```{code-block} python
+:emphasize-lines: 4-5,9-12,21
+
 import pandas as pd
 from atomworks.ml.datasets import PandasDataset
 from atomworks.ml.datasets.loaders import create_loader_with_query_pn_units
@@ -135,18 +179,20 @@ dataset = PandasDataset(
 ```
 ````
 
-Now we need the two transforms that do not yet exist: `CropToPocket` and `FeaturizeForDocking`. The *Creating Custom Transforms* example is a great place to start.
+### Creating Custom Transforms
+
+Now we need the two transforms that do not yet exist: `CropToPocket` and `FeaturizeForDocking`. The {ref}`sphx_glr_auto_examples_pocket_conditioning_transform.py` example is a great place to start.
 
 ```{tip}
 Write your transforms in a separate `transforms.py` file. Each transform is a class whose `forward()` method calls a standalone function of the same (snake_case) name. Keeping the logic in a standalone function makes it easy to test and reuse outside the transform machinery.
 ```
 
 (aw_build_model_p2_crop)=
-## Writing `CropToPocket`
-We will build `CropToPocket` up incrementally, confirming it plugs into `Compose` at each stage.
+#### `CropToPocket`
+The `CropToPocket` transform will take the protein-lingand interfaces from our dataset and crop them to just the pocket. We will build `CropToPocket` up incrementally, confirming it plugs into `Compose` at each stage.
 
-### Start with a shell
-Begin with a class that has an `__init__(radius=10.0)` and a `forward()` that just returns `data` unchanged. Confirm it plugs into `Compose()`.
+##### Start with a Shell
+Begin with a class that has an `__init__(radius=10.0)` and a `forward()` that just returns the input `data` unchanged. Confirm it plugs into `Compose()`.
 
 ````{dropdown} Click to see the code
 In `transforms.py`:
@@ -161,8 +207,10 @@ class CropToPocket(Transform):
     def forward(self, data: dict) -> dict:
         return data
 ```
-Back in your original script:
-```python
+Back in your `smoke_test.py` file, make sure to add this transform to your pipeline:
+```{code-block} python
+:emphasize-lines: 1,6
+
 from transforms import CropToPocket
 ...
 pipe = Compose([
@@ -173,9 +221,8 @@ pipe = Compose([
 ...
 ```
 ````
-
-### Add input validation
-In `check_input()`, assert that `data` contains the three keys the transform needs: `atom_array`, `query_pn_unit_iids`, and `chain_info`.
+##### Input Validation
+We need to add input validation to our class, add a `check_input()` method. In `check_input()`, assert that `data` contains the three keys the transform needs: `atom_array`, `query_pn_unit_iids`, and `chain_info`.
 
 ````{dropdown} Click to see the code
 In the `CropToPocket` class:
@@ -187,12 +234,14 @@ In the `CropToPocket` class:
 ```
 ````
 
-### Add the standalone function
-Add a standalone `crop_to_pocket()` function that `forward()` calls. For now, just copy the `AtomArray` and return it.
+##### Write the `crop_to_pocket` Function
+Add a standalone `crop_to_pocket()` function that `forward()` calls. It should take `atom_array`, `query_pn_unit_iids`, `chain_info`, and `radius` as inputs. For now, just copy the `AtomArray` and return it.
 
 ````{dropdown} Click to see the code
 In `transforms.py`:
-```python
+```{code-block} python
+:emphasize-lines: 4-11,15-22
+
 import numpy as np
 from biotite.structure import AtomArray
 
@@ -218,11 +267,12 @@ class CropToPocket(Transform):
 ```
 ````
 
-### Decide which unit is the ligand and which is the protein
-Each interface has two query PN units. Use `chain_info` to check which side is a polymer. If exactly one side is a polymer, the non-polymer side is the ligand. If the flags are ambiguous, fall back to a heuristic: the side with fewer atoms is treated as the ligand.
+Each interface has two query PN units, a ligand and a protein (polymer). Add to the `crop_to_pocket` function to use `chain_info` to correctly assign the `iid`s to `ligand_iid` and `protien_iid`. If exactly one side is a polymer, the non-polymer side is the ligand. If the flags are ambiguous, fall back to a heuristic: the side with fewer atoms is treated as the ligand.
 
 ````{dropdown} Click to see the code
-```python
+```{code-block} python
+:emphasize-lines: 9-31
+
 def crop_to_pocket(
     atom_array: AtomArray,
     query_pn_unit_iids: list,
@@ -231,10 +281,12 @@ def crop_to_pocket(
 ) -> AtomArray:
     atom_array = atom_array.copy()
 
+    # The iids will be in the form of <chain_label>_<chain_numer>, for example A_1
     iid_a, iid_b = query_pn_unit_iids
     chain_a = iid_a.split("_")[0]
     chain_b = iid_b.split("_")[0]
 
+    # chain_info is a dictionary of metadata about the chains
     a_is_polymer = chain_info.get(chain_a, {}).get("is_polymer", True)
     b_is_polymer = chain_info.get(chain_b, {}).get("is_polymer", True)
 
@@ -256,8 +308,7 @@ def crop_to_pocket(
 ```
 ````
 
-### Build the atom masks and verify both sides have atoms
-Create boolean masks for the ligand and protein atoms and raise a clear error if either side is empty. Failing early with a descriptive message makes debugging bad structures much easier later.
+Create boolean masks to make sure that the PN unit actually contains atoms whose identity match the `ligand_iid` or `protein_iid`. Raise a clear error if either side is empty. Failing early with a descriptive message makes debugging bad structures much easier later.
 
 ````{dropdown} Click to see the code
 ```python
@@ -275,15 +326,17 @@ Create boolean masks for the ligand and protein atoms and raise a clear error if
 ```
 ````
 
-### Add the spatial crop with a KD-tree
-Now for the actual crop. We keep every ligand atom plus every protein atom within `radius` angstroms of any ligand atom.
+##### Add the Spatial Crop with a KD-tree
+Now for the actual crop. We keep every ligand atom plus every protein atom within a given `radius` (in angstroms) of any ligand atom.
 
 ```{note}
-A **KD-tree** (k-dimensional tree) is a data structure that partitions points in space so you can answer "which points are within radius *r* of this query point?" efficiently, without comparing every pair of atoms. SciPy's `cKDTree.query_ball_point` returns, for each ligand atom, the indices of all protein atoms within `radius`.
+A **KD-tree** (k-dimensional tree) is a data structure that partitions points in space so you can answer "which points are within radius *r* of this query point?" efficiently, without comparing every pair of atoms. SciPy's []`cKDTree.query_ball_point`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.cKDTree.query_ball_point.html#scipy.spatial.cKDTree.query_ball_point) returns, for each ligand atom, the indices of all protein atoms within `radius`.
 ```
 
 ````{dropdown} Click to see the code
-```python
+```{code-block} python
+:emphasize-lines: 1,30-55
+
 from scipy.spatial import cKDTree
 
 def crop_to_pocket(
@@ -354,7 +407,7 @@ print("Cropped atom count:", len(cropped))
 ```
 ````
 
-### Add the `is_ligand` annotation
+##### Add the `is_ligand` annotation
 The featurizer (and later analysis) needs to know which cropped atoms are ligand atoms. Annotate the cropped `AtomArray` with a boolean `is_ligand` array.
 
 ```{important}
@@ -363,7 +416,9 @@ This annotation is easy to forget: it is computed from `keep` and `ligand_global
 
 ````{dropdown} Click to see the code
 Add these two lines just before returning, so the end of `crop_to_pocket` reads:
-```python
+```{code-block} python
+:emphasize-lines: 4-5
+
     keep = np.sort(np.concatenate([pocket_global_indices, ligand_global_indices]))
     cropped = atom_array[keep]
 
@@ -392,11 +447,13 @@ print("CropToPocket sanity checks passed.")
 ```
 ````
 
-### Declare which transforms must run first
+##### Declare which transforms must run first
 `CropToPocket` assumes hydrogens and unresolved atoms are already gone. Declare this ordering requirement so AtomWorks can enforce it.
 
 ````{dropdown} Click to see the code
-```python
+```{code-block} python
+:emphasize-lines: 2
+
 class CropToPocket(Transform):
     requires_previous_transforms = ["RemoveHydrogens", "RemoveUnresolvedAtoms"]
     ...
@@ -450,10 +507,10 @@ print("\nCropToPocket smoke test passed.")
 ````
 
 (aw_build_model_p2_featurize)=
-## Writing `FeaturizeForDocking`
+#### `FeaturizeForDocking`
 We follow the same incremental procedure. `FeaturizeForDocking` reads the cropped `AtomArray` and returns a dictionary of tensors that we merge into the example.
 
-### Start with a shell
+##### Start with a Shell
 ````{dropdown} Click to see the code
 In `transforms.py`:
 ```python
@@ -474,7 +531,7 @@ pipe = Compose([
 ```
 ````
 
-### Declare the dependency on `CropToPocket`
+##### Declare the dependency on `CropToPocket`
 `FeaturizeForDocking` depends on the `is_ligand` annotation created by `CropToPocket`, so declare it as a required previous transform and validate the annotation in `check_input()`.
 
 ````{dropdown} Click to see the code
@@ -489,9 +546,15 @@ class FeaturizeForDocking(Transform):
 ```
 ````
 
-### Add the standalone function
+##### Write the `featurize_for_docking` Function
+Instead of starting with a copy of the `AtomArray`, start with just returning an empty dictionary. 
+
+Also write the `forward()` function. Have it 
+
 ````{dropdown} Click to see the code
-```python
+```{code-block} python
+:emphasize-lines: 1-2,7-8
+
 def featurize_for_docking(atom_array: AtomArray) -> dict:
     return {}
 
@@ -508,7 +571,9 @@ class FeaturizeForDocking(Transform):
 `target_coords` are the ground-truth coordinates the model must reproduce.
 
 ````{dropdown} Click to see the code
-```python
+```{code-block} python
+:emphasize-lines: 2-6
+
 def featurize_for_docking(atom_array: AtomArray) -> dict:
     is_ligand = atom_array.is_ligand.astype(bool)
     target_coords = atom_array.coord.astype(np.float32)
@@ -536,7 +601,9 @@ assert example["target_coords"].shape[1] == 3
 This is the heart of the task. We keep the real pocket coordinates but zero out the ligand coordinates — the model must learn to place the ligand.
 
 ````{dropdown} Click to see the code
-```python
+```{code-block} python
+:emphasize-lines: 5-6,11
+
 def featurize_for_docking(atom_array: AtomArray) -> dict:
     is_ligand = atom_array.is_ligand.astype(bool)
     target_coords = atom_array.coord.astype(np.float32)
@@ -556,7 +623,9 @@ def featurize_for_docking(atom_array: AtomArray) -> dict:
 Encode each atom's element as an integer atomic number using the AtomWorks lookup table. These integers will feed an embedding layer in the model.
 
 ````{dropdown} Click to see the code
-```python
+```{code-block} python
+:emphasize-lines: 1,10-13,16
+
 from atomworks.constants import ELEMENT_NAME_TO_ATOMIC_NUMBER
 ...
 def featurize_for_docking(atom_array: AtomArray) -> dict:
@@ -585,7 +654,9 @@ Elements not found in the lookup table map to `0`, which acts as an "unknown ato
 `edge_index` is the bond graph in COO (coordinate) format: a `[2, E]` integer array where each column is a bonded pair of atoms.
 
 ````{dropdown} Click to see the code
-```python
+```{code-block} python
+:emphasize-lines: 13-14,20
+
 def featurize_for_docking(atom_array: AtomArray) -> dict:
     is_ligand = atom_array.is_ligand.astype(bool)
     target_coords = atom_array.coord.astype(np.float32)

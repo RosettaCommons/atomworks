@@ -2,6 +2,21 @@
 
 ## Table of Contents
 
+- {ref}`aw_build_model_p3_intro`
+- {ref}`aw_build_model_p3_prereq`
+- {ref}`aw_build_model_p3_choice`
+- {ref}`aw_build_model_p3_goal`
+- {ref}`aw_build_model_p3_imports`
+- {ref}`aw_build_model_p3_init`
+- {ref}`aw_build_model_p3_layers`
+- {ref}`aw_build_model_p3_forward`
+- {ref}`aw_build_model_p3_step`
+- {ref}`aw_build_model_p3_hooks`
+- {ref}`aw_build_model_p3_optim`
+- {ref}`aw_build_model_p3_shape`
+- {ref}`aw_build_model_p3_next`
+- {ref}`aw_build_model_p3_glossary`
+
 (aw_build_model_p3_intro)=
 ## Introduction
 This is the third tutorial in the **How to Build a Model Using AtomWorks** series. So far you have:
