@@ -22,27 +22,32 @@
 This is the third tutorial in the **How to Build a Model Using AtomWorks** series. So far you have:
 
 - Parquet files for your `train`/`val`/`test` splits ([Part 1](how_to_build_a_model.md)).
-- A loader that turns each parquet row into a protein-ligand structure ([Part 2](how_to_build_a_model_part2.md)).
-- A transform pipeline that crops the pocket and converts it into tensors ([Part 2](how_to_build_a_model_part2.md)).
+- A loader that turns each parquet row into a protein-ligand structure ([Part 2](how_to_build_a_model_part2.md#wiring-up-the-dataset-and-loader)).
+- A transform pipeline that crops the pocket and converts it into tensors ([Part 2](how_to_build_a_model_part2.md#building-the-transform-pipeline)).
 
 **In this installment, you will write the neural network that consumes those tensors and predicts 3D coordinates for every atom.**
+
 
 By the end of this part you will have a `model.py` containing a trainable `PocketDockGNN` `LightningModule`.
 
 ```{important}
-This tutorial continues to build a script using the AtomWorks API and PyTorch. The full solution is available in the tutorial files; the code here is also hidden in collapsible cells so you can attempt each step yourself first.
+This tutorial continues to build a script using the AtomWorks API and PyTorch. The full solution is available in the tutorial files; the code here is also hidden in collapsible cells so you can attempt each step yourself.
 ```
 
 (aw_build_model_p3_prereq)=
 ## Prerequisites
-Before starting this part it is assumed that you have:
+Before starting this part of the tutorial series it is assumed that you have:
 - Completed [Part 2](how_to_build_a_model_part2.md), with a working `transforms.py` and `smoke_test.py`.
-- A working installation of PyTorch and PyTorch Lightning.
+- A working installation of [PyTorch](https://pytorch.org/get-started/locally/) and [PyTorch Lightning](https://lightning.ai/docs/pytorch/stable/index).
 - Familiarity with basic neural-network building blocks (`Linear`, `Embedding`, `LayerNorm`) and the idea of message passing on a graph.
 
 (aw_build_model_p3_choice)=
 ## Choosing an Architecture
 Before writing any code, we have to decide what architecture to use. For this tutorial we use a simple message-passing **graph neural network (GNN)**. A GNN is a natural choice because our data is already a graph: the bond graph is stored in `edge_index`, and each atom is a node with an atomic-number feature.
+
+```{note}
+We use a GNN as an example model architecture. This tutorial focuses on using AtomWorks to build and train a model, rather than on the details of how GNNs work.
+```
 
 ```{warning}
 This model is **not** rotation/translation invariant. It sees raw XYZ coordinates, which means it can learn to "cheat" based on absolute position rather than on geometry. Equivariant architectures (for example, those built on relative displacements or SE(3)-equivariant layers) address this, but they add substantial complexity. We keep things simple here so the pipeline is easy to follow; treat the resulting model as a teaching example rather than a production docking model.
@@ -56,8 +61,8 @@ A few other decisions to make before writing:
 
 To keep the example small and trainable on a single GPU, we use:
 
-- **3 GNN layers** — enough to propagate information a few hops through the bond graph.
-- **128 hidden dimensions** — small enough to train on a single GPU.
+- **3 GNN layers**: enough to propagate information a few hops through the bond graph.
+- **128 hidden dimensions**: small enough to train on a single GPU.
 - **Mean squared error (MSE)** between predicted and target coordinates.
 
 (aw_build_model_p3_goal)=
@@ -71,8 +76,9 @@ We will write the model in `model.py`. It needs to:
 
 (aw_build_model_p3_imports)=
 ## Imports and Class Definition
-Import PyTorch, Lightning, and the basic building blocks. `torch` provides tensors and tensor ops; `torch.nn` provides layers like `Linear`, `Embedding`, and `LayerNorm`; `pytorch_lightning` provides `LightningModule`, which packages the model, loss, logging, and optimizer setup into one class.
+Import PyTorch, Lightning, and the basic building blocks. [`torch`](https://pytorch.org/) provides tensors and tensor ops; [`torch.nn`](https://docs.pytorch.org/docs/2.13/nn.html) provides layers like `Linear`, `Embedding`, and `LayerNorm`; [`pytorch_lightning`](https://lightning.ai/docs/pytorch/stable/index) provides `LightningModule`, which packages the model, loss, logging, and optimizer setup into one class.
 
+Lets start off `model.py` by importing these modules and begining our `PocketDockGNN` class that inherits from `Lightning Module`:
 ````{dropdown} Click to see the code
 ```python
 import torch
@@ -105,16 +111,16 @@ Write `__init__` and save the hyperparameters so Lightning can restore them from
 
 These arguments mean:
 
-- **`num_atom_types=119`** — one embedding-table entry for each atomic number from 0 to 118.
-- **`hidden_dim`** — the width of the learned per-atom representation.
-- **`num_layers`** — how many rounds of message passing to run.
-- **`learning_rate`** — the Adam step size.
+- **`num_atom_types=119`** - one embedding-table entry for each atomic number from 0 to 118. (We are using 0 to denote an unknown atom type.)
+- **`hidden_dim`** - the width of the learned per-atom representation.
+- **`num_layers`** - how many rounds of message passing to run.
+- **`learning_rate`** - step size for the [Adam optimizer](https://www.geeksforgeeks.org/deep-learning/adam-optimizer/).
 
 (aw_build_model_p3_layers)=
 ## Building the Layers
 We build the layers in the order the data flows through them.
 
-### Embed atom identities
+### Embed Atom Identities
 Each atom arrives as an integer atomic number. A neural network works better with learned vectors, so we add an embedding table. This lets the model learn different behavior for carbon, oxygen, nitrogen, and so on without us hand-coding any chemistry rules.
 
 ````{dropdown} Click to see the code
@@ -124,7 +130,7 @@ Each atom arrives as an integer atomic number. A neural network works better wit
 ````
 
 ### Combine atom type with input coordinates
-The featurizer produces two especially important per-atom inputs: atom identity and input coordinates. Concatenate the atom embedding with the 3 coordinate values and project back to `hidden_dim`.
+For each atom, the model combines its learned atom-type embedding with its three input coordinates. We concatenate these features and project the resulting vector back to hidden_dim.
 
 ````{dropdown} Click to see the code
 ```python
@@ -285,7 +291,7 @@ The stage-specific methods become tiny wrappers around the shared step.
 
 (aw_build_model_p3_optim)=
 ## Configure the Optimizer
-Tell Lightning which optimizer to use. Here we use Adam.
+Tell Lightning which optimizer to use. Here we use [Adam](https://docs.pytorch.org/docs/2.13/generated/torch.optim.Adam.html).
 
 ````{dropdown} Click to see the code
 ```python

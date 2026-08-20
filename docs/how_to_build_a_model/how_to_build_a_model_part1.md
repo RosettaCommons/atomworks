@@ -13,7 +13,7 @@
 ## Introduction
 This is the first in a series of tutorials that walks you through how to use AtomWorks to build a machine learning model for protein design from start to finish. 
 
-**In this installment, you will learn how to use the [IO functionalities in AtomWorks]() to prepare your data for use in a machine learning model.**
+**In this installment, you will learn how to use the [IO functionalities in AtomWorks](../io.rst) to prepare your data for use in a machine learning model.**
 
 By the end of this tutorial series you will have cleaned data and built a graph neural network to create plausible bound poses between a ligand and a protein pocket. 
 

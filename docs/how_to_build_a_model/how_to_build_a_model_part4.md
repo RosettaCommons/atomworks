@@ -32,7 +32,7 @@ This is the fourth and final tutorial in the **How to Build a Model Using AtomWo
 **In this installment, you will write `train.py`, which wires all of these pieces together to train, validate, checkpoint, and test the model.**
 
 ```{important}
-This tutorial completes the training script using the AtomWorks API, PyTorch, and PyTorch Lightning. The full solution is available in the tutorial files, and the code below is hidden in collapsible cells so you can attempt each step yourself first.
+This tutorial completes the training script using the [AtomWorks API](../api_reference.rst), [PyTorch](https://pytorch.org/), and [PyTorch Lightning](https://lightning.ai/docs/pytorch/stable/index). The full solution is available in the tutorial files, and the code below is hidden in collapsible cells so you can attempt each step yourself first.
 ```
 
 (aw_build_model_p4_prereq)=
@@ -63,7 +63,7 @@ In other words, the task is: *given the protein pocket context and the ligand at
 
 (aw_build_model_p4_imports)=
 ## Imports and Global Settings
-Import PyTorch, PyTorch Lightning, the AtomWorks dataset utilities, the transforms you wrote in Part 2, and the model class from Part 3.
+In a new file, `model.py`, import PyTorch, PyTorch Lightning, the AtomWorks dataset utilities, the transforms you wrote in Part 2, and the model class from Part 3.
 
 ````{dropdown} Click to see the code
 ```python
@@ -81,7 +81,7 @@ from atomworks.ml.transforms.base import ConvertToTorch, Compose
 from transforms import CropToPocket, FeaturizeForDocking
 from model import PocketDockGNN
 ```
-Note that we now also import `ConvertToTorch`, which turns the NumPy features from `FeaturizeForDocking` into `torch` tensors.
+Note that we now also import {py:class}`~atomworks.ml.transforms.base.ConvertToTorch`, which turns the NumPy features from `FeaturizeForDocking` into `torch` tensors.
 ````
 
 Add two small global settings.
@@ -143,7 +143,7 @@ TENSOR_KEYS = [
 ## Make the Dataset Robust to Bad Examples
 If you train on real structures — which we are — some examples will fail. A ligand may have no resolved coordinates, or the pocket crop may remove everything useful. You do not want one bad structure to crash the entire run.
 
-Wrap `PandasDataset` in a small `RobustDataset`. If a single example raises during loading or transform, it records the index and returns `None` instead of killing training.
+Wrap {py:class}`~atomworks.ml.datasets.PandasDataset` in a small `RobustDataset` that inherits from []`torch.utils.data.Dataset`](https://docs.pytorch.org/docs/2.13/data.html#torch.utils.data.Dataset). If a single example raises during loading or transform, it records the index and returns `None` instead of killing training.
 
 ````{dropdown} Click to see the code
 ```python
@@ -166,7 +166,7 @@ class RobustDataset(Dataset):
 
 (aw_build_model_p4_collate)=
 ## Write a Custom `collate_fn`
-The default PyTorch collator is not a good fit here: the examples are variable-size graphs, the dataset may return `None`, and we only want to batch the specific tensors the model needs (ignoring any extra fields in the example dictionary). The collate function should do two things: drop failed examples, and stack only the tensor keys the model expects.
+The default PyTorch collator is not a good fit here: the examples are variable-size graphs, the dataset may return `None`, and we only want to batch the specific tensors the model needs (ignoring any extra fields in the example dictionary). Your collate function should do two things: drop failed examples, and stack only the tensor keys the model expects.
 
 ````{dropdown} Click to see the code
 ```python
@@ -335,7 +335,7 @@ The `EarlyStopping` callback stops training if validation loss stops improving f
 
 (aw_build_model_p4_trainer)=
 ## Create the Trainer
-Now define the trainer itself with the PyTorch Lightning `Trainer`.
+Now define the trainer itself with the [PyTorch Lightning `Trainer`](https://lightning.ai/docs/pytorch/stable/core-api/trainer).
 
 ````{dropdown} Click to see the code
 ```python
