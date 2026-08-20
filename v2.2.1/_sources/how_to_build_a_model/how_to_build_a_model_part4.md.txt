@@ -33,7 +33,7 @@ This is the fourth and final tutorial in the **How to Build a Model Using AtomWo
 **In this installment, you will write `train.py`, which wires all of these pieces together to train, validate, checkpoint, and test the model.**
 
 ```{important}
-This tutorial completes the training script using the [AtomWorks API](../api_reference.rst), [PyTorch](https://pytorch.org/), and [PyTorch Lightning](https://lightning.ai/docs/pytorch/stable/index). The full solution is available in the tutorial files, and the code below is hidden in collapsible cells so you can attempt each step yourself first.
+This tutorial completes the training script using the [AtomWorks API](../api_reference.rst), [PyTorch](https://pytorch.org/), and [PyTorch Lightning](https://lightning.ai/docs/pytorch/stable/index). The full solution is available in the [tutorial files](./scripts/index.rst), and the code below is hidden in collapsible cells so you can attempt each step yourself first.
 ```
 
 (aw_build_model_p4_prereq)=

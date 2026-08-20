@@ -33,7 +33,7 @@ This tutorial will walk you through the creation of these two scripts.
 
 For those who want to use the tutorial text as structure and hints to write your own code, the solutions are hidden in collapsible cells. The new code in cells with repeated code is highlighted. 
 
-If you would like to see the full scripts, they are provided in the tutorial files. <!-- TODO: link the tutorial files -->
+If you would like to see the full scripts, they are provided in the [tutorial files](./scripts/index.rst). 
 ```
 
 (aw_build_model_p2_prereq)=
