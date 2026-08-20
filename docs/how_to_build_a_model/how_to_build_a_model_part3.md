@@ -31,7 +31,7 @@ This is the third tutorial in the **How to Build a Model Using AtomWorks** serie
 By the end of this part you will have a `model.py` containing a trainable `PocketDockGNN` `LightningModule`.
 
 ```{important}
-This tutorial continues to build a script using the AtomWorks API and PyTorch. The full solution is available in the tutorial files; the code here is also hidden in collapsible cells so you can attempt each step yourself.
+This tutorial continues to build a script using the AtomWorks API and PyTorch. The full solution is available in the [tutorial files](./scripts/index.rst); the code here is also hidden in collapsible cells so you can attempt each step yourself.
 ```
 
 (aw_build_model_p3_prereq)=
