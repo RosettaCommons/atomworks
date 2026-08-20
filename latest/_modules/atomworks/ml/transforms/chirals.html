@@ -26,29 +26,31 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/transforms/chirals';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
-        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.2.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
@@ -167,6 +169,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -293,6 +302,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -426,7 +442,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for atomworks.ml.transforms.chirals</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Transforms relating to stereochemistry (chirality)&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Transforms relating to stereochemistry (chirality)"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">combinations</span>
@@ -451,18 +467,18 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">_IDEAL_DIHEDRAL_ANGLE</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="sd">The ideal dihedral angle (in radians) between a side of the tetrahedron and</span>
 <span class="sd">a plane that contains two atoms of the tetrahedral side and the</span>
 <span class="sd">center of mass of the tetrahedron (= the chiral center).</span>
 <span class="sd">This is ~35.26 degrees.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 
 <div class="viewcode-block" id="get_dih">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.chirals.get_dih">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_dih</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate dihedral angles for all consecutive quadruples (a[i],b[i],c[i],d[i])</span>
+<span class="w">    </span><span class="sd">"""Calculate dihedral angles for all consecutive quadruples (a[i],b[i],c[i],d[i])</span>
 <span class="sd">    given Cartesian coordinates of four sets of atoms a,b,c,d</span>
 
 <span class="sd">    Copied from rf2aa.kinematics.get_dih to decouple the transform from the rf2aa package.</span>
@@ -472,7 +488,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        dih : pytorch tensor of shape [batch,nres] that stores resulting the dihedrals</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">b0</span> <span class="o">=</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span>
     <span class="n">b1</span> <span class="o">=</span> <span class="n">c</span> <span class="o">-</span> <span class="n">b</span>
     <span class="n">b2</span> <span class="o">=</span> <span class="n">d</span> <span class="o">-</span> <span class="n">c</span>
@@ -492,7 +508,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_plane_pair_keys_for_planes_between_chiral_center_and_tetrahedral_side</span><span class="p">(</span>
     <span class="n">chiral_center</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">bonded_atoms</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">take_first_chiral_subordering</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get the unique keys that define all pairs of planes that can be formed between:</span>
 <span class="sd">    (1) a side of the tetrahedron and</span>
 <span class="sd">    (2) a plane that contains two atoms of the tetrahedral side and the chiral center.</span>
@@ -541,12 +557,12 @@
 <span class="sd">            (1, 3, 5, 4),</span>
 <span class="sd">            (1, 4, 5, 3)</span>
 <span class="sd">        ]</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">bonded_atoms</span><span class="p">)</span> <span class="ow">in</span> <span class="p">(</span>
         <span class="mi">3</span><span class="p">,</span>
         <span class="mi">4</span><span class="p">,</span>
-    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expected 3 bonded heavy atoms (implict hydrogen assumed) or 4 bonded atoms, got </span><span class="si">{</span><span class="n">bonded_atoms</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">),</span> <span class="sa">f</span><span class="s2">"Expected 3 bonded heavy atoms (implict hydrogen assumed) or 4 bonded atoms, got </span><span class="si">{</span><span class="n">bonded_atoms</span><span class="si">}</span><span class="s2">"</span>
     <span class="n">bonded_atoms</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">bonded_atoms</span><span class="p">)</span>  <span class="c1"># sort to ensure i &lt; j &lt; k &lt; l</span>
 
     <span class="c1"># get unique keys that define all pairs of planes that can be formed between</span>
@@ -560,7 +576,7 @@
     <span class="c1"># ... iterate over all 4 sides of the tetrahedron (i,j,k,l):</span>
     <span class="c1">#  There are 4 such sides: (ijk), (ijl), (ikl), (jkl)</span>
     <span class="k">for</span> <span class="n">tetrahedral_side</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="n">bonded_atoms</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
-        <span class="c1"># If there are four bonded (non-hydrogen) atoms, and we indicated that we want don&#39;t want to</span>
+        <span class="c1"># If there are four bonded (non-hydrogen) atoms, and we indicated that we want don't want to</span>
         <span class="c1"># enumerate all sub-orders, simply take the first tetrahedral side</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bonded_atoms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">take_first_chiral_subordering</span><span class="p">:</span>
             <span class="n">plane_pair_keys</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">chiral_center</span><span class="p">,</span> <span class="o">*</span><span class="n">tetrahedral_side</span><span class="p">))</span>
@@ -588,7 +604,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">get_rf2aa_chiral_features</span><span class="p">(</span>
     <span class="n">chiral_centers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">coords</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">take_first_chiral_subordering</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extracts chiral centers and featurize them for RF2AA.</span>
+<span class="w">    </span><span class="sd">"""Extracts chiral centers and featurize them for RF2AA.</span>
 
 <span class="sd">    NOTE: Each row of output features contains the indices of the plane pairs and the signed ideal</span>
 <span class="sd">        dihedral angle for each chiral center. For example, the entry:</span>
@@ -612,7 +628,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        chiral_centers: A list of dictionaries, of the form:</span>
-<span class="sd">            {&quot;chiral_center_idx&quot;: int, &quot;bonded_explicit_atom_idxs&quot;: list[int]}</span>
+<span class="sd">            {"chiral_center_idx": int, "bonded_explicit_atom_idxs": list[int]}</span>
 <span class="sd">            where chiral_center_idx is the index of the chiral center atom, and bonded_explicit_atom_idxs</span>
 <span class="sd">            is a list of the indices of the atoms bonded to the chiral center (excluding implicit hydrogens).</span>
 <span class="sd">        coords: A numpy array of atomic coordinates.</span>
@@ -626,13 +642,13 @@
 <span class="sd">                      and the signed ideal dihedral angle for each chiral center. The sign of the dihedral</span>
 <span class="sd">                      angle determines the chirality of the chiral center (+1 for clockwise, -1 for counterclockwise).</span>
 <span class="sd">                      If no stereocenters are found, returns an empty tensor of shape [0, 5].</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># iterate over all tetrahedral stereo centers and record the plane pairs that define the tetrahedral side</span>
     <span class="n">dihedral_plane_pair_idxs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">chiral_center_info</span> <span class="ow">in</span> <span class="n">chiral_centers</span><span class="p">:</span>
-        <span class="n">chiral_center</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">chiral_center_info</span><span class="p">[</span><span class="s2">&quot;chiral_center_idx&quot;</span><span class="p">]</span>
-        <span class="n">bonded_atoms</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">chiral_center_info</span><span class="p">[</span><span class="s2">&quot;bonded_explicit_atom_idxs&quot;</span><span class="p">]</span>
+        <span class="n">chiral_center</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">chiral_center_info</span><span class="p">[</span><span class="s2">"chiral_center_idx"</span><span class="p">]</span>
+        <span class="n">bonded_atoms</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">chiral_center_info</span><span class="p">[</span><span class="s2">"bonded_explicit_atom_idxs"</span><span class="p">]</span>
 
         <span class="c1"># get the keys for uniquely identifying all pairs of planes that can be formed between</span>
         <span class="c1">#   a side of the tetrahedron and a plane that contains two atoms of the tetrahedral side and the chiral center</span>
@@ -671,10 +687,10 @@
 <div class="viewcode-block" id="AddRF2AAChiralFeatures">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.chirals.AddRF2AAChiralFeatures">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AddRF2AAChiralFeatures</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;AddRF2AAChiralFeatures adds chiral features to the atom array data under the &quot;chiral_feats&quot; key.</span>
+<span class="w">    </span><span class="sd">"""AddRF2AAChiralFeatures adds chiral features to the atom array data under the "chiral_feats" key.</span>
 
-<span class="sd">    Chiral centers are taken from data[&quot;chiral_centers&quot;], which is a list of dictionaries, of the form:</span>
-<span class="sd">    {&quot;chiral_center_atom_id&quot;: int, &quot;bonded_explicit_atom_ids&quot;: list[int]}</span>
+<span class="sd">    Chiral centers are taken from data["chiral_centers"], which is a list of dictionaries, of the form:</span>
+<span class="sd">    {"chiral_center_atom_id": int, "bonded_explicit_atom_ids": list[int]}</span>
 
 <span class="sd">    This metadata can be added by running e.g. the AddOpenBabelMoleculesForAtomizedMolecules and</span>
 <span class="sd">    GetChiralCentersFromOpenBabel transforms. This transform also requires the AtomizeByCCDName transform</span>
@@ -684,23 +700,23 @@
 <span class="sd">        data: A dictionary containing the input data, including the atom array and chiral centers.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        The updated data dictionary with the added chiral features under the &quot;chiral_feats&quot; key.</span>
+<span class="sd">        The updated data dictionary with the added chiral features under the "chiral_feats" key.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            data = {</span>
-<span class="sd">                &quot;atom_array&quot;: atom_array,</span>
-<span class="sd">                &quot;chiral_centers&quot;: [</span>
-<span class="sd">                    {&quot;chiral_center_atom_id&quot;: 5, &quot;bonded_explicit_atom_ids&quot;: [1, 2, 3, 4]},</span>
-<span class="sd">                    {&quot;chiral_center_atom_id&quot;: 10, &quot;bonded_explicit_atom_ids&quot;: [6, 7, 8, 9]},</span>
+<span class="sd">                "atom_array": atom_array,</span>
+<span class="sd">                "chiral_centers": [</span>
+<span class="sd">                    {"chiral_center_atom_id": 5, "bonded_explicit_atom_ids": [1, 2, 3, 4]},</span>
+<span class="sd">                    {"chiral_center_atom_id": 10, "bonded_explicit_atom_ids": [6, 7, 8, 9]},</span>
 <span class="sd">                ],</span>
 <span class="sd">            }</span>
 
 <span class="sd">            transform = AddRF2AAChiralFeatures()</span>
 <span class="sd">            result = transform.forward(data)</span>
 
-<span class="sd">            print(result[&quot;chiral_feats&quot;])</span>
+<span class="sd">            print(result["chiral_feats"])</span>
 <span class="sd">            # Output might look like:</span>
 <span class="sd">            #  (assuming the atom_id s above also correspond to the indices in the atom array,</span>
 <span class="sd">            #   otherwise the first 4 columns look different as they are the indices in the atom array)</span>
@@ -708,37 +724,37 @@
 <span class="sd">            #         [ 5.,  2.,  3.,  4., -0.61546...],</span>
 <span class="sd">            #         ...</span>
 <span class="sd">            #         [10.,  7.,  8.,  9., -0.61546...]])</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">requires_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AtomizeByCCDName&quot;</span><span class="p">]</span>
+    <span class="n">requires_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"AtomizeByCCDName"</span><span class="p">]</span>
 
 <div class="viewcode-block" id="AddRF2AAChiralFeatures.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.chirals.AddRF2AAChiralFeatures.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="s2">&quot;chiral_centers&quot;</span><span class="p">])</span>
-        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
-        <span class="n">check_nonzero_length</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">)</span>
-        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atomize&quot;</span><span class="p">,</span> <span class="s2">&quot;atom_id&quot;</span><span class="p">])</span></div>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atom_array"</span><span class="p">,</span> <span class="s2">"chiral_centers"</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_nonzero_length</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">)</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atomize"</span><span class="p">,</span> <span class="s2">"atom_id"</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="AddRF2AAChiralFeatures.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.chirals.AddRF2AAChiralFeatures.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
+        <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span>
 
         <span class="n">token_idxs</span> <span class="o">=</span> <span class="n">spread_token_wise</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">get_token_count</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)))</span>
         <span class="n">_id_to_token_idx</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atom_id</span><span class="p">,</span> <span class="n">token_idxs</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
         <span class="n">id_to_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">_id_to_token_idx</span><span class="o">.</span><span class="n">get</span><span class="p">)</span>
 
         <span class="n">chiral_centers_by_idx</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">chiral_center</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;chiral_centers&quot;</span><span class="p">]:</span>
-            <span class="n">chiral_center_atom_id</span> <span class="o">=</span> <span class="n">chiral_center</span><span class="p">[</span><span class="s2">&quot;chiral_center_atom_id&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">chiral_center</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">"chiral_centers"</span><span class="p">]:</span>
+            <span class="n">chiral_center_atom_id</span> <span class="o">=</span> <span class="n">chiral_center</span><span class="p">[</span><span class="s2">"chiral_center_atom_id"</span><span class="p">]</span>
 
             <span class="k">if</span> <span class="n">chiral_center_atom_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">atom_id</span><span class="p">:</span>
                 <span class="c1"># ... skip chiral centers around atoms that are no longer in the array</span>
                 <span class="k">continue</span>
 
-            <span class="n">bonded_atom_ids</span> <span class="o">=</span> <span class="n">chiral_center</span><span class="p">[</span><span class="s2">&quot;bonded_explicit_atom_ids&quot;</span><span class="p">]</span>
+            <span class="n">bonded_atom_ids</span> <span class="o">=</span> <span class="n">chiral_center</span><span class="p">[</span><span class="s2">"bonded_explicit_atom_ids"</span><span class="p">]</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">bonded_atom_ids</span><span class="p">,</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">atom_id</span><span class="p">)):</span>
                 <span class="c1"># ... skip chiral centers with atoms that are no longer in the array</span>
                 <span class="k">continue</span>
@@ -747,7 +763,7 @@
             <span class="n">chiral_center_idx</span> <span class="o">=</span> <span class="n">id_to_idx</span><span class="p">([</span><span class="n">chiral_center_atom_id</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">bonded_atom_idxs</span> <span class="o">=</span> <span class="n">id_to_idx</span><span class="p">(</span><span class="n">bonded_atom_ids</span><span class="p">)</span>
             <span class="n">chiral_centers_by_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="p">{</span><span class="s2">&quot;chiral_center_idx&quot;</span><span class="p">:</span> <span class="n">chiral_center_idx</span><span class="p">,</span> <span class="s2">&quot;bonded_explicit_atom_idxs&quot;</span><span class="p">:</span> <span class="n">bonded_atom_idxs</span><span class="p">}</span>
+                <span class="p">{</span><span class="s2">"chiral_center_idx"</span><span class="p">:</span> <span class="n">chiral_center_idx</span><span class="p">,</span> <span class="s2">"bonded_explicit_atom_idxs"</span><span class="p">:</span> <span class="n">bonded_atom_idxs</span><span class="p">}</span>
             <span class="p">)</span>
 
         <span class="n">chiral_feats</span> <span class="o">=</span> <span class="n">get_rf2aa_chiral_features</span><span class="p">(</span>
@@ -755,7 +771,7 @@
             <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">get_af3_token_center_coords</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)),</span>
             <span class="n">take_first_chiral_subordering</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;chiral_feats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">chiral_feats</span>  <span class="c1"># [n_chirals, 5]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"chiral_feats"</span><span class="p">]</span> <span class="o">=</span> <span class="n">chiral_feats</span>  <span class="c1"># [n_chirals, 5]</span>
 
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
@@ -763,14 +779,14 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_reference_conformer_to_residue_mapping</span><span class="p">(</span><span class="n">atom_names</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">conformer</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Maps atom indices from a reference conformer (as an AtomArray) to the specified residue, dropping all atoms that are not in the residue.</span>
 <span class="sd">    Args:</span>
 <span class="sd">        - atom_names (np.ndarray): Array of atom names in the residue to map to</span>
 <span class="sd">        - conformer (AtomArray): The reference conformer, as an AtomArray (containing the atom_name annotation)</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        - ref_map (np.ndarray): Index in atom of reference positions (-1 if masked)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># ... mark the atoms that are in the residue (keep) and where</span>
     <span class="n">keep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">conformer</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>  <span class="c1"># [n_atoms_in_conformer]</span>
@@ -779,7 +795,7 @@
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">atom_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atom_names</span><span class="p">):</span>
         <span class="n">matching_atom_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">conformer</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="n">atom_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matching_atom_idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Atom </span><span class="si">{</span><span class="n">atom_name</span><span class="si">}</span><span class="s2"> not found in conformer.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Atom </span><span class="si">{</span><span class="n">atom_name</span><span class="si">}</span><span class="s2"> not found in conformer."</span><span class="p">)</span>
             <span class="k">continue</span>
         <span class="n">matching_atom_idx</span> <span class="o">=</span> <span class="n">matching_atom_idx</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
         <span class="n">keep</span><span class="p">[</span><span class="n">matching_atom_idx</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
@@ -793,11 +809,11 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">add_af3_chiral_features</span><span class="p">(</span>
     <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">chiral_centers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">rdkit_mols</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mol</span><span class="p">],</span> <span class="n">take_first_chiral_subordering</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes chiral features from atom array, chiral centers, and RDKit molecules.</span>
+<span class="w">    </span><span class="sd">"""Computes chiral features from atom array, chiral centers, and RDKit molecules.</span>
 
 <span class="sd">    See `AddAF3ChiralFeatures` for more details.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># We&#39;re going to use the same logic we do in GetAF3ReferenceMoleculeFeatures</span>
+<span class="sd">    """</span>
+    <span class="c1"># We're going to use the same logic we do in GetAF3ReferenceMoleculeFeatures</span>
     <span class="c1"># ... get residue-level stochiometry</span>
     <span class="n">_res_start_ends</span> <span class="o">=</span> <span class="n">get_residue_starts</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">add_exclusive_stop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">_res_starts</span><span class="p">,</span> <span class="n">_res_ends</span> <span class="o">=</span> <span class="n">_res_start_ends</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">_res_start_ends</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
@@ -848,19 +864,19 @@
 <div class="viewcode-block" id="AddAF3ChiralFeatures">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.chirals.AddAF3ChiralFeatures">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AddAF3ChiralFeatures</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds chiral features into the feats dictionary.</span>
+<span class="w">    </span><span class="sd">"""Adds chiral features into the feats dictionary.</span>
 
-<span class="sd">    Adds the following features to the data dictionary under the &#39;feats&#39; key:</span>
+<span class="sd">    Adds the following features to the data dictionary under the 'feats' key:</span>
 
 <span class="sd">        chiral_feats</span>
 <span class="sd">            [N_chiral_centers, 5] A listing of chiral centers of the format:</span>
 <span class="sd">            tensor([[ 5.,  1.,  2.,  3.,  0.61546...],...])</span>
 <span class="sd">            Here, the first 4 columns define atom indices of chiral center; the 5th is target dihedral</span>
 
-<span class="sd">    Metadata from GetRDKitChiralCenters, held in the &quot;chiral_centers&quot; key, is needed for this transform.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    Metadata from GetRDKitChiralCenters, held in the "chiral_centers" key, is needed for this transform.</span>
+<span class="sd">    """</span>
 
-    <span class="n">requires_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;GetRDKitChiralCenters&quot;</span><span class="p">]</span>
+    <span class="n">requires_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"GetRDKitChiralCenters"</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">take_first_chiral_subordering</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -869,18 +885,18 @@
 <div class="viewcode-block" id="AddAF3ChiralFeatures.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.chirals.AddAF3ChiralFeatures.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="s2">&quot;chiral_centers&quot;</span><span class="p">,</span> <span class="s2">&quot;rdkit&quot;</span><span class="p">])</span>
-        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
-        <span class="n">check_nonzero_length</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">)</span></div>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atom_array"</span><span class="p">,</span> <span class="s2">"chiral_centers"</span><span class="p">,</span> <span class="s2">"rdkit"</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_nonzero_length</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="AddAF3ChiralFeatures.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.chirals.AddAF3ChiralFeatures.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="n">chiral_feats</span> <span class="o">=</span> <span class="n">add_af3_chiral_features</span><span class="p">(</span>
-            <span class="n">atom_array</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">],</span>
-            <span class="n">chiral_centers</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;chiral_centers&quot;</span><span class="p">],</span>
-            <span class="n">rdkit_mols</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;rdkit&quot;</span><span class="p">],</span>
+            <span class="n">atom_array</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">],</span>
+            <span class="n">chiral_centers</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">"chiral_centers"</span><span class="p">],</span>
+            <span class="n">rdkit_mols</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">"rdkit"</span><span class="p">],</span>
             <span class="n">take_first_chiral_subordering</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">take_first_chiral_subordering</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -888,12 +904,12 @@
         <span class="n">chiral_centers</span> <span class="o">=</span> <span class="n">chiral_feats</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
         <span class="n">chiral_center_dihedral_angles</span> <span class="o">=</span> <span class="n">chiral_feats</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
 
-        <span class="n">feats</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;feats&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">feats</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"feats"</span><span class="p">,</span> <span class="p">{})</span>
         <span class="n">feats</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
             <span class="p">{</span>
-                <span class="s2">&quot;chiral_feats&quot;</span><span class="p">:</span> <span class="n">chiral_feats</span><span class="p">,</span>  <span class="c1"># [n_chirals, 5]</span>
-                <span class="s2">&quot;chiral_centers&quot;</span><span class="p">:</span> <span class="n">chiral_centers</span><span class="p">,</span>  <span class="c1"># (long) [n_chirals, 4]</span>
-                <span class="s2">&quot;chiral_center_dihedral_angles&quot;</span><span class="p">:</span> <span class="n">chiral_center_dihedral_angles</span><span class="p">,</span>  <span class="c1"># (float) [n_chirals]</span>
+                <span class="s2">"chiral_feats"</span><span class="p">:</span> <span class="n">chiral_feats</span><span class="p">,</span>  <span class="c1"># [n_chirals, 5]</span>
+                <span class="s2">"chiral_centers"</span><span class="p">:</span> <span class="n">chiral_centers</span><span class="p">,</span>  <span class="c1"># (long) [n_chirals, 4]</span>
+                <span class="s2">"chiral_center_dihedral_angles"</span><span class="p">:</span> <span class="n">chiral_center_dihedral_angles</span><span class="p">,</span>  <span class="c1"># (float) [n_chirals]</span>
             <span class="p">}</span>
         <span class="p">)</span>
 
@@ -929,8 +945,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -964,7 +980,7 @@
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
 </p></div>
       
     </div>

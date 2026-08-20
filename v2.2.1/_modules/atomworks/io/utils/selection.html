@@ -26,29 +26,31 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/io/utils/selection';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
-        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.2.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
@@ -167,6 +169,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -293,6 +302,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -426,7 +442,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for atomworks.io.utils.selection</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Tools for atom and segment selection on ``AtomArray`` and ``AtomArrayStack``.</span>
+<span></span><span class="sd">"""Tools for atom and segment selection on ``AtomArray`` and ``AtomArrayStack``.</span>
 
 <span class="sd">Provides helpers to compute segment boundaries and apply expressive selection syntax to structures.</span>
 
@@ -436,9 +452,9 @@
 <span class="sd">- :py:class:`~atomworks.io.utils.selection.SegmentSlice`</span>
 
 <span class="sd">See individual docstrings for usage and examples.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AtomSelection&quot;</span><span class="p">,</span> <span class="s2">&quot;AtomSelectionStack&quot;</span><span class="p">,</span> <span class="s2">&quot;annot_start_stop_idxs&quot;</span><span class="p">,</span> <span class="s2">&quot;get_annotation&quot;</span><span class="p">,</span> <span class="s2">&quot;get_residue_starts&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"AtomSelection"</span><span class="p">,</span> <span class="s2">"AtomSelectionStack"</span><span class="p">,</span> <span class="s2">"annot_start_stop_idxs"</span><span class="p">,</span> <span class="s2">"get_annotation"</span><span class="p">,</span> <span class="s2">"get_residue_starts"</span><span class="p">]</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
@@ -459,7 +475,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">annot_start_stop_idxs</span><span class="p">(</span>
     <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">,</span> <span class="n">annots</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">add_exclusive_stop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the start and stop indices for segments in an AtomArray where any of the specified annotation(s) change.</span>
+<span class="w">    </span><span class="sd">"""Computes the start and stop indices for segments in an AtomArray where any of the specified annotation(s) change.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">      atom_array: The AtomArray to process.</span>
@@ -471,10 +487,10 @@
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; atom_array = AtomArray(...)</span>
-<span class="sd">        &gt;&gt;&gt; start_stop_idxs = annot_start_stop_idxs(atom_array, annots=&quot;chain_id&quot;, add_exclusive_stop=True)</span>
+<span class="sd">        &gt;&gt;&gt; start_stop_idxs = annot_start_stop_idxs(atom_array, annots="chain_id", add_exclusive_stop=True)</span>
 <span class="sd">        &gt;&gt;&gt; print(start_stop_idxs)</span>
 <span class="sd">        [0, 5, 10, 15]</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
 
@@ -491,7 +507,7 @@
 <div class="viewcode-block" id="get_residue_starts">
 <a class="viewcode-back" href="../../../../io/utils/selection.html#atomworks.io.utils.selection.get_residue_starts">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_residue_starts</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">,</span> <span class="n">add_exclusive_stop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the start (and optionally stop) indices of residues in an AtomArray.</span>
+<span class="w">    </span><span class="sd">"""Get the start (and optionally stop) indices of residues in an AtomArray.</span>
 
 <span class="sd">    This is a more robust version of :py:func:`biotite.structure.residues.get_residue_starts`</span>
 <span class="sd">    that additionally differentiates residues across different ``transformation_id`` values</span>
@@ -508,8 +524,8 @@
 <span class="sd">      * `Biotite get_residue_starts`_</span>
 
 <span class="sd">      .. _Biotite get_residue_starts: https://github.com/biotite-dev/biotite/blob/231eefed334e1d3509c1b7cb3f2bfd71d4b0eeb0/src/biotite/structure/residues.py#L35</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_annots_to_check</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;chain_id&quot;</span><span class="p">,</span> <span class="s2">&quot;res_name&quot;</span><span class="p">,</span> <span class="s2">&quot;res_id&quot;</span><span class="p">,</span> <span class="s2">&quot;ins_code&quot;</span><span class="p">,</span> <span class="s2">&quot;transformation_id&quot;</span><span class="p">]</span>
+<span class="sd">    """</span>
+    <span class="n">_annots_to_check</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"chain_id"</span><span class="p">,</span> <span class="s2">"res_name"</span><span class="p">,</span> <span class="s2">"res_id"</span><span class="p">,</span> <span class="s2">"ins_code"</span><span class="p">,</span> <span class="s2">"transformation_id"</span><span class="p">]</span>
     <span class="n">existing_annots</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span>
     <span class="n">annots_to_check</span> <span class="o">=</span> <span class="p">[</span><span class="n">annot</span> <span class="k">for</span> <span class="n">annot</span> <span class="ow">in</span> <span class="n">_annots_to_check</span> <span class="k">if</span> <span class="n">annot</span> <span class="ow">in</span> <span class="n">existing_annots</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">annot_start_stop_idxs</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">annots</span><span class="o">=</span><span class="n">annots_to_check</span><span class="p">,</span> <span class="n">add_exclusive_stop</span><span class="o">=</span><span class="n">add_exclusive_stop</span><span class="p">)</span></div>
@@ -517,7 +533,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_validate_n_body_and_type</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">,</span> <span class="n">n_body</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate ``n_body`` value and structure type.</span>
+<span class="w">    </span><span class="sd">"""Validate ``n_body`` value and structure type.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">      atom_array: Structure to validate.</span>
@@ -527,12 +543,12 @@
 <span class="sd">    Raises:</span>
 <span class="sd">      ValueError: If ``n_body &gt; 1`` but ``atom_array`` is not ``AtomArrayPlus`` or ``AtomArrayStack``.</span>
 <span class="sd">      NotImplementedError: If ``n_body`` is not 1 or 2.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">n_body</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="p">(</span><span class="n">AtomArrayPlus</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot </span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2"> with n_body=</span><span class="si">{</span><span class="n">n_body</span><span class="si">}</span><span class="s2"> on non-AtomArrayPlus!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cannot </span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2"> with n_body=</span><span class="si">{</span><span class="n">n_body</span><span class="si">}</span><span class="s2"> on non-AtomArrayPlus!"</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">n_body</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot </span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2"> with n_body=</span><span class="si">{</span><span class="n">n_body</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cannot </span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2"> with n_body=</span><span class="si">{</span><span class="n">n_body</span><span class="si">}</span><span class="s2">!"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="get_annotation">
@@ -540,7 +556,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">get_annotation</span><span class="p">(</span>
     <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">,</span> <span class="n">annot</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">n_body</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return an annotation array if present, otherwise ``default``.</span>
+<span class="w">    </span><span class="sd">"""Return an annotation array if present, otherwise ``default``.</span>
 
 <span class="sd">    If ``n_body`` is ``None``, the dimensionality is auto-detected by probing 1D then 2D annotation categories.</span>
 
@@ -552,9 +568,9 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">      The requested annotation array or ``default`` if missing.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">n_body</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">_validate_n_body_and_type</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">n_body</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;get annotation for </span><span class="si">{</span><span class="n">annot</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">_validate_n_body_and_type</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">n_body</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"get annotation for </span><span class="si">{</span><span class="n">annot</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Auto-detect annotation dimensionality if n_body not specified</span>
         <span class="k">for</span> <span class="n">body</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
@@ -570,23 +586,23 @@
 
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">get_annotation_categories</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">,</span> <span class="n">n_body</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get annotation categories for the specified n_body.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_annotation_categories</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">,</span> <span class="n">n_body</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"all"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Get annotation categories for the specified n_body.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">      atom_array: Structure to query.</span>
-<span class="sd">      n_body: ``1`` for 1D, ``2`` for 2D, or ``&quot;all&quot;`` for both.</span>
+<span class="sd">      n_body: ``1`` for 1D, ``2`` for 2D, or ``"all"`` for both.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">      Names of available annotation categories for the requested dimensionality.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Map n_body to the corresponding method name</span>
     <span class="n">n_body_to_method</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;get_annotation_categories&quot;</span><span class="p">,</span>
-        <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;get_annotation_2d_categories&quot;</span><span class="p">,</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="s2">"get_annotation_categories"</span><span class="p">,</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="s2">"get_annotation_2d_categories"</span><span class="p">,</span>
     <span class="p">}</span>
 
-    <span class="k">if</span> <span class="n">n_body</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">n_body</span> <span class="o">==</span> <span class="s2">"all"</span><span class="p">:</span>
         <span class="n">categories</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">method_name</span> <span class="ow">in</span> <span class="n">n_body_to_method</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">method_name</span><span class="p">):</span>
@@ -603,9 +619,9 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">SegmentSlice</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract base class for slicing segments of an AtomArray or AtomArrayStack.</span>
+<span class="w">    </span><span class="sd">"""Abstract base class for slicing segments of an AtomArray or AtomArrayStack.</span>
 
-<span class="sd">    Provides functionality analogous to Python&#39;s built-in slice object but operates on structural segments</span>
+<span class="sd">    Provides functionality analogous to Python's built-in slice object but operates on structural segments</span>
 <span class="sd">    (e.g., residues or chains indices) rather than individual atom indices. To subclass, implement the</span>
 <span class="sd">    `_get_segment_bounds` method to return the start and stop indices of the segments.</span>
 
@@ -617,7 +633,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">      start: Starting segment index. Defaults to ``None``.</span>
 <span class="sd">      stop: Exclusive ending segment index. Defaults to ``None``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">stop</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">start</span>
@@ -628,14 +644,14 @@
         <span class="k">pass</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">slice</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a slice object for the specified segment range in the atom array.</span>
+<span class="w">        </span><span class="sd">"""Creates a slice object for the specified segment range in the atom array.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">          atom_array: Structure to slice.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">          A Python ``slice`` that can be used to index ``atom_array``.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">seg_bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_segment_bounds</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
         <span class="n">n_segments</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">seg_bounds</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="n">n_segments</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -649,7 +665,7 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">ResIdxSlice</span><span class="p">(</span><span class="n">SegmentSlice</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Slice atoms by residue indices.</span>
+<span class="w">    </span><span class="sd">"""Slice atoms by residue indices.</span>
 
 <span class="sd">    Residues are segmented by changes in ``chain_id``, ``res_name``, ``res_id``,</span>
 <span class="sd">    ``ins_code``, or ``transformation_id``.</span>
@@ -658,14 +674,14 @@
 <span class="sd">        &gt;&gt;&gt; atom_array = AtomArray(...)</span>
 <span class="sd">        &gt;&gt;&gt; res_slice = ResIdxSlice(0, 2)</span>
 <span class="sd">        &gt;&gt;&gt; sliced_atom_array = atom_array[res_slice]  # &lt;-- returns a new AtomArray with the first two residues</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_segment_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">get_residue_starts</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">add_exclusive_stop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">ChainIdxSlice</span><span class="p">(</span><span class="n">SegmentSlice</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Slice atoms by chain indices.</span>
+<span class="w">    </span><span class="sd">"""Slice atoms by chain indices.</span>
 
 <span class="sd">    Allows for selecting ranges of chains using Python slice-like syntax. Each chain is considered</span>
 <span class="sd">    as a segment, defined by changes in the chain_id annotation.</span>
@@ -674,7 +690,7 @@
 <span class="sd">        &gt;&gt;&gt; atom_array = AtomArray(...)</span>
 <span class="sd">        &gt;&gt;&gt; chain_slice = ChainIdxSlice(0, 1)</span>
 <span class="sd">        &gt;&gt;&gt; sliced_atom_array = atom_array[chain_slice]  # &lt;-- returns a new AtomArray with the first chain</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_segment_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">struc</span><span class="o">.</span><span class="n">get_chain_starts</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">add_exclusive_stop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -683,39 +699,39 @@
 <div class="viewcode-block" id="AtomSelection">
 <a class="viewcode-back" href="../../../../io/utils/selection.html#atomworks.io.utils.selection.AtomSelection">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AtomSelection</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represent a selection of atoms in a molecular structure.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Represent a selection of atoms in a molecular structure."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">chain_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
-        <span class="n">res_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
-        <span class="n">res_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
-        <span class="n">atom_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
-        <span class="n">transformation_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
+        <span class="n">chain_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"*"</span><span class="p">,</span>
+        <span class="n">res_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"*"</span><span class="p">,</span>
+        <span class="n">res_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"*"</span><span class="p">,</span>
+        <span class="n">atom_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"*"</span><span class="p">,</span>
+        <span class="n">transformation_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"*"</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a selection.</span>
+<span class="w">        </span><span class="sd">"""Initialize a selection.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">          chain_id: Chain identifier or ``&quot;*&quot;`` for any. Defaults to ``&quot;*&quot;``.</span>
-<span class="sd">          res_name: Residue name or ``&quot;*&quot;`` for any. Defaults to ``&quot;*&quot;``.</span>
-<span class="sd">          res_id: Residue index (integer) or ``&quot;*&quot;`` for any. Defaults to ``&quot;*&quot;``.</span>
-<span class="sd">          atom_name: Atom name or ``&quot;*&quot;`` for any. Defaults to ``&quot;*&quot;``.</span>
-<span class="sd">          transformation_id: Transformation id or ``&quot;*&quot;`` for any. Defaults to ``&quot;*&quot;``.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">          chain_id: Chain identifier or ``"*"`` for any. Defaults to ``"*"``.</span>
+<span class="sd">          res_name: Residue name or ``"*"`` for any. Defaults to ``"*"``.</span>
+<span class="sd">          res_id: Residue index (integer) or ``"*"`` for any. Defaults to ``"*"``.</span>
+<span class="sd">          atom_name: Atom name or ``"*"`` for any. Defaults to ``"*"``.</span>
+<span class="sd">          transformation_id: Transformation id or ``"*"`` for any. Defaults to ``"*"``.</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">=</span> <span class="n">chain_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">res_name</span> <span class="o">=</span> <span class="n">res_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">=</span> <span class="n">atom_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">res_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">res_id</span><span class="p">)</span> <span class="k">if</span> <span class="n">res_id</span> <span class="o">!=</span> <span class="s2">&quot;*&quot;</span> <span class="k">else</span> <span class="n">res_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">res_id</span><span class="p">)</span> <span class="k">if</span> <span class="n">res_id</span> <span class="o">!=</span> <span class="s2">"*"</span> <span class="k">else</span> <span class="n">res_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">transformation_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">transformation_id</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">chain_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">res_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res_id</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transformation_id</span><span class="p">)]</span>
 
-        <span class="c1"># Remove trailing &#39;*&#39; values</span>
-        <span class="k">while</span> <span class="n">parts</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
+        <span class="c1"># Remove trailing '*' values</span>
+        <span class="k">while</span> <span class="n">parts</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"*"</span><span class="p">:</span>
             <span class="n">parts</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">"/"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -739,26 +755,26 @@
 <div class="viewcode-block" id="AtomSelection.from_selection_str">
 <a class="viewcode-back" href="../../../../io/utils/selection.html#atomworks.io.utils.selection.AtomSelection.from_selection_str">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_selection_str</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">selection_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AtomSelection&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a selection from ``CHAIN/RES/RESID/ATOM/TRANSFORM`` syntax.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_selection_str</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">selection_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"AtomSelection"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Create a selection from ``CHAIN/RES/RESID/ATOM/TRANSFORM`` syntax.</span>
 
-<span class="sd">        ``&quot;*&quot;`` acts as a wildcard for any field. Trailing fields may be omitted</span>
-<span class="sd">        and default to ``&quot;*&quot;``.</span>
+<span class="sd">        ``"*"`` acts as a wildcard for any field. Trailing fields may be omitted</span>
+<span class="sd">        and default to ``"*"``.</span>
 
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; # Selects the CA atom of the ALA residue at chain A, residue index 1</span>
-<span class="sd">            &gt;&gt;&gt; AtomSelection.from_selection_str(&quot;A/ALA/1/CA&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; AtomSelection.from_selection_str("A/ALA/1/CA")</span>
 
 <span class="sd">            &gt;&gt;&gt; # Selects the CB atom of the ALA residue in any chain at any residue index</span>
-<span class="sd">            &gt;&gt;&gt; AtomSelection.from_selection_str(&quot;*/ALA/*/CB&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; AtomSelection.from_selection_str("*/ALA/*/CB")</span>
 
 <span class="sd">            &gt;&gt;&gt; # Selects all atoms of the ALA residue at chain A</span>
-<span class="sd">            &gt;&gt;&gt; AtomSelection.from_selection_str(&quot;A/ALA/&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; AtomSelection.from_selection_str("A/ALA/")</span>
 
 <span class="sd">            &gt;&gt;&gt; # Selects the CA atom of the ALA residue at chain A, residue index 1, transformation index 1</span>
-<span class="sd">            &gt;&gt;&gt; AtomSelection.from_selection_str(&quot;A/ALA/1/CA/1&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; AtomSelection.from_selection_str("A/ALA/1/CA/1")</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">selection</span> <span class="o">=</span> <span class="n">parse_selection_string</span><span class="p">(</span><span class="n">selection_string</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">chain_id</span><span class="o">=</span><span class="n">selection</span><span class="o">.</span><span class="n">chain_id</span><span class="p">,</span>
@@ -772,20 +788,20 @@
 <div class="viewcode-block" id="AtomSelection.from_pymol_str">
 <a class="viewcode-back" href="../../../../io/utils/selection.html#atomworks.io.utils.selection.AtomSelection.from_pymol_str">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_pymol_str</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pymol_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AtomSelection&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a selection from a PyMOL atom label string.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_pymol_str</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pymol_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"AtomSelection"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Create a selection from a PyMOL atom label string.</span>
 
 <span class="sd">        PyMOL strings are of the form ``CHAIN/RES`RESID/ATOM`` and do not support</span>
-<span class="sd">        ``transformation_id``. ``&quot;*&quot;`` may be used as a wildcard.</span>
+<span class="sd">        ``transformation_id``. ``"*"`` may be used as a wildcard.</span>
 
 <span class="sd">        PyMOL strings do not support transformation_id.</span>
 
-<span class="sd">        We introduce to default PyMOL syntax the &quot;*&quot; operator as a wildcard to select all atoms in a given granularity.</span>
+<span class="sd">        We introduce to default PyMOL syntax the "*" operator as a wildcard to select all atoms in a given granularity.</span>
 
 <span class="sd">        Example:</span>
 <span class="sd">            &gt;&gt;&gt; # Selects the OD2 atom of the ASP residue at chain A, residue index 37</span>
-<span class="sd">            &gt;&gt;&gt; AtomSelection.from_pymol_str(&quot;A/ASP`37/OD2&quot;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; AtomSelection.from_pymol_str("A/ASP`37/OD2")</span>
+<span class="sd">        """</span>
         <span class="n">selection</span> <span class="o">=</span> <span class="n">parse_pymol_string</span><span class="p">(</span><span class="n">pymol_string</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">chain_id</span><span class="o">=</span><span class="n">selection</span><span class="o">.</span><span class="n">chain_id</span><span class="p">,</span>
@@ -798,39 +814,39 @@
 <div class="viewcode-block" id="AtomSelection.get_mask">
 <a class="viewcode-back" href="../../../../io/utils/selection.html#atomworks.io.utils.selection.AtomSelection.get_mask">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a boolean mask using this AtomSelection on an AtomArray.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Create a boolean mask using this AtomSelection on an AtomArray."""</span>
         <span class="k">return</span> <span class="n">get_mask_from_atom_selection</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="AtomSelection.get_idxs">
 <a class="viewcode-back" href="../../../../io/utils/selection.html#atomworks.io.utils.selection.AtomSelection.get_idxs">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_idxs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the indices of atoms selected by this AtomSelection.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Get the indices of atoms selected by this AtomSelection."""</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_mask</span><span class="p">(</span><span class="n">atom_array</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span></div>
 </div>
 
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">parse_selection_string</span><span class="p">(</span><span class="n">selection_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomSelection</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse ``CHAIN/RES/RESID/ATOM/TRANSFORM`` into an :py:class:`AtomSelection`.</span>
+<span class="w">    </span><span class="sd">"""Parse ``CHAIN/RES/RESID/ATOM/TRANSFORM`` into an :py:class:`AtomSelection`.</span>
 
-<span class="sd">    ``&quot;*&quot;`` acts as a wildcard for any field. Trailing fields may be omitted</span>
-<span class="sd">    and default to ``&quot;*&quot;``.</span>
+<span class="sd">    ``"*"`` acts as a wildcard for any field. Trailing fields may be omitted</span>
+<span class="sd">    and default to ``"*"``.</span>
 
 <span class="sd">    See Also:</span>
 <span class="sd">      :py:meth:`~atomworks.io.utils.selection.AtomSelection.from_selection_str`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">granularity_tiers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;chain_id&quot;</span><span class="p">,</span> <span class="s2">&quot;res_name&quot;</span><span class="p">,</span> <span class="s2">&quot;res_id&quot;</span><span class="p">,</span> <span class="s2">&quot;atom_name&quot;</span><span class="p">,</span> <span class="s2">&quot;transformation_id&quot;</span><span class="p">]</span>
-    <span class="n">values</span> <span class="o">=</span> <span class="n">selection_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">granularity_tiers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"chain_id"</span><span class="p">,</span> <span class="s2">"res_name"</span><span class="p">,</span> <span class="s2">"res_id"</span><span class="p">,</span> <span class="s2">"atom_name"</span><span class="p">,</span> <span class="s2">"transformation_id"</span><span class="p">]</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">selection_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
 
     <span class="c1"># Create a dictionary with available tiers and values</span>
-    <span class="n">selection_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">tier</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">tier</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">granularity_tiers</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="s2">&quot;*&quot;</span><span class="p">}</span>
+    <span class="n">selection_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">tier</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">tier</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">granularity_tiers</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="s2">"*"</span><span class="p">}</span>
 
     <span class="k">return</span> <span class="n">AtomSelection</span><span class="p">(</span><span class="o">**</span><span class="n">selection_dict</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">parse_pymol_string</span><span class="p">(</span><span class="n">pymol_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomSelection</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a PyMOL string ``CHAIN/RES`RESID/ATOM`` into an :py:class:`AtomSelection`.</span>
+<span class="w">    </span><span class="sd">"""Parse a PyMOL string ``CHAIN/RES`RESID/ATOM`` into an :py:class:`AtomSelection`.</span>
 
 <span class="sd">    PyMOL selection strings are of the form: CHAIN_ID/RES_NAME`RES_ID/ATOM_NAME</span>
 
@@ -838,56 +854,56 @@
 
 <span class="sd">    See Also:</span>
 <span class="sd">      :py:meth:`~atomworks.io.utils.selection.AtomSelection.from_pymol_str`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Replace backtick with slash to standardize the format</span>
-    <span class="n">standardized_string</span> <span class="o">=</span> <span class="n">pymol_string</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;`&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
+    <span class="n">standardized_string</span> <span class="o">=</span> <span class="n">pymol_string</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"`"</span><span class="p">,</span> <span class="s2">"/"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">parse_selection_string</span><span class="p">(</span><span class="n">standardized_string</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">get_mask_from_selection_string</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">selection_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a boolean mask from an AtomArray sequence selection string.</span>
+<span class="w">    </span><span class="sd">"""Create a boolean mask from an AtomArray sequence selection string.</span>
 
-<span class="sd">    Selection strings follow ``CHAIN/RES/RESID/ATOM/TRANSFORM`` with ``&quot;*&quot;`` as a</span>
+<span class="sd">    Selection strings follow ``CHAIN/RES/RESID/ATOM/TRANSFORM`` with ``"*"`` as a</span>
 <span class="sd">    wildcard for any field. Trailing fields may be omitted.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; atom_array = AtomArray(...)</span>
-<span class="sd">        &gt;&gt;&gt; mask = get_mask_from_selection_string(atom_array, &quot;A/ALA/1/CA&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; mask = get_mask_from_selection_string(atom_array, "A/ALA/1/CA")</span>
 <span class="sd">        [False, True, False, False, ...]</span>
 
 <span class="sd">    See Also:</span>
 <span class="sd">      :py:func:`~atomworks.io.utils.selection.parse_selection_string`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">get_mask_from_atom_selection</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">parse_selection_string</span><span class="p">(</span><span class="n">selection_string</span><span class="p">))</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">get_mask_from_atom_selection</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">atom_selection</span><span class="p">:</span> <span class="n">AtomSelection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a boolean mask from an :py:class:`AtomSelection`.</span>
+<span class="w">    </span><span class="sd">"""Create a boolean mask from an :py:class:`AtomSelection`.</span>
 
 <span class="sd">    See Also:</span>
 <span class="sd">      :py:func:`~atomworks.io.utils.selection.parse_selection_string`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># TODO: Refactor using AtomArray query syntax</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
 
     <span class="c1"># ... add the masks</span>
-    <span class="k">if</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">chain_id</span> <span class="ow">and</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">!=</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">chain_id</span> <span class="ow">and</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">!=</span> <span class="s2">"*"</span><span class="p">:</span>
         <span class="n">mask</span> <span class="o">&amp;=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">==</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">chain_id</span>
 
-    <span class="k">if</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">res_name</span> <span class="ow">and</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">res_name</span> <span class="o">!=</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">res_name</span> <span class="ow">and</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">res_name</span> <span class="o">!=</span> <span class="s2">"*"</span><span class="p">:</span>
         <span class="n">mask</span> <span class="o">&amp;=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span> <span class="o">==</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">res_name</span>
 
-    <span class="k">if</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">res_id</span> <span class="ow">and</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">res_id</span> <span class="o">!=</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">res_id</span> <span class="ow">and</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">res_id</span> <span class="o">!=</span> <span class="s2">"*"</span><span class="p">:</span>
         <span class="n">mask</span> <span class="o">&amp;=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">res_id</span> <span class="o">==</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">res_id</span>
 
-    <span class="k">if</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">atom_name</span> <span class="ow">and</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">!=</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">atom_name</span> <span class="ow">and</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">!=</span> <span class="s2">"*"</span><span class="p">:</span>
         <span class="n">mask</span> <span class="o">&amp;=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">atom_name</span>
 
-    <span class="k">if</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">transformation_id</span> <span class="ow">and</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">transformation_id</span> <span class="o">!=</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">transformation_id</span> <span class="ow">and</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">transformation_id</span> <span class="o">!=</span> <span class="s2">"*"</span><span class="p">:</span>
         <span class="n">mask</span> <span class="o">&amp;=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">transformation_id</span> <span class="o">==</span> <span class="n">atom_selection</span><span class="o">.</span><span class="n">transformation_id</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mask</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No atoms found for selection: </span><span class="si">{</span><span class="n">atom_selection</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No atoms found for selection: </span><span class="si">{</span><span class="n">atom_selection</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">mask</span>
 
@@ -895,7 +911,7 @@
 <div class="viewcode-block" id="AtomSelectionStack">
 <a class="viewcode-back" href="../../../../io/utils/selection.html#atomworks.io.utils.selection.AtomSelectionStack">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AtomSelectionStack</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manage multiple :py:class:`AtomSelection` objects as a unioned query.</span>
+<span class="w">    </span><span class="sd">"""Manage multiple :py:class:`AtomSelection` objects as a unioned query.</span>
 
 <span class="sd">    Supports ranges and comma-separated tokens via :py:meth:`from_query` and</span>
 <span class="sd">    contiguous ranges via :py:meth:`from_contig`.</span>
@@ -903,44 +919,44 @@
 <span class="sd">    See Also:</span>
 <span class="sd">      :py:meth:`~atomworks.io.utils.selection.AtomSelectionStack.from_query`,</span>
 <span class="sd">      :py:meth:`~atomworks.io.utils.selection.AtomSelectionStack.from_contig`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selections</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AtomSelection</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a stack of selections.</span>
+<span class="w">        </span><span class="sd">"""Initialize a stack of selections.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">          selections: Sequence of selections to be unioned.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">selections</span> <span class="o">=</span> <span class="n">selections</span>
 
 <div class="viewcode-block" id="AtomSelectionStack.from_contig">
 <a class="viewcode-back" href="../../../../io/utils/selection.html#atomworks.io.utils.selection.AtomSelectionStack.from_contig">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_contig</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">contig</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AtomSelectionStack&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a stack from contiguous residue ranges.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_contig</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">contig</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"AtomSelectionStack"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Create a stack from contiguous residue ranges.</span>
 
-<span class="sd">        Contig strings specify inclusive residue index ranges, e.g. ``&quot;A1-2&quot;``</span>
-<span class="sd">        or ``&quot;A1-2, B3-10&quot;``.</span>
+<span class="sd">        Contig strings specify inclusive residue index ranges, e.g. ``"A1-2"``</span>
+<span class="sd">        or ``"A1-2, B3-10"``.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">          contig: Contiguous residue selection string like ``&quot;A1-2, B3-10&quot;``.</span>
+<span class="sd">          contig: Contiguous residue selection string like ``"A1-2, B3-10"``.</span>
 
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; # Selects residues 1..2 in chain A</span>
-<span class="sd">            &gt;&gt;&gt; AtomSelectionStack.from_contig(&quot;A1-2&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; AtomSelectionStack.from_contig("A1-2")</span>
 <span class="sd">            &gt;&gt;&gt; # Selects residues 1..2 in chain A and 3..10 in chain B</span>
-<span class="sd">            &gt;&gt;&gt; AtomSelectionStack.from_contig(&quot;A1-2, B3-10&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; AtomSelectionStack.from_contig("A1-2, B3-10")</span>
 
 <span class="sd">        See Also:</span>
 <span class="sd">          :py:meth:`~atomworks.io.utils.selection.AtomSelectionStack.from_query`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># First define a regex that matches the elements of the contig string</span>
-        <span class="n">CONTIG_REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;([A-Za-z]+)(\d+)-(\d+)&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
+        <span class="n">CONTIG_REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"([A-Za-z]+)(\d+)-(\d+)"</span><span class="p">)</span>  <span class="c1"># noqa</span>
         <span class="n">selections</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">selection</span> <span class="ow">in</span> <span class="n">contig</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">selection</span> <span class="ow">in</span> <span class="n">contig</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">" "</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">):</span>
             <span class="n">match</span> <span class="o">=</span> <span class="n">CONTIG_REGEX</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">selection</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid contig string: </span><span class="si">{</span><span class="n">selection</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid contig string: </span><span class="si">{</span><span class="n">selection</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="n">chain_id</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
             <span class="c1"># Create a new AtomSelection for each match</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">stop</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
@@ -953,33 +969,33 @@
 <div class="viewcode-block" id="AtomSelectionStack.from_query">
 <a class="viewcode-back" href="../../../../io/utils/selection.html#atomworks.io.utils.selection.AtomSelectionStack.from_query">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_query</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;AtomSelectionStack&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a stack from extended query syntax with ranges.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_query</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">"AtomSelectionStack"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Create a stack from extended query syntax with ranges.</span>
 
 <span class="sd">        Extended syntax overview:</span>
 <span class="sd">        - **Chains**: ``A`` (all atoms in chain A), ``A/ALA`` (all ALA in chain A)</span>
 <span class="sd">        - **Ranges (``res_id`` only)**: ``A/*/5-10`` selects residues 5..10 in chain A</span>
 
 <span class="sd">        Grammar per field (``CHAIN/RES/RESID/ATOM/TRANSFORM``):</span>
-<span class="sd">        - ``&quot;*&quot;`` wildcard</span>
-<span class="sd">        - Exact value, e.g. ``&quot;A&quot;``, ``&quot;ALA&quot;``, ``&quot;CA&quot;``</span>
-<span class="sd">        - Range (``res_id`` only): ``&quot;5-10&quot;`` (inclusive)</span>
+<span class="sd">        - ``"*"`` wildcard</span>
+<span class="sd">        - Exact value, e.g. ``"A"``, ``"ALA"``, ``"CA"``</span>
+<span class="sd">        - Range (``res_id`` only): ``"5-10"`` (inclusive)</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">        - Fields are in order: CHAIN_ID/RES_NAME/RES_ID/ATOM_NAME/TRANSFORMATION_ID</span>
-<span class="sd">        - Wildcard is &quot;*&quot;. Missing trailing fields default to &quot;*&quot;.</span>
+<span class="sd">        - Wildcard is "*". Missing trailing fields default to "*".</span>
 <span class="sd">        - Multiple comma-separated tokens are combined by union.</span>
 
 <span class="sd">        Multiple tokens may be provided as a comma-separated string or ``list[str]``.</span>
 
 <span class="sd">        Examples:</span>
 <span class="sd">            &gt;&gt;&gt; # Selects residues 5..10 in chain A</span>
-<span class="sd">            &gt;&gt;&gt; AtomSelectionStack.from_query(&quot;A/*/5-10&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; AtomSelectionStack.from_query("A/*/5-10")</span>
 <span class="sd">            &gt;&gt;&gt; # Selects residues 5..10 in chain A and 3..10 in chain B</span>
-<span class="sd">            &gt;&gt;&gt; AtomSelectionStack.from_query(&quot;A/*/5-10, B/*/3-10&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; AtomSelectionStack.from_query("A/*/5-10, B/*/3-10")</span>
 <span class="sd">            &gt;&gt;&gt; # Selects residues 5..10 in chain A and 3..10 in chain B</span>
-<span class="sd">            &gt;&gt;&gt; AtomSelectionStack.from_query([&quot;A/*/5-10&quot;, &quot;B/*/3-10&quot;])</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; AtomSelectionStack.from_query(["A/*/5-10", "B/*/3-10"])</span>
+<span class="sd">        """</span>
         <span class="n">tokens</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_query_tokens</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
         <span class="n">selections</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AtomSelection</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -993,73 +1009,73 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_parse_query_tokens</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse query input into individual tokens.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Parse query input into individual tokens."""</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">tok</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">query</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">tok</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">tok</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">query</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span> <span class="k">if</span> <span class="n">tok</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">tok</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">query</span> <span class="k">if</span> <span class="n">tok</span> <span class="ow">and</span> <span class="n">tok</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_parse_token_fields</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse a single token into field values.&quot;&quot;&quot;</span>
-        <span class="n">parts</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">"""Parse a single token into field values."""</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
 
-        <span class="c1"># Ensure five fields with &#39;*&#39; defaults</span>
+        <span class="c1"># Ensure five fields with '*' defaults</span>
         <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">:</span>
-            <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">)</span>
+            <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"*"</span><span class="p">)</span>
         <span class="n">chain_val</span><span class="p">,</span> <span class="n">res_name_val</span><span class="p">,</span> <span class="n">res_id_val</span><span class="p">,</span> <span class="n">atom_name_val</span><span class="p">,</span> <span class="n">trans_id_val</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;chain_id&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_field_value</span><span class="p">(</span><span class="n">chain_val</span><span class="p">,</span> <span class="n">is_res_id</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-            <span class="s2">&quot;res_name&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_field_value</span><span class="p">(</span><span class="n">res_name_val</span><span class="p">,</span> <span class="n">is_res_id</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-            <span class="s2">&quot;res_id&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_field_value</span><span class="p">(</span><span class="n">res_id_val</span><span class="p">,</span> <span class="n">is_res_id</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-            <span class="s2">&quot;atom_name&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_field_value</span><span class="p">(</span><span class="n">atom_name_val</span><span class="p">,</span> <span class="n">is_res_id</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-            <span class="s2">&quot;transformation_id&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_field_value</span><span class="p">(</span><span class="n">trans_id_val</span><span class="p">,</span> <span class="n">is_res_id</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="s2">"chain_id"</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_field_value</span><span class="p">(</span><span class="n">chain_val</span><span class="p">,</span> <span class="n">is_res_id</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="s2">"res_name"</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_field_value</span><span class="p">(</span><span class="n">res_name_val</span><span class="p">,</span> <span class="n">is_res_id</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="s2">"res_id"</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_field_value</span><span class="p">(</span><span class="n">res_id_val</span><span class="p">,</span> <span class="n">is_res_id</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="s2">"atom_name"</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_field_value</span><span class="p">(</span><span class="n">atom_name_val</span><span class="p">,</span> <span class="n">is_res_id</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+            <span class="s2">"transformation_id"</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_field_value</span><span class="p">(</span><span class="n">trans_id_val</span><span class="p">,</span> <span class="n">is_res_id</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
         <span class="p">}</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_parse_field_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">is_res_id</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse a field value into a list of options.</span>
+<span class="w">        </span><span class="sd">"""Parse a field value into a list of options.</span>
 
 <span class="sd">        For ``res_id``, values are integers; for others, strings.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">v</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span> <span class="ow">or</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">"*"</span> <span class="ow">or</span> <span class="n">v</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="s2">"*"</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_extract_field_options</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">is_res_id</span><span class="o">=</span><span class="n">is_res_id</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_extract_field_options</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">is_res_id</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract options from a field value (ranges or scalars).&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Extract options from a field value (ranges or scalars)."""</span>
         <span class="c1"># Range syntax: 5-10 (res_id only)</span>
-        <span class="k">if</span> <span class="n">is_res_id</span> <span class="ow">and</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;-?\d+-?\d+&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-            <span class="n">start_s</span><span class="p">,</span> <span class="n">stop_s</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_res_id</span> <span class="ow">and</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="sa">r</span><span class="s2">"-?\d+-?\d+"</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+            <span class="n">start_s</span><span class="p">,</span> <span class="n">stop_s</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"-"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">start_i</span><span class="p">,</span> <span class="n">stop_i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">start_s</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">stop_s</span><span class="p">)</span>
             <span class="n">step</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">start_i</span> <span class="o">&lt;=</span> <span class="n">stop_i</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
             <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">start_i</span><span class="p">,</span> <span class="n">stop_i</span> <span class="o">+</span> <span class="n">step</span><span class="p">,</span> <span class="n">step</span><span class="p">))</span>
 
         <span class="c1"># Scalar value</span>
-        <span class="k">return</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)]</span> <span class="k">if</span> <span class="n">is_res_id</span> <span class="ow">and</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)]</span> <span class="k">if</span> <span class="n">is_res_id</span> <span class="ow">and</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"*"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span> <span class="k">else</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_build_selections_from_fields</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">field_values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AtomSelection</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build selections from parsed field values, expanding sets and ranges.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Build selections from parsed field values, expanding sets and ranges."""</span>
         <span class="c1"># Extract field values directly as lists</span>
-        <span class="n">chain_vals</span> <span class="o">=</span> <span class="n">field_values</span><span class="p">[</span><span class="s2">&quot;chain_id&quot;</span><span class="p">]</span>
-        <span class="n">resn_vals</span> <span class="o">=</span> <span class="n">field_values</span><span class="p">[</span><span class="s2">&quot;res_name&quot;</span><span class="p">]</span>
-        <span class="n">resi_vals</span> <span class="o">=</span> <span class="n">field_values</span><span class="p">[</span><span class="s2">&quot;res_id&quot;</span><span class="p">]</span>
-        <span class="n">atom_vals</span> <span class="o">=</span> <span class="n">field_values</span><span class="p">[</span><span class="s2">&quot;atom_name&quot;</span><span class="p">]</span>
-        <span class="n">tran_vals</span> <span class="o">=</span> <span class="n">field_values</span><span class="p">[</span><span class="s2">&quot;transformation_id&quot;</span><span class="p">]</span>
+        <span class="n">chain_vals</span> <span class="o">=</span> <span class="n">field_values</span><span class="p">[</span><span class="s2">"chain_id"</span><span class="p">]</span>
+        <span class="n">resn_vals</span> <span class="o">=</span> <span class="n">field_values</span><span class="p">[</span><span class="s2">"res_name"</span><span class="p">]</span>
+        <span class="n">resi_vals</span> <span class="o">=</span> <span class="n">field_values</span><span class="p">[</span><span class="s2">"res_id"</span><span class="p">]</span>
+        <span class="n">atom_vals</span> <span class="o">=</span> <span class="n">field_values</span><span class="p">[</span><span class="s2">"atom_name"</span><span class="p">]</span>
+        <span class="n">tran_vals</span> <span class="o">=</span> <span class="n">field_values</span><span class="p">[</span><span class="s2">"transformation_id"</span><span class="p">]</span>
 
         <span class="c1"># Build selections via Cartesian product</span>
         <span class="n">selections</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">AtomSelection</span><span class="p">(</span>
-                <span class="n">chain_id</span><span class="o">=</span><span class="n">c</span> <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="s2">&quot;*&quot;</span> <span class="k">else</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
-                <span class="n">res_name</span><span class="o">=</span><span class="n">r</span> <span class="k">if</span> <span class="n">r</span> <span class="o">!=</span> <span class="s2">&quot;*&quot;</span> <span class="k">else</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
-                <span class="n">res_id</span><span class="o">=</span><span class="n">i</span> <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="s2">&quot;*&quot;</span> <span class="k">else</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
-                <span class="n">atom_name</span><span class="o">=</span><span class="n">a</span> <span class="k">if</span> <span class="n">a</span> <span class="o">!=</span> <span class="s2">&quot;*&quot;</span> <span class="k">else</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
-                <span class="n">transformation_id</span><span class="o">=</span><span class="n">t</span> <span class="k">if</span> <span class="n">t</span> <span class="o">!=</span> <span class="s2">&quot;*&quot;</span> <span class="k">else</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
+                <span class="n">chain_id</span><span class="o">=</span><span class="n">c</span> <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="s2">"*"</span> <span class="k">else</span> <span class="s2">"*"</span><span class="p">,</span>
+                <span class="n">res_name</span><span class="o">=</span><span class="n">r</span> <span class="k">if</span> <span class="n">r</span> <span class="o">!=</span> <span class="s2">"*"</span> <span class="k">else</span> <span class="s2">"*"</span><span class="p">,</span>
+                <span class="n">res_id</span><span class="o">=</span><span class="n">i</span> <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="s2">"*"</span> <span class="k">else</span> <span class="s2">"*"</span><span class="p">,</span>
+                <span class="n">atom_name</span><span class="o">=</span><span class="n">a</span> <span class="k">if</span> <span class="n">a</span> <span class="o">!=</span> <span class="s2">"*"</span> <span class="k">else</span> <span class="s2">"*"</span><span class="p">,</span>
+                <span class="n">transformation_id</span><span class="o">=</span><span class="n">t</span> <span class="k">if</span> <span class="n">t</span> <span class="o">!=</span> <span class="s2">"*"</span> <span class="k">else</span> <span class="s2">"*"</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="n">chain_vals</span><span class="p">,</span> <span class="n">resn_vals</span><span class="p">,</span> <span class="n">resi_vals</span><span class="p">,</span> <span class="n">atom_vals</span><span class="p">,</span> <span class="n">tran_vals</span><span class="p">)</span>
         <span class="p">]</span>
@@ -1069,7 +1085,7 @@
 <div class="viewcode-block" id="AtomSelectionStack.get_mask">
 <a class="viewcode-back" href="../../../../io/utils/selection.html#atomworks.io.utils.selection.AtomSelectionStack.get_mask">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a boolean mask by unioning all selections.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Create a boolean mask by unioning all selections."""</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">selections</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
 
@@ -1080,7 +1096,7 @@
 <div class="viewcode-block" id="AtomSelectionStack.get_center_of_mass">
 <a class="viewcode-back" href="../../../../io/utils/selection.html#atomworks.io.utils.selection.AtomSelectionStack.get_center_of_mass">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_center_of_mass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the center of mass of the selected atoms.</span>
+<span class="w">        </span><span class="sd">"""Return the center of mass of the selected atoms.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">          For :py:class:`~biotite.structure.AtomArray`: ``(3,)`` array.</span>
@@ -1088,23 +1104,23 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">          ValueError: If no atoms are selected.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mask</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mask</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No atoms selected by the AtomSelectionStack.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"No atoms selected by the AtomSelectionStack."</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">AtomArrayStack</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[:,</span> <span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot get center of mass for </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cannot get center of mass for </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span><span class="si">}</span><span class="s2">!"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="AtomSelectionStack.get_principal_components">
 <a class="viewcode-back" href="../../../../io/utils/selection.html#atomworks.io.utils.selection.AtomSelectionStack.get_principal_components">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_principal_components</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return principal axes (eigenvectors) of the selected atoms via SVD.</span>
+<span class="w">        </span><span class="sd">"""Return principal axes (eigenvectors) of the selected atoms via SVD.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">          ``(3, 3)`` array for :py:class:`~biotite.structure.AtomArray`.</span>
@@ -1112,10 +1128,10 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">          ValueError: If no atoms are selected.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mask</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mask</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No atoms selected by the AtomSelectionStack.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"No atoms selected by the AtomSelectionStack."</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">):</span>
             <span class="n">coords</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>  <span class="c1"># (N_atoms, 3)</span>
@@ -1132,7 +1148,7 @@
                 <span class="n">pcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vh</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>  <span class="c1"># (3, 3)</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">pcs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># (n_models, 3, 3)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot get principal components for </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cannot get principal components for </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span><span class="si">}</span><span class="s2">!"</span><span class="p">)</span></div>
 </div>
 
 </pre></div>
@@ -1164,8 +1180,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1199,7 +1215,7 @@
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
 </p></div>
       
     </div>

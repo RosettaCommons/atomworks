@@ -26,29 +26,31 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/transforms/base';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
-        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.2.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
@@ -167,6 +169,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -293,6 +302,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -426,7 +442,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for atomworks.ml.transforms.base</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Base classes for transformations.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Base classes for transformations."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -448,11 +464,11 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms._checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_contains_keys</span><span class="p">,</span> <span class="n">check_does_not_contain_keys</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.utils.rng</span><span class="w"> </span><span class="kn">import</span> <span class="n">capture_rng_states</span><span class="p">,</span> <span class="n">rng_state</span><span class="p">,</span> <span class="n">serialize_rng_state_dict</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;transforms&quot;</span><span class="p">)</span>
-<span class="n">DEBUG</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"transforms"</span><span class="p">)</span>
+<span class="n">DEBUG</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"DEBUG"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Debug mode is on&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Debug mode is on"</span><span class="p">)</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
@@ -461,19 +477,19 @@
 <div class="viewcode-block" id="TransformPipelineError">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.TransformPipelineError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TransformPipelineError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A custom error class for Transform pipelines (via :class:`Compose`).</span>
+<span class="w">    </span><span class="sd">"""A custom error class for Transform pipelines (via :class:`Compose`).</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        rng_state_dict: Optional RNG state dictionary for debugging purposes.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rng_state_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize TransformPipelineError.</span>
+<span class="w">        </span><span class="sd">"""Initialize TransformPipelineError.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            message: The error message.</span>
 <span class="sd">            rng_state_dict: Optional RNG state dictionary for debugging purposes.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
         <span class="c1"># expose RNG state dict for debugging</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rng_state_dict</span> <span class="o">=</span> <span class="n">rng_state_dict</span></div>
@@ -483,24 +499,24 @@
 <div class="viewcode-block" id="TransformedDict">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.TransformedDict">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TransformedDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A thin wrapper around a dictionary that can be used to track the transform history.</span>
+<span class="w">    </span><span class="sd">"""A thin wrapper around a dictionary that can be used to track the transform history.</span>
 
 <span class="sd">    Behaves just like a regular dictionary but includes a ``__transform_history__`` attribute</span>
 <span class="sd">    that tracks the sequence of transforms applied to the data.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">__existing_dict_to_wrap</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new instance or return the existing TransformedDict instance.</span>
+<span class="w">        </span><span class="sd">"""Create a new instance or return the existing TransformedDict instance.</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            To get a pure dictionary, simply use ``dict(transformed_dict)`` on a TransformedDict instance.</span>
-<span class="sd">            TransformedDict&#39;s behave just like dicts for all intents and purposes.</span>
+<span class="sd">            TransformedDict's behave just like dicts for all intents and purposes.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            __existing_dict_to_wrap: This is useful for wrapping an existing dictionary.</span>
 <span class="sd">                The odd name is used as an unlikely name to avoid conflicts with the dict class.</span>
 <span class="sd">            **kwargs: Additional keyword arguments to pass to the dictionary constructor.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># if the argument is already a TransformedDict, return it</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">__existing_dict_to_wrap</span><span class="p">,</span> <span class="n">TransformedDict</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">__existing_dict_to_wrap</span>
@@ -509,7 +525,7 @@
         <span class="n">instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
         <span class="c1"># ... and update it with the provided dictionary if given</span>
         <span class="k">if</span> <span class="n">__existing_dict_to_wrap</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Either `__existing_dict_to_wrap` or `kwargs` must be provided, but not both.&quot;</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Either `__existing_dict_to_wrap` or `kwargs` must be provided, but not both."</span>
             <span class="c1"># ... if the argument is a dict, update the instance with the dict</span>
             <span class="n">instance</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">__existing_dict_to_wrap</span><span class="p">)</span>
         <span class="c1"># ... or update it with the keyword arguments if given</span>
@@ -526,7 +542,7 @@
 <div class="viewcode-block" id="Transform">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.Transform">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Transform</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract base class for transformations on dictionary objects.</span>
+<span class="w">    </span><span class="sd">"""Abstract base class for transformations on dictionary objects.</span>
 
 <span class="sd">    To write a subclass, you need to implement the :meth:`forward` method.</span>
 <span class="sd">    Optionally, you can override :meth:`check_input` for input validation.</span>
@@ -538,7 +554,7 @@
 <span class="sd">        incompatible_previous_transforms: Transforms that cannot have preceded this transform.</span>
 <span class="sd">        previous_transforms_order_matters: Whether the order of the transforms is important.</span>
 <span class="sd">        _track_transform_history: Whether to track the transform history.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">validate_input</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">raise_if_invalid_input</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
@@ -551,14 +567,14 @@
 <div class="viewcode-block" id="Transform.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.Transform.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: B027</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the input dictionary is valid for the transform.</span>
+<span class="w">        </span><span class="sd">"""Check if the input dictionary is valid for the transform.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data: The input dictionary to validate.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            Exception: If the input is invalid.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">pass</span></div>
 
 
@@ -566,7 +582,7 @@
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.Transform.forward">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply a transformation to the input dictionary and return the transformed dictionary.</span>
+<span class="w">        </span><span class="sd">"""Apply a transformation to the input dictionary and return the transformed dictionary.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data: The input dictionary to transform.</span>
@@ -575,36 +591,36 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The transformed dictionary.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">pass</span></div>
 
 
     <span class="c1"># Internal logic for formatting error messages, debugging, logging and transform history tracking</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_format_error_msg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the error message with optional traceback when in DEBUG mode.</span>
+<span class="w">        </span><span class="sd">"""Format the error message with optional traceback when in DEBUG mode.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            e: The exception that occurred.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Formatted error message.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid input for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="sd">        """</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Invalid input for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="si">{</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">80</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\n\n</span><span class="si">{</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"="</span> <span class="o">*</span> <span class="mi">80</span>
         <span class="k">return</span> <span class="n">msg</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_transform_to_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span> <span class="o">|</span> <span class="n">ABCMeta</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a transform to a string.</span>
+<span class="w">        </span><span class="sd">"""Convert a transform to a string.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            t: The transform to convert (string, Transform instance, or Transform class).</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            String representation of the transform.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="c1"># case: transform was provided as string, e.g. as `&quot;RemoveKeys&quot;`</span>
+            <span class="c1"># case: transform was provided as string, e.g. as `"RemoveKeys"`</span>
             <span class="k">return</span> <span class="n">t</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">ABCMeta</span><span class="p">):</span>
             <span class="c1"># case: transform was provided as class, e.g. as `RemoveKeys`</span>
@@ -613,47 +629,47 @@
             <span class="c1"># case: transform was provided as instance, e.g. as `RemoveKeys()`</span>
             <span class="k">return</span> <span class="n">t</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Transform `</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">` cannot be converted to a string form for comparison of history.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Transform `</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">` cannot be converted to a string form for comparison of history."</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_ensure_has_transform_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">TransformedDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransformedDict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ensure that the data dictionary has a transform history by wrapping it in a TransformedDict.</span>
+<span class="w">        </span><span class="sd">"""Ensure that the data dictionary has a transform history by wrapping it in a TransformedDict.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data: The data dictionary to wrap.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            TransformedDict instance with transform history.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">TransformedDict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_transform_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">TransformedDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the transform history from the data.</span>
+<span class="w">        </span><span class="sd">"""Get the transform history from the data.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data: The TransformedDict containing the history.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List of transform names in the history.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">__transform_history__</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_maybe_update_transform_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">TransformedDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the transform history by appending the current transform to the transform history.</span>
+<span class="w">        </span><span class="sd">"""Update the transform history by appending the current transform to the transform history.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data: The TransformedDict to update.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The updated data dictionary.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_track_transform_history</span><span class="p">:</span>
             <span class="n">this_transform_record</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-                <span class="s2">&quot;instance&quot;</span><span class="p">:</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)),</span>
-                <span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">(),</span>
-                <span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="s2">&quot;processing_time&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">"name"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                <span class="s2">"instance"</span><span class="p">:</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)),</span>
+                <span class="s2">"start_time"</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">(),</span>
+                <span class="s2">"end_time"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">"processing_time"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
             <span class="p">}</span>
             <span class="c1"># record the current transform in the transform history</span>
             <span class="n">data</span><span class="o">.</span><span class="n">__transform_history__</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">__transform_history__</span><span class="p">,</span> <span class="n">this_transform_record</span><span class="p">]</span>
@@ -661,7 +677,7 @@
         <span class="k">return</span> <span class="n">data</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_maybe_restore_transform_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">TransformedDict</span><span class="p">,</span> <span class="n">transform_history</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Restore the transform history, in case the data was copied.</span>
+<span class="w">        </span><span class="sd">"""Restore the transform history, in case the data was copied.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data: The TransformedDict to restore history for.</span>
@@ -669,51 +685,51 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The data with restored history.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;__transform_history__&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">__transform_history__</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"__transform_history__"</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">__transform_history__</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># restore previous transform history if it is not present (e.g. if the data was copied)</span>
             <span class="n">data</span><span class="o">.</span><span class="n">__transform_history__</span> <span class="o">=</span> <span class="n">transform_history</span>
         <span class="k">return</span> <span class="n">data</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_maybe_record_processing_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">TransformedDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Record the processing time for the transform.</span>
+<span class="w">        </span><span class="sd">"""Record the processing time for the transform.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data: The TransformedDict to record timing for.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The data with updated timing information.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_track_transform_history</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">__transform_history__</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">reverse_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">__transform_history__</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
                 <span class="c1"># record the processing time for the current transform</span>
                 <span class="n">record</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">__transform_history__</span><span class="p">[</span><span class="n">reverse_idx</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;instance&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
-                    <span class="n">start_time</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;start_time&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s2">"instance"</span><span class="p">]</span> <span class="o">==</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+                    <span class="n">start_time</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s2">"start_time"</span><span class="p">]</span>
                     <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-                    <span class="n">data</span><span class="o">.</span><span class="n">__transform_history__</span><span class="p">[</span><span class="n">reverse_idx</span><span class="p">][</span><span class="s2">&quot;end_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">end_time</span>
-                    <span class="n">data</span><span class="o">.</span><span class="n">__transform_history__</span><span class="p">[</span><span class="n">reverse_idx</span><span class="p">][</span><span class="s2">&quot;processing_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">__transform_history__</span><span class="p">[</span><span class="n">reverse_idx</span><span class="p">][</span><span class="s2">"end_time"</span><span class="p">]</span> <span class="o">=</span> <span class="n">end_time</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">__transform_history__</span><span class="p">[</span><span class="n">reverse_idx</span><span class="p">][</span><span class="s2">"processing_time"</span><span class="p">]</span> <span class="o">=</span> <span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span>
         <span class="k">return</span> <span class="n">data</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_transform_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">TransformedDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the previous transforms are valid for the transform.</span>
+<span class="w">        </span><span class="sd">"""Check if the previous transforms are valid for the transform.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data: The TransformedDict to check.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            TransformPipelineError: If the transform history is invalid.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># extract the transform history</span>
-        <span class="n">history</span> <span class="o">=</span> <span class="p">[</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">__transform_history__</span><span class="p">]</span>
+        <span class="n">history</span> <span class="o">=</span> <span class="p">[</span><span class="n">record</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">__transform_history__</span><span class="p">]</span>
 
         <span class="c1"># ensure that `incompatible_previous_transforms` did not get applied</span>
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">incompatible_previous_transforms</span><span class="p">:</span>
             <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_to_str</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">history</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Transform `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">` cannot be applied if any of the transforms </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">incompatible_previous_transforms</span><span class="si">}</span><span class="s2"> &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;have been applied before it. Current transform history: </span><span class="si">{</span><span class="n">history</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Transform `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">` cannot be applied if any of the transforms </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">incompatible_previous_transforms</span><span class="si">}</span><span class="s2"> "</span>
+                    <span class="sa">f</span><span class="s2">"have been applied before it. Current transform history: </span><span class="si">{</span><span class="n">history</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span>
 
         <span class="c1"># get indices of `requires_previous_transforms` in the transform history</span>
@@ -723,25 +739,25 @@
             <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
             <span class="n">matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">index</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">history</span><span class="p">)</span> <span class="k">if</span> <span class="n">pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">t</span><span class="p">)]</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Transform `</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">` is missing from the transform history, which is </span><span class="si">{</span><span class="n">history</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Transform `</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">` is missing from the transform history, which is </span><span class="si">{</span><span class="n">history</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Transform `</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">` appears multiple times in the transform history, which is </span><span class="si">{</span><span class="n">history</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Transform `</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">` appears multiple times in the transform history, which is </span><span class="si">{</span><span class="n">history</span><span class="si">}</span><span class="s2">."</span>
                 <span class="p">)</span>
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
             <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
         <span class="c1"># check if the indices are in the correct order</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_transforms_order_matters</span> <span class="ow">and</span> <span class="p">(</span><span class="n">indices</span> <span class="o">!=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">indices</span><span class="p">)):</span>
-            <span class="n">current_order</span> <span class="o">=</span> <span class="s2">&quot;&gt;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">history</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">indices</span><span class="p">)])</span>
-            <span class="n">required_order</span> <span class="o">=</span> <span class="s2">&quot;&gt;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">requires_previous_transforms</span><span class="p">)</span>
+            <span class="n">current_order</span> <span class="o">=</span> <span class="s2">"&gt;"</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">history</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">indices</span><span class="p">)])</span>
+            <span class="n">required_order</span> <span class="o">=</span> <span class="s2">"&gt;"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">requires_previous_transforms</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Transform `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">` requires the transforms </span><span class="si">{</span><span class="n">required_order</span><span class="si">}</span><span class="s2"> &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;to have been applied before it in this order, but the current order is </span><span class="si">{</span><span class="n">current_order</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"Transform `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">` requires the transforms </span><span class="si">{</span><span class="n">required_order</span><span class="si">}</span><span class="s2"> "</span>
+                <span class="sa">f</span><span class="s2">"to have been applied before it in this order, but the current order is </span><span class="si">{</span><span class="n">current_order</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate and apply the transformation to the given dictionary.</span>
+<span class="w">        </span><span class="sd">"""Validate and apply the transformation to the given dictionary.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data: The input dictionary to transform.</span>
@@ -753,7 +769,7 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            TransformPipelineError: If the input is invalid and raise_if_invalid_input is True.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># enable history tracking if it is not already enabled</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_has_transform_history</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
@@ -786,7 +802,7 @@
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
             <span class="n">data</span><span class="p">,</span> <span class="nb">dict</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;`forward` method of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> must return a dictionary, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">"`forward` method of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> must return a dictionary, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
 
         <span class="c1"># restore the transform history if `data` was copied (which loses the transform history)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_has_transform_history</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -796,24 +812,24 @@
         <span class="k">return</span> <span class="n">data</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;String representation of the transform for debugging, notebooks and logging.</span>
+<span class="w">        </span><span class="sd">"""String representation of the transform for debugging, notebooks and logging.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            String representation of the transform.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Get all the attributes of the class</span>
-        <span class="n">repr_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">repr_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span><span class="si">}</span><span class="s2">"</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">pprint</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="w"> </span><span class="n">sort_dicts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">pprint</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="w"> </span><span class="n">sort_dicts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
                 <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
             <span class="p">]</span>
-            <span class="n">repr_str</span> <span class="o">+=</span> <span class="s2">&quot;(</span><span class="se">\n</span><span class="s2"> &quot;</span> <span class="o">+</span> <span class="s2">&quot;,</span><span class="se">\n</span><span class="s2">  &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">)&quot;</span>
+            <span class="n">repr_str</span> <span class="o">+=</span> <span class="s2">"(</span><span class="se">\n</span><span class="s2"> "</span> <span class="o">+</span> <span class="s2">",</span><span class="se">\n</span><span class="s2">  "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">)"</span>
         <span class="k">return</span> <span class="n">repr_str</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Transform</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Compose</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add two transforms together to create a Compose instance.</span>
+<span class="w">        </span><span class="sd">"""Add two transforms together to create a Compose instance.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            other: Another Transform or Compose instance.</span>
@@ -823,7 +839,7 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: If other is not a Transform or Compose instance.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Case 1: self &amp; other are `Compose` instances</span>
         <span class="c1">#  ... overridden in `Compose` class</span>
         <span class="c1"># Case 2: self is a `Compose` instance and other is a `Transform` instance</span>
@@ -837,14 +853,14 @@
             <span class="k">return</span> <span class="n">Compose</span><span class="p">([</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">])</span>
         <span class="c1"># Case 5: other is not a `Transform` instance</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected a Transform or Compose, but got a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Expected a Transform or Compose, but got a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="Compose">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.Compose">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Compose</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compose multiple transformations together.</span>
+<span class="w">    </span><span class="sd">"""Compose multiple transformations together.</span>
 
 <span class="sd">    This class allows you to chain multiple transformations and apply them sequentially to a data dictionary.</span>
 <span class="sd">    It is particularly useful for preprocessing pipelines where multiple steps need to be applied in a specific order.</span>
@@ -855,12 +871,12 @@
 <span class="sd">            useful for debugging when dealing with probabilistic transformations. The RNG state is returned with</span>
 <span class="sd">            the error message if the transform pipeline fails, allowing you to instantiate the same RNG state</span>
 <span class="sd">            with ``eval`` for debugging.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_track_transform_history</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Compose does not show up in the transform history</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transforms</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Transform</span><span class="p">],</span> <span class="n">track_rng_state</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">print_rng_state</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the Compose transformation pipeline.</span>
+<span class="w">        </span><span class="sd">"""Initialize the Compose transformation pipeline.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            transforms: A list of transformations to be applied sequentially.</span>
@@ -874,16 +890,16 @@
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: If transforms is not a list or tuple, if it is empty, or if it contains elements that</span>
 <span class="sd">                are not instances of Transform.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transforms</span><span class="p">,</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected a list or tuple of Transforms, but got a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">transforms</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Expected a list or tuple of Transforms, but got a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">transforms</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">transforms</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Got an empty list of transforms.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Got an empty list of transforms."</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Transform</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">transforms</span><span class="p">):</span>
             <span class="n">invalid_type</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">transforms</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Transform</span><span class="p">))</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected a list or tuple of Transforms, but got a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">invalid_type</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Expected a list or tuple of Transforms, but got a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">invalid_type</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span> <span class="o">=</span> <span class="n">transforms</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">track_rng_state</span> <span class="o">=</span> <span class="n">track_rng_state</span>
@@ -891,7 +907,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">print_rng_state</span> <span class="o">=</span> <span class="n">print_rng_state</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Transform</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">Transform</span><span class="p">]</span> <span class="o">|</span> <span class="n">Compose</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Compose</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add another transform or compose to this compose.</span>
+<span class="w">        </span><span class="sd">"""Add another transform or compose to this compose.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            other: Another Transform, list of Transforms, or Compose instance.</span>
@@ -901,7 +917,7 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: If other is not a valid type.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Compose</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">Compose</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">transforms</span><span class="p">,</span> <span class="n">track_rng_state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">track_rng_state</span> <span class="ow">or</span> <span class="n">other</span><span class="o">.</span><span class="n">track_rng_state</span>
@@ -911,18 +927,18 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">Compose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transforms</span> <span class="o">+</span> <span class="n">other</span><span class="p">,</span> <span class="n">track_rng_state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">track_rng_state</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected a Transform or list of Transforms or Compose, but got a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Expected a Transform or list of Transforms or Compose, but got a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Compose.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.Compose.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the input is valid for the compose.</span>
+<span class="w">        </span><span class="sd">"""Check if the input is valid for the compose.</span>
 
 <span class="sd">        Compose is always valid, so this method does nothing.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data: The input data to check.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Compose is always valid</span>
         <span class="k">pass</span></div>
 
@@ -933,7 +949,7 @@
         <span class="n">next_transform_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">stop_before</span><span class="p">:</span> <span class="n">Transform</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if transforms should stop before the next transform.</span>
+<span class="w">        </span><span class="sd">"""Check if transforms should stop before the next transform.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            next_transform: The next transform to apply.</span>
@@ -945,7 +961,7 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: If stop_before is not a valid type.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">stop_before</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stop_before</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
@@ -955,7 +971,7 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stop_before</span><span class="p">,</span> <span class="n">Transform</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">next_transform</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="n">stop_before</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected a Transform or str or int, but got a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">stop_before</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Expected a Transform or str or int, but got a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">stop_before</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Compose.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.Compose.forward">[docs]</a>
@@ -965,7 +981,7 @@
         <span class="n">rng_state_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">_stop_before</span><span class="p">:</span> <span class="n">Transform</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply a series of transformations to the input data.</span>
+<span class="w">        </span><span class="sd">"""Apply a series of transformations to the input data.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data: The input data to be transformed.</span>
@@ -979,7 +995,7 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            Exception: If any transform in the pipeline fails, with details about the failure point and RNG state.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># set the RNG state context if given</span>
         <span class="k">with</span> <span class="p">(</span>
@@ -1009,19 +1025,19 @@
 
                 <span class="c1"># Give more informative messages for failures within a ConditionalRoute or RandomRoute</span>
                 <span class="k">if</span> <span class="p">(</span>
-                    <span class="n">failed_transform_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ConditionalRoute&quot;</span><span class="p">,</span> <span class="s2">&quot;RandomRoute&quot;</span><span class="p">]</span>
-                    <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;__transform_history__&quot;</span><span class="p">)</span>
+                    <span class="n">failed_transform_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"ConditionalRoute"</span><span class="p">,</span> <span class="s2">"RandomRoute"</span><span class="p">]</span>
+                    <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"__transform_history__"</span><span class="p">)</span>
                     <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">__transform_history__</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
                 <span class="p">):</span>
-                    <span class="n">last_transform</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">__transform_history__</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+                    <span class="n">last_transform</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">__transform_history__</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">"name"</span><span class="p">]</span>
                     <span class="k">if</span> <span class="n">last_transform</span> <span class="o">!=</span> <span class="n">failed_transform_name</span><span class="p">:</span>
-                        <span class="n">failed_transform_name</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; -&gt; </span><span class="si">{</span><span class="n">last_transform</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="n">failed_transform_name</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" -&gt; </span><span class="si">{</span><span class="n">last_transform</span><span class="si">}</span><span class="s2">"</span>
 
-                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Transforms failed at stage `</span><span class="si">{</span><span class="n">failed_transform_name</span><span class="si">}</span><span class="s2">`: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-                <span class="k">if</span> <span class="s2">&quot;example_id&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Failure occurred for example ID: </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;example_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Transforms failed at stage `</span><span class="si">{</span><span class="n">failed_transform_name</span><span class="si">}</span><span class="s2">`: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s2">"example_id"</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Failure occurred for example ID: </span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">'example_id'</span><span class="p">]</span><span class="si">}</span><span class="s2">."</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_rng_state</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_rng_state</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Random number generator states at the start of the pipeline (you can instantiate the string below with `eval` for debugging):</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="n">msg</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">Random number generator states at the start of the pipeline (you can instantiate the string below with `eval` for debugging):</span><span class="se">\n</span><span class="s2">"</span>
                     <span class="n">msg</span> <span class="o">+=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">serialize_rng_state_dict</span><span class="p">(</span><span class="n">rng_state_dict</span><span class="p">))</span>
 
                 <span class="c1"># Update error message of original exception</span>
@@ -1034,7 +1050,7 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;Compose(</span><span class="se">\n</span><span class="s2">  &quot;</span> <span class="o">+</span> <span class="s2">&quot;,</span><span class="se">\n</span><span class="s2">  &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">)&quot;</span>
+        <span class="k">return</span> <span class="s2">"Compose(</span><span class="se">\n</span><span class="s2">  "</span> <span class="o">+</span> <span class="s2">",</span><span class="se">\n</span><span class="s2">  "</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span><span class="p">])</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">)"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transforms</span><span class="p">)</span>
@@ -1042,7 +1058,7 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">slice</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Transform</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">Compose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transforms</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">track_rng_state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">track_rng_state</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="s2">&quot;__iter__&quot;</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="s2">"__iter__"</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">Compose</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">transforms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idx</span><span class="p">],</span> <span class="n">track_rng_state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">track_rng_state</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span></div>
@@ -1052,7 +1068,7 @@
 <div class="viewcode-block" id="ListBuilder">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.ListBuilder">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ListBuilder</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A convenience class to build lists element by element with the &#39;+=&#39; operator&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""A convenience class to build lists element by element with the '+=' operator"""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1077,9 +1093,9 @@
 <div class="viewcode-block" id="RemoveKeys">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.RemoveKeys">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RemoveKeys</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Remove keys from the data dictionary.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">require_keys_exist</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">keys</span> <span class="o">=</span> <span class="n">keys</span>
@@ -1105,9 +1121,9 @@
 <div class="viewcode-block" id="SubsetToKeys">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.SubsetToKeys">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SubsetToKeys</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Keep only the keys in the data dictionary.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">require_keys_exist</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">keys</span> <span class="o">=</span> <span class="n">keys</span>
@@ -1130,9 +1146,9 @@
 <div class="viewcode-block" id="AddData">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.AddData">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AddData</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Add data to the data dictionary.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">allow_overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
@@ -1156,14 +1172,14 @@
 <div class="viewcode-block" id="LogData">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.LogData">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">LogData</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Log the data dictionary. Meant for debugging.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">_track_transform_history</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># LogData does not show up in the transform history</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="n">depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">pprint_kwargs</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="n">depth</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">depth</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Depth must be a positive integer or None&quot;</span>
+        <span class="k">assert</span> <span class="n">depth</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">depth</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Depth must be a positive integer or None"</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_level</span> <span class="o">=</span> <span class="n">log_level</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="n">depth</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pprint_kwargs</span> <span class="o">=</span> <span class="n">pprint_kwargs</span>
@@ -1178,9 +1194,9 @@
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.LogData.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="c1"># Construct log message</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">80</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Data: </span><span class="se">\n</span><span class="si">{</span><span class="n">pprint</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">depth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">depth</span><span class="p">,</span><span class="w"> </span><span class="n">sort_dicts</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="w"> </span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">pprint_kwargs</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">80</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"="</span> <span class="o">*</span> <span class="mi">80</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"Data: </span><span class="se">\n</span><span class="si">{</span><span class="n">pprint</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">depth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">depth</span><span class="p">,</span><span class="w"> </span><span class="n">sort_dicts</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="w"> </span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">pprint_kwargs</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="s2">"="</span> <span class="o">*</span> <span class="mi">80</span>
 
         <span class="c1"># Log the message</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
@@ -1196,9 +1212,9 @@
 <div class="viewcode-block" id="PickleToDisk">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.PickleToDisk">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PickleToDisk</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Save the data dictionary to a pickle file.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1213,7 +1229,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">save_transform_history</span> <span class="o">=</span> <span class="n">save_transform_history</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">file_name_func</span><span class="p">:</span>
-            <span class="n">file_name_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">data</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.pkl&quot;</span>  <span class="c1"># noqa</span>
+            <span class="n">file_name_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">data</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span><span class="si">}</span><span class="s2">.pkl"</span>  <span class="c1"># noqa</span>
 
         <span class="c1"># Ensure the directory exists</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1221,7 +1237,7 @@
 <div class="viewcode-block" id="PickleToDisk.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.PickleToDisk.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span></div>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"id"</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="PickleToDisk.forward">
@@ -1230,9 +1246,9 @@
         <span class="n">file_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_name_func</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir_path</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2"> already exists. Set overwrite=True to overwrite it.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"File </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2"> already exists. Set overwrite=True to overwrite it."</span><span class="p">)</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="c1"># NOTE: We cast the data to a dict to ensure that the data is serializable</span>
             <span class="c1">#  and that deserialization does not fail due to the presence of custom classes.</span>
             <span class="c1">#  (in particular the `TransformedDict` class)</span>
@@ -1246,11 +1262,11 @@
 <div class="viewcode-block" id="RaiseError">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.RaiseError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RaiseError</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Raises an error for testing and debugging purposes.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error_type</span><span class="p">:</span> <span class="ne">Exception</span> <span class="o">=</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="n">error_message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;User requested raising an error.&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error_type</span><span class="p">:</span> <span class="ne">Exception</span> <span class="o">=</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="n">error_message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"User requested raising an error."</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">error_type</span> <span class="o">=</span> <span class="n">error_type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">error_message</span> <span class="o">=</span> <span class="n">error_message</span>
 
@@ -1271,9 +1287,9 @@
 <div class="viewcode-block" id="Identity">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.Identity">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Identity</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Identity transform. Does nothing and just passes the data through.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">validate_input</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">raise_if_invalid_input</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1290,19 +1306,19 @@
 <div class="viewcode-block" id="RandomRoute">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.RandomRoute">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RandomRoute</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Route probabilistically between various transforms.</span>
 
 <span class="sd">    This transform is useful for routing between different transforms probabilistically, e.g. for</span>
 <span class="sd">    sampling different cropping strategies.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">validate_input</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">raise_if_invalid_input</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">_track_transform_history</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># RandomRoute records history because it changes the RNG state</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transforms</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Transform</span><span class="p">],</span> <span class="n">probs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Initializes the RandomRoute transform.</span>
 
 <span class="sd">        Args:</span>
@@ -1311,19 +1327,19 @@
 <span class="sd">                must be non-negative and sum to 1. There must be as many probabilities as there are transforms.</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            AssertionError: If inputs are invalid (e.g. probabilities don&#39;t add up, are negative, etc.)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            AssertionError: If inputs are invalid (e.g. probabilities don't add up, are negative, etc.)</span>
+<span class="sd">        """</span>
         <span class="c1"># Validate inputs</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">transforms</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">probs</span><span class="p">),</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Number of transforms must match number of probabilities. &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">transforms</span><span class="p">)</span><span class="si">}</span><span class="s2"> transforms and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span><span class="si">}</span><span class="s2"> probabilities.&quot;</span>
+            <span class="sa">f</span><span class="s2">"Number of transforms must match number of probabilities. "</span>
+            <span class="sa">f</span><span class="s2">"Got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">transforms</span><span class="p">)</span><span class="si">}</span><span class="s2"> transforms and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span><span class="si">}</span><span class="s2"> probabilities."</span>
         <span class="p">)</span>
         <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probs</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probs</span><span class="p">),</span> <span class="mi">0</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Probabilities must sum to 1 or 0. Got </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">"Probabilities must sum to 1 or 0. Got </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Transform</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">transforms</span><span class="p">),</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;All elements in transforms must be Transform instances. &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">t</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">transforms</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="n">Transform</span><span class="p">)))</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"All elements in transforms must be Transform instances. "</span>
+            <span class="sa">f</span><span class="s2">"Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">t</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">transforms</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="n">Transform</span><span class="p">)))</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span> <span class="o">=</span> <span class="n">transforms</span>
@@ -1373,14 +1389,14 @@
 <div class="viewcode-block" id="ConditionalRoute">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.ConditionalRoute">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ConditionalRoute</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Route conditionally between various transforms.</span>
 
 <span class="sd">    This Transform is useful for routing between different transforms based on a condition, e.g. skipping transforms during inference.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">Any</span><span class="p">],</span> <span class="n">transform_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Transform</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Initialize the ConditionalRoute transformation.</span>
 
 <span class="sd">        Args:</span>
@@ -1390,15 +1406,15 @@
 <span class="sd">        Example:</span>
 <span class="sd">            ```python</span>
 <span class="sd">            ConditionalRoute(</span>
-<span class="sd">                condition_func=lambda data: data.get(&quot;mode&quot;, &quot;inference&quot;),</span>
+<span class="sd">                condition_func=lambda data: data.get("mode", "inference"),</span>
 <span class="sd">                transform_map={</span>
-<span class="sd">                    &quot;train&quot;: TrainingTransform(),</span>
-<span class="sd">                    &quot;inference&quot;: Identity(),</span>
-<span class="sd">                    # Defaults to Identity if no match; &quot;inference&quot; included for clarity</span>
+<span class="sd">                    "train": TrainingTransform(),</span>
+<span class="sd">                    "inference": Identity(),</span>
+<span class="sd">                    # Defaults to Identity if no match; "inference" included for clarity</span>
 <span class="sd">                },</span>
 <span class="sd">            )</span>
 <span class="sd">            ```</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">condition_func</span> <span class="o">=</span> <span class="n">condition_func</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">transform_map</span> <span class="o">=</span> <span class="n">transform_map</span>
 
@@ -1412,7 +1428,7 @@
 <div class="viewcode-block" id="ConditionalRoute.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.ConditionalRoute.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Apply the appropriate transformation based on the condition value.</span>
 
 <span class="sd">        Args:</span>
@@ -1420,7 +1436,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dict[str, Any]: The transformed data dictionary.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">condition_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">condition_func</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="n">transform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">condition_value</span><span class="p">,</span> <span class="n">Identity</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">transform</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
@@ -1430,19 +1446,19 @@
 
 <div class="viewcode-block" id="convert_to_torch">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.convert_to_torch">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">convert_to_torch</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the contents of specified `data` keys to torch tensors and move them to the specified device.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_to_torch</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"cpu"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Convert the contents of specified `data` keys to torch tensors and move them to the specified device.</span>
 
 <span class="sd">    For each given top-level `data` key, all nested numpy arrays are converted to torch tensors.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data (dict[str, Any]): The input data dictionary.</span>
 <span class="sd">        keys (list[str]): List of `data` keys within which to search for numpy arrays to convert to torch tensors.</span>
-<span class="sd">        device (str): The device to which the tensors should be moved (e.g., &#39;cpu&#39;, &#39;cuda&#39;). Default is &#39;cpu&#39;.</span>
+<span class="sd">        device (str): The device to which the tensors should be moved (e.g., 'cpu', 'cuda'). Default is 'cpu'.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        dict[str, Any]: The data dictionary with numpy arrays converted to torch tensors.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Set of supported numpy data types</span>
     <span class="n">supported_dtypes</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
@@ -1462,7 +1478,7 @@
     <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_convert_to_tensor</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a value to a torch tensor if it is a numpy array or recursively handle nested dictionaries.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Convert a value to a torch tensor if it is a numpy array or recursively handle nested dictionaries."""</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">in</span> <span class="n">supported_dtypes</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
@@ -1476,7 +1492,7 @@
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">_convert_to_tensor</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; not found in the data dictionary.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Key '</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">' not found in the data dictionary."</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">data</span></div>
 
@@ -1485,11 +1501,11 @@
 <div class="viewcode-block" id="ConvertToTorch">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.ConvertToTorch">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ConvertToTorch</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Converts the contents of specified `data` keys to torch tensors and moves them to the specified device.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"cpu"</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">keys</span> <span class="o">=</span> <span class="n">keys</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
 
@@ -1510,9 +1526,9 @@
 <div class="viewcode-block" id="RaiseOnCondition">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.RaiseOnCondition">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RaiseOnCondition</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Raises a user-specified exception if a given condition is met.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition</span><span class="p">:</span> <span class="nb">callable</span><span class="p">,</span> <span class="n">error_message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">exception_to_raise</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]</span> <span class="o">=</span> <span class="ne">ValueError</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">condition</span> <span class="o">=</span> <span class="n">condition</span>
@@ -1538,9 +1554,9 @@
 <div class="viewcode-block" id="ApplyFunction">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.base.ApplyFunction">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ApplyFunction</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Applies a function to the data dictionary.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="nb">callable</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
@@ -1586,8 +1602,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1621,7 +1637,7 @@
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
 </p></div>
       
     </div>

@@ -26,29 +26,31 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/utils/geometry';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
-        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.2.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
@@ -167,6 +169,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -293,6 +302,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -426,7 +442,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for atomworks.ml.utils.geometry</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Various geometry utility functions to deal with rigid body transformations in 3D.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Various geometry utility functions to deal with rigid body transformations in 3D."""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
@@ -440,7 +456,7 @@
 <div class="viewcode-block" id="get_torch_eps">
 <a class="viewcode-back" href="../../../../ml/utils.html#atomworks.ml.utils.geometry.get_torch_eps">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_torch_eps</span><span class="p">(</span><span class="n">dtype</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the smallest positive representable value for a given torch dtype.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Get the smallest positive representable value for a given torch dtype."""</span>
     <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span></div>
 
 
@@ -450,7 +466,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">rigid_from_3_points</span><span class="p">(</span>
     <span class="n">x1</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">x2</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">x3</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Compute the rigid body transformation (R, t) that leads from the origin into the local frame</span>
 <span class="sd">    via the Gram-Schmidt process.</span>
 
@@ -484,7 +500,7 @@
 <span class="sd">                [ 0., 1., 0.]])</span>
 <span class="sd">        &gt;&gt;&gt; print(t)</span>
 <span class="sd">        tensor([0., 0., 0.])</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">eps</span> <span class="o">=</span> <span class="n">default</span><span class="p">(</span><span class="n">eps</span><span class="p">,</span> <span class="n">get_torch_eps</span><span class="p">(</span><span class="n">x1</span><span class="o">.</span><span class="n">dtype</span><span class="p">))</span>
 
     <span class="c1"># Compute the x-axis of the local frame (pointing from x2 to x3)</span>
@@ -516,7 +532,7 @@
     <span class="n">rigid</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span>
     <span class="n">points</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Apply a rigid body transformation to a set of points via (p -&gt; R @ p + t).</span>
 <span class="sd">    (i.e. first rotate then translate)</span>
 
@@ -529,9 +545,9 @@
 <span class="sd">        - torch.Tensor: A tensor of shape [..., 3] representing the transformed points.</span>
 
 <span class="sd">    NOTE: This transforms `p` from the local frame of the `rigid` to the global frame.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">rots</span><span class="p">,</span> <span class="n">trans</span> <span class="o">=</span> <span class="n">rigid</span>
-    <span class="k">return</span> <span class="n">einsum</span><span class="p">(</span><span class="n">rots</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="s2">&quot;... i j, ... j -&gt; ... i&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">trans</span></div>
+    <span class="k">return</span> <span class="n">einsum</span><span class="p">(</span><span class="n">rots</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="s2">"... i j, ... j -&gt; ... i"</span><span class="p">)</span> <span class="o">+</span> <span class="n">trans</span></div>
 
 
 
@@ -541,7 +557,7 @@
     <span class="n">rigid</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span>
     <span class="n">points</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Apply a batch of rigid body transformations to a set of batched points via (p -&gt; R @ p + t).</span>
 <span class="sd">    (i.e. first rotate then translate)</span>
 
@@ -554,20 +570,20 @@
 <span class="sd">        - torch.Tensor: A tensor of shape [batch_size, ..., 3] representing the transformed points.</span>
 
 <span class="sd">    NOTE: This transforms `p` from the local frame of the `rigid` to the global frame.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">rots</span><span class="p">,</span> <span class="n">trans</span> <span class="o">=</span> <span class="n">rigid</span>
     <span class="n">batch</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">shape</span>
-    <span class="k">assert</span> <span class="n">rots</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s2">&quot;rotation dimension must match the points dimension&quot;</span>
-    <span class="k">assert</span> <span class="n">trans</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s2">&quot;translation dimension must match the points dimension&quot;</span>
+    <span class="k">assert</span> <span class="n">rots</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s2">"rotation dimension must match the points dimension"</span>
+    <span class="k">assert</span> <span class="n">trans</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="s2">"translation dimension must match the points dimension"</span>
     <span class="n">trans</span> <span class="o">=</span> <span class="n">trans</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">einsum</span><span class="p">(</span><span class="n">rots</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="s2">&quot;b i j, b l j -&gt; b l i&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">trans</span></div>
+    <span class="k">return</span> <span class="n">einsum</span><span class="p">(</span><span class="n">rots</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="s2">"b i j, b l j -&gt; b l i"</span><span class="p">)</span> <span class="o">+</span> <span class="n">trans</span></div>
 
 
 
 <div class="viewcode-block" id="invert_rigid">
 <a class="viewcode-back" href="../../../../ml/utils.html#atomworks.ml.utils.geometry.invert_rigid">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">invert_rigid</span><span class="p">(</span><span class="n">rigid</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Invert a rigid body transformation (R, t) to (R^T, -R^T @ t).</span>
 
 <span class="sd">    Args:</span>
@@ -588,10 +604,10 @@
 <span class="sd">                [ 0,  0,  1]])</span>
 <span class="sd">        &gt;&gt;&gt; print(t_inv)</span>
 <span class="sd">        tensor([-2,  1, -3])</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">rots</span><span class="p">,</span> <span class="n">trans</span> <span class="o">=</span> <span class="n">rigid</span>
-    <span class="n">inv_rots</span> <span class="o">=</span> <span class="n">rearrange</span><span class="p">(</span><span class="n">rots</span><span class="p">,</span> <span class="s2">&quot;... i j-&gt;... j i&quot;</span><span class="p">)</span>
-    <span class="n">inv_trans</span> <span class="o">=</span> <span class="o">-</span><span class="n">einsum</span><span class="p">(</span><span class="n">inv_rots</span><span class="p">,</span> <span class="n">trans</span><span class="p">,</span> <span class="s2">&quot;... i j, ... j-&gt;... i&quot;</span><span class="p">)</span>
+    <span class="n">inv_rots</span> <span class="o">=</span> <span class="n">rearrange</span><span class="p">(</span><span class="n">rots</span><span class="p">,</span> <span class="s2">"... i j-&gt;... j i"</span><span class="p">)</span>
+    <span class="n">inv_trans</span> <span class="o">=</span> <span class="o">-</span><span class="n">einsum</span><span class="p">(</span><span class="n">inv_rots</span><span class="p">,</span> <span class="n">trans</span><span class="p">,</span> <span class="s2">"... i j, ... j-&gt;... i"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">inv_rots</span><span class="p">,</span> <span class="n">inv_trans</span></div>
 
 
@@ -602,7 +618,7 @@
     <span class="n">rigid1</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span>
     <span class="n">rigid2</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Compose two rigid body transformations (R1, t1) and (R2, t2) to (R2 @ R1, R2 @ t1 + t2).</span>
 
 <span class="sd">    Args:</span>
@@ -622,12 +638,12 @@
 <span class="sd">                [0., 0., 1.]])</span>
 <span class="sd">        &gt;&gt;&gt; print(t_composed)</span>
 <span class="sd">        tensor([1., 1., 0.])</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">rots1</span><span class="p">,</span> <span class="n">trans1</span> <span class="o">=</span> <span class="n">rigid1</span>
     <span class="n">rots2</span><span class="p">,</span> <span class="n">trans2</span> <span class="o">=</span> <span class="n">rigid2</span>
 
-    <span class="n">rots_composed</span> <span class="o">=</span> <span class="n">einsum</span><span class="p">(</span><span class="n">rots2</span><span class="p">,</span> <span class="n">rots1</span><span class="p">,</span> <span class="s2">&quot;... i j, ... j k-&gt;... i k&quot;</span><span class="p">)</span>
-    <span class="n">trans_composed</span> <span class="o">=</span> <span class="n">einsum</span><span class="p">(</span><span class="n">rots2</span><span class="p">,</span> <span class="n">trans1</span><span class="p">,</span> <span class="s2">&quot;... i j, ... j-&gt;... i&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">trans2</span>
+    <span class="n">rots_composed</span> <span class="o">=</span> <span class="n">einsum</span><span class="p">(</span><span class="n">rots2</span><span class="p">,</span> <span class="n">rots1</span><span class="p">,</span> <span class="s2">"... i j, ... j k-&gt;... i k"</span><span class="p">)</span>
+    <span class="n">trans_composed</span> <span class="o">=</span> <span class="n">einsum</span><span class="p">(</span><span class="n">rots2</span><span class="p">,</span> <span class="n">trans1</span><span class="p">,</span> <span class="s2">"... i j, ... j-&gt;... i"</span><span class="p">)</span> <span class="o">+</span> <span class="n">trans2</span>
 
     <span class="k">return</span> <span class="n">rots_composed</span><span class="p">,</span> <span class="n">trans_composed</span></div>
 
@@ -639,7 +655,7 @@
     <span class="n">rigid</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span>
     <span class="n">points</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Apply the inverse of a rigid body transformation to a set of points via (p -&gt; R^T @ (p - t)).</span>
 
 <span class="sd">    Args:</span>
@@ -649,7 +665,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        - torch.Tensor: The transformed points, with the same shape as the input points.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">inv_rigid</span> <span class="o">=</span> <span class="n">invert_rigid</span><span class="p">(</span><span class="n">rigid</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">apply_rigid</span><span class="p">(</span><span class="n">inv_rigid</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span></div>
 
@@ -658,7 +674,7 @@
 <div class="viewcode-block" id="get_random_rots">
 <a class="viewcode-back" href="../../../../ml/utils.html#atomworks.ml.utils.geometry.get_random_rots">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_random_rots</span><span class="p">(</span><span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">tensor_kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Generate random 3D rotation matrices.</span>
 
 <span class="sd">    Args:</span>
@@ -674,7 +690,7 @@
 <span class="sd">        torch.Size([5, 3, 3])</span>
 <span class="sd">        &gt;&gt;&gt; print(torch.allclose(torch.det(R), torch.ones(5)))</span>
 <span class="sd">        True</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Generate random matrices</span>
     <span class="n">rand_mat</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">**</span><span class="n">tensor_kwargs</span><span class="p">)</span>
 
@@ -692,7 +708,7 @@
 <div class="viewcode-block" id="get_random_rigid">
 <a class="viewcode-back" href="../../../../ml/utils.html#atomworks.ml.utils.geometry.get_random_rigid">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_random_rigid</span><span class="p">(</span><span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">tensor_kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate random rigid body transformations (R, t).</span>
+<span class="w">    </span><span class="sd">"""Generate random rigid body transformations (R, t).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        batch_size: Number of rigid transformations to generate.</span>
@@ -707,7 +723,7 @@
 
 <span class="sd">    Note:</span>
 <span class="sd">        If batch_size is 1, the output tensors are squeezed to remove the batch dimension.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">rots</span> <span class="o">=</span> <span class="n">get_random_rots</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="o">**</span><span class="n">tensor_kwargs</span><span class="p">)</span>
     <span class="n">trans</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">**</span><span class="n">tensor_kwargs</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">batch_size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -719,7 +735,7 @@
 <div class="viewcode-block" id="random_rigid_augmentation">
 <a class="viewcode-back" href="../../../../ml/utils.html#atomworks.ml.utils.geometry.random_rigid_augmentation">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">random_rigid_augmentation</span><span class="p">(</span><span class="n">coord_atom_lvl</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Apply random rigid body transformations to atomic coordinates.</span>
 
 <span class="sd">    Generates random rigid body transformations (rotation and translation)</span>
@@ -736,7 +752,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        torch.Tensor: A tensor of the same shape as `coord_atom_lvl`, containing the transformed</span>
 <span class="sd">                      atomic coordinates.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">rigid</span> <span class="o">=</span> <span class="n">get_random_rigid</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">s</span><span class="p">)</span>
 
     <span class="c1"># (`get_random_rigid` squeezes dimension for batch_size=1)</span>
@@ -752,10 +768,10 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">masked_center</span><span class="p">(</span>
     <span class="n">coord_atom_lvl</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">mask_atom_lvl</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Center the coordinates of the atoms in coord_atom_lvl around the origin using the mask mask_atom_lvl.</span>
+<span class="w">    </span><span class="sd">"""Center the coordinates of the atoms in coord_atom_lvl around the origin using the mask mask_atom_lvl.</span>
 
 <span class="sd">    Supports both NumPy and PyTorch tensors.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">mask_atom_lvl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">mask_atom_lvl</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">coord_atom_lvl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
@@ -774,7 +790,7 @@
 <div class="viewcode-block" id="align_atom_arrays">
 <a class="viewcode-back" href="../../../../ml/utils.html#atomworks.ml.utils.geometry.align_atom_arrays">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">align_atom_arrays</span><span class="p">(</span><span class="n">mbl_sele</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">tgt_sele</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">mbl_full</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">AtomArray</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Computes the transformation that aligns mbl_sele to tgt_sele,</span>
 <span class="sd">    then applies that transformation to mbl_full and returns it along with aligment rmsd</span>
 
@@ -789,7 +805,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        AtomArray: an atom array of the same shape as mbl_full, containing the transformed coordinates.</span>
 <span class="sd">        float: the RMSD between mbl_sele and tgt_sele following alignment.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">mbl_fitted</span><span class="p">,</span> <span class="n">xform</span> <span class="o">=</span> <span class="n">superimpose</span><span class="p">(</span><span class="n">tgt_sele</span><span class="p">,</span> <span class="n">mbl_sele</span><span class="p">)</span>
     <span class="n">mbl_full_xformed</span> <span class="o">=</span> <span class="n">xform</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">mbl_full</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">mbl_full_xformed</span><span class="p">,</span> <span class="n">rmsd</span><span class="p">(</span><span class="n">mbl_fitted</span><span class="p">,</span> <span class="n">tgt_sele</span><span class="p">)</span></div>
@@ -823,8 +839,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -858,7 +874,7 @@
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
 </p></div>
       
     </div>

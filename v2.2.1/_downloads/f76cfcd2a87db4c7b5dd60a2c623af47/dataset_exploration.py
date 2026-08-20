@@ -239,7 +239,7 @@ print(f"Created PandasDataset with {len(dataset)} examples")
 
 ########################################################################
 # Related Examples
-# ---------------
+# ----------------
 #
 # - :doc:`load_and_visualize_structures` - Learn how to load and explore protein structures
 # - :doc:`pocket_conditioning_transform` - Create custom transforms for ligand pocket identification and ML feature generation

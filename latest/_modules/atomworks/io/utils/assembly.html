@@ -26,29 +26,31 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/io/utils/assembly';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
-        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.2.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
@@ -167,6 +169,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -293,6 +302,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -426,11 +442,11 @@
                 <article class="bd-article">
                   
   <h1>Source code for atomworks.io.utils.assembly</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Utility functions for computing bioassemblies based on rototranslations of the asymmetric unit.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;build_assemblies_from_asym_unit&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"build_assemblies_from_asym_unit"</span><span class="p">]</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
 
@@ -447,7 +463,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_matrix_rotate</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Perform a rotation using a rotation matrix.</span>
 
 <span class="sd">    Args:</span>
@@ -456,7 +472,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        ndarray: The rotated coordinates.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># For proper rotation reshape into a maximum of 2 dimensions</span>
     <span class="n">orig_ndim</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">ndim</span>
     <span class="k">if</span> <span class="n">orig_ndim</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
@@ -471,18 +487,18 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_parse_transformations</span><span class="p">(</span><span class="n">struct_oper</span><span class="p">:</span> <span class="n">CIFCategory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get transformation operation in terms of rotation matrix and</span>
 <span class="sd">    translation for each operation ID in `pdbx_struct_oper_list`.</span>
 
 <span class="sd">    Copied from: https://github.com/biotite-dev/biotite/blob/v0.40.0/src/biotite/structure/io/pdbx/convert.py#L1398</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">transformation_dict</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">struct_oper</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="nb">str</span><span class="p">)):</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">struct_oper</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="nb">str</span><span class="p">)):</span>
         <span class="n">rotation_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-            <span class="p">[[</span><span class="n">struct_oper</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;matrix[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">][</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="nb">float</span><span class="p">)[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)]</span>
+            <span class="p">[[</span><span class="n">struct_oper</span><span class="p">[</span><span class="sa">f</span><span class="s2">"matrix[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">][</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">]"</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="nb">float</span><span class="p">)[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)]</span>
         <span class="p">)</span>
-        <span class="n">translation_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">struct_oper</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;vector[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="nb">float</span><span class="p">)[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)])</span>
+        <span class="n">translation_vector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">struct_oper</span><span class="p">[</span><span class="sa">f</span><span class="s2">"vector[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">]"</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="nb">float</span><span class="p">)[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)])</span>
         <span class="n">transformation_dict</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">rotation_matrix</span><span class="p">,</span> <span class="n">translation_vector</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">transformation_dict</span>
 
@@ -490,12 +506,12 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_apply_assembly_transformation</span><span class="p">(</span>
     <span class="n">structure</span><span class="p">:</span> <span class="n">AtomArrayStack</span><span class="p">,</span> <span class="n">transformation_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get subassembly by applying the given operation to the input</span>
 <span class="sd">    structure containing affected asym IDs.</span>
 
 <span class="sd">    Modified from: https://github.com/biotite-dev/biotite/blob/v0.40.0/src/biotite/structure/io/pdbx/convert.py#L1398</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">coord</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">coord</span>
     <span class="c1"># Execute for each transformation step</span>
     <span class="c1"># in the operation expression</span>
@@ -516,9 +532,9 @@
     <span class="n">assembly_gen_category</span><span class="p">:</span> <span class="n">CIFCategory</span><span class="p">,</span>
     <span class="n">struct_oper_category</span><span class="p">:</span> <span class="n">CIFCategory</span><span class="p">,</span>
     <span class="n">asym_unit_atom_array_stack</span><span class="p">:</span> <span class="n">AtomArrayStack</span><span class="p">,</span>
-    <span class="n">assembly_ids</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="s2">&quot;first&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;first&quot;</span><span class="p">,</span>
+    <span class="n">assembly_ids</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"all"</span><span class="p">,</span> <span class="s2">"first"</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"first"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Builds one or more biological assemblies by applying transformation operations to the asymmetric unit coordinates.</span>
+<span class="w">    </span><span class="sd">"""Builds one or more biological assemblies by applying transformation operations to the asymmetric unit coordinates.</span>
 
 <span class="sd">    Code modified from: https://github.com/biotite-dev/biotite/blob/v0.40.0/src/biotite/structure/io/pdbx/convert.py#L1318</span>
 <span class="sd">    Args:</span>
@@ -527,8 +543,8 @@
 <span class="sd">        - struct_oper_category (CIFCategory): The pdbx_struct_oper_list category containing transformation matrices.</span>
 <span class="sd">        - asym_unit_atom_array_stack (AtomArrayStack): The atom array stack to which the transformations will be applied</span>
 <span class="sd">            (the asymmetric unit).</span>
-<span class="sd">        - assembly_ids (Literal[&quot;all&quot;, &quot;first&quot;] | list[str], optional): Which assemblies to build. Can be &quot;first&quot; (build</span>
-<span class="sd">            only first assembly), &quot;all&quot; (build all assemblies), or a list of specific assembly IDs. Defaults to &quot;first&quot;.</span>
+<span class="sd">        - assembly_ids (Literal["all", "first"] | list[str], optional): Which assemblies to build. Can be "first" (build</span>
+<span class="sd">            only first assembly), "all" (build all assemblies), or a list of specific assembly IDs. Defaults to "first".</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        - dict[str, AtomArrayStack]: Dictionary mapping assembly IDs to their corresponding built assemblies, with</span>
@@ -536,41 +552,41 @@
 
 <span class="sd">    Raises:</span>
 <span class="sd">        - ValueError: If any requested assembly ID is not found in the assembly generation instructions.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Parse CIF blocks and select assembly (either by passed assembly_id or the first assembly)</span>
-    <span class="n">available_assembly_ids</span> <span class="o">=</span> <span class="n">assembly_gen_category</span><span class="p">[</span><span class="s2">&quot;assembly_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">available_assembly_ids</span> <span class="o">=</span> <span class="n">assembly_gen_category</span><span class="p">[</span><span class="s2">"assembly_id"</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
 
     <span class="c1"># parse `assembly_ids` option</span>
-    <span class="k">if</span> <span class="n">assembly_ids</span> <span class="o">==</span> <span class="s2">&quot;first&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">assembly_ids</span> <span class="o">==</span> <span class="s2">"first"</span><span class="p">:</span>
         <span class="n">to_build</span> <span class="o">=</span> <span class="p">[</span><span class="n">available_assembly_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-    <span class="k">elif</span> <span class="n">assembly_ids</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">assembly_ids</span> <span class="o">==</span> <span class="s2">"all"</span><span class="p">:</span>
         <span class="n">to_build</span> <span class="o">=</span> <span class="n">available_assembly_ids</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Assert that the given `assembly_ids` are valid</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">assembly_ids</span><span class="p">,</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">_id</span> <span class="ow">in</span> <span class="n">assembly_ids</span>
-        <span class="p">),</span> <span class="s2">&quot;Invalid `build_assembly` option. Must be &#39;first&#39;, &#39;all&#39;, or a list/tuple of assembly IDs as strings.&quot;</span>
+        <span class="p">),</span> <span class="s2">"Invalid `build_assembly` option. Must be 'first', 'all', or a list/tuple of assembly IDs as strings."</span>
         <span class="n">to_build</span> <span class="o">=</span> <span class="n">assembly_ids</span>
 
     <span class="c1"># ensure instructions for each requested assembly id exist</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">_id</span> <span class="ow">in</span> <span class="n">available_assembly_ids</span> <span class="k">for</span> <span class="n">_id</span> <span class="ow">in</span> <span class="n">to_build</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Invalid assembly ID(s) provided: </span><span class="si">{</span><span class="n">to_build</span><span class="si">}</span><span class="s2">. Available assembly IDs: </span><span class="si">{</span><span class="n">available_assembly_ids</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"Invalid assembly ID(s) provided: </span><span class="si">{</span><span class="n">to_build</span><span class="si">}</span><span class="s2">. Available assembly IDs: </span><span class="si">{</span><span class="n">available_assembly_ids</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
 
     <span class="c1"># get the transformations and apply to affected asym IDs</span>
     <span class="n">transformations</span> <span class="o">=</span> <span class="n">_parse_transformations</span><span class="p">(</span><span class="n">struct_oper_category</span><span class="p">)</span>  <span class="c1"># {id: rotation, translation}</span>
     <span class="n">assemblies</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">_id</span><span class="p">,</span> <span class="n">op_expr</span><span class="p">,</span> <span class="n">asym_id_expr</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-        <span class="n">assembly_gen_category</span><span class="p">[</span><span class="s2">&quot;assembly_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
-        <span class="n">assembly_gen_category</span><span class="p">[</span><span class="s2">&quot;oper_expression&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
-        <span class="n">assembly_gen_category</span><span class="p">[</span><span class="s2">&quot;asym_id_list&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+        <span class="n">assembly_gen_category</span><span class="p">[</span><span class="s2">"assembly_id"</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+        <span class="n">assembly_gen_category</span><span class="p">[</span><span class="s2">"oper_expression"</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
+        <span class="n">assembly_gen_category</span><span class="p">[</span><span class="s2">"asym_id_list"</span><span class="p">]</span><span class="o">.</span><span class="n">as_array</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span>
         <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="c1"># Find the operation expressions for given assembly ID</span>
         <span class="k">if</span> <span class="n">_id</span> <span class="ow">in</span> <span class="n">to_build</span><span class="p">:</span>
             <span class="n">operations</span> <span class="o">=</span> <span class="n">pdbx</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">_parse_operation_expression</span><span class="p">(</span><span class="n">op_expr</span><span class="p">)</span>
-            <span class="n">asym_ids</span> <span class="o">=</span> <span class="n">asym_id_expr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+            <span class="n">asym_ids</span> <span class="o">=</span> <span class="n">asym_id_expr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span>
             <span class="c1"># Filter affected asym IDs</span>
             <span class="n">sub_structure</span> <span class="o">=</span> <span class="n">asym_unit_atom_array_stack</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">asym_unit_atom_array_stack</span><span class="o">.</span><span class="n">chain_id</span><span class="p">,</span> <span class="n">asym_ids</span><span class="p">)]</span>
             <span class="k">for</span> <span class="n">operation</span> <span class="ow">in</span> <span class="n">operations</span><span class="p">:</span>
@@ -578,10 +594,10 @@
                 <span class="c1"># Add transformation ID annotation (e.g., 1 for identity operation)</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">operation</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="c1"># Rarely, operation expressions will have multiple elements defining their name</span>
-                    <span class="c1"># (e.g. (&#39;1&#39;, &#39;X0&#39;) for `2fs3`), in this case we combine them into a single string</span>
+                    <span class="c1"># (e.g. ('1', 'X0') for `2fs3`), in this case we combine them into a single string</span>
                     <span class="c1"># for referencing the operation later on</span>
-                    <span class="n">operation</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">operation</span><span class="p">)</span>
-                <span class="n">sub_assembly</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;transformation_id&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">sub_assembly</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">operation</span><span class="p">))</span>
+                    <span class="n">operation</span> <span class="o">=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">operation</span><span class="p">)</span>
+                <span class="n">sub_assembly</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">"transformation_id"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">sub_assembly</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">operation</span><span class="p">))</span>
                 <span class="c1"># Merge the chains with asym IDs for this operation with chains from other operations</span>
                 <span class="n">assemblies</span><span class="p">[</span><span class="n">_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">assemblies</span><span class="p">[</span><span class="n">_id</span><span class="p">]</span> <span class="o">+</span> <span class="n">sub_assembly</span> <span class="k">if</span> <span class="n">_id</span> <span class="ow">in</span> <span class="n">assemblies</span> <span class="k">else</span> <span class="n">sub_assembly</span>
 
@@ -595,9 +611,9 @@
     <span class="n">struct_oper_category</span><span class="p">:</span> <span class="n">CIFCategory</span><span class="p">,</span>
     <span class="n">asym_unit_atom_array_stack</span><span class="p">:</span> <span class="n">AtomArrayStack</span><span class="p">,</span>
     <span class="n">fix_symmetry_centers</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-    <span class="n">build_assembly</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;first&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span>
+    <span class="n">build_assembly</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"first"</span><span class="p">,</span> <span class="s2">"all"</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">"all"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Builds and annotates the assemblies from asymmetric unit coordinates and related transformation operations.</span>
 
 <span class="sd">    Args:</span>
@@ -606,11 +622,11 @@
 <span class="sd">        asym_unit_atom_array_stack (AtomArrayStack): The atom array stack to which the transformations will be applied (the asymmetric unit).</span>
 <span class="sd">        fix_symmetry_centers (bool): Flag to indicate if non-polymers at symmetry centers should be patched.</span>
 <span class="sd">        build_assembly (string, list, or tuple, optional): Specifies which assembly to build, if any. Options are None</span>
-<span class="sd">            (e.g., asymmetric unit), &quot;first&quot;, &quot;all&quot;, or a list or tuple of assembly IDs. Defaults to &quot;all&quot;.</span>
+<span class="sd">            (e.g., asymmetric unit), "first", "all", or a list or tuple of assembly IDs. Defaults to "all".</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        assemblies (dict[str, AtomArrayStack]): The dictionary containing the built assemblies.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">assemblies</span> <span class="o">=</span> <span class="n">_build_bioassembly_from_asym_unit</span><span class="p">(</span>
         <span class="n">assembly_gen_category</span><span class="o">=</span><span class="n">assembly_gen_category</span><span class="p">,</span>
         <span class="n">struct_oper_category</span><span class="o">=</span><span class="n">struct_oper_category</span><span class="p">,</span>
@@ -657,8 +673,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -692,7 +708,7 @@
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
 </p></div>
       
     </div>

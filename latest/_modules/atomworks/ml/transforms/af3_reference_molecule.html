@@ -26,29 +26,31 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/transforms/af3_reference_molecule';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
-        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.2.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
@@ -167,6 +169,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -293,6 +302,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -451,7 +467,7 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.utils.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">masked_center</span><span class="p">,</span> <span class="n">random_rigid_augmentation</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;atomworks.ml&quot;</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"atomworks.ml"</span><span class="p">)</span>
 
 
 <span class="c1"># (Lazy-load this expensive computation to avoid slow imports)</span>
@@ -459,8 +475,8 @@
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.af3_reference_molecule.get_known_ccd_codes">[docs]</a>
 <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_known_ccd_codes</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the set of known CCD codes, computing it lazily on first access.&quot;&quot;&quot;</span>
-    <span class="c1"># UNL is a special CCD code for unknown ligands; we do not consider it &quot;known&quot; as it has no structure</span>
+<span class="w">    </span><span class="sd">"""Get the set of known CCD codes, computing it lazily on first access."""</span>
+    <span class="c1"># UNL is a special CCD code for unknown ligands; we do not consider it "known" as it has no structure</span>
     <span class="k">return</span> <span class="n">get_available_ccd_codes</span><span class="p">(</span><span class="n">CCD_MIRROR_PATH</span><span class="p">)</span> <span class="o">-</span> <span class="p">{</span><span class="n">UNKNOWN_LIGAND</span><span class="p">}</span></div>
 
 
@@ -470,7 +486,7 @@
     <span class="n">max_conformers_per_residue</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">cached_residue_level_data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract cached conformers and return remaining stochiometry.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Extract cached conformers and return remaining stochiometry."""</span>
     <span class="n">cached_mols</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">remaining_stochiometry</span> <span class="o">=</span> <span class="n">res_stochiometry</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
@@ -482,7 +498,7 @@
 
         <span class="k">if</span> <span class="n">res_name</span> <span class="ow">in</span> <span class="n">cached_residue_level_data</span><span class="p">:</span>
             <span class="c1"># (We remove hydrogens to be consistent with on-the-fly conformer generation)</span>
-            <span class="n">cached_mol</span> <span class="o">=</span> <span class="n">remove_hydrogens</span><span class="p">(</span><span class="n">cached_residue_level_data</span><span class="p">[</span><span class="n">res_name</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mol&quot;</span><span class="p">))</span>
+            <span class="n">cached_mol</span> <span class="o">=</span> <span class="n">remove_hydrogens</span><span class="p">(</span><span class="n">cached_residue_level_data</span><span class="p">[</span><span class="n">res_name</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"mol"</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">cached_mol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cached_mol</span><span class="o">.</span><span class="n">GetNumConformers</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">needed_conformers</span><span class="p">:</span>
                 <span class="c1"># We have enough cached conformers - use the cached mol</span>
                 <span class="n">cached_mols</span><span class="p">[</span><span class="n">res_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">cached_mol</span>
@@ -495,10 +511,10 @@
     <span class="n">res_stochiometry</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
     <span class="n">max_conformers_per_residue</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">),</span>
-    <span class="n">timeout_strategy</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;signal&quot;</span><span class="p">,</span> <span class="s2">&quot;subprocess&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;subprocess&quot;</span><span class="p">,</span>
+    <span class="n">timeout_strategy</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"signal"</span><span class="p">,</span> <span class="s2">"subprocess"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"subprocess"</span><span class="p">,</span>
     <span class="o">**</span><span class="n">generate_conformers_kwargs</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate RDKit molecules with conformers for each residue in bulk (given the counts in `res_stochiometry`).</span>
+<span class="w">    </span><span class="sd">"""Generate RDKit molecules with conformers for each residue in bulk (given the counts in `res_stochiometry`).</span>
 <span class="sd">    Args:</span>
 <span class="sd">        res_stochiometry: A dictionary mapping residue names to their count.</span>
 <span class="sd">        max_conformers_per_residue: Maximum number of conformers to generate per residue type.</span>
@@ -506,7 +522,7 @@
 <span class="sd">        timeout: The timeout for conformer generation. If None, no timeout is applied and</span>
 <span class="sd">            the timeout strategy is ignored (no subprocesses will be spawned). Defaults to (3.0, 0.15), which</span>
 <span class="sd">            gives a timeout of 3.0 + 0.15 * (n_conformers - 1) seconds per unique CCD code.</span>
-<span class="sd">        timeout_strategy: The strategy to use for the timeout. Defaults to &quot;subprocess&quot;.</span>
+<span class="sd">        timeout_strategy: The strategy to use for the timeout. Defaults to "subprocess".</span>
 <span class="sd">        **generate_conformers_kwargs: Additional keyword arguments to pass to the</span>
 <span class="sd">            generate_conformers function.</span>
 
@@ -520,7 +536,7 @@
 
 <span class="sd">    Reference:</span>
 <span class="sd">        `AF3 Supplementary Information &lt;https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf&gt;`_</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">ref_mols</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">res_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">res_stochiometry</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">res_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">get_known_ccd_codes</span><span class="p">():</span>
@@ -543,7 +559,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_encode_atom_names_like_af3</span><span class="p">(</span><span class="n">atom_names</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encodes atom names like AF3.</span>
+<span class="w">    </span><span class="sd">"""Encodes atom names like AF3.</span>
 
 <span class="sd">    This generates the `ref_atom_name_chars` feature used in AF3.</span>
 <span class="sd">        One-hot encoding of the unique atom names in the reference conformer.</span>
@@ -552,7 +568,7 @@
 
 <span class="sd">    Reference:</span>
 <span class="sd">        `AF3 Supplementary Information &lt;https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf&gt;`_</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Handle empty array case</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">atom_names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
@@ -560,9 +576,9 @@
     <span class="c1"># Ensure uppercase</span>
     <span class="n">atom_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">char</span><span class="o">.</span><span class="n">upper</span><span class="p">(</span><span class="n">atom_names</span><span class="p">)</span>
     <span class="c1"># Turn into 4 character ASCII string (this truncates longer atom names)</span>
-    <span class="n">atom_names</span> <span class="o">=</span> <span class="n">atom_names</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;|S4&quot;</span><span class="p">)</span>
-    <span class="c1"># Pad to 4 char string with &quot; &quot; (ord(&quot; &quot;) = 32)</span>
-    <span class="n">atom_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">char</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">atom_names</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">fillchar</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+    <span class="n">atom_names</span> <span class="o">=</span> <span class="n">atom_names</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"|S4"</span><span class="p">)</span>
+    <span class="c1"># Pad to 4 char string with " " (ord(" ") = 32)</span>
+    <span class="n">atom_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">char</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">atom_names</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">fillchar</span><span class="o">=</span><span class="s2">" "</span><span class="p">)</span>
     <span class="c1"># Interpret ASCII bytes to uint8</span>
     <span class="n">atom_names</span> <span class="o">=</span> <span class="n">atom_names</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
     <span class="c1"># Reshape to (N, 4) and subtract 32 to get back to range [0, 64]</span>
@@ -572,7 +588,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_map_reference_conformer_to_residue</span><span class="p">(</span>
     <span class="n">res_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">atom_names</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">conformer</span><span class="p">:</span> <span class="n">AtomArray</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Maps the coordinate information from a reference conformer to a</span>
+<span class="w">    </span><span class="sd">"""Maps the coordinate information from a reference conformer to a</span>
 <span class="sd">    given residue, dropping all atoms that are not in the residue.</span>
 
 <span class="sd">    Args:</span>
@@ -583,7 +599,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        - ref_pos (np.ndarray): Reference positions for atoms in the residue.</span>
 <span class="sd">        - ref_mask (np.ndarray): Mask indicating valid reference positions.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># ... mark the atoms that are in the residue (keep) and where they are in the residue (to_within_res_idx)</span>
     <span class="n">keep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">conformer</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>  <span class="c1"># [n_atoms_in_conformer]</span>
@@ -593,7 +609,7 @@
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">atom_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atom_names</span><span class="p">):</span>
         <span class="n">matching_atom_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">conformer</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="n">atom_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matching_atom_idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Atom </span><span class="si">{</span><span class="n">atom_name</span><span class="si">}</span><span class="s2"> not found in conformer for residue </span><span class="si">{</span><span class="n">res_name</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="n">atom_names</span><span class="si">=}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Atom </span><span class="si">{</span><span class="n">atom_name</span><span class="si">}</span><span class="s2"> not found in conformer for residue </span><span class="si">{</span><span class="n">res_name</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="n">atom_names</span><span class="si">=}</span><span class="s2">."</span><span class="p">)</span>
             <span class="k">continue</span>
         <span class="n">matching_atom_idx</span> <span class="o">=</span> <span class="n">matching_atom_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">keep</span><span class="p">[</span><span class="n">matching_atom_idx</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
@@ -618,13 +634,13 @@
     <span class="n">conformer_generation_timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">),</span>
     <span class="n">apply_random_rotation_and_translation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">use_element_for_atom_names_of_atomized_tokens</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">timeout_strategy</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;signal&quot;</span><span class="p">,</span> <span class="s2">&quot;subprocess&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;subprocess&quot;</span><span class="p">,</span>
+    <span class="n">timeout_strategy</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"signal"</span><span class="p">,</span> <span class="s2">"subprocess"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"subprocess"</span><span class="p">,</span>
     <span class="n">max_conformers_per_residue</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">cached_residue_level_data</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">residue_conformer_indices</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">generate_conformers_kwargs</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Chem</span><span class="o">.</span><span class="n">Mol</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get AF3 reference features for each residue in the atom array.</span>
+<span class="w">    </span><span class="sd">"""Get AF3 reference features for each residue in the atom array.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        atom_array: The input atom array.</span>
@@ -633,7 +649,7 @@
 <span class="sd">            If None, no timeout is applied and the timeout strategy is ignored (no subprocesses will be spawned).</span>
 <span class="sd">        apply_random_rotation_and_translation: Whether to apply a random rotation and translation to each conformer (AF-3-style)</span>
 <span class="sd">        timeout_strategy: The strategy to use for the timeout.</span>
-<span class="sd">            Defaults to &quot;subprocess&quot; (which is the most reliable choice).</span>
+<span class="sd">            Defaults to "subprocess" (which is the most reliable choice).</span>
 <span class="sd">        max_conformers_per_residue: Maximum number of conformers to generate per residue type.</span>
 <span class="sd">            If None, generates conformers equal to residue count. If set, generates min(count, max_conformers_per_residue)</span>
 <span class="sd">            and randomly samples from those conformers for each residue instance.</span>
@@ -644,14 +660,14 @@
 <span class="sd">            .. code-block:: python</span>
 
 <span class="sd">                {</span>
-<span class="sd">                    &quot;ALA&quot;: {&quot;mol&quot;: rdkit.Chem.Mol},  # Mol with &gt;=1 conformers</span>
-<span class="sd">                    &quot;HEM&quot;: {&quot;mol&quot;: rdkit.Chem.Mol},  # Mol with &gt;=1 conformers</span>
+<span class="sd">                    "ALA": {"mol": rdkit.Chem.Mol},  # Mol with &gt;=1 conformers</span>
+<span class="sd">                    "HEM": {"mol": rdkit.Chem.Mol},  # Mol with &gt;=1 conformers</span>
 <span class="sd">                    ...</span>
 <span class="sd">                }</span>
 
 <span class="sd">            Requirements:</span>
-<span class="sd">                - Keys must be CCD codes (e.g., ``&quot;ALA&quot;``, ``&quot;HEM&quot;``)</span>
-<span class="sd">                - Each value must be a dict with a ``&quot;mol&quot;`` key containing an RDKit Mol object</span>
+<span class="sd">                - Keys must be CCD codes (e.g., ``"ALA"``, ``"HEM"``)</span>
+<span class="sd">                - Each value must be a dict with a ``"mol"`` key containing an RDKit Mol object</span>
 <span class="sd">                - Each Mol must have at least as many conformers as ``min(count, max_conformers_per_residue)``</span>
 <span class="sd">                  to be used (otherwise conformers will be generated on-the-fly)</span>
 <span class="sd">                - Hydrogens will be automatically removed from cached Mols for consistency</span>
@@ -682,13 +698,13 @@
 <span class="sd">            Determined by the `ground_truth_conformer_policy` annotation.</span>
 <span class="sd">        - ref_pos_ground_truth (optional): [N_atoms, 3] The ground-truth conformer positions.</span>
 <span class="sd">            Determined by the `ground_truth_conformer_policy` annotation.</span>
-<span class="sd">        - is_atomized_atom_level: [N_atoms] Whether the atom is atomized (atom-level version of &quot;is_ligand&quot;)</span>
+<span class="sd">        - is_atomized_atom_level: [N_atoms] Whether the atom is atomized (atom-level version of "is_ligand")</span>
 
 <span class="sd">    Reference:</span>
 <span class="sd">        `Section 2.8 of the AF3 supplementary information &lt;https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf&gt;`_</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_has_ground_truth_conformer_policy</span> <span class="o">=</span> <span class="s2">&quot;ground_truth_conformer_policy&quot;</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span>
-    <span class="n">_has_global_res_id</span> <span class="o">=</span> <span class="s2">&quot;res_id_global&quot;</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span>
+<span class="sd">    """</span>
+    <span class="n">_has_ground_truth_conformer_policy</span> <span class="o">=</span> <span class="s2">"ground_truth_conformer_policy"</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span>
+    <span class="n">_has_global_res_id</span> <span class="o">=</span> <span class="s2">"res_id_global"</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span>
 
     <span class="c1"># Generate reference conformers for each residue (if cropped, each residue that has tokens in the crop)</span>
     <span class="c1"># ... get residue-level stochiometry</span>
@@ -713,7 +729,7 @@
     <span class="n">generated_mols</span> <span class="o">=</span> <span class="n">_get_rdkit_mols_with_conformers</span><span class="p">(</span>
         <span class="n">res_stochiometry</span><span class="o">=</span><span class="n">remaining_stochiometry</span><span class="p">,</span>
         <span class="n">max_conformers_per_residue</span><span class="o">=</span><span class="n">max_conformers_per_residue</span><span class="p">,</span>
-        <span class="n">hydrogen_policy</span><span class="o">=</span><span class="s2">&quot;remove&quot;</span><span class="p">,</span>
+        <span class="n">hydrogen_policy</span><span class="o">=</span><span class="s2">"remove"</span><span class="p">,</span>
         <span class="n">timeout</span><span class="o">=</span><span class="n">conformer_generation_timeout</span><span class="p">,</span>
         <span class="n">timeout_strategy</span><span class="o">=</span><span class="n">timeout_strategy</span><span class="p">,</span>
         <span class="o">**</span><span class="n">generate_conformers_kwargs</span><span class="p">,</span>
@@ -760,7 +776,7 @@
             <span class="n">res_global_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">res_id_global</span><span class="p">[</span><span class="n">res_start</span><span class="p">])</span>  <span class="c1"># Convert to Python int</span>
             <span class="k">if</span> <span class="n">res_global_id</span> <span class="ow">in</span> <span class="n">residue_conformer_indices</span><span class="p">:</span>
                 <span class="n">conformer_indices</span> <span class="o">=</span> <span class="n">residue_conformer_indices</span><span class="p">[</span><span class="n">res_global_id</span><span class="p">]</span>
-                <span class="c1"># (We don&#39;t yet support multiple conformers per residue, so we just use the first one, which is random anyhow)</span>
+                <span class="c1"># (We don't yet support multiple conformers per residue, so we just use the first one, which is random anyhow)</span>
                 <span class="n">conf_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">conformer_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">conformer_indices</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="k">else</span> <span class="n">conformer_indices</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">conf_idx</span> <span class="o">=</span> <span class="n">_next_conf_idx</span><span class="p">[</span><span class="n">res_name</span><span class="p">]</span>
@@ -785,12 +801,12 @@
             <span class="n">ground_truth_conformer</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">_has_valid_ground_truth</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                    <span class="s2">&quot;Ground-truth conformer policy set, but NaNs found in the atom array. Conformer policy will be treated as IGNORE.&quot;</span>
+                    <span class="s2">"Ground-truth conformer policy set, but NaNs found in the atom array. Conformer policy will be treated as IGNORE."</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># We REPLACE the generated conformer with the ground-truth conformer if either:</span>
-                <span class="c1"># (a) the ground-truth conformer policy is set to &quot;REPLACE&quot; for all atoms in the residue</span>
-                <span class="c1"># (b) the current conformer is all 0&#39;s/NaN&#39;s (i.e., the conformer generation failed), and the policy is set to &quot;FALLBACK&quot; for all atoms in the residue</span>
+                <span class="c1"># (a) the ground-truth conformer policy is set to "REPLACE" for all atoms in the residue</span>
+                <span class="c1"># (b) the current conformer is all 0's/NaN's (i.e., the conformer generation failed), and the policy is set to "FALLBACK" for all atoms in the residue</span>
                 <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
                     <span class="n">atom_array</span><span class="o">.</span><span class="n">ground_truth_conformer_policy</span><span class="p">[</span><span class="n">res_start</span><span class="p">:</span><span class="n">res_end</span><span class="p">]</span> <span class="o">==</span> <span class="n">GroundTruthConformerPolicy</span><span class="o">.</span><span class="n">REPLACE</span>
                 <span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
@@ -807,13 +823,13 @@
                     <span class="n">conformer</span><span class="o">.</span><span class="n">coord</span> <span class="o">=</span> <span class="n">masked_center</span><span class="p">(</span><span class="n">conformer</span><span class="o">.</span><span class="n">coord</span><span class="p">)</span>
                     <span class="n">ref_pos_is_ground_truth</span><span class="p">[</span><span class="n">res_start</span><span class="p">:</span><span class="n">res_end</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
-                <span class="c1"># We ADD another feature, `ref_pos_ground_truth`, if the policy is set to &quot;ADD&quot; for all atoms in the residue</span>
+                <span class="c1"># We ADD another feature, `ref_pos_ground_truth`, if the policy is set to "ADD" for all atoms in the residue</span>
                 <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
                     <span class="n">atom_array</span><span class="o">.</span><span class="n">ground_truth_conformer_policy</span><span class="p">[</span><span class="n">res_start</span><span class="p">:</span><span class="n">res_end</span><span class="p">]</span> <span class="o">==</span> <span class="n">GroundTruthConformerPolicy</span><span class="o">.</span><span class="n">ADD</span>
                 <span class="p">):</span>
                     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">res_start</span><span class="p">:</span><span class="n">res_end</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
                         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                            <span class="s2">&quot;Ground-truth conformer requested, but NaNs found in the atom array. Conformer will not be replaced with ground truth.&quot;</span>
+                            <span class="s2">"Ground-truth conformer requested, but NaNs found in the atom array. Conformer will not be replaced with ground truth."</span>
                         <span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">ground_truth_conformer</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">res_start</span><span class="p">:</span><span class="n">res_end</span><span class="p">]</span>
@@ -855,7 +871,7 @@
     <span class="c1"># ... element</span>
     <span class="n">ref_element</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">atom_array</span><span class="o">.</span><span class="n">atomic_number</span>
-        <span class="k">if</span> <span class="s2">&quot;atomic_number&quot;</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">"atomic_number"</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span>
         <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">ELEMENT_NAME_TO_ATOMIC_NUMBER</span><span class="o">.</span><span class="n">get</span><span class="p">)(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">element</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="c1"># ... charge</span>
@@ -866,29 +882,29 @@
 
     <span class="k">if</span> <span class="n">use_element_for_atom_names_of_atomized_tokens</span><span class="p">:</span>
         <span class="k">assert</span> <span class="p">(</span>
-            <span class="s2">&quot;atomize&quot;</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span>
-        <span class="p">),</span> <span class="s2">&quot;Atomize annotation is required when using element for atom names of atomized tokens.&quot;</span>
+            <span class="s2">"atomize"</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span>
+        <span class="p">),</span> <span class="s2">"Atomize annotation is required when using element for atom names of atomized tokens."</span>
         <span class="n">ref_atom_name_chars</span><span class="p">[</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atomize</span><span class="p">]</span> <span class="o">=</span> <span class="n">_encode_atom_names_like_af3</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">element</span><span class="p">[</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atomize</span><span class="p">])</span>
 
     <span class="c1"># ... space uid (type conversion needed for some older torch versions)</span>
     <span class="c1">#     we assign a unique integer for each residue instance:</span>
     <span class="n">ref_space_uid</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">segments</span><span class="o">.</span><span class="n">spread_segment_wise</span><span class="p">(</span><span class="n">_res_start_ends</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_res_starts</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">))</span>
 
-    <span class="n">is_atomized_atom_level</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">atomize</span> <span class="k">if</span> <span class="s2">&quot;atomize&quot;</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">is_atomized_atom_level</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">atomize</span> <span class="k">if</span> <span class="s2">"atomize"</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span> <span class="k">else</span> <span class="kc">None</span>
 
     <span class="n">ref_conformer</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;ref_pos&quot;</span><span class="p">:</span> <span class="n">ref_pos</span><span class="p">,</span>  <span class="c1"># (n_atoms, 3)</span>
-        <span class="s2">&quot;ref_mask&quot;</span><span class="p">:</span> <span class="n">ref_mask</span><span class="p">,</span>  <span class="c1"># (n_atoms)</span>
-        <span class="s2">&quot;ref_element&quot;</span><span class="p">:</span> <span class="n">ref_element</span><span class="p">,</span>  <span class="c1"># (n_atoms)</span>
-        <span class="s2">&quot;ref_charge&quot;</span><span class="p">:</span> <span class="n">ref_charge</span><span class="p">,</span>  <span class="c1"># (n_atoms)</span>
-        <span class="s2">&quot;ref_atom_name_chars&quot;</span><span class="p">:</span> <span class="n">ref_atom_name_chars</span><span class="p">,</span>  <span class="c1"># (n_atoms, 4)</span>
-        <span class="s2">&quot;ref_space_uid&quot;</span><span class="p">:</span> <span class="n">ref_space_uid</span><span class="p">,</span>  <span class="c1"># (n_atoms)</span>
-        <span class="s2">&quot;is_atomized_atom_level&quot;</span><span class="p">:</span> <span class="n">is_atomized_atom_level</span><span class="p">,</span>  <span class="c1"># (n_atoms)</span>
+        <span class="s2">"ref_pos"</span><span class="p">:</span> <span class="n">ref_pos</span><span class="p">,</span>  <span class="c1"># (n_atoms, 3)</span>
+        <span class="s2">"ref_mask"</span><span class="p">:</span> <span class="n">ref_mask</span><span class="p">,</span>  <span class="c1"># (n_atoms)</span>
+        <span class="s2">"ref_element"</span><span class="p">:</span> <span class="n">ref_element</span><span class="p">,</span>  <span class="c1"># (n_atoms)</span>
+        <span class="s2">"ref_charge"</span><span class="p">:</span> <span class="n">ref_charge</span><span class="p">,</span>  <span class="c1"># (n_atoms)</span>
+        <span class="s2">"ref_atom_name_chars"</span><span class="p">:</span> <span class="n">ref_atom_name_chars</span><span class="p">,</span>  <span class="c1"># (n_atoms, 4)</span>
+        <span class="s2">"ref_space_uid"</span><span class="p">:</span> <span class="n">ref_space_uid</span><span class="p">,</span>  <span class="c1"># (n_atoms)</span>
+        <span class="s2">"is_atomized_atom_level"</span><span class="p">:</span> <span class="n">is_atomized_atom_level</span><span class="p">,</span>  <span class="c1"># (n_atoms)</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="n">_has_ground_truth_conformer_policy</span><span class="p">:</span>
-        <span class="n">ref_conformer</span><span class="p">[</span><span class="s2">&quot;ref_pos_ground_truth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref_pos_ground_truth</span>  <span class="c1"># (n_atoms, 3)</span>
-        <span class="n">ref_conformer</span><span class="p">[</span><span class="s2">&quot;ref_pos_is_ground_truth&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref_pos_is_ground_truth</span>  <span class="c1"># (n_atoms)</span>
+        <span class="n">ref_conformer</span><span class="p">[</span><span class="s2">"ref_pos_ground_truth"</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref_pos_ground_truth</span>  <span class="c1"># (n_atoms, 3)</span>
+        <span class="n">ref_conformer</span><span class="p">[</span><span class="s2">"ref_pos_is_ground_truth"</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref_pos_is_ground_truth</span>  <span class="c1"># (n_atoms)</span>
 
     <span class="k">return</span> <span class="n">ref_conformer</span><span class="p">,</span> <span class="n">ref_mols</span></div>
 
@@ -897,9 +913,9 @@
 <div class="viewcode-block" id="GetAF3ReferenceMoleculeFeatures">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.af3_reference_molecule.GetAF3ReferenceMoleculeFeatures">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GetAF3ReferenceMoleculeFeatures</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate AF3 reference molecule features for each residue in the atom array.</span>
+<span class="w">    </span><span class="sd">"""Generate AF3 reference molecule features for each residue in the atom array.</span>
 
-<span class="sd">    This transform adds the following features to the data dictionary under the &#39;feats&#39; key, following AF3:</span>
+<span class="sd">    This transform adds the following features to the data dictionary under the 'feats' key, following AF3:</span>
 <span class="sd">        - ref_pos: [N_atoms, 3] Atom positions in the reference conformer, with a random rotation and</span>
 <span class="sd">          translation applied. Atom positions are given in Å.</span>
 <span class="sd">        - ref_mask: [N_atoms] Mask indicating which atom slots are used in the reference conformer.</span>
@@ -916,14 +932,14 @@
 <span class="sd">          Determined by the `ground_truth_conformer_policy` annotation.</span>
 <span class="sd">        - ref_pos_ground_truth: [N_atoms, 3] The ground-truth conformer positions.</span>
 <span class="sd">          Determined by the `ground_truth_conformer_policy` annotation.</span>
-<span class="sd">        - is_atomized_atom_level: [N_atoms] Whether the atom is atomized (atom-level version of &quot;is_ligand&quot;)</span>
+<span class="sd">        - is_atomized_atom_level: [N_atoms] Whether the atom is atomized (atom-level version of "is_ligand")</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        This transform should be applied after cropping.</span>
 
 <span class="sd">    Reference:</span>
 <span class="sd">        `Section 2.8 of the AF3 supplementary information &lt;https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf&gt;`_</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -944,29 +960,29 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">use_cached_conformers</span> <span class="o">=</span> <span class="n">use_cached_conformers</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_element_for_atom_names_of_atomized_tokens</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Using element type for atom names of atomized tokens.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Using element type for atom names of atomized tokens."</span><span class="p">)</span>
 
 <div class="viewcode-block" id="GetAF3ReferenceMoleculeFeatures.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.af3_reference_molecule.GetAF3ReferenceMoleculeFeatures.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
-        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
-        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;res_name&quot;</span><span class="p">,</span> <span class="s2">&quot;element&quot;</span><span class="p">,</span> <span class="s2">&quot;charge&quot;</span><span class="p">,</span> <span class="s2">&quot;atom_name&quot;</span><span class="p">])</span>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atom_array"</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"res_name"</span><span class="p">,</span> <span class="s2">"element"</span><span class="p">,</span> <span class="s2">"charge"</span><span class="p">,</span> <span class="s2">"atom_name"</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_element_for_atom_names_of_atomized_tokens</span><span class="p">:</span>
-            <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atomize&quot;</span><span class="p">])</span></div>
+            <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atomize"</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="GetAF3ReferenceMoleculeFeatures.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.af3_reference_molecule.GetAF3ReferenceMoleculeFeatures.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span>
 
         <span class="c1"># Extract cached data and conformer indices, if enabled</span>
         <span class="n">cached_residue_level_data</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cached_conformers</span> <span class="ow">and</span> <span class="s2">&quot;cached_residue_level_data&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="n">cached_residue_level_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;cached_residue_level_data&quot;</span><span class="p">][</span><span class="s2">&quot;residues&quot;</span><span class="p">]</span>
-        <span class="n">residue_conformer_indices</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;residue_conformer_indices&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cached_conformers</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cached_conformers</span> <span class="ow">and</span> <span class="s2">"cached_residue_level_data"</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">cached_residue_level_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"cached_residue_level_data"</span><span class="p">][</span><span class="s2">"residues"</span><span class="p">]</span>
+        <span class="n">residue_conformer_indices</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"residue_conformer_indices"</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cached_conformers</span> <span class="k">else</span> <span class="kc">None</span>
 
         <span class="c1"># Generate reference features</span>
         <span class="n">reference_features</span><span class="p">,</span> <span class="n">rdkit_mols</span> <span class="o">=</span> <span class="n">get_af3_reference_molecule_features</span><span class="p">(</span>
@@ -980,15 +996,15 @@
             <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">generate_conformers_kwargs</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># Add reference features to the &#39;feats&#39; dictionary</span>
-        <span class="k">if</span> <span class="s2">&quot;feats&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;feats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;feats&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">reference_features</span><span class="p">)</span>
+        <span class="c1"># Add reference features to the 'feats' dictionary</span>
+        <span class="k">if</span> <span class="s2">"feats"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">"feats"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"feats"</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">reference_features</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_rdkit_mols</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s2">&quot;rdkit&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;rdkit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;rdkit&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">rdkit_mols</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">"rdkit"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">"rdkit"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">"rdkit"</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">rdkit_mols</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
@@ -1004,7 +1020,7 @@
     <span class="n">policy</span><span class="p">:</span> <span class="n">GroundTruthConformerPolicy</span> <span class="o">=</span> <span class="n">GroundTruthConformerPolicy</span><span class="o">.</span><span class="n">REPLACE</span><span class="p">,</span>
     <span class="n">is_unconditional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply ground truth conformer policy with configurable probabilities per chain type.</span>
+<span class="w">    </span><span class="sd">"""Apply ground truth conformer policy with configurable probabilities per chain type.</span>
 
 <span class="sd">    Adds the `ground_truth_conformer_policy` annotation to the AtomArray if it does not already exist.</span>
 <span class="sd">    This annotation indicates if/how residues should use the ground-truth coordinates (i.e., the coordinates from the original structure) as the reference conformer.</span>
@@ -1028,11 +1044,11 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        AtomArray: The input atom array with the `ground_truth_conformer_policy` annotation updated.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># ... add the annotation if it does not already exist, defaulting to IGNORE</span>
-    <span class="k">if</span> <span class="s2">&quot;ground_truth_conformer_policy&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">():</span>
+    <span class="k">if</span> <span class="s2">"ground_truth_conformer_policy"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">():</span>
         <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span>
-            <span class="s2">&quot;ground_truth_conformer_policy&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">),</span> <span class="n">GroundTruthConformerPolicy</span><span class="o">.</span><span class="n">IGNORE</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
+            <span class="s2">"ground_truth_conformer_policy"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">),</span> <span class="n">GroundTruthConformerPolicy</span><span class="o">.</span><span class="n">IGNORE</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">is_unconditional</span><span class="p">:</span>
@@ -1046,7 +1062,7 @@
             <span class="c1"># (Probability for this chain type)</span>
             <span class="n">probabilities</span><span class="p">[</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_type</span> <span class="o">==</span> <span class="n">chain_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">chain_type_probabilities</span><span class="p">[</span><span class="n">chain_type</span><span class="p">]</span>
 
-    <span class="c1"># ... sample Bernoulli random variables for each atom (1 = apply policy, 0 = don&#39;t apply))</span>
+    <span class="c1"># ... sample Bernoulli random variables for each atom (1 = apply policy, 0 = don't apply))</span>
     <span class="c1"># (We will only consider the first atom in each residue for the policy)</span>
     <span class="n">apply_policy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">probabilities</span>  <span class="c1"># [n_atoms]</span>
     <span class="n">_res_start_ends</span> <span class="o">=</span> <span class="n">get_residue_starts</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">add_exclusive_stop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1067,9 +1083,9 @@
 <div class="viewcode-block" id="RandomApplyGroundTruthConformerByChainType">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.af3_reference_molecule.RandomApplyGroundTruthConformerByChainType">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RandomApplyGroundTruthConformerByChainType</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply ground truth conformer policy with configurable probabilities per chain type.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Apply ground truth conformer policy with configurable probabilities per chain type."""</span>
 
-    <span class="n">incompatible_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;GetAF3ReferenceMoleculeFeatures&quot;</span><span class="p">]</span>
+    <span class="n">incompatible_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"GetAF3ReferenceMoleculeFeatures"</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1077,7 +1093,7 @@
         <span class="n">default_probability</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="n">policy</span><span class="p">:</span> <span class="n">GroundTruthConformerPolicy</span> <span class="o">=</span> <span class="n">GroundTruthConformerPolicy</span><span class="o">.</span><span class="n">REPLACE</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Args:</span>
 <span class="sd">            chain_type_probabilities: Dictionary mapping chain types or groups of chain types</span>
 <span class="sd">                to their probability of using ground truth conformer. For example:</span>
@@ -1087,7 +1103,7 @@
 <span class="sd">                }</span>
 <span class="sd">            default_probability: Default probability for any chain type not explicitly specified</span>
 <span class="sd">            policy: Which ground truth conformer policy to apply when selected</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">chain_type_probabilities</span> <span class="o">=</span> <span class="n">chain_type_probabilities</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">default_probability</span> <span class="o">=</span> <span class="n">default_probability</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">policy</span> <span class="o">=</span> <span class="n">policy</span>
@@ -1095,7 +1111,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_expanded_probabilities</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">chain_type_key</span><span class="p">,</span> <span class="n">prob</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">chain_type_probabilities</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chain_type_key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-                <span class="c1"># If it&#39;s a tuple of chain types, apply the same probability to each</span>
+                <span class="c1"># If it's a tuple of chain types, apply the same probability to each</span>
                 <span class="k">for</span> <span class="n">ct</span> <span class="ow">in</span> <span class="n">chain_type_key</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_expanded_probabilities</span><span class="p">[</span><span class="n">ct</span><span class="p">]</span> <span class="o">=</span> <span class="n">prob</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1105,9 +1121,9 @@
 <div class="viewcode-block" id="RandomApplyGroundTruthConformerByChainType.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.af3_reference_molecule.RandomApplyGroundTruthConformerByChainType.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="n">is_unconditional</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;is_unconditional&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">random_apply_ground_truth_conformer_by_chain_type</span><span class="p">(</span>
-            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">],</span>
+        <span class="n">is_unconditional</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"is_unconditional"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span> <span class="o">=</span> <span class="n">random_apply_ground_truth_conformer_by_chain_type</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">],</span>
             <span class="n">chain_type_probabilities</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_expanded_probabilities</span><span class="p">,</span>
             <span class="n">default_probability</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">default_probability</span><span class="p">,</span>
             <span class="n">policy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">,</span>
@@ -1145,8 +1161,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1180,7 +1196,7 @@
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
 </p></div>
       
     </div>

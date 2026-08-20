@@ -26,29 +26,31 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/utils/io';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
-        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.2.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
@@ -167,6 +169,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -293,6 +302,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -426,10 +442,10 @@
                 <article class="bd-article">
                   
   <h1>Source code for atomworks.ml.utils.io</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;I/O utilities for ML components.</span>
+<span></span><span class="sd">"""I/O utilities for ML components.</span>
 
 <span class="sd">Provides functions for file operations, directory scanning, and data loading.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
@@ -454,7 +470,7 @@
 <div class="viewcode-block" id="open_file">
 <a class="viewcode-back" href="../../../../ml/utils.html#atomworks.ml.utils.io.open_file">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">open_file</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TextIO</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Open a file, handling compressed files if necessary.</span>
+<span class="w">    </span><span class="sd">"""Open a file, handling compressed files if necessary.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        filename: The path to the file to open.</span>
@@ -464,28 +480,28 @@
 
 <span class="sd">    Raises:</span>
 <span class="sd">        AssertionError: If the file does not exist.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="c1"># ...assert that the file exists</span>
-    <span class="k">assert</span> <span class="n">filename</span><span class="o">.</span><span class="n">exists</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">&quot;File </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2"> does not exist&quot;</span>
+    <span class="k">assert</span> <span class="n">filename</span><span class="o">.</span><span class="n">exists</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">"File </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2"> does not exist"</span>
     <span class="c1"># ...open the file for reading, accepting gzipped, zstd, or plaintext files</span>
-    <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.gz&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">filename</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.zst&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">".gz"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"rt"</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">filename</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">".zst"</span><span class="p">:</span>
         <span class="c1"># Open zstd file and wrap in TextIOWrapper for text mode</span>
         <span class="c1"># Note: The file handle is managed by the TextIOWrapper/stream_reader</span>
         <span class="n">dctx</span> <span class="o">=</span> <span class="n">zstd</span><span class="o">.</span><span class="n">ZstdDecompressor</span><span class="p">()</span>
-        <span class="n">fh</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span>  <span class="c1"># noqa: SIM115</span>
+        <span class="n">fh</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span>  <span class="c1"># noqa: SIM115</span>
         <span class="n">reader</span> <span class="o">=</span> <span class="n">dctx</span><span class="o">.</span><span class="n">stream_reader</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">io</span><span class="o">.</span><span class="n">TextIOWrapper</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">filename</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">io</span><span class="o">.</span><span class="n">TextIOWrapper</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">filename</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"r"</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="scan_directory">
 <a class="viewcode-back" href="../../../../ml/utils.html#atomworks.ml.utils.io.scan_directory">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">scan_directory</span><span class="p">(</span><span class="n">dir_path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fast, order-independent directory scan for files up to max_depth levels deep.</span>
+<span class="w">    </span><span class="sd">"""Fast, order-independent directory scan for files up to max_depth levels deep.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        dir_path: The root directory to scan.</span>
@@ -493,7 +509,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list of file paths found within the specified directory and depth.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">file_paths</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">dir_path</span><span class="p">):</span>
@@ -514,7 +530,7 @@
 <div class="viewcode-block" id="cache_based_on_subset_of_args">
 <a class="viewcode-back" href="../../../../ml/utils.html#atomworks.ml.utils.io.cache_based_on_subset_of_args">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">cache_based_on_subset_of_args</span><span class="p">(</span><span class="n">cache_keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">maxsize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator to cache function results based on a subset of its keyword arguments.</span>
+<span class="w">    </span><span class="sd">"""Decorator to cache function results based on a subset of its keyword arguments.</span>
 
 <span class="sd">    Most helpful when some arguments may be unhashable types (e.g., dictionaries, AtomArray).</span>
 <span class="sd">    If the value of any of the cache keys is None, the function is executed and the result is not cached.</span>
@@ -534,14 +550,14 @@
 <span class="sd">    Example:</span>
 <span class="sd">        .. code-block:: python</span>
 
-<span class="sd">            @cache_based_on_subset_of_args([&quot;arg1&quot;], maxsize=2)</span>
+<span class="sd">            @cache_based_on_subset_of_args(["arg1"], maxsize=2)</span>
 <span class="sd">            def function(*, arg1, arg2):</span>
 <span class="sd">                return arg1 + arg2</span>
 
 
 <span class="sd">            result1 = function(arg1=1, arg2=2)  # Caches with key 1</span>
 <span class="sd">            result2 = function(arg1=1, arg2=3)  # Retrieves from cache</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
         <span class="n">cache</span> <span class="o">=</span> <span class="p">{}</span>
@@ -582,7 +598,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">cache_to_disk_as_pickle</span><span class="p">(</span>
     <span class="n">cache_dir</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">use_gzip</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">directory_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A decorator to cache the results of a function to disk as a pickle file.</span>
 
 <span class="sd">    Creates a unique cached pickle file for each set of function arguments using an MD5 hash.</span>
@@ -599,7 +615,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        function: The wrapped function with optional disk caching enabled.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
         <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
@@ -608,14 +624,14 @@
                 <span class="c1"># If caching is disabled, always execute the function</span>
                 <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-            <span class="c1"># ... create cache directory if it doesn&#39;t exist</span>
+            <span class="c1"># ... create cache directory if it doesn't exist</span>
             <span class="n">cache_dir_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">)</span>
             <span class="n">cache_dir_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
             <span class="c1"># ... create a unique cache file path based on the MD5 hash of function arguments</span>
-            <span class="n">args_repr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">args_repr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">"</span>
             <span class="n">hash_hex</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">args_repr</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
-            <span class="n">file_extension</span> <span class="o">=</span> <span class="s2">&quot;.pkl.gz&quot;</span> <span class="k">if</span> <span class="n">use_gzip</span> <span class="k">else</span> <span class="s2">&quot;.pkl&quot;</span>
+            <span class="n">file_extension</span> <span class="o">=</span> <span class="s2">".pkl.gz"</span> <span class="k">if</span> <span class="n">use_gzip</span> <span class="k">else</span> <span class="s2">".pkl"</span>
             <span class="n">sharding_pattern</span> <span class="o">=</span> <span class="n">build_sharding_pattern</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">directory_depth</span><span class="p">,</span> <span class="n">chars_per_dir</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
             <span class="n">sharded_path</span> <span class="o">=</span> <span class="n">apply_sharding_pattern</span><span class="p">(</span><span class="n">hash_hex</span><span class="p">,</span> <span class="n">sharding_pattern</span><span class="p">)</span>
             <span class="n">cache_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">)</span> <span class="o">/</span> <span class="n">sharded_path</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="n">file_extension</span><span class="p">)</span>
@@ -625,20 +641,20 @@
             <span class="k">if</span> <span class="n">cache_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="c1"># ... try to load the result from cache file</span>
-                    <span class="k">with</span> <span class="n">open_func</span><span class="p">(</span><span class="n">cache_file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="n">open_func</span><span class="p">(</span><span class="n">cache_file</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                         <span class="n">result</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
                     <span class="k">return</span> <span class="n">result</span>
 
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                     <span class="c1"># (Fallback to executing the function, with a warning)</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error loading cache file </span><span class="si">{</span><span class="n">cache_file</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error loading cache file </span><span class="si">{</span><span class="n">cache_file</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-            <span class="c1"># If cache file doesn&#39;t exist, execute the function</span>
+            <span class="c1"># If cache file doesn't exist, execute the function</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
             <span class="c1"># ... save the result to cache file, creating directories if necessary</span>
             <span class="n">cache_file</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="k">with</span> <span class="n">open_func</span><span class="p">(</span><span class="n">cache_file</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">open_func</span><span class="p">(</span><span class="n">cache_file</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">result</span>
@@ -652,15 +668,15 @@
 <div class="viewcode-block" id="to_parquet_with_metadata">
 <a class="viewcode-back" href="../../../../ml/utils.html#atomworks.ml.utils.io.to_parquet_with_metadata">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">to_parquet_with_metadata</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convenience wrapper around df.to_parquet that saves table-wide metadata (df.attrs) to the parquet file.</span>
+<span class="w">    </span><span class="sd">"""Convenience wrapper around df.to_parquet that saves table-wide metadata (df.attrs) to the parquet file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        df: pandas DataFrame to save.</span>
 <span class="sd">        filepath: Path where to save the parquet file.</span>
 <span class="sd">        **kwargs: Additional arguments to pass to df.to_parquet.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Use df.attrs as metadata</span>
-    <span class="n">metadata</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s2">&quot;attrs&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s2">"attrs"</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
 
     <span class="c1"># Convert metadata dictionary to strings</span>
     <span class="n">string_metadata</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">):</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
@@ -683,7 +699,7 @@
 <div class="viewcode-block" id="read_parquet_with_metadata">
 <a class="viewcode-back" href="../../../../ml/utils.html#atomworks.ml.utils.io.read_parquet_with_metadata">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">read_parquet_with_metadata</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convenience wrapper around pd.read_parquet that preserves metadata.</span>
+<span class="w">    </span><span class="sd">"""Convenience wrapper around pd.read_parquet that preserves metadata.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        filepath: Path to the parquet file.</span>
@@ -691,7 +707,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        pandas DataFrame with metadata in .attrs attribute</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Read the parquet file using pyarrow</span>
     <span class="n">table</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
 
@@ -699,12 +715,12 @@
     <span class="n">raw_metadata</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">metadata</span>
 
     <span class="c1"># Convert bytes keys and values back to strings</span>
-    <span class="n">metadata_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="o">.</span><span class="n">decode</span><span class="p">():</span> <span class="n">v</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">raw_metadata</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="sa">b</span><span class="s2">&quot;pandas&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;pyarrow_schema&quot;</span><span class="p">)}</span>
+    <span class="n">metadata_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="o">.</span><span class="n">decode</span><span class="p">():</span> <span class="n">v</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">raw_metadata</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="sa">b</span><span class="s2">"pandas"</span><span class="p">,</span> <span class="sa">b</span><span class="s2">"pyarrow_schema"</span><span class="p">)}</span>
 
     <span class="c1"># Read the DataFrame using pandas</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="c1"># Attach metadata to DataFrame&#39;s attrs</span>
+    <span class="c1"># Attach metadata to DataFrame's attrs</span>
     <span class="n">df</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="n">metadata_dict</span>
 
     <span class="k">return</span> <span class="n">df</span></div>
@@ -738,8 +754,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -773,7 +789,7 @@
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
 </p></div>
       
     </div>

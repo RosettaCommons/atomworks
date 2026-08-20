@@ -26,29 +26,31 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/transforms/sasa';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
-        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.2.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
@@ -167,6 +169,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -293,6 +302,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -440,7 +456,7 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;atomworks.ml&quot;</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"atomworks.ml"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="calculate_atomwise_sasa">
@@ -448,21 +464,21 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">calculate_atomwise_sasa</span><span class="p">(</span>
     <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
     <span class="n">probe_radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.4</span><span class="p">,</span>
-    <span class="n">atom_radii</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="s2">&quot;ProtOr&quot;</span><span class="p">,</span>
+    <span class="n">atom_radii</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="s2">"ProtOr"</span><span class="p">,</span>
     <span class="n">point_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
     <span class="n">atom_filter</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate the SASA for each atom in `atom_array`, excluding those</span>
 <span class="sd">    with NaN coordinates. The output will have the same length as the</span>
 <span class="sd">    input AtomArray, with NaN values for excluded (invalid) atoms.</span>
 
 <span class="sd">     Args:</span>
 <span class="sd">        probe_radius (float, optional): Van-der-Waals radius of the probe in Angstrom. Defaults to 1.4 (for water).</span>
-<span class="sd">        atom_radii (str | np.ndarray, optional): Atom radii set to use for calculation. Defaults to &quot;ProtOr&quot;. &quot;ProtOr&quot; will not get sasa&#39;s for hydrogen atoms and some other atoms, like ions or certain atoms with charges</span>
+<span class="sd">        atom_radii (str | np.ndarray, optional): Atom radii set to use for calculation. Defaults to "ProtOr". "ProtOr" will not get sasa's for hydrogen atoms and some other atoms, like ions or certain atoms with charges</span>
 <span class="sd">        point_number (int, optional): Number of points in the Shrake-Rupley algorithm to sample for calculating SASA. Defaults to 100.</span>
 <span class="sd">        atom_filter (np.ndarray | None, optional): A boolean array of length `atom_array.array_length()` to filter the atoms to calculate SASA for. Defaults to None. Only calculates SASA for filtered atoms</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># 1) Create a boolean vector for valid atoms (no NaNs in their coordinates)</span>
     <span class="n">has_resolved_coordinates</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">atom_filter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -495,11 +511,11 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">calculate_atomwise_rasa</span><span class="p">(</span>
     <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
     <span class="n">probe_radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.4</span><span class="p">,</span>
-    <span class="n">atom_radii</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="s2">&quot;ProtOr&quot;</span><span class="p">,</span>
+    <span class="n">atom_radii</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="s2">"ProtOr"</span><span class="p">,</span>
     <span class="n">point_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
     <span class="n">atom_filter</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Calculate the Relative Solvent-Accessible Surface Area (RASA) for each atom in `atom_array`.</span>
 
 <span class="sd">    The RASA is defined as the ratio of the SASA of a residue in a protein structure</span>
@@ -510,10 +526,10 @@
 <span class="sd">    Args:</span>
 <span class="sd">        atom_array (AtomArray): The input AtomArray containing the atomic coordinates.</span>
 <span class="sd">        probe_radius (float, optional): Van-der-Waals radius of the probe in Angstrom. Defaults to 1.4 (for water).</span>
-<span class="sd">        atom_radii (str | np.ndarray, optional): Atom radii set to use for calculation. Defaults to &quot;ProtOr&quot;. &quot;ProtOr&quot; will not get sasa&#39;s for hydrogen atoms and some other atoms, like ions or certain atoms with charges</span>
+<span class="sd">        atom_radii (str | np.ndarray, optional): Atom radii set to use for calculation. Defaults to "ProtOr". "ProtOr" will not get sasa's for hydrogen atoms and some other atoms, like ions or certain atoms with charges</span>
 <span class="sd">        point_number (int, optional): Number of points in the Shrake-Rupley algorithm to sample for calculating SASA. Defaults to 100.</span>
 <span class="sd">        atom_filter (np.ndarray | None, optional): A boolean array of length `atom_array.array_length()` to filter the atoms to calculate SASA for. Defaults to None. Only calculates SASA for filtered atoms</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">default_vdw_radius</span> <span class="o">=</span> <span class="mf">1.8</span>
     <span class="c1"># 1) Calculate the SASA for each atom in the atom array</span>
     <span class="k">try</span><span class="p">:</span>
@@ -525,7 +541,7 @@
             <span class="n">point_number</span><span class="o">=</span><span class="n">point_number</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error calculating SASA: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. Defaulting to NaN.&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error calculating SASA: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. Defaulting to NaN."</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 
     <span class="c1"># 2) Calculate the SASA for each atom in an extended conformation</span>
@@ -555,22 +571,22 @@
 <div class="viewcode-block" id="CalculateSASA">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.sasa.CalculateSASA">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CalculateSASA</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform for calculating Solvent-Accessible Surface Area (SASA) for each atom in an AtomArray.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Transform for calculating Solvent-Accessible Surface Area (SASA) for each atom in an AtomArray."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">probe_radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.4</span><span class="p">,</span>
-        <span class="n">atom_radii</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;ProtOr&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="s2">&quot;ProtOr&quot;</span><span class="p">,</span>
+        <span class="n">atom_radii</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"ProtOr"</span><span class="p">]</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="s2">"ProtOr"</span><span class="p">,</span>
         <span class="n">point_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Initialize the CalculateSASA transform.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            probe_radius (float, optional): Van-der-Waals radius of the probe in Angstrom. Defaults to 1.4 (for water).</span>
-<span class="sd">            atom_radii (str | np.ndarray, optional): Atom radii set to use for calculation. Defaults to &quot;ProtOr&quot;. &quot;ProtOr&quot; will not get sasa&#39;s for hydrogen atoms and some other atoms, like ions or certain atoms with charges</span>
+<span class="sd">            atom_radii (str | np.ndarray, optional): Atom radii set to use for calculation. Defaults to "ProtOr". "ProtOr" will not get sasa's for hydrogen atoms and some other atoms, like ions or certain atoms with charges</span>
 <span class="sd">            point_number (int, optional): Number of points in the Shrake-Rupley algorithm to sample for calculating SASA. Defaults to 100.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">probe_radius</span> <span class="o">=</span> <span class="n">probe_radius</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">atom_radii</span> <span class="o">=</span> <span class="n">atom_radii</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">point_number</span> <span class="o">=</span> <span class="n">point_number</span>
@@ -578,15 +594,15 @@
 <div class="viewcode-block" id="CalculateSASA.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.sasa.CalculateSASA.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
-        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
-        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;res_name&quot;</span><span class="p">])</span></div>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atom_array"</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"res_name"</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="CalculateSASA.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.sasa.CalculateSASA.forward">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key_to_add_sasa_to</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates SASA and adds it to the data dictionary under the key &quot;atom_array&quot;.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key_to_add_sasa_to</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"atom_array"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Calculates SASA and adds it to the data dictionary under the key "atom_array".</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data: A dictionary containing the input data atomarray.</span>
@@ -594,7 +610,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The data dictionary with SASA values added.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">key_to_add_sasa_to</span><span class="p">]</span>
         <span class="n">sasa</span> <span class="o">=</span> <span class="n">calculate_atomwise_sasa</span><span class="p">(</span>
             <span class="n">atom_array</span><span class="p">,</span>
@@ -602,7 +618,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">atom_radii</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">point_number</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;sasa&quot;</span><span class="p">,</span> <span class="n">sasa</span><span class="p">)</span>
+        <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">"sasa"</span><span class="p">,</span> <span class="n">sasa</span><span class="p">)</span>
         <span class="n">data</span><span class="p">[</span><span class="n">key_to_add_sasa_to</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_array</span>
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
@@ -636,8 +652,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -671,7 +687,7 @@
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
 </p></div>
       
     </div>

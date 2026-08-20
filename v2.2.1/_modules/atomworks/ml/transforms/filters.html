@@ -26,29 +26,31 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/transforms/filters';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
-        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.2.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
@@ -167,6 +169,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -293,6 +302,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -426,7 +442,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for atomworks.ml.transforms.filters</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Transforms that filter an AtomArray, removing chains, residues, or atoms based on some criteria&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Transforms that filter an AtomArray, removing chains, residues, or atoms based on some criteria"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -458,12 +474,12 @@
 <div class="viewcode-block" id="remove_unresolved_pn_units">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.remove_unresolved_pn_units">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">remove_unresolved_pn_units</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Filters PN units that have all unresolved atoms (i.e., atoms with occupancy 0) from the AtomArray.</span>
 
 <span class="sd">    Can be applied before or after croppping, since cropping may lead to PN units with all unresolved atoms that were previously not entirely unresolved.</span>
 <span class="sd">    At training time, these unresolved PN units provide minimal value and can lead to errors in the model.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Get the PN units with resolved atoms</span>
     <span class="n">pn_units_with_resolved_atoms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span><span class="p">[</span><span class="n">atom_array</span><span class="o">.</span><span class="n">occupancy</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">])</span>
 
@@ -477,13 +493,13 @@
 <div class="viewcode-block" id="remove_unresolved_tokens">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.remove_unresolved_tokens">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">remove_unresolved_tokens</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Filters tokens that have all unresolved atoms (i.e., atoms with occupancy 0) from the AtomArray.</span>
 
 <span class="sd">    A token is defined by the token utilities and can be either:</span>
 <span class="sd">        - A residue (when atomize=False)</span>
 <span class="sd">        - An individual atom (when atomize=True)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">atom_array</span>
 
@@ -507,25 +523,25 @@
 <div class="viewcode-block" id="RemoveUnresolvedPNUnits">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveUnresolvedPNUnits">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RemoveUnresolvedPNUnits</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Filters PN units that have all unresolved atoms (i.e., atoms with occupancy 0) from the AtomArray.</span>
 
 <span class="sd">    Can be applied before or after croppping, since cropping may lead to PN units with all unresolved atoms that were previously not entirely unresolved.</span>
 <span class="sd">    At training time, these unresolved PN units provide minimal value and can lead to errors in the model.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
 <div class="viewcode-block" id="RemoveUnresolvedPNUnits.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveUnresolvedPNUnits.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
-        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
-        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">,</span> <span class="s2">&quot;occupancy&quot;</span><span class="p">])</span></div>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atom_array"</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"pn_unit_iid"</span><span class="p">,</span> <span class="s2">"occupancy"</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="RemoveUnresolvedPNUnits.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveUnresolvedPNUnits.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">remove_unresolved_pn_units</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span> <span class="o">=</span> <span class="n">remove_unresolved_pn_units</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
 
@@ -534,18 +550,18 @@
 <div class="viewcode-block" id="RemoveUnresolvedTokens">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveUnresolvedTokens">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RemoveUnresolvedTokens</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filters tokens that have all unresolved atoms (i.e., atoms with occupancy 0) from the AtomArray.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Filters tokens that have all unresolved atoms (i.e., atoms with occupancy 0) from the AtomArray."""</span>
 
 <div class="viewcode-block" id="RemoveUnresolvedTokens.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveUnresolvedTokens.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;occupancy&quot;</span><span class="p">])</span></div>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"occupancy"</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="RemoveUnresolvedTokens.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveUnresolvedTokens.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">remove_unresolved_tokens</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span> <span class="o">=</span> <span class="n">remove_unresolved_tokens</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
 
@@ -558,7 +574,7 @@
     <span class="n">query_pn_unit_iids</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">supported_chain_types</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">ChainType</span><span class="p">]</span> <span class="o">=</span> <span class="n">TRAINING_SUPPORTED_CHAIN_TYPES</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter out chains with unsupported chain types from the AtomArray.</span>
+<span class="w">    </span><span class="sd">"""Filter out chains with unsupported chain types from the AtomArray.</span>
 
 <span class="sd">    Additionally, asserts that none of the query pn_units are of an unsupported chain type if given.</span>
 <span class="sd">    (in which case they should have been filtered out upstream, otherwise our example is not valid).</span>
@@ -569,7 +585,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        AtomArray: The filtered AtomArray.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># We first assert that none of the query pn_units are of an unsupported chain type, which means the example should have been filtered out upstream</span>
     <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">query_pn_unit_iids</span><span class="p">):</span>
         <span class="n">query_pn_unit_chain_types</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>
@@ -577,7 +593,7 @@
         <span class="p">)</span>
         <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">query_pn_unit_chain_types</span><span class="p">,</span> <span class="n">supported_chain_types</span><span class="p">)</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Query PN unit has an unsupported chain type: </span><span class="si">{</span><span class="n">query_pn_unit_chain_types</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">"Query PN unit has an unsupported chain type: </span><span class="si">{</span><span class="n">query_pn_unit_chain_types</span><span class="si">}</span><span class="s2">"</span>
 
     <span class="c1"># Then, we filter out chains with unsupported chain types</span>
     <span class="n">is_supported_chain_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_type</span><span class="p">,</span> <span class="n">supported_chain_types</span><span class="p">)</span>
@@ -588,40 +604,40 @@
 <div class="viewcode-block" id="RemoveUnsupportedChainTypes">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveUnsupportedChainTypes">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RemoveUnsupportedChainTypes</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter out chains with unsupported chain types from the AtomArray.</span>
+<span class="w">    </span><span class="sd">"""Filter out chains with unsupported chain types from the AtomArray.</span>
 
 <span class="sd">    Additionally, asserts that none of the query pn_units are of an unsupported chain type if given.</span>
 <span class="sd">    (in which case they should have been filtered out upstream, otherwise our example is not valid).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">requires_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">supported_chain_types</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">ChainType</span><span class="p">]</span> <span class="o">=</span> <span class="n">TRAINING_SUPPORTED_CHAIN_TYPES</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Initialize the RemoveUnsupportedChainTypes transform.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            supported_chain_types (Sequence[ChainType]): The chain types to keep in the AtomArray.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">supported_chain_types</span> <span class="o">=</span> <span class="n">supported_chain_types</span>
 
 <div class="viewcode-block" id="RemoveUnsupportedChainTypes.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveUnsupportedChainTypes.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;chain_type&quot;</span><span class="p">,</span> <span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">])</span></div>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"chain_type"</span><span class="p">,</span> <span class="s2">"pn_unit_iid"</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="RemoveUnsupportedChainTypes.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveUnsupportedChainTypes.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
-        <span class="n">query_pn_unit_iids</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;query_pn_unit_iids&quot;</span><span class="p">)</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span>
+        <span class="n">query_pn_unit_iids</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"query_pn_unit_iids"</span><span class="p">)</span>
 
         <span class="c1"># Apply transform</span>
         <span class="n">atom_array</span> <span class="o">=</span> <span class="n">remove_unsupported_chain_types</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">query_pn_unit_iids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported_chain_types</span><span class="p">)</span>
 
         <span class="c1"># Update data</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_array</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_array</span>
 
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
@@ -631,9 +647,9 @@
 <div class="viewcode-block" id="remove_hydrogens">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.remove_hydrogens">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">remove_hydrogens</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">hydrogen_names</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">=</span> <span class="n">HYDROGEN_LIKE_SYMBOLS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Remove hydrogens from the atom array.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">is_heavy</span> <span class="o">=</span> <span class="n">not_isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">element</span><span class="p">,</span> <span class="n">hydrogen_names</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">is_heavy</span><span class="p">]</span></div>
 
@@ -642,24 +658,24 @@
 <div class="viewcode-block" id="RemoveHydrogens">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveHydrogens">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RemoveHydrogens</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Remove hydrogens from the atom array.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hydrogen_names</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">)):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hydrogen_names</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"1"</span><span class="p">,</span> <span class="s2">"H"</span><span class="p">,</span> <span class="s2">"D"</span><span class="p">,</span> <span class="s2">"T"</span><span class="p">)):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hydrogen_names</span> <span class="o">=</span> <span class="n">hydrogen_names</span>
 
 <div class="viewcode-block" id="RemoveHydrogens.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveHydrogens.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
-        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span></div>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atom_array"</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RemoveHydrogens.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveHydrogens.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">remove_hydrogens</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydrogen_names</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span> <span class="o">=</span> <span class="n">remove_hydrogens</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydrogen_names</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
 
@@ -668,21 +684,21 @@
 <div class="viewcode-block" id="FilterToProteins">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.FilterToProteins">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FilterToProteins</span><span class="p">(</span><span class="n">ApplyFunctionToAtomArray</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Filter atom array to only include protein residues.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">arr</span><span class="p">:</span> <span class="n">arr</span><span class="p">[</span><span class="n">struc</span><span class="o">.</span><span class="n">filter_polymer</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">pol_type</span><span class="o">=</span><span class="s2">&quot;peptide&quot;</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="n">min_size</span><span class="p">)])</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">arr</span><span class="p">:</span> <span class="n">arr</span><span class="p">[</span><span class="n">struc</span><span class="o">.</span><span class="n">filter_polymer</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">pol_type</span><span class="o">=</span><span class="s2">"peptide"</span><span class="p">,</span> <span class="n">min_size</span><span class="o">=</span><span class="n">min_size</span><span class="p">)])</span></div>
 
 
 
 <div class="viewcode-block" id="filter_to_specified_pn_units">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.filter_to_specified_pn_units">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">filter_to_specified_pn_units</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">pn_unit_iids</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">set</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Filter atom array to only include specific PN units.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span><span class="p">,</span> <span class="n">pn_unit_iids</span><span class="p">)]</span></div>
 
 
@@ -690,27 +706,27 @@
 <div class="viewcode-block" id="FilterToSpecifiedPNUnits">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.FilterToSpecifiedPNUnits">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FilterToSpecifiedPNUnits</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Filter atom array to only include specific PN units, denoted via the row metadata (held in `extra_info`).</span>
 <span class="sd">    Such a filter is useful, for example, when during pre-processing we have identified clashing PN Units that we may want to exclude from the AtomArray.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        - extra_info_key_with_pn_unit_iids_to_keep (str): The key in the &quot;extra_info&quot; dictionary that contains the PN unit IDs to filter to. If the key does not exist, the AtomArray is not filtered.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        - extra_info_key_with_pn_unit_iids_to_keep (str): The key in the "extra_info" dictionary that contains the PN unit IDs to filter to. If the key does not exist, the AtomArray is not filtered.</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extra_info_key_with_pn_unit_iids_to_keep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;all_pn_unit_iids_after_processing&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extra_info_key_with_pn_unit_iids_to_keep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"all_pn_unit_iids_after_processing"</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pn_unit_iid_key</span> <span class="o">=</span> <span class="n">extra_info_key_with_pn_unit_iids_to_keep</span>
 
 <div class="viewcode-block" id="FilterToSpecifiedPNUnits.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.FilterToSpecifiedPNUnits.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;extra_info&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pn_unit_iid_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;extra_info&quot;</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s2">"extra_info"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pn_unit_iid_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">"extra_info"</span><span class="p">]):</span>
             <span class="c1"># ... short-circuit if the key does not exist in the `extra_info` dictionary</span>
             <span class="k">return</span> <span class="n">data</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># ... otherwise, filter the atom array</span>
-            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filter_to_specified_pn_units</span><span class="p">(</span>
-                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">],</span> <span class="nb">eval</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;extra_info&quot;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">pn_unit_iid_key</span><span class="p">])</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span> <span class="o">=</span> <span class="n">filter_to_specified_pn_units</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">],</span> <span class="nb">eval</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"extra_info"</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">pn_unit_iid_key</span><span class="p">])</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="n">data</span></div>
 </div>
@@ -722,7 +738,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">random_remove_pn_units_by_annotation_query</span><span class="p">(</span>
     <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delete_probability</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Randomly remove pn_units from atom_array based on a query string with configurable probability.</span>
+<span class="w">    </span><span class="sd">"""Randomly remove pn_units from atom_array based on a query string with configurable probability.</span>
 
 <span class="sd">    A pn_unit is considered to match the query if ALL atoms in the pn_unit satisfy the query condition.</span>
 
@@ -731,7 +747,7 @@
 <span class="sd">        query: Query string in atomworks.io Query syntax to identify pn_units to potentially delete</span>
 <span class="sd">        delete_probability: Probability of deleting matched pn_units (0.0 = never delete, 1.0 = always delete)</span>
 <span class="sd">        rng: Random number generator for probabilistic deletion</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">rng</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
 
@@ -768,13 +784,13 @@
 <div class="viewcode-block" id="RandomlyRemovePNUnitsByAnnotationQuery">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RandomlyRemovePNUnitsByAnnotationQuery">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RandomlyRemovePNUnitsByAnnotationQuery</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Randomly remove pn_units from atom_array based on a query string with configurable probability.</span>
+<span class="w">    </span><span class="sd">"""Randomly remove pn_units from atom_array based on a query string with configurable probability.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        query: Query string in atomworks.io query syntax to identify pn_units to potentially delete</span>
 <span class="sd">        delete_probability: Probability of deleting matched pn_units (0.0 = never delete, 1.0 = always delete)</span>
 <span class="sd">        rng_seed: Random seed for reproducibility (default: 42)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delete_probability</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">rng_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">query</span> <span class="o">=</span> <span class="n">query</span>
@@ -784,16 +800,16 @@
 <div class="viewcode-block" id="RandomlyRemovePNUnitsByAnnotationQuery.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RandomlyRemovePNUnitsByAnnotationQuery.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">])</span></div>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"pn_unit_iid"</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="RandomlyRemovePNUnitsByAnnotationQuery.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RandomlyRemovePNUnitsByAnnotationQuery.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="n">rng</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rng&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rng_seed</span><span class="p">))</span>
+        <span class="n">rng</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"rng"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rng_seed</span><span class="p">))</span>
 
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">random_remove_pn_units_by_annotation_query</span><span class="p">(</span>
-            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">delete_probability</span><span class="p">,</span> <span class="n">rng</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span> <span class="o">=</span> <span class="n">random_remove_pn_units_by_annotation_query</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">delete_probability</span><span class="p">,</span> <span class="n">rng</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
@@ -803,16 +819,16 @@
 <div class="viewcode-block" id="RandomlyRemoveLigands">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RandomlyRemoveLigands">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RandomlyRemoveLigands</span><span class="p">(</span><span class="n">RandomlyRemovePNUnitsByAnnotationQuery</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Randomly remove free-floating ligands (non-polymer ligands that are not covalent modifications)&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Randomly remove free-floating ligands (non-polymer ligands that are not covalent modifications)"""</span>
 
 <div class="viewcode-block" id="RandomlyRemoveLigands.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RandomlyRemoveLigands.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;is_polymer&quot;</span><span class="p">,</span> <span class="s2">&quot;is_covalent_modification&quot;</span><span class="p">])</span></div>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"is_polymer"</span><span class="p">,</span> <span class="s2">"is_covalent_modification"</span><span class="p">])</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delete_probability</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">rng_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">):</span>
-        <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;~is_polymer &amp; ~is_covalent_modification&quot;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="s2">"~is_polymer &amp; ~is_covalent_modification"</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">delete_probability</span><span class="o">=</span><span class="n">delete_probability</span><span class="p">,</span> <span class="n">rng_seed</span><span class="o">=</span><span class="n">rng_seed</span><span class="p">)</span></div>
 
 
@@ -820,7 +836,7 @@
 <div class="viewcode-block" id="RemoveUnresolvedLigandAtomsIfTooMany">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveUnresolvedLigandAtomsIfTooMany">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RemoveUnresolvedLigandAtomsIfTooMany</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    If the number of unresolved (zero-occupancy) ligand atoms exceeds a specified threshold, remove all masked (zero-occupancy) ligand atoms from the atom array.</span>
 
 <span class="sd">    This Transform is needed to avoid a significant proportion of the crop window from being filled with unresolved ligand atoms. Most commonly, this occurs with poorly resolved liposomes.</span>
@@ -829,7 +845,7 @@
 <span class="sd">        - unresolved_ligand_atom_limit(int): The maximum number of unresolved ligand atoms allowed in the atom array.</span>
 
 <span class="sd">    Example: See PDB ID `6CLZ`, which contains a liposome with many unresolved atoms.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unresolved_ligand_atom_limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">unresolved_ligand_atom_limit</span> <span class="o">=</span> <span class="n">unresolved_ligand_atom_limit</span>
@@ -837,15 +853,15 @@
 <div class="viewcode-block" id="RemoveUnresolvedLigandAtomsIfTooMany.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveUnresolvedLigandAtomsIfTooMany.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
-        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
-        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;occupancy&quot;</span><span class="p">])</span></div>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atom_array"</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"occupancy"</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="RemoveUnresolvedLigandAtomsIfTooMany.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveUnresolvedLigandAtomsIfTooMany.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span>
 
         <span class="c1"># Create a mask for unresolved ligand atoms</span>
         <span class="n">is_ligand_atom</span> <span class="o">=</span> <span class="o">~</span><span class="n">atom_array</span><span class="o">.</span><span class="n">is_polymer</span>
@@ -856,9 +872,9 @@
         <span class="n">num_unresolved_ligand_atoms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">is_unresolved_ligand_atom</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">num_unresolved_ligand_atoms</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">unresolved_ligand_atom_limit</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Removing </span><span class="si">{</span><span class="n">num_unresolved_ligand_atoms</span><span class="si">}</span><span class="s2"> unresolved ligand atoms from the atom array, exceeding the limit of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">unresolved_ligand_atom_limit</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Removing </span><span class="si">{</span><span class="n">num_unresolved_ligand_atoms</span><span class="si">}</span><span class="s2"> unresolved ligand atoms from the atom array, exceeding the limit of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">unresolved_ligand_atom_limit</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
-            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="o">~</span><span class="n">is_unresolved_ligand_atom</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="o">~</span><span class="n">is_unresolved_ligand_atom</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
@@ -887,13 +903,13 @@
 <div class="viewcode-block" id="RemovePolymersWithTooFewResolvedResidues">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemovePolymersWithTooFewResolvedResidues">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RemovePolymersWithTooFewResolvedResidues</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    From the AF-3 supplement, Section 2.5.4:</span>
-<span class="sd">        &gt; &quot;Any polymer chain containing fewer than 4 resolved residues is filtered out.&quot;</span>
+<span class="sd">        &gt; "Any polymer chain containing fewer than 4 resolved residues is filtered out."</span>
 
 <span class="sd">    We implement this filter as a Transform that removes polymer chains with fewer than `min_residues` resolved residues.</span>
 <span class="sd">    Note that upstream, we must ensure that the chosen query PN units are not polymer chains with too few resolved residues themselves.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_residues</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_residues</span> <span class="o">=</span> <span class="n">min_residues</span>
@@ -901,15 +917,15 @@
 <div class="viewcode-block" id="RemovePolymersWithTooFewResolvedResidues.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemovePolymersWithTooFewResolvedResidues.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
-        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
-        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;occupancy&quot;</span><span class="p">,</span> <span class="s2">&quot;is_polymer&quot;</span><span class="p">])</span></div>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atom_array"</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"occupancy"</span><span class="p">,</span> <span class="s2">"is_polymer"</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="RemovePolymersWithTooFewResolvedResidues.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemovePolymersWithTooFewResolvedResidues.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">remove_polymers_with_too_few_resolved_residues</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_residues</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span> <span class="o">=</span> <span class="n">remove_polymers_with_too_few_resolved_residues</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_residues</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
 
@@ -918,9 +934,9 @@
 <div class="viewcode-block" id="remove_unresolved_atoms">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.remove_unresolved_atoms">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">remove_unresolved_atoms</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">min_occupancy</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Remove atoms with occupancy less than `min_occupancy` from the atom array.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">atom_array</span><span class="o">.</span><span class="n">occupancy</span> <span class="o">&gt;=</span> <span class="n">min_occupancy</span><span class="p">]</span></div>
 
 
@@ -936,7 +952,7 @@
 <div class="viewcode-block" id="HandleUndesiredResTokens">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.HandleUndesiredResTokens">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">HandleUndesiredResTokens</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Remove, or otherwise handle, undesired residue tokens from the AtomArray.</span>
 
 <span class="sd">    For undesired residue names `res_name`, the following actions are taken:</span>
@@ -946,10 +962,10 @@
 <span class="sd">            - Map to the closest canonical residue name (if possible)</span>
 <span class="sd">            - Else, map to an unknown residue name (if possible, i.e if backbone atoms are present)</span>
 <span class="sd">            - Else, atomize</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">undesired_res_tokens</span><span class="p">:</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        HandleUndesiredResTokens is a Transform that removes undesired residue tokens from an AtomArray.</span>
 
 <span class="sd">        This class processes an AtomArray to identify and handle undesired residue names. The actions taken</span>
@@ -962,20 +978,20 @@
 <span class="sd">              or mapped.</span>
 
 <span class="sd">        Example:</span>
-<span class="sd">            &gt;&gt;&gt; transform = HandleUndesiredResTokens(undesired_res_tokens=[&quot;PTR&quot;, &quot;SO4&quot;])</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            &gt;&gt;&gt; transform = HandleUndesiredResTokens(undesired_res_tokens=["PTR", "SO4"])</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">undesired_res_tokens</span> <span class="o">=</span> <span class="n">undesired_res_tokens</span>
 
 <div class="viewcode-block" id="HandleUndesiredResTokens.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.HandleUndesiredResTokens.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
-        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
-        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;res_name&quot;</span><span class="p">,</span> <span class="s2">&quot;is_polymer&quot;</span><span class="p">,</span> <span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">,</span> <span class="s2">&quot;chain_type&quot;</span><span class="p">])</span></div>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atom_array"</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"res_name"</span><span class="p">,</span> <span class="s2">"is_polymer"</span><span class="p">,</span> <span class="s2">"pn_unit_iid"</span><span class="p">,</span> <span class="s2">"chain_type"</span><span class="p">])</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_closest_canonical_residue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">res_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">chain_type</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">force_unknown</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Map a residue name to the closest canonical residue name.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Map a residue name to the closest canonical residue name."""</span>
         <span class="n">one_letter_canonical</span> <span class="o">=</span> <span class="n">get_1_from_3_letter_code</span><span class="p">(</span>
             <span class="n">res_name</span><span class="p">,</span> <span class="n">chain_type</span><span class="o">=</span><span class="n">ChainType</span><span class="p">(</span><span class="n">chain_type</span><span class="p">),</span> <span class="n">use_closest_canonical</span><span class="o">=</span><span class="ow">not</span> <span class="n">force_unknown</span>
         <span class="p">)</span>
@@ -986,13 +1002,13 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_map_to_closest_canonical_residue</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">res_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">chain_type</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">has_hydrogens</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">atom_name</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Map a residue name to the closest canonical residue name.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Map a residue name to the closest canonical residue name."""</span>
 
         <span class="k">for</span> <span class="n">force_unknown</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
             <span class="n">canonical_res_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_closest_canonical_residue</span><span class="p">(</span><span class="n">res_name</span><span class="p">,</span> <span class="n">chain_type</span><span class="p">,</span> <span class="n">force_unknown</span><span class="p">)</span>
             <span class="n">canonical_res</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">residue</span><span class="p">(</span><span class="n">canonical_res_name</span><span class="p">)</span>
 
-            <span class="c1"># Remove hydrogens if non-canonical residue doesn&#39;t have hydrogens</span>
+            <span class="c1"># Remove hydrogens if non-canonical residue doesn't have hydrogens</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">has_hydrogens</span><span class="p">:</span>
                 <span class="n">canonical_res</span> <span class="o">=</span> <span class="n">canonical_res</span><span class="p">[</span><span class="n">not_isin</span><span class="p">(</span><span class="n">canonical_res</span><span class="o">.</span><span class="n">element</span><span class="p">,</span> <span class="n">HYDROGEN_LIKE_SYMBOLS</span><span class="p">)]</span>
 
@@ -1009,10 +1025,10 @@
 <div class="viewcode-block" id="HandleUndesiredResTokens.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.HandleUndesiredResTokens.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="s2">&quot;atomize&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">():</span>
-            <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;atomize&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">))</span>
+        <span class="k">if</span> <span class="s2">"atomize"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">():</span>
+            <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">"atomize"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">))</span>
 
         <span class="c1"># Mark undesired residues</span>
         <span class="n">to_remove</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">undesired_res_tokens</span><span class="p">)</span>
@@ -1045,7 +1061,7 @@
                     <span class="n">atom_name</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span><span class="p">[</span><span class="n">token_start</span><span class="p">:</span><span class="n">token_stop</span><span class="p">]),</span>  <span class="c1"># tuple for hashability</span>
                 <span class="p">)</span>
 
-                <span class="c1"># if new_res_name is the same as the original res_name (i.e. we didn&#39;t map to a canonical residue),</span>
+                <span class="c1"># if new_res_name is the same as the original res_name (i.e. we didn't map to a canonical residue),</span>
                 <span class="c1"># we atomize the residue</span>
                 <span class="k">if</span> <span class="n">new_res_name</span> <span class="o">==</span> <span class="n">old_res_name</span><span class="p">:</span>
                     <span class="n">atom_array</span><span class="o">.</span><span class="n">atomize</span><span class="p">[</span><span class="n">token_start</span><span class="p">:</span><span class="n">token_stop</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
@@ -1058,7 +1074,7 @@
 
         <span class="c1"># Drop undesired residues</span>
         <span class="n">atom_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="o">~</span><span class="n">to_remove</span><span class="p">]</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_array</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_array</span>
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
 
@@ -1067,12 +1083,12 @@
 <div class="viewcode-block" id="remove_protein_terminal_oxygen">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.remove_protein_terminal_oxygen">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">remove_protein_terminal_oxygen</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove terminal oxygen atoms (`OXT`) from protein chains.</span>
+<span class="w">    </span><span class="sd">"""Remove terminal oxygen atoms (`OXT`) from protein chains.</span>
 
 <span class="sd">    Terminal oxygen atoms are only removed from protein residues that are not atomized.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">is_atomized</span> <span class="o">=</span> <span class="n">get_annotation</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="s2">&quot;atomize&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">))</span>
-    <span class="n">is_terminal</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">&quot;OXT&quot;</span>
+<span class="sd">    """</span>
+    <span class="n">is_atomized</span> <span class="o">=</span> <span class="n">get_annotation</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="s2">"atomize"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">))</span>
+    <span class="n">is_terminal</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">"OXT"</span>
     <span class="n">is_protein</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_type</span><span class="p">,</span> <span class="n">ChainTypeInfo</span><span class="o">.</span><span class="n">PROTEINS</span><span class="p">)</span>
     <span class="n">remove</span> <span class="o">=</span> <span class="n">is_terminal</span> <span class="o">&amp;</span> <span class="n">is_protein</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">is_atomized</span>
 
@@ -1086,20 +1102,20 @@
 <div class="viewcode-block" id="RemoveTerminalOxygen">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveTerminalOxygen">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RemoveTerminalOxygen</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove terminal oxygen atoms (`OXT`) from the atom array.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Remove terminal oxygen atoms (`OXT`) from the atom array."""</span>
 
     <span class="c1"># TODO: Rename to RemoveProteinTerminalOxygen</span>
 
 <div class="viewcode-block" id="RemoveTerminalOxygen.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveTerminalOxygen.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_name&quot;</span><span class="p">,</span> <span class="s2">&quot;chain_type&quot;</span><span class="p">])</span></div>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atom_name"</span><span class="p">,</span> <span class="s2">"chain_type"</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="RemoveTerminalOxygen.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveTerminalOxygen.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">remove_protein_terminal_oxygen</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span> <span class="o">=</span> <span class="n">remove_protein_terminal_oxygen</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
 
@@ -1108,12 +1124,12 @@
 <div class="viewcode-block" id="remove_nucleic_acid_terminal_oxygen">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.remove_nucleic_acid_terminal_oxygen">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">remove_nucleic_acid_terminal_oxygen</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove terminal oxygen atoms (`OP3`) in nucleic acids from the atom array.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Remove terminal oxygen atoms (`OP3`) in nucleic acids from the atom array."""</span>
     <span class="c1"># Built mask non-atomized terminal oxygen atoms on nucleic acids</span>
     <span class="n">is_atomized</span> <span class="o">=</span> <span class="n">get_annotation</span><span class="p">(</span>
-        <span class="n">atom_array</span><span class="p">,</span> <span class="s2">&quot;atomize&quot;</span><span class="p">,</span> <span class="n">n_body</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">atom_array</span><span class="p">,</span> <span class="s2">"atomize"</span><span class="p">,</span> <span class="n">n_body</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
     <span class="p">)</span>
-    <span class="n">is_terminal</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">&quot;OP3&quot;</span>
+    <span class="n">is_terminal</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">"OP3"</span>
     <span class="n">is_nucleic_acid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_type</span><span class="p">,</span> <span class="n">ChainTypeInfo</span><span class="o">.</span><span class="n">NUCLEIC_ACIDS</span><span class="p">)</span>
 
     <span class="n">remove</span> <span class="o">=</span> <span class="n">is_terminal</span> <span class="o">&amp;</span> <span class="n">is_nucleic_acid</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">is_atomized</span>
@@ -1128,23 +1144,23 @@
 <div class="viewcode-block" id="RemoveNucleicAcidTerminalOxygen">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveNucleicAcidTerminalOxygen">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RemoveNucleicAcidTerminalOxygen</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Remove terminal oxygen atoms (`OP3`) in nucleic acids from the atom array.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
 <div class="viewcode-block" id="RemoveNucleicAcidTerminalOxygen.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveNucleicAcidTerminalOxygen.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
-        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
-        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_name&quot;</span><span class="p">,</span> <span class="s2">&quot;chain_type&quot;</span><span class="p">])</span></div>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atom_array"</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atom_name"</span><span class="p">,</span> <span class="s2">"chain_type"</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="RemoveNucleicAcidTerminalOxygen.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveNucleicAcidTerminalOxygen.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">remove_nucleic_acid_terminal_oxygen</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_array</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">remove_nucleic_acid_terminal_oxygen</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">])</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_array</span>
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
 
@@ -1177,8 +1193,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1212,7 +1228,7 @@
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
 </p></div>
       
     </div>

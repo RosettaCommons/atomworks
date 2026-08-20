@@ -26,29 +26,31 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/transforms/template';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
-        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.2.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
@@ -167,6 +169,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -293,6 +302,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -426,7 +442,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for atomworks.ml.transforms.template</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Transforms for adding and featurizing templates.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Transforms for adding and featurizing templates."""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
@@ -471,7 +487,7 @@
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.RF2AATemplate">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">RF2AATemplate</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data class for holding template information in the RF, RF2 &amp; RF2AA format.</span>
+<span class="w">    </span><span class="sd">"""Data class for holding template information in the RF, RF2 &amp; RF2AA format.</span>
 
 <span class="sd">    NOTE:</span>
 <span class="sd">        - RF templates only exist for proteins</span>
@@ -489,9 +505,9 @@
 <span class="sd">        - f0d: Tensor([1, n_templates, 8?]), [0,:,4] holds sequence identity info</span>
 <span class="sd">        - f1d: Tensor([1, n_templates x n_atoms_per_template, 3]), something in there may be related to template confidence, gaps?</span>
 <span class="sd">        - seq: Tensor([1, 100677]) (tensor, encoded with Chemdata.aa2num encoding)</span>
-<span class="sd">        - ids: list[tuple[str]]  # Holds the f&quot;{pdb_id}_{chain_id}&quot; of the template</span>
+<span class="sd">        - ids: list[tuple[str]]  # Holds the f"{pdb_id}_{chain_id}" of the template</span>
 <span class="sd">        - label: list[str]  # holds the lookup_id for this template</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">xyz</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>  <span class="c1"># [1, n_templates x n_atoms_per_template, 14, 3]</span>
     <span class="n">mask</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>  <span class="c1"># [1, n_templates x n_atom_per_template, 14]</span>
@@ -499,7 +515,7 @@
     <span class="n">f0d</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>  <span class="c1"># [1, n_templates, 8?]</span>
     <span class="n">f1d</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>  <span class="c1"># [1, n_templates x n_atoms_per_template, 3]</span>
     <span class="n">seq</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>  <span class="c1"># [1, n_templates x n_atoms_per_template]</span>
-    <span class="n">ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>  <span class="c1"># Holds the f&quot;{pdb_id}_{chain_id}&quot; of the template</span>
+    <span class="n">ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>  <span class="c1"># Holds the f"{pdb_id}_{chain_id}" of the template</span>
     <span class="n">label</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>  <span class="c1"># holds the lookup_id for this template</span>
 
     <span class="c1"># RF2AA ideal N, CA, C initial coordinates (protein), copied from `chemdata` in RF2AA to decouple from `atomworks.ml`</span>
@@ -538,11 +554,11 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">pdb_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ids</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"_"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ids</span><span class="p">])</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">chain_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ids</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"_"</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ids</span><span class="p">])</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_res_per_template</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -562,11 +578,11 @@
 
 <div class="viewcode-block" id="RF2AATemplate.subset">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.RF2AATemplate.subset">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template_idxs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;RF2AATemplate&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template_idxs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">"RF2AATemplate"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Subset the template to only include the template indices specified in `template_idxs`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">template_idxs</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">template_idxs</span><span class="p">),</span> <span class="s2">&quot;`template_idxs` must be unique&quot;</span>
+<span class="sd">        """</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">template_idxs</span><span class="p">)</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">template_idxs</span><span class="p">),</span> <span class="s2">"`template_idxs` must be unique"</span>
 
         <span class="c1"># Subset the data</span>
         <span class="n">template_atom_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qmap</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">template_idxs</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
@@ -590,11 +606,11 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">to_atom_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">template_idx</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">template_idx</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_templates</span> <span class="o">-</span> <span class="mi">1</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;template_idx must be an int between 0 and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_templates</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">template_idx</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">"template_idx must be an int between 0 and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_templates</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">template_idx</span><span class="si">}</span><span class="s2">"</span>
 
         <span class="c1"># Get pdb_id and chain_id</span>
         <span class="n">template_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ids</span><span class="p">[</span><span class="n">template_idx</span><span class="p">]</span>
-        <span class="n">pdb_id</span><span class="p">,</span> <span class="n">chain_id</span> <span class="o">=</span> <span class="n">template_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="n">pdb_id</span><span class="p">,</span> <span class="n">chain_id</span> <span class="o">=</span> <span class="n">template_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"_"</span><span class="p">)</span>
 
         <span class="c1"># Get indices to select the residues for the template</span>
         <span class="n">template_res_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qmap</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">template_idx</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -624,21 +640,21 @@
         <span class="n">atom_array</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">chain_id</span><span class="p">),</span> <span class="n">n_atom</span><span class="p">)</span>
 
         <span class="c1"># ... set the `is_polymer` annotation to True (all templates are polymers)</span>
-        <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;is_polymer&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">n_atom</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+        <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">"is_polymer"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">n_atom</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
 
         <span class="c1"># ... append custom annotation for which residue in the query protein this template</span>
         <span class="c1">#  residue aligns to (indexing starts with 0 at query sequence start)</span>
         <span class="n">aligned_query_res_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qmap</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">template_res_idxs</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-        <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;aligned_query_res_idx&quot;</span><span class="p">,</span> <span class="n">struc</span><span class="o">.</span><span class="n">spread_residue_wise</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">aligned_query_res_idx</span><span class="p">))</span>
+        <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">"aligned_query_res_idx"</span><span class="p">,</span> <span class="n">struc</span><span class="o">.</span><span class="n">spread_residue_wise</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">aligned_query_res_idx</span><span class="p">))</span>
 
         <span class="c1"># ... append custom annotation for alignment confidence</span>
         <span class="n">alignment_confidence</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">f1d</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">template_res_idxs</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
         <span class="c1"># NOTE: Some templates have the rare bug that the alignment confidence is `inf`. In this case</span>
         <span class="c1">#  we set it to 0.5 (since this was a presumably a parsing bug of the HHR file) and warn the user</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">alignment_confidence</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Template </span><span class="si">{</span><span class="n">template_id</span><span class="si">}</span><span class="s2"> has `inf` alignment confidence. Setting to 0.5.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Template </span><span class="si">{</span><span class="n">template_id</span><span class="si">}</span><span class="s2"> has `inf` alignment confidence. Setting to 0.5."</span><span class="p">)</span>
             <span class="n">alignment_confidence</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">alignment_confidence</span><span class="p">),</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">alignment_confidence</span><span class="p">)</span>
-        <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;alignment_confidence&quot;</span><span class="p">,</span> <span class="n">struc</span><span class="o">.</span><span class="n">spread_residue_wise</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">alignment_confidence</span><span class="p">))</span>
+        <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">"alignment_confidence"</span><span class="p">,</span> <span class="n">struc</span><span class="o">.</span><span class="n">spread_residue_wise</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">alignment_confidence</span><span class="p">))</span>
 
         <span class="c1"># ...mask residues with unresolved backbone atoms</span>
         <span class="n">atom_array</span> <span class="o">=</span> <span class="n">mask_polymer_residues_with_unresolved_frame_atoms</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
@@ -657,7 +673,7 @@
     <span class="n">mask_token_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">init_coords</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Generates blank template features for RF2AA.</span>
 
 <span class="sd">    Args:</span>
@@ -673,13 +689,13 @@
 <span class="sd">            - t1d (torch.Tensor): Tensor of shape (n_template, n_token, encoding.n_tokens) containing the 1D template features.</span>
 <span class="sd">            - mask (torch.Tensor): Tensor of shape (n_template, n_token, encoding.n_atoms_per_token) containing the mask information.</span>
 <span class="sd">            - template_origin (np.ndarray): Array of shape (n_template,) containing the origin of the templates.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># TODO: Fix fill value</span>
     <span class="c1"># Initialize blank template features</span>
-    <span class="n">xyz</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n_template</span><span class="p">,</span> <span class="n">n_token</span><span class="p">,</span> <span class="n">encoding</span><span class="o">.</span><span class="n">n_atoms_per_token</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">))</span>
+    <span class="n">xyz</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n_template</span><span class="p">,</span> <span class="n">n_token</span><span class="p">,</span> <span class="n">encoding</span><span class="o">.</span><span class="n">n_atoms_per_token</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">))</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_template</span><span class="p">,</span> <span class="n">n_token</span><span class="p">,</span> <span class="n">encoding</span><span class="o">.</span><span class="n">n_atoms_per_token</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
     <span class="n">t1d</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_template</span><span class="p">,</span> <span class="n">n_token</span><span class="p">,</span> <span class="n">encoding</span><span class="o">.</span><span class="n">n_tokens</span><span class="p">))</span>
-    <span class="n">template_origin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">n_template</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">template_origin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">n_template</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
 
     <span class="c1"># Fill in the initial coordinates and mask values</span>
     <span class="n">xyz</span><span class="p">[:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">init_coords</span>
@@ -697,31 +713,31 @@
 <span class="nd">@cache</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_lazy_load_template_lookup_dict</span><span class="p">(</span><span class="n">template_lookup_path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
     <span class="n">template_lookup_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">template_lookup_path</span><span class="p">,</span> <span class="n">keep_default_na</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">na_values</span><span class="o">=</span><span class="n">NA_VALUES</span><span class="p">)</span>
-    <span class="n">template_lookup_df</span><span class="p">[</span><span class="s2">&quot;HASH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">template_lookup_df</span><span class="p">[</span><span class="s2">&quot;HASH&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s2">06d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">template_lookup_df</span><span class="p">[</span><span class="s2">"HASH"</span><span class="p">]</span> <span class="o">=</span> <span class="n">template_lookup_df</span><span class="p">[</span><span class="s2">"HASH"</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s2">06d</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="n">pdb_chain_id_to_hash_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-        <span class="nb">zip</span><span class="p">(</span><span class="n">template_lookup_df</span><span class="p">[</span><span class="s2">&quot;CHAINID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">template_lookup_df</span><span class="p">[</span><span class="s2">&quot;HASH&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="nb">zip</span><span class="p">(</span><span class="n">template_lookup_df</span><span class="p">[</span><span class="s2">"CHAINID"</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">template_lookup_df</span><span class="p">[</span><span class="s2">"HASH"</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">pdb_chain_id_to_hash_dict</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_rf_template_id</span><span class="p">(</span><span class="n">pdb_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">chain_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">chain_type</span><span class="p">:</span> <span class="n">ChainType</span><span class="p">,</span> <span class="n">template_lookup_path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Retrieves the template lookup ID for a given PDB and chain ID combination.</span>
 <span class="sd">    (NOTE: This is the `chid_to_hash` ID used for MSAs &amp; Templates used in the original RF2AA)</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    - pdb_id (str): The PDB ID of the protein structure. E.g., &quot;1A2K&quot;.</span>
-<span class="sd">    - chain_id (str): The chain ID within the PDB structure. E.g., &quot;A&quot;. Notably, no transformation ID.</span>
+<span class="sd">    - pdb_id (str): The PDB ID of the protein structure. E.g., "1A2K".</span>
+<span class="sd">    - chain_id (str): The chain ID within the PDB structure. E.g., "A". Notably, no transformation ID.</span>
 <span class="sd">    - chain_type (ChainType): The type of the chain, as defined in the ChainType enum.</span>
 <span class="sd">    - template_lookup_path (PathLike): Path to the template MSA lookup file, typically on the DIGS.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">    - str: The template lookup ID corresponding to the combined PDB and chain ID.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">combined_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pdb_id</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">chain_id</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="sd">    """</span>
+    <span class="n">combined_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">pdb_id</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">chain_id</span><span class="si">}</span><span class="s2">"</span>
     <span class="k">if</span> <span class="n">chain_type</span> <span class="o">==</span> <span class="n">ChainType</span><span class="o">.</span><span class="n">POLYPEPTIDE_L</span><span class="p">:</span>
         <span class="c1"># For polypeptide(L) chains, we lookup the identified based on the mapping stored on disk</span>
-        <span class="c1"># If we don&#39;t find a match, we append &quot;_single_sequence&quot; to the combined ID to ensure we won&#39;t find any MSAs</span>
+        <span class="c1"># If we don't find a match, we append "_single_sequence" to the combined ID to ensure we won't find any MSAs</span>
         <span class="k">return</span> <span class="n">_lazy_load_template_lookup_dict</span><span class="p">(</span><span class="n">template_lookup_path</span><span class="o">=</span><span class="n">template_lookup_path</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">combined_id</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">chain_type</span> <span class="o">==</span> <span class="n">ChainType</span><span class="o">.</span><span class="n">RNA</span> <span class="ow">or</span> <span class="n">chain_type</span> <span class="o">==</span> <span class="n">ChainType</span><span class="o">.</span><span class="n">DNA</span><span class="p">:</span>
         <span class="c1"># For nucleic acids, we use `{pdb_id}_{chain_id}` as the identifier</span>
@@ -733,18 +749,18 @@
         <span class="c1"># ... skip if no template ID (e.g. no matching template ID found in the lookup dict)</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="n">path_to_template</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">template_base_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">rf_template_id</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">rf_template_id</span><span class="si">}</span><span class="s2">.pt&quot;</span>
+    <span class="n">path_to_template</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">template_base_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">rf_template_id</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">rf_template_id</span><span class="si">}</span><span class="s2">.pt"</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path_to_template</span><span class="p">):</span>
         <span class="c1"># ... skip if template file does not exist</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_to_template</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span> <span class="n">weights_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_to_template</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="s2">"cpu"</span><span class="p">,</span> <span class="n">weights_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="AddRFTemplates">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.AddRFTemplates">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AddRFTemplates</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Adds RF templates to the data.</span>
 
 <span class="sd">    The templates are added to the data under the key `template`.</span>
@@ -761,7 +777,7 @@
 <span class="sd">                - seq_similarity (float): The sequence similarity of the template to the query.</span>
 <span class="sd">                - atom_array (AtomArray): The atom array of the template.</span>
 <span class="sd">                - n_res (int): The number of residues in the template.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -774,7 +790,7 @@
         <span class="n">template_lookup_path</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">template_base_dir</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Initialize the AddRFTemplates transform.</span>
 
 <span class="sd">        Args:</span>
@@ -795,19 +811,19 @@
 <span class="sd">            AssertionError: If `min_seq_similarity` or `max_seq_similarity` are not between 0.0 and 100.0.</span>
 <span class="sd">            AssertionError: If `n_template` is not a positive integer.</span>
 <span class="sd">            AssertionError: If `min_template_length` is not a non-negative integer.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">min_seq_similarity</span> <span class="o">&lt;=</span> <span class="mf">100.0</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;min_seq_similarity must be between 0.0 and 100.0, got </span><span class="si">{</span><span class="n">min_seq_similarity</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">"min_seq_similarity must be between 0.0 and 100.0, got </span><span class="si">{</span><span class="n">min_seq_similarity</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">max_seq_similarity</span> <span class="o">&lt;=</span> <span class="mf">100.0</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;max_seq_similarity must be between 0.0 and 100.0, got </span><span class="si">{</span><span class="n">max_seq_similarity</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">"max_seq_similarity must be between 0.0 and 100.0, got </span><span class="si">{</span><span class="n">max_seq_similarity</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_n_template</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">max_n_template</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;max_n_template must be a positive integer, got </span><span class="si">{</span><span class="n">max_n_template</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">"max_n_template must be a positive integer, got </span><span class="si">{</span><span class="n">max_n_template</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">min_template_length</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">min_template_length</span> <span class="o">&gt;=</span> <span class="mi">0</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;min_template_length must be a non-negative integer, got </span><span class="si">{</span><span class="n">min_template_length</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">"min_template_length must be a non-negative integer, got </span><span class="si">{</span><span class="n">min_template_length</span><span class="si">}</span><span class="s2">"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">n_template</span> <span class="o">=</span> <span class="n">max_n_template</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pick_top</span> <span class="o">=</span> <span class="n">pick_top</span>
@@ -815,33 +831,33 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">max_seq_similarity</span> <span class="o">=</span> <span class="n">max_seq_similarity</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_template_length</span> <span class="o">=</span> <span class="n">min_template_length</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filter_by_query_length</span> <span class="o">=</span> <span class="n">filter_by_query_length</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">template_lookup_path</span> <span class="o">=</span> <span class="n">template_lookup_path</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TEMPLATE_LOOKUP_PATH&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">template_base_dir</span> <span class="o">=</span> <span class="n">template_base_dir</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TEMPLATE_BASE_DIR&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">template_lookup_path</span> <span class="o">=</span> <span class="n">template_lookup_path</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"TEMPLATE_LOOKUP_PATH"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">template_base_dir</span> <span class="o">=</span> <span class="n">template_base_dir</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"TEMPLATE_BASE_DIR"</span><span class="p">)</span>
 
 <div class="viewcode-block" id="AddRFTemplates.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.AddRFTemplates.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="s2">&quot;chain_info&quot;</span><span class="p">])</span>
-        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span></div>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atom_array"</span><span class="p">,</span> <span class="s2">"chain_info"</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="AddRFTemplates.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.AddRFTemplates.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="s2">&quot;pdb_id&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No PDB ID found in data. Skipping template addition.&quot;</span><span class="p">)</span>
-            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="s2">"pdb_id"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"No PDB ID found in data. Skipping template addition."</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">"template"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">return</span> <span class="n">data</span>
 
-        <span class="n">pdb_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;pdb_id&quot;</span><span class="p">]</span>
-        <span class="n">chain_info</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;chain_info&quot;</span><span class="p">]</span>
+        <span class="n">pdb_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"pdb_id"</span><span class="p">]</span>
+        <span class="n">chain_info</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"chain_info"</span><span class="p">]</span>
 
         <span class="c1"># Load template information</span>
         <span class="c1"># NOTE: Currently templates only exist for proteins</span>
         <span class="n">templates</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">chain_id</span> <span class="ow">in</span> <span class="n">chain_info</span><span class="p">:</span>
             <span class="c1"># get chain_type and convert to Enum</span>
-            <span class="n">chain_type</span> <span class="o">=</span> <span class="n">chain_info</span><span class="p">[</span><span class="n">chain_id</span><span class="p">][</span><span class="s2">&quot;chain_type&quot;</span><span class="p">]</span>
+            <span class="n">chain_type</span> <span class="o">=</span> <span class="n">chain_info</span><span class="p">[</span><span class="n">chain_id</span><span class="p">][</span><span class="s2">"chain_type"</span><span class="p">]</span>
             <span class="n">chain_type</span> <span class="o">=</span> <span class="n">ChainType</span><span class="o">.</span><span class="n">as_enum</span><span class="p">(</span><span class="n">chain_type</span><span class="p">)</span>
 
             <span class="n">rf_template</span> <span class="o">=</span> <span class="kc">None</span>
@@ -850,7 +866,7 @@
                 <span class="n">rf_template</span> <span class="o">=</span> <span class="n">_load_rf_template</span><span class="p">(</span><span class="n">rf_template_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_base_dir</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">rf_template</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No RF template found for </span><span class="si">{</span><span class="n">pdb_id</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">chain_id</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No RF template found for </span><span class="si">{</span><span class="n">pdb_id</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">chain_id</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
                 <span class="c1"># early exit if no templates</span>
                 <span class="k">continue</span>
 
@@ -889,19 +905,19 @@
             <span class="n">chain_templates</span> <span class="o">=</span> <span class="n">chain_templates</span><span class="o">.</span><span class="n">subset</span><span class="p">(</span><span class="n">valid_template_idxs</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_template</span><span class="p">])</span>
             <span class="n">templates</span><span class="p">[</span><span class="n">chain_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="p">{</span>
-                    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">chain_templates</span><span class="o">.</span><span class="n">ids</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                    <span class="s2">&quot;pdb_id&quot;</span><span class="p">:</span> <span class="n">chain_templates</span><span class="o">.</span><span class="n">pdb_ids</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                    <span class="s2">&quot;chain_id&quot;</span><span class="p">:</span> <span class="n">chain_templates</span><span class="o">.</span><span class="n">chain_ids</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                    <span class="s2">&quot;template_lookup_id&quot;</span><span class="p">:</span> <span class="n">chain_templates</span><span class="o">.</span><span class="n">lookup_id</span><span class="p">,</span>
-                    <span class="s2">&quot;seq_similarity&quot;</span><span class="p">:</span> <span class="n">chain_templates</span><span class="o">.</span><span class="n">seq_similarity_to_query</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                    <span class="s2">&quot;atom_array&quot;</span><span class="p">:</span> <span class="n">chain_templates</span><span class="o">.</span><span class="n">to_atom_array</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
-                    <span class="s2">&quot;n_res&quot;</span><span class="p">:</span> <span class="n">chain_templates</span><span class="o">.</span><span class="n">n_res_per_template</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="s2">"id"</span><span class="p">:</span> <span class="n">chain_templates</span><span class="o">.</span><span class="n">ids</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="s2">"pdb_id"</span><span class="p">:</span> <span class="n">chain_templates</span><span class="o">.</span><span class="n">pdb_ids</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="s2">"chain_id"</span><span class="p">:</span> <span class="n">chain_templates</span><span class="o">.</span><span class="n">chain_ids</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="s2">"template_lookup_id"</span><span class="p">:</span> <span class="n">chain_templates</span><span class="o">.</span><span class="n">lookup_id</span><span class="p">,</span>
+                    <span class="s2">"seq_similarity"</span><span class="p">:</span> <span class="n">chain_templates</span><span class="o">.</span><span class="n">seq_similarity_to_query</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="s2">"atom_array"</span><span class="p">:</span> <span class="n">chain_templates</span><span class="o">.</span><span class="n">to_atom_array</span><span class="p">(</span><span class="n">i</span><span class="p">),</span>
+                    <span class="s2">"n_res"</span><span class="p">:</span> <span class="n">chain_templates</span><span class="o">.</span><span class="n">n_res_per_template</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
                 <span class="p">}</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">chain_templates</span><span class="o">.</span><span class="n">n_templates</span><span class="p">)</span>
             <span class="p">]</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">templates</span><span class="p">[</span><span class="n">chain_id</span><span class="p">])</span><span class="si">}</span><span class="s2"> templates for chain </span><span class="si">{</span><span class="n">chain_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">chain_templates</span><span class="o">.</span><span class="n">ids</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Added </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">templates</span><span class="p">[</span><span class="n">chain_id</span><span class="p">])</span><span class="si">}</span><span class="s2"> templates for chain </span><span class="si">{</span><span class="n">chain_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">chain_templates</span><span class="o">.</span><span class="n">ids</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
 
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">templates</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"template"</span><span class="p">]</span> <span class="o">=</span> <span class="n">templates</span>
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
 
@@ -910,7 +926,7 @@
 <div class="viewcode-block" id="FeaturizeTemplatesLikeRF2AA">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.FeaturizeTemplatesLikeRF2AA">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FeaturizeTemplatesLikeRF2AA</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A transform that featurizes RFTemplates templates for RF2AA.</span>
 
 <span class="sd">    This class takes the templates added by the `AddRFTemplates` transform and featurizes them</span>
@@ -933,7 +949,7 @@
 <span class="sd">        AssertionError: If `n_template` is not a positive integer.</span>
 <span class="sd">        AssertionError: If `encoding` is not an instance of `TokenEncoding`.</span>
 <span class="sd">        AssertionError: If `init_coords` is a tensor and its dimensions do not match the expected shape.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">requires_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">AddRFTemplates</span><span class="p">,</span> <span class="n">AddWithinPolyResIdxAnnotation</span><span class="p">]</span>
 
@@ -945,7 +961,7 @@
         <span class="n">encoding</span><span class="p">:</span> <span class="n">TokenEncoding</span> <span class="o">=</span> <span class="n">RF2AA_ATOM36_ENCODING</span><span class="p">,</span>
         <span class="n">allowed_chain_types</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ChainType</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ChainType</span><span class="o">.</span><span class="n">POLYPEPTIDE_L</span><span class="p">,</span> <span class="n">ChainType</span><span class="o">.</span><span class="n">RNA</span><span class="p">],</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Initializes the FeaturizeRFTemplatesForRF2AA transform.</span>
 
 <span class="sd">        Args:</span>
@@ -961,19 +977,19 @@
 <span class="sd">            AssertionError: If `encoding` is not an instance of `TokenEncoding`.</span>
 <span class="sd">            AssertionError: If `init_coords` is a tensor and its dimensions do not match the expected shape.</span>
 <span class="sd">            AssertionError: If `allowed_chain_types` is not a list or contains any elements that are not instances of `ChainType`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_template</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">n_template</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;n_template must be a positive integer, got </span><span class="si">{</span><span class="n">n_template</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">"n_template must be a positive integer, got </span><span class="si">{</span><span class="n">n_template</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
             <span class="n">encoding</span><span class="p">,</span> <span class="n">TokenEncoding</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;encoding must be an instance of TokenEncoding, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">"encoding must be an instance of TokenEncoding, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">allowed_chain_types</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">allowed_chain_types</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;allowed_chain_types must be a non-empty list, got </span><span class="si">{</span><span class="n">allowed_chain_types</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">"allowed_chain_types must be a non-empty list, got </span><span class="si">{</span><span class="n">allowed_chain_types</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span>
             <span class="n">allowed_chain_types</span><span class="p">,</span> <span class="n">ChainType</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">&quot;Allowed chain types must be a list of ChainType enums. Got </span><span class="si">{</span><span class="n">allowed_chain_types</span><span class="si">=}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">"Allowed chain types must be a list of ChainType enums. Got </span><span class="si">{</span><span class="n">allowed_chain_types</span><span class="si">=}</span><span class="s2">."</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_template</span> <span class="o">=</span> <span class="n">n_template</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mask_token_idx</span> <span class="o">=</span> <span class="n">mask_token_idx</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init_coords</span> <span class="o">=</span> <span class="n">init_coords</span>
@@ -982,29 +998,29 @@
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">init_coords</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
             <span class="n">n_dim</span> <span class="o">=</span> <span class="n">init_coords</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="k">assert</span> <span class="n">n_dim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;init_coords must have 3 dimensions, got </span><span class="si">{</span><span class="n">n_dim</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">assert</span> <span class="n">n_dim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"init_coords must have 3 dimensions, got </span><span class="si">{</span><span class="n">n_dim</span><span class="si">}</span><span class="s2">"</span>
 
             <span class="k">if</span> <span class="n">init_coords</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="n">n_token</span> <span class="o">=</span> <span class="n">init_coords</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
                 <span class="k">assert</span> <span class="p">(</span>
                     <span class="n">n_token</span> <span class="o">==</span> <span class="n">encoding</span><span class="o">.</span><span class="n">n_atoms_per_token</span>
-                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;init_coords must have </span><span class="si">{</span><span class="n">encoding</span><span class="o">.</span><span class="n">n_atoms_per_token</span><span class="si">}</span><span class="s2"> tokens, got </span><span class="si">{</span><span class="n">n_token</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">),</span> <span class="sa">f</span><span class="s2">"init_coords must have </span><span class="si">{</span><span class="n">encoding</span><span class="o">.</span><span class="n">n_atoms_per_token</span><span class="si">}</span><span class="s2"> tokens, got </span><span class="si">{</span><span class="n">n_token</span><span class="si">}</span><span class="s2">"</span>
 
 <div class="viewcode-block" id="FeaturizeTemplatesLikeRF2AA.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.FeaturizeTemplatesLikeRF2AA.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
-        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;template&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
-        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
-        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;chain_type&quot;</span><span class="p">,</span> <span class="s2">&quot;within_poly_res_idx&quot;</span><span class="p">])</span></div>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"template"</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"template"</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"chain_type"</span><span class="p">,</span> <span class="s2">"within_poly_res_idx"</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="FeaturizeTemplatesLikeRF2AA.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.FeaturizeTemplatesLikeRF2AA.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="c1"># Extract data</span>
-        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
-        <span class="n">templates_by_chain</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span>
+        <span class="n">templates_by_chain</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"template"</span><span class="p">]</span>
 
         <span class="c1"># Initialize empty template features (= all padded) to fill later</span>
         <span class="n">xyz</span><span class="p">,</span> <span class="n">t1d</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">blank_rf2aa_template_features</span><span class="p">(</span>
@@ -1034,7 +1050,7 @@
             <span class="c1"># Get chain token starts (useful for going from atom-level &gt; token-level annotations)</span>
             <span class="n">_c_token_starts</span> <span class="o">=</span> <span class="n">get_token_starts</span><span class="p">(</span><span class="n">chain</span><span class="p">)</span>  <span class="c1"># [n_token_in_chain] (int)</span>
             <span class="c1"># ... atomized tokens cannot be matched to templates</span>
-            <span class="k">if</span> <span class="s2">&quot;atomize&quot;</span> <span class="ow">in</span> <span class="n">chain</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">"atomize"</span> <span class="ow">in</span> <span class="n">chain</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">():</span>
                 <span class="n">is_token_atomized</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">atomize</span><span class="p">[</span><span class="n">_c_token_starts</span><span class="p">]</span>  <span class="c1"># [n_token_in_chain] (bool)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">is_token_atomized</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">_c_token_starts</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
@@ -1042,7 +1058,7 @@
 
             <span class="c1"># Featurize the templates and insert into the template features</span>
             <span class="k">for</span> <span class="n">tmpl_idx</span><span class="p">,</span> <span class="n">tmpl_data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">templates_by_chain</span><span class="p">[</span><span class="n">chain_id</span><span class="p">]):</span>
-                <span class="n">template</span> <span class="o">=</span> <span class="n">tmpl_data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
+                <span class="n">template</span> <span class="o">=</span> <span class="n">tmpl_data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span>
 
                 <span class="c1"># Filter the template to only include tokens that are aligned to the query chain and that are not atomized</span>
                 <span class="c1"># ... we use -1 as a placeholder query_res_idx for template tokens without alignment</span>
@@ -1087,7 +1103,7 @@
                 <span class="n">_tmpl_xyz</span> <span class="o">=</span> <span class="n">select_data_by_id</span><span class="p">(</span>
                     <span class="n">select_ids</span><span class="o">=</span><span class="n">token_ids_to_fill</span><span class="p">,</span>
                     <span class="n">data_ids</span><span class="o">=</span><span class="n">template_token_id</span><span class="p">,</span>
-                    <span class="n">data</span><span class="o">=</span><span class="n">template_encoded</span><span class="p">[</span><span class="s2">&quot;xyz&quot;</span><span class="p">],</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">template_encoded</span><span class="p">[</span><span class="s2">"xyz"</span><span class="p">],</span>
                     <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">xyz</span><span class="p">[</span><span class="n">tmpl_idx</span><span class="p">,</span> <span class="n">token_idxs_to_fill</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">_tmpl_xyz</span><span class="p">)</span>
@@ -1096,7 +1112,7 @@
                 <span class="n">_tmpl_mask</span> <span class="o">=</span> <span class="n">select_data_by_id</span><span class="p">(</span>
                     <span class="n">select_ids</span><span class="o">=</span><span class="n">token_ids_to_fill</span><span class="p">,</span>
                     <span class="n">data_ids</span><span class="o">=</span><span class="n">template_token_id</span><span class="p">,</span>
-                    <span class="n">data</span><span class="o">=</span><span class="n">template_encoded</span><span class="p">[</span><span class="s2">&quot;mask&quot;</span><span class="p">],</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">template_encoded</span><span class="p">[</span><span class="s2">"mask"</span><span class="p">],</span>
                     <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">mask</span><span class="p">[</span><span class="n">tmpl_idx</span><span class="p">,</span> <span class="n">token_idxs_to_fill</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">_tmpl_mask</span><span class="p">)</span>
@@ -1105,7 +1121,7 @@
                 <span class="n">_tmpl_seq</span> <span class="o">=</span> <span class="n">select_data_by_id</span><span class="p">(</span>
                     <span class="n">select_ids</span><span class="o">=</span><span class="n">token_ids_to_fill</span><span class="p">,</span>
                     <span class="n">data_ids</span><span class="o">=</span><span class="n">template_token_id</span><span class="p">,</span>
-                    <span class="n">data</span><span class="o">=</span><span class="n">template_encoded</span><span class="p">[</span><span class="s2">&quot;seq&quot;</span><span class="p">],</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">template_encoded</span><span class="p">[</span><span class="s2">"seq"</span><span class="p">],</span>
                     <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">_tmpl_confidence</span> <span class="o">=</span> <span class="n">select_data_by_id</span><span class="p">(</span>
@@ -1123,10 +1139,10 @@
                 <span class="n">t1d</span><span class="p">[</span><span class="n">tmpl_idx</span><span class="p">,</span> <span class="n">token_idxs_to_fill</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">_tmpl_confidence</span><span class="p">)</span>
 
         <span class="c1"># Save the template features</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;template_feat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;xyz&quot;</span><span class="p">:</span> <span class="n">xyz</span><span class="p">,</span>  <span class="c1"># [n_template, n_res, n_atoms_per_token, 3] (float)</span>
-            <span class="s2">&quot;mask&quot;</span><span class="p">:</span> <span class="n">mask</span><span class="p">,</span>  <span class="c1"># [n_template, n_res, n_atoms_per_token] (bool)</span>
-            <span class="s2">&quot;t1d&quot;</span><span class="p">:</span> <span class="n">t1d</span><span class="p">,</span>  <span class="c1"># [n_tepmlate, n_res, n_tokens],  [0:n_tokens-1] = one-hot encoded sequence, [-1] = confidence</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"template_feat"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"xyz"</span><span class="p">:</span> <span class="n">xyz</span><span class="p">,</span>  <span class="c1"># [n_template, n_res, n_atoms_per_token, 3] (float)</span>
+            <span class="s2">"mask"</span><span class="p">:</span> <span class="n">mask</span><span class="p">,</span>  <span class="c1"># [n_template, n_res, n_atoms_per_token] (bool)</span>
+            <span class="s2">"t1d"</span><span class="p">:</span> <span class="n">t1d</span><span class="p">,</span>  <span class="c1"># [n_tepmlate, n_res, n_tokens],  [0:n_tokens-1] = one-hot encoded sequence, [-1] = confidence</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
@@ -1136,7 +1152,7 @@
 <div class="viewcode-block" id="blank_af3_template_features">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.blank_af3_template_features">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">blank_af3_template_features</span><span class="p">(</span><span class="n">n_templates</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_tokens</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">gap_token_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Generates blank template features for AF3.</span>
 
 <span class="sd">    Args:</span>
@@ -1146,13 +1162,13 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: A dictionary containing initialized template features.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;template_restype&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n_templates</span><span class="p">,</span> <span class="n">n_tokens</span><span class="p">),</span> <span class="n">gap_token_index</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
-        <span class="s2">&quot;template_pseudo_beta_mask&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_templates</span><span class="p">,</span> <span class="n">n_tokens</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">),</span>
-        <span class="s2">&quot;template_backbone_frame_mask&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_templates</span><span class="p">,</span> <span class="n">n_tokens</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">),</span>
-        <span class="s2">&quot;template_distogram&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n_templates</span><span class="p">,</span> <span class="n">n_tokens</span><span class="p">,</span> <span class="n">n_tokens</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">)),</span>
-        <span class="s2">&quot;template_unit_vector&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_templates</span><span class="p">,</span> <span class="n">n_tokens</span><span class="p">,</span> <span class="n">n_tokens</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+        <span class="s2">"template_restype"</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n_templates</span><span class="p">,</span> <span class="n">n_tokens</span><span class="p">),</span> <span class="n">gap_token_index</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+        <span class="s2">"template_pseudo_beta_mask"</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_templates</span><span class="p">,</span> <span class="n">n_tokens</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">),</span>
+        <span class="s2">"template_backbone_frame_mask"</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_templates</span><span class="p">,</span> <span class="n">n_tokens</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">),</span>
+        <span class="s2">"template_distogram"</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n_templates</span><span class="p">,</span> <span class="n">n_tokens</span><span class="p">,</span> <span class="n">n_tokens</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">)),</span>
+        <span class="s2">"template_unit_vector"</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_templates</span><span class="p">,</span> <span class="n">n_tokens</span><span class="p">,</span> <span class="n">n_tokens</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
     <span class="p">}</span></div>
 
 
@@ -1163,11 +1179,11 @@
     <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
     <span class="n">templates_by_chain</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]],</span>
     <span class="n">sequence_encoding</span><span class="p">:</span> <span class="n">AF3SequenceEncoding</span><span class="p">,</span>
-    <span class="n">gap_token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&lt;G&gt;&quot;</span><span class="p">,</span>
+    <span class="n">gap_token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"&lt;G&gt;"</span><span class="p">,</span>
     <span class="n">allowed_chain_type</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ChainType</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ChainType</span><span class="o">.</span><span class="n">POLYPEPTIDE_L</span><span class="p">,</span> <span class="n">ChainType</span><span class="o">.</span><span class="n">RNA</span><span class="p">],</span>
     <span class="n">distogram_bins</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">3.25</span><span class="p">,</span> <span class="mf">50.75</span><span class="p">,</span> <span class="mi">38</span><span class="p">),</span>  <span class="c1"># in Angstrom # noqa: B008</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Generate AF3 template features for a given (cropped) atom array and the corresponding templates.</span>
 
 <span class="sd">    NOTE: Number of templates (n_template) is determined by the number of templates in the templates_by_chain dict.</span>
@@ -1201,7 +1217,7 @@
 <span class="sd">        `AF2 supplementary information &lt;https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf&gt;`_</span>
 
 <span class="sd">    NOTE: For templates a token is always a residue since we never align ligands, non-canonicals, PTMs, etc.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Get the maximum number of templates for any chain, which will be the number of templates to fill</span>
     <span class="n">n_templates</span> <span class="o">=</span> <span class="p">(</span>
@@ -1216,11 +1232,11 @@
     <span class="n">_n_token</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">_a_token_starts</span><span class="p">)</span>
 
     <span class="n">blank_af3_template</span> <span class="o">=</span> <span class="n">blank_af3_template_features</span><span class="p">(</span><span class="n">n_templates</span><span class="p">,</span> <span class="n">_n_token</span><span class="p">,</span> <span class="n">sequence_encoding</span><span class="o">.</span><span class="n">token_to_idx</span><span class="p">[</span><span class="n">gap_token</span><span class="p">])</span>
-    <span class="n">res_type</span> <span class="o">=</span> <span class="n">blank_af3_template</span><span class="p">[</span><span class="s2">&quot;template_restype&quot;</span><span class="p">]</span>  <span class="c1"># [n_templates, n_token] (int)</span>
-    <span class="n">template_pseudo_beta_mask</span> <span class="o">=</span> <span class="n">blank_af3_template</span><span class="p">[</span><span class="s2">&quot;template_pseudo_beta_mask&quot;</span><span class="p">]</span>  <span class="c1"># [n_templates, n_token] (bool)</span>
-    <span class="n">template_backbone_frame_mask</span> <span class="o">=</span> <span class="n">blank_af3_template</span><span class="p">[</span><span class="s2">&quot;template_backbone_frame_mask&quot;</span><span class="p">]</span>  <span class="c1"># [n_templates, n_token] (bool)</span>
-    <span class="n">template_distogram</span> <span class="o">=</span> <span class="n">blank_af3_template</span><span class="p">[</span><span class="s2">&quot;template_distogram&quot;</span><span class="p">]</span>  <span class="c1"># [n_templates, n_token, n_token] (float)</span>
-    <span class="n">template_unit_vector</span> <span class="o">=</span> <span class="n">blank_af3_template</span><span class="p">[</span><span class="s2">&quot;template_unit_vector&quot;</span><span class="p">]</span>  <span class="c1"># [n_templates, n_token, n_token, 3] (float)</span>
+    <span class="n">res_type</span> <span class="o">=</span> <span class="n">blank_af3_template</span><span class="p">[</span><span class="s2">"template_restype"</span><span class="p">]</span>  <span class="c1"># [n_templates, n_token] (int)</span>
+    <span class="n">template_pseudo_beta_mask</span> <span class="o">=</span> <span class="n">blank_af3_template</span><span class="p">[</span><span class="s2">"template_pseudo_beta_mask"</span><span class="p">]</span>  <span class="c1"># [n_templates, n_token] (bool)</span>
+    <span class="n">template_backbone_frame_mask</span> <span class="o">=</span> <span class="n">blank_af3_template</span><span class="p">[</span><span class="s2">"template_backbone_frame_mask"</span><span class="p">]</span>  <span class="c1"># [n_templates, n_token] (bool)</span>
+    <span class="n">template_distogram</span> <span class="o">=</span> <span class="n">blank_af3_template</span><span class="p">[</span><span class="s2">"template_distogram"</span><span class="p">]</span>  <span class="c1"># [n_templates, n_token, n_token] (float)</span>
+    <span class="n">template_unit_vector</span> <span class="o">=</span> <span class="n">blank_af3_template</span><span class="p">[</span><span class="s2">"template_unit_vector"</span><span class="p">]</span>  <span class="c1"># [n_templates, n_token, n_token, 3] (float)</span>
 
     <span class="c1"># Fill the template features chain by chain and template by template ...</span>
     <span class="k">for</span> <span class="n">chain</span> <span class="ow">in</span> <span class="n">chain_instance_iter</span><span class="p">(</span><span class="n">atom_array</span><span class="p">):</span>
@@ -1238,7 +1254,7 @@
         <span class="c1"># Get chain token starts (useful for going from atom-level &gt; token-level annotations)</span>
         <span class="n">_c_token_starts</span> <span class="o">=</span> <span class="n">get_token_starts</span><span class="p">(</span><span class="n">chain</span><span class="p">)</span>  <span class="c1"># [n_token_in_chain] (int)</span>
         <span class="c1"># ... atomized tokens cannot be matched to templates</span>
-        <span class="k">if</span> <span class="s2">&quot;atomize&quot;</span> <span class="ow">in</span> <span class="n">chain</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">():</span>
+        <span class="k">if</span> <span class="s2">"atomize"</span> <span class="ow">in</span> <span class="n">chain</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">():</span>
             <span class="n">is_token_atomized</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">atomize</span><span class="p">[</span><span class="n">_c_token_starts</span><span class="p">]</span>  <span class="c1"># [n_token_in_chain] (bool)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">is_token_atomized</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">_c_token_starts</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
@@ -1246,7 +1262,7 @@
 
         <span class="c1"># Featurize the templates and insert into the template features</span>
         <span class="k">for</span> <span class="n">tmpl_idx</span><span class="p">,</span> <span class="n">tmpl_data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">templates_by_chain</span><span class="p">[</span><span class="n">chain_id</span><span class="p">]):</span>
-            <span class="n">template</span> <span class="o">=</span> <span class="n">tmpl_data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="n">tmpl_data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span>
 
             <span class="c1"># Filter the template to only include tokens that are aligned to the query chain and that are not atomized</span>
             <span class="c1"># ... we use -1 as a placeholder query_res_idx for template tokens without alignment</span>
@@ -1288,8 +1304,8 @@
 
             <span class="c1"># ...fill the template_pseudo_beta_mask</span>
             <span class="c1">#   get information on whether the (pseudo) CB is resolved</span>
-            <span class="n">_is_cb</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">&quot;CB&quot;</span>
-            <span class="n">_is_glycine_ca</span> <span class="o">=</span> <span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">&quot;CA&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">res_name</span> <span class="o">==</span> <span class="s2">&quot;GLY&quot;</span><span class="p">)</span>
+            <span class="n">_is_cb</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">"CB"</span>
+            <span class="n">_is_glycine_ca</span> <span class="o">=</span> <span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">"CA"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">res_name</span> <span class="o">==</span> <span class="s2">"GLY"</span><span class="p">)</span>
             <span class="n">_is_pseudo_cb_resolved</span> <span class="o">=</span> <span class="p">(</span><span class="n">_is_cb</span> <span class="o">|</span> <span class="n">_is_glycine_ca</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">occupancy</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
             <span class="c1"># ... spread it accross the token axis</span>
             <span class="n">_has_pseudo_cb</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">apply_residue_wise</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">_is_pseudo_cb_resolved</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">)</span>
@@ -1297,9 +1313,9 @@
 
             <span class="c1"># ... fill the template_backbone_frame_mask</span>
             <span class="n">_is_n_ca_c_resolved</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">&quot;CA&quot;</span><span class="p">)</span>
-                <span class="o">|</span> <span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">&quot;N&quot;</span><span class="p">)</span>
-                <span class="o">|</span> <span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">&quot;C&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">occupancy</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">"CA"</span><span class="p">)</span>
+                <span class="o">|</span> <span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">"N"</span><span class="p">)</span>
+                <span class="o">|</span> <span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">"C"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">occupancy</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
             <span class="p">)</span>
             <span class="n">_has_n_ca_c_resolved</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">apply_residue_wise</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">(</span><span class="n">_is_n_ca_c_resolved</span><span class="p">),</span> <span class="n">function</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
             <span class="n">template_backbone_frame_mask</span><span class="p">[</span><span class="n">tmpl_idx</span><span class="p">,</span> <span class="n">token_idxs_to_fill</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">_has_n_ca_c_resolved</span><span class="p">)</span>
@@ -1310,21 +1326,21 @@
             <span class="n">template_distogram</span><span class="p">[</span><span class="n">tmpl_idx</span><span class="p">,</span> <span class="n">ix1</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">ix2</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cdist</span><span class="p">(</span>
                 <span class="n">template_coords</span><span class="p">[</span><span class="n">_is_pseudo_cb_resolved</span><span class="p">],</span>
                 <span class="n">template_coords</span><span class="p">[</span><span class="n">_is_pseudo_cb_resolved</span><span class="p">],</span>
-                <span class="n">compute_mode</span><span class="o">=</span><span class="s2">&quot;donot_use_mm_for_euclid_dist&quot;</span><span class="p">,</span>
+                <span class="n">compute_mode</span><span class="o">=</span><span class="s2">"donot_use_mm_for_euclid_dist"</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="c1"># ... fill the template_unit_vector</span>
 
             <span class="n">residues_with_resolved_n_ca_c</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">spread_residue_wise</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">_has_n_ca_c_resolved</span><span class="p">)</span>
             <span class="n">template_frames</span> <span class="o">=</span> <span class="n">rigid_from_3_points</span><span class="p">(</span>
-                <span class="n">x1</span><span class="o">=</span><span class="n">template_coords</span><span class="p">[(</span><span class="n">template</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">&quot;N&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">residues_with_resolved_n_ca_c</span><span class="p">)],</span>
-                <span class="n">x2</span><span class="o">=</span><span class="n">template_coords</span><span class="p">[(</span><span class="n">template</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">&quot;CA&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">residues_with_resolved_n_ca_c</span><span class="p">)],</span>
-                <span class="n">x3</span><span class="o">=</span><span class="n">template_coords</span><span class="p">[(</span><span class="n">template</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">&quot;C&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">residues_with_resolved_n_ca_c</span><span class="p">)],</span>
+                <span class="n">x1</span><span class="o">=</span><span class="n">template_coords</span><span class="p">[(</span><span class="n">template</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">"N"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">residues_with_resolved_n_ca_c</span><span class="p">)],</span>
+                <span class="n">x2</span><span class="o">=</span><span class="n">template_coords</span><span class="p">[(</span><span class="n">template</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">"CA"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">residues_with_resolved_n_ca_c</span><span class="p">)],</span>
+                <span class="n">x3</span><span class="o">=</span><span class="n">template_coords</span><span class="p">[(</span><span class="n">template</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">"C"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">residues_with_resolved_n_ca_c</span><span class="p">)],</span>
             <span class="p">)</span>  <span class="c1"># (n_template_res, 3, 3), (n_template_res, 3)</span>
             <span class="c1"># ... get CA coords in the respective frames</span>
             <span class="n">ca_coords_in_frames</span> <span class="o">=</span> <span class="n">apply_inverse_rigid</span><span class="p">(</span>
                 <span class="n">rigid</span><span class="o">=</span><span class="p">(</span><span class="n">template_frames</span><span class="p">[</span><span class="mi">0</span><span class="p">][:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">template_frames</span><span class="p">[</span><span class="mi">1</span><span class="p">][:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]),</span>
-                <span class="n">points</span><span class="o">=</span><span class="n">template_coords</span><span class="p">[(</span><span class="n">template</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">&quot;CA&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">residues_with_resolved_n_ca_c</span><span class="p">)],</span>
+                <span class="n">points</span><span class="o">=</span><span class="n">template_coords</span><span class="p">[(</span><span class="n">template</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">"CA"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">residues_with_resolved_n_ca_c</span><span class="p">)],</span>
             <span class="p">)</span>  <span class="c1"># (n_template_res, n_template_res, 3)</span>
             <span class="n">ca_direction_in_frames</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">ca_coords_in_frames</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
             <span class="c1"># ... reset diagonal to 0 (can be non-zero due to normalization &amp; numerical error)</span>
@@ -1341,14 +1357,14 @@
     <span class="n">n_bins</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">distogram_bins</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
     <span class="n">template_distogram</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">one_hot</span><span class="p">(</span><span class="n">template_distogram</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">n_bins</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
         <span class="n">torch</span><span class="o">.</span><span class="n">float32</span>
-    <span class="p">)</span>  <span class="c1"># We don&#39;t need int64 precision</span>
+    <span class="p">)</span>  <span class="c1"># We don't need int64 precision</span>
 
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;template_restype&quot;</span><span class="p">:</span> <span class="n">res_type</span><span class="p">,</span>
-        <span class="s2">&quot;template_pseudo_beta_mask&quot;</span><span class="p">:</span> <span class="n">template_pseudo_beta_mask</span><span class="p">,</span>
-        <span class="s2">&quot;template_backbone_frame_mask&quot;</span><span class="p">:</span> <span class="n">template_backbone_frame_mask</span><span class="p">,</span>
-        <span class="s2">&quot;template_distogram&quot;</span><span class="p">:</span> <span class="n">template_distogram</span><span class="p">,</span>
-        <span class="s2">&quot;template_unit_vector&quot;</span><span class="p">:</span> <span class="n">template_unit_vector</span><span class="p">,</span>
+        <span class="s2">"template_restype"</span><span class="p">:</span> <span class="n">res_type</span><span class="p">,</span>
+        <span class="s2">"template_pseudo_beta_mask"</span><span class="p">:</span> <span class="n">template_pseudo_beta_mask</span><span class="p">,</span>
+        <span class="s2">"template_backbone_frame_mask"</span><span class="p">:</span> <span class="n">template_backbone_frame_mask</span><span class="p">,</span>
+        <span class="s2">"template_distogram"</span><span class="p">:</span> <span class="n">template_distogram</span><span class="p">,</span>
+        <span class="s2">"template_unit_vector"</span><span class="p">:</span> <span class="n">template_unit_vector</span><span class="p">,</span>
     <span class="p">}</span></div>
 
 
@@ -1356,7 +1372,7 @@
 <div class="viewcode-block" id="FeaturizeTemplatesLikeAF3">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.FeaturizeTemplatesLikeAF3">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FeaturizeTemplatesLikeAF3</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A transform that featurizes templates for AlphaFold 3.</span>
 
 <span class="sd">    This transform generates the following template features (as torch.Tensors):</span>
@@ -1372,18 +1388,18 @@
 <span class="sd">    References:</span>
 <span class="sd">        `Section 2.8 of the AF3 supplementary information &lt;https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf&gt;`_</span>
 <span class="sd">        `AF2 supplementary information &lt;https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-021-03819-2/MediaObjects/41586_2021_3819_MOESM1_ESM.pdf&gt;`_</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">requires_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s2">&quot;AddRFTemplates|AddInputFileTemplate&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;AddWithinChainInstanceResIdx&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;AddGlobalTokenIdAnnotation&quot;</span><span class="p">,</span>
+        <span class="s2">"AddRFTemplates|AddInputFileTemplate"</span><span class="p">,</span>
+        <span class="s2">"AddWithinChainInstanceResIdx"</span><span class="p">,</span>
+        <span class="s2">"AddGlobalTokenIdAnnotation"</span><span class="p">,</span>
     <span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">sequence_encoding</span><span class="p">:</span> <span class="n">AF3SequenceEncoding</span><span class="p">,</span>
-        <span class="n">gap_token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&lt;G&gt;&quot;</span><span class="p">,</span>
+        <span class="n">gap_token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"&lt;G&gt;"</span><span class="p">,</span>
         <span class="n">allowed_chain_type</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ChainType</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ChainType</span><span class="o">.</span><span class="n">POLYPEPTIDE_L</span><span class="p">,</span> <span class="n">ChainType</span><span class="o">.</span><span class="n">RNA</span><span class="p">],</span>
         <span class="n">distogram_bins</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">3.25</span><span class="p">,</span> <span class="mf">50.75</span><span class="p">,</span> <span class="mi">38</span><span class="p">),</span>  <span class="c1"># noqa: B008</span>
     <span class="p">):</span>
@@ -1395,16 +1411,16 @@
 <div class="viewcode-block" id="FeaturizeTemplatesLikeAF3.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.FeaturizeTemplatesLikeAF3.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="s2">&quot;template&quot;</span><span class="p">])</span>
-        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
-        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;template&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span></div>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atom_array"</span><span class="p">,</span> <span class="s2">"template"</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"template"</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="FeaturizeTemplatesLikeAF3.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.FeaturizeTemplatesLikeAF3.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
-        <span class="n">templates_by_chain</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span>
+        <span class="n">templates_by_chain</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"template"</span><span class="p">]</span>
 
         <span class="n">template_features</span> <span class="o">=</span> <span class="n">featurize_templates_like_af3</span><span class="p">(</span>
             <span class="n">atom_array</span><span class="o">=</span><span class="n">atom_array</span><span class="p">,</span>
@@ -1416,9 +1432,9 @@
         <span class="p">)</span>
 
         <span class="c1"># Add the template features to the `feats` dict</span>
-        <span class="k">if</span> <span class="s2">&quot;feats&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;feats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;feats&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">template_features</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"feats"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">"feats"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"feats"</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">template_features</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
@@ -1430,15 +1446,15 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">random_subsample_templates</span><span class="p">(</span>
     <span class="n">template_dictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]],</span> <span class="n">n_template</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Subsample the templates for each chain in the template dictionary. We support the &quot;training&quot; implementation with this function;</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Subsample the templates for each chain in the template dictionary. We support the "training" implementation with this function;</span>
 <span class="sd">    for inference, do not use this function (and instead e.g. set `max_n_template=4` to directly take the first 4 templates).</span>
 
 <span class="sd">    From the AF-3 supplement:</span>
-<span class="sd">        &gt; &quot;Templates are sorted by e-value. At most 20 templates can be returned by our search, and the model uses up to 4</span>
+<span class="sd">        &gt; "Templates are sorted by e-value. At most 20 templates can be returned by our search, and the model uses up to 4</span>
 <span class="sd">            (Ntempl ≤ 4). At inference time we take the first 4. At training time we choose k random templates out of the available</span>
 <span class="sd">            n, where k ~ min(Uniform[0, n], 4). This reduces the efficacy of simply copying the template.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">for</span> <span class="n">chain_id</span><span class="p">,</span> <span class="n">templates</span> <span class="ow">in</span> <span class="n">template_dictionary</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="c1"># ...at training time we choose k random templates out of the available n, where k ~ min(Uniform[0, n], 4)</span>
         <span class="n">n_available_templates</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">templates</span><span class="p">)</span>
@@ -1456,16 +1472,16 @@
 <div class="viewcode-block" id="RandomSubsampleTemplates">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.RandomSubsampleTemplates">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RandomSubsampleTemplates</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Subsample the templates for each chain in the template dictionary.</span>
+<span class="w">    </span><span class="sd">"""Subsample the templates for each chain in the template dictionary.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        n_template (int): The maximum possible number of templates to use. Default is 4.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">incompatible_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">FeaturizeTemplatesLikeAF3</span><span class="p">,</span>
         <span class="n">FeaturizeTemplatesLikeRF2AA</span><span class="p">,</span>
-        <span class="s2">&quot;OneHotTemplateRestype&quot;</span><span class="p">,</span>
+        <span class="s2">"OneHotTemplateRestype"</span><span class="p">,</span>
     <span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_template</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">):</span>
@@ -1474,14 +1490,14 @@
 <div class="viewcode-block" id="RandomSubsampleTemplates.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.RandomSubsampleTemplates.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">])</span>
-        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;template&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span></div>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"template"</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"template"</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RandomSubsampleTemplates.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.RandomSubsampleTemplates.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">random_subsample_templates</span><span class="p">(</span><span class="n">template_dictionary</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">],</span> <span class="n">n_template</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_template</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"template"</span><span class="p">]</span> <span class="o">=</span> <span class="n">random_subsample_templates</span><span class="p">(</span><span class="n">template_dictionary</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">"template"</span><span class="p">],</span> <span class="n">n_template</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_template</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
@@ -1491,11 +1507,11 @@
 <div class="viewcode-block" id="OneHotTemplateRestype">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.OneHotTemplateRestype">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">OneHotTemplateRestype</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    One-hot encode residue types within templates.</span>
 <span class="sd">    NOTE: We keep as a separate transform since the AF-3 supplement did not</span>
 <span class="sd">    explicitly mention the one-hot encoding of the residue types for templates.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoding</span><span class="p">:</span> <span class="n">AF3SequenceEncoding</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="n">encoding</span>
@@ -1503,16 +1519,16 @@
 <div class="viewcode-block" id="OneHotTemplateRestype.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.OneHotTemplateRestype.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;feats&quot;</span><span class="p">])</span>
-        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;feats&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"feats"</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"feats"</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
 
-        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;feats&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;template_restype&quot;</span><span class="p">])</span></div>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"feats"</span><span class="p">],</span> <span class="p">[</span><span class="s2">"template_restype"</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="OneHotTemplateRestype.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.OneHotTemplateRestype.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="n">template_restype</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;feats&quot;</span><span class="p">][</span><span class="s2">&quot;template_restype&quot;</span><span class="p">]</span>
+        <span class="n">template_restype</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"feats"</span><span class="p">][</span><span class="s2">"template_restype"</span><span class="p">]</span>
 
         <span class="c1"># One-hot encode the template restype</span>
         <span class="n">template_restype_onehot</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">one_hot</span><span class="p">(</span>
@@ -1520,7 +1536,7 @@
         <span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
 
         <span class="c1"># Add the one-hot encoded template restype to the `feats` dict</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;feats&quot;</span><span class="p">][</span><span class="s2">&quot;template_restype&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">template_restype_onehot</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"feats"</span><span class="p">][</span><span class="s2">"template_restype"</span><span class="p">]</span> <span class="o">=</span> <span class="n">template_restype_onehot</span>
 
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
@@ -1542,24 +1558,24 @@
         <span class="c1"># Check for chains where templates exist</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">is_input_file_templated</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># Early exit if there are no templates for this chain</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No templates for chain </span><span class="si">{</span><span class="n">chain</span><span class="o">.</span><span class="n">chain_id</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No templates for chain </span><span class="si">{</span><span class="n">chain</span><span class="o">.</span><span class="n">chain_id</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
             <span class="k">continue</span>
 
         <span class="n">chain_id</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">chain_id</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">template_chain</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">atom_array</span><span class="o">.</span><span class="n">is_input_file_templated</span><span class="p">]</span>
         <span class="c1"># add extra template annotations to the template</span>
         <span class="c1"># aligned_query_res_idx, alignment_confidence</span>
-        <span class="n">template_chain</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;aligned_query_res_idx&quot;</span><span class="p">,</span> <span class="n">template_chain</span><span class="o">.</span><span class="n">res_id</span><span class="p">)</span>
-        <span class="n">template_chain</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;alignment_confidence&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">template_chain</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
+        <span class="n">template_chain</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">"aligned_query_res_idx"</span><span class="p">,</span> <span class="n">template_chain</span><span class="o">.</span><span class="n">res_id</span><span class="p">)</span>
+        <span class="n">template_chain</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">"alignment_confidence"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">template_chain</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
         <span class="n">template</span><span class="p">[</span><span class="n">chain_id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="p">{</span>
-                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="s2">&quot;pdb_id&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="s2">&quot;chain_id&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="s2">&quot;template_lookup_id&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="s2">&quot;seq_similarity&quot;</span><span class="p">:</span> <span class="mf">100.0</span><span class="p">,</span>
-                <span class="s2">&quot;atom_array&quot;</span><span class="p">:</span> <span class="n">template_chain</span><span class="p">,</span>
-                <span class="s2">&quot;n_res&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">template_chain</span><span class="o">.</span><span class="n">res_id</span><span class="p">)),</span>
+                <span class="s2">"id"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">"pdb_id"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">"chain_id"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">"template_lookup_id"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">"seq_similarity"</span><span class="p">:</span> <span class="mf">100.0</span><span class="p">,</span>
+                <span class="s2">"atom_array"</span><span class="p">:</span> <span class="n">template_chain</span><span class="p">,</span>
+                <span class="s2">"n_res"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">template_chain</span><span class="o">.</span><span class="n">res_id</span><span class="p">)),</span>
             <span class="p">}</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="n">template</span></div>
@@ -1569,29 +1585,29 @@
 <div class="viewcode-block" id="AddInputFileTemplate">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.AddInputFileTemplate">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AddInputFileTemplate</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    If atoms from the input file have been marked as templates, add them to the template dictionary.</span>
 <span class="sd">    This is useful for when users want to use a part of their design as a template using</span>
 <span class="sd">    the template_selection_syntax argument in the inference script.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
 <div class="viewcode-block" id="AddInputFileTemplate.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.AddInputFileTemplate.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;is_input_file_templated&quot;</span><span class="p">])</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"is_input_file_templated"</span><span class="p">])</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">check_input</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="AddInputFileTemplate.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.template.AddInputFileTemplate.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span>
         <span class="n">template</span> <span class="o">=</span> <span class="n">add_input_file_template</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
         <span class="c1"># Add the templates to the data</span>
-        <span class="k">if</span> <span class="s2">&quot;template&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Template already exists in data. Cannot add input file template.&quot;</span><span class="p">)</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">template</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Templating from input file.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"template"</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Template already exists in data. Cannot add input file template."</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"template"</span><span class="p">]</span> <span class="o">=</span> <span class="n">template</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Templating from input file."</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
 
@@ -1624,8 +1640,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1659,7 +1675,7 @@
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
 </p></div>
       
     </div>

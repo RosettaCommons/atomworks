@@ -26,29 +26,31 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/transforms/encoding';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
-        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.2.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
@@ -167,6 +169,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -293,6 +302,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -426,13 +442,13 @@
                 <article class="bd-article">
                   
   <h1>Source code for atomworks.ml.transforms.encoding</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Transforms and helper functions to convert from `AtomArray` objects to various encoding schemes.</span>
+<span></span><span class="sd">"""Transforms and helper functions to convert from `AtomArray` objects to various encoding schemes.</span>
 
 <span class="sd">During encoding, sequences of tokens are converted to sequences of integers, and the</span>
 <span class="sd">AtomArray of coordinates is converted to a (N_token, N_atoms_per_token, 3) tensor.</span>
 
 <span class="sd">The token type (residue-level or atom-level) is encoded as a boolean in the `atomize` flag.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">getLogger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
@@ -464,9 +480,9 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">atom_array_to_encoded_resnames</span><span class="p">(</span>
     <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
     <span class="n">encoding</span><span class="p">:</span> <span class="n">TokenEncoding</span><span class="p">,</span>
-    <span class="n">atomize_token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&lt;A&gt;&quot;</span><span class="p">,</span>
+    <span class="n">atomize_token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"&lt;A&gt;"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encode residue types from an AtomArray.</span>
+<span class="w">    </span><span class="sd">"""Encode residue types from an AtomArray.</span>
 
 <span class="sd">    Encodes at token level, then spreads to atom level for efficiency.</span>
 <span class="sd">    Handles proteins, DNA, RNA, atomized residues (ligands, ions), and unknown tokens.</span>
@@ -487,12 +503,12 @@
 <span class="sd">        &gt;&gt;&gt; from atomworks.ml.encoding_definitions import UNIFIED_ATOM37_ENCODING</span>
 <span class="sd">        &gt;&gt;&gt; resnames = atom_array_to_encoded_resnames(atom_array, UNIFIED_ATOM37_ENCODING)</span>
 <span class="sd">        &gt;&gt;&gt; # resnames[i] is the encoded residue type for atom i</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">n_tokens</span> <span class="o">=</span> <span class="n">get_token_count</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
     <span class="n">token_encoded_seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n_tokens</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
 
     <span class="c1"># Check if atom array has atomize annotation</span>
-    <span class="n">has_atomize</span> <span class="o">=</span> <span class="s2">&quot;atomize&quot;</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span>
+    <span class="n">has_atomize</span> <span class="o">=</span> <span class="s2">"atomize"</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span>
 
     <span class="c1"># Iterate over tokens and encode token names (token-level encoding)</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">token</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">token_iter</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)):</span>
@@ -510,7 +526,7 @@
         <span class="k">if</span> <span class="n">token_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">encoding</span><span class="o">.</span><span class="n">token_to_idx</span><span class="p">:</span>
             <span class="n">token_is_atom</span> <span class="o">=</span> <span class="p">(</span><span class="n">has_atomize</span> <span class="ow">and</span> <span class="n">token</span><span class="o">.</span><span class="n">atomize</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
             <span class="n">token_name</span> <span class="o">=</span> <span class="n">encoding</span><span class="o">.</span><span class="n">resolve_unknown_token_name</span><span class="p">(</span><span class="n">token_name</span><span class="p">,</span> <span class="n">token_is_atom</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="n">token_name</span> <span class="ow">in</span> <span class="n">encoding</span><span class="o">.</span><span class="n">token_to_idx</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Unknown token name: </span><span class="si">{</span><span class="n">token_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">assert</span> <span class="n">token_name</span> <span class="ow">in</span> <span class="n">encoding</span><span class="o">.</span><span class="n">token_to_idx</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Unknown token name: </span><span class="si">{</span><span class="n">token_name</span><span class="si">}</span><span class="s2">"</span>
 
         <span class="c1"># Encode as integer index</span>
         <span class="n">token_encoded_seq</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">encoding</span><span class="o">.</span><span class="n">token_to_idx</span><span class="p">[</span><span class="n">token_name</span><span class="p">]</span>
@@ -525,18 +541,18 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">atom_array_to_encoding</span><span class="p">(</span>
     <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
     <span class="n">encoding</span><span class="p">:</span> <span class="n">TokenEncoding</span><span class="p">,</span>
-    <span class="n">default_coord</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">),</span>
+    <span class="n">default_coord</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
     <span class="n">occupancy_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
     <span class="n">extra_annotations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s2">&quot;chain_id&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;chain_entity&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;molecule_iid&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;chain_iid&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;transformation_id&quot;</span><span class="p">,</span>
+        <span class="s2">"chain_id"</span><span class="p">,</span>
+        <span class="s2">"chain_entity"</span><span class="p">,</span>
+        <span class="s2">"molecule_iid"</span><span class="p">,</span>
+        <span class="s2">"chain_iid"</span><span class="p">,</span>
+        <span class="s2">"transformation_id"</span><span class="p">,</span>
     <span class="p">],</span>
-    <span class="n">coord_annotation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;coord&quot;</span><span class="p">,</span>
+    <span class="n">coord_annotation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"coord"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Encode an atom array using a specified `TokenEncoding`.</span>
 
 <span class="sd">    This function processes an `AtomArray` to generate encoded representations, including coordinates, masks,</span>
@@ -559,16 +575,16 @@
 <span class="sd">          from the number of residues.</span>
 <span class="sd">        - encoding (TokenEncoding): The encoding scheme to apply to the atom array.</span>
 <span class="sd">        - default_coord (np.ndarray | float, optional): Default coordinate value to use for uninitialized</span>
-<span class="sd">          coordinates. Defaults to float(&quot;nan&quot;).</span>
+<span class="sd">          coordinates. Defaults to float("nan").</span>
 <span class="sd">        - occupancy_threshold (float, optional): Minimum occupancy for atoms to be considered resolved</span>
 <span class="sd">          in the mask. Defaults to 0.0 (only completely unresolved atoms are masked).</span>
 <span class="sd">        - extra_annotations (list[str], optional): A list of additional annotations to encode. These must</span>
 <span class="sd">          be `id` style annotations (e.g., `chain_id`, `molecule_iid`). The encoding will be generated as</span>
 <span class="sd">          integers, where the first occurrence of a given ID is encoded as `0`, and subsequent occurrences</span>
 <span class="sd">          are encoded as `1`, `2`, etc. Defaults to</span>
-<span class="sd">          [&quot;chain_id&quot;, &quot;chain_entity&quot;, &quot;molecule_iid&quot;, &quot;chain_iid&quot;, &quot;transformation_id&quot;].</span>
+<span class="sd">          ["chain_id", "chain_entity", "molecule_iid", "chain_iid", "transformation_id"].</span>
 <span class="sd">        - coord_annotation (str, optional): The annotation of the AtomArray containing the coordinates to encode.</span>
-<span class="sd">          Defaults to &quot;coord&quot;.</span>
+<span class="sd">          Defaults to "coord".</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        - dict: A dictionary containing the following keys:</span>
@@ -586,7 +602,7 @@
 <span class="sd">                - `chain_id_to_int` (dict): Mapping of chain IDs to integers in the `chain_id` array.</span>
 <span class="sd">                - `chain_entity` (np.ndarray): Encoded entity IDs of shape [n_token].</span>
 <span class="sd">                - `chain_entity_to_int` (dict): Mapping of entity IDs to integers in the `chain_entity` array.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Extract atom array information</span>
     <span class="n">n_token</span> <span class="o">=</span> <span class="n">get_token_count</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
 
@@ -609,25 +625,25 @@
 
     <span class="c1"># Iterate over residues and encode (# TODO: Speed up by vectorizing if necessary)</span>
     <span class="c1"># ... record whether the atom array has the `atomize` annotation to deal with atomized residues</span>
-    <span class="n">has_atomize</span> <span class="o">=</span> <span class="s2">&quot;atomize&quot;</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span>
+    <span class="n">has_atomize</span> <span class="o">=</span> <span class="s2">"atomize"</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">token</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">token_iter</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)):</span>
         <span class="c1"># ... extract token name</span>
         <span class="c1"># ... case 1: atom tokens (e.g. 6 - for carbon)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">has_atomize</span> <span class="ow">and</span> <span class="n">token</span><span class="o">.</span><span class="n">atomize</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">token_name</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">token</span><span class="o">.</span><span class="n">atomic_number</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="k">if</span> <span class="s2">&quot;atomic_number&quot;</span> <span class="ow">in</span> <span class="n">token</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span>
+                <span class="k">if</span> <span class="s2">"atomic_number"</span> <span class="ow">in</span> <span class="n">token</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span>
                 <span class="k">else</span> <span class="n">ELEMENT_NAME_TO_ATOMIC_NUMBER</span><span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">element</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span>
             <span class="p">)</span>
             <span class="n">token_is_atom</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="c1"># ... case 2: residue tokens (e.g. &quot;ALA&quot;)</span>
+        <span class="c1"># ... case 2: residue tokens (e.g. "ALA")</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">token_name</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">res_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">token_is_atom</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">if</span> <span class="n">token_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">encoding</span><span class="o">.</span><span class="n">token_to_idx</span><span class="p">:</span>
             <span class="n">token_name</span> <span class="o">=</span> <span class="n">encoding</span><span class="o">.</span><span class="n">resolve_unknown_token_name</span><span class="p">(</span><span class="n">token_name</span><span class="p">,</span> <span class="n">token_is_atom</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="n">token_name</span> <span class="ow">in</span> <span class="n">encoding</span><span class="o">.</span><span class="n">token_to_idx</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Unknown token name: </span><span class="si">{</span><span class="n">token_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">assert</span> <span class="n">token_name</span> <span class="ow">in</span> <span class="n">encoding</span><span class="o">.</span><span class="n">token_to_idx</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Unknown token name: </span><span class="si">{</span><span class="n">token_name</span><span class="si">}</span><span class="s2">"</span>
 
         <span class="c1"># Encode sequence</span>
         <span class="n">encoded_seq</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">encoding</span><span class="o">.</span><span class="n">token_to_idx</span><span class="p">[</span><span class="n">token_name</span><span class="p">]</span>
@@ -639,9 +655,9 @@
         <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">token</span><span class="p">:</span>
             <span class="n">atom_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">token_name</span><span class="p">)</span> <span class="k">if</span> <span class="n">token_is_atom</span> <span class="k">else</span> <span class="n">atom</span><span class="o">.</span><span class="n">atom_name</span>
             <span class="c1"># (token_name, atom_name) is e.g.</span>
-            <span class="c1">#  ... (&#39;ALA&#39;, &#39;CA&#39;) if  token_is_atom=False</span>
-            <span class="c1">#  ... (&#39;UNK&#39;, whatever) if token_is_atom=False but we had to resolve an unknown token</span>
-            <span class="c1">#  ... (6, &#39;6&#39;) if token_is_atom=True</span>
+            <span class="c1">#  ... ('ALA', 'CA') if  token_is_atom=False</span>
+            <span class="c1">#  ... ('UNK', whatever) if token_is_atom=False but we had to resolve an unknown token</span>
+            <span class="c1">#  ... (6, '6') if token_is_atom=True</span>
 
             <span class="c1"># ... case 1: atom name is in the encoding</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">token_name</span><span class="p">,</span> <span class="n">atom_name</span><span class="p">)</span> <span class="ow">in</span> <span class="n">encoding</span><span class="o">.</span><span class="n">atom_to_idx</span><span class="p">:</span>
@@ -650,7 +666,7 @@
                 <span class="n">encoded_mask</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">to_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">occupancy</span> <span class="o">&gt;</span> <span class="n">occupancy_threshold</span>
 
             <span class="c1"># ... case 2: atom name does not exist for token, but token is an `unknown` token,</span>
-            <span class="c1">#  so it&#39;s `ok` to not match</span>
+            <span class="c1">#  so it's `ok` to not match</span>
             <span class="k">elif</span> <span class="n">token_name</span> <span class="ow">in</span> <span class="n">encoding</span><span class="o">.</span><span class="n">unknown_tokens</span><span class="p">:</span>
                 <span class="k">continue</span>
 
@@ -664,9 +680,9 @@
 
             <span class="c1"># ... case 4: failed to find the relevant atom_name for this token when we should, so we raise an error</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Atom (</span><span class="si">{</span><span class="n">token_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">atom_name</span><span class="si">}</span><span class="s2">) not in encoding for token `</span><span class="si">{</span><span class="n">token_name</span><span class="si">}</span><span class="s2">`&quot;</span>
-                <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Problematic atom:</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">atom</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Atom (</span><span class="si">{</span><span class="n">token_name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">atom_name</span><span class="si">}</span><span class="s2">) not in encoding for token `</span><span class="si">{</span><span class="n">token_name</span><span class="si">}</span><span class="s2">`"</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">Problematic atom:</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">atom</span><span class="si">}</span><span class="s2">"</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="c1"># Encode additional annotation</span>
@@ -675,12 +691,12 @@
             <span class="n">extra_annot_encoded</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">extra_annot_counters</span><span class="p">[</span><span class="n">key</span><span class="p">](</span><span class="n">annot</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;xyz&quot;</span><span class="p">:</span> <span class="n">encoded_coord</span><span class="p">,</span>  <span class="c1"># [n_token_in_atom_array, n_atoms_per_token, 3] (float)</span>
-        <span class="s2">&quot;mask&quot;</span><span class="p">:</span> <span class="n">encoded_mask</span><span class="p">,</span>  <span class="c1"># [n_token_in_atom_array, n_atoms_per_token] (bool)</span>
-        <span class="s2">&quot;seq&quot;</span><span class="p">:</span> <span class="n">encoded_seq</span><span class="p">,</span>  <span class="c1"># [n_token_in_atom_array] (int)</span>
-        <span class="s2">&quot;token_is_atom&quot;</span><span class="p">:</span> <span class="n">encoded_token_is_atom</span><span class="p">,</span>  <span class="c1"># [n_token_in_atom_array] (bool)</span>
+        <span class="s2">"xyz"</span><span class="p">:</span> <span class="n">encoded_coord</span><span class="p">,</span>  <span class="c1"># [n_token_in_atom_array, n_atoms_per_token, 3] (float)</span>
+        <span class="s2">"mask"</span><span class="p">:</span> <span class="n">encoded_mask</span><span class="p">,</span>  <span class="c1"># [n_token_in_atom_array, n_atoms_per_token] (bool)</span>
+        <span class="s2">"seq"</span><span class="p">:</span> <span class="n">encoded_seq</span><span class="p">,</span>  <span class="c1"># [n_token_in_atom_array] (int)</span>
+        <span class="s2">"token_is_atom"</span><span class="p">:</span> <span class="n">encoded_token_is_atom</span><span class="p">,</span>  <span class="c1"># [n_token_in_atom_array] (bool)</span>
         <span class="o">**</span><span class="p">{</span><span class="n">annot</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">extra_annot_encoded</span><span class="p">[</span><span class="n">annot</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span> <span class="k">for</span> <span class="n">annot</span> <span class="ow">in</span> <span class="n">extra_annot_encoded</span><span class="p">},</span>
-        <span class="o">**</span><span class="p">{</span><span class="n">annot</span> <span class="o">+</span> <span class="s2">&quot;_to_int&quot;</span><span class="p">:</span> <span class="n">extra_annot_counters</span><span class="p">[</span><span class="n">annot</span><span class="p">]</span><span class="o">.</span><span class="n">key_to_id</span> <span class="k">for</span> <span class="n">annot</span> <span class="ow">in</span> <span class="n">extra_annot_counters</span><span class="p">},</span>
+        <span class="o">**</span><span class="p">{</span><span class="n">annot</span> <span class="o">+</span> <span class="s2">"_to_int"</span><span class="p">:</span> <span class="n">extra_annot_counters</span><span class="p">[</span><span class="n">annot</span><span class="p">]</span><span class="o">.</span><span class="n">key_to_id</span> <span class="k">for</span> <span class="n">annot</span> <span class="ow">in</span> <span class="n">extra_annot_counters</span><span class="p">},</span>
     <span class="p">}</span></div>
 
 
@@ -691,13 +707,13 @@
     <span class="n">encoded_coord</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">encoded_seq</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">encoding</span><span class="p">:</span> <span class="n">TokenEncoding</span><span class="p">,</span>
-    <span class="n">chain_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>
+    <span class="n">chain_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"A"</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">encoded_mask</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">token_is_atom</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">other_annotations</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an AtomArray from encoded coordinates, mask, and sequence.</span>
+<span class="w">    </span><span class="sd">"""Create an AtomArray from encoded coordinates, mask, and sequence.</span>
 
 <span class="sd">    This function takes encoded data and reconstructs an AtomArray, which is a</span>
 <span class="sd">    structured representation of atomic information. The encoded coordinates,</span>
@@ -708,8 +724,8 @@
 <span class="sd">        encoded_coord: Encoded coordinates tensor.</span>
 <span class="sd">        encoded_seq: Encoded sequence tensor.</span>
 <span class="sd">        encoding: The encoding to use for encoding the atom array.</span>
-<span class="sd">        chain_id: Chain ID. Can be a single string (e.g., &quot;A&quot;)</span>
-<span class="sd">          or a numpy array of shape (n_res,) corresponding to each residue. Defaults to &quot;A&quot;.</span>
+<span class="sd">        chain_id: Chain ID. Can be a single string (e.g., "A")</span>
+<span class="sd">          or a numpy array of shape (n_res,) corresponding to each residue. Defaults to "A".</span>
 <span class="sd">        encoded_mask: Optional encoded mask tensor. If not provided, will be derived</span>
 <span class="sd">          from coordinates by checking for NaN values. Defaults to ``None``.</span>
 <span class="sd">        token_is_atom: Boolean mask indicating</span>
@@ -724,7 +740,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The created AtomArray containing the encoded atomic information.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Turn tensors into numpy arrays if necessary</span>
     <span class="n">_from_tensor</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span>  <span class="c1"># noqa E731</span>
     <span class="n">encoded_coord</span> <span class="o">=</span> <span class="n">_from_tensor</span><span class="p">(</span><span class="n">encoded_coord</span><span class="p">)</span>
@@ -744,7 +760,7 @@
     <span class="n">atom_name</span> <span class="o">=</span> <span class="n">encoding</span><span class="o">.</span><span class="n">idx_to_atom</span><span class="p">[</span><span class="n">encoded_seq</span><span class="p">]</span>  <span class="c1"># [n_res, n_atoms_per_token] (str)</span>
 
     <span class="c1"># Determine which atoms should exist in each token, and how many atoms are in each token</span>
-    <span class="n">atom_should_exist</span> <span class="o">=</span> <span class="n">atom_name</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># [n_res, n_atoms_per_token] (bool)</span>
+    <span class="n">atom_should_exist</span> <span class="o">=</span> <span class="n">atom_name</span> <span class="o">!=</span> <span class="s2">""</span>  <span class="c1"># [n_res, n_atoms_per_token] (bool)</span>
     <span class="n">atoms_per_res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">atom_should_exist</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [n_res] (int)</span>
 
     <span class="c1"># Set up atom array</span>
@@ -753,7 +769,7 @@
     <span class="n">atom_array</span> <span class="o">=</span> <span class="n">AtomArray</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="n">n_atom</span><span class="p">)</span>
 
     <span class="c1"># ... flatten occupancy &amp; validate that masking did not miss any existing atoms</span>
-    <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;occupancy&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">encoded_mask</span><span class="p">[</span><span class="n">atom_should_exist</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+    <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">"occupancy"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">encoded_mask</span><span class="p">[</span><span class="n">atom_should_exist</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
     <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">encoded_mask</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">occupancy</span><span class="p">)</span>
 
     <span class="c1"># ... set atomize annotation if `token_is_atom` is provided</span>
@@ -761,7 +777,7 @@
         <span class="c1"># Expand token_is_atom to n_atoms_per_token if necessary</span>
         <span class="k">if</span> <span class="n">token_is_atom</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">token_is_atom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">token_is_atom</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">encoding</span><span class="o">.</span><span class="n">n_atoms_per_token</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;atomize&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">token_is_atom</span><span class="p">[</span><span class="n">atom_should_exist</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">))</span>
+        <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">"atomize"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">token_is_atom</span><span class="p">[</span><span class="n">atom_should_exist</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">))</span>
 
     <span class="c1"># ... flatten and annotate coordinates</span>
     <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span> <span class="o">=</span> <span class="n">encoded_coord</span><span class="p">[</span><span class="n">atom_should_exist</span><span class="p">]</span>
@@ -799,7 +815,7 @@
             <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="n">annot</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">annot_arr</span><span class="p">,</span> <span class="n">atoms_per_chain</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Annotation `</span><span class="si">{</span><span class="n">annot</span><span class="si">}</span><span class="s2">` has incorrect shape: </span><span class="si">{</span><span class="n">annot_arr</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">. Expected [n_atom] (</span><span class="si">{</span><span class="n">n_atom</span><span class="si">}</span><span class="s2">) or [n_res] (</span><span class="si">{</span><span class="n">n_res</span><span class="si">}</span><span class="s2">).&quot;</span>
+                <span class="sa">f</span><span class="s2">"Annotation `</span><span class="si">{</span><span class="n">annot</span><span class="si">}</span><span class="s2">` has incorrect shape: </span><span class="si">{</span><span class="n">annot_arr</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">. Expected [n_atom] (</span><span class="si">{</span><span class="n">n_atom</span><span class="si">}</span><span class="s2">) or [n_res] (</span><span class="si">{</span><span class="n">n_res</span><span class="si">}</span><span class="s2">)."</span>
             <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">atom_array</span></div>
@@ -809,7 +825,7 @@
 <div class="viewcode-block" id="EncodeAtomArray">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.encoding.EncodeAtomArray">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EncodeAtomArray</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encode an atom array to an arbitrary `TokenEncoding`.</span>
+<span class="w">    </span><span class="sd">"""Encode an atom array to an arbitrary `TokenEncoding`.</span>
 
 <span class="sd">    This will add the following information to the data dict:</span>
 <span class="sd">        - `encoding` (dict)</span>
@@ -819,39 +835,39 @@
 <span class="sd">            - `token_is_atom`: Token type (atom or residue) (`token_is_atom`)</span>
 <span class="sd">            - Various other optional annotations such as `chain_id`, `chain_entity`, etc. See `atom_array_to_encoding`</span>
 <span class="sd">              for more details.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">encoding</span><span class="p">:</span> <span class="n">TokenEncoding</span><span class="p">,</span>
-        <span class="n">default_coord</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">),</span>
+        <span class="n">default_coord</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"nan"</span><span class="p">),</span>
         <span class="n">occupancy_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="n">extra_annotations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s2">&quot;chain_id&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;chain_entity&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;molecule_iid&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;chain_iid&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;transformation_id&quot;</span><span class="p">,</span>
+            <span class="s2">"chain_id"</span><span class="p">,</span>
+            <span class="s2">"chain_entity"</span><span class="p">,</span>
+            <span class="s2">"molecule_iid"</span><span class="p">,</span>
+            <span class="s2">"chain_iid"</span><span class="p">,</span>
+            <span class="s2">"transformation_id"</span><span class="p">,</span>
         <span class="p">],</span>
-        <span class="n">coord_annotation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;coord&quot;</span><span class="p">,</span>
+        <span class="n">coord_annotation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"coord"</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Convert an atom array to an encoding.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            - `encoding` (TokenEncoding): The encoding to use for encoding the atom array.</span>
-<span class="sd">            - `default_coord` (float | np.ndarray, optional): Default coordinate value. Defaults to float(&quot;nan&quot;).</span>
+<span class="sd">            - `default_coord` (float | np.ndarray, optional): Default coordinate value. Defaults to float("nan").</span>
 <span class="sd">            - `occupancy_threshold` (float, optional): Minimum occupancy for atoms to be considered resolved</span>
 <span class="sd">                in the mask. Defaults to 0.0 (only completely unresolved atoms are masked).</span>
 <span class="sd">            - `extra_annotations` (list[str], optional): Extra annotations to encode. These must be `id` style annotations</span>
 <span class="sd">                like `chain_id` or `molecule_iid`, as the encoding will be generated as `int`s. Each first occurrence</span>
 <span class="sd">                of a given `id` will be encoded as `0`, and each subsequent occurrence will be encoded as `1`, `2`, etc.</span>
-<span class="sd">                Defaults to [&quot;chain_id&quot;, &quot;chain_entity&quot;, &quot;molecule_iid&quot;, &quot;chain_iid&quot;, &quot;transformation_id&quot;].</span>
+<span class="sd">                Defaults to ["chain_id", "chain_entity", "molecule_iid", "chain_iid", "transformation_id"].</span>
 <span class="sd">            - `coord_annotation` (str, optional): The annotation of the AtomArray containing the coordinates to encode.</span>
-<span class="sd">                Defaults to &quot;coord,&quot; but in same cases we may want to use a different annotation (e.g., if we imputed coordinates)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">                Defaults to "coord," but in same cases we may want to use a different annotation (e.g., if we imputed coordinates)</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">encoding</span><span class="p">,</span> <span class="n">TokenEncoding</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Encoding must be a `TokenEncoding`, but got: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Encoding must be a `TokenEncoding`, but got: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="n">encoding</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">default_coord</span> <span class="o">=</span> <span class="n">default_coord</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">occupancy_threshold</span> <span class="o">=</span> <span class="n">occupancy_threshold</span>
@@ -861,14 +877,14 @@
 <div class="viewcode-block" id="EncodeAtomArray.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.encoding.EncodeAtomArray.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">required</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;occupancy&quot;</span><span class="p">,</span> <span class="o">*</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">coord_annotation</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coord_annotation</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;coord&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="p">[])]</span>
+        <span class="n">required</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"occupancy"</span><span class="p">,</span> <span class="o">*</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">coord_annotation</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coord_annotation</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">"coord"</span><span class="p">)</span> <span class="k">else</span> <span class="p">[])]</span>
         <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">required</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="EncodeAtomArray.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.encoding.EncodeAtomArray.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span>
 
         <span class="n">encoded</span> <span class="o">=</span> <span class="n">atom_array_to_encoding</span><span class="p">(</span>
             <span class="n">atom_array</span><span class="p">,</span>
@@ -879,7 +895,7 @@
             <span class="n">coord_annotation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">coord_annotation</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;encoded&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">encoded</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"encoded"</span><span class="p">]</span> <span class="o">=</span> <span class="n">encoded</span>
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
 
@@ -888,11 +904,11 @@
 <div class="viewcode-block" id="AddTokenAnnotation">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.encoding.AddTokenAnnotation">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AddTokenAnnotation</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Add a token annotation to the atom array. This is mostly meant as a debug transform and not expected to be used in production.</span>
 
 <span class="sd">    Sets the `token` annotation to the token name for each atom in the atom array.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoding</span><span class="p">:</span> <span class="n">TokenEncoding</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="n">encoding</span>
@@ -900,24 +916,24 @@
 <div class="viewcode-block" id="AddTokenAnnotation.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.encoding.AddTokenAnnotation.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
-        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
-        <span class="n">check_nonzero_length</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">)</span></div>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atom_array"</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_nonzero_length</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="AddTokenAnnotation.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.encoding.AddTokenAnnotation.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span>
 
         <span class="c1"># Iterate over residues and tokenize</span>
         <span class="c1"># ... record whether the atom array has the `atomize` annotation</span>
-        <span class="n">has_atomize</span> <span class="o">=</span> <span class="s2">&quot;atomize&quot;</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span>
+        <span class="n">has_atomize</span> <span class="o">=</span> <span class="s2">"atomize"</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span>
         <span class="n">tokens</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">_i</span><span class="p">,</span> <span class="n">token</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">token_iter</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)):</span>
             <span class="c1"># ... extract token name</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">has_atomize</span> <span class="ow">and</span> <span class="n">token</span><span class="o">.</span><span class="n">atomize</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">atomic_number</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Atomize annotation is only allowed for single atoms.&quot;</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">atomic_number</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Atomize annotation is only allowed for single atoms."</span>
                 <span class="n">token_name</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">atomic_number</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="n">token_is_atom</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">else</span><span class="p">:</span>
@@ -928,7 +944,7 @@
                 <span class="n">token_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="o">.</span><span class="n">resolve_unknown_token_name</span><span class="p">(</span><span class="n">token_name</span><span class="p">,</span> <span class="n">token_is_atom</span><span class="p">)</span>
             <span class="n">tokens</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">token_name</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">token</span><span class="p">))</span>
 
-        <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">&quot;token&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">))</span>
+        <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">"token"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">tokens</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
 
@@ -937,13 +953,13 @@
 <div class="viewcode-block" id="EncodeAF3TokenLevelFeatures">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.encoding.EncodeAF3TokenLevelFeatures">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EncodeAF3TokenLevelFeatures</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A transform that encodes token-level features like AF3. The token-level features are returned as:</span>
+<span class="w">    </span><span class="sd">"""A transform that encodes token-level features like AF3. The token-level features are returned as:</span>
 
 <span class="sd">    feats:</span>
 <span class="sd">        (Standard AF3 token-level features)</span>
 
 <span class="sd">        residue_index</span>
-<span class="sd">            Residue number in the token&#39;s original input chain (pre-crop)</span>
+<span class="sd">            Residue number in the token's original input chain (pre-crop)</span>
 <span class="sd">        token_index</span>
 <span class="sd">            Token number. Increases monotonically; does not restart at 1 for new</span>
 <span class="sd">            chains. (Runs from 0 to N_tokens)</span>
@@ -984,7 +1000,7 @@
 
 <span class="sd">    Reference:</span>
 <span class="sd">        `Section 2.8 of the AF3 supplementary (Table 5) &lt;https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf&gt;`_</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequence_encoding</span><span class="p">:</span> <span class="n">AF3SequenceEncoding</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sequence_encoding</span> <span class="o">=</span> <span class="n">sequence_encoding</span>
@@ -992,16 +1008,16 @@
 <div class="viewcode-block" id="EncodeAF3TokenLevelFeatures.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.encoding.EncodeAF3TokenLevelFeatures.check_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">])</span>
-        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;atom_array&quot;</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atom_array"</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
         <span class="n">check_atom_array_annotation</span><span class="p">(</span>
             <span class="n">data</span><span class="p">,</span>
             <span class="p">[</span>
-                <span class="s2">&quot;atomize&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;pn_unit_iid&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;chain_entity&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;res_name&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;within_chain_res_idx&quot;</span><span class="p">,</span>
+                <span class="s2">"atomize"</span><span class="p">,</span>
+                <span class="s2">"pn_unit_iid"</span><span class="p">,</span>
+                <span class="s2">"chain_entity"</span><span class="p">,</span>
+                <span class="s2">"res_name"</span><span class="p">,</span>
+                <span class="s2">"within_chain_res_idx"</span><span class="p">,</span>
             <span class="p">],</span>
         <span class="p">)</span></div>
 
@@ -1009,7 +1025,7 @@
 <div class="viewcode-block" id="EncodeAF3TokenLevelFeatures.forward">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.encoding.EncodeAF3TokenLevelFeatures.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;atom_array&quot;</span><span class="p">]</span>
+        <span class="n">atom_array</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span>
         <span class="c1"># ... get token-level array</span>
         <span class="n">token_starts</span> <span class="o">=</span> <span class="n">get_token_starts</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
         <span class="n">token_level_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">token_starts</span><span class="p">]</span>
@@ -1024,14 +1040,14 @@
         <span class="c1"># ... (chain entity)</span>
         <span class="n">entity_name</span><span class="p">,</span> <span class="n">entity_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">token_level_array</span><span class="o">.</span><span class="n">pn_unit_entity</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="c1"># ... (within chain entity)</span>
-        <span class="n">sym_name</span><span class="p">,</span> <span class="n">sym_id</span> <span class="o">=</span> <span class="n">get_within_entity_idx</span><span class="p">(</span><span class="n">token_level_array</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">&quot;pn_unit&quot;</span><span class="p">)</span>
+        <span class="n">sym_name</span><span class="p">,</span> <span class="n">sym_id</span> <span class="o">=</span> <span class="n">get_within_entity_idx</span><span class="p">(</span><span class="n">token_level_array</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">"pn_unit"</span><span class="p">)</span>
 
         <span class="c1"># ... sequence tokens</span>
         <span class="n">restype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequence_encoding</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">token_level_array</span><span class="o">.</span><span class="n">res_name</span><span class="p">)</span>
 
-        <span class="c1"># HACK: MSA transformations rely on the encoded query sequence being stored in &quot;encoded/seq&quot;</span>
-        <span class="c1"># We could consider finding a consistent place to store the encoded query sequence across RF2AA and AF3 (e.g., &quot;encoded&quot; vs. &quot;feats/restype&quot;)</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;encoded&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;seq&quot;</span><span class="p">:</span> <span class="n">restype</span><span class="p">}</span>
+        <span class="c1"># HACK: MSA transformations rely on the encoded query sequence being stored in "encoded/seq"</span>
+        <span class="c1"># We could consider finding a consistent place to store the encoded query sequence across RF2AA and AF3 (e.g., "encoded" vs. "feats/restype")</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"encoded"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"seq"</span><span class="p">:</span> <span class="n">restype</span><span class="p">}</span>
 
         <span class="c1"># ...one-hot encode the restype (NOTE: We one-hot encode here, since we have access to the sequence encoding object)</span>
         <span class="n">restype</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">one_hot</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">restype</span><span class="p">),</span> <span class="n">num_classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sequence_encoding</span><span class="o">.</span><span class="n">n_tokens</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
@@ -1049,29 +1065,29 @@
         <span class="n">is_ligand</span> <span class="o">=</span> <span class="o">~</span><span class="p">(</span><span class="n">is_protein</span> <span class="o">|</span> <span class="n">is_rna</span> <span class="o">|</span> <span class="n">is_dna</span><span class="p">)</span>
 
         <span class="c1"># ... add to data dict</span>
-        <span class="k">if</span> <span class="s2">&quot;feats&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;feats&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">if</span> <span class="s2">&quot;feat_metadata&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;feat_metadata&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="s2">"feats"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">"feats"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="s2">"feat_metadata"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">"feat_metadata"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="c1"># ... add to data dict</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;feats&quot;</span><span class="p">]</span> <span class="o">|=</span> <span class="p">{</span>
-            <span class="s2">&quot;residue_index&quot;</span><span class="p">:</span> <span class="n">residue_index</span><span class="p">,</span>  <span class="c1"># (N_tokens) (int)</span>
-            <span class="s2">&quot;token_index&quot;</span><span class="p">:</span> <span class="n">token_index</span><span class="p">,</span>  <span class="c1"># (N_tokens) (int)</span>
-            <span class="s2">&quot;asym_id&quot;</span><span class="p">:</span> <span class="n">asym_id</span><span class="p">,</span>  <span class="c1"># (N_tokens) (int)</span>
-            <span class="s2">&quot;entity_id&quot;</span><span class="p">:</span> <span class="n">entity_id</span><span class="p">,</span>  <span class="c1"># (N_tokens) (int)</span>
-            <span class="s2">&quot;sym_id&quot;</span><span class="p">:</span> <span class="n">sym_id</span><span class="p">,</span>  <span class="c1"># (N_tokens) (int)</span>
-            <span class="s2">&quot;restype&quot;</span><span class="p">:</span> <span class="n">restype</span><span class="p">,</span>  <span class="c1"># (N_tokens, 32) (float, one-hot)</span>
-            <span class="s2">&quot;is_protein&quot;</span><span class="p">:</span> <span class="n">is_protein</span><span class="p">,</span>  <span class="c1"># (N_tokens) (bool)</span>
-            <span class="s2">&quot;is_rna&quot;</span><span class="p">:</span> <span class="n">is_rna</span><span class="p">,</span>  <span class="c1"># (N_tokens) (bool)</span>
-            <span class="s2">&quot;is_dna&quot;</span><span class="p">:</span> <span class="n">is_dna</span><span class="p">,</span>  <span class="c1"># (N_tokens) (bool)</span>
-            <span class="s2">&quot;is_ligand&quot;</span><span class="p">:</span> <span class="n">is_ligand</span><span class="p">,</span>  <span class="c1"># (N_tokens) (bool)</span>
-            <span class="s2">&quot;is_atomized&quot;</span><span class="p">:</span> <span class="n">token_level_array</span><span class="o">.</span><span class="n">atomize</span><span class="p">,</span>  <span class="c1"># (N_tokens) (bool)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"feats"</span><span class="p">]</span> <span class="o">|=</span> <span class="p">{</span>
+            <span class="s2">"residue_index"</span><span class="p">:</span> <span class="n">residue_index</span><span class="p">,</span>  <span class="c1"># (N_tokens) (int)</span>
+            <span class="s2">"token_index"</span><span class="p">:</span> <span class="n">token_index</span><span class="p">,</span>  <span class="c1"># (N_tokens) (int)</span>
+            <span class="s2">"asym_id"</span><span class="p">:</span> <span class="n">asym_id</span><span class="p">,</span>  <span class="c1"># (N_tokens) (int)</span>
+            <span class="s2">"entity_id"</span><span class="p">:</span> <span class="n">entity_id</span><span class="p">,</span>  <span class="c1"># (N_tokens) (int)</span>
+            <span class="s2">"sym_id"</span><span class="p">:</span> <span class="n">sym_id</span><span class="p">,</span>  <span class="c1"># (N_tokens) (int)</span>
+            <span class="s2">"restype"</span><span class="p">:</span> <span class="n">restype</span><span class="p">,</span>  <span class="c1"># (N_tokens, 32) (float, one-hot)</span>
+            <span class="s2">"is_protein"</span><span class="p">:</span> <span class="n">is_protein</span><span class="p">,</span>  <span class="c1"># (N_tokens) (bool)</span>
+            <span class="s2">"is_rna"</span><span class="p">:</span> <span class="n">is_rna</span><span class="p">,</span>  <span class="c1"># (N_tokens) (bool)</span>
+            <span class="s2">"is_dna"</span><span class="p">:</span> <span class="n">is_dna</span><span class="p">,</span>  <span class="c1"># (N_tokens) (bool)</span>
+            <span class="s2">"is_ligand"</span><span class="p">:</span> <span class="n">is_ligand</span><span class="p">,</span>  <span class="c1"># (N_tokens) (bool)</span>
+            <span class="s2">"is_atomized"</span><span class="p">:</span> <span class="n">token_level_array</span><span class="o">.</span><span class="n">atomize</span><span class="p">,</span>  <span class="c1"># (N_tokens) (bool)</span>
         <span class="p">}</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;feat_metadata&quot;</span><span class="p">]</span> <span class="o">|=</span> <span class="p">{</span>
-            <span class="s2">&quot;asym_name&quot;</span><span class="p">:</span> <span class="n">asym_name</span><span class="p">,</span>  <span class="c1"># (N_asyms)</span>
-            <span class="s2">&quot;entity_name&quot;</span><span class="p">:</span> <span class="n">entity_name</span><span class="p">,</span>  <span class="c1"># (N_entities)</span>
-            <span class="s2">&quot;sym_name&quot;</span><span class="p">:</span> <span class="n">sym_name</span><span class="p">,</span>  <span class="c1"># (N_entities)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"feat_metadata"</span><span class="p">]</span> <span class="o">|=</span> <span class="p">{</span>
+            <span class="s2">"asym_name"</span><span class="p">:</span> <span class="n">asym_name</span><span class="p">,</span>  <span class="c1"># (N_asyms)</span>
+            <span class="s2">"entity_name"</span><span class="p">:</span> <span class="n">entity_name</span><span class="p">,</span>  <span class="c1"># (N_entities)</span>
+            <span class="s2">"sym_name"</span><span class="p">:</span> <span class="n">sym_name</span><span class="p">,</span>  <span class="c1"># (N_entities)</span>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="n">data</span></div>
@@ -1106,8 +1122,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1141,7 +1157,7 @@
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
 </p></div>
       
     </div>

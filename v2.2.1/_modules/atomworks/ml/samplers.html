@@ -26,29 +26,31 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
-<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+  <link href="../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
-<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/samplers';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
-        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.2.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
@@ -167,6 +169,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../tutorial/index.html">
     Tutorial
@@ -293,6 +302,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../tutorial/index.html">
     Tutorial
@@ -444,7 +460,7 @@
 <div class="viewcode-block" id="calculate_af3_example_weights">
 <a class="viewcode-back" href="../../../ml/samplers.html#atomworks.ml.samplers.calculate_af3_example_weights">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">calculate_af3_example_weights</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">alphas</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">beta</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determines the weight of each example in the DataFrame using a methodology inspired by AF-3.</span>
+<span class="w">    </span><span class="sd">"""Determines the weight of each example in the DataFrame using a methodology inspired by AF-3.</span>
 
 <span class="sd">    In AF-3, the weight of a given example is a function of:</span>
 <span class="sd">        (1) The size of the cluster to which the example belongs (specific for interfaces vs. chains)</span>
@@ -476,60 +492,60 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        pd.Series: A Series containing the calculated weights for each row in the DataFrame</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;n_prot&quot;</span><span class="p">,</span> <span class="s2">&quot;n_nuc&quot;</span><span class="p">,</span> <span class="s2">&quot;n_ligand&quot;</span><span class="p">,</span> <span class="s2">&quot;cluster_size&quot;</span><span class="p">]</span>
+<span class="sd">    """</span>
+    <span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"n_prot"</span><span class="p">,</span> <span class="s2">"n_nuc"</span><span class="p">,</span> <span class="s2">"n_ligand"</span><span class="p">,</span> <span class="s2">"cluster_size"</span><span class="p">]</span>
     <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">required_columns</span><span class="p">),</span> <span class="p">(</span>
-        <span class="s2">&quot;Missing required columns in the (loaded) DataFrame. &quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;Please ensure the DataFrame contains the following columns: </span><span class="si">{</span><span class="n">required_columns</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="s2">&quot;Also ensure that the columns to include are specified in the Hydra configuration file.&quot;</span>
+        <span class="s2">"Missing required columns in the (loaded) DataFrame. "</span>
+        <span class="sa">f</span><span class="s2">"Please ensure the DataFrame contains the following columns: </span><span class="si">{</span><span class="n">required_columns</span><span class="si">}</span><span class="s2">"</span>
+        <span class="s2">"Also ensure that the columns to include are specified in the Hydra configuration file."</span>
     <span class="p">)</span>
     <span class="c1"># Extract relevant columns with default handling</span>
-    <span class="n">n_prot</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;n_prot&quot;</span><span class="p">]</span>
-    <span class="n">n_nuc</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;n_nuc&quot;</span><span class="p">]</span>
-    <span class="n">n_ligand</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;n_ligand&quot;</span><span class="p">]</span>
-    <span class="n">n_peptide</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;n_peptide&quot;</span><span class="p">]</span>
-    <span class="n">cluster_size</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;cluster_size&quot;</span><span class="p">]</span>
+    <span class="n">n_prot</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"n_prot"</span><span class="p">]</span>
+    <span class="n">n_nuc</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"n_nuc"</span><span class="p">]</span>
+    <span class="n">n_ligand</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"n_ligand"</span><span class="p">]</span>
+    <span class="n">n_peptide</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"n_peptide"</span><span class="p">]</span>
+    <span class="n">cluster_size</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"cluster_size"</span><span class="p">]</span>
 
-    <span class="c1"># For interfaces, the column &quot;involves_loi&quot; indicates whether the interface involves a ligand of interest</span>
-    <span class="c1"># For pn_units, the column &quot;q_pn_unit_is_loi&quot; indicates whether the query PN Unit is a ligand of interest</span>
+    <span class="c1"># For interfaces, the column "involves_loi" indicates whether the interface involves a ligand of interest</span>
+    <span class="c1"># For pn_units, the column "q_pn_unit_is_loi" indicates whether the query PN Unit is a ligand of interest</span>
     <span class="c1"># (1 = True, 0 = False)</span>
-    <span class="k">assert</span> <span class="s2">&quot;involves_loi&quot;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="ow">or</span> <span class="s2">&quot;q_pn_unit_is_loi&quot;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="p">(</span>
-        <span class="s2">&quot;Missing column for &#39;involves_loi&#39; or &#39;q_pn_unit_is_loi&#39;. &quot;</span>
-        <span class="s2">&quot;Please check the columns in the DataFrame: </span><span class="si">{df.columns}</span><span class="s2">, &quot;</span>
-        <span class="s2">&quot;and the columns to include specified in the Hydra configuration file.&quot;</span>
+    <span class="k">assert</span> <span class="s2">"involves_loi"</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="ow">or</span> <span class="s2">"q_pn_unit_is_loi"</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="p">(</span>
+        <span class="s2">"Missing column for 'involves_loi' or 'q_pn_unit_is_loi'. "</span>
+        <span class="s2">"Please check the columns in the DataFrame: </span><span class="si">{df.columns}</span><span class="s2">, "</span>
+        <span class="s2">"and the columns to include specified in the Hydra configuration file."</span>
     <span class="p">)</span>
-    <span class="n">is_loi</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;involves_loi&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;involves_loi&quot;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">else</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;q_pn_unit_is_loi&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">is_loi</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"involves_loi"</span><span class="p">]</span> <span class="k">if</span> <span class="s2">"involves_loi"</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">else</span> <span class="n">df</span><span class="p">[</span><span class="s2">"q_pn_unit_is_loi"</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
     <span class="c1"># Assert that all cluster sizes are greater than 0</span>
-    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">cluster_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;All cluster sizes must be greater than 0&quot;</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">cluster_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">),</span> <span class="s2">"All cluster sizes must be greater than 0"</span>
 
     <span class="c1"># Warn if not all cluster sizes are less than the dataframe length</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">cluster_size</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)):</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-            <span class="s2">&quot;Some cluster sizes are greater than the DataFrame length. &quot;</span>
-            <span class="s2">&quot;This is unexpected, unless you are running with a very &quot;</span>
-            <span class="s2">&quot;restricted dataframe for debugging. If you aren&#39;t, please check!&quot;</span>
+            <span class="s2">"Some cluster sizes are greater than the DataFrame length. "</span>
+            <span class="s2">"This is unexpected, unless you are running with a very "</span>
+            <span class="s2">"restricted dataframe for debugging. If you aren't, please check!"</span>
         <span class="p">)</span>
 
-    <span class="c1"># If we&#39;re missing any of the alphas, or any of the counts, log a warning</span>
-    <span class="n">missing_alphas</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">alphas</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="p">{</span><span class="s2">&quot;a_prot&quot;</span><span class="p">,</span> <span class="s2">&quot;a_peptide&quot;</span><span class="p">,</span> <span class="s2">&quot;a_nuc&quot;</span><span class="p">,</span> <span class="s2">&quot;a_ligand&quot;</span><span class="p">,</span> <span class="s2">&quot;a_loi&quot;</span><span class="p">}</span>
-    <span class="n">missing_counts</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;n_prot&quot;</span><span class="p">,</span> <span class="s2">&quot;n_peptide&quot;</span><span class="p">,</span> <span class="s2">&quot;n_nuc&quot;</span><span class="p">,</span> <span class="s2">&quot;n_ligand&quot;</span><span class="p">}</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="c1"># If we're missing any of the alphas, or any of the counts, log a warning</span>
+    <span class="n">missing_alphas</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">alphas</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="p">{</span><span class="s2">"a_prot"</span><span class="p">,</span> <span class="s2">"a_peptide"</span><span class="p">,</span> <span class="s2">"a_nuc"</span><span class="p">,</span> <span class="s2">"a_ligand"</span><span class="p">,</span> <span class="s2">"a_loi"</span><span class="p">}</span>
+    <span class="n">missing_counts</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"n_prot"</span><span class="p">,</span> <span class="s2">"n_peptide"</span><span class="p">,</span> <span class="s2">"n_nuc"</span><span class="p">,</span> <span class="s2">"n_ligand"</span><span class="p">}</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">missing_alphas</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing alphas from configuration file: </span><span class="si">{</span><span class="n">missing_alphas</span><span class="si">}</span><span class="s2">; defaulting to 0&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Missing alphas from configuration file: </span><span class="si">{</span><span class="n">missing_alphas</span><span class="si">}</span><span class="s2">; defaulting to 0"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">missing_counts</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing chain within dataframe counts: </span><span class="si">{</span><span class="n">missing_counts</span><span class="si">}</span><span class="s2">; defaulting to 0&quot;</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Columns in dataframe: </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Missing chain within dataframe counts: </span><span class="si">{</span><span class="n">missing_counts</span><span class="si">}</span><span class="s2">; defaulting to 0"</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Columns in dataframe: </span><span class="si">{</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calculating weights for AF-3 examples using alphas=</span><span class="si">{</span><span class="n">alphas</span><span class="si">}</span><span class="s2">, beta=</span><span class="si">{</span><span class="n">beta</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Calculating weights for AF-3 examples using alphas=</span><span class="si">{</span><span class="n">alphas</span><span class="si">}</span><span class="s2">, beta=</span><span class="si">{</span><span class="n">beta</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="c1"># Vectorized calculation of the weights</span>
     <span class="n">weights</span> <span class="o">=</span> <span class="p">(</span><span class="n">beta</span> <span class="o">/</span> <span class="n">cluster_size</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
-        <span class="n">alphas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;a_prot&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_prot</span>
-        <span class="o">+</span> <span class="n">alphas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;a_peptide&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_peptide</span>
-        <span class="o">+</span> <span class="n">alphas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;a_nuc&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_nuc</span>
-        <span class="o">+</span> <span class="n">alphas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;a_ligand&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_ligand</span>
-        <span class="o">+</span> <span class="n">alphas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;a_loi&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">is_loi</span>
+        <span class="n">alphas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"a_prot"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_prot</span>
+        <span class="o">+</span> <span class="n">alphas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"a_peptide"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_peptide</span>
+        <span class="o">+</span> <span class="n">alphas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"a_nuc"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_nuc</span>
+        <span class="o">+</span> <span class="n">alphas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"a_ligand"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_ligand</span>
+        <span class="o">+</span> <span class="n">alphas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"a_loi"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">is_loi</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">weights</span></div>
@@ -538,8 +554,8 @@
 
 <div class="viewcode-block" id="get_cluster_sizes">
 <a class="viewcode-back" href="../../../ml/samplers.html#atomworks.ml.samplers.get_cluster_sizes">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_cluster_sizes</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">cluster_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cluster&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a mapping between cluster alphanumeric IDs and the number of PN units/interfaces in each cluster.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_cluster_sizes</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">cluster_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"cluster"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Generate a mapping between cluster alphanumeric IDs and the number of PN units/interfaces in each cluster.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        df (pd.DataFrame): DataFrame containing the PN unit or interface data</span>
@@ -547,7 +563,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: A dictionary where the keys are unique cluster IDs and the values are the counts of occurrences.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Use the value_counts method to count occurrences of each unique value in the cluster column</span>
     <span class="n">cluster_counts</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">cluster_column</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
 
@@ -559,9 +575,9 @@
 <div class="viewcode-block" id="calculate_weights_for_pdb_dataset_df">
 <a class="viewcode-back" href="../../../ml/samplers.html#atomworks.ml.samplers.calculate_weights_for_pdb_dataset_df">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">calculate_weights_for_pdb_dataset_df</span><span class="p">(</span>
-    <span class="n">dataset_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">alphas</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">beta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">cluster_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cluster&quot;</span>
+    <span class="n">dataset_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">alphas</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">beta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">cluster_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"cluster"</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate weights for each row in the DataFrame based on the cluster size and the AF-3 weighting methodology.</span>
+<span class="w">    </span><span class="sd">"""Calculate weights for each row in the DataFrame based on the cluster size and the AF-3 weighting methodology.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        dataset_df (pd.DataFrame): DataFrame containing the PN unit or interface data</span>
@@ -570,15 +586,15 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        torch.Tensor: A tensor containing the calculated weights for each row in the DataFrame</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Generate the cluster sizes...</span>
     <span class="n">cluster_id_to_size_map</span> <span class="o">=</span> <span class="n">get_cluster_sizes</span><span class="p">(</span><span class="n">dataset_df</span><span class="p">,</span> <span class="n">cluster_column</span><span class="o">=</span><span class="n">cluster_column</span><span class="p">)</span>
 
     <span class="c1"># ...map the cluster sizes to the DataFrame</span>
-    <span class="n">dataset_df</span><span class="p">[</span><span class="s2">&quot;cluster_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset_df</span><span class="p">[</span><span class="n">cluster_column</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">cluster_id_to_size_map</span><span class="p">)</span>
+    <span class="n">dataset_df</span><span class="p">[</span><span class="s2">"cluster_size"</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset_df</span><span class="p">[</span><span class="n">cluster_column</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">cluster_id_to_size_map</span><span class="p">)</span>
 
     <span class="c1"># ... assert no NaN cluster sizes</span>
-    <span class="k">assert</span> <span class="ow">not</span> <span class="n">dataset_df</span><span class="p">[</span><span class="s2">&quot;cluster_size&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">(),</span> <span class="s2">&quot;Cluster sizes must not be NaN&quot;</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">dataset_df</span><span class="p">[</span><span class="s2">"cluster_size"</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">(),</span> <span class="s2">"Cluster sizes must not be NaN"</span>
 
     <span class="c1"># ...calculate weights using vectorized operations</span>
     <span class="n">weights</span> <span class="o">=</span> <span class="n">calculate_af3_example_weights</span><span class="p">(</span><span class="n">dataset_df</span><span class="p">,</span> <span class="n">alphas</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
@@ -591,25 +607,25 @@
 <div class="viewcode-block" id="calculate_weights_by_inverse_cluster_size">
 <a class="viewcode-back" href="../../../ml/samplers.html#atomworks.ml.samplers.calculate_weights_by_inverse_cluster_size">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">calculate_weights_by_inverse_cluster_size</span><span class="p">(</span>
-    <span class="n">dataset_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">cluster_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cluster&quot;</span>
+    <span class="n">dataset_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">cluster_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"cluster"</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate weights for each row in the DataFrame as the inverse of its cluster size.</span>
+<span class="w">    </span><span class="sd">"""Calculate weights for each row in the DataFrame as the inverse of its cluster size.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        dataset_df (pd.DataFrame): DataFrame containing the PN unit or interface data</span>
-<span class="sd">        cluster_column (str): Column name in `dataset_df` corresponding to the cluster info. Default is &quot;cluster&quot;.</span>
+<span class="sd">        cluster_column (str): Column name in `dataset_df` corresponding to the cluster info. Default is "cluster".</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        torch.Tensor: A tensor containing the calculated weights for each row in the DataFrame</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Generate the cluster sizes...</span>
     <span class="n">cluster_id_to_size_map</span> <span class="o">=</span> <span class="n">get_cluster_sizes</span><span class="p">(</span><span class="n">dataset_df</span><span class="p">,</span> <span class="n">cluster_column</span><span class="o">=</span><span class="n">cluster_column</span><span class="p">)</span>
 
     <span class="c1"># ... map the cluster sizes to the DataFrame</span>
-    <span class="n">dataset_df</span><span class="p">[</span><span class="s2">&quot;cluster_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset_df</span><span class="p">[</span><span class="n">cluster_column</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">cluster_id_to_size_map</span><span class="p">)</span>
+    <span class="n">dataset_df</span><span class="p">[</span><span class="s2">"cluster_size"</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset_df</span><span class="p">[</span><span class="n">cluster_column</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">cluster_id_to_size_map</span><span class="p">)</span>
 
     <span class="c1"># ... calculate weights as the inverse of the cluster size</span>
-    <span class="n">weights</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">dataset_df</span><span class="p">[</span><span class="s2">&quot;cluster_size&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">dataset_df</span><span class="p">[</span><span class="s2">"cluster_size"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
 
     <span class="c1"># ... and return the weights as a tensor</span>
     <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span></div>
@@ -619,21 +635,21 @@
 <div class="viewcode-block" id="set_sampler_epoch">
 <a class="viewcode-back" href="../../../ml/samplers.html#atomworks.ml.samplers.set_sampler_epoch">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">set_sampler_epoch</span><span class="p">(</span><span class="n">sampler</span><span class="p">:</span> <span class="n">Sampler</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">add_random_offset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Control the random seed for a sampler.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Control the random seed for a sampler."""</span>
     <span class="k">if</span> <span class="n">add_random_offset</span><span class="p">:</span>
         <span class="n">epoch</span> <span class="o">+=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e12</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e12</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Setting epoch for sampler </span><span class="si">{</span><span class="n">sampler</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Setting epoch for sampler </span><span class="si">{</span><span class="n">sampler</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="s2">&quot;set_epoch&quot;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="s2">"set_epoch"</span><span class="p">):</span>
         <span class="n">sampler</span><span class="o">.</span><span class="n">set_epoch</span><span class="p">(</span><span class="n">epoch</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="s2">&quot;generator&quot;</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="s2">"generator"</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">sampler</span><span class="o">.</span><span class="n">generator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">sampler</span><span class="o">.</span><span class="n">generator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Generator</span><span class="p">()</span>
         <span class="n">sampler</span><span class="o">.</span><span class="n">generator</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">epoch</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Sampler </span><span class="si">{</span><span class="n">sampler</span><span class="si">}</span><span class="s2"> does not have a set_epoch method or generator attribute, so epoch cannot be set.&quot;</span>
+            <span class="sa">f</span><span class="s2">"Sampler </span><span class="si">{</span><span class="n">sampler</span><span class="si">}</span><span class="s2"> does not have a set_epoch method or generator attribute, so epoch cannot be set."</span>
         <span class="p">)</span></div>
 
 
@@ -641,7 +657,7 @@
 <div class="viewcode-block" id="DistributedMixedSampler">
 <a class="viewcode-back" href="../../../ml/samplers.html#atomworks.ml.samplers.DistributedMixedSampler">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DistributedMixedSampler</span><span class="p">(</span><span class="n">Sampler</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom DistributedSampler implementation that samples from an arbitrary list of samplers with specified probabilities.</span>
+<span class="w">    </span><span class="sd">"""Custom DistributedSampler implementation that samples from an arbitrary list of samplers with specified probabilities.</span>
 
 <span class="sd">    Child samplers can be any type of non-distributed sampler, including a MixedSampler.</span>
 <span class="sd">    After gathering all indices, shards the samples across nodes, ensuring each node receives a unique slice of the dataset.</span>
@@ -671,12 +687,12 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        datasets_info: List of dictionaries, where each dictionary must contain at a minimum:</span>
-<span class="sd">            - &quot;sampler&quot;: Sampler object for the dataset</span>
-<span class="sd">            - &quot;dataset&quot;: Dataset object associated with the sampler</span>
-<span class="sd">            - &quot;probability&quot;: Probability of sampling from this dataset</span>
+<span class="sd">            - "sampler": Sampler object for the dataset</span>
+<span class="sd">            - "dataset": Dataset object associated with the sampler</span>
+<span class="sd">            - "probability": Probability of sampling from this dataset</span>
 <span class="sd">        num_replicas: Number of replicas (nodes) in the distributed setting</span>
 <span class="sd">        rank: Rank of the current node</span>
-<span class="sd">        n_examples_per_epoch: Number of examples in an epoch. Effectively, the &quot;length&quot; of the sampler (since we often sample with replacement).</span>
+<span class="sd">        n_examples_per_epoch: Number of examples in an epoch. Effectively, the "length" of the sampler (since we often sample with replacement).</span>
 <span class="sd">            May be None, in which case the number of examples per epoch must be set dynamically by a parent sampler.</span>
 <span class="sd">        shuffle: Whether to shuffle the indices. If False, the iterator will return all sampled indices from the first dataset, then the second, etc.</span>
 <span class="sd">        drop_last: Whether to drop the last incomplete batch if the dataset size is not divisible by the batch size</span>
@@ -686,7 +702,7 @@
 
 <span class="sd">    Reference:</span>
 <span class="sd">        `PyTorch DistributedSampler &lt;https://github.com/pytorch/pytorch/blob/main/torch/utils/data/distributed.py#L68&gt;`_</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -704,9 +720,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">drop_last</span> <span class="o">=</span> <span class="n">drop_last</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Initialize epoch to 0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">samplers</span> <span class="o">=</span> <span class="p">[</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;sampler&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">datasets_info</span><span class="p">]</span>  <span class="c1"># ordered</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="p">[</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;probability&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">datasets_info</span><span class="p">]</span>  <span class="c1"># ordered</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dataset_lengths</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">datasets_info</span><span class="p">]</span>  <span class="c1"># ordered</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">samplers</span> <span class="o">=</span> <span class="p">[</span><span class="n">info</span><span class="p">[</span><span class="s2">"sampler"</span><span class="p">]</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">datasets_info</span><span class="p">]</span>  <span class="c1"># ordered</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span> <span class="o">=</span> <span class="p">[</span><span class="n">info</span><span class="p">[</span><span class="s2">"probability"</span><span class="p">]</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">datasets_info</span><span class="p">]</span>  <span class="c1"># ordered</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset_lengths</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s2">"dataset"</span><span class="p">])</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">datasets_info</span><span class="p">]</span>  <span class="c1"># ordered</span>
 
         <span class="c1"># Calculate cumulative lengths of datasets (so we can map local dataset indices to ConcatDataset indices)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cumulative_lengths</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="n">accumulate</span><span class="p">(</span><span class="n">add</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset_lengths</span><span class="p">))]</span>  <span class="c1"># ordered</span>
@@ -717,21 +733,21 @@
         <span class="c1"># ... the number of samplers, probabilities, and datasets match</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samplers</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_lengths</span><span class="p">)</span>
         <span class="c1"># ... the probabilities sum to 1</span>
-        <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="s2">&quot;Probabilities must sum to 1&quot;</span>
-        <span class="c1"># ... the datasets_info contains keys for &quot;sampler&quot;, &quot;probability&quot;, and &quot;dataset&quot;</span>
-        <span class="k">assert</span> <span class="s2">&quot;sampler&quot;</span> <span class="ow">in</span> <span class="n">datasets_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="s2">&quot;probability&quot;</span> <span class="ow">in</span> <span class="n">datasets_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="s2">&quot;dataset&quot;</span> <span class="ow">in</span> <span class="n">datasets_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probabilities</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="s2">"Probabilities must sum to 1"</span>
+        <span class="c1"># ... the datasets_info contains keys for "sampler", "probability", and "dataset"</span>
+        <span class="k">assert</span> <span class="s2">"sampler"</span> <span class="ow">in</span> <span class="n">datasets_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="s2">"probability"</span> <span class="ow">in</span> <span class="n">datasets_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="s2">"dataset"</span> <span class="ow">in</span> <span class="n">datasets_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">n_examples_per_epoch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_num_examples_per_epoch</span><span class="p">(</span><span class="n">n_examples_per_epoch</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_num_examples_per_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_examples_per_epoch</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the number of examples per epoch, and update the number of examples per epoch for each sampler.</span>
+<span class="w">        </span><span class="sd">"""Set the number of examples per epoch, and update the number of examples per epoch for each sampler.</span>
 
 <span class="sd">        Allows for dynamic setting and propagation of the number of examples per epoch.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            n_examples_per_epoch: Number of examples in an epoch. Effectively, the &quot;length&quot; of the sampler</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            n_examples_per_epoch: Number of examples in an epoch. Effectively, the "length" of the sampler</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_examples_per_epoch</span> <span class="o">=</span> <span class="n">n_examples_per_epoch</span>
 
         <span class="c1"># If the number of examples per epoch is not evenly divisible by the number of replicas, there</span>
@@ -754,19 +770,19 @@
         <span class="k">for</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">n_examples</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samplers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_examples_per_dataset</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="c1"># Set the `n_examples_per_epoch` for each sampler, if they allow it...</span>
             <span class="c1"># NOTE: Required for MixedSamplers, which must continue propagating the number of examples per epoch</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="s2">&quot;_set_num_examples_per_epoch&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="s2">"_set_num_examples_per_epoch"</span><span class="p">):</span>
                 <span class="n">sampler</span><span class="o">.</span><span class="n">_set_num_examples_per_epoch</span><span class="p">(</span><span class="n">n_examples</span><span class="p">)</span>
 
             <span class="c1"># ... override the `num_samples` attribute if it exists (e.g., for WeightedRandomSampler)</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="s2">&quot;num_samples&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="s2">"num_samples"</span><span class="p">):</span>
                 <span class="n">sampler</span><span class="o">.</span><span class="n">num_samples</span> <span class="o">=</span> <span class="n">n_examples</span>
 
             <span class="c1"># ... and assert that either we have more than n_examples_per_epoch examples or we are sampling with replacement</span>
             <span class="n">sampler_has_enough_data</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sampler</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">n_examples</span>
-            <span class="n">sampler_is_replacement</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="s2">&quot;replacement&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="n">sampler_is_replacement</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="s2">"replacement"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">sampler_has_enough_data</span> <span class="ow">or</span> <span class="n">sampler_is_replacement</span>
-            <span class="p">),</span> <span class="s2">&quot;Must either have enough data or be sampling with replacement&quot;</span>
+            <span class="p">),</span> <span class="s2">"Must either have enough data or be sampling with replacement"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Trigger the __iter__ of each sampler upfront (generates a list of local indices based on the sampling scheme)</span>
@@ -795,7 +811,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Remove tail of data to make it evenly divisible.</span>
             <span class="n">indices</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_size</span><span class="p">]</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_size</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">total_size</span><span class="si">}</span><span class="s2"> indices, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_size</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">total_size</span><span class="si">}</span><span class="s2"> indices, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
 
         <span class="c1"># Randomly permute the global indices (otherwise, we will sample one dataset first, then the next, etc.)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span><span class="p">:</span>
@@ -835,18 +851,18 @@
 <div class="viewcode-block" id="MixedSampler">
 <a class="viewcode-back" href="../../../ml/samplers.html#atomworks.ml.samplers.MixedSampler">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MixedSampler</span><span class="p">(</span><span class="n">DistributedMixedSampler</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A non-distributed sampler that samples from an arbitrary list of samplers with specified probabilities.</span>
+<span class="w">    </span><span class="sd">"""A non-distributed sampler that samples from an arbitrary list of samplers with specified probabilities.</span>
 
 <span class="sd">    This class acts like a DistributedMixedSampler with `rank=0` and `num_replicas=1`.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        datasets_info: List of dictionaries, where each dictionary must contain at a minimum:</span>
-<span class="sd">            - &quot;sampler&quot;: Sampler object for the dataset</span>
-<span class="sd">            - &quot;dataset&quot;: Dataset object associated with the sampler</span>
-<span class="sd">            - &quot;probability&quot;: Probability of sampling from this dataset</span>
-<span class="sd">        n_examples_per_epoch: Number of examples in an epoch. Effectively, the &quot;length&quot; of the sampler.</span>
+<span class="sd">            - "sampler": Sampler object for the dataset</span>
+<span class="sd">            - "dataset": Dataset object associated with the sampler</span>
+<span class="sd">            - "probability": Probability of sampling from this dataset</span>
+<span class="sd">        n_examples_per_epoch: Number of examples in an epoch. Effectively, the "length" of the sampler.</span>
 <span class="sd">        shuffle: Whether to shuffle the indices. If False, the iterator will return all sampled indices from the first dataset, then the second, etc.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -867,10 +883,10 @@
 <div class="viewcode-block" id="FallbackSamplerWrapper">
 <a class="viewcode-back" href="../../../ml/samplers.html#atomworks.ml.samplers.FallbackSamplerWrapper">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FallbackSamplerWrapper</span><span class="p">(</span><span class="n">Sampler</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A wrapper around a sampler that allows for a fallback sampler to be used when an error occurs.</span>
+<span class="w">    </span><span class="sd">"""A wrapper around a sampler that allows for a fallback sampler to be used when an error occurs.</span>
 
 <span class="sd">    Meant to be used with a FallbackDatasetWrapper.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">:</span> <span class="n">Sampler</span><span class="p">,</span> <span class="n">fallback_sampler</span><span class="p">:</span> <span class="n">Sampler</span><span class="p">,</span> <span class="n">n_fallback_retries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
@@ -906,7 +922,7 @@
         <span class="n">generator</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">prefetch_buffer_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">replacement</span><span class="p">,</span> <span class="s2">&quot;LazyWeightedRandomSampler only supports replacement=True&quot;</span>
+        <span class="k">assert</span> <span class="n">replacement</span><span class="p">,</span> <span class="s2">"LazyWeightedRandomSampler only supports replacement=True"</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> <span class="n">replacement</span><span class="p">,</span> <span class="n">generator</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prefetch_buffer_size</span> <span class="o">=</span> <span class="n">prefetch_buffer_size</span>
 
@@ -933,9 +949,9 @@
 <div class="viewcode-block" id="LoadBalancedDistributedSampler">
 <a class="viewcode-back" href="../../../ml/samplers.html#atomworks.ml.samplers.LoadBalancedDistributedSampler">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">LoadBalancedDistributedSampler</span><span class="p">(</span><span class="n">DistributedSampler</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;DistributedSampler that balances large examples across replicas.</span>
+<span class="w">    </span><span class="sd">"""DistributedSampler that balances large examples across replicas.</span>
 
-<span class="sd">    Helpful for validation, where we don&#39;t want GPUs to be idle while waiting for the slowest replica to finish.</span>
+<span class="sd">    Helpful for validation, where we don't want GPUs to be idle while waiting for the slowest replica to finish.</span>
 
 <span class="sd">    For example, we may want to avoid the scenario where one GPU receives many large examples that are slow to process,</span>
 <span class="sd">    while another GPU receives many small examples that are quick to process.</span>
@@ -947,7 +963,7 @@
 <span class="sd">        key_to_balance: Key in the dataset data dataframe that contains the length (size) of each example.</span>
 <span class="sd">            The dataset must have a data attribute that can be accessed like a dataframe.</span>
 <span class="sd">            For example, if the dataset has a data attribute that is a pandas DataFrame, the key_to_balance</span>
-<span class="sd">            should be a column in that DataFrame (i.e., &quot;n_tokens&quot;).</span>
+<span class="sd">            should be a column in that DataFrame (i.e., "n_tokens").</span>
 <span class="sd">        num_replicas (int, optional): Number of processes participating in</span>
 <span class="sd">            distributed training. By default, :attr:`world_size` is retrieved from the</span>
 <span class="sd">            current distributed group.</span>
@@ -958,7 +974,7 @@
 <span class="sd">            tail of the data to make it evenly divisible across the number of</span>
 <span class="sd">            replicas. If ``False``, the sampler will add extra indices to make</span>
 <span class="sd">            the data evenly divisible across the replicas. Default: ``False``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1033,8 +1049,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
-<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1068,7 +1084,7 @@
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
 </p></div>
       
     </div>

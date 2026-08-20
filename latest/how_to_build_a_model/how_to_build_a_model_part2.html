@@ -1,0 +1,1418 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Part 2: Creating a Transform Pipeline &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'how_to_build_a_model/how_to_build_a_model_part2';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.2.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script async="async" defer="defer" src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Part 3: Write a Model" href="how_to_build_a_model_part3.html" />
+    <link rel="prev" title="Part 1: Cleaning the Data" href="how_to_build_a_model_part1.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.2.1" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Sections</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="how_to_build_a_model_part1.html">Part 1: Cleaning the Data</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Part 2: Creating a Transform Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_build_a_model_part3.html">Part 3: Write a Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_build_a_model_part4.html">Part 4: Train a Model</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">How to Build a Model with AtomWorks</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Part 2: Creating a Transform Pipeline</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="part-2-creating-a-transform-pipeline">
+<h1>Part 2: Creating a Transform Pipeline<a class="headerlink" href="#part-2-creating-a-transform-pipeline" title="Link to this heading">#</a></h1>
+<section id="table-of-contents">
+<h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#aw-build-model-p2-intro"><span class="std std-ref">Introduction</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p2-prereq"><span class="std std-ref">Prerequisites</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p2-goal"><span class="std std-ref">The Goal of the Pipeline</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p2-wire"><span class="std std-ref">Wiring Up the Dataset and Loader</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p2-compose"><span class="std std-ref">Building the Transform Pipeline</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#aw-build-model-p2-crop"><span class="std std-ref">CropToPocket</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p2-featurize"><span class="std std-ref">FeaturizeForDocking</span></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#aw-build-model-p2-smoke"><span class="std std-ref">The Complete Smoke Test</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p2-next"><span class="std std-ref">What Next?</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p2-glossary"><span class="std std-ref">Glossary</span></a></p></li>
+</ul>
+</section>
+<section id="introduction">
+<span id="aw-build-model-p2-intro"></span><h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<p>This is the second tutorial in the <strong>How to Build a Model with AtomWorks</strong> series. In <a class="reference internal" href="how_to_build_a_model_part1.html"><span class="std std-doc">Part 1</span></a> you cleaned the PDB metadata and saved <code class="docutils literal notranslate"><span class="pre">train</span></code>/<code class="docutils literal notranslate"><span class="pre">val</span></code>/<code class="docutils literal notranslate"><span class="pre">test</span></code> parquet splits.</p>
+<p><strong>In this installment, you will learn how to transform each parquet file into tensors that can be used in a machine learning model.</strong></p>
+<p>More specifically, you will learn how to:</p>
+<ul class="simple">
+<li><p>create custom transforms</p></li>
+<li><p>create a transform pipeline</p></li>
+<li><p>utilize the <code class="docutils literal notranslate"><span class="pre">PandasDataset</span></code> class to go from parquets to trainable tensors</p></li>
+</ul>
+<p>By the end of this part of the tutorial series you will have two python files:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">transforms.py</span></code>: Definition of custom tensors</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">smoke_test.py</span></code>: Testing the pipeline by loading a single example</p></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This tutorial will walk you through the creation of these two scripts.</p>
+<p>For those who want to use the tutorial text as structure and hints to write your own code, the solutions are hidden in collapsible cells. The new code in cells with repeated code is highlighted.</p>
+<p>If you would like to see the full scripts, they are provided in the tutorial files. <!-- TODO: link the tutorial files --></p>
+</div>
+</section>
+<section id="prerequisites">
+<span id="aw-build-model-p2-prereq"></span><h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h2>
+<p>Before starting this part it is assumed that you have:</p>
+<ul class="simple">
+<li><p>Completed <a class="reference internal" href="how_to_build_a_model_part1.html"><span class="std std-doc">Part 1</span></a> and saved <code class="docutils literal notranslate"><span class="pre">splits/train.parquet</span></code>, <code class="docutils literal notranslate"><span class="pre">splits/val.parquet</span></code>, and <code class="docutils literal notranslate"><span class="pre">splits/test.parquet</span></code>.</p></li>
+<li><p>A working installation of AtomWorks, including the <code class="docutils literal notranslate"><span class="pre">ml</span></code> side.</p></li>
+<li><p>A (partial) PDB mirror set up so the loader can find the structure file for each row (see <a class="reference internal" href="../mirrors.html"><span class="std std-doc">Data Mirrors</span></a>).</p></li>
+<li><p>Familiarity with <code class="docutils literal notranslate"><span class="pre">biotite.structure.AtomArray</span></code>, <a class="reference external" href="https://numpy.org/doc/stable/index.html">NumPy</a>, and <a class="reference external" href="https://scipy.org/">SciPy</a>.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The transforms you write here operate on a <code class="docutils literal notranslate"><span class="pre">biotite</span></code> <code class="docutils literal notranslate"><span class="pre">AtomArray</span></code>. If you have not worked with <code class="docutils literal notranslate"><span class="pre">AtomArray</span></code> objects before, it helps to skim the <a class="reference external" href="https://www.biotite-python.org/latest/apidoc/biotite.structure.AtomArray.html">Biotite structure documentation</a> so the coordinate and annotation access patterns below feel familiar.</p>
+</div>
+</section>
+<section id="the-goal-of-the-pipeline">
+<span id="aw-build-model-p2-goal"></span><h2>The Goal of the Pipeline<a class="headerlink" href="#the-goal-of-the-pipeline" title="Link to this heading">#</a></h2>
+<p>Our task is pose generation: given a protein pocket and a small-molecule ligand (from the parquet files we generated in <a class="reference internal" href="how_to_build_a_model_part1.html"><span class="std std-doc">Part 1</span></a>), predict plausible bound cartesian coordinates for every ligand atom. To get there, each raw structure needs to be reduced to just the binding pocket and converted into tensors.</p>
+<p>We will create a transform pipeline that can take protein/ligand pairs from the parquet files we created in <a class="reference internal" href="how_to_build_a_model_part1.html"><span class="std std-doc">Part 1</span></a>, reduce the information to just the binding pocket, and convert them into tensors that can be used in the training of our machine learning model.</p>
+<p>We will apply four transforms in order, two that already exist in AtomWorks and two that we will write ourselves:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">RemoveHydrogens</span></code></strong> <em>(exists already)</em>: drops hydrogen atoms.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">RemoveUnresolvedAtoms</span></code></strong> <em>(exists already)</em>: drops atoms with no resolved coordinates.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">CropToPocket</span></code></strong> <em>(new)</em>: spatially crops the structure to the atoms within a radius of the ligand.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">FeaturizeForDocking</span></code></strong> <em>(new)</em>: converts the <code class="docutils literal notranslate"><span class="pre">AtomArray</span></code> into the tensors our model needs.</p></li>
+</ul>
+<p>A fifth transform, <code class="docutils literal notranslate"><span class="pre">ConvertToTorch</span></code>, converts the NumPy features into <code class="docutils literal notranslate"><span class="pre">torch</span></code> tensors. We add it in <a class="reference internal" href="how_to_build_a_model_part4.html"><span class="std std-doc">Part 4</span></a> when we build the training loop; for now we work in NumPy so the outputs are easy to inspect.</p>
+</section>
+<section id="wiring-up-the-dataset-and-loader">
+<span id="aw-build-model-p2-wire"></span><h2>Wiring Up the Dataset and Loader<a class="headerlink" href="#wiring-up-the-dataset-and-loader" title="Link to this heading">#</a></h2>
+<p>Before writing any transforms, let’s confirm we can load a single example. AtomWorks provides two pieces we need:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../ml/datasets/datasets.html#atomworks.ml.datasets.PandasDataset" title="atomworks.ml.datasets.PandasDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">PandasDataset</span></code></a> wraps a parquet/DataFrame and applies a loader and transform to each row.</p></li>
+<li><p><a class="reference internal" href="../ml/datasets/datasets.html#atomworks.ml.datasets.loaders.create_loader_with_query_pn_units" title="atomworks.ml.datasets.loaders.create_loader_with_query_pn_units"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_loader_with_query_pn_units()</span></code></a> returns a picklable loader that parses the CIF file for each row and attaches the <em>query</em> PN unit IIDs to the example, so we know which chain(s) the interface of interest involves.</p></li>
+</ul>
+<p>It is worth reading the documentation for both (linked above) before using them. You can search the API docs, or use <code class="docutils literal notranslate"><span class="pre">help()</span></code> at a Python prompt. There is also more detail on <code class="docutils literal notranslate"><span class="pre">PandasDataset</span></code> in the <a class="reference internal" href="../auto_examples/dataset_exploration.html#sphx-glr-auto-examples-dataset-exploration-py"><span class="std std-ref">Dataset Exploration and Management in AtomWorks</span></a> example.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see how to inspect the documentation in a Python prompt</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">PandasDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.datasets.loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_loader_with_query_pn_units</span>
+
+<span class="n">help</span><span class="p">(</span><span class="n">PandasDataset</span><span class="p">)</span>
+<span class="n">help</span><span class="p">(</span><span class="n">create_loader_with_query_pn_units</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><p>Let’s create our PandasDataset. We need to supply it with</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">data</span></code>: let’s use train.parquet</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: however you want to label this structure, in the tutorial we’ll call it <code class="docutils literal notranslate"><span class="pre">docking_train</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">id_column</span></code>: The column that has the unique identifier for each of piece of data, <code class="docutils literal notranslate"><span class="pre">example_id</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">loader</span></code>: we will use <code class="docutils literal notranslate"><span class="pre">create_loader_with_query_pn_units</span></code> here</p></li>
+</ul>
+<p>As a quick check that everything fits together, write a script (<code class="docutils literal notranslate"><span class="pre">smoke_test.py</span></code>) that reads <code class="docutils literal notranslate"><span class="pre">train.parquet</span></code>, builds a <code class="docutils literal notranslate"><span class="pre">PandasDataset</span></code> from it, and uses <code class="docutils literal notranslate"><span class="pre">create_loader_with_query_pn_units</span></code> as the loader.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">PandasDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.datasets.loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_loader_with_query_pn_units</span>
+
+<span class="n">df_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s2">"splits/train.parquet"</span><span class="p">)</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">PandasDataset</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">df_train</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"docking_train"</span><span class="p">,</span>
+    <span class="n">id_column</span><span class="o">=</span><span class="s2">"example_id"</span><span class="p">,</span>
+    <span class="n">loader</span><span class="o">=</span><span class="n">create_loader_with_query_pn_units</span><span class="p">(</span>
+        <span class="n">pn_unit_iid_colnames</span><span class="o">=</span><span class="p">[</span><span class="s2">"pn_unit_1_iid"</span><span class="p">,</span> <span class="s2">"pn_unit_2_iid"</span><span class="p">]</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p class="sd-card-text">Note that loader is told which columns hold the query PN unit IIDs.</p>
+</div>
+</details><p>Now load one example and inspect it. This tells us what keys <!-- TODO replace keys with something more descriptive --> the loader attaches and confirms the parquet, the loader, and your PDB mirror are all talking to each other.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Dataset size: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="c1"># Load a single example</span>
+<span class="n">example</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Loaded one sample successfully."</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Sample type:"</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">example</span><span class="p">))</span>
+
+<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">example</span><span class="p">,</span> <span class="s2">"keys"</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Sample keys:"</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">example</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">example</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">example</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><p>You should see that the example <code class="docutils literal notranslate"><span class="pre">type</span></code> is <code class="docutils literal notranslate"><span class="pre">&lt;class</span> <span class="pre">'atomworks.ml.transforms.base.TransformedDict'&gt;</span></code>.</p>
+<p>Among the keys you should see <code class="docutils literal notranslate"><span class="pre">atom_array</span></code>, <code class="docutils literal notranslate"><span class="pre">query_pn_unit_iids</span></code>, and <code class="docutils literal notranslate"><span class="pre">chain_info</span></code>. These are the pieces of information that At
+omWorks has pulled from the parquet files that we will use in our transforms pipeline:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">atom_array</span></code></strong> is the <code class="xref py py-class docutils literal notranslate"><span class="pre">AtomArray</span></code> for this structure. Every atom carries a <code class="docutils literal notranslate"><span class="pre">pn_unit_iid</span></code> annotation (<code class="docutils literal notranslate"><span class="pre">atom_array.pn_unit_iid</span></code>), tagging it with the PN unit it belongs to, using the same string format as <code class="docutils literal notranslate"><span class="pre">query_pn_unit_iids</span></code> below.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">query_pn_unit_iids</span></code></strong> is a list of PN unit IID strings, one per column named in <code class="docutils literal notranslate"><span class="pre">pn_unit_iid_colnames</span></code>. Each IID has the form <code class="docutils literal notranslate"><span class="pre">&quot;{chain_id}_{transformation_id}&quot;</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;A_1&quot;</span></code>), or a comma-joined list of such tokens for a covalently-linked, multi-chain unit (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;G_1,R_1&quot;</span></code>). Since we asked for two columns (<code class="docutils literal notranslate"><span class="pre">pn_unit_1_iid</span></code> and <code class="docutils literal notranslate"><span class="pre">pn_unit_2_iid</span></code>), this list has two entries: the two sides of the interface we are studying.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">chain_info</span></code></strong> is a dictionary keyed by <code class="docutils literal notranslate"><span class="pre">chain_id</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;A&quot;</span></code>, note this is just the chain id, not the full PN unit IID), where each value is a dict of per-chain metadata parsed from the CIF file, including <code class="docutils literal notranslate"><span class="pre">is_polymer</span></code> (bool), <code class="docutils literal notranslate"><span class="pre">chain_type</span></code>, and the chain’s sequence. <code class="docutils literal notranslate"><span class="pre">CropToPocket</span></code> will use <code class="docutils literal notranslate"><span class="pre">is_polymer</span></code> to work out which side of the interface is the ligand.</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The loader also attaches other keys to <code class="docutils literal notranslate"><span class="pre">example</span></code>, such as <code class="docutils literal notranslate"><span class="pre">example_id</span></code>, <code class="docutils literal notranslate"><span class="pre">metadata</span></code>, and <code class="docutils literal notranslate"><span class="pre">ligand_info</span></code>, however the three listed above are the ones this tutorial’s transforms rely on.</p>
+</div>
+</section>
+<section id="building-the-transform-pipeline">
+<span id="aw-build-model-p2-compose"></span><h2>Building the Transform Pipeline<a class="headerlink" href="#building-the-transform-pipeline" title="Link to this heading">#</a></h2>
+<p>We can start creating our pipeline by adding to the code in our <code class="docutils literal notranslate"><span class="pre">smoke_test.py</span></code> file. We will use the <a class="reference internal" href="../ml/transforms.html#atomworks.ml.transforms.base.Compose" title="atomworks.ml.transforms.base.Compose"><code class="xref py py-class docutils literal notranslate"><span class="pre">Compose</span></code></a> class to store the transforms, in an object we’ll call <code class="docutils literal notranslate"><span class="pre">pipe</span></code>, in the order we want them to be applied and then add that object to our <code class="docutils literal notranslate"><span class="pre">dataset</span></code>.</p>
+<p>Let’s start with the two transforms that are native to AtomWorks, <a class="reference internal" href="../ml/transforms.html#atomworks.ml.transforms.filters.RemoveHydrogens" title="atomworks.ml.transforms.filters.RemoveHydrogens"><code class="xref py py-class docutils literal notranslate"><span class="pre">RemoveHydrogens</span></code></a> and <a class="reference internal" href="../ml/transforms.html#atomworks.ml.transforms.filters.RemoveUnresolvedAtoms" title="atomworks.ml.transforms.filters.RemoveUnresolvedAtoms"><code class="xref py py-class docutils literal notranslate"><span class="pre">RemoveUnresolvedAtoms</span></code></a>:</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">PandasDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.datasets.loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_loader_with_query_pn_units</span>
+<span class="hll"><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">RemoveHydrogens</span><span class="p">,</span> <span class="n">RemoveUnresolvedAtoms</span>
+</span><span class="hll"><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Compose</span>
+</span>
+<span class="n">df_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s2">"splits/train.parquet"</span><span class="p">)</span>
+
+<span class="hll"><span class="n">pipe</span> <span class="o">=</span> <span class="n">Compose</span><span class="p">([</span>
+</span><span class="hll">    <span class="n">RemoveHydrogens</span><span class="p">(),</span>
+</span><span class="hll">    <span class="n">RemoveUnresolvedAtoms</span><span class="p">(),</span>
+</span><span class="hll"><span class="p">])</span>
+</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">PandasDataset</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">df_train</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"docking_train"</span><span class="p">,</span>
+    <span class="n">id_column</span><span class="o">=</span><span class="s2">"example_id"</span><span class="p">,</span>
+    <span class="n">loader</span><span class="o">=</span><span class="n">create_loader_with_query_pn_units</span><span class="p">(</span>
+        <span class="n">pn_unit_iid_colnames</span><span class="o">=</span><span class="p">[</span><span class="s2">"pn_unit_1_iid"</span><span class="p">,</span> <span class="s2">"pn_unit_2_iid"</span><span class="p">]</span>
+    <span class="p">),</span>
+<span class="hll">    <span class="n">transform</span><span class="o">=</span><span class="n">pipe</span><span class="p">,</span>
+</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><section id="creating-custom-transforms">
+<h3>Creating Custom Transforms<a class="headerlink" href="#creating-custom-transforms" title="Link to this heading">#</a></h3>
+<p>Now we need the two transforms that do not yet exist: <code class="docutils literal notranslate"><span class="pre">CropToPocket</span></code> and <code class="docutils literal notranslate"><span class="pre">FeaturizeForDocking</span></code>. The <a class="reference internal" href="../auto_examples/pocket_conditioning_transform.html#sphx-glr-auto-examples-pocket-conditioning-transform-py"><span class="std std-ref">Creating Custom Transforms: Ligand Pocket Conditioning</span></a> example is a great place to start.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Write your transforms in a separate <code class="docutils literal notranslate"><span class="pre">transforms.py</span></code> file. Each transform is a class whose <code class="docutils literal notranslate"><span class="pre">forward()</span></code> method calls a standalone function of the same (snake_case) name. Keeping the logic in a standalone function makes it easy to test and reuse outside the transform machinery.</p>
+</div>
+<section id="croptopocket">
+<span id="aw-build-model-p2-crop"></span><h4><code class="docutils literal notranslate"><span class="pre">CropToPocket</span></code><a class="headerlink" href="#croptopocket" title="Link to this heading">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">CropToPocket</span></code> transform will take the protein-lingand interfaces from our dataset and crop them to just the pocket. We will build <code class="docutils literal notranslate"><span class="pre">CropToPocket</span></code> up incrementally, confirming it plugs into <code class="docutils literal notranslate"><span class="pre">Compose</span></code> at each stage.</p>
+<section id="start-with-a-shell">
+<h5>Start with a Shell<a class="headerlink" href="#start-with-a-shell" title="Link to this heading">#</a></h5>
+<p>Begin with a class that has an <code class="docutils literal notranslate"><span class="pre">__init__(radius=10.0)</span></code> and a <code class="docutils literal notranslate"><span class="pre">forward()</span></code> that just returns the input <code class="docutils literal notranslate"><span class="pre">data</span></code> unchanged. Confirm it plugs into <code class="docutils literal notranslate"><span class="pre">Compose()</span></code>.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">In <code class="docutils literal notranslate"><span class="pre">transforms.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CropToPocket</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">data</span>
+</pre></div>
+</div>
+<p class="sd-card-text">Back in your <code class="docutils literal notranslate"><span class="pre">smoke_test.py</span></code> file, make sure to add this transform to your pipeline:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="hll"><span class="kn">from</span><span class="w"> </span><span class="nn">transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">CropToPocket</span>
+</span><span class="o">...</span>
+<span class="n">pipe</span> <span class="o">=</span> <span class="n">Compose</span><span class="p">([</span>
+    <span class="n">RemoveHydrogens</span><span class="p">(),</span>
+    <span class="n">RemoveUnresolvedAtoms</span><span class="p">(),</span>
+<span class="hll">    <span class="n">CropToPocket</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="mf">10.0</span><span class="p">),</span>
+</span><span class="p">])</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="input-validation">
+<h5>Input Validation<a class="headerlink" href="#input-validation" title="Link to this heading">#</a></h5>
+<p>We need to add input validation to our class, add a <code class="docutils literal notranslate"><span class="pre">check_input()</span></code> method. In <code class="docutils literal notranslate"><span class="pre">check_input()</span></code>, assert that <code class="docutils literal notranslate"><span class="pre">data</span></code> contains the three keys the transform needs: <code class="docutils literal notranslate"><span class="pre">atom_array</span></code>, <code class="docutils literal notranslate"><span class="pre">query_pn_unit_iids</span></code>, and <code class="docutils literal notranslate"><span class="pre">chain_info</span></code>.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">In the <code class="docutils literal notranslate"><span class="pre">CropToPocket</span></code> class:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="s2">"atom_array"</span> <span class="ow">in</span> <span class="n">data</span><span class="p">,</span> <span class="s2">"Missing atom_array"</span>
+        <span class="k">assert</span> <span class="s2">"query_pn_unit_iids"</span> <span class="ow">in</span> <span class="n">data</span><span class="p">,</span> <span class="s2">"Missing query_pn_unit_iids"</span>
+        <span class="k">assert</span> <span class="s2">"chain_info"</span> <span class="ow">in</span> <span class="n">data</span><span class="p">,</span> <span class="s2">"Missing chain_info"</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="write-the-crop-to-pocket-function">
+<h5>Write the <code class="docutils literal notranslate"><span class="pre">crop_to_pocket</span></code> Function<a class="headerlink" href="#write-the-crop-to-pocket-function" title="Link to this heading">#</a></h5>
+<p>Add a standalone <code class="docutils literal notranslate"><span class="pre">crop_to_pocket()</span></code> function that <code class="docutils literal notranslate"><span class="pre">forward()</span></code> calls. It should take <code class="docutils literal notranslate"><span class="pre">atom_array</span></code>, <code class="docutils literal notranslate"><span class="pre">query_pn_unit_iids</span></code>, <code class="docutils literal notranslate"><span class="pre">chain_info</span></code>, and <code class="docutils literal notranslate"><span class="pre">radius</span></code> as inputs. For now, just copy the <code class="docutils literal notranslate"><span class="pre">AtomArray</span></code> and return it.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">In <code class="docutils literal notranslate"><span class="pre">transforms.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span>
+
+<span class="hll"><span class="k">def</span><span class="w"> </span><span class="nf">crop_to_pocket</span><span class="p">(</span>
+</span><span class="hll">    <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
+</span><span class="hll">    <span class="n">query_pn_unit_iids</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+</span><span class="hll">    <span class="n">chain_info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+</span><span class="hll">    <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span>
+</span><span class="hll"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
+</span><span class="hll">    <span class="n">atom_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span class="hll">    <span class="k">return</span> <span class="n">atom_array</span>
+</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CropToPocket</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+    <span class="o">...</span>
+<span class="hll">    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span class="hll">        <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span> <span class="o">=</span> <span class="n">crop_to_pocket</span><span class="p">(</span>
+</span><span class="hll">            <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">],</span>
+</span><span class="hll">            <span class="n">query_pn_unit_iids</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">"query_pn_unit_iids"</span><span class="p">],</span>
+</span><span class="hll">            <span class="n">chain_info</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s2">"chain_info"</span><span class="p">],</span>
+</span><span class="hll">            <span class="n">radius</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="p">,</span>
+</span><span class="hll">        <span class="p">)</span>
+</span><span class="hll">        <span class="k">return</span> <span class="n">data</span>
+</span></pre></div>
+</div>
+</div>
+</details><p>Each interface has two query PN units, a ligand and a protein (polymer). Add to the <code class="docutils literal notranslate"><span class="pre">crop_to_pocket</span></code> function to use <code class="docutils literal notranslate"><span class="pre">chain_info</span></code> to correctly assign the <code class="docutils literal notranslate"><span class="pre">iid</span></code>s to <code class="docutils literal notranslate"><span class="pre">ligand_iid</span></code> and <code class="docutils literal notranslate"><span class="pre">protien_iid</span></code>. If exactly one side is a polymer, the non-polymer side is the ligand. If the flags are ambiguous, fall back to a heuristic: the side with fewer atoms is treated as the ligand.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">crop_to_pocket</span><span class="p">(</span>
+    <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
+    <span class="n">query_pn_unit_iids</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="n">chain_info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
+    <span class="n">atom_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="hll">    <span class="n">iid_a</span><span class="p">,</span> <span class="n">iid_b</span> <span class="o">=</span> <span class="n">query_pn_unit_iids</span>
+</span><span class="hll">    <span class="n">chain_a</span> <span class="o">=</span> <span class="n">iid_a</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"_"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class="hll">    <span class="n">chain_b</span> <span class="o">=</span> <span class="n">iid_b</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"_"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class="hll">
+</span><span class="hll">    <span class="c1"># chain_info is a dictionary of metadata about the chains</span>
+</span><span class="hll">    <span class="n">a_is_polymer</span> <span class="o">=</span> <span class="n">chain_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">chain_a</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"is_polymer"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+</span><span class="hll">    <span class="n">b_is_polymer</span> <span class="o">=</span> <span class="n">chain_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">chain_b</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"is_polymer"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+</span><span class="hll">
+</span><span class="hll">    <span class="k">if</span> <span class="ow">not</span> <span class="n">a_is_polymer</span><span class="p">:</span>
+</span><span class="hll">        <span class="n">ligand_iid</span><span class="p">,</span> <span class="n">protein_iid</span> <span class="o">=</span> <span class="n">iid_a</span><span class="p">,</span> <span class="n">iid_b</span>
+</span><span class="hll">    <span class="k">elif</span> <span class="ow">not</span> <span class="n">b_is_polymer</span><span class="p">:</span>
+</span><span class="hll">        <span class="n">ligand_iid</span><span class="p">,</span> <span class="n">protein_iid</span> <span class="o">=</span> <span class="n">iid_b</span><span class="p">,</span> <span class="n">iid_a</span>
+</span><span class="hll">    <span class="k">else</span><span class="p">:</span>
+</span><span class="hll">        <span class="n">mask_a</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span> <span class="o">==</span> <span class="n">iid_a</span>
+</span><span class="hll">        <span class="n">mask_b</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span> <span class="o">==</span> <span class="n">iid_b</span>
+</span><span class="hll">        <span class="k">if</span> <span class="n">mask_a</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">mask_b</span><span class="o">.</span><span class="n">sum</span><span class="p">():</span>
+</span><span class="hll">            <span class="n">ligand_iid</span><span class="p">,</span> <span class="n">protein_iid</span> <span class="o">=</span> <span class="n">iid_a</span><span class="p">,</span> <span class="n">iid_b</span>
+</span><span class="hll">        <span class="k">else</span><span class="p">:</span>
+</span><span class="hll">            <span class="n">ligand_iid</span><span class="p">,</span> <span class="n">protein_iid</span> <span class="o">=</span> <span class="n">iid_b</span><span class="p">,</span> <span class="n">iid_a</span>
+</span><span class="hll">
+</span><span class="hll">    <span class="nb">print</span><span class="p">(</span><span class="s2">"ligand_iid:"</span><span class="p">,</span> <span class="n">ligand_iid</span><span class="p">)</span>
+</span><span class="hll">    <span class="nb">print</span><span class="p">(</span><span class="s2">"protein_iid:"</span><span class="p">,</span> <span class="n">protein_iid</span><span class="p">)</span>
+</span><span class="hll">    <span class="k">return</span> <span class="n">atom_array</span>
+</span></pre></div>
+</div>
+</div>
+</details><p>Create boolean masks to make sure that the PN unit actually contains atoms whose identity match the <code class="docutils literal notranslate"><span class="pre">ligand_iid</span></code> or <code class="docutils literal notranslate"><span class="pre">protein_iid</span></code>. Raise a clear error if either side is empty. Failing early with a descriptive message makes debugging bad structures much easier later.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">ligand_mask</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span> <span class="o">==</span> <span class="n">ligand_iid</span>
+    <span class="n">protein_mask</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span> <span class="o">==</span> <span class="n">protein_iid</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"ligand atoms:"</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">ligand_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"protein atoms:"</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">protein_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()))</span>
+
+    <span class="k">if</span> <span class="n">ligand_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Ligand </span><span class="si">{</span><span class="n">ligand_iid</span><span class="si">}</span><span class="s2"> has no atoms"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">protein_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Protein </span><span class="si">{</span><span class="n">protein_iid</span><span class="si">}</span><span class="s2"> has no atoms"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">atom_array</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="add-the-spatial-crop-with-a-kd-tree">
+<h5>Add the Spatial Crop with a KD-tree<a class="headerlink" href="#add-the-spatial-crop-with-a-kd-tree" title="Link to this heading">#</a></h5>
+<p>Now for the actual crop. We keep every ligand atom plus every protein atom within a given <code class="docutils literal notranslate"><span class="pre">radius</span></code> (in angstroms) of any ligand atom.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A <strong>KD-tree</strong> (k-dimensional tree) is a data structure that partitions points in space so you can answer “which points are within radius <em>r</em> of this query point?” efficiently, without comparing every pair of atoms. SciPy’s <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.cKDTree.query_ball_point.html#scipy.spatial.cKDTree.query_ball_point"><code class="docutils literal notranslate"><span class="pre">cKDTree.query_ball_point</span></code></a> returns, for each ligand atom, the indices of all protein atoms within <code class="docutils literal notranslate"><span class="pre">radius</span></code>.</p>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="hll"><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial</span><span class="w"> </span><span class="kn">import</span> <span class="n">cKDTree</span>
+</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">crop_to_pocket</span><span class="p">(</span>
+    <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
+    <span class="n">query_pn_unit_iids</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+    <span class="n">chain_info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
+    <span class="n">atom_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="n">iid_a</span><span class="p">,</span> <span class="n">iid_b</span> <span class="o">=</span> <span class="n">query_pn_unit_iids</span>
+    <span class="n">chain_a</span> <span class="o">=</span> <span class="n">iid_a</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"_"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">chain_b</span> <span class="o">=</span> <span class="n">iid_b</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"_"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">a_is_polymer</span> <span class="o">=</span> <span class="n">chain_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">chain_a</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"is_polymer"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">b_is_polymer</span> <span class="o">=</span> <span class="n">chain_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">chain_b</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"is_polymer"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">a_is_polymer</span><span class="p">:</span>
+        <span class="n">ligand_iid</span><span class="p">,</span> <span class="n">protein_iid</span> <span class="o">=</span> <span class="n">iid_a</span><span class="p">,</span> <span class="n">iid_b</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">b_is_polymer</span><span class="p">:</span>
+        <span class="n">ligand_iid</span><span class="p">,</span> <span class="n">protein_iid</span> <span class="o">=</span> <span class="n">iid_b</span><span class="p">,</span> <span class="n">iid_a</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mask_a</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span> <span class="o">==</span> <span class="n">iid_a</span>
+        <span class="n">mask_b</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span> <span class="o">==</span> <span class="n">iid_b</span>
+        <span class="k">if</span> <span class="n">mask_a</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">mask_b</span><span class="o">.</span><span class="n">sum</span><span class="p">():</span>
+            <span class="n">ligand_iid</span><span class="p">,</span> <span class="n">protein_iid</span> <span class="o">=</span> <span class="n">iid_a</span><span class="p">,</span> <span class="n">iid_b</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ligand_iid</span><span class="p">,</span> <span class="n">protein_iid</span> <span class="o">=</span> <span class="n">iid_b</span><span class="p">,</span> <span class="n">iid_a</span>
+
+<span class="hll">    <span class="n">ligand_mask</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span> <span class="o">==</span> <span class="n">ligand_iid</span>
+</span><span class="hll">    <span class="n">protein_mask</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span> <span class="o">==</span> <span class="n">protein_iid</span>
+</span><span class="hll">
+</span><span class="hll">    <span class="n">ligand_coords</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">ligand_mask</span><span class="p">]</span>
+</span><span class="hll">    <span class="n">protein_coords</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">protein_mask</span><span class="p">]</span>
+</span><span class="hll">
+</span><span class="hll">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ligand_coords</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span class="hll">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Ligand </span><span class="si">{</span><span class="n">ligand_iid</span><span class="si">}</span><span class="s2"> has no atoms"</span><span class="p">)</span>
+</span><span class="hll">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">protein_coords</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span class="hll">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Protein </span><span class="si">{</span><span class="n">protein_iid</span><span class="si">}</span><span class="s2"> has no atoms"</span><span class="p">)</span>
+</span><span class="hll">
+</span><span class="hll">    <span class="n">tree</span> <span class="o">=</span> <span class="n">cKDTree</span><span class="p">(</span><span class="n">protein_coords</span><span class="p">)</span>
+</span><span class="hll">    <span class="n">neighbor_indices</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">query_ball_point</span><span class="p">(</span><span class="n">ligand_coords</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="n">radius</span><span class="p">)</span>
+</span><span class="hll">
+</span><span class="hll">    <span class="n">total_neighbors</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">neighbor_indices</span><span class="p">)</span>
+</span><span class="hll">    <span class="k">if</span> <span class="n">total_neighbors</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span class="hll">        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No protein atoms found within </span><span class="si">{</span><span class="n">radius</span><span class="si">}</span><span class="s2">A of ligand </span><span class="si">{</span><span class="n">ligand_iid</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span class="hll">
+</span><span class="hll">    <span class="n">pocket_local_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">neighbor_indices</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">))</span>
+</span><span class="hll">    <span class="n">protein_global_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">protein_mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class="hll">    <span class="n">pocket_global_indices</span> <span class="o">=</span> <span class="n">protein_global_indices</span><span class="p">[</span><span class="n">pocket_local_indices</span><span class="p">]</span>
+</span><span class="hll">    <span class="n">ligand_global_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ligand_mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class="hll">
+</span><span class="hll">    <span class="n">keep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">pocket_global_indices</span><span class="p">,</span> <span class="n">ligand_global_indices</span><span class="p">]))</span>
+</span><span class="hll">    <span class="n">cropped</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span>
+</span><span class="hll">    <span class="k">return</span> <span class="n">cropped</span>
+</span></pre></div>
+</div>
+<p class="sd-card-text">The <code class="docutils literal notranslate"><span class="pre">cKDTree</span></code> is built from the protein coordinates; <code class="docutils literal notranslate"><span class="pre">query_ball_point</span></code> returns indices <em>local</em> to <code class="docutils literal notranslate"><span class="pre">protein_coords</span></code>, so we map them back to global indices via <code class="docutils literal notranslate"><span class="pre">protein_global_indices</span></code> before slicing the <code class="docutils literal notranslate"><span class="pre">AtomArray</span></code>.</p>
+</div>
+</details><p>Confirm the crop runs in your test:</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">example</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">cropped</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Loaded one sample successfully."</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Cropped atom count:"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cropped</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="add-the-is-ligand-annotation">
+<h5>Add the <code class="docutils literal notranslate"><span class="pre">is_ligand</span></code> annotation<a class="headerlink" href="#add-the-is-ligand-annotation" title="Link to this heading">#</a></h5>
+<p>The featurizer (and later analysis) needs to know which cropped atoms are ligand atoms. Annotate the cropped <code class="docutils literal notranslate"><span class="pre">AtomArray</span></code> with a boolean <code class="docutils literal notranslate"><span class="pre">is_ligand</span></code> array.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This annotation is easy to forget: it is computed from <code class="docutils literal notranslate"><span class="pre">keep</span></code> and <code class="docutils literal notranslate"><span class="pre">ligand_global_indices</span></code>, but you must actually attach it to the array with <code class="docutils literal notranslate"><span class="pre">set_annotation</span></code>. If you skip this line, <code class="docutils literal notranslate"><span class="pre">FeaturizeForDocking</span></code> will fail because <code class="docutils literal notranslate"><span class="pre">atom_array.is_ligand</span></code> will not exist.</p>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">Add these two lines just before returning, so the end of <code class="docutils literal notranslate"><span class="pre">crop_to_pocket</span></code> reads:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">keep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">pocket_global_indices</span><span class="p">,</span> <span class="n">ligand_global_indices</span><span class="p">]))</span>
+    <span class="n">cropped</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span>
+
+<span class="hll">    <span class="n">is_ligand</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">keep</span><span class="p">,</span> <span class="n">ligand_global_indices</span><span class="p">)</span>
+</span><span class="hll">    <span class="n">cropped</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="s2">"is_ligand"</span><span class="p">,</span> <span class="n">is_ligand</span><span class="p">)</span>
+</span>    <span class="k">return</span> <span class="n">cropped</span>
+</pre></div>
+</div>
+</div>
+</details><p>Quick check in your test:</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">example</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">cropped</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Loaded one sample successfully."</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Cropped atom count:"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cropped</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Has is_ligand annotation:"</span><span class="p">,</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cropped</span><span class="p">,</span> <span class="s2">"is_ligand"</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Ligand atoms kept:"</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">cropped</span><span class="o">.</span><span class="n">is_ligand</span><span class="o">.</span><span class="n">sum</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Pocket atoms kept:"</span><span class="p">,</span> <span class="nb">int</span><span class="p">((</span><span class="o">~</span><span class="n">cropped</span><span class="o">.</span><span class="n">is_ligand</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()))</span>
+
+<span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cropped</span><span class="p">,</span> <span class="s2">"is_ligand"</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">cropped</span><span class="o">.</span><span class="n">is_ligand</span><span class="o">.</span><span class="n">any</span><span class="p">(),</span> <span class="s2">"No ligand atoms were kept"</span>
+<span class="k">assert</span> <span class="p">(</span><span class="o">~</span><span class="n">cropped</span><span class="o">.</span><span class="n">is_ligand</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(),</span> <span class="s2">"No pocket atoms were kept"</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"CropToPocket sanity checks passed."</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="declare-which-transforms-must-run-first">
+<h5>Declare which transforms must run first<a class="headerlink" href="#declare-which-transforms-must-run-first" title="Link to this heading">#</a></h5>
+<p><code class="docutils literal notranslate"><span class="pre">CropToPocket</span></code> assumes hydrogens and unresolved atoms are already gone. Declare this ordering requirement so AtomWorks can enforce it.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">CropToPocket</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="hll">    <span class="n">requires_previous_transforms</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"RemoveHydrogens"</span><span class="p">,</span> <span class="s2">"RemoveUnresolvedAtoms"</span><span class="p">]</span>
+</span>    <span class="o">...</span>
+</pre></div>
+</div>
+</div>
+</details><p>At this point you can assemble a full <code class="docutils literal notranslate"><span class="pre">smoke_test.py</span></code>:</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the full Pyhton file:</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">PandasDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.datasets.loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_loader_with_query_pn_units</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">RemoveHydrogens</span><span class="p">,</span> <span class="n">RemoveUnresolvedAtoms</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Compose</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">CropToPocket</span>
+
+<span class="n">df_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s2">"splits/train.parquet"</span><span class="p">)</span>
+
+<span class="n">pipe</span> <span class="o">=</span> <span class="n">Compose</span><span class="p">([</span>
+    <span class="n">RemoveHydrogens</span><span class="p">(),</span>
+    <span class="n">RemoveUnresolvedAtoms</span><span class="p">(),</span>
+    <span class="n">CropToPocket</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="mf">10.0</span><span class="p">),</span>
+<span class="p">])</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">PandasDataset</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">df_train</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"docking_train"</span><span class="p">,</span>
+    <span class="n">id_column</span><span class="o">=</span><span class="s2">"example_id"</span><span class="p">,</span>
+    <span class="n">loader</span><span class="o">=</span><span class="n">create_loader_with_query_pn_units</span><span class="p">(</span>
+        <span class="n">pn_unit_iid_colnames</span><span class="o">=</span><span class="p">[</span><span class="s2">"pn_unit_1_iid"</span><span class="p">,</span> <span class="s2">"pn_unit_2_iid"</span><span class="p">]</span>
+    <span class="p">),</span>
+    <span class="n">transform</span><span class="o">=</span><span class="n">pipe</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Dataset size: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">example</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">cropped</span> <span class="o">=</span> <span class="n">example</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Loaded one sample successfully."</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Sample keys:"</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">example</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Cropped atom count:"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cropped</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Has is_ligand annotation:"</span><span class="p">,</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cropped</span><span class="p">,</span> <span class="s2">"is_ligand"</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Ligand atoms kept:"</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">cropped</span><span class="o">.</span><span class="n">is_ligand</span><span class="o">.</span><span class="n">sum</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Pocket atoms kept:"</span><span class="p">,</span> <span class="nb">int</span><span class="p">((</span><span class="o">~</span><span class="n">cropped</span><span class="o">.</span><span class="n">is_ligand</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()))</span>
+
+<span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cropped</span><span class="p">,</span> <span class="s2">"is_ligand"</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">cropped</span><span class="o">.</span><span class="n">is_ligand</span><span class="o">.</span><span class="n">any</span><span class="p">(),</span> <span class="s2">"No ligand atoms were kept"</span>
+<span class="k">assert</span> <span class="p">(</span><span class="o">~</span><span class="n">cropped</span><span class="o">.</span><span class="n">is_ligand</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(),</span> <span class="s2">"No pocket atoms were kept"</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">CropToPocket smoke test passed."</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+</section>
+<section id="featurizefordocking">
+<span id="aw-build-model-p2-featurize"></span><h4><code class="docutils literal notranslate"><span class="pre">FeaturizeForDocking</span></code><a class="headerlink" href="#featurizefordocking" title="Link to this heading">#</a></h4>
+<p>We follow the same incremental procedure. <code class="docutils literal notranslate"><span class="pre">FeaturizeForDocking</span></code> reads the cropped <code class="docutils literal notranslate"><span class="pre">AtomArray</span></code> and returns a dictionary of tensors that we merge into the example.</p>
+<section id="id1">
+<h5>Start with a Shell<a class="headerlink" href="#id1" title="Link to this heading">#</a></h5>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">In <code class="docutils literal notranslate"><span class="pre">transforms.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">FeaturizeForDocking</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">data</span>
+</pre></div>
+</div>
+<p class="sd-card-text">Add it to <code class="docutils literal notranslate"><span class="pre">Compose()</span></code> in <code class="docutils literal notranslate"><span class="pre">smoke_test.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">CropToPocket</span><span class="p">,</span> <span class="n">FeaturizeForDocking</span>
+
+<span class="n">pipe</span> <span class="o">=</span> <span class="n">Compose</span><span class="p">([</span>
+    <span class="n">RemoveHydrogens</span><span class="p">(),</span>
+    <span class="n">RemoveUnresolvedAtoms</span><span class="p">(),</span>
+    <span class="n">CropToPocket</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="mf">10.0</span><span class="p">),</span>
+    <span class="n">FeaturizeForDocking</span><span class="p">(),</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="declare-the-dependency-on-croptopocket">
+<h5>Declare the dependency on <code class="docutils literal notranslate"><span class="pre">CropToPocket</span></code><a class="headerlink" href="#declare-the-dependency-on-croptopocket" title="Link to this heading">#</a></h5>
+<p><code class="docutils literal notranslate"><span class="pre">FeaturizeForDocking</span></code> depends on the <code class="docutils literal notranslate"><span class="pre">is_ligand</span></code> annotation created by <code class="docutils literal notranslate"><span class="pre">CropToPocket</span></code>, so declare it as a required previous transform and validate the annotation in <code class="docutils literal notranslate"><span class="pre">check_input()</span></code>.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms._checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_atom_array_annotation</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FeaturizeForDocking</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+    <span class="n">requires_previous_transforms</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"CropToPocket"</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"is_ligand"</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="write-the-featurize-for-docking-function">
+<h5>Write the <code class="docutils literal notranslate"><span class="pre">featurize_for_docking</span></code> Function<a class="headerlink" href="#write-the-featurize-for-docking-function" title="Link to this heading">#</a></h5>
+<p>Instead of starting with a copy of the <code class="docutils literal notranslate"><span class="pre">AtomArray</span></code>, start with just returning an empty dictionary.</p>
+<p>Also update the <code class="docutils literal notranslate"><span class="pre">forward()</span></code> function. Have it update the <code class="docutils literal notranslate"><span class="pre">data</span></code> dictionary with the dictionary features the <code class="docutils literal notranslate"><span class="pre">featureize_for_docking</span></code> function will eventually create.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="hll"><span class="k">def</span><span class="w"> </span><span class="nf">featurize_for_docking</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span class="hll">    <span class="k">return</span> <span class="p">{}</span>
+</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FeaturizeForDocking</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="hll">        <span class="n">features</span> <span class="o">=</span> <span class="n">featurize_for_docking</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">])</span>
+</span><span class="hll">        <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+</span>        <span class="k">return</span> <span class="n">data</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="add-the-is-ligand-mask-and-target-coordinates">
+<h5>Add the <code class="docutils literal notranslate"><span class="pre">is_ligand</span></code> Mask and Target Coordinates<a class="headerlink" href="#add-the-is-ligand-mask-and-target-coordinates" title="Link to this heading">#</a></h5>
+<p><code class="docutils literal notranslate"><span class="pre">target_coords</span></code> are the ground-truth coordinates the model must reproduce.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">featurize_for_docking</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="hll">    <span class="n">is_ligand</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">is_ligand</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+</span><span class="hll">    <span class="n">target_coords</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+</span><span class="hll">    <span class="k">return</span> <span class="p">{</span>
+</span><span class="hll">        <span class="s2">"is_ligand"</span><span class="p">:</span> <span class="n">is_ligand</span><span class="p">,</span>
+</span><span class="hll">        <span class="s2">"target_coords"</span><span class="p">:</span> <span class="n">target_coords</span><span class="p">,</span>
+</span>    <span class="p">}</span>
+</pre></div>
+</div>
+<p class="sd-card-text">Check the new features in your smoke test:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">example</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Sample keys:"</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">example</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"is_ligand shape:"</span><span class="p">,</span> <span class="n">example</span><span class="p">[</span><span class="s2">"is_ligand"</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"ligand atoms:"</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">example</span><span class="p">[</span><span class="s2">"is_ligand"</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()))</span>
+<span class="k">assert</span> <span class="s2">"is_ligand"</span> <span class="ow">in</span> <span class="n">example</span>
+<span class="k">assert</span> <span class="n">example</span><span class="p">[</span><span class="s2">"is_ligand"</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="nb">bool</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"target_coords shape:"</span><span class="p">,</span> <span class="n">example</span><span class="p">[</span><span class="s2">"target_coords"</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"target_coords dtype:"</span><span class="p">,</span> <span class="n">example</span><span class="p">[</span><span class="s2">"target_coords"</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">example</span><span class="p">[</span><span class="s2">"target_coords"</span><span class="p">]</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span>
+<span class="k">assert</span> <span class="n">example</span><span class="p">[</span><span class="s2">"target_coords"</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="add-input-coords-with-the-ligand-zeroed-out">
+<h5>Add <code class="docutils literal notranslate"><span class="pre">input_coords</span></code> with the ligand zeroed out<a class="headerlink" href="#add-input-coords-with-the-ligand-zeroed-out" title="Link to this heading">#</a></h5>
+<p>This is the heart of the task. We keep the real pocket coordinates but zero out the ligand coordinates: the model must learn to place the ligand.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">featurize_for_docking</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">is_ligand</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">is_ligand</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">target_coords</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="hll">    <span class="n">input_coords</span> <span class="o">=</span> <span class="n">target_coords</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span class="hll">    <span class="n">input_coords</span><span class="p">[</span><span class="n">is_ligand</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"is_ligand"</span><span class="p">:</span> <span class="n">is_ligand</span><span class="p">,</span>
+        <span class="s2">"target_coords"</span><span class="p">:</span> <span class="n">target_coords</span><span class="p">,</span>
+<span class="hll">        <span class="s2">"input_coords"</span><span class="p">:</span> <span class="n">input_coords</span><span class="p">,</span>
+</span>    <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="add-atomic-numbers">
+<h5>Add <code class="docutils literal notranslate"><span class="pre">atomic_numbers</span></code><a class="headerlink" href="#add-atomic-numbers" title="Link to this heading">#</a></h5>
+<p>Encode each atom’s element as an integer atomic number using the AtomWorks lookup table. These integers will feed an embedding layer in the model.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="hll"><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">ELEMENT_NAME_TO_ATOMIC_NUMBER</span>
+</span><span class="o">...</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">featurize_for_docking</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">is_ligand</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">is_ligand</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">target_coords</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+    <span class="n">input_coords</span> <span class="o">=</span> <span class="n">target_coords</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">input_coords</span><span class="p">[</span><span class="n">is_ligand</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+<span class="hll">    <span class="n">atomic_numbers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+</span><span class="hll">        <span class="p">[</span><span class="n">ELEMENT_NAME_TO_ATOMIC_NUMBER</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">element</span><span class="p">],</span>
+</span><span class="hll">        <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span>
+</span><span class="hll">    <span class="p">)</span>
+</span>
+    <span class="k">return</span> <span class="p">{</span>
+<span class="hll">        <span class="s2">"atomic_numbers"</span><span class="p">:</span> <span class="n">atomic_numbers</span><span class="p">,</span>
+</span>        <span class="s2">"is_ligand"</span><span class="p">:</span> <span class="n">is_ligand</span><span class="p">,</span>
+        <span class="s2">"target_coords"</span><span class="p">:</span> <span class="n">target_coords</span><span class="p">,</span>
+        <span class="s2">"input_coords"</span><span class="p">:</span> <span class="n">input_coords</span><span class="p">,</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p class="sd-card-text">Elements not found in the lookup table map to <code class="docutils literal notranslate"><span class="pre">0</span></code>, which acts as an “unknown atom” index in the embedding table.</p>
+</div>
+</details></section>
+<section id="add-bonds-via-an-edge-index">
+<h5>Add Bonds Via an <code class="docutils literal notranslate"><span class="pre">edge_index</span></code><a class="headerlink" href="#add-bonds-via-an-edge-index" title="Link to this heading">#</a></h5>
+<p><code class="docutils literal notranslate"><span class="pre">edge_index</span></code> is the bond graph in COO (coordinate) format: a <code class="docutils literal notranslate"><span class="pre">[2,</span> <span class="pre">&lt;number</span> <span class="pre">of</span> <span class="pre">bonds&gt;]</span></code> integer array where each column is a bonded pair of atoms.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">featurize_for_docking</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">is_ligand</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">is_ligand</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">target_coords</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+    <span class="n">input_coords</span> <span class="o">=</span> <span class="n">target_coords</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">input_coords</span><span class="p">[</span><span class="n">is_ligand</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="n">atomic_numbers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">ELEMENT_NAME_TO_ATOMIC_NUMBER</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">element</span><span class="p">],</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<span class="hll">    <span class="n">bonds</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">as_array</span><span class="p">()</span>
+</span><span class="hll">    <span class="c1"># we only need the first two columns, the last one is the number of bonds</span>
+</span>    <span class="n">edge_index</span> <span class="o">=</span> <span class="n">bonds</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"atomic_numbers"</span><span class="p">:</span> <span class="n">atomic_numbers</span><span class="p">,</span>
+        <span class="s2">"input_coords"</span><span class="p">:</span> <span class="n">input_coords</span><span class="p">,</span>
+<span class="hll">        <span class="s2">"target_coords"</span><span class="p">:</span> <span class="n">target_coords</span><span class="p">,</span>
+</span>        <span class="s2">"edge_index"</span><span class="p">:</span> <span class="n">edge_index</span><span class="p">,</span>
+        <span class="s2">"is_ligand"</span><span class="p">:</span> <span class="n">is_ligand</span><span class="p">,</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">atom_array.bonds.as_array()</span></code> returns an array whose first two columns are the indices of the bonded atoms; we take those two columns and transpose to get the <code class="docutils literal notranslate"><span class="pre">[2,</span> <span class="pre">E]</span></code> shape.</p>
+</div>
+</details><p>Check the edge graph in your smoke test:</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">example</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"edge_index shape:"</span><span class="p">,</span> <span class="n">example</span><span class="p">[</span><span class="s2">"edge_index"</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"edge_index dtype:"</span><span class="p">,</span> <span class="n">example</span><span class="p">[</span><span class="s2">"edge_index"</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">example</span><span class="p">[</span><span class="s2">"edge_index"</span><span class="p">]</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span>
+<span class="k">assert</span> <span class="n">example</span><span class="p">[</span><span class="s2">"edge_index"</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
+<span class="k">assert</span> <span class="n">example</span><span class="p">[</span><span class="s2">"edge_index"</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">example</span><span class="p">[</span><span class="s2">"atomic_numbers"</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+</section>
+</section>
+<section id="the-final-featurizefordocking-class">
+<h3>The final <code class="docutils literal notranslate"><span class="pre">FeaturizeForDocking</span></code> class<a class="headerlink" href="#the-final-featurizefordocking-class" title="Link to this heading">#</a></h3>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">FeaturizeForDocking</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+    <span class="n">requires_previous_transforms</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"CropToPocket"</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"is_ligand"</span><span class="p">])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="n">featurize_for_docking</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">])</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+</section>
+<section id="the-complete-smoke-test">
+<span id="aw-build-model-p2-smoke"></span><h2>The Complete Smoke Test<a class="headerlink" href="#the-complete-smoke-test" title="Link to this heading">#</a></h2>
+<p>Your final <code class="docutils literal notranslate"><span class="pre">smoke_test.py</span></code> should build the full pipeline and validate every tensor:</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the complete file</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">PandasDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.datasets.loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_loader_with_query_pn_units</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">RemoveHydrogens</span><span class="p">,</span> <span class="n">RemoveUnresolvedAtoms</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Compose</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">CropToPocket</span><span class="p">,</span> <span class="n">FeaturizeForDocking</span>
+
+<span class="n">df_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s2">"splits/train.parquet"</span><span class="p">)</span>
+
+<span class="n">pipe</span> <span class="o">=</span> <span class="n">Compose</span><span class="p">([</span>
+    <span class="n">RemoveHydrogens</span><span class="p">(),</span>
+    <span class="n">RemoveUnresolvedAtoms</span><span class="p">(),</span>
+    <span class="n">CropToPocket</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="mf">10.0</span><span class="p">),</span>
+    <span class="n">FeaturizeForDocking</span><span class="p">(),</span>
+<span class="p">])</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">PandasDataset</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">df_train</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"docking_train"</span><span class="p">,</span>
+    <span class="n">id_column</span><span class="o">=</span><span class="s2">"example_id"</span><span class="p">,</span>
+    <span class="n">loader</span><span class="o">=</span><span class="n">create_loader_with_query_pn_units</span><span class="p">(</span>
+        <span class="n">pn_unit_iid_colnames</span><span class="o">=</span><span class="p">[</span><span class="s2">"pn_unit_1_iid"</span><span class="p">,</span> <span class="s2">"pn_unit_2_iid"</span><span class="p">]</span>
+    <span class="p">),</span>
+    <span class="n">transform</span><span class="o">=</span><span class="n">pipe</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Dataset size: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">example</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Loaded one sample successfully."</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Sample keys:"</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">example</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"atomic_numbers:"</span><span class="p">,</span> <span class="n">example</span><span class="p">[</span><span class="s2">"atomic_numbers"</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">example</span><span class="p">[</span><span class="s2">"atomic_numbers"</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"input_coords:"</span><span class="p">,</span> <span class="n">example</span><span class="p">[</span><span class="s2">"input_coords"</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">example</span><span class="p">[</span><span class="s2">"input_coords"</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"target_coords:"</span><span class="p">,</span> <span class="n">example</span><span class="p">[</span><span class="s2">"target_coords"</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">example</span><span class="p">[</span><span class="s2">"target_coords"</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"edge_index:"</span><span class="p">,</span> <span class="n">example</span><span class="p">[</span><span class="s2">"edge_index"</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">example</span><span class="p">[</span><span class="s2">"edge_index"</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"is_ligand:"</span><span class="p">,</span> <span class="n">example</span><span class="p">[</span><span class="s2">"is_ligand"</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">example</span><span class="p">[</span><span class="s2">"is_ligand"</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">example</span><span class="p">[</span><span class="s2">"atomic_numbers"</span><span class="p">]</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="k">assert</span> <span class="n">example</span><span class="p">[</span><span class="s2">"target_coords"</span><span class="p">]</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span>
+<span class="k">assert</span> <span class="n">example</span><span class="p">[</span><span class="s2">"target_coords"</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
+<span class="k">assert</span> <span class="n">example</span><span class="p">[</span><span class="s2">"input_coords"</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">example</span><span class="p">[</span><span class="s2">"target_coords"</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+<span class="k">assert</span> <span class="n">example</span><span class="p">[</span><span class="s2">"edge_index"</span><span class="p">]</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span>
+<span class="k">assert</span> <span class="n">example</span><span class="p">[</span><span class="s2">"edge_index"</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
+<span class="k">assert</span> <span class="n">example</span><span class="p">[</span><span class="s2">"edge_index"</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">example</span><span class="p">[</span><span class="s2">"atomic_numbers"</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">assert</span> <span class="p">(</span><span class="n">example</span><span class="p">[</span><span class="s2">"input_coords"</span><span class="p">][</span><span class="n">example</span><span class="p">[</span><span class="s2">"is_ligand"</span><span class="p">]]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> \
+    <span class="s2">"Ligand coordinates should be zeroed"</span>
+<span class="k">assert</span> <span class="p">(</span><span class="n">example</span><span class="p">[</span><span class="s2">"input_coords"</span><span class="p">][</span><span class="o">~</span><span class="n">example</span><span class="p">[</span><span class="s2">"is_ligand"</span><span class="p">]]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(),</span> \
+    <span class="s2">"Pocket coordinates should not all be zero"</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">FeaturizeForDocking smoke test passed."</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><p>When this passes, every example your dataset yields carries five arrays: <code class="docutils literal notranslate"><span class="pre">atomic_numbers</span></code>, <code class="docutils literal notranslate"><span class="pre">input_coords</span></code>, <code class="docutils literal notranslate"><span class="pre">target_coords</span></code>, <code class="docutils literal notranslate"><span class="pre">edge_index</span></code>, and <code class="docutils literal notranslate"><span class="pre">is_ligand</span></code>.</p>
+</section>
+<section id="what-next">
+<span id="aw-build-model-p2-next"></span><h2>What Next?<a class="headerlink" href="#what-next" title="Link to this heading">#</a></h2>
+<p>With a working transform pipeline, you are ready to write the model that consumes these tensors. Continue to <a class="reference internal" href="how_to_build_a_model_part3.html"><span class="std std-doc">Part 3: Write a Model</span></a>.</p>
+</section>
+<section id="glossary">
+<span id="aw-build-model-p2-glossary"></span><h2>Glossary<a class="headerlink" href="#glossary" title="Link to this heading">#</a></h2>
+<p><strong>KD-tree:</strong> a space-partitioning data structure for fast nearest-neighbor and radius queries.</p>
+<p><strong>COO format:</strong> “coordinate” sparse format; here, a <code class="docutils literal notranslate"><span class="pre">[2,</span> <span class="pre">E]</span></code> array listing the endpoints of each bond.</p>
+<p><strong>Transform:</strong> a reusable step that reads and rewrites the example dictionary; chained together with <code class="docutils literal notranslate"><span class="pre">Compose</span></code>.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="how_to_build_a_model_part1.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Part 1: Cleaning the Data</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="how_to_build_a_model_part3.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Part 3: Write a Model</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">Table of Contents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-goal-of-the-pipeline">The Goal of the Pipeline</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wiring-up-the-dataset-and-loader">Wiring Up the Dataset and Loader</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-the-transform-pipeline">Building the Transform Pipeline</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-custom-transforms">Creating Custom Transforms</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#croptopocket"><code class="docutils literal notranslate"><span class="pre">CropToPocket</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#start-with-a-shell">Start with a Shell</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#input-validation">Input Validation</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#write-the-crop-to-pocket-function">Write the <code class="docutils literal notranslate"><span class="pre">crop_to_pocket</span></code> Function</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#add-the-spatial-crop-with-a-kd-tree">Add the Spatial Crop with a KD-tree</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#add-the-is-ligand-annotation">Add the <code class="docutils literal notranslate"><span class="pre">is_ligand</span></code> annotation</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#declare-which-transforms-must-run-first">Declare which transforms must run first</a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#featurizefordocking"><code class="docutils literal notranslate"><span class="pre">FeaturizeForDocking</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Start with a Shell</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#declare-the-dependency-on-croptopocket">Declare the dependency on <code class="docutils literal notranslate"><span class="pre">CropToPocket</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#write-the-featurize-for-docking-function">Write the <code class="docutils literal notranslate"><span class="pre">featurize_for_docking</span></code> Function</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#add-the-is-ligand-mask-and-target-coordinates">Add the <code class="docutils literal notranslate"><span class="pre">is_ligand</span></code> Mask and Target Coordinates</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#add-input-coords-with-the-ligand-zeroed-out">Add <code class="docutils literal notranslate"><span class="pre">input_coords</span></code> with the ligand zeroed out</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#add-atomic-numbers">Add <code class="docutils literal notranslate"><span class="pre">atomic_numbers</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#add-bonds-via-an-edge-index">Add Bonds Via an <code class="docutils literal notranslate"><span class="pre">edge_index</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-final-featurizefordocking-class">The final <code class="docutils literal notranslate"><span class="pre">FeaturizeForDocking</span></code> class</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-complete-smoke-test">The Complete Smoke Test</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-next">What Next?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#glossary">Glossary</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/how_to_build_a_model/how_to_build_a_model_part2.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

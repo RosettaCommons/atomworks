@@ -1,0 +1,974 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Part 3: Write a Model &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'how_to_build_a_model/how_to_build_a_model_part3';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.2.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script async="async" defer="defer" src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Part 4: Train a Model" href="how_to_build_a_model_part4.html" />
+    <link rel="prev" title="Part 2: Creating a Transform Pipeline" href="how_to_build_a_model_part2.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.2.1" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Sections</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="how_to_build_a_model_part1.html">Part 1: Cleaning the Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_build_a_model_part2.html">Part 2: Creating a Transform Pipeline</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Part 3: Write a Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_build_a_model_part4.html">Part 4: Train a Model</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">How to Build a Model with AtomWorks</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Part 3: Write a Model</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="part-3-write-a-model">
+<h1>Part 3: Write a Model<a class="headerlink" href="#part-3-write-a-model" title="Link to this heading">#</a></h1>
+<section id="table-of-contents">
+<h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#aw-build-model-p3-intro"><span class="std std-ref">Introduction</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p3-prereq"><span class="std std-ref">Prerequisites</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p3-choice"><span class="std std-ref">Choosing an Architecture</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p3-goal"><span class="std std-ref">The Goal of model.py</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p3-imports"><span class="std std-ref">Imports and Class Definition</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p3-init"><span class="std std-ref">__init__ and Hyperparameters</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p3-layers"><span class="std std-ref">Building the Layers</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p3-forward"><span class="std std-ref">The Forward Pass</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p3-step"><span class="std std-ref">One Shared Train/Val/Test Step</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p3-hooks"><span class="std std-ref">Connect Lightning’s Step Methods</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p3-optim"><span class="std std-ref">Configure the Optimizer</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p3-shape"><span class="std std-ref">The Shape of model.py</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p3-next"><span class="std std-ref">What Next?</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p3-glossary"><span class="std std-ref">Glossary</span></a></p></li>
+</ul>
+</section>
+<section id="introduction">
+<span id="aw-build-model-p3-intro"></span><h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<p>This is the third tutorial in the <strong>How to Build a Model Using AtomWorks</strong> series. So far you have:</p>
+<ul class="simple">
+<li><p>Parquet files for your <code class="docutils literal notranslate"><span class="pre">train</span></code>/<code class="docutils literal notranslate"><span class="pre">val</span></code>/<code class="docutils literal notranslate"><span class="pre">test</span></code> splits (<a class="reference internal" href="how_to_build_a_model_part1.html"><span class="std std-doc">Part 1</span></a>).</p></li>
+<li><p>A loader that turns each parquet row into a protein-ligand structure (<a class="reference internal" href="how_to_build_a_model_part2.html#wiring-up-the-dataset-and-loader"><span class="std std-ref">Part 2</span></a>).</p></li>
+<li><p>A transform pipeline that crops the pocket and converts it into tensors (<a class="reference internal" href="how_to_build_a_model_part2.html#building-the-transform-pipeline"><span class="std std-ref">Part 2</span></a>).</p></li>
+</ul>
+<p><strong>In this installment, you will write the neural network that consumes those tensors and predicts 3D coordinates for every atom.</strong></p>
+<p>By the end of this part you will have a <code class="docutils literal notranslate"><span class="pre">model.py</span></code> containing a trainable <code class="docutils literal notranslate"><span class="pre">PocketDockGNN</span></code> <code class="docutils literal notranslate"><span class="pre">LightningModule</span></code>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This tutorial continues to build a script using the AtomWorks API and PyTorch. The full solution is available in the tutorial files; the code here is also hidden in collapsible cells so you can attempt each step yourself.</p>
+</div>
+</section>
+<section id="prerequisites">
+<span id="aw-build-model-p3-prereq"></span><h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h2>
+<p>Before starting this part of the tutorial series it is assumed that you have:</p>
+<ul class="simple">
+<li><p>Completed <a class="reference internal" href="how_to_build_a_model_part2.html"><span class="std std-doc">Part 2</span></a>, with a working <code class="docutils literal notranslate"><span class="pre">transforms.py</span></code> and <code class="docutils literal notranslate"><span class="pre">smoke_test.py</span></code>.</p></li>
+<li><p>A working installation of <a class="reference external" href="https://pytorch.org/get-started/locally/">PyTorch</a> and <a class="reference external" href="https://lightning.ai/docs/pytorch/stable/index">PyTorch Lightning</a>.</p></li>
+<li><p>Familiarity with basic neural-network building blocks (<code class="docutils literal notranslate"><span class="pre">Linear</span></code>, <code class="docutils literal notranslate"><span class="pre">Embedding</span></code>, <code class="docutils literal notranslate"><span class="pre">LayerNorm</span></code>) and the idea of message passing on a graph.</p></li>
+</ul>
+</section>
+<section id="choosing-an-architecture">
+<span id="aw-build-model-p3-choice"></span><h2>Choosing an Architecture<a class="headerlink" href="#choosing-an-architecture" title="Link to this heading">#</a></h2>
+<p>Before writing any code, we have to decide what architecture to use. For this tutorial we use a simple message-passing <strong>graph neural network (GNN)</strong>. A GNN is a natural choice because our data is already a graph: the bond graph is stored in <code class="docutils literal notranslate"><span class="pre">edge_index</span></code>, and each atom is a node with an atomic-number feature.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We use a GNN as an example model architecture. This tutorial focuses on using AtomWorks to build and train a model, rather than on the details of how GNNs work.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This model is <strong>not</strong> rotation/translation invariant. It sees raw XYZ coordinates, which means it can learn to “cheat” based on absolute position rather than on geometry. Equivariant architectures (for example, those built on relative displacements or SE(3)-equivariant layers) address this, but they add substantial complexity. We keep things simple here so the pipeline is easy to follow; treat the resulting model as a teaching example rather than a production docking model.</p>
+</div>
+<p>A few other decisions to make before writing:</p>
+<ul class="simple">
+<li><p><strong>How many GNN layers?</strong> More layers propagate information further across the bond graph, at the cost of compute and the risk of over-smoothing.</p></li>
+<li><p><strong>What hidden dimension?</strong> Wider layers can represent more, but use more memory.</p></li>
+<li><p><strong>What loss function?</strong> This should reflect what “a good pose” means.</p></li>
+</ul>
+<p>To keep the example small and trainable on a single GPU, we use:</p>
+<ul class="simple">
+<li><p><strong>3 GNN layers</strong>: enough to propagate information a few hops through the bond graph.</p></li>
+<li><p><strong>128 hidden dimensions</strong>: small enough to train on a single GPU.</p></li>
+<li><p><strong>Mean squared error (MSE)</strong> between predicted and target coordinates.</p></li>
+</ul>
+</section>
+<section id="the-goal-of-model-py">
+<span id="aw-build-model-p3-goal"></span><h2>The Goal of <code class="docutils literal notranslate"><span class="pre">model.py</span></code><a class="headerlink" href="#the-goal-of-model-py" title="Link to this heading">#</a></h2>
+<p>We will write the model in <code class="docutils literal notranslate"><span class="pre">model.py</span></code>. It needs to:</p>
+<ul class="simple">
+<li><p>Take atom types, coordinates, and bond edges as input.</p></li>
+<li><p>Pass information along the atom graph.</p></li>
+<li><p>Predict 3D coordinates for each atom.</p></li>
+<li><p>Expose train/val/test steps through a <code class="docutils literal notranslate"><span class="pre">LightningModule</span></code>.</p></li>
+</ul>
+</section>
+<section id="imports-and-class-definition">
+<span id="aw-build-model-p3-imports"></span><h2>Imports and Class Definition<a class="headerlink" href="#imports-and-class-definition" title="Link to this heading">#</a></h2>
+<p>Import PyTorch, Lightning, and the basic building blocks. <a class="reference external" href="https://pytorch.org/"><code class="docutils literal notranslate"><span class="pre">torch</span></code></a> provides tensors and tensor ops; <a class="reference external" href="https://docs.pytorch.org/docs/2.13/nn.html"><code class="docutils literal notranslate"><span class="pre">torch.nn</span></code></a> provides layers like <code class="docutils literal notranslate"><span class="pre">Linear</span></code>, <code class="docutils literal notranslate"><span class="pre">Embedding</span></code>, and <code class="docutils literal notranslate"><span class="pre">LayerNorm</span></code>; <a class="reference external" href="https://lightning.ai/docs/pytorch/stable/index"><code class="docutils literal notranslate"><span class="pre">pytorch_lightning</span></code></a> provides <code class="docutils literal notranslate"><span class="pre">LightningModule</span></code>, which packages the model, loss, logging, and optimizer setup into one class.</p>
+<p>Lets start off <code class="docutils literal notranslate"><span class="pre">model.py</span></code> by importing these modules and begining our <code class="docutils literal notranslate"><span class="pre">PocketDockGNN</span></code> class that inherits from <code class="docutils literal notranslate"><span class="pre">Lightning</span> <span class="pre">Module</span></code>:</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytorch_lightning</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">PocketDockGNN</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">LightningModule</span><span class="p">):</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="init-and-hyperparameters">
+<span id="aw-build-model-p3-init"></span><h2><code class="docutils literal notranslate"><span class="pre">__init__</span></code> and Hyperparameters<a class="headerlink" href="#init-and-hyperparameters" title="Link to this heading">#</a></h2>
+<p>Write <code class="docutils literal notranslate"><span class="pre">__init__</span></code> and save the hyperparameters so Lightning can restore them from a checkpoint.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">num_atom_types</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">119</span><span class="p">,</span>
+        <span class="n">hidden_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span>
+        <span class="n">num_layers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">learning_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_hyperparameters</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">=</span> <span class="n">learning_rate</span>
+</pre></div>
+</div>
+</div>
+</details><p>These arguments mean:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">num_atom_types=119</span></code></strong> - one embedding-table entry for each atomic number from 0 to 118. (We are using 0 to denote an unknown atom type.)</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">hidden_dim</span></code></strong> - the width of the learned per-atom representation.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">num_layers</span></code></strong> - how many rounds of message passing to run.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">learning_rate</span></code></strong> - step size for the <a class="reference external" href="https://www.geeksforgeeks.org/deep-learning/adam-optimizer/">Adam optimizer</a>.</p></li>
+</ul>
+</section>
+<section id="building-the-layers">
+<span id="aw-build-model-p3-layers"></span><h2>Building the Layers<a class="headerlink" href="#building-the-layers" title="Link to this heading">#</a></h2>
+<p>We build the layers in the order the data flows through them.</p>
+<section id="embed-atom-identities">
+<h3>Embed Atom Identities<a class="headerlink" href="#embed-atom-identities" title="Link to this heading">#</a></h3>
+<p>Each atom arrives as an integer atomic number. A neural network works better with learned vectors, so we add an embedding table. This lets the model learn different behavior for carbon, oxygen, nitrogen, and so on without us hand-coding any chemistry rules.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="bp">self</span><span class="o">.</span><span class="n">atom_embedding</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">num_atom_types</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="combine-atom-type-with-input-coordinates">
+<h3>Combine atom type with input coordinates<a class="headerlink" href="#combine-atom-type-with-input-coordinates" title="Link to this heading">#</a></h3>
+<p>For each atom, the model combines its learned atom-type embedding with its three input coordinates. We concatenate these features and project the resulting vector back to hidden_dim.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="bp">self</span><span class="o">.</span><span class="n">input_proj</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim</span> <span class="o">+</span> <span class="mi">3</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">),</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="build-the-message-passing-blocks">
+<h3>Build the message-passing blocks<a class="headerlink" href="#build-the-message-passing-blocks" title="Link to this heading">#</a></h3>
+<p>The graph structure comes from <code class="docutils literal notranslate"><span class="pre">edge_index</span></code>, which says which atoms are bonded. To use that graph, add a stack of message and update blocks, plus layer norms.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="bp">self</span><span class="o">.</span><span class="n">conv_layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">([</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">),</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_layers</span><span class="p">)</span>
+        <span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">([</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">),</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_layers</span><span class="p">)</span>
+        <span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer_norms</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">([</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_layers</span><span class="p">)</span>
+        <span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</details><p>These three lists work together:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">conv_layers</span></code></strong>: transform each source atom into a message.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">update_layers</span></code></strong>: combine an atom’s current state with the aggregated neighbor message.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">layer_norms</span></code></strong>: stabilize training after each update.</p></li>
+</ul>
+</section>
+<section id="project-back-to-3d-coordinates">
+<h3>Project back to 3D coordinates<a class="headerlink" href="#project-back-to-3d-coordinates" title="Link to this heading">#</a></h3>
+<p>After message passing, each atom has a learned hidden representation. The output head maps that vector to an (x, y, z) prediction.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="bp">self</span><span class="o">.</span><span class="n">output_proj</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="define-the-loss">
+<h3>Define the loss<a class="headerlink" href="#define-the-loss" title="Link to this heading">#</a></h3>
+<p>For the tutorial we use mean squared error between predicted and target coordinates.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="bp">self</span><span class="o">.</span><span class="n">loss_fn</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+</section>
+<section id="the-forward-pass">
+<span id="aw-build-model-p3-forward"></span><h2>The Forward Pass<a class="headerlink" href="#the-forward-pass" title="Link to this heading">#</a></h2>
+<p>Now write <code class="docutils literal notranslate"><span class="pre">forward()</span></code>. It does four things in order:</p>
+<ol class="arabic simple">
+<li><p>Embed the atomic numbers.</p></li>
+<li><p>Concatenate those embeddings with the input coordinates and project.</p></li>
+<li><p>Run message passing over the bond graph. For each layer, compute a message for every atom, route each source message to its destination atom using <code class="docutils literal notranslate"><span class="pre">edge_index</span></code>, sum the incoming messages per destination, and update each atom with a residual connection.</p></li>
+<li><p>Project to coordinates.</p></li>
+</ol>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">atomic_numbers</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">input_coords</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">edge_index</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_embedding</span><span class="p">(</span><span class="n">atomic_numbers</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_proj</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">input_coords</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="n">src</span><span class="p">,</span> <span class="n">dst</span> <span class="o">=</span> <span class="n">edge_index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">edge_index</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">conv</span><span class="p">,</span> <span class="n">update</span><span class="p">,</span> <span class="n">norm</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conv_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_layers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_norms</span><span class="p">):</span>
+            <span class="n">messages</span> <span class="o">=</span> <span class="n">conv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">agg</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">agg</span><span class="o">.</span><span class="n">scatter_add_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dst</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)),</span> <span class="n">messages</span><span class="p">[</span><span class="n">src</span><span class="p">])</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">norm</span><span class="p">(</span><span class="n">update</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">agg</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)))</span>
+
+        <span class="n">pred_coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_proj</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pred_coords</span>
+</pre></div>
+</div>
+<p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">scatter_add_</span></code> sums each source atom’s message into the row of <code class="docutils literal notranslate"><span class="pre">agg</span></code> belonging to its destination atom, which implements neighbor aggregation. The residual connection (<code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">x</span> <span class="pre">+</span> <span class="pre">...</span></code>) keeps gradients well-behaved across layers.</p>
+</div>
+</details><div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">atom_array.bonds.as_array()</span></code> lists each bond once, so as written, messages flow from <code class="docutils literal notranslate"><span class="pre">src</span></code> to <code class="docutils literal notranslate"><span class="pre">dst</span></code> in a single direction per bond. If you want symmetric message passing (information flowing both ways along every bond), you can duplicate and flip the edges when you build <code class="docutils literal notranslate"><span class="pre">edge_index</span></code>, or concatenate <code class="docutils literal notranslate"><span class="pre">[src,</span> <span class="pre">dst]</span></code> with <code class="docutils literal notranslate"><span class="pre">[dst,</span> <span class="pre">src]</span></code>. This is optional for the tutorial but worth knowing.</p>
+</div>
+</section>
+<section id="one-shared-train-val-test-step">
+<span id="aw-build-model-p3-step"></span><h2>One Shared Train/Val/Test Step<a class="headerlink" href="#one-shared-train-val-test-step" title="Link to this heading">#</a></h2>
+<p>Lightning calls separate methods for training, validation, and test, but the logic is almost identical, so write it once in a helper. Skip <code class="docutils literal notranslate"><span class="pre">None</span></code> batches (these come from failed examples, which we handle in <a class="reference internal" href="how_to_build_a_model_part4.html"><span class="std std-doc">Part 4</span></a>), remove the leading batch dimension added by the <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> (we use <code class="docutils literal notranslate"><span class="pre">batch_size=1</span></code>), run the model, and compute the coordinate loss.</p>
+<p>The full-coordinate MSE is fine for optimization, but docking quality is best judged on the ligand atoms alone, so we also log a ligand RMSD.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span><span class="w"> </span><span class="nf">_shared_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">batch</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="c1"># Remove the batch dimension added by DataLoader (batch_size=1)</span>
+        <span class="n">atomic_numbers</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">"atomic_numbers"</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>   <span class="c1"># (N,)</span>
+        <span class="n">input_coords</span>   <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">"input_coords"</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>     <span class="c1"># (N, 3)</span>
+        <span class="n">target_coords</span>  <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">"target_coords"</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>    <span class="c1"># (N, 3)</span>
+        <span class="n">edge_index</span>     <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">"edge_index"</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>       <span class="c1"># (2, E)</span>
+        <span class="n">is_ligand</span>      <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">"is_ligand"</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>        <span class="c1"># (N,)</span>
+
+        <span class="n">pred_coords</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">atomic_numbers</span><span class="p">,</span> <span class="n">input_coords</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_fn</span><span class="p">(</span><span class="n">pred_coords</span><span class="p">,</span> <span class="n">target_coords</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">ligand_rmsd</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+                <span class="p">((</span><span class="n">pred_coords</span><span class="p">[</span><span class="n">is_ligand</span><span class="p">]</span> <span class="o">-</span> <span class="n">target_coords</span><span class="p">[</span><span class="n">is_ligand</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2">/loss"</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">prog_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2">/ligand_rmsd"</span><span class="p">,</span> <span class="n">ligand_rmsd</span><span class="p">,</span> <span class="n">prog_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">loss</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="connect-lightning-s-step-methods">
+<span id="aw-build-model-p3-hooks"></span><h2>Connect Lightning’s Step Methods<a class="headerlink" href="#connect-lightning-s-step-methods" title="Link to this heading">#</a></h2>
+<p>The stage-specific methods become tiny wrappers around the shared step.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span><span class="w"> </span><span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shared_step</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="s2">"train"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">validation_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shared_step</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="s2">"val"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shared_step</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="s2">"test"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="configure-the-optimizer">
+<span id="aw-build-model-p3-optim"></span><h2>Configure the Optimizer<a class="headerlink" href="#configure-the-optimizer" title="Link to this heading">#</a></h2>
+<p>Tell Lightning which optimizer to use. Here we use <a class="reference external" href="https://docs.pytorch.org/docs/2.13/generated/torch.optim.Adam.html">Adam</a>.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span><span class="w"> </span><span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="the-shape-of-model-py">
+<span id="aw-build-model-p3-shape"></span><h2>The Shape of <code class="docutils literal notranslate"><span class="pre">model.py</span></code><a class="headerlink" href="#the-shape-of-model-py" title="Link to this heading">#</a></h2>
+<p>Your final <code class="docutils literal notranslate"><span class="pre">model.py</span></code> should have this shape:</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the outline</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytorch_lightning</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">PocketDockGNN</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">LightningModule</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="o">...</span><span class="p">):</span>
+        <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="o">...</span><span class="p">):</span>
+        <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_shared_step</span><span class="p">(</span><span class="o">...</span><span class="p">):</span>
+        <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">training_step</span><span class="p">(</span><span class="o">...</span><span class="p">):</span>
+        <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validation_step</span><span class="p">(</span><span class="o">...</span><span class="p">):</span>
+        <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_step</span><span class="p">(</span><span class="o">...</span><span class="p">):</span>
+        <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">configure_optimizers</span><span class="p">(</span><span class="o">...</span><span class="p">):</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+</div>
+</details><p>At this point you should have a trainable model class.</p>
+</section>
+<section id="what-next">
+<span id="aw-build-model-p3-next"></span><h2>What Next?<a class="headerlink" href="#what-next" title="Link to this heading">#</a></h2>
+<p>With <code class="docutils literal notranslate"><span class="pre">transforms.py</span></code> and <code class="docutils literal notranslate"><span class="pre">model.py</span></code> in place, you are ready to wire everything into a training loop. Continue to <a class="reference internal" href="how_to_build_a_model_part4.html"><span class="std std-doc">Part 4: Train a Model</span></a>.</p>
+</section>
+<section id="glossary">
+<span id="aw-build-model-p3-glossary"></span><h2>Glossary<a class="headerlink" href="#glossary" title="Link to this heading">#</a></h2>
+<p><strong>GNN (graph neural network):</strong> a network that operates on graph-structured data by passing messages between connected nodes.</p>
+<p><strong>Message passing:</strong> the process of computing a message from each node, aggregating messages at each destination node, and updating node states.</p>
+<p><strong>RMSD (root-mean-square deviation):</strong>: the square root of the mean squared distance between predicted and true atom positions; a standard structural-accuracy metric.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="how_to_build_a_model_part2.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Part 2: Creating a Transform Pipeline</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="how_to_build_a_model_part4.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Part 4: Train a Model</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">Table of Contents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choosing-an-architecture">Choosing an Architecture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-goal-of-model-py">The Goal of <code class="docutils literal notranslate"><span class="pre">model.py</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#imports-and-class-definition">Imports and Class Definition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#init-and-hyperparameters"><code class="docutils literal notranslate"><span class="pre">__init__</span></code> and Hyperparameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-the-layers">Building the Layers</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#embed-atom-identities">Embed Atom Identities</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#combine-atom-type-with-input-coordinates">Combine atom type with input coordinates</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#build-the-message-passing-blocks">Build the message-passing blocks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#project-back-to-3d-coordinates">Project back to 3D coordinates</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#define-the-loss">Define the loss</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-forward-pass">The Forward Pass</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#one-shared-train-val-test-step">One Shared Train/Val/Test Step</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#connect-lightning-s-step-methods">Connect Lightning’s Step Methods</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configure-the-optimizer">Configure the Optimizer</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-shape-of-model-py">The Shape of <code class="docutils literal notranslate"><span class="pre">model.py</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-next">What Next?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#glossary">Glossary</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/how_to_build_a_model/how_to_build_a_model_part3.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

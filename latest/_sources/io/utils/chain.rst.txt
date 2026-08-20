@@ -1,5 +1,5 @@
 Chain Utilities
-==============
+===============
 
 .. automodule:: atomworks.io.utils.chain
    :members:

@@ -26,29 +26,31 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/datasets/file_dataset';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
-        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.2.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
@@ -167,6 +169,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -293,6 +302,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -426,7 +442,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for atomworks.ml.datasets.file_dataset</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;File-based dataset implementation.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""File-based dataset implementation."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">PathLike</span>
@@ -445,12 +461,12 @@
 <div class="viewcode-block" id="FileDataset">
 <a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.FileDataset">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FileDataset</span><span class="p">(</span><span class="n">MolecularDataset</span><span class="p">,</span> <span class="n">ExampleIDMixin</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dataset that loads molecular data from individual files.</span>
+<span class="w">    </span><span class="sd">"""Dataset that loads molecular data from individual files.</span>
 
 <span class="sd">    Each file represents one example in the dataset. If creating a dataset from a</span>
 <span class="sd">    directory, use the :meth:`from_directory` class method instead of the default</span>
 <span class="sd">    constructor.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -460,7 +476,7 @@
         <span class="n">filter_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">PathLike</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize FileDataset.</span>
+<span class="w">        </span><span class="sd">"""Initialize FileDataset.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            file_paths: List of file paths for the dataset. Each file represents</span>
@@ -473,9 +489,9 @@
 
 <span class="sd">        Examples:</span>
 <span class="sd">            Create from explicit file list:</span>
-<span class="sd">                &gt;&gt;&gt; files = [&quot;/path/to/file1.cif&quot;, &quot;/path/to/file2.cif&quot;]</span>
-<span class="sd">                &gt;&gt;&gt; dataset = FileDataset(file_paths=files, name=&quot;my_dataset&quot;)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">                &gt;&gt;&gt; files = ["/path/to/file1.cif", "/path/to/file2.cif"]</span>
+<span class="sd">                &gt;&gt;&gt; dataset = FileDataset(file_paths=files, name="my_dataset")</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">filter_fn</span> <span class="o">=</span> <span class="n">filter_fn</span> <span class="ow">or</span> <span class="n">_always_true</span>
@@ -483,9 +499,9 @@
         <span class="c1"># Convert to Path objects and filter</span>
         <span class="n">file_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">file_paths</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_fn</span><span class="p">(</span><span class="n">path</span><span class="p">)]</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">file_paths</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No files found after applying filters&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"No files found after applying filters"</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_paths</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">file_paths</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;File paths must be unique&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"File paths must be unique"</span><span class="p">)</span>
 
         <span class="c1"># Sort for consistent id&lt;&gt;idx mapping</span>
         <span class="n">file_paths</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
@@ -496,7 +512,7 @@
 
         <span class="c1"># Verify that all example IDs are unique</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id_to_idx_map</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_paths</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Example IDs must be unique. Found duplicate example IDs.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Example IDs must be unique. Found duplicate example IDs."</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FileDataset.from_directory">
 <a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.FileDataset.from_directory">[docs]</a>
@@ -508,8 +524,8 @@
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">max_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;FileDataset&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a FileDataset by scanning a directory for files.</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"FileDataset"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Create a FileDataset by scanning a directory for files.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            directory: Path to directory to scan for files.</span>
@@ -522,13 +538,13 @@
 
 <span class="sd">        Example:</span>
 <span class="sd">            Create from directory:</span>
-<span class="sd">                &gt;&gt;&gt; dataset = FileDataset.from_directory(directory=&quot;/path/to/files&quot;, name=&quot;my_dataset&quot;, max_depth=2)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">                &gt;&gt;&gt; dataset = FileDataset.from_directory(directory="/path/to/files", name="my_dataset", max_depth=2)</span>
+<span class="sd">        """</span>
         <span class="n">dir_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">dir_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Directory </span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Directory </span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2"> does not exist."</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">dir_path</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Path </span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2"> is not a directory.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Path </span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2"> is not a directory."</span><span class="p">)</span>
 
         <span class="n">file_paths</span> <span class="o">=</span> <span class="n">scan_directory</span><span class="p">(</span><span class="n">dir_path</span><span class="o">=</span><span class="n">dir_path</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="n">max_depth</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">file_paths</span><span class="o">=</span><span class="n">file_paths</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
@@ -543,8 +559,8 @@
         <span class="n">file_paths</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">PathLike</span><span class="p">],</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;FileDataset&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a FileDataset from an explicit list of file paths.</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"FileDataset"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Create a FileDataset from an explicit list of file paths.</span>
 
 <span class="sd">        This is an alias for the main constructor for clarity and consistency</span>
 <span class="sd">        with :meth:`from_directory`.</span>
@@ -556,22 +572,22 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            FileDataset instance with the provided file paths.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">file_paths</span><span class="o">=</span><span class="n">file_paths</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of files in the dataset.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the number of files in the dataset."""</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_paths</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the dataset contains the example ID.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Check if the dataset contains the example ID."""</span>
         <span class="k">return</span> <span class="n">example_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_to_idx_map</span>
 
 <div class="viewcode-block" id="FileDataset.id_to_idx">
 <a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.FileDataset.id_to_idx">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">id_to_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert example ID(s) to index(es).&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Convert example ID(s) to index(es)."""</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">example_id</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">id_to_idx_map</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span> <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">example_id</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_to_idx_map</span><span class="p">[</span><span class="n">example_id</span><span class="p">]</span></div>
@@ -580,39 +596,39 @@
 <div class="viewcode-block" id="FileDataset.idx_to_id">
 <a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.FileDataset.idx_to_id">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">idx_to_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert index(es) to example ID(s).&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Convert index(es) to example ID(s)."""</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_example_id</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idx</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_example_id</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load and transform an example by file index.</span>
+<span class="w">        </span><span class="sd">"""Load and transform an example by file index.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            idx: The index of the file to load.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Transformed data from the file.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">file_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_paths</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
         <span class="n">example_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_example_id</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_loader</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_transform</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">example_id</span><span class="o">=</span><span class="n">example_id</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_example_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get example ID from index - returns filename stem without extensions.</span>
+<span class="w">        </span><span class="sd">"""Get example ID from index - returns filename stem without extensions.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            idx: The index of the file.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Filename stem without any extensions.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">file_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_paths</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span>
         <span class="c1"># If filename has multiple extensions (e.g., .cif.gz), remove them all</span>
-        <span class="k">while</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="k">while</span> <span class="s2">"."</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span>
         <span class="k">return</span> <span class="n">filename</span></div>
 
@@ -645,8 +661,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -680,7 +696,7 @@
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
 </p></div>
       
     </div>

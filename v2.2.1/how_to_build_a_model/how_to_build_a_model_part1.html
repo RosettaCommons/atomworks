@@ -1,0 +1,954 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Part 1: Cleaning the Data &#8212; atomworks  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'how_to_build_a_model/how_to_build_a_model_part1';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.2.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <script async="async" defer="defer" src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Part 2: Creating a Transform Pipeline" href="how_to_build_a_model_part2.html" />
+    <link rel="prev" title="How to Build a Model with AtomWorks" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.2.1" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks  documentation - Home"/>
+    <img src="../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks  documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Sections</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Part 1: Cleaning the Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_build_a_model_part2.html">Part 2: Creating a Transform Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_build_a_model_part3.html">Part 3: Write a Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_build_a_model_part4.html">Part 4: Train a Model</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">How to Build a Model with AtomWorks</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Part 1: Cleaning the Data</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="part-1-cleaning-the-data">
+<h1>Part 1: Cleaning the Data<a class="headerlink" href="#part-1-cleaning-the-data" title="Link to this heading">#</a></h1>
+<section id="table-of-contents">
+<h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="#aw-build-model-p1-intro"><span class="std std-ref">Introduction</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p1-prereq"><span class="std std-ref">Prerequisites</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p1-setup"><span class="std std-ref">Setup</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p1-tutorial"><span class="std std-ref">Creating Cleaned Parquet Files</span></a></p>
+<ul>
+<li><p><a class="reference internal" href="#aw-build-model-p1-load"><span class="std std-ref">Loading the parquet file using Pandas</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p1-merge"><span class="std std-ref">Merging Datasets</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p1-clean"><span class="std std-ref">Cleaning the Data</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p1-new-cols"><span class="std std-ref">Adding New Columns</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p1-split"><span class="std std-ref">Training, Testing, and Validation Sets</span></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#aw-build-model-p1-next"><span class="std std-ref">What Next?</span></a></p></li>
+<li><p><a class="reference internal" href="#aw-build-model-p1-glossary"><span class="std std-ref">Glossary</span></a></p></li>
+</ul>
+</section>
+<section id="introduction">
+<span id="aw-build-model-p1-intro"></span><h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<p>This is the first in a series of tutorials that walks you through how to use AtomWorks to build a machine learning model for determining the pose of a ligand in a protein binding pocket from start to finish.</p>
+<p><strong>In this installment, you will learn how to use the <a class="reference internal" href="../io.html"><span class="std std-doc">IO functionalities in AtomWorks</span></a> to prepare your data for use in a machine learning model.</strong></p>
+<p>By the end this first part of the <strong>How to Build a Model with AtomWorks</strong> tutorial series you will have created a script that will collect, clean, and split the data we need to train our model in to training, validation, and test sets.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>For those that want to use the tutorial text as structure and hints to write your own script, we have hidden the code in collapsible cells.</p>
+<p>The full script, <code class="docutils literal notranslate"><span class="pre">data_cleaning_script.py</span></code>, is provided in the <a class="reference internal" href="scripts/index.html"><span class="std std-doc">tutorial files</span></a>.</p>
+</div>
+</section>
+<section id="prerequisites">
+<span id="aw-build-model-p1-prereq"></span><h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h2>
+<p>Before starting this tutorial it is assumed that you have:</p>
+<ul class="simple">
+<li><p>An intermediate knowledge of Python and the <a class="reference external" href="https://pandas.pydata.org/">Pandas</a> library.</p></li>
+<li><p>A working installation of <a class="reference external" href="https://rosettacommons.github.io/atomworks/latest/">AtomWorks</a>. Only the <code class="docutils literal notranslate"><span class="pre">io</span></code> side will be used for this first part of the How to Build a Model tutorial series, however other parts will require the <code class="docutils literal notranslate"><span class="pre">ml</span></code> side.</p></li>
+<li><p>At least 1GB of space for storage of the parquet files.</p></li>
+<li><p>At least a portion of the PDB mirrored - the full mirror takes ~100GB of space.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you do not have over 100GB of space on your computing system, you can use a subset of the PDB instead of the full PDB mirror. See <a class="reference internal" href="../mirrors.html"><span class="std std-doc">Data Mirrors</span></a> for how to only download specific PDB IDs.</p>
+</div>
+</section>
+<section id="setup">
+<span id="aw-build-model-p1-setup"></span><h2>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
+<p>AtomWorks provides a few parquet files that already contains various pieces of metadata about the various structures included in the PDB. We will use these as our starting point.</p>
+<p>Download and decompress the parquet files via:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget<span class="w"> </span>https://files.ipd.uw.edu/pub/atomworks/dfs/pdb/2026_01_06.tar.gz
+tar<span class="w"> </span>-xvf<span class="w"> </span>2026_01_06.tar.gz
+</pre></div>
+</div>
+<p>After decompressing the folder you should see three parquet files:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">assemblies.parquet</span></code>:</strong> There are multiple bio assemblies stored in a single <a class="reference external" href="https://www.rcsb.org/">PDB</a>, each assembly will have multiple chains, interfaces, etc.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">interfaces.parquet</span></code>:</strong> Contains metadata for all binary interfaces in the <a class="reference external" href="https://www.rcsb.org/">PDB</a></p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">pn_units.parquet</span></code>:</strong> Contains metadata for each PN unit in the <a class="reference external" href="https://www.rcsb.org/">PDB</a></p></li>
+</ul>
+<p>We will only use <code class="docutils literal notranslate"><span class="pre">interfaces.parquet</span></code> and <code class="docutils literal notranslate"><span class="pre">pn_units.parquet</span></code> in this tutorial.</p>
+</section>
+<section id="creating-cleaned-parquet-files">
+<span id="aw-build-model-p1-tutorial"></span><h2>Creating Cleaned Parquet Files<a class="headerlink" href="#creating-cleaned-parquet-files" title="Link to this heading">#</a></h2>
+<section id="loading-the-parquet-file-using-pandas">
+<span id="aw-build-model-p1-load"></span><h3>Loading the parquet file using Pandas<a class="headerlink" href="#loading-the-parquet-file-using-pandas" title="Link to this heading">#</a></h3>
+<p>Let’s first take a look at the information contained in the parquet file. Parquet files are not human parsable, but we can use <a class="reference external" href="https://pandas.pydata.org/">Pandas</a> to inspect it.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">Load in the datasets:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">interfaces</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s2">"2026_01_06/interfaces.parquet"</span><span class="p">)</span>
+<span class="n">pn_units</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s2">"2026_01_06/pn_units.parquet"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="sd-card-text">View the dataset columns:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">interfaces</span><span class="o">.</span><span class="n">columns</span>
+<span class="n">pn_units</span><span class="o">.</span><span class="n">columns</span>
+</pre></div>
+</div>
+</div>
+</details><p>Let’s take a closer look at a few of the columns in the interfaces parquet: <!-- TODO: check if these descriptions are true--></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pdb_id</span></code>: The identifier for the specific structure in the PDB.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">assembly_id</span></code>: Integer label for what assembly the given interface belongs to. There may be multiple assemblies in a single PDB structure.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pn_unit_1_iid</span></code>: Label for the first PN unit in the interface.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pn_unit_2_iid</span></code>: Label for the second PN unit in the interface.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">involves_loi</span></code>: Boolean for if the LOI (Ligand of Interest) is part of the interface.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">is_inter_molecule</span></code>: Boolean for if the interfaces is between two molecules (True) or within the same molecule (False).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">involves_metal</span></code>: Boolean for if the interface involves a metal atom.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">involves_covalent_modification</span></code>: Boolean for if the interface involves a covalent modification (e.g. glycosylation).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_contacts</span></code>: Number of contacts between the two PN units that create the interface.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">min_distance</span></code>: Minimum distance between the contacts that create the interface.</p></li>
+</ul>
+<p>Let’s also look at a few columns of interest from the PN units parquet file:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pn_unit_iid</span></code>: Label for the specific PN unit in the structure that the row corresponds to.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">is_polymer</span></code>: Boolean for whether the PN unit is a polymer</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_resolved_residues</span></code>: Number of resolved residues in the structure.</p></li>
+</ul>
+<p>We encourage you to take a closer look at these datasets on your own. For some suggestions on what to do, see the collapsible group below:</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">See the first 5 rows of specific columns in a dataset:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">interfaces</span><span class="p">[[</span><span class="s2">"pdb_id"</span><span class="p">,</span><span class="s2">"assembly_id"</span><span class="p">,</span> <span class="s2">"pn_unit_1_iid"</span><span class="p">,</span> <span class="s2">"pn_unit_2_iid"</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sd-card-text">See the unique values of a given column:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">interfaces</span><span class="p">[</span><span class="s2">"assembly_id"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sd-card-text">Determine the datatype of the data stored in a particular column:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">interfaces</span><span class="p">[[</span><span class="s2">"is_inter_molecule"</span><span class="p">]]</span><span class="o">.</span><span class="n">dtype</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="merging-datasets">
+<span id="aw-build-model-p1-merge"></span><h3>Merging Datasets<a class="headerlink" href="#merging-datasets" title="Link to this heading">#</a></h3>
+<p>While the interfaces parquet has most of the data we need to train our model to predict poses for ligands binding to protein pockets, we need the information stored in the <code class="docutils literal notranslate"><span class="pre">is_polymer</span></code> and <code class="docutils literal notranslate"><span class="pre">num_resolved_residues</span></code> columns in the PN units dataset as well. We will use the information in <code class="docutils literal notranslate"><span class="pre">is_polymer</span></code> to ensure that the interfaces we are looking at are between a protein (polymer) and ligand (non-polymer). We will use the information in <code class="docutils literal notranslate"><span class="pre">num_resolved_residues</span></code> to make sure our dataset remains small enough to train our model on a single GPU.</p>
+<p>We will need to merge this information with the interfaces dataset twice, one for each PN unit involved in each interface. Keep in mind that you need the information in <code class="docutils literal notranslate"><span class="pre">pdb_id</span></code>, <code class="docutils literal notranslate"><span class="pre">assembly_id</span></code>, and <code class="docutils literal notranslate"><span class="pre">pn_unit_iid</span></code> to uniquely identify a structure!</p>
+<p>The code that follows in the rest of this tutorial can be found in <code class="docutils literal notranslate"><span class="pre">data_cleaning_script.py</span></code> in the <a class="reference internal" href="scripts/index.html"><span class="std std-doc">tutorial files</span></a>.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click here to see how to merge these datasets.</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">Create two copies of the relevant columns in the PN units dataset, one for each PN unit involved in the interface.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">u1_cols</span> <span class="o">=</span> <span class="n">pn_units</span><span class="p">[[</span><span class="s2">"pdb_id"</span><span class="p">,</span> <span class="s2">"assembly_id"</span><span class="p">,</span> <span class="s2">"pn_unit_iid"</span><span class="p">,</span> <span class="s2">"is_polymer"</span><span class="p">,</span> <span class="s2">"num_resolved_residues"</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">u2_cols</span> <span class="o">=</span> <span class="n">pn_units</span><span class="p">[[</span><span class="s2">"pdb_id"</span><span class="p">,</span> <span class="s2">"assembly_id"</span><span class="p">,</span> <span class="s2">"pn_unit_iid"</span><span class="p">,</span> <span class="s2">"is_polymer"</span><span class="p">,</span> <span class="s2">"num_resolved_residues"</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sd-card-text">Rename the columns so that they match what is in the interfaces dataset and to ensure the new information is distinguishable between the two PN units.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">u1_cols</span> <span class="o">=</span> <span class="n">u1_cols</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+    <span class="s2">"pn_unit_iid"</span><span class="p">:</span> <span class="s2">"pn_unit_1_iid"</span><span class="p">,</span>
+    <span class="s2">"is_polymer"</span><span class="p">:</span> <span class="s2">"u1_is_polymer"</span><span class="p">,</span>
+    <span class="s2">"num_resolved_residues"</span><span class="p">:</span> <span class="s2">"u1_num_resolved_residues"</span>
+<span class="p">})</span>
+<span class="n">u2_cols</span> <span class="o">=</span> <span class="n">u2_cols</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+    <span class="s2">"pn_unit_iid"</span><span class="p">:</span> <span class="s2">"pn_unit_2_iid"</span><span class="p">,</span>
+    <span class="s2">"is_polymer"</span><span class="p">:</span> <span class="s2">"u2_is_polymer"</span><span class="p">,</span>
+    <span class="s2">"num_resolved_residues"</span><span class="p">:</span> <span class="s2">"u2_num_resolved_residues"</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p class="sd-card-text">Actually merge the three datasets together:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">interfaces</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">u1_cols</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">"pdb_id"</span><span class="p">,</span> <span class="s2">"assembly_id"</span><span class="p">,</span> <span class="s2">"pn_unit_1_iid"</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s2">"inner"</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">u2_cols</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">"pdb_id"</span><span class="p">,</span> <span class="s2">"assembly_id"</span><span class="p">,</span> <span class="s2">"pn_unit_2_iid"</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s2">"inner"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><p>Check that the merge occurred correctly by printing out the columns of the new data frame, inspecting the first few rows of the new data frame, etc.</p>
+</section>
+<section id="cleaning-the-data">
+<span id="aw-build-model-p1-clean"></span><h3>Cleaning the Data<a class="headerlink" href="#cleaning-the-data" title="Link to this heading">#</a></h3>
+<p>For the purposes of this tutorial, we want to remove rows where <code class="docutils literal notranslate"><span class="pre">involves_covalent_modification</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> and where the interface involves non-protein and non-ligand chains since we are looking for interfaces that are between a protein and a ligand.</p>
+<p>This means we only want to keep rows where:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">involves_loi</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">is_inter_molecule</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">involves_covalent_modification</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p>We want one PN unit involved in the interface to be a polymer and the other to be non-polymer.</p></li>
+<li><p>The total number of resolved residues for the pocket/ligand combination should be less than 200, to keep the training time relatively short.</p></li>
+</ul>
+<p>We also want to make sure we remove any duplicates. The <code class="docutils literal notranslate"><span class="pre">u1</span></code> and <code class="docutils literal notranslate"><span class="pre">u2</span></code> labels are arbitrary, so it’s possible for two rows to be identical.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">Keep only rows where at least one PN unit is a ligand of interest:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"involves_loi"</span><span class="p">]</span><span class="o">==</span><span class="kc">True</span><span class="p">]</span>
+</pre></div>
+</div>
+<p class="sd-card-text">Keep only rows where the interfaces are intermolecular:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"is_inter_molecule"</span><span class="p">]</span><span class="o">==</span><span class="kc">True</span><span class="p">]</span>
+</pre></div>
+</div>
+<p class="sd-card-text">Remove metal mediated-interfaces:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"involves_metal"</span><span class="p">]</span><span class="o">!=</span><span class="kc">True</span><span class="p">]</span>
+</pre></div>
+</div>
+<p class="sd-card-text">Remove covalently modified residues</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"involves_covalent_modification"</span><span class="p">]</span> <span class="o">!=</span> <span class="kc">True</span><span class="p">]</span>
+</pre></div>
+</div>
+<p class="sd-card-text">Keep only interfaces where one PN unit is a polymer (protein) and one is not (ligand):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"u1_is_polymer"</span><span class="p">]</span> <span class="o">!=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"u2_is_polymer"</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p class="sd-card-text">Keep only small examples:
+df = df[(df[“u1_num_resolved_residues”] + df[“u2_num_resolved_residues”]) &lt; 200 ]</p>
+<p class="sd-card-text">Remove duplicates
+df = df.drop_duplications(subset[“pdb_id”, “assembly_id”, “pn_unit_1_iid”, “pn_unit_2_iid”])</p>
+</div>
+</details><p>You can check to make sure these filters are actually being applied to your data frame by checking the <code class="docutils literal notranslate"><span class="pre">len</span></code> of the data frame before and after applying each filter.</p>
+<p>To make sure the filter is doing what you expect, you can try running this procedure on a small subset of the data or locating specific rows in the larger dataset that should/should not be impacted by each filtering step.</p>
+</section>
+<section id="adding-new-columns">
+<span id="aw-build-model-p1-new-cols"></span><h3>Adding New Columns<a class="headerlink" href="#adding-new-columns" title="Link to this heading">#</a></h3>
+<p>It will be useful later on if one row contains unique labels for each remaining interface. Right now information from four columns (<code class="docutils literal notranslate"><span class="pre">pdb_id</span></code>, <code class="docutils literal notranslate"><span class="pre">assembly_id</span></code>, <code class="docutils literal notranslate"><span class="pre">pn_unit_1_iid</span></code>, and <code class="docutils literal notranslate"><span class="pre">pn_unit_2_iid</span></code>) are required to uniquely identify an interface in our dataset. Let’s add a new column (<code class="docutils literal notranslate"><span class="pre">example_id</span></code>) to our dataframe and store our custom lable there.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code.</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s2">"example_id"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"pdb_id"</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"_"</span> <span class="o">+</span> 
+    <span class="n">df</span><span class="p">[</span><span class="s2">"assembly_id"</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"_"</span> <span class="o">+</span> 
+    <span class="n">df</span><span class="p">[</span><span class="s2">"pn_unit_1_iid"</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"_"</span> <span class="o">+</span> 
+    <span class="n">df</span><span class="p">[</span><span class="s2">"pn_unit_2_iid"</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</details><p>It will also be useful during training if our dataset already contains the path to the structure file in our PDB mirror. Add this information as a new column (<code class="docutils literal notranslate"><span class="pre">path</span></code>) to your dataset.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code.</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PDB_MIRROR_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"PDB_MIRROR_PATH"</span><span class="p">,</span> <span class="s2">"/PATH/TO/pdb_mirror"</span><span class="p">)</span>
+<span class="n">df</span><span class="p">[</span><span class="s2">"path"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"pdb_id"</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">PDB_MIRROR_PATH</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">.cif.gz"</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p class="sd-card-text">Replace <code class="docutils literal notranslate"><span class="pre">&quot;/PATH/TO/pdb_mirror&quot;</span></code> if this environment variable is not already set. If it is set, you can leave this second argument blank.</p>
+</div>
+</details><p>To check that your code works correctly, make sure these new columns are present when you run <code class="docutils literal notranslate"><span class="pre">df.columns</span></code> and check the first few values in each. Are they what you expected?</p>
+<p>You can also add a test to ensure that all the values in <code class="docutils literal notranslate"><span class="pre">example_id</span></code> are unique:</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code.</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">df</span><span class="p">[</span><span class="s2">"example_id"</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">),</span> <span class="s2">"example_id is not unique!"</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="training-testing-and-validation-sets">
+<span id="aw-build-model-p1-split"></span><h3>Training, Testing, and Validation Sets<a class="headerlink" href="#training-testing-and-validation-sets" title="Link to this heading">#</a></h3>
+<p>Now that we have the data, we need to split it up into three sets: <code class="docutils literal notranslate"><span class="pre">test</span></code>, <code class="docutils literal notranslate"><span class="pre">train</span></code>, and <code class="docutils literal notranslate"><span class="pre">val</span></code> (short for validation). There are many ways to do this and which is best will depend on your data and what you are trying to accomplish with your model.</p>
+<p>Here, we will use the <code class="docutils literal notranslate"><span class="pre">protein_cluster_30</span></code> column in the PN units data frame to split up our data. This column groups proteins by 30% sequence identity, meaning that it contains hash-based IDs that uniquely identify a cluster of proteins sharing more than 30% sequence identity. We will do an 80/10/10 split: 80% of the data will be in training, 10% in test, and 10% in validation. <!-- TODO: what algorithm was used to calculated these values --></p>
+<p>We will use this column to split the data by cluster, instead of individual rows. This will prevent the model from seeing near-identical protein pockets between the training and testing sets.</p>
+<p>Isolate this column and the data from the PN units data frame that uniquely identifies each row and merge it with the data frame. Remember that we will need to perform the merge twice, since there are two PN unites in each interface.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code.</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">protein_clusters</span> <span class="o">=</span> <span class="n">pn_units</span><span class="p">[[</span><span class="s2">"pdb_id"</span><span class="p">,</span> <span class="s2">"assembly_id"</span><span class="p">,</span> <span class="s2">"pn_unit_iid"</span><span class="p">,</span> <span class="s2">"protein_cluster_30"</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+    <span class="n">protein_clusters</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">"pn_unit_iid"</span><span class="p">:</span> <span class="s2">"pn_unit_1_iid"</span><span class="p">,</span>
+        <span class="s2">"protein_cluster_30"</span><span class="p">:</span> <span class="s2">"u1_cluster"</span>
+    <span class="p">}),</span>
+    <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">"pdb_id"</span><span class="p">,</span> <span class="s2">"assembly_id"</span><span class="p">,</span> <span class="s2">"pn_unit_1_iid"</span><span class="p">],</span>
+    <span class="n">how</span><span class="o">=</span><span class="s2">"left"</span>
+<span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+    <span class="n">protein_clusters</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">"pn_unit_iid"</span><span class="p">:</span> <span class="s2">"pn_unit_2_iid"</span><span class="p">,</span>
+        <span class="s2">"protein_cluster_30"</span><span class="p">:</span> <span class="s2">"u2_cluster"</span>
+    <span class="p">}),</span>
+    <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">"pdb_id"</span><span class="p">,</span> <span class="s2">"assembly_id"</span><span class="p">,</span> <span class="s2">"pn_unit_2_iid"</span><span class="p">],</span>
+    <span class="n">how</span><span class="o">=</span><span class="s2">"left"</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><p>Only the side of the interface that corresponds to the polymer will have a value for <code class="docutils literal notranslate"><span class="pre">protein_cluster_30</span></code>, the ligand will always have a <code class="docutils literal notranslate"><span class="pre">Null</span></code> value. Instead of having to check both <code class="docutils literal notranslate"><span class="pre">u2_cluster</span></code> and <code class="docutils literal notranslate"><span class="pre">u1_cluster</span></code> to determine which cluster our interface belongs to, let’s put the information all in one column:</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code.</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s2">"protein_cluster"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">"u1_is_polymer"</span><span class="p">],</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">"u1_cluster"</span><span class="p">],</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">"u2_cluster"</span><span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><p>Check to see if there are any cases where no cluster was assigned.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code.</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># There are several ways to check, here we will just count the number of Null values:</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"protein_cluster"</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()])</span>
+</pre></div>
+</div>
+</div>
+</details><p>If any exist, we want to remove them from our dataset. They likely point to RNA/DNA chains, very short peptides, or low quality entries.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code.</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"protein_cluster"</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">()]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><p>Before splitting the data up, let’s shuffle the unique clusters. We use a seed of 42 for reproducibility. Use this seed if you want to exactly replicate what was produced in this segment of the tutorial.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code.</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">unique_clusters</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"protein_cluster"</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">rng</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">unique_clusters</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><p>Now we can finally spit the data into separate datasets and save them as parquet files for future use:</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Click to see the code.</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_clusters</span><span class="p">)</span>
+<span class="n">n_train</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">0.8</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">n_val</span>   <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">0.1</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span>
+<span class="c1"># test gets the remainder to avoid off-by-one gaps</span>
+
+<span class="n">train_clusters</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">unique_clusters</span><span class="p">[:</span><span class="n">n_train</span><span class="p">])</span>
+<span class="n">val_clusters</span>   <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">unique_clusters</span><span class="p">[</span><span class="n">n_train</span> <span class="p">:</span> <span class="n">n_train</span> <span class="o">+</span> <span class="n">n_val</span><span class="p">])</span>
+<span class="n">test_clusters</span>  <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">unique_clusters</span><span class="p">[</span><span class="n">n_train</span> <span class="o">+</span> <span class="n">n_val</span> <span class="p">:])</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">assign_split</span><span class="p">(</span><span class="n">cluster</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">train_clusters</span><span class="p">:</span> <span class="k">return</span> <span class="s2">"train"</span>
+    <span class="k">if</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">val_clusters</span><span class="p">:</span>   <span class="k">return</span> <span class="s2">"val"</span>
+    <span class="k">if</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">test_clusters</span><span class="p">:</span>  <span class="k">return</span> <span class="s2">"test"</span>
+    <span class="k">return</span> <span class="s2">"unassigned"</span>  <span class="c1"># rows where cluster was null</span>
+
+<span class="n">df</span><span class="p">[</span><span class="s2">"split"</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">"protein_cluster"</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">assign_split</span><span class="p">)</span>
+
+<span class="n">df_train</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"split"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"train"</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_val</span>   <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"split"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"val"</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_test</span>  <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"split"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"test"</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s2">"splits"</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_train</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="s2">"splits/train.parquet"</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">df_val</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="s2">"splits/val.parquet"</span><span class="p">,</span>     <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">df_test</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="s2">"splits/test.parquet"</span><span class="p">,</span>   <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><p>You now have created the datasets you need to train, test, and validate the machine learning model you’ll create as you continue to go through the <strong>How to Build a Model Using AtomWorks</strong> tutorial series.</p>
+</section>
+</section>
+<section id="what-next">
+<span id="aw-build-model-p1-next"></span><h2>What Next?<a class="headerlink" href="#what-next" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="how_to_build_a_model_part2.html"><span class="std std-doc">How to Build a Model with AtomWorks Part 2</span></a></p>
+</section>
+<section id="glossary">
+<span id="aw-build-model-p1-glossary"></span><h2>Glossary<a class="headerlink" href="#glossary" title="Link to this heading">#</a></h2>
+<p><strong>Parquet:</strong> a columnar binary file format for storing large tabular datasets efficiently.</p>
+<p><strong>PN unit:</strong> AtomWorks’ unit of “Polymer or Non-polymer”; a single chain, ligand, or other discrete molecular entity within a structure.</p>
+<p><strong>Interface:</strong> a pair of PN units in contact within a bio assembly, characterized by columns like <code class="docutils literal notranslate"><span class="pre">num_contacts</span></code> and <code class="docutils literal notranslate"><span class="pre">min_distance</span></code>.</p>
+<p><strong>LOI (Ligand of Interest):</strong> the ligand being tracked for a given interface; used to identify protein-ligand interfaces in the dataset.</p>
+<p><strong>Sequence identity cluster:</strong> a group of protein chains that share more than a threshold percentage of sequence identity (e.g. 30%); used to split data so that similar proteins don’t leak across train/val/test sets.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">How to Build a Model with AtomWorks</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="how_to_build_a_model_part2.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Part 2: Creating a Transform Pipeline</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">Table of Contents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-cleaned-parquet-files">Creating Cleaned Parquet Files</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-the-parquet-file-using-pandas">Loading the parquet file using Pandas</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#merging-datasets">Merging Datasets</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cleaning-the-data">Cleaning the Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-new-columns">Adding New Columns</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training-testing-and-validation-sets">Training, Testing, and Validation Sets</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-next">What Next?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#glossary">Glossary</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/how_to_build_a_model/how_to_build_a_model_part1.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

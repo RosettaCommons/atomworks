@@ -26,29 +26,31 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
     <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/datasets/pandas_dataset';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
-        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/latest/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_version = '0.20.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://baker-laboratory.github.io/atomworks-dev/latest/_static/switcher.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.2.1';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
@@ -167,6 +169,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -293,6 +302,13 @@
 <nav>
   <ul class="bd-navbar-elements navbar-nav">
     
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
     Tutorial
@@ -426,7 +442,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for atomworks.ml.datasets.pandas_dataset</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Pandas DataFrame-based dataset implementation.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Pandas DataFrame-based dataset implementation."""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
@@ -444,24 +460,24 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExampleIDMixin</span><span class="p">,</span> <span class="n">MolecularDataset</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;datasets&quot;</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"datasets"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="PandasDataset">
 <a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.PandasDataset">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PandasDataset</span><span class="p">(</span><span class="n">MolecularDataset</span><span class="p">,</span> <span class="n">ExampleIDMixin</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dataset for tabular data stored as pandas DataFrames.</span>
+<span class="w">    </span><span class="sd">"""Dataset for tabular data stored as pandas DataFrames.</span>
 
 <span class="sd">    Inherits all functionality from :class:`MolecularDataset` with additional</span>
 <span class="sd">    DataFrame-specific features for filtering and ID-based access.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">PathLike</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">id_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;example_id&quot;</span><span class="p">,</span>
+        <span class="n">id_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">"example_id"</span><span class="p">,</span>
         <span class="n">filters</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">columns_to_load</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="c1"># MolecularDataset parameters</span>
@@ -470,7 +486,7 @@
         <span class="n">save_failed_examples_to_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">load_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize PandasDataset.</span>
+<span class="w">        </span><span class="sd">"""Initialize PandasDataset.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data: Either a pandas DataFrame or path to a CSV/Parquet file containing</span>
@@ -488,17 +504,17 @@
 <span class="sd">            loader: Optional function to process raw DataFrame rows into Transform-ready format.</span>
 <span class="sd">            save_failed_examples_to_dir: Optional directory path where failed examples</span>
 <span class="sd">                will be saved for debugging. Includes RNG state and error information.</span>
-<span class="sd">            load_kwargs: Additional keyword arguments passed to pandas&#39; read functions</span>
+<span class="sd">            load_kwargs: Additional keyword arguments passed to pandas' read functions</span>
 <span class="sd">                (read_csv, read_parquet) when loading from file.</span>
 
 <span class="sd">        Examples:</span>
 <span class="sd">            Load from DataFrame:</span>
-<span class="sd">                &gt;&gt;&gt; df = pd.DataFrame({&quot;path&quot;: [...], &quot;label&quot;: [...]})</span>
-<span class="sd">                &gt;&gt;&gt; dataset = PandasDataset(data=df, name=&quot;my_dataset&quot;)</span>
+<span class="sd">                &gt;&gt;&gt; df = pd.DataFrame({"path": [...], "label": [...]})</span>
+<span class="sd">                &gt;&gt;&gt; dataset = PandasDataset(data=df, name="my_dataset")</span>
 
 <span class="sd">            Load from file with filtering:</span>
-<span class="sd">                &gt;&gt;&gt; dataset = PandasDataset(data=&quot;data.csv&quot;, name=&quot;filtered_dataset&quot;, filters=[&quot;label &gt; 0&quot;, &quot;path.str.contains(&#39;.pdb&#39;)&quot;])</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">                &gt;&gt;&gt; dataset = PandasDataset(data="data.csv", name="filtered_dataset", filters=["label &gt; 0", "path.str.contains('.pdb')"])</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
@@ -520,13 +536,13 @@
 
         <span class="c1"># Set index column if specified</span>
         <span class="k">if</span> <span class="n">id_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">id_column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Column </span><span class="si">{</span><span class="n">id_column</span><span class="si">}</span><span class="s2"> not found in dataset.&quot;</span>
+            <span class="k">assert</span> <span class="n">id_column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Column </span><span class="si">{</span><span class="n">id_column</span><span class="si">}</span><span class="s2"> not found in dataset."</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">id_column</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verify_integrity</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_load_from_path</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">columns_to_load</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">load_kwargs</span><span class="p">:</span> <span class="n">Any</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load data from file path.</span>
+<span class="w">        </span><span class="sd">"""Load data from file path.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            path: Path to the file to load.</span>
@@ -538,66 +554,66 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: If file type is unsupported.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="c1"># Convert OmegaConf ListConfig to plain list if needed</span>
         <span class="k">if</span> <span class="n">columns_to_load</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">columns_to_load</span> <span class="o">=</span> <span class="n">as_list</span><span class="p">(</span><span class="n">columns_to_load</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.csv&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">".csv"</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="n">columns_to_load</span><span class="p">,</span> <span class="n">keep_default_na</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">na_values</span><span class="o">=</span><span class="n">NA_VALUES</span><span class="p">,</span> <span class="o">**</span><span class="n">load_kwargs</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">&quot;.parquet&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">==</span> <span class="s2">".parquet"</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">read_parquet_with_metadata</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns_to_load</span><span class="p">,</span> <span class="o">**</span><span class="n">load_kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported file type: </span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported file type: </span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get an example by index, applying specified loader and Transforms.</span>
+<span class="w">        </span><span class="sd">"""Get an example by index, applying specified loader and Transforms.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            idx: The index of the example to retrieve.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Transformed data from the row.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">raw_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
         <span class="n">example_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_example_id</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_loader</span><span class="p">(</span><span class="n">raw_data</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_transform</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">example_id</span><span class="o">=</span><span class="n">example_id</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="n">idx</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of rows in the dataset.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the number of rows in the dataset."""</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the dataset contains the example ID.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Check if the dataset contains the example ID."""</span>
         <span class="k">return</span> <span class="n">example_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">index</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_id_to_index_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert single example ID to index.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Convert single example ID to index."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">example_id</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_id_to_index_multiple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert multiple example IDs to indices.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Convert multiple example IDs to indices."""</span>
         <span class="n">idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">idxs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">example_id</span><span class="p">)]</span> <span class="k">for</span> <span class="n">example_id</span> <span class="ow">in</span> <span class="n">example_ids</span><span class="p">]</span>
 
 <div class="viewcode-block" id="PandasDataset.id_to_idx">
 <a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.PandasDataset.id_to_idx">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">id_to_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert an example ID to the corresponding local index.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Convert an example ID to the corresponding local index."""</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">example_id</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id_to_index_single</span><span class="p">(</span><span class="n">example_id</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">example_id</span><span class="p">,</span> <span class="nb">list</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id_to_index_multiple</span><span class="p">(</span><span class="n">example_id</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid type for example_id: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">example_id</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid type for example_id: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">example_id</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PandasDataset.idx_to_id">
 <a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.PandasDataset.idx_to_id">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">idx_to_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a local index to the corresponding example ID.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Convert a local index to the corresponding example ID."""</span>
         <span class="n">_return_single</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">idx</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">()):</span>
             <span class="n">_return_single</span> <span class="o">=</span> <span class="kc">True</span>
@@ -608,7 +624,7 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_apply_filters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filters</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply filters to the data based on the provided list of query strings.</span>
+<span class="w">        </span><span class="sd">"""Apply filters to the data based on the provided list of query strings.</span>
 
 <span class="sd">        For documentation on pandas query syntax, see: https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.query.html</span>
 
@@ -621,25 +637,25 @@
 
 <span class="sd">        Example:</span>
 <span class="sd">            &gt;&gt;&gt; queries = [</span>
-<span class="sd">            &gt;&gt;&gt;     &quot;deposition_date &lt; &#39;2020-01-01&#39;&quot;,</span>
-<span class="sd">            &gt;&gt;&gt;     &quot;resolution &lt; 2.5 and ~method.str.contains(&#39;NMR&#39;)&quot;,</span>
-<span class="sd">            &gt;&gt;&gt;     &quot;cluster.notnull()&quot;,</span>
-<span class="sd">            &gt;&gt;&gt;     &quot;method in [&#39;X-RAY_DIFFRACTION&#39;, &#39;ELECTRON_MICROSCOPY&#39;]&quot;</span>
+<span class="sd">            &gt;&gt;&gt;     "deposition_date &lt; '2020-01-01'",</span>
+<span class="sd">            &gt;&gt;&gt;     "resolution &lt; 2.5 and ~method.str.contains('NMR')",</span>
+<span class="sd">            &gt;&gt;&gt;     "cluster.notnull()",</span>
+<span class="sd">            &gt;&gt;&gt;     "method in ['X-RAY_DIFFRACTION', 'ELECTRON_MICROSCOPY']"</span>
 <span class="sd">            &gt;&gt;&gt; ]</span>
-<span class="sd">            &gt;&gt;&gt; dataset = PandasDataset(data=&quot;data.csv&quot;, name=&quot;filtered_dataset&quot;, filters=queries)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_already_filtered</span><span class="p">,</span> <span class="s2">&quot;Filters cannot be applied after initialization.&quot;</span>
+<span class="sd">            &gt;&gt;&gt; dataset = PandasDataset(data="data.csv", name="filtered_dataset", filters=queries)</span>
+<span class="sd">        """</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_already_filtered</span><span class="p">,</span> <span class="s2">"Filters cannot be applied after initialization."</span>
 
         <span class="c1"># Apply queries one by one, confirming the impact of each</span>
         <span class="k">for</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_apply_query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_apply_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply a single query to the data.</span>
+<span class="w">        </span><span class="sd">"""Apply a single query to the data.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            query: The pandas query string to apply.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Filter using query and validate impact</span>
         <span class="n">original_num_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
@@ -647,7 +663,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_validate_filter_impact</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">original_num_rows</span><span class="p">,</span> <span class="n">filtered_num_rows</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_validate_filter_impact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">original_num_rows</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">filtered_num_rows</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the impact of the filter.</span>
+<span class="w">        </span><span class="sd">"""Validate the impact of the filter.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            query: The query that was applied.</span>
@@ -656,34 +672,34 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: If the query removes all rows.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">rows_removed</span> <span class="o">=</span> <span class="n">original_num_rows</span> <span class="o">-</span> <span class="n">filtered_num_rows</span>
         <span class="n">percent_removed</span> <span class="o">=</span> <span class="p">(</span><span class="n">rows_removed</span> <span class="o">/</span> <span class="n">original_num_rows</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
         <span class="n">percent_remaining</span> <span class="o">=</span> <span class="p">(</span><span class="n">filtered_num_rows</span> <span class="o">/</span> <span class="n">original_num_rows</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
 
         <span class="k">if</span> <span class="n">filtered_num_rows</span> <span class="o">==</span> <span class="n">original_num_rows</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Query &#39;</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2">&#39; on dataset </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> did not remove any rows.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Query '</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2">' on dataset </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> did not remove any rows."</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">filtered_num_rows</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Query &#39;</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2">&#39; on dataset </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> removed all rows.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Query '</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2">' on dataset </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> removed all rows."</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">+-------------------------------------------+</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Query &#39;</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2">&#39; on dataset </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;  - Started with: </span><span class="si">{</span><span class="n">original_num_rows</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> rows</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;  - Removed: </span><span class="si">{</span><span class="n">rows_removed</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> rows (</span><span class="si">{</span><span class="n">percent_removed</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%)</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;  - Remaining: </span><span class="si">{</span><span class="n">filtered_num_rows</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> rows (</span><span class="si">{</span><span class="n">percent_remaining</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%)</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;+-------------------------------------------+</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">+-------------------------------------------+</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">"Query '</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2">' on dataset </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">"  - Started with: </span><span class="si">{</span><span class="n">original_num_rows</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> rows</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">"  - Removed: </span><span class="si">{</span><span class="n">rows_removed</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> rows (</span><span class="si">{</span><span class="n">percent_removed</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%)</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">"  - Remaining: </span><span class="si">{</span><span class="n">filtered_num_rows</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> rows (</span><span class="si">{</span><span class="n">percent_remaining</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%)</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">"+-------------------------------------------+</span><span class="se">\n</span><span class="s2">"</span>
             <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_example_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get example ID from index - returns the index value from the DataFrame.</span>
+<span class="w">        </span><span class="sd">"""Get example ID from index - returns the index value from the DataFrame.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            idx: The index of the row.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The index value as a string.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>  <span class="c1"># .name gets the index value</span></div>
 
 
@@ -700,7 +716,7 @@
     <span class="n">save_failed_examples_to_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PandasDataset</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Backwards-compatible wrapper for the deprecated StructuralDatasetWrapper.</span>
+<span class="w">    </span><span class="sd">"""Backwards-compatible wrapper for the deprecated StructuralDatasetWrapper.</span>
 
 <span class="sd">    This function is deprecated and will be removed in a future version.</span>
 <span class="sd">    Use :class:`PandasDataset` with the appropriate loader function instead.</span>
@@ -718,18 +734,18 @@
 
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: If dataset parameter is required but not provided.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.datasets.parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_example_from_metadata_row</span>
 
     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-        <span class="s2">&quot;StructuralDatasetWrapper is deprecated. Use PandasDataset with a loader function instead. &quot;</span>
-        <span class="s2">&quot;See atomworks.ml.datasets.loaders for functional alternatives to dataset parsers.&quot;</span><span class="p">,</span>
+        <span class="s2">"StructuralDatasetWrapper is deprecated. Use PandasDataset with a loader function instead. "</span>
+        <span class="s2">"See atomworks.ml.datasets.loaders for functional alternatives to dataset parsers."</span><span class="p">,</span>
         <span class="ne">DeprecationWarning</span><span class="p">,</span>
         <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">dataset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;dataset parameter is required for StructuralDatasetWrapper&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"dataset parameter is required for StructuralDatasetWrapper"</span><span class="p">)</span>
 
     <span class="c1"># Create loader from deprecated parameters</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">loader</span><span class="p">(</span><span class="n">row</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -738,7 +754,7 @@
     <span class="c1"># Create a new PandasDataset with the loader</span>
     <span class="k">return</span> <span class="n">PandasDataset</span><span class="p">(</span>
         <span class="n">data</span><span class="o">=</span><span class="n">dataset</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
-        <span class="n">name</span><span class="o">=</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;structural_dataset&quot;</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"structural_dataset"</span><span class="p">,</span>
         <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
         <span class="n">loader</span><span class="o">=</span><span class="n">loader</span><span class="p">,</span>
         <span class="n">save_failed_examples_to_dir</span><span class="o">=</span><span class="n">save_failed_examples_to_dir</span><span class="p">,</span>
@@ -774,8 +790,8 @@
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -809,7 +825,7 @@
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.20.0.
 </p></div>
       
     </div>

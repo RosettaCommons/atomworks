@@ -1,5 +1,5 @@
 Selection Utilities
-=================
+===================
 
 .. automodule:: atomworks.io.utils.selection
    :members:
