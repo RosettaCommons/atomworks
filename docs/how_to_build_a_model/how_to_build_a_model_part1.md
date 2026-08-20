@@ -6,32 +6,35 @@
 - {ref}`aw_build_model_p1_prereq`
 - {ref}`aw_build_model_p1_setup`
 - {ref}`aw_build_model_p1_tutorial`
+  - {ref}`aw_build_model_p1_load`
+  - {ref}`aw_build_model_p1_merge`
+  - {ref}`aw_build_model_p1_clean`
+  - {ref}`aw_build_model_p1_new_cols`
+  - {ref}`aw_build_model_p1_split`
 - {ref}`aw_build_model_p1_next`
 - {ref}`aw_build_model_p1_glossary`
 
 (aw_build_model_p1_intro)=
 ## Introduction
-This is the first in a series of tutorials that walks you through how to use AtomWorks to build a machine learning model for protein design from start to finish. 
+This is the first in a series of tutorials that walks you through how to use AtomWorks to build a machine learning model for determining the pose of a ligand in a protein binding pocket from start to finish. 
 
 **In this installment, you will learn how to use the [IO functionalities in AtomWorks](../io.rst) to prepare your data for use in a machine learning model.**
 
-By the end of this tutorial series you will have cleaned data and built a graph neural network to create plausible bound poses between a ligand and a protein pocket. 
+By the end this first part of the **How to Build a Model with AtomWorks** tutorial series you will have created a script that will collect, clean, and split the data we need to train our model in to training, validation, and test sets. 
 
 ```{important}
-This tutorial will walk you through creating a script for creating training, validation, and testing sets for a machine learning model using the AtomWorks API. 
-
 For those that want to use the tutorial text as structure and hints to write your own script, we have hidden the code in collapsible cells. 
 
-The full script, `data_cleaning_script.py`, is provided in the tutorial files. <!-- TODO: Create a tutorials file folder and upload once ready. -->
+The full script, `data_cleaning_script.py`, is provided in the [tutorial files](./scripts/index.rst). 
 ```
 
 (aw_build_model_p1_prereq)=
 ## Prerequisites
 Before starting this tutorial it is assumed that you have:
-- An intermediate knowledge of Python and the Pandas library.
-- A working installation of AtomWorks. Only the `io` side will be used for this first part of the How to Build a Model tutorial series, however other parts will require the `ml` side.
+- An intermediate knowledge of Python and the [Pandas](https://pandas.pydata.org/) library.
+- A working installation of [AtomWorks](https://rosettacommons.github.io/atomworks/latest/). Only the `io` side will be used for this first part of the How to Build a Model tutorial series, however other parts will require the `ml` side.
 - At least 1GB of space for storage of the parquet files.
-- Having at least a portion of the PDB mirrored - the full mirror takes ~100GB of space.
+- At least a portion of the PDB mirrored - the full mirror takes ~100GB of space.
 
 ```{note}
 If you do not have over 100GB of space on your computing system, you can use a subset of the PDB instead of the full PDB mirror. See [Data Mirrors](../mirrors.rst) for how to only download specific PDB IDs.
@@ -47,8 +50,8 @@ wget https://files.ipd.uw.edu/pub/atomworks/dfs/pdb/2026_01_06.tar.gz
 tar -xvf 2026_01_06.tar.gz
 ```
 After decompressing the folder you should see three parquet files: 
-- **`assemblies.parquet`:** There are multiple bio assemblies stored in a single PDB, each assembly will have multiple chains, interfaces, etc. 
-- **`interfaces.parquet`:** Contains metadata for all binary interfaces in the PDB
+- **`assemblies.parquet`:** There are multiple bio assemblies stored in a single [PDB](https://www.rcsb.org/), each assembly will have multiple chains, interfaces, etc. 
+- **`interfaces.parquet`:** Contains metadata for all binary interfaces in the [PDB](https://www.rcsb.org/)
 - **`pn_units.parquet`:** Contains metadata for each PN unit in the [PDB](https://www.rcsb.org/)
 
 We will only use `interfaces.parquet` and `pn_units.parquet` in this tutorial.
@@ -115,6 +118,8 @@ While the interfaces parquet has most of the data we need to train our model to 
 
 We will need to merge this information with the interfaces dataset twice, one for each PN unit involved in each interface. Keep in mind that you need the information in `pdb_id`, `assembly_id`, and `pn_unit_iid` to uniquely identify a structure!
 
+The code that follows in the rest of this tutorial can be found in `data_cleaning_script.py` in the [tutorial files](./scripts/index.rst).
+
 ````{dropdown} Click here to see how to merge these datasets.
 Create two copies of the relevant columns in the PN units dataset, one for each PN unit involved in the interface.  
 ```python
@@ -145,14 +150,14 @@ Check that the merge occurred correctly by printing out the columns of the new d
 
 (aw_build_model_p1_clean)=
 ### Cleaning the Data
-For the purposes of this tutorial, we want to remove rows where `involves_covalent_modification` is True and where the interface involves non-protein and non-ligand chains since we're looking for interfaces that are between a protein and a ligand.
+For the purposes of this tutorial, we want to remove rows where `involves_covalent_modification` is `True` and where the interface involves non-protein and non-ligand chains since we are looking for interfaces that are between a protein and a ligand.
 
 This means we only want to keep rows where:
-- `involves_loi` is True.
-- `is_inter_molecule` is True.
-- `involves_covalent_modification` is False.
+- `involves_loi` is `True`.
+- `is_inter_molecule` is `True`.
+- `involves_covalent_modification` is `False`.
 - We want one PN unit involved in the interface to be a polymer and the other to be non-polymer.
-- The total number of resolved residues for the pocket/ligand combination should be less than 200 (to keep the training time relatively short.)
+- The total number of resolved residues for the pocket/ligand combination should be less than 200, to keep the training time relatively short.
 
 We also want to make sure we remove any duplicates. The `u1` and `u2` labels are arbitrary, so it's possible for two rows to be identical. 
 
@@ -190,7 +195,7 @@ To make sure the filter is doing what you expect, you can try running this proce
 
 (aw_build_model_p1_new_cols)=
 ### Adding New Columns
-It will be useful later on if one row contains unique labels for each remaining interface. Right now information from four columns (`pdb_id`, `assembly_id`, `pn_unit_1_iid`, and `pn_unit_2_iid`) are required to uniquely identify an interface in our dataset. Let's add a new column to our dataframe and store our custom lable there. 
+It will be useful later on if one row contains unique labels for each remaining interface. Right now information from four columns (`pdb_id`, `assembly_id`, `pn_unit_1_iid`, and `pn_unit_2_iid`) are required to uniquely identify an interface in our dataset. Let's add a new column (`example_id`) to our dataframe and store our custom lable there. 
 
 ````{dropdown} Click to see the code.
 ```python
@@ -201,7 +206,7 @@ df["example_id"] = (df["pdb_id"] + "_" +
 ```
 ````
 
-It will also be useful during training if our dataset already contains the path to the structure file in our PDB mirror. Add this information as a new column to your dataset. 
+It will also be useful during training if our dataset already contains the path to the structure file in our PDB mirror. Add this information as a new column (`path`) to your dataset. 
 ````{dropdown} Click to see the code. 
 ```python
 PDB_MIRROR_PATH = os.environ.get("PDB_MIRROR_PATH", "/PATH/TO/pdb_mirror")
@@ -226,7 +231,7 @@ assert df["example_id"].nunique() == len(df), "example_id is not unique!"
 ### Training, Testing, and Validation Sets
 Now that we have the data, we need to split it up into three sets: `test`, `train`, and `val` (short for validation). There are many ways to do this and which is best will depend on your data and what you are trying to accomplish with your model. 
 
-Here, we will use the `protein_cluster_30` column in the PN units data frame to split up our data. This column groups proteins by 30% sequence identity, it contains hash-based IDs that uniquely identify a cluster of proteins sharing more than 30% sequence identity. We will do an 80/10/10 split: 80% of the data will be in training, 10% in test, and 10% in validation. <!-- TODO: what algorithm was used to calculated these values -->
+Here, we will use the `protein_cluster_30` column in the PN units data frame to split up our data. This column groups proteins by 30% sequence identity, meaning that it contains hash-based IDs that uniquely identify a cluster of proteins sharing more than 30% sequence identity. We will do an 80/10/10 split: 80% of the data will be in training, 10% in test, and 10% in validation. <!-- TODO: what algorithm was used to calculated these values -->
 
 We will use this column to split the data by cluster, instead of individual rows. This will prevent the model from seeing near-identical protein pockets between the training and testing sets. 
 
@@ -332,15 +337,15 @@ You now have created the datasets you need to train, test, and validate the mach
 (aw_build_model_p1_glossary)=
 ## Glossary
 
-Parquet — a columnar binary file format for storing large tabular datasets efficiently.
+**Parquet:** a columnar binary file format for storing large tabular datasets efficiently.
 
-PN unit — AtomWorks' unit of "Polymer or Non-polymer"; a single chain, ligand, or other discrete molecular entity within a structure.
+**PN unit:** AtomWorks' unit of "Polymer or Non-polymer"; a single chain, ligand, or other discrete molecular entity within a structure.
 
-Interface — a pair of PN units in contact within a bio assembly, characterized by columns like `num_contacts` and `min_distance`.
+**Interface:** a pair of PN units in contact within a bio assembly, characterized by columns like `num_contacts` and `min_distance`.
 
-LOI (Ligand of Interest) — the ligand being tracked for a given interface; used to identify protein-ligand interfaces in the dataset.
+**LOI (Ligand of Interest):** the ligand being tracked for a given interface; used to identify protein-ligand interfaces in the dataset.
 
-Sequence identity cluster — a group of protein chains that share more than a threshold percentage of sequence identity (e.g. 30%); used to split data so that similar proteins don't leak across train/val/test sets.
+**Sequence identity cluster:** a group of protein chains that share more than a threshold percentage of sequence identity (e.g. 30%); used to split data so that similar proteins don't leak across train/val/test sets.
 
 
 

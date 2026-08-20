@@ -1,15 +1,12 @@
 """
-This script is part of the "How to Build a Model Using AtomWorks" tutorial.
-It uses the AtomWorks API to apply a loader and transform to each 'example' (data point).
+Applies a loader and transform pipeline to each example and runs a smoke test.
+Created in part 2 of the How to Build a Model with AtomWorks tutorial series.
 
-Transforms applied: 
+Transforms applied:
 - RemoveHydrogens
 - RemoveUnresolvedAtoms
 - CropToPocket
-- FeaturizeFor<ModelName>
-- ConvertToTorch
-
-Last updated: April 14, 2026
+- FeaturizeForDocking
 """
 
 import pandas as pd
@@ -18,12 +15,14 @@ from atomworks.ml.datasets.loaders import create_loader_with_query_pn_units
 from atomworks.ml.transforms.filters import RemoveHydrogens, RemoveUnresolvedAtoms
 from atomworks.ml.transforms.base import Compose
 
-from docs.how_to_build_a_model.scripts.transforms import CropToPocket, FeaturizeForDocking
+# NOTE: import assumes you run this script from the directory containing transforms.py. 
 
-# Load in the training data as a Pandas data frame
+from transforms import CropToPocket, FeaturizeForDocking
+
+# Load in the training data as a pandas DataFrame
 df_train = pd.read_parquet("splits/train.parquet")
 
-# Define our transforms pipeline with two transforms that are already defined in AtomWorks
+# Define the transform pipeline
 transforms_pipeline = Compose([
     RemoveHydrogens(),
     RemoveUnresolvedAtoms(),
@@ -31,9 +30,9 @@ transforms_pipeline = Compose([
     FeaturizeForDocking(),
 ])
 
-
-# Use the data to create an AtomWorks PandasDataset object
-dataset = PandasDataset(data=df_train,
+# Build the AtomWorks PandasDataset
+dataset = PandasDataset(
+    data=df_train,
     name="docking_train",
     id_column="example_id",
     loader=create_loader_with_query_pn_units(

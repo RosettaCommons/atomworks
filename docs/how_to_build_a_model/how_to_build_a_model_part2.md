@@ -7,8 +7,8 @@
 - {ref}`aw_build_model_p2_goal`
 - {ref}`aw_build_model_p2_wire`
 - {ref}`aw_build_model_p2_compose`
-- {ref}`aw_build_model_p2_crop`
-- {ref}`aw_build_model_p2_featurize`
+  - {ref}`aw_build_model_p2_crop`
+  - {ref}`aw_build_model_p2_featurize`
 - {ref}`aw_build_model_p2_smoke`
 - {ref}`aw_build_model_p2_next`
 - {ref}`aw_build_model_p2_glossary`
@@ -24,7 +24,7 @@ More specifically, you will learn how to:
 - create a transform pipeline
 - utilize the `PandasDataset` class to go from parquets to trainable tensors
 
-By the end of this part of the tutorial series you will have to python files: 
+By the end of this part of the tutorial series you will have two python files: 
 - `transforms.py`: Definition of custom tensors
 - `smoke_test.py`: Testing the pipeline by loading a single example
 
@@ -42,7 +42,7 @@ Before starting this part it is assumed that you have:
 - Completed [Part 1](how_to_build_a_model_part1.md) and saved `splits/train.parquet`, `splits/val.parquet`, and `splits/test.parquet`.
 - A working installation of AtomWorks, including the `ml` side.
 - A (partial) PDB mirror set up so the loader can find the structure file for each row (see [Data Mirrors](../mirrors.rst)).
-- Familiarity with `biotite.structure.AtomArray`, NumPy, and SciPy.
+- Familiarity with `biotite.structure.AtomArray`, [NumPy](https://numpy.org/doc/stable/index.html), and [SciPy](https://scipy.org/).
 
 ```{note}
 The transforms you write here operate on a `biotite` `AtomArray`. If you have not worked with `AtomArray` objects before, it helps to skim the [Biotite structure documentation](https://www.biotite-python.org/latest/apidoc/biotite.structure.AtomArray.html) so the coordinate and annotation access patterns below feel familiar.
@@ -50,16 +50,16 @@ The transforms you write here operate on a `biotite` `AtomArray`. If you have no
 
 (aw_build_model_p2_goal)=
 ## The Goal of the Pipeline
-Our task is pose generation: given a protein pocket and a small-molecule ligand (from the parquet files we generated in [Part 1](how_to_build_a_model_part1.md)), predict plausible bound cartesian coordinates for every atom. To get there, each raw structure needs to be reduced to just the binding pocket and converted into tensors.
+Our task is pose generation: given a protein pocket and a small-molecule ligand (from the parquet files we generated in [Part 1](how_to_build_a_model_part1.md)), predict plausible bound cartesian coordinates for every ligand atom. To get there, each raw structure needs to be reduced to just the binding pocket and converted into tensors.
 
 We will create a transform pipeline that can take protein/ligand pairs from the parquet files we created in [Part 1](how_to_build_a_model_part1.md), reduce the information to just the binding pocket, and convert them into tensors that can be used in the training of our machine learning model. 
 
 We will apply four transforms in order, two that already exist in AtomWorks and two that we will write ourselves:
 
-- **`RemoveHydrogens`** *(exists already)* — drops hydrogen atoms.
-- **`RemoveUnresolvedAtoms`** *(exists already)* — drops atoms with no resolved coordinates.
-- **`CropToPocket`** *(new)* — spatially crops the structure to the atoms within a radius of the ligand.
-- **`FeaturizeForDocking`** *(new)* — converts the `AtomArray` into the tensors our model needs.
+- **`RemoveHydrogens`** *(exists already)*: drops hydrogen atoms.
+- **`RemoveUnresolvedAtoms`** *(exists already)*: drops atoms with no resolved coordinates.
+- **`CropToPocket`** *(new)*: spatially crops the structure to the atoms within a radius of the ligand.
+- **`FeaturizeForDocking`** *(new)*: converts the `AtomArray` into the tensors our model needs.
 
 A fifth transform, `ConvertToTorch`, converts the NumPy features into `torch` tensors. We add it in [Part 4](how_to_build_a_model_part4.md) when we build the training loop; for now we work in NumPy so the outputs are easy to inspect.
 
@@ -72,7 +72,7 @@ Before writing any transforms, let's confirm we can load a single example. AtomW
 
 It is worth reading the documentation for both (linked above) before using them. You can search the API docs, or use `help()` at a Python prompt. There is also more detail on `PandasDataset` in the {ref}`sphx_glr_auto_examples_dataset_exploration.py` example.
 
-````{dropdown} Click to see how to inspect the documentation
+````{dropdown} Click to see how to inspect the documentation in a Python prompt
 ```python
 from atomworks.ml.datasets import PandasDataset
 from atomworks.ml.datasets.loaders import create_loader_with_query_pn_units
@@ -136,8 +136,8 @@ Among the keys you should see `atom_array`, `query_pn_unit_iids`, and `chain_inf
 omWorks has pulled from the parquet files that we will use in our transforms pipeline:
 
 - **`atom_array`** is the {py:class}`~biotite.structure.AtomArray` for this structure. Every atom carries a `pn_unit_iid` annotation (`atom_array.pn_unit_iid`), tagging it with the PN unit it belongs to, using the same string format as `query_pn_unit_iids` below.
-- **`query_pn_unit_iids`** is a list of PN unit IID strings, one per column named in `pn_unit_iid_colnames`. Each IID has the form `"{chain_id}_{transformation_id}"` (e.g. `"A_1"`), or a comma-joined list of such tokens for a covalently-linked, multi-chain unit (e.g. `"G_1,R_1"`). Since we asked for two columns (`pn_unit_1_iid` and `pn_unit_2_iid`), this list has two entries — the two sides of the interface we are studying.
-- **`chain_info`** is a dictionary keyed by `chain_id` (e.g. `"A"` — note this is just the chain id, not the full PN unit IID), where each value is a dict of per-chain metadata parsed from the CIF file, including `is_polymer` (bool), `chain_type`, and the chain's sequence. `CropToPocket` will use `is_polymer` to work out which side of the interface is the ligand.
+- **`query_pn_unit_iids`** is a list of PN unit IID strings, one per column named in `pn_unit_iid_colnames`. Each IID has the form `"{chain_id}_{transformation_id}"` (e.g. `"A_1"`), or a comma-joined list of such tokens for a covalently-linked, multi-chain unit (e.g. `"G_1,R_1"`). Since we asked for two columns (`pn_unit_1_iid` and `pn_unit_2_iid`), this list has two entries: the two sides of the interface we are studying.
+- **`chain_info`** is a dictionary keyed by `chain_id` (e.g. `"A"`, note this is just the chain id, not the full PN unit IID), where each value is a dict of per-chain metadata parsed from the CIF file, including `is_polymer` (bool), `chain_type`, and the chain's sequence. `CropToPocket` will use `is_polymer` to work out which side of the interface is the ligand.
 
 ```{tip}
 The loader also attaches other keys to `example`, such as `example_id`, `metadata`, and `ligand_info`, however the three listed above are the ones this tutorial's transforms rely on.
@@ -281,7 +281,6 @@ def crop_to_pocket(
 ) -> AtomArray:
     atom_array = atom_array.copy()
 
-    # The iids will be in the form of <chain_label>_<chain_numer>, for example A_1
     iid_a, iid_b = query_pn_unit_iids
     chain_a = iid_a.split("_")[0]
     chain_b = iid_b.split("_")[0]
@@ -330,7 +329,7 @@ Create boolean masks to make sure that the PN unit actually contains atoms whose
 Now for the actual crop. We keep every ligand atom plus every protein atom within a given `radius` (in angstroms) of any ligand atom.
 
 ```{note}
-A **KD-tree** (k-dimensional tree) is a data structure that partitions points in space so you can answer "which points are within radius *r* of this query point?" efficiently, without comparing every pair of atoms. SciPy's []`cKDTree.query_ball_point`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.cKDTree.query_ball_point.html#scipy.spatial.cKDTree.query_ball_point) returns, for each ligand atom, the indices of all protein atoms within `radius`.
+A **KD-tree** (k-dimensional tree) is a data structure that partitions points in space so you can answer "which points are within radius *r* of this query point?" efficiently, without comparing every pair of atoms. SciPy's [`cKDTree.query_ball_point`](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.cKDTree.query_ball_point.html#scipy.spatial.cKDTree.query_ball_point) returns, for each ligand atom, the indices of all protein atoms within `radius`.
 ```
 
 ````{dropdown} Click to see the code
@@ -598,7 +597,7 @@ assert example["target_coords"].shape[1] == 3
 ````
 
 ##### Add `input_coords` with the ligand zeroed out
-This is the heart of the task. We keep the real pocket coordinates but zero out the ligand coordinates — the model must learn to place the ligand.
+This is the heart of the task. We keep the real pocket coordinates but zero out the ligand coordinates: the model must learn to place the ligand.
 
 ````{dropdown} Click to see the code
 ```{code-block} python
@@ -779,8 +778,8 @@ With a working transform pipeline, you are ready to write the model that consume
 (aw_build_model_p2_glossary)=
 ## Glossary
 
-KD-tree — a space-partitioning data structure for fast nearest-neighbor and radius queries.
+**KD-tree:** a space-partitioning data structure for fast nearest-neighbor and radius queries.
 
-COO format — "coordinate" sparse format; here, a `[2, E]` array listing the endpoints of each bond.
+**COO format:** "coordinate" sparse format; here, a `[2, E]` array listing the endpoints of each bond.
 
-transform — a reusable step that reads and rewrites the example dictionary; chained together with `Compose`.
+**Transform:** a reusable step that reads and rewrites the example dictionary; chained together with `Compose`.

@@ -18,13 +18,14 @@
 - {ref}`aw_build_model_p4_trainer`
 - {ref}`aw_build_model_p4_fit`
 - {ref}`aw_build_model_p4_wrap`
+- {ref}`aw_build_model_p4_inference`
 - {ref}`aw_build_model_p4_glossary`
 
 (aw_build_model_p4_intro)=
 ## Introduction
 This is the fourth and final tutorial in the **How to Build a Model Using AtomWorks** series. By now you have:
 
-- Parquet files for your `train`/`val`/`test` splits ([Part 1](how_to_build_a_model.md)).
+- Parquet files for your `train`/`val`/`test` splits ([Part 1](how_to_build_a_model_part1.md)).
 - A loader that turns each parquet row into a protein-ligand structure ([Part 2](how_to_build_a_model_part2.md)).
 - A transform pipeline that crops the pocket and converts it into tensors ([Part 2](how_to_build_a_model_part2.md)).
 - A `PocketDockGNN` model in `model.py` ([Part 3](how_to_build_a_model_part3.md)).
@@ -38,8 +39,8 @@ This tutorial completes the training script using the [AtomWorks API](../api_ref
 (aw_build_model_p4_prereq)=
 ## Prerequisites
 Before starting this part it is assumed that you have:
-- Completed [Parts 1–3](how_to_build_a_model.md), with `transforms.py` and `model.py` in place.
-- A working installation of PyTorch and PyTorch Lightning.
+- Completed [Parts 1–3](index.rst), with `transforms.py` and `model.py` in place.
+- A working installation of [PyTorch](https://pytorch.org/) and [PyTorch Lightning](https://lightning.ai/docs/pytorch/stable).
 - Access to a GPU (the example trainer is configured for a single GPU, but you can change the accelerator).
 
 (aw_build_model_p4_overview)=
@@ -53,17 +54,17 @@ Before starting this part it is assumed that you have:
 
 The model sees a pocket-centered graph with five tensors:
 
-- **`atomic_numbers`** — atomic identity for each atom.
-- **`input_coords`** — protein pocket coordinates are kept, ligand coordinates are zeroed out.
-- **`target_coords`** — the true coordinates the model should predict.
-- **`edge_index`** — bond graph connectivity.
-- **`is_ligand`** — a boolean mask for which atoms belong to the ligand.
+- **`atomic_numbers`**: atomic identity for each atom.
+- **`input_coords`**: protein pocket coordinates are kept, ligand coordinates are zeroed out.
+- **`target_coords`**: the true coordinates the model should predict.
+- **`edge_index`**: bond graph connectivity.
+- **`is_ligand`**: a boolean mask for which atoms belong to the ligand.
 
 In other words, the task is: *given the protein pocket context and the ligand atoms, predict the ligand's 3D placement.*
 
 (aw_build_model_p4_imports)=
 ## Imports and Global Settings
-In a new file, `model.py`, import PyTorch, PyTorch Lightning, the AtomWorks dataset utilities, the transforms you wrote in Part 2, and the model class from Part 3.
+In a new file, `model.py`, import PyTorch, PyTorch Lightning, the AtomWorks dataset utilities used in the previous scripts, the transforms you wrote in Part 2, and the model class from Part 3.
 
 ````{dropdown} Click to see the code
 ```python
@@ -84,19 +85,20 @@ from model import PocketDockGNN
 Note that we now also import {py:class}`~atomworks.ml.transforms.base.ConvertToTorch`, which turns the NumPy features from `FeaturizeForDocking` into `torch` tensors.
 ````
 
-Add two small global settings.
+Add two small global settings: 
+- `torch.set_float32_matmul_precision("medium")`: a practical speed/precision trade-off for training. 
+- `pl.seed_everything(42)`: makes runs more reproducible.
 
 ````{dropdown} Click to see the code
 ```python
 torch.set_float32_matmul_precision("medium")
 pl.seed_everything(42)
 ```
-`torch.set_float32_matmul_precision("medium")` is a practical speed/precision trade-off for training. `pl.seed_everything(42)` makes runs more reproducible.
 ````
 
 (aw_build_model_p4_config)=
 ## Configuration
-Put the tunable settings in one place near the top of the file.
+Put the tunable settings from the previous scripts and the maximum sizes for our training, validation, and testing datasets in a `CONFIG` dictionary near the top of the file.
 
 ````{dropdown} Click to see the code
 ```python
@@ -121,7 +123,7 @@ The `max_*` values cap how many examples we use so the run stays small and fast 
 
 (aw_build_model_p4_keys)=
 ## List the Tensor Keys
-Your featurization step produces five tensors. Write those keys down once so the rest of the file can reuse the same list. This list is used both to tell `ConvertToTorch` what to convert and to tell the collate function what to stack.
+Your featurization step produces five tensors. Store those once in a `TENSOR_KEYS` list so the rest of the file can reuse the same list. This list is used both to tell `ConvertToTorch` what to convert and to tell the collate function what to stack.
 
 ````{dropdown} Click to see the code
 ```python
@@ -141,9 +143,9 @@ TENSOR_KEYS = [
 
 (aw_build_model_p4_robust)=
 ## Make the Dataset Robust to Bad Examples
-If you train on real structures — which we are — some examples will fail. A ligand may have no resolved coordinates, or the pocket crop may remove everything useful. You do not want one bad structure to crash the entire run.
+If you train on real structures (which we are) some examples will fail. A ligand may have no resolved coordinates, or the pocket crop may remove everything useful. You do not want one bad structure to crash the entire run.
 
-Wrap {py:class}`~atomworks.ml.datasets.PandasDataset` in a small `RobustDataset` that inherits from []`torch.utils.data.Dataset`](https://docs.pytorch.org/docs/2.13/data.html#torch.utils.data.Dataset). If a single example raises during loading or transform, it records the index and returns `None` instead of killing training.
+Wrap {py:class}`~atomworks.ml.datasets.PandasDataset` in a small `RobustDataset` that inherits from [`torch.utils.data.Dataset`](https://docs.pytorch.org/docs/2.13/data.html#torch.utils.data.Dataset). If a single example raises during loading or transform, it records the index and returns `None` instead of killing training.
 
 ````{dropdown} Click to see the code
 ```python
@@ -403,11 +405,38 @@ You have now built a complete, if simplified, machine-learning pipeline with Ato
 - Add symmetric edges or an equivariant architecture to remove the model's dependence on absolute coordinates (see the warning in [Part 3](how_to_build_a_model_part3.md)).
 - Track additional metrics, such as per-example ligand RMSD distributions, or visualize predicted poses.
 
+(aw_build_model_p4_inference)=
+## Running Inference on a Trained Model
+`trainer.test()` reports metrics, but it does not hand you the predicted poses. To get coordinates for a new pocket-ligand example, reload the best checkpoint and call the model directly. You can find a `inference.py` script in the [tutorial files](./scripts/index.rst).
+
+````{dropdown} Click to see the code
+```python
+model = PocketDockGNN.load_from_checkpoint(best_checkpoint.best_model_path)
+model.eval()
+
+batch = next(iter(test_loader))
+atomic_numbers = batch["atomic_numbers"].squeeze(0)
+input_coords = batch["input_coords"].squeeze(0)
+edge_index = batch["edge_index"].squeeze(0)
+is_ligand = batch["is_ligand"].squeeze(0)
+
+with torch.no_grad():
+    pred_coords = model(atomic_numbers, input_coords, edge_index)
+
+predicted_ligand_coords = pred_coords[is_ligand]
+```
+The `.squeeze(0)` calls undo the batch dimension `DataLoader` adds, matching what `_shared_step` does internally. Only the rows where `is_ligand` is `True` are the coordinates you asked the model to predict. The rest are the (unchanged) protein pocket context.
+````
+
+```{note}
+`pred_coords` is a raw coordinate prediction, not validated molecular geometry. Check bond lengths and clashes before treating it as a usable pose.
+```
+
 (aw_build_model_p4_glossary)=
 ## Glossary
 
-collate function — a function that assembles a list of examples into a single batch; here it also drops failed (`None`) examples.
+**Collate function:** a function that assembles a list of examples into a single batch; here it also drops failed (`None`) examples.
 
-checkpoint — a saved snapshot of model weights (and optimizer state) that can be reloaded to resume training or run evaluation.
+**Checkpoint:** a saved snapshot of model weights (and optimizer state) that can be reloaded to resume training or run evaluation.
 
-early stopping — halting training once a monitored metric (here `val/loss`) stops improving, to save compute and reduce overfitting.
+**Early stopping:** halting training once a monitored metric (here `val/loss`) stops improving, to save compute and reduce overfitting.

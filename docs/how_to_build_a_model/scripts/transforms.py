@@ -1,3 +1,7 @@
+"""Script that creates the custom transforms used to train our model. 
+This script is created in part 2 of the How to Build a Model with AtomWorks
+tutorial."""
+
 from atomworks.ml.transforms.base import Transform
 import numpy as np
 from biotite.structure import AtomArray
@@ -5,8 +9,10 @@ from scipy.spatial import cKDTree
 from atomworks.ml.transforms._checks import check_atom_array_annotation
 from atomworks.constants import ELEMENT_NAME_TO_ATOMIC_NUMBER
 
+
 class CropToPocket(Transform):
     requires_previous_transforms = ["RemoveHydrogens", "RemoveUnresolvedAtoms"]
+
     def __init__(self, radius: float = 10.0) -> None:
         super().__init__()
         self.radius = radius
@@ -19,11 +25,12 @@ class CropToPocket(Transform):
             radius=self.radius,
         )
         return data
-    
+
     def check_input(self, data: dict) -> None:
         assert "atom_array" in data, "Missing atom_array"
         assert "query_pn_unit_iids" in data, "Missing query_pn_unit_iids"
         assert "chain_info" in data, "Missing chain_info"
+
 
 class FeaturizeForDocking(Transform):
     requires_previous_transforms = ["CropToPocket"]
@@ -35,7 +42,8 @@ class FeaturizeForDocking(Transform):
         features = featurize_for_docking(data["atom_array"])
         data.update(features)
         return data
-    
+
+
 def crop_to_pocket(
     atom_array: AtomArray,
     query_pn_unit_iids: list,
@@ -87,10 +95,13 @@ def crop_to_pocket(
     ligand_global_indices = np.where(ligand_mask)[0]
 
     keep = np.sort(np.concatenate([pocket_global_indices, ligand_global_indices]))
-    is_ligand = np.isin(keep, ligand_global_indices)
     cropped = atom_array[keep]
 
+    is_ligand = np.isin(keep, ligand_global_indices)
+    cropped.set_annotation("is_ligand", is_ligand)
+
     return cropped
+
 
 def featurize_for_docking(atom_array: AtomArray) -> dict:
     is_ligand = atom_array.is_ligand.astype(bool)
@@ -114,4 +125,3 @@ def featurize_for_docking(atom_array: AtomArray) -> dict:
         "edge_index": edge_index,
         "input_coords": input_coords,
     }
-

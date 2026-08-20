@@ -21,7 +21,7 @@
 ## Introduction
 This is the third tutorial in the **How to Build a Model Using AtomWorks** series. So far you have:
 
-- Parquet files for your `train`/`val`/`test` splits ([Part 1](how_to_build_a_model.md)).
+- Parquet files for your `train`/`val`/`test` splits ([Part 1](how_to_build_a_model_part1.md)).
 - A loader that turns each parquet row into a protein-ligand structure ([Part 2](how_to_build_a_model_part2.md#wiring-up-the-dataset-and-loader)).
 - A transform pipeline that crops the pocket and converts it into tensors ([Part 2](how_to_build_a_model_part2.md#building-the-transform-pipeline)).
 
@@ -174,9 +174,9 @@ The graph structure comes from `edge_index`, which says which atoms are bonded. 
 
 These three lists work together:
 
-- **`conv_layers`** — transform each source atom into a message.
-- **`update_layers`** — combine an atom's current state with the aggregated neighbor message.
-- **`layer_norms`** — stabilize training after each update.
+- **`conv_layers`**: transform each source atom into a message.
+- **`update_layers`**: combine an atom's current state with the aggregated neighbor message.
+- **`layer_norms`**: stabilize training after each update.
 
 ### Project back to 3D coordinates
 After message passing, each atom has a learned hidden representation. The output head maps that vector to an (x, y, z) prediction.
@@ -337,8 +337,8 @@ With `transforms.py` and `model.py` in place, you are ready to wire everything i
 (aw_build_model_p3_glossary)=
 ## Glossary
 
-GNN (graph neural network) — a network that operates on graph-structured data by passing messages between connected nodes.
+**GNN (graph neural network):** a network that operates on graph-structured data by passing messages between connected nodes.
 
-message passing — the process of computing a message from each node, aggregating messages at each destination node, and updating node states.
+**Message passing:** the process of computing a message from each node, aggregating messages at each destination node, and updating node states.
 
-RMSD (root-mean-square deviation) — the square root of the mean squared distance between predicted and true atom positions; a standard structural-accuracy metric.
+**RMSD (root-mean-square deviation):**: the square root of the mean squared distance between predicted and true atom positions; a standard structural-accuracy metric.
