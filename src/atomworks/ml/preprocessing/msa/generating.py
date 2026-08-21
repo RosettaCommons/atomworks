@@ -38,6 +38,7 @@ import tempfile
 import time
 from os import PathLike
 from pathlib import Path
+from typing import Literal
 
 import pandas as pd
 
@@ -47,6 +48,7 @@ from atomworks.ml.executables.mmseqs2 import MMseqs2
 from atomworks.ml.preprocessing.msa.filtering import HHFilterConfig, MSAFilterConfig, filter_msas
 from atomworks.ml.preprocessing.msa.finding import find_msas
 from atomworks.ml.preprocessing.msa.organizing import MSAOrganizationConfig, organize_msas
+from atomworks.ml.preprocessing.msa.server import MSAServerConfig, make_msas_mmseqs_server
 from atomworks.ml.utils.misc import hash_sequence
 
 LOCAL_DB_PATH_GPU = _load_env_var("COLABFOLD_LOCAL_DB_PATH_GPU")
@@ -150,24 +152,30 @@ class MSAGenerationConfig:
     working ColabFold script parameters.
 
     Args:
+        backend: Where the search runs. "local" uses the local MMseqs2 installation and ColabFold
+            databases; "server" submits the sequences to a remote ColabFold-style MMseqs2 server.
         sharding_pattern: Directory sharding pattern for file organization.
         output_extension: File extension and compression for output files.
-        use_env: Whether to include environmental (metagenomic) database.
-        gpu: Whether to use GPU acceleration.
-        gpu_server: Whether to use GPU server (requires gpu=True).
-        num_iterations: Number of MMseqs2 search iterations.
-        max_seqs: Maximum number of cluster centers (NOT total sequences) in the MSA.
-        threads: Number of CPU threads to use.
-        use_local_temp_dir: Whether to use local temporary directory for intermediate files.
-        max_final_sequences: Maximum number of sequences in the final MSA after HHFilter.
+        use_env: Whether to include environmental (metagenomic) database. Applies to both backends;
+            with backend="server" it overrides `server.use_env`.
+        gpu: Whether to use GPU acceleration. Local backend only.
+        gpu_server: Whether to use GPU server (requires gpu=True). Local backend only.
+        num_iterations: Number of MMseqs2 search iterations. Local backend only.
+        max_seqs: Maximum number of cluster centers (NOT total sequences) in the MSA. Local backend only.
+        threads: Number of CPU threads to use. Local backend only.
+        use_local_temp_dir: Whether to use local temporary directory for intermediate files. Local backend only.
+        max_final_sequences: Maximum number of sequences in the final MSA after HHFilter, or None to skip
+            filtering. Note that HHfilter is a local binary, which a "server" backend user may not have.
         check_existing: Whether to check for existing MSAs before generation.
         existing_msa_dirs: Directories to check for existing MSAs. If None, uses LOCAL_MSA_DIRS env var.
-        search_config: Advanced MMseqs2 search configuration.
+        search_config: Advanced MMseqs2 search configuration. Local backend only.
+        server: Remote MSA server configuration. Server backend only.
 
     References:
         * Mirdita, M. et al. (2022). ColabFold: making protein folding accessible to all. *Nature Methods*, 19, 679-682.
     """
 
+    backend: Literal["local", "server"] = "local"
     sharding_pattern: str = "/0:2/"
     output_extension: str = MSAFileExtension.A3M_GZ.value
     use_env: bool = True
@@ -177,16 +185,24 @@ class MSAGenerationConfig:
     max_seqs: int = 10000
     threads: int = 32
     use_local_temp_dir: bool = True
-    max_final_sequences: int = 10000
+    max_final_sequences: int | None = 10000
     check_existing: bool = False
     existing_msa_dirs: list[PathLike] | None = None
     search_config: MMseqs2SearchConfig = dataclasses.field(default_factory=lambda: MMseqs2SearchConfig())
+    server: MSAServerConfig = dataclasses.field(default_factory=lambda: MSAServerConfig())
 
     def __post_init__(self):
+        if self.backend not in ("local", "server"):
+            raise ValueError(f"Unknown MSA backend: {self.backend!r}. Must be one of 'local', 'server'.")
+
         # If we're using GPU, also use the GPU server by default
         if self.gpu and not self.gpu_server:
             logger.info("GPU is enabled, setting gpu_server to True")
             self.gpu_server = True
+
+        if self.backend == "server":
+            # Keep the two backends' notion of which databases to search in sync
+            self.server.use_env = self.use_env
 
 
 def _get_database_path(gpu: bool = False) -> Path:
@@ -712,7 +728,7 @@ def make_msas_mmseqs(
     num_iterations: int = 3,
     max_seqs: int = 10_000,
     use_local_temp_dir: bool = True,
-    max_final_sequences: int = 10_000,
+    max_final_sequences: int | None = 10_000,
     sharding_pattern: str = "/0:2/",
     output_extension: str = MSAFileExtension.A3M_GZ.value,
     search_config: MMseqs2SearchConfig | None = None,
@@ -727,7 +743,7 @@ def make_msas_mmseqs(
         num_iterations: Number of search iterations.
         max_seqs: Maximum number of cluster centers.
         use_local_temp_dir: Whether to use local temporary directory for intermediate files.
-        max_final_sequences: Maximum number of sequences in final MSAs after filtering.
+        max_final_sequences: Maximum number of sequences in final MSAs after filtering, or None to skip filtering.
         sharding_pattern: Directory sharding pattern (e.g., "/0:2/").
         output_extension: Output file extension (.a3m, .a3m.gz, .a3m.zst, .afa, .afa.gz, .afa.zst).
         search_config: Advanced MMseqs2 search configuration.
@@ -845,6 +861,9 @@ def make_msas_from_csv(
 ) -> None:
     """Generate MSAs from sequences in a CSV file.
 
+    Dispatches to the local MMseqs2 pipeline or to a remote MMseqs2 server, depending on
+    ``config.backend``.
+
     Args:
         csv_file: Path to CSV file containing protein sequences.
         output_dir: Directory where organized MSA files will be saved.
@@ -863,6 +882,12 @@ def make_msas_from_csv(
         .. code-block:: python
 
            make_msas_from_csv("data.csv", "output_msas/", sequence_column="sequence")
+
+        Generate MSAs with a remote MMseqs2 server instead of local databases:
+
+        .. code-block:: python
+
+           make_msas_from_csv("sequences.csv", "output_msas/", config=MSAGenerationConfig(backend="server"))
     """
 
     df = pd.read_csv(csv_file)
@@ -881,6 +906,21 @@ def make_msas_from_csv(
     # Handle config creation
     if config is None:
         config = MSAGenerationConfig()
+
+    if config.backend == "server":
+        # The server backend does its own existence check: unlike the local backend it also looks in
+        # `output_dir`, so it works without LOCAL_MSA_DIRS being set
+        make_msas_mmseqs_server(
+            sequences=sequences,
+            output_dir=output_dir,
+            config=config.server,
+            sharding_pattern=config.sharding_pattern,
+            output_extension=config.output_extension,
+            max_final_sequences=config.max_final_sequences,
+            check_existing=config.check_existing,
+            existing_msa_dirs=config.existing_msa_dirs,
+        )
+        return
 
     # Filter existing sequences if requested
     if config.check_existing:
