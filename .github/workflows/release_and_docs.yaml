@@ -56,7 +56,10 @@ jobs:
           PYPI_REPO_URL: https://upload.pypi.org/legacy/
         run: |
           npx semantic-release
-          VERSION=$(git describe --tags --abbrev=0 --match "v*" 2>/dev/null || echo "no-version")
+          # Only publish docs when semantic-release tagged this exact commit.
+          # Using the newest historical tag here would overwrite immutable
+          # version docs after a non-release production push.
+          VERSION=$(git describe --tags --exact-match --match "v*" HEAD 2>/dev/null || echo "no-version")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Released version: $VERSION"
 
@@ -117,7 +120,7 @@ jobs:
               fi
               
               if [[ "$v" == "latest" ]]; then
-                entry="{\"version\": \"latest\", \"url\": \"https://baker-laboratory.github.io/atomworks-dev/latest/index.html\", \"name\": \"latest\"}"
+                entry="{\"version\": \"latest\", \"url\": \"https://rosettacommons.github.io/atomworks/latest/index.html\", \"name\": \"latest\"}"
               else
                 disp="${v#v}"
                 # Mark the newest stable version as preferred
@@ -126,7 +129,7 @@ jobs:
                 else
                   preferred="false"
                 fi
-                entry="{\"version\": \"$disp\", \"url\": \"https://baker-laboratory.github.io/atomworks-dev/$v/index.html\", \"name\": \"v$disp\", \"preferred\": $preferred}"
+                entry="{\"version\": \"$disp\", \"url\": \"https://rosettacommons.github.io/atomworks/$v/index.html\", \"name\": \"v$disp\", \"preferred\": $preferred}"
               fi
               
               switcher_content="$switcher_content$entry"
