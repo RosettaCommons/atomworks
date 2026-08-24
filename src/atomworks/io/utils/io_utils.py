@@ -114,7 +114,10 @@ def load_any(
             If "all", all fields in the 'atom_site' category of the file will be included.
         include_bonds: Whether to include bonds in the structure.
         model: The model number to use for loading the structure. If None, all models will be loaded.
-        altloc: The altloc ID to use for loading the structure.
+        altloc: The altloc ID to use for loading the structure. If "first", the first altloc will be used.
+            If "occupancy", the altloc with highest occupancy for each atom will be used. If "all", all altlocs will be included.
+            If a string is provided, it will be used as the altloc ID to filter the structure by and it is assumed
+            that that altloc ID is present in the file. If it is not present, an error will be raised. Defaults to "occupancy".
 
     Returns:
         The loaded structure with the specified fields and assumptions.
