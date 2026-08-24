@@ -1,10 +1,14 @@
 import time
+from pathlib import Path
 
+import pandas as pd
 import pytest
 
 from atomworks.io.parser import parse
 from atomworks.io.utils.testing import assert_same_atom_array
-from tests.io.conftest import get_pdb_path
+from tests.io.conftest import TEST_DATA_IO, get_pdb_path
+
+STRUCTURE = TEST_DATA_IO / "2hhb.cif.gz"
 
 TEST_CASES = [
     "4NDZ",  # 29K atoms, large enough to test caching without too much variance
@@ -98,6 +102,29 @@ def test_caching(pdb_id: str, tmp_path):
 
     # Assert that the result with different arguments is similar to the normal elapsed time
     assert abs(different_args_elapsed_time - normal_elapsed_time) < normal_elapsed_time * 0.8
+
+
+def _cache_files(cache_dir: Path) -> list[Path]:
+    """Return the cache entries below `cache_dir`, ignoring temporary write files."""
+    return [p for p in cache_dir.rglob("*") if p.is_file() and not p.name.endswith(".tmp")]
+
+
+def test_cache_write_is_atomic(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """An interrupted write leaves neither a cache entry nor a temporary file behind."""
+    real_to_pickle = pd.to_pickle
+
+    def failing_to_pickle(obj, path, *args, **kwargs):
+        # Partial file first, so the test fails if the target path were written directly.
+        Path(path).write_bytes(b"partial")
+        raise KeyboardInterrupt("interrupted while writing the cache")
+
+    monkeypatch.setattr(pd, "to_pickle", failing_to_pickle)
+    with pytest.raises(KeyboardInterrupt):
+        parse(STRUCTURE, cache_dir=tmp_path, save_to_cache=True)
+    monkeypatch.setattr(pd, "to_pickle", real_to_pickle)
+
+    assert not _cache_files(tmp_path), "an interrupted write left a cache entry behind"
+    assert not list(tmp_path.rglob("*.tmp")), "an interrupted write left a temporary file behind"
 
 
 if __name__ == "__main__":

@@ -13,6 +13,7 @@ from __future__ import annotations
 import io
 import logging
 import os
+import socket
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Literal
@@ -84,6 +85,10 @@ This dictionary exists to provide a convenient import for the standard parameter
 # Cache sharding configuration (internal, not exposed to parse() to avoid complexity)
 _CACHE_SHARDING_DEPTH = 2  # Use 2-level sharding by default (e.g., ab/cd/abcdef123456/)
 _CACHE_SHARDING_CHARS_PER_DIR = 2  # Number of characters per directory level
+
+# Cache-file suffix -> pandas compression, covering what `utils.compression` recognises.
+# Note pandas infers `.gz` and `.zst` but not `.gzip`.
+_CACHE_COMPRESSION = {".gz": "gzip", ".gzip": "gzip", ".zst": "zstd"}
 
 
 def _get_atomworks_version() -> str:
@@ -167,7 +172,10 @@ def parse(
             If not provided, the file type will be inferred automatically.
         load_from_cache (bool, optional): Whether to load pre-compiled results from cache. Defaults to False.
         cache_dir (PathLike, optional): Directory path to save pre-compiled results. Defaults to None.
-        save_to_cache (bool, optional): Whether to save the results to cache when building the structure. Defaults to False.
+        save_to_cache (bool, optional): Whether to save the results to cache when building the structure.
+            Defaults to False. An entry is written to a temporary file and then moved into place, so a
+            process interrupted while writing leaves no partial entry behind, and several processes may
+            fill a shared cache directory concurrently. An entry that already exists is not rewritten.
 
         **Parsing arguments:**
         ccd_mirror_path (str, optional): Path to the local mirror of the Chemical Component Dictionary (recommended).
@@ -367,9 +375,23 @@ def parse(
         # Ensure all parent directories exist
         cache_file_path.parent.mkdir(parents=True, exist_ok=True)
 
-        # Save the result to the cache, excluding the assemblies
+        # Save the result to the cache, excluding the assemblies.
+        #
+        # Write to a temp file (named with host and pid to avoid collisions between
+        # workers sharing the cache) and atomically move it into place, so an interrupted
+        # write can't leave a corrupt cache entry
         result_to_cache = {k: v for k, v in result.items() if k != "assemblies"}
-        pd.to_pickle(result_to_cache, cache_file_path)
+        # Explicit: pandas would infer compression from the temp name, which has no suffix
+        compression = _CACHE_COMPRESSION.get(cache_file_path.suffix, "infer")
+        node = socket.gethostname().replace(os.sep, "_")
+        tmp_path = cache_file_path.with_name(f"{cache_file_path.name}.{node}.{os.getpid()}.tmp")
+        try:
+            pd.to_pickle(result_to_cache, tmp_path, compression=compression)
+            # replace() not rename(): two workers can race here, and rename() raises on Windows
+            tmp_path.replace(cache_file_path)
+        except BaseException:
+            tmp_path.unlink(missing_ok=True)
+            raise
 
     return result
 
