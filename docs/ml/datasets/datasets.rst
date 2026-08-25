@@ -71,6 +71,35 @@ Basic Usage Examples
        )
    )
 
+**ASE LMDB datasets** (for OMol25/OMat24/OPoly26-style ``*.aselmdb`` shards):
+
+.. code-block:: python
+
+   from atomworks.ml.datasets import ASELMDBDataset
+   from atomworks.ml.datasets.loaders import create_ase_atoms_loader, create_ase_materials_loader
+
+   dataset = ASELMDBDataset.from_directory(
+       directory="/path/to/omol25/train",
+       name="omol25_train",
+       loader=create_ase_atoms_loader(),
+   )
+
+   example = dataset[0]
+   atoms = example["atoms"]            # ASE Atoms
+   atom_array = example["atom_array"]  # Biotite AtomArray
+
+   materials_dataset = ASELMDBDataset.from_directory(
+       directory="/path/to/omat24/rattled-300-subsampled",
+       name="omat24_rattled",
+       loader=create_ase_materials_loader(),
+   )
+
+   material = materials_dataset[0]
+   fractional_coordinates = material["fractional_coordinates"]
+   lattice_lengths = material["lattice_lengths"]
+   lattice_angles = material["lattice_angles"]
+   space_group = material["space_group"]
+
 **Custom loaders** for specialized use cases:
 
 .. code-block:: python

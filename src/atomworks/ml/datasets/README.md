@@ -45,6 +45,35 @@ dataset = PandasDataset(
 )
 ```
 
+### ASE LMDB Dataset
+
+```python
+from atomworks.ml.datasets import ASELMDBDataset
+from atomworks.ml.datasets.loaders import create_ase_atoms_loader, create_ase_materials_loader
+
+# OMol25/OMat24-style datasets are ASE DB-compatible LMDB files (*.aselmdb).
+dataset = ASELMDBDataset.from_directory(
+    directory="/path/to/omol25/train",
+    name="omol25_train",
+    loader=create_ase_atoms_loader(),  # Optional: adds an AtomArray for AtomWorks transforms
+)
+
+example = dataset[0]
+atoms = example["atoms"]          # ASE Atoms object with flattened atoms.info metadata
+atom_array = example["atom_array"]  # Biotite AtomArray created by the loader
+
+materials_dataset = ASELMDBDataset.from_directory(
+    directory="/path/to/omat24/rattled-300-subsampled",
+    name="omat24_rattled",
+    loader=create_ase_materials_loader(),
+)
+material = materials_dataset[0]
+fractional_coordinates = material["fractional_coordinates"]
+lattice_lengths = material["lattice_lengths"]
+lattice_angles = material["lattice_angles"]
+space_group = material["space_group"]
+```
+
 ## Core Concepts
 
 ### The Three-Step Pipeline
@@ -124,6 +153,30 @@ dataset = PandasDataset(
 **Filtering:** Filters are applied sequentially during initialization. Each filter logs its impact on dataset size.
 
 **ID-Based Access:** Set an `id_column` to enable `dataset.id_to_idx()` and `idx_to_id()` methods.
+
+#### `ASELMDBDataset`
+
+For ASE DB-compatible LMDB shards, including FAIR Chemistry datasets such as OMol25, OMat24, and OPoly26.
+
+```python
+dataset = ASELMDBDataset(
+    paths="/data/omol25/train",  # Directory scanned recursively for *.aselmdb files
+    name="omol25_train",
+    return_type="record",        # "record" (default), "atoms", or "row"
+    readonly=True,
+    readahead=False,
+)
+```
+
+**Record output:** The default output is a dictionary containing `atoms` (ASE `Atoms`), `key_value_pairs`, `data`, `calculator_results`, and `extra_info`.
+
+**AtomArray loading:** Use `create_ase_atoms_loader()` when ASE molecule records need to flow through AtomWorks transform pipelines.
+
+**ID Mapping:** By default, IDs are generated as `<shard_id>:<ase_row_id>` for fast reversible lookup. To use an OMol/OPoly metadata field such as `sid`, pass `example_id_key="sid"` and `build_id_index=True`.
+
+**Materials loading:** Use `create_ase_materials_loader()` for periodic materials datasets. It adds `fractional_coordinates`, `lattice_vectors`, `lattice_lengths`, `lattice_angles`, `cell_parameters`, `space_group`, and `parent_space_group`.
+
+**Optional dependencies:** Install with `atomworks[ase]` to enable ASE LMDB support.
 
 ### Loader Functions
 

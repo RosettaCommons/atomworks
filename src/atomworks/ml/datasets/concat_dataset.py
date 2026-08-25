@@ -180,7 +180,7 @@ def get_row_and_index_by_example_id(dataset: ExampleIDMixin, example_id: str) ->
         dataset = dataset.get_dataset_by_idx(_local_idx)
         _local_idx = dataset.id_to_idx(example_id)
 
-    row = dataset.data.loc[example_id]
+    row = dataset.data.loc[example_id] if hasattr(dataset, "data") and hasattr(dataset.data, "loc") else dataset[idx]
     return {"row": row, "index": idx}
 
 
