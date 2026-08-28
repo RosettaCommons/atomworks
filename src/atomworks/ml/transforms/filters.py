@@ -13,6 +13,7 @@ from biotite.structure import AtomArray, AtomArrayStack
 from atomworks.common import exists, not_isin
 from atomworks.constants import HYDROGEN_LIKE_SYMBOLS
 from atomworks.enums import ChainType, ChainTypeInfo
+from atomworks.io.utils.ccd import get_chem_comp_leaving_atom_names
 from atomworks.io.utils.query import QueryExpression
 from atomworks.io.utils.selection import get_annotation
 from atomworks.io.utils.sequence import get_1_from_3_letter_code, get_3_from_1_letter_code
@@ -400,6 +401,19 @@ class RemoveUnresolvedAtoms(ApplyFunctionToAtomArray):
         super().__init__(func=lambda arr: remove_unresolved_atoms(arr, min_occupancy))
 
 
+def _leaving_atom_names(res_name: str) -> frozenset[str]:
+    """Atom names the CCD declares as displaced when `res_name` forms an inter-residue bond.
+
+    `OXT`/`HXT` for amino acids, `OP3`/`HOP3` for nucleotides. A residue inside a polymer has
+    already lost these during parsing (see `atomworks.io.template`), so they must not be
+    required when matching an observed residue against a free-monomer CCD template.
+    """
+    names: set[str] = set()
+    for displaced_atom_names in get_chem_comp_leaving_atom_names(res_name).values():
+        names |= {str(name) for name in displaced_atom_names}
+    return frozenset(names)
+
+
 class HandleUndesiredResTokens(Transform):
     """
     Remove, or otherwise handle, undesired residue tokens from the AtomArray.
@@ -458,9 +472,15 @@ class HandleUndesiredResTokens(Transform):
             if not has_hydrogens:
                 canonical_res = canonical_res[not_isin(canonical_res.element, HYDROGEN_LIKE_SYMBOLS)]
 
-            # If canonical residue is a strict subset of the original residue,
+            # Leaving atoms are absent from every residue inside a polymer, so they must not
+            # be required else no residue in a chain can ever match.
+            required_atom_names = canonical_res.atom_name[
+                not_isin(canonical_res.atom_name, list(_leaving_atom_names(canonical_res_name)))
+            ]
+
+            # If the canonical residue is a subset of the original residue,
             #  keep all matching atom names and delete the rest
-            if np.all(np.isin(canonical_res.atom_name, atom_name)):
+            if np.all(np.isin(required_atom_names, atom_name)):
                 to_keep = np.isin(atom_name, canonical_res.atom_name)
                 # ... if we match without `force_unknown` break loop early
                 return to_keep, canonical_res_name
