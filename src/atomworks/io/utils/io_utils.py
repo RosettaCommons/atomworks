@@ -1,4 +1,4 @@
-"""General utility functions for working with CIF files in Biotite."""
+"""GeneralA utility functions for working with CIF files in Biotite."""
 
 __all__ = [
     "apply_sharding_pattern",
@@ -11,6 +11,8 @@ __all__ = [
     "to_cif_buffer",
     "to_cif_file",
     "to_cif_string",
+    "to_pdb_buffer",
+    "to_pdb_string",
 ]
 
 import gzip
