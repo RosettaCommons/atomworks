@@ -60,21 +60,7 @@ To install in a fresh environment:
 
 To run the AtomWorks test suite, you need to download the test data and configure environment variables.
 
-**Step 1: Download test data**
-
-From the repository root, run:
-
-.. code-block:: bash
-
-   atomworks setup tests
-
-This downloads and extracts the test pack (~500 MB) to ``tests/data/``, which includes:
-
-* ``tests/data/pdb/`` — A mini PDB mirror with test structures
-* ``tests/data/ccd/`` — A mini CCD mirror with test ligand definitions
-* ``tests/data/shared/`` — MSA files, templates, and metadata for ML tests
-
-**Step 2: Create a .env file**
+**Step 1: Create a .env file**
 
 Create a ``.env`` file in the repository root with the paths to the test data:
 
@@ -90,6 +76,21 @@ You can copy ``.env.sample`` as a starting point:
 
    cp .env.sample .env
    # Then edit .env to set the paths above
+
+**Step 2: Download test data**
+
+From the repository root, run:
+
+.. code-block:: bash
+
+   atomworks setup tests
+   atomworks ccd sync tests/data/ccd  # (or $CCD_MIRROR_PATH if you exported the variable to your shell)
+
+This downloads and extracts the test pack (~500 MB) to ``tests/data/``, which includes:
+
+* ``tests/data/pdb/`` — A mini PDB mirror with test structures
+* ``tests/data/ccd/`` — A mini CCD mirror with test ligand definitions
+* ``tests/data/shared/`` — MSA files, templates, and metadata for ML tests
 
 **Step 3: Run the tests**
 
