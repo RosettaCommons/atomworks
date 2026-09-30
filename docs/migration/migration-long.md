@@ -1,8 +1,6 @@
 # AtomWorks 2.x → 3.0: detailed migration guide
 
-This draft describes public `release/atomworks-3-0` commit `df50559731c0ba43cc29a82b50c87a60d1a0a951`. It compares the published `v2.0.0` (`581163158592e56093b966d0285eab6382351e53`) and `v2.2.1` (`beedcb3063e9613155943223f5ce2a4cbab810e3`) sources. The `v2.0.0` tag itself declares package version `1.1.0`, so use its SHA/tag, not the embedded version alone, to identify that baseline. It focuses on user-visible migration decisions rather than every internal addition. Examples were checked against source signatures and Python syntax. The core parse and corrected CIF example were executed on 6LYZ (1,001 heavy atoms before and after); ML, protonation and broader chemistry workflows were not runtime-tested. Test citations describe committed coverage, not tests run for this audit. See the [short guide](migration-short.md) for the main migration steps.
-
-**Release preparation:** the candidate's `pyproject.toml` currently says `2.1.1`. Set the intended 3.0 version and release tag before publishing installation instructions or caches whose provenance depends on the package version. These drafts intentionally contain no `pip install atomworks==3.0.0` command while that release is unverified.
+Start with the I/O changes below: parser configuration, chemical corrections, alternate conformers, CIF round trips and parser caches. The [short guide](migration-short.md) covers the essential steps; additional ML migration notes follow the I/O sections.
 
 ## Parser calls and defaults
 
@@ -136,7 +134,21 @@ The new implementation emits/reloads richer component and bond chemistry, includ
 
 [Round-trip tests](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/tests/io/utils/test_io.py), [annotation serialization](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/utils/standard_annotations/serialization.py), [custom CCD handling](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/utils/ccd.py).
 
-## Model encodings and conditions
+## Parser caching
+
+The parser now caches complete results as Zstandard-compressed pickles in a `parse-v2` namespace. Settings, package versions and source identity enter the key; random unseeded conformers and active external CCD overrides bypass caching. **Paths are keyed by resolved path, not file-content hash.** Replacing a file in place can reuse a stale result; keep source paths immutable or supply a changed immutable `cache_key`. An explicit key must change with source contents. Isolate old/new cache directories for a controlled migration. Benchmark cached and uncached performance separately. [Cache code](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/parser.py).
+
+## I/O environment and validation
+
+Python ≥3.11 remains supported; the candidate pins Biotite exactly to 1.6.0 and checks it at import time (2.2.1 pins 1.4.0). PyArrow minimum rises to 23.0.1, core adds jaxtyping, and Hydride is no longer a core dependency. Optional S3 and catcif integrations have extras. Regenerate a locked environment instead of upgrading Biotite in isolation. [Dependency manifest](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/pyproject.toml).
+
+Lock both environments, migrate parser calls and configuration, then compare a fixed set of structures covering covalent modifications, alternate conformers and assemblies. Review atom identities, charges, bond orders and hydrogen counts before adopting the new parser or regenerating cached outputs.
+
+## Additional ML migration notes
+
+The remaining sections apply when using AtomWorks for model features or datasets. They are not required for a standalone I/O migration. Install the `[ml]` extra for Torch workflows; it now includes numba.
+
+### Model encodings and conditions
 
 `UNIFIED_ATOM37_ENCODING` retains 37 atom slots but adds terminal phosphate `OP3` in slot 36 for standard DNA/RNA and a new gap token `<G>` at class 33. The vocabulary therefore grows from 33 to 34 classes relative to 2.2.1. Check embedding/head sizes, saved class tables, labels, loss masks and atom-slot masks. A matching 37-wide coordinate tensor can still carry changed semantics. [Definition](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/ml/encoding_definitions.py).
 
@@ -154,7 +166,7 @@ conditioned_mask = C_CRD.mask(atoms)
 
 For external target values, set explicit condition annotations with the condition API. Calling `set_annotation_from_ground_truth` intentionally replaces targets with values from the current structure. Legacy module aliases and some legacy CIF masks are supported, but this is a specific compatibility list (sequence, coordinate, index), not blanket support for arbitrary historical fields. Custom condition subclasses should follow the new definitions and StandardAnnotation contract. [Condition definitions](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/ml/conditions/definitions.py), [base API](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/ml/conditions/base.py).
 
-## Datasets, preprocessing and caching
+### Datasets and preprocessing
 
 For a previous loader created with `create_loader_with_query_pn_units(pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"])`:
 
@@ -176,14 +188,12 @@ Preprocessing is reorganized around `PreprocessConfig` and assembly/PN-unit/inte
 
 `PandasDataset` delegates to a metadata index and can use Arrow with `memory_map=True`. Its `.data` is then an Arrow Table, so pandas-only operations must be adapted. Dataset filters are independent row predicates evaluated on the input and combined; filters that calculate aggregate thresholds from the progressively filtered table may change meaning. Use a stable ID column rather than relying on the old optional `id_column=None` pattern. [Dataset](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/ml/datasets/pandas_dataset.py).
 
-The parser now caches complete results as Zstandard-compressed pickles in a `parse-v2` namespace. Settings, package versions and source identity enter the key; random unseeded conformers and active external CCD overrides bypass caching. **Paths are keyed by resolved path, not file-content hash.** Replacing a file in place can reuse a stale result; keep source paths immutable or supply a changed immutable `cache_key`. An explicit key must change with source contents. Isolate old/new cache directories for a controlled migration. Benchmark cached and uncached performance separately. [Cache code](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/parser.py).
+## Draft scope and validation evidence
 
-## Installation, performance and adoption
+This draft describes public `release/atomworks-3-0` commit `df50559731c0ba43cc29a82b50c87a60d1a0a951`. It compares the published `v2.0.0` (`581163158592e56093b966d0285eab6382351e53`) and `v2.2.1` (`beedcb3063e9613155943223f5ce2a4cbab810e3`) sources. The `v2.0.0` tag itself declares package version `1.1.0`, so use its SHA/tag, not the embedded version alone, to identify that baseline. It focuses on user-visible migration decisions rather than every internal addition. Examples were checked against source signatures and Python syntax. The core parse and corrected CIF example were executed on 6LYZ (1,001 heavy atoms before and after); ML, protonation and broader chemistry workflows were not runtime-tested. Test citations describe committed coverage, not tests run for this audit. See the [short guide](migration-short.md) for the main migration steps.
 
-Python ≥3.11 remains supported; the candidate pins Biotite exactly to 1.6.0 and checks it at import time (2.2.1 pins 1.4.0). PyArrow minimum rises to 23.0.1, core adds jaxtyping, ML adds numba, and Hydride is no longer a core dependency. Optional S3, PoseBusters and catcif integrations have extras; Torch remains in `[ml]`. Regenerate a locked environment instead of upgrading Biotite in isolation. [Dependency manifest](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/pyproject.toml).
+**Release preparation:** the candidate's `pyproject.toml` currently says `2.1.1`. Set the intended 3.0 version and release tag before publishing installation instructions or caches whose provenance depends on the package version. These drafts intentionally contain no `pip install atomworks==3.0.0` command while that release is unverified.
 
 **Public versus private scope:** this public snapshot predates private parser-performance PR #441 (`e774b25d`) and chemistry PR #461 (`f16e388c`). Their changes require a further release-branch update and revalidation. Measured uncached parsing took 2.25–2.81× as long as 2.2.1 on three structures; the separate current-private comparison also does not establish a speedup over 2.2.1. Do not promote a general speedup from this candidate. The measurements used 6LYZ, 5OCM and 6TQN, Python 3.12.13, each version's required Biotite, model 1, all assemblies, bundled CCD, and no parser disk cache. Medians came from five warm-process parses after an initial parse; matching atom counts did not establish full scientific equivalence.
 
-The release also adds preparation from AtomArrays, more flexible structure storage/loaders, structural selection utilities, and additional analysis transforms. Adopt these when useful; they do not all require a migration change. Publish a speedup only with its exact version pair, data, configuration, cache conditions, and output checks; changing defaults or skipping atom completion is a different workload.
-
-A practical rollout is: lock both environments; migrate imports/configuration; compare a fixed structural edge-case set; validate saved feature conventions/checkpoints; regenerate and version affected datasets/caches; then measure throughput on the actual workload. Record unresolved mismatches rather than weakening structural regression expectations to make the migration pass.
+Performance comparisons should identify the exact version pair, data, configuration, cache conditions and output checks. Changing defaults or skipping atom completion changes the workload.
