@@ -1,4 +1,5 @@
 import copy
+import itertools
 from copy import deepcopy
 from functools import cache
 from typing import Any
@@ -6,10 +7,12 @@ from typing import Any
 import biotite.structure as struc
 import numpy as np
 import pytest
+from scipy.spatial import KDTree
 
-from atomworks.io.utils.testing import assert_same_atom_array
+from atomworks.constants import PDB_MIRROR_PATH
+from atomworks.io.utils.testing import assert_same_atom_array_or_stack
 from atomworks.ml.datasets import get_row_and_index_by_example_id
-from atomworks.ml.datasets.parsers import InterfacesDFParser, PNUnitsDFParser, load_example_from_metadata_row
+from atomworks.ml.datasets.loaders import create_structure_loader
 from atomworks.ml.encoding_definitions import RF2AA_ATOM36_ENCODING
 from atomworks.ml.transforms.atom_array import (
     AddGlobalAtomIdAnnotation,
@@ -17,11 +20,12 @@ from atomworks.ml.transforms.atom_array import (
 )
 from atomworks.ml.transforms.atomize import AtomizeByCCDName
 from atomworks.ml.transforms.base import Compose
-from atomworks.ml.transforms.covalent_modifications import FlagAndReassignCovalentModifications
+from atomworks.ml.transforms.covalent_modifications import AnnotateCovalentModifications
 from atomworks.ml.transforms.crop import (
     CropContiguousLikeAF3,
     CropSpatialLikeAF3,
     compute_local_hash,
+    get_spatial_crop_center,
 )
 from atomworks.ml.transforms.filters import RemoveHydrogens, RemoveTerminalOxygen
 from atomworks.ml.utils.rng import create_rng_state_from_seeds, rng_state
@@ -125,8 +129,14 @@ BENCHMARK_EXAMPLE_IDS = [example["id"] for example in BENCHMARK_EXAMPLES]
 @cache
 def _get_example(example_id: str, dataset: Any) -> dict:
     row = get_row_and_index_by_example_id(dataset, example_id)["row"]
-    dataset_parser = PNUnitsDFParser() if "pn_units" in example_id else InterfacesDFParser()
-    return load_example_from_metadata_row(metadata_row=row, metadata_row_parser=dataset_parser)
+    query_columns = ["q_pn_unit_iid"] if "pn_units" in example_id else ["pn_unit_1_iid", "pn_unit_2_iid"]
+    return create_structure_loader(
+        path_colname="pdb_id",
+        base_path=PDB_MIRROR_PATH,
+        extension=".cif.gz",
+        sharding_pattern="/1:3/",
+        column_mapping={"query_pn_unit_iids": query_columns},
+    )(row)
 
 
 def get_example(example_id: str, dataset: Any) -> dict:
@@ -143,7 +153,7 @@ def test_af3_like_spatial_crop_transform(
             AddGlobalAtomIdAnnotation(),
             RemoveHydrogens(),
             RemoveTerminalOxygen(),
-            FlagAndReassignCovalentModifications(),
+            AnnotateCovalentModifications(),
             AtomizeByCCDName(atomize_by_default=True, res_names_to_ignore=RF2AA_ATOM36_ENCODING.tokens),
         ],
         track_rng_state=False,
@@ -154,6 +164,23 @@ def test_af3_like_spatial_crop_transform(
         data = get_example(example_id, rf2aa_pdb_dataset)
         data = prep_pipe(data)
         pre_crop_atom_array = data["atom_array"]
+        query = data["query_pn_unit_iids"]
+        occupied_query = np.isin(pre_crop_atom_array.pn_unit_iid, query) & (pre_crop_atom_array.occupancy > 0)
+        expected_centers = occupied_query.copy() if len(query) == 1 else np.zeros(len(pre_crop_atom_array), dtype=bool)
+        for left, right in itertools.combinations(query, 2):
+            indices = [
+                np.flatnonzero((pre_crop_atom_array.pn_unit_iid == unit) & occupied_query) for unit in (left, right)
+            ]
+            for a, b in (indices, indices[::-1]):
+                counts = KDTree(pre_crop_atom_array.coord[b]).query_ball_point(
+                    pre_crop_atom_array.coord[a], r=15.0, return_length=True
+                )
+                expected_centers[a[counts > 0]] = True
+        np.testing.assert_array_equal(
+            get_spatial_crop_center(pre_crop_atom_array, query, raise_if_missing_crop_center=False),
+            expected_centers if expected_centers.any() else occupied_query,
+            strict=True,
+        )
         data = crop_pipe(data)
         post_crop_atom_array = data["atom_array"]
 
@@ -181,7 +208,7 @@ def test_af3_like_spatial_crop_transform(
             np.testing.assert_array_equal(
                 crop_token_idxs, np.arange(n_tokens), err_msg="Not all atoms in crop despite not cropping."
             )
-            assert_same_atom_array(pre_crop_atom_array, post_crop_atom_array)
+            assert_same_atom_array_or_stack(pre_crop_atom_array, post_crop_atom_array)
             return
 
         # Ensure correct, expected token count
@@ -240,7 +267,7 @@ def test_af3_like_contiguous_crop_transform(
             AddGlobalAtomIdAnnotation(),
             RemoveHydrogens(),
             RemoveTerminalOxygen(),
-            FlagAndReassignCovalentModifications(),
+            AnnotateCovalentModifications(),
             AtomizeByCCDName(atomize_by_default=True, res_names_to_ignore=RF2AA_ATOM36_ENCODING.tokens),
         ],
         track_rng_state=False,
@@ -268,7 +295,7 @@ def test_af3_like_contiguous_crop_transform(
 
         if not data["crop_info"]["requires_crop"]:
             # ... no crop was performed
-            assert_same_atom_array(pre_crop_atom_array, post_crop_atom_array)
+            assert_same_atom_array_or_stack(pre_crop_atom_array, post_crop_atom_array)
             return
 
         # Ensure crop is contiguous within each polymer instance
@@ -300,7 +327,7 @@ def regression_test_af3_like_spatial_crop_transform(
             AddGlobalAtomIdAnnotation(),
             RemoveHydrogens(),
             RemoveTerminalOxygen(),
-            FlagAndReassignCovalentModifications(),
+            AnnotateCovalentModifications(),
             AtomizeByCCDName(atomize_by_default=True, res_names_to_ignore=RF2AA_ATOM36_ENCODING.tokens),
         ],
         track_rng_state=False,
@@ -347,7 +374,7 @@ def test_resize_crops_with_too_many_atoms(pdb_id, np_seed=1):
             AddGlobalAtomIdAnnotation(),
             RemoveHydrogens(),
             RemoveTerminalOxygen(),
-            FlagAndReassignCovalentModifications(),
+            AnnotateCovalentModifications(),
             AtomizeByCCDName(atomize_by_default=True, res_names_to_ignore=RF2AA_ATOM36_ENCODING.tokens),
         ],
         track_rng_state=False,
@@ -376,6 +403,45 @@ def test_resize_crops_with_too_many_atoms(pdb_id, np_seed=1):
         ), f"Expected contiguous crop to be resized to less than 3000 atoms, got {len(post_crop_atom_array)} atoms."
 
 
+@pytest.mark.parametrize("crop_transform_cls", [CropContiguousLikeAF3, CropSpatialLikeAF3])
+@pytest.mark.parametrize(
+    "crop_size_range,max_crop_size",
+    [
+        ((20, 40), None),  # absolute token-count range
+        ((0.1, 0.9), 60),  # fraction-of-length range, capped by max_crop_size
+    ],
+)
+def test_dynamic_crop_size_range(crop_transform_cls, crop_size_range, max_crop_size):
+    """Test that `crop_size_range` samples a variety of crop sizes, respecting `max_crop_size`."""
+    prep_pipe = Compose(
+        [
+            AddGlobalAtomIdAnnotation(),
+            RemoveHydrogens(),
+            RemoveTerminalOxygen(),
+            AnnotateCovalentModifications(),
+            AtomizeByCCDName(atomize_by_default=True, res_names_to_ignore=RF2AA_ATOM36_ENCODING.tokens),
+        ],
+        track_rng_state=False,
+    )
+    data = prep_pipe(cached_parse("6lyz"))
+
+    sampled_sizes = set()
+    for seed in range(20):
+        crop_pipe = crop_transform_cls(crop_size_range=crop_size_range, max_crop_size=max_crop_size)
+        with rng_state(create_rng_state_from_seeds(np_seed=seed)):
+            data_cropped = crop_pipe(copy.deepcopy(data))
+        crop_size = data_cropped["crop_info"]["crop_size"]
+        if max_crop_size is not None:
+            assert crop_size <= max_crop_size, f"Sampled crop size {crop_size} exceeds max_crop_size {max_crop_size}."
+        else:
+            assert (
+                crop_size_range[0] <= crop_size <= crop_size_range[1]
+            ), f"Sampled crop size {crop_size} outside of range {crop_size_range}."
+        sampled_sizes.add(crop_size)
+
+    assert len(sampled_sizes) > 1, f"Expected variety in sampled crop sizes across seeds, got {sampled_sizes}"
+
+
 def test_compute_local_hash():
     data = cached_parse("6lyz")
 
@@ -384,7 +450,7 @@ def test_compute_local_hash():
             AddGlobalAtomIdAnnotation(),
             RemoveHydrogens(),
             RemoveTerminalOxygen(),
-            FlagAndReassignCovalentModifications(),
+            AnnotateCovalentModifications(),
             AtomizeByCCDName(atomize_by_default=True, res_names_to_ignore=RF2AA_ATOM36_ENCODING.tokens),
         ],
         track_rng_state=False,
@@ -395,11 +461,13 @@ def test_compute_local_hash():
     # Annotate the pre-crop hash
     pre_crop = data["atom_array"]
     hash_pre = compute_local_hash(pre_crop)
+    tree = KDTree(pre_crop.coord)
+    np.testing.assert_array_equal(hash_pre, np.array(list(map(len, tree.query_ball_tree(tree, 6.0)))), strict=True)
     pre_crop.set_annotation("hash_pre", hash_pre)
     data["atom_array"] = pre_crop
 
     # Test 1: Effectively no cropping
-    crop_pipe = CropSpatialLikeAF3(crop_size=10_000)
+    crop_pipe = CropSpatialLikeAF3(crop_size=10_000, annotate_crop_boundary=True)
     with rng_state(create_rng_state_from_seeds(np_seed=12)):
         data_cropped = crop_pipe(copy.deepcopy(data))
 
@@ -411,9 +479,10 @@ def test_compute_local_hash():
         assert np.all(
             post_crop.hash_pre == post_crop.hash_post
         ), "Hash mismatch between pre- and post-crop despite not cropping."
+        assert not post_crop.at_crop_boundary.any()
 
     # Test 2: Spatial cropping
-    crop_pipe = CropSpatialLikeAF3(crop_size=32)
+    crop_pipe = CropSpatialLikeAF3(crop_size=32, annotate_crop_boundary=True)
     with rng_state(create_rng_state_from_seeds(np_seed=12)):
         data_cropped = crop_pipe(copy.deepcopy(data))
         post_crop = data_cropped["atom_array"]
@@ -421,6 +490,9 @@ def test_compute_local_hash():
         post_crop.set_annotation("hash_post", hash_post)
 
         affected_idxs = np.where(post_crop.hash_pre != post_crop.hash_post)[0]
+        np.testing.assert_array_equal(
+            post_crop.at_crop_boundary, post_crop.hash_pre != post_crop.hash_post, strict=True
+        )
 
         # fmt: off
         # NOTE: These were manually checked in pymol for a 6 A cut-off radius
@@ -444,12 +516,15 @@ def test_compute_local_hash():
         assert np.all(affected_idxs == _affected_idxs), f"Affected idxs mismatch: {affected_idxs} != {_affected_idxs}"
 
     # Test 3: Contiguous cropping
-    crop_pipe = CropContiguousLikeAF3(crop_size=32)
+    crop_pipe = CropContiguousLikeAF3(crop_size=32, annotate_crop_boundary=True)
     with rng_state(create_rng_state_from_seeds(np_seed=12)):
         data_cropped = crop_pipe(copy.deepcopy(data))
         post_crop = data_cropped["atom_array"]
         hash_post = compute_local_hash(post_crop, radius=6.0)
         post_crop.set_annotation("hash_post", hash_post)
+        np.testing.assert_array_equal(
+            post_crop.at_crop_boundary, post_crop.hash_pre != post_crop.hash_post, strict=True
+        )
 
         # fmt: off
         # NOTE: These were manually checked in pymol for a 6 A cut-off radius

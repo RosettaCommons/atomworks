@@ -1,7 +1,5 @@
 """Finding pre-computed MSAs on disk, and reporting missing sequences."""
 
-from __future__ import annotations
-
 import logging
 from pathlib import Path
 
@@ -36,7 +34,7 @@ def find(
     existing_msa_dirs: str | None = typer.Option(
         None,
         "--existing-msa-dirs",
-        help="Comma-separated list of directories containing MSA information. (Uses LOCAL_MSA_DIRS env var if not specified.)",
+        help="Comma-separated MSA directories to find (uses PROTEIN_MSA_DIRS env var if not specified)",
     ),
     missing_output: Path | None = typer.Option(
         None,
@@ -60,8 +58,8 @@ def find(
     Analyzes a CSV file to find existing MSA files for sequences and
     optionally saves missing and found sequences to separate CSV files.
 
-    You will need to set the LOCAL_MSA_DIRS environment variable to the directory
-    where your MSA information is stored.
+    Provide --existing-msa-dirs or set PROTEIN_MSA_DIRS to the directories
+    containing your MSA files.
 
     Examples:
         # Find MSAs for single-column CSV
@@ -98,7 +96,7 @@ def find(
     if msa_dirs:
         typer.echo(f"  MSA Directories: {msa_dirs}")
     else:
-        typer.echo("  MSA Directories: LOCAL_MSA_DIRS env var")
+        typer.echo("  MSA Directories: PROTEIN_MSA_DIRS env var")
     typer.secho("=" * 35, fg=typer.colors.CYAN)
 
     try:

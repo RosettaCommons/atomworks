@@ -10,7 +10,7 @@ from atomworks.ml.transforms.atom_array import (
 )
 from atomworks.ml.transforms.atomize import AtomizeByCCDName
 from atomworks.ml.transforms.base import Compose
-from atomworks.ml.transforms.covalent_modifications import FlagAndReassignCovalentModifications
+from atomworks.ml.transforms.covalent_modifications import AnnotateCovalentModifications
 from atomworks.ml.transforms.crop import (
     CropSpatialLikeAF3,
 )
@@ -76,7 +76,7 @@ def test_spatial_knn_mask(test_case: dict[str, Any]):
             AddGlobalAtomIdAnnotation(),
             RemoveHydrogens(),
             RemoveTerminalOxygen(),
-            FlagAndReassignCovalentModifications(),
+            AnnotateCovalentModifications(),
             AtomizeByCCDName(atomize_by_default=True, res_names_to_ignore=RF2AA_ATOM36_ENCODING.tokens),
         ]
     )
@@ -99,7 +99,7 @@ def test_spatial_knn_mask(test_case: dict[str, Any]):
             AddGlobalAtomIdAnnotation(),
             RemoveHydrogens(),
             RemoveTerminalOxygen(),
-            FlagAndReassignCovalentModifications(),
+            AnnotateCovalentModifications(),
             AtomizeByCCDName(atomize_by_default=True, res_names_to_ignore=RF2AA_ATOM36_ENCODING.tokens),
             CropSpatialLikeAF3(crop_size=128),
         ]

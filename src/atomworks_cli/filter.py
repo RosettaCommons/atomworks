@@ -1,7 +1,5 @@
 """MSA filtering command using HHfilter."""
 
-from __future__ import annotations
-
 import logging
 from glob import glob
 from pathlib import Path
@@ -21,7 +19,7 @@ logger = logging.getLogger(__name__)
 def filter(
     input_dir: str = typer.Argument(
         ...,
-        help="Source directory containing MSA files to filter (supports glob patterns like '0*'),",
+        help="Source directory containing MSA files to filter (supports glob patterns like '0*').",
     ),
     output_dir: Path = typer.Argument(
         None,
@@ -85,7 +83,7 @@ def filter(
     Can be applied to organized MSA files or any directory of MSA files.
     Automatic compression/decompression is applied based on the input and output file extensions.
 
-    Before using this command users must have HH-Filter installed and the path set. HH-Filter is part of the HH-suite package.
+    Before using this command users must have hhfilter installed and available on PATH. hhfilter is part of the HH-suite package.
 
     Examples:
         # Filter files in a separate output directory

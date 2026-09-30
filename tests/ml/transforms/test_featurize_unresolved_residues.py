@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from atomworks.io.utils.testing import assert_same_atom_array
+from atomworks.io.utils.testing import assert_same_atom_array_or_stack
 from atomworks.ml.encoding_definitions import (
     RF2AA_ATOM36_ENCODING,
 )
@@ -127,7 +127,7 @@ def test_place_unresolved_token_atoms_on_representative_atom(pdb_id):
     for chain_iid in np.unique(unresolved_non_polymer_atoms.chain_iid):
         output_chain_atom_array = output_atom_array[output_atom_array.chain_iid == chain_iid]
         input_chain_atom_array = atom_array[atom_array.chain_iid == chain_iid]
-        assert_same_atom_array(output_chain_atom_array, input_chain_atom_array)
+        assert_same_atom_array_or_stack(output_chain_atom_array, input_chain_atom_array)
 
 
 @pytest.mark.parametrize("pdb_id", FEATURIZE_UNRESOLVED_RESIDUES_TEST_CASES)

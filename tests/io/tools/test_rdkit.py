@@ -10,9 +10,11 @@ from atomworks.io.tools.rdkit import (
     atom_array_from_rdkit,
     atom_array_to_rdkit,
     ccd_code_to_rdkit,
+    fix_charge_based_on_valence,
     get_morgan_fingerprint_from_rdkit_mol,
     smiles_to_rdkit,
 )
+from atomworks.io.utils.ccd import atom_array_from_ccd_code
 from atomworks.io.utils.io_utils import load_any
 from tests.io.conftest import TEST_DATA_IO
 
@@ -93,9 +95,24 @@ def test_atom_array_rdkit_interconversion(test_atom_array):
     for annotation in ["chain_id", "res_id", "res_name", "atom_name"]:
         assert np.array_equal(new_atom_array.get_annotation(annotation), test_atom_array.get_annotation(annotation))
     assert np.allclose(new_atom_array.coord, test_atom_array.coord)
+    mol._annotations["atom_name"][0] = ""
+    assert test_atom_array.atom_name[0] != ""
 
 
 def test_fixing_molecules():
+    bad = Chem.MolFromSmiles("[O-]=P([O-])([O-])[O-].C[N+](C)(C)C", sanitize=False)
+    bad.UpdatePropertyCache(strict=False)
+    expected = Chem.MolFromSmiles("O=P([O-])([O-])[O-].C[N+](C)(C)C")
+    repaired = fix_charge_based_on_valence(bad)
+    Chem.SanitizeMol(repaired)
+    assert Chem.MolToSmiles(repaired) == Chem.MolToSmiles(expected)
+    assert fix_charge_based_on_valence(repaired) is repaired
+
+    unrepairable = Chem.MolFromSmiles("C(C)(C)(C)(C)C.O=P([O-])([O-])[O-]", sanitize=False)
+    charges = [atom.GetFormalCharge() for atom in unrepairable.GetAtoms()]
+    assert fix_charge_based_on_valence(unrepairable) is unrepairable
+    assert [atom.GetFormalCharge() for atom in unrepairable.GetAtoms()] == charges
+
     smi = "c1cc(c[n](c1)[C@H]2[C@@H]([C@@H]([C@H](O2)CO[P@@](=O)([O-])O[P@](=O)(O)OC[C@@H]3[C@H]([C@H]([C@H](O3)n4cnc5c4ncnc5N)OP(=O)(O)O)O)O)O)C(=O)N"
     smi_correct = "c1cc(c[n+](c1)[C@H]2[C@@H]([C@@H]([C@H](O2)CO[P@@](=O)([O-])O[P@](=O)(O)OC[C@@H]3[C@H]([C@H]([C@H](O3)n4cnc5c4ncnc5N)OP(=O)(O)O)O)O)O)C(=O)N"
 
@@ -227,6 +244,103 @@ def test_chriality_in_spoofed_rdkit_molecules():
     atom_array.coord = dal_coord
     mol_ala_inverted = atom_array_to_rdkit(atom_array)
     assert Chem.FindMolChiralCenters(mol_ala_inverted) == [(1, "R")]
+
+
+@pytest.mark.parametrize(
+    "ccd_code",
+    [
+        "35N",  # Simple TMC with copper
+        "GDP",  # Guanosine diphosphate (simpler than ATP)
+        "ATP",  # Adenosine triphosphate (several phosphate groups)
+        "SAM",  # S-adenosyl methionine (sulfur chemistry)
+        "FMN",  # Flavin mononucleotide
+    ],
+)
+def test_atom_array_to_rdkit_bond_inference(ccd_code: str):
+    """Test that inferring bonds from coordinates produces same results as using original bonds."""
+
+    original = atom_array_from_ccd_code(ccd_code)
+
+    # Path 1: Normal conversion using original CCD bonds
+    mol_with_bonds = atom_array_to_rdkit(
+        original,
+        infer_bonds=False,
+        hydrogen_policy="keep",  # Keep all hydrogens
+        sanitize=True,
+    )
+    result_with_bonds = atom_array_from_rdkit(
+        mol_with_bonds,
+        remove_hydrogens=False,  # Keep hydrogens for comparison
+    )
+
+    # Path 2: Conversion with bond inference from 3D coordinates
+    original_no_bonds = original.copy()
+    original_no_bonds.bonds = None  # Remove bonds to force inference
+
+    mol_inferred = atom_array_to_rdkit(
+        original_no_bonds,
+        infer_bonds=True,  # Infer bonds from coordinates
+        hydrogen_policy="keep",
+        sanitize=True,
+    )
+    result_inferred = atom_array_from_rdkit(
+        mol_inferred,
+        remove_hydrogens=False,
+    )
+
+    # (a) Total charge is the same
+    charge_with_bonds = int(result_with_bonds.charge.sum())
+    charge_inferred = int(result_inferred.charge.sum())
+    assert charge_with_bonds == charge_inferred, (
+        f"{ccd_code}: Total charge differs - " f"with bonds: {charge_with_bonds}, inferred: {charge_inferred}"
+    )
+
+    # (b) Bond connectivity is the same
+    connectivity_with_bonds = _get_bond_connectivity(result_with_bonds.bonds)
+    connectivity_inferred = _get_bond_connectivity(result_inferred.bonds)
+    assert connectivity_with_bonds == connectivity_inferred, (
+        f"{ccd_code}: Bond connectivity differs\n"
+        f"  Bonds only in original: {connectivity_with_bonds - connectivity_inferred}\n"
+        f"  Bonds only in inferred: {connectivity_inferred - connectivity_with_bonds}"
+    )
+
+    # (c) Hybridization is the same
+    specified_mask = result_with_bonds.hyb != -1  # Only compare atoms with specified hybridization
+    assert np.array_equal(
+        result_with_bonds.hyb[specified_mask], result_inferred.hyb[specified_mask]
+    ), f"{ccd_code}: Hybridization differs"
+
+    # (d) Aromaticity is the same
+    assert np.array_equal(
+        result_with_bonds.is_aromatic, result_inferred.is_aromatic
+    ), f"{ccd_code}: Aromaticity differs"
+
+
+def _get_bond_connectivity(bonds: struc.BondList | None) -> set[tuple[int, int]]:
+    """Extract bond connectivity (which atoms are bonded) ignoring bond types."""
+    if bonds is None:
+        return set()
+
+    bond_array = bonds.as_array()  # Shape: (n_bonds, 3) - [atom1, atom2, type]
+    return {(min(int(i), int(j)), max(int(i), int(j))) for i, j, _ in bond_array}
+
+
+def test_nhyd_with_explicit_hydrogens():
+    """nhyd must agree whether Hs are implicit or explicit graph neighbors.
+
+    ATP (adenosine triphosphate) has a purine aromatic ring, sp3 sugar carbons, and
+    phosphate oxygens — a good spread of heavy atoms with differing H counts.
+    """
+
+    def nhyd_by_name(hydrogen_policy: str) -> dict[str, int]:
+        mol = ccd_code_to_rdkit("ATP", hydrogen_policy=hydrogen_policy)
+        aa = atom_array_from_rdkit(mol, set_coord_if_available=False, remove_hydrogens=True)
+        return dict(zip(aa.atom_name, aa.nhyd, strict=True))
+
+    nhyd_implicit = nhyd_by_name("remove")
+    nhyd_explicit = nhyd_by_name("keep")
+
+    assert nhyd_implicit == nhyd_explicit
 
 
 if __name__ == "__main__":

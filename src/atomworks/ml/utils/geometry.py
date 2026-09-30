@@ -206,16 +206,20 @@ def apply_inverse_rigid(
     return apply_rigid(inv_rigid, points)
 
 
-def get_random_rots(batch_size: int, **tensor_kwargs) -> torch.Tensor:
-    """
-    Generate random 3D rotation matrices.
+def get_random_rots(
+    batch_size: int,
+    mode: str = "torch",
+    device: torch.device | None = None,
+) -> torch.Tensor | np.ndarray:
+    """Generate uniformly distributed 3D rotation matrices via QR decomposition.
 
     Args:
-        - batch_size (int): Number of rotation matrices to generate.
-        - device (torch.device | None): Device to place the tensors on. Defaults to None.
+        batch_size: Number of rotation matrices to generate.
+        mode: ``"torch"`` or ``"numpy"``. Defaults to ``"torch"``.
+        device: Torch device. Ignored when ``mode="numpy"``.
 
     Returns:
-        - torch.Tensor: Batch of random rotation matrices with shape (batch_size, 3, 3).
+        Batch of random rotation matrices with shape (batch_size, 3, 3).
 
     Example:
         >>> R = get_random_rots(5)
@@ -224,26 +228,37 @@ def get_random_rots(batch_size: int, **tensor_kwargs) -> torch.Tensor:
         >>> print(torch.allclose(torch.det(R), torch.ones(5)))
         True
     """
-    # Generate random matrices
-    rand_mat = torch.randn(batch_size, 3, 3, **tensor_kwargs)
+    if mode == "numpy":
+        rand_mat = np.random.standard_normal((batch_size, 3, 3)).astype(np.float32)
+        q_decomp, r = np.linalg.qr(rand_mat)
+        diagonal_sign = np.where(np.diagonal(r, axis1=-2, axis2=-1) < 0, -1.0, 1.0)
+        q_decomp *= diagonal_sign[:, np.newaxis, :]
+        orientation = np.where(np.linalg.det(q_decomp) < 0, -1.0, 1.0)
+        q_decomp[:, :, -1] *= orientation[:, np.newaxis]
+        return q_decomp
+    elif mode == "torch":
+        rand_mat = torch.randn(batch_size, 3, 3, device=device)
+        q_decomp, r = torch.linalg.qr(rand_mat)
+        diagonal_sign = torch.where(torch.diagonal(r, dim1=-2, dim2=-1) < 0, -1.0, 1.0)
+        q_decomp *= diagonal_sign.unsqueeze(-2)
+        orientation = torch.where(torch.det(q_decomp) < 0, -1.0, 1.0)
+        q_decomp[:, :, -1] *= orientation.unsqueeze(-1)
+        return q_decomp
+    else:
+        raise ValueError(f"Invalid mode {mode}, expected 'torch' or 'numpy'")
 
-    # Compute QR decomposition
-    q_decomp, _ = torch.linalg.qr(rand_mat)
 
-    # Ensure proper rotation (determinant = 1)
-    det = torch.det(q_decomp)
-    q_decomp *= det.unsqueeze(-1).unsqueeze(-1).sign()
-
-    return q_decomp
-
-
-def get_random_rigid(batch_size: int, scale: float = 1.0, **tensor_kwargs) -> tuple[torch.Tensor, torch.Tensor]:
+def get_random_rigid(
+    batch_size: int,
+    scale: float = 1.0,
+    device: torch.device | None = None,
+) -> tuple[torch.Tensor, torch.Tensor]:
     """Generate random rigid body transformations (R, t).
 
     Args:
         batch_size: Number of rigid transformations to generate.
         scale: Scale factor for the translation vectors. Defaults to 1.0.
-        **tensor_kwargs: Additional keyword arguments to pass to tensor creation functions.
+        device: Torch device.
 
     Returns:
         A rigid tuple containing:
@@ -254,8 +269,8 @@ def get_random_rigid(batch_size: int, scale: float = 1.0, **tensor_kwargs) -> tu
     Note:
         If batch_size is 1, the output tensors are squeezed to remove the batch dimension.
     """
-    rots = get_random_rots(batch_size, **tensor_kwargs)
-    trans = scale * torch.randn(batch_size, 3, **tensor_kwargs)
+    rots = get_random_rots(batch_size, device=device)
+    trans = scale * torch.randn(batch_size, 3, device=device)
     if batch_size == 1:
         rots, trans = rots.squeeze(0), trans.squeeze(0)
     return rots, trans
@@ -280,7 +295,7 @@ def random_rigid_augmentation(coord_atom_lvl: torch.Tensor, batch_size: int, s: 
         torch.Tensor: A tensor of the same shape as `coord_atom_lvl`, containing the transformed
                       atomic coordinates.
     """
-    rigid = get_random_rigid(batch_size, scale=s)
+    rigid = get_random_rigid(batch_size, scale=s, device=coord_atom_lvl.device)
 
     # (`get_random_rigid` squeezes dimension for batch_size=1)
     if batch_size == 1:
@@ -330,3 +345,78 @@ def align_atom_arrays(mbl_sele: AtomArray, tgt_sele: AtomArray, mbl_full: AtomAr
     mbl_fitted, xform = superimpose(tgt_sele, mbl_sele)
     mbl_full_xformed = xform.apply(mbl_full)
     return mbl_full_xformed, rmsd(mbl_fitted, tgt_sele)
+
+
+# ---------------------------------------------------------------------------
+# Scalar vector geometry (numpy)
+# ---------------------------------------------------------------------------
+
+
+def angle_between_vectors(v1: np.ndarray, v2: np.ndarray) -> float:
+    """Return the angle in degrees between two vectors."""
+    cos = np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2) + 1e-12)
+    return float(np.degrees(np.arccos(np.clip(cos, -1, 1))))
+
+
+def dihedral_angle(p0: np.ndarray, p1: np.ndarray, p2: np.ndarray, p3: np.ndarray) -> float:
+    """Return the dihedral angle (degrees) between planes ``(p0, p1, p2)`` and ``(p1, p2, p3)``."""
+    b1 = p1 - p0
+    b2 = p2 - p1
+    b3 = p3 - p2
+    n1 = np.cross(b1, b2)
+    n2 = np.cross(b2, b3)
+    norm1, norm2 = np.linalg.norm(n1), np.linalg.norm(n2)
+    if norm1 < 1e-12 or norm2 < 1e-12:
+        return 0.0
+    n1, n2 = n1 / norm1, n2 / norm2
+    return float(np.degrees(np.arccos(np.clip(np.dot(n1, n2), -1, 1))))
+
+
+def plane_normal(points: np.ndarray) -> np.ndarray:
+    """Return the unit normal of the plane through the first three of *points*."""
+    v1 = points[1] - points[0]
+    v2 = points[2] - points[0]
+    n = np.cross(v1, v2)
+    norm = np.linalg.norm(n)
+    return n / norm if norm > 1e-12 else np.array([0.0, 0.0, 1.0])
+
+
+def in_plane_offset(normal: np.ndarray, plane_origin: np.ndarray, point: np.ndarray) -> float:
+    """Project *point* onto the plane defined by *normal* through *plane_origin*.
+
+    Returns the distance between the projection and *plane_origin*.
+    """
+    proj = point - np.dot(point - plane_origin, normal) * normal
+    return float(np.linalg.norm(proj - plane_origin))
+
+
+def is_planar(points: np.ndarray, max_dev: float = 5.0) -> bool:
+    """Return whether *points* are coplanar within *max_dev* degrees.
+
+    Computes the local normal at each point (from its two neighbours, treating
+    *points* as a closed loop) and checks that all pairwise normal deviations
+    are below *max_dev*.
+
+    Args:
+        points: Point coordinates ``(n, 3)``.
+        max_dev: Max allowed deviation between local normals (degrees).
+    """
+    if len(points) < 3:
+        return False
+    normals = []
+    for k in range(len(points)):
+        v1 = points[(k + 1) % len(points)] - points[k]
+        v2 = points[(k - 1) % len(points)] - points[k]
+        n = np.cross(v1, v2)
+        norm = np.linalg.norm(n)
+        if norm > 1e-12:
+            normals.append(n / norm)
+    if len(normals) < 2:
+        return False
+    for i in range(len(normals)):
+        for j in range(i + 1, len(normals)):
+            angle = angle_between_vectors(normals[i], normals[j])
+            angle = min(angle, 180.0 - angle)
+            if angle > max_dev:
+                return False
+    return True

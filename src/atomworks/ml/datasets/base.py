@@ -1,14 +1,15 @@
 """Base classes for AtomWorks molecular datasets."""
 
+import copy
 import logging
 import os
 import socket
 import time
-from abc import ABC, abstractmethod
 from collections.abc import Callable
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol, runtime_checkable
 
+import numpy as np
 from torch.utils.data import Dataset
 
 from atomworks.ml.transforms.base import TransformedDict
@@ -18,48 +19,21 @@ from atomworks.ml.utils.rng import capture_rng_states
 logger = logging.getLogger("datasets")
 
 
-class ExampleIDMixin(ABC):
-    """Mixin providing example ID functionality to a Dataset.
+@runtime_checkable
+class ExampleIDProtocol(Protocol):
+    """Structural interface for datasets that support ID-based access."""
 
-    Provides methods for converting between example IDs and indices, and checking
-    if an example ID exists in the dataset.
-    """
-
-    @abstractmethod
     def __contains__(self, example_id: str) -> bool:
-        """Check if the dataset contains the example ID.
+        """Check if the dataset contains the example ID."""
+        ...
 
-        Args:
-            example_id: The ID to check for.
-
-        Returns:
-            True if the ID exists in the dataset.
-        """
-        pass
-
-    @abstractmethod
     def id_to_idx(self, example_id: str | list[str]) -> int | list[int]:
-        """Convert example ID(s) to index(es).
+        """Convert example ID(s) to index(es)."""
+        ...
 
-        Args:
-            example_id: Single ID or list of IDs to convert.
-
-        Returns:
-            Corresponding index or list of indices.
-        """
-        pass
-
-    @abstractmethod
-    def idx_to_id(self, idx: int | list[int]) -> str | list[str]:
-        """Convert index(es) to example ID(s).
-
-        Args:
-            idx: Single index or list of indices to convert.
-
-        Returns:
-            Corresponding ID or list of IDs.
-        """
-        pass
+    def idx_to_id(self, idx: int | list[int]) -> str | np.ndarray:
+        """Convert index(es) to example ID(s)."""
+        ...
 
 
 class MolecularDataset(Dataset):
@@ -67,6 +41,7 @@ class MolecularDataset(Dataset):
 
     Handles Transform pipelines and loader functionality for molecular data.
     Subclasses implement :meth:`__getitem__` with their own data access patterns.
+    Dictionary samples include ``dataset_name`` after transforms finish.
     """
 
     def __init__(
@@ -128,6 +103,13 @@ class MolecularDataset(Dataset):
 
         return data
 
+    def _with_dataset_name(self, data: Any) -> Any:
+        """Attach source identity to a shallow copy, preserving transform history."""
+        if isinstance(data, dict):
+            data = copy.copy(data)
+            data["dataset_name"] = self.name
+        return data
+
     def _apply_transform(self, data: Any, example_id: str | None = None, idx: int | None = None) -> Any:
         """Apply the Transform pipeline with error handling and debugging support.
 
@@ -145,7 +127,7 @@ class MolecularDataset(Dataset):
             Exception: Any exception from the transform pipeline is re-raised.
         """
         if self.transform is None:
-            return data
+            return self._with_dataset_name(data)
 
         # Generate default example_id from idx and dataset name if not provided
         if example_id is None and idx is not None:
@@ -159,7 +141,7 @@ class MolecularDataset(Dataset):
             # Capture RNG state for reproducibility before applying Transforms
             rng_state_dict = capture_rng_states(include_cuda=False)
             data = self.transform(data)
-            return data
+            return self._with_dataset_name(data)
 
         except KeyboardInterrupt:
             # Always re-raise keyboard interrupts

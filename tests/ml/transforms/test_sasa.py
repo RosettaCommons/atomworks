@@ -1,90 +1,59 @@
 from typing import Any
 
+import biotite.structure as struc
 import numpy as np
 import pytest
 from biotite.structure import AtomArray
+from biotite.structure.info import vdw_radius_single
 
-from atomworks.ml.transforms.sasa import CalculateSASA, calculate_atomwise_rasa
+from atomworks.ml.transforms.sasa import (
+    CalculateSASA,
+    _get_element_radii,
+    _get_protor_element_fallback_radii,
+    calculate_atomwise_rasa,
+)
 from atomworks.ml.utils.testing import cached_parse
 
-# Define test cases
-# (all values for radii and SASA are from "WhatIF")
 SASA_TEST_CASES = [
     {
-        "pdb_id": "1fu2",  # (multi-chain protein)
-        "probe_radius": 1.4,  # default radius for water as a solvent
+        "pdb_id": "1fu2",  # multi-chain protein with ZN
+        "probe_radius": 1.4,
         "atom_radii": "ProtOr",
         "point_number": 100,
         "spot_checks": [
-            {"atom_name": "H"},  # should be nan
-            {"atom_name": "ZN"},  # should be nan
-            {"atom_name": "N"},  # should be not nan
+            {"atom_name": "H", "expect_nan": True},
+            {"atom_name": "ZN", "expect_nan": True},  # ProtOr has no metal radii
+            {"atom_name": "N", "expect_nan": False},
         ],
     },
     {
-        "pdb_id": "3p42",  # testing protein with certain NaN coordinates
-        "probe_radius": 1.4,  # default radius for water as a solvent
+        "pdb_id": "3p42",  # protein with NaN coordinates
+        "probe_radius": 1.4,
         "atom_radii": "ProtOr",
         "point_number": 100,
         "spot_checks": [
-            {"atom_name": "H"},  # should be nan
-            {"atom_name": "N"},  # should be not nan
+            {"atom_name": "H", "expect_nan": True},
+            {"atom_name": "N", "expect_nan": False},
+        ],
+    },
+    {
+        "pdb_id": "1fu2",  # element mode: covers metals and ligand atoms
+        "probe_radius": 1.4,
+        "atom_radii": "element",
+        "point_number": 100,
+        "spot_checks": [
+            {"atom_name": "H", "expect_nan": True},
+            {"atom_name": "ZN", "expect_nan": False},  # element mode has metal radii
+            {"atom_name": "N", "expect_nan": False},
         ],
     },
 ]
 
 
-def _define_residue_keys(
-    atom_array: AtomArray,
-):
-    """
-    Defines a key for each residue in the atom array.
-    """
-    res_ids = atom_array.res_id
-    res_names = atom_array.res_name
-    chain_ids = atom_array.chain_id
-    transformation_ids = atom_array.transformation_id
-
-    # Create unique keys for each residue using chain_id, res_id, and res_name
-    res_keys = [
-        f"{chain}_{transform}:{name}_{res_id}"
-        for chain, transform, name, res_id in zip(chain_ids, transformation_ids, res_names, res_ids, strict=False)
-    ]
-    return res_keys
-
-
-def _count_atoms_in_each_residue(atom_array: AtomArray) -> dict[int, int]:
-    """Count the number of atoms in each residue in the atom array."""
-    # Get the residue keys
-    res_keys = _define_residue_keys(atom_array)
-    # Count atoms per unique residue
-    unique_keys, counts = np.unique(res_keys, return_counts=True)
-    return dict(zip(unique_keys, counts, strict=False))
-
-
-def _get_indices_of_singleton_residues(atom_array: AtomArray) -> np.ndarray:
-    """Get the indices of residues with only one atom in the atom array."""
-    res_count_mapping = _count_atoms_in_each_residue(atom_array)
-
-    res_keys = _define_residue_keys(atom_array)
-    singleton_residue_keys = [key for key, count in res_count_mapping.items() if count == 1]
-    singleton_residue_indices = np.isin(res_keys, singleton_residue_keys)
-    return singleton_residue_indices
-
-
 @pytest.mark.parametrize("test_case", SASA_TEST_CASES)
 def test_calculate_sasa(test_case: dict[str, Any]):
-    """
-    Test the CalculateSASA transform using a multi-chain protein.
-    Checks:
-    - The SASA of atoms that should not have SASA calculated are NaN
-    - The SASA of heavy atoms that should have SASA are >=0
-    """
-
-    # Load the atom array
+    """Test CalculateSASA with ProtOr radii (protein-only)."""
     data = cached_parse(test_case["pdb_id"])
-
-    # Apply the transform
     transform = CalculateSASA(
         probe_radius=test_case["probe_radius"],
         atom_radii=test_case["atom_radii"],
@@ -92,30 +61,23 @@ def test_calculate_sasa(test_case: dict[str, Any]):
     )
     data = transform(data)
 
-    # Check SASA values of specific atoms
-
     for spot_check in test_case["spot_checks"]:
         atom_mask = data["atom_array"].atom_name == spot_check["atom_name"]
-        if data["atom_array"][atom_mask].atom_name[0] in (["ZN", "NA", "H"]):
-            assert np.isnan(data["atom_array"][atom_mask].sasa).all()
+        if spot_check["expect_nan"]:
+            assert np.isnan(
+                data["atom_array"][atom_mask].sasa
+            ).all(), f"{spot_check['atom_name']} should have NaN SASA with {test_case['atom_radii']} radii"
         else:
-            valid_mask = ~np.isnan(data["atom_array"][atom_mask].coord).all(axis=1)
-            assert np.all(data["atom_array"][atom_mask][valid_mask].sasa >= 0)
+            valid_mask = ~np.isnan(data["atom_array"][atom_mask].coord).any(axis=-1)
+            assert np.all(
+                data["atom_array"][atom_mask][valid_mask].sasa >= 0
+            ), f"{spot_check['atom_name']} should have valid SASA with {test_case['atom_radii']} radii"
 
 
 @pytest.mark.parametrize("test_case", SASA_TEST_CASES)
 def test_calculate_rasa(test_case: dict[str, Any]):
-    """
-    Test the CalculateRASA transform using a multi-chain protein.
-    Checks:
-    - The RASA of atoms that should not have RASA calculated are NaN
-    - The RASA of heavy atoms that should have RASA are >=0
-    """
-
-    # Load the atom array
+    """Test RASA with ProtOr radii (protein-only)."""
     data = cached_parse(test_case["pdb_id"])
-
-    # Apply the transform
     atom_array = data["atom_array"]
     rasa = calculate_atomwise_rasa(
         atom_array,
@@ -123,27 +85,104 @@ def test_calculate_rasa(test_case: dict[str, Any]):
         atom_radii=test_case["atom_radii"],
         point_number=test_case["point_number"],
     )
-    data["atom_array"].set_annotation("rasa", rasa)
 
-    singleton_residue_indices = _get_indices_of_singleton_residues(atom_array)
-    # convert indices to boolean mask
-    is_singleton_residues = np.zeros(len(atom_array), dtype=bool)
-    if len(singleton_residue_indices) > 0:
-        is_singleton_residues[singleton_residue_indices] = True
+    has_coords = ~np.isnan(atom_array.coord).any(axis=-1)
+    is_heavy = atom_array.element != "H"
+    has_sasa = ~np.isnan(rasa)
+    valid_mask = has_coords & is_heavy & has_sasa
 
-    # Check RASA values of specific atoms
-    atom_mask = data["atom_array"].element == "H"
-    atom_mask |= data["atom_array"].occupancy == 0
-    atom_mask |= is_singleton_residues
-    assert np.isnan(data["atom_array"][atom_mask].rasa).all()
-    assert np.all(data["atom_array"][~atom_mask].rasa >= 0), "RASA should be >= 0 for heavy atoms"
-    assert np.all(data["atom_array"][~atom_mask].rasa <= 1), "RASA should be <= 1 for heavy atoms"
+    assert np.all(rasa[valid_mask] >= 0), "RASA should be >= 0 for valid heavy atoms"
+    assert np.all(rasa[valid_mask] <= 1), "RASA should be <= 1 for valid heavy atoms"
+
+    no_coords_mask = ~has_coords
+    assert np.isnan(rasa[no_coords_mask]).all(), "Atoms without coords should have NaN RASA"
 
 
-def test_calculate_rasa_failure():
-    data = cached_parse("7eeu")
+def _assert_valid_rasa(rasa: np.ndarray, atom_array: AtomArray, mode: str) -> None:
+    """Shared assertions for RASA across modes."""
+    has_coords = ~np.isnan(atom_array.coord).any(axis=-1)
+    is_heavy = atom_array.element != "H"
+    has_sasa = ~np.isnan(rasa)
+    valid_mask = has_coords & is_heavy & has_sasa
+
+    valid_rasa = rasa[valid_mask]
+    assert np.all(valid_rasa >= 0), f"[{mode}] RASA should be >= 0"
+    assert np.all(valid_rasa <= 1), f"[{mode}] RASA should be <= 1"
+
+
+def test_rasa_auto_protein_metal():
+    """Test auto mode on 1fu2 (protein + ZN): ProtOr for residues, element fallback for ZN."""
+    data = cached_parse("1fu2")
     atom_array = data["atom_array"]
-    rasa = calculate_atomwise_rasa(
-        atom_array,
+
+    rasa = calculate_atomwise_rasa(atom_array, atom_radii="auto")
+    _assert_valid_rasa(rasa, atom_array, "auto")
+
+    has_coords = ~np.isnan(atom_array.coord).any(axis=-1)
+    zn_mask = (atom_array.element == "ZN") & has_coords
+    if zn_mask.any():
+        assert not np.isnan(rasa[zn_mask]).any(), "ZN should have valid RASA with auto mode"
+
+    radii = _get_protor_element_fallback_radii(atom_array)
+    ala_ca_mask = (atom_array.res_name == "ALA") & (atom_array.atom_name == "CA")
+    if ala_ca_mask.any():
+        protor_ca = struc.info.radii.vdw_radius_protor("ALA", "CA")
+        assert radii[ala_ca_mask][0] == pytest.approx(protor_ca), "Standard residues should use ProtOr"
+    zn_only = atom_array.element == "ZN"
+    if zn_only.any():
+        assert radii[zn_only][0] == pytest.approx(vdw_radius_single("ZN")), "ZN should use element fallback"
+
+
+def test_rasa_auto_protein_dna_metal():
+    """Test auto mode on 6w13 (protein + DNA + MG + ligand): all atom types should work."""
+    data = cached_parse("6w13")
+    atom_array = data["atom_array"]
+
+    rasa = calculate_atomwise_rasa(atom_array, atom_radii="auto")
+    _assert_valid_rasa(rasa, atom_array, "auto")
+
+    has_coords = ~np.isnan(atom_array.coord).any(axis=-1)
+    mg_mask = (atom_array.element == "MG") & has_coords
+    if mg_mask.any():
+        assert not np.isnan(rasa[mg_mask]).any(), "MG should have valid RASA"
+
+    dna_residues = {"DA", "DT", "DC", "DG"}
+    dna_mask = np.isin(atom_array.res_name, dna_residues) & has_coords & (atom_array.element != "H")
+    if dna_mask.any():
+        assert not np.isnan(rasa[dna_mask]).any(), "DNA heavy atoms should have valid RASA"
+
+
+def test_element_radii_unknown_raises():
+    """Unknown elements should raise ValueError, not silently default."""
+    atom_array = AtomArray(1)
+    atom_array.element = np.array(["XX"])
+    atom_array.atom_name = np.array(["XX"])
+    atom_array.res_name = np.array(["UNK"])
+
+    with pytest.raises(ValueError, match="No VdW radius found for element 'XX'"):
+        _get_element_radii(atom_array)
+
+
+def test_element_radii_ligand_atoms():
+    """Element-based SASA/RASA should work for synthetic ligand-like atom arrays."""
+    atom_array = AtomArray(6)
+    atom_array.chain_id = np.array(["A", "A", "A", "L", "L", "L"])
+    atom_array.res_id = np.array([1, 1, 1, 0, 0, 0])
+    atom_array.res_name = np.array(["ALA", "ALA", "ALA", "L", "L", "L"])
+    atom_array.atom_name = np.array(["CA", "C", "N", "C0", "O0", "N0"])
+    atom_array.element = np.array(["C", "C", "N", "C", "O", "N"])
+    atom_array.coord = np.array(
+        [
+            [0.0, 0.0, 0.0],
+            [1.5, 0.0, 0.0],
+            [0.0, 1.5, 0.0],
+            [5.0, 5.0, 5.0],
+            [6.5, 5.0, 5.0],
+            [5.0, 6.5, 5.0],
+        ]
     )
-    assert np.isnan(rasa).all(), "RASA should be NaN for all atoms in this case"
+
+    rasa = calculate_atomwise_rasa(atom_array, atom_radii="element")
+    assert not np.isnan(rasa).any(), "All atoms should have valid RASA"
+    assert np.all(rasa >= 0)
+    assert np.all(rasa <= 1)

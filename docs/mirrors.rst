@@ -81,8 +81,8 @@ Step 3 — Configure an AF3-style dataset (example: train only on D-polypeptides
 Next we need to use the metadata to configure a dataset that we would like to sample from. This includes e.g. training cut-off, filters, transforms to apply, etc.
 Here's a simple example that:
 
-* Filters to D-polypeptide and L-polypeptide chains only (`POLYPEPTIDE_D` and `POLYPEPTIDE_L` -- to include additional chain types, replace the lists with the appropriate IDs (see [mapping](./src/atomworks/enums.py#L31-L45) in comments).
-* Excludes ligands in the AF3 list of excluded ligands, available at [`atomworks.io.constants.AF3_EXCLUDED_LIGANDS_REGEX`](./src/atomworks/constants.py#L350).
+* Filters to D-polypeptide and L-polypeptide chains only (`POLYPEPTIDE_D` and `POLYPEPTIDE_L` -- to include additional chain types, replace the lists with the appropriate IDs (see `mapping <https://github.com/baker-laboratory/atomworks-dev/blob/dev/src/atomworks/enums.py>`_ in comments).
+* Excludes ligands in the AF3 list of excluded ligands, available at `atomworks.constants.AF3_EXCLUDED_LIGANDS_REGEX <https://github.com/baker-laboratory/atomworks-dev/blob/dev/src/atomworks/constants.py>`_.
 
 .. code-block:: yaml
 
@@ -99,9 +99,12 @@ Here's a simple example that:
     _target_: atomworks.ml.datasets.datasets.ConcatDatasetWithID
     datasets:
       # Single PN units
-      - _target_: atomworks.ml.datasets.datasets.StructuralDatasetWrapper
-        dataset_parser:
-          _target_: atomworks.ml.datasets.parsers.PNUnitsDFParser
+      - _target_: atomworks.ml.datasets.datasets.PandasDataset
+        name: pn_units
+        id_column: example_id
+        data: /path/to/metadata/pn_units_df.parquet
+        loader:
+          _target_: atomworks.ml.datasets.loaders.create_structure_loader
         transform:
           _target_: atomworks.ml.pipelines.af3.build_af3_transform_pipeline
           is_inference: false
@@ -118,28 +121,26 @@ Here's a simple example that:
           #   - { dir: /path/to/msa, extension: .a3m.gz, directory_depth: 2 }
           # rna_msa_dirs:
           #   - { dir: /path/to/msa, extension: .afa, directory_depth: 0 }
-        dataset:
-          _target_: atomworks.ml.datasets.datasets.PandasDataset
-          name: pn_units
-          id_column: example_id
-          data: /path/to/metadata/pn_units_df.parquet
-          filters:
-            - "deposition_date < '2022-01-01'"
-            - "resolution < 5.0 and ~method.str.contains('NMR')"
-            - "num_polymer_pn_units <= 20"
-            - "cluster.notnull()"
-            - "method in ['X-RAY_DIFFRACTION', 'ELECTRON_MICROSCOPY']"
-            # Train only on D-polypeptides:
-            - "q_pn_unit_type in [5, 6]"  # 5 = POLYPEPTIDE_D, 6 = POLYPEPTIDE_L
-            # Exclude ligands from AF3 excluded set:
-            - "~(q_pn_unit_non_polymer_res_names.notnull() and q_pn_unit_non_polymer_res_names.str.contains('${af3_excluded_ligands_regex}', regex=True))"
-          columns_to_load: null
+        filters:
+          - "deposition_date < '2022-01-01'"
+          - "resolution < 5.0 and ~method.str.contains('NMR')"
+          - "num_polymer_pn_units <= 20"
+          - "cluster.notnull()"
+          - "method in ['X-RAY_DIFFRACTION', 'ELECTRON_MICROSCOPY']"
+          # Train only on D-polypeptides:
+          - "q_pn_unit_type in [5, 6]"  # 5 = POLYPEPTIDE_D, 6 = POLYPEPTIDE_L
+          # Exclude ligands from AF3 excluded set:
+          - "~(q_pn_unit_non_polymer_res_names.notnull() and q_pn_unit_non_polymer_res_names.str.contains('${af3_excluded_ligands_regex}', regex=True))"
+        columns_to_load: null
         save_failed_examples_to_dir: null
 
       # Binary interfaces
-      - _target_: atomworks.ml.datasets.datasets.StructuralDatasetWrapper
-        dataset_parser:
-          _target_: atomworks.ml.datasets.parsers.InterfacesDFParser
+      - _target_: atomworks.ml.datasets.datasets.PandasDataset
+        name: interfaces
+        id_column: example_id
+        data: /path/to/metadata/interfaces_df.parquet
+        loader:
+          _target_: atomworks.ml.datasets.loaders.create_structure_loader
         transform:
           _target_: atomworks.ml.pipelines.af3.build_af3_transform_pipeline
           is_inference: false
@@ -155,25 +156,18 @@ Here's a simple example that:
           #   - { dir: /path/to/msa, extension: .a3m.gz, directory_depth: 2 }
           # rna_msa_dirs:
           #   - { dir: /path/to/msa, extension: .afa, directory_depth: 0 }
-        dataset:
-          _target_: atomworks.ml.datasets.datasets.PandasDataset
-          name: interfaces
-          id_column: example_id
-          data: /path/to/metadata/interfaces_df.parquet
-          filters:
-            - "deposition_date < '2022-01-01'"
-            - "resolution < 5.0 and ~method.str.contains('NMR')"
-            - "num_polymer_pn_units <= 20"
-            - "cluster.notnull()"
-            - "method in ['X-RAY_DIFFRACTION', 'ELECTRON_MICROSCOPY']"
-            # Train only on D-polypeptide interfaces:
-            - "pn_unit_1_type in [5, 6]"  # 5 = POLYPEPTIDE_D, 6 = POLYPEPTIDE_L
-            - "pn_unit_2_type in [5, 6]"  # 5 = POLYPEPTIDE_D, 6 = POLYPEPTIDE_L
-            - "~(pn_unit_1_non_polymer_res_names.notnull() and pn_unit_1_non_polymer_res_names.str.contains('${af3_excluded_ligands_regex}', regex=True))"
-            - "~(pn_unit_2_non_polymer_res_names.notnull() and pn_unit_2_non_polymer_res_names.str.contains('${af3_excluded_ligands_regex}', regex=True))"
-          columns_to_load: null
-        cif_parser_args:
-          cache_dir: null
+        filters:
+          - "deposition_date < '2022-01-01'"
+          - "resolution < 5.0 and ~method.str.contains('NMR')"
+          - "num_polymer_pn_units <= 20"
+          - "cluster.notnull()"
+          - "method in ['X-RAY_DIFFRACTION', 'ELECTRON_MICROSCOPY']"
+          # Train only on D-polypeptide interfaces:
+          - "pn_unit_1_type in [5, 6]"  # 5 = POLYPEPTIDE_D, 6 = POLYPEPTIDE_L
+          - "pn_unit_2_type in [5, 6]"  # 5 = POLYPEPTIDE_D, 6 = POLYPEPTIDE_L
+          - "~(pn_unit_1_non_polymer_res_names.notnull() and pn_unit_1_non_polymer_res_names.str.contains('${af3_excluded_ligands_regex}', regex=True))"
+          - "~(pn_unit_2_non_polymer_res_names.notnull() and pn_unit_2_non_polymer_res_names.str.contains('${af3_excluded_ligands_regex}', regex=True))"
+        columns_to_load: null
         save_failed_examples_to_dir: null
 
 Step 4 — Train a model
@@ -188,7 +182,7 @@ You now have a full fledged dataset that you can use to train models on! If you 
 .. code-block::bash
   atomworks setup tests  # This will download the test pack to `tests/data` and unpack it there (~500 MB). 
 
-You will now have a mini PDB at `tests/data/pdb` and a mini custom CCD at `tests/data/ccd`. The distillation and metadata are in `data/ml/af2_distillation`, `data/ml/pdb_pn_units` and `data/ml/pdb_interfaces`. A dataset that uses all of these is [for example here](./tests/ml/conftest.py#L300).
+You will now have a mini PDB at `tests/data/pdb` and a mini custom CCD at `tests/data/ccd`. The distillation and metadata are in `data/ml/af2_distillation`, `data/ml/pdb_pn_units` and `data/ml/pdb_interfaces`. A dataset that uses all of these is for example `here <https://github.com/baker-laboratory/atomworks-dev/blob/dev/tests/ml/conftest.py>`_.
 
 To run the tests for the various datasets, you can run the following command:
 
@@ -196,4 +190,3 @@ To run the tests for the various datasets, you can run the following command:
   
   # Make sure you have the correct environment activated, and set your paths correctly in the .env file / shell environment variables (see points above)
   pytest tests/ml/pipelines/test_data_loading_pipelines.py
-

@@ -1,7 +1,5 @@
 """MSA organization command for standardized AtomWorks-compatible MSA directory structures."""
 
-from __future__ import annotations
-
 import logging
 from pathlib import Path
 
@@ -73,7 +71,7 @@ def organize(
     existing_msa_dirs: str | None = typer.Option(
         None,
         "--existing-msa-dirs",
-        help="Comma-separated MSA directories to check (uses LOCAL_MSA_DIRS env var if not specified).",
+        help="Comma-separated MSA directories to check (uses PROTEIN_MSA_DIRS env var if not specified)",
     ),
     verbose: bool = typer.Option(
         False,
@@ -144,7 +142,7 @@ def organize(
         typer.echo(f"{value}")
     typer.secho("=" * 40, fg=typer.colors.CYAN)
     if config.check_existing:
-        dirs_display = config.existing_msa_dirs if config.existing_msa_dirs else "LOCAL_MSA_DIRS env var"
+        dirs_display = config.existing_msa_dirs if config.existing_msa_dirs else "PROTEIN_MSA_DIRS env var"
         typer.secho(f"MSA Directories: {dirs_display}", fg=typer.colors.BLUE)
 
     enable_logging(verbose)

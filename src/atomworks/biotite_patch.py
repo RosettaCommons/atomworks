@@ -8,13 +8,11 @@ References:
     `Biotite Structure Module <https://www.biotite-python.org/apidoc/biotite.structure.html>`_
 """
 
-from typing import Callable
+from collections.abc import Callable
 
-
-import biotite
-from biotite.structure import AtomArray, AtomArrayStack, Atom
-import numpy as np
 import biotite.structure as struc
+import numpy as np
+from biotite.structure import Atom, AtomArray, AtomArrayStack
 
 __all__ = [
     "monkey_patch_biotite",
@@ -60,9 +58,33 @@ def apply_if_version_lt(version: str, min_version: str) -> Callable:
     return decorator
 
 
+def _add_transformation_id_to_struct_conn(
+    struct_conn: dict[str, np.ndarray],
+    atom_array: AtomArray,
+    bond_array: np.ndarray,
+) -> None:
+    """Add transformation_id fields to struct_conn for bond disambiguation.
+
+    Adds ptnr{1,2}_transformation_id custom fields to struct_conn,
+    enabling correct bond reconstruction in assemblies.
+
+    Args:
+        struct_conn: Dictionary to add transformation_id fields to (modified in-place).
+        atom_array: Atom array containing transformation_id annotation.
+        bond_array: Bond array with shape (n_bonds, 2+) where columns 0,1 are atom indices.
+    """
+    if "transformation_id" not in atom_array.get_annotation_categories():
+        raise ValueError("transformation_id annotation required to add transformation IDs to struct_conn")
+
+    transformation_id = atom_array.transformation_id
+    for i in range(2):
+        atom_indices = bond_array[:, i]
+        struct_conn[f"ptnr{i+1}_transformation_id"] = transformation_id[atom_indices].astype(str)
+
+
 def _add_query_mask_idxs_methods() -> None:
     """Add `query`, `mask`, and `idxs` methods to `AtomArray` and `AtomArrayStack`."""
-    from atomworks.io.utils.query import query, mask, idxs
+    from atomworks.io.utils.query import idxs, mask, query
 
     def query_method(self: AtomArray | AtomArrayStack, expr: str) -> AtomArray | AtomArrayStack:
         """
@@ -118,9 +140,9 @@ def _enable_lean_atom_array_repr() -> None:
                     atoms = atoms + ",\n\t" + self.get_atom(i).__repr__()
             return f"AtomArray([{atoms}\n])"
 
-        setattr(struc.AtomArray, "__repr__", lean_atom_array_repr)
-        setattr(struc.AtomArray, "_repr_original", original_repr)
-        setattr(struc.AtomArray, "_repr_lean", True)
+        struc.AtomArray.__repr__ = lean_atom_array_repr
+        struc.AtomArray._repr_original = original_repr
+        struc.AtomArray._repr_lean = True
 
 
 def _enable_segment_slices_in_atom_arrays() -> None:
@@ -135,14 +157,14 @@ def _enable_segment_slices_in_atom_arrays() -> None:
                 item = item(self)
             return original_getitem(self, item)
 
-        setattr(struc.AtomArray, "__getitem__", getitem_with_segment_slices)
-        setattr(struc.AtomArray, "_getitem_original", original_getitem)
-        setattr(struc.AtomArray, "_getitem_new", True)
+        struc.AtomArray.__getitem__ = getitem_with_segment_slices
+        struc.AtomArray._getitem_original = original_getitem
+        struc.AtomArray._getitem_new = True
 
 
 def _update_get_residue_starts() -> None:
     """Improve the `get_residue_starts` function to disambiguate symmetry copies."""
-    from atomworks.io.utils.selection import get_residue_starts  # noqa: E402
+    from atomworks.io.utils.selection import get_residue_starts
 
     struc.get_residue_starts = get_residue_starts
 
@@ -184,7 +206,7 @@ def _update_array() -> None:
         for i, atom in enumerate(atoms):
             if sorted(atom._annot.keys()) != names:
                 raise ValueError(
-                    f"The atom at index {i} does not share the same annotation categories as the atom at index 0"
+                    f"The atom at index {i} does not share the same " f"annotation categories as the atom at index 0"
                 )
         array = AtomArray(len(atoms))
 
@@ -203,253 +225,150 @@ def _update_array() -> None:
     struc.array = array
 
 
-def _update_pdbx_set_structure() -> None:
-    """Improve the `set_structure` function to handle altloc atoms."""
+def _concatenate() -> None:
+    """
+    Almost identical to biotite.structure.concatenate, but with a temporary fix
+    for the UnboundLocalError issue in concat_atoms assignment.
 
-    # fmt: off
-    # ruff: noqa
-    import biotite.structure.io.pdbx as pdbx
-    from biotite.structure.io.pdbx.convert import (
-        MaskValue,
-        _check_non_empty,
-        _determine_entity_id,
-        _get_or_create_block,
-        _repeat,
-        _set_inter_residue_bonds,
-        _set_intra_residue_bonds,
-        unitcell_from_vectors,
-    )
+    Once the PR for the fix is merged and released, we can remove this patch.
+    issue: https://github.com/biotite-dev/biotite/issues/855
+    biotite PR for the fix: https://github.com/biotite-dev/biotite/pull/857
+    """
+    from biotite.sequence import Sequence
+    from biotite.structure import AtomArray, AtomArrayStack
+    from biotite.structure.bonds import BondList
 
-    def set_structure(
-        pdbx_file,
-        array,
-        data_block=None,
-        include_bonds=False,
-        extra_fields=[],
-    ):
+    # Ensure that the atoms can be iterated over multiple times
+    def concatenate(atoms: list[AtomArray | AtomArrayStack]) -> AtomArray | AtomArrayStack:
         """
-        Set the ``atom_site`` category with atom information from an
-        :class:`AtomArray` or :class:`AtomArrayStack`.
-
-        This will save the coordinates, the mandatory annotation categories
-        and the optional annotation categories
-        ``atom_id``, ``b_factor``, ``occupancy`` and ``charge``.
-        If the atom array (stack) contains the annotation ``'atom_id'``,
-        these values will be used for atom numbering instead of continuous
-        numbering.
-        Furthermore, inter-residue bonds will be written into the
-        ``struct_conn`` category.
+        Concatenate multiple :class:`AtomArray` or :class:`AtomArrayStack` objects into
+        a single :class:`AtomArray` or :class:`AtomArrayStack`, respectively.
 
         Parameters
         ----------
-        pdbx_file : CIFFile or CIFBlock or BinaryCIFFile or BinaryCIFBlock
-            The file object.
-        array : AtomArray or AtomArrayStack
-            The structure to be written. If a stack is given, each array in
-            the stack will be in a separate model.
-        data_block : str, optional
-            The name of the data block.
-            Default is the first (and most times only) data block of the
-            file.
-            If the data block object is passed directly to `pdbx_file`,
-            this parameter is ignored.
-            If the file is empty, a new data block will be created.
-        include_bonds : bool, optional
-            If set to true and `array` has associated ``bonds`` , the
-            intra-residue bonds will be written into the ``chem_comp_bond``
-            category.
-            Inter-residue bonds will be written into the ``struct_conn``
-            independent of this parameter.
-        extra_fields : list of str, optional
-            List of additional fields from the ``atom_site`` category
-            that should be written into the file.
-            Default is an empty list.
+        atoms : iterable object of AtomArray or AtomArrayStack
+            The atoms to be concatenated.
+            :class:`AtomArray` cannot be mixed with :class:`AtomArrayStack`.
+
+        Returns
+        -------
+        concatenated_atoms : AtomArray or AtomArrayStack
+            The concatenated atoms, i.e. its ``array_length()`` is the sum of the
+            ``array_length()`` of the input ``atoms``.
 
         Notes
         -----
-        In some cases, the written inter-residue bonds cannot be read again
-        due to ambiguity to which atoms the bond refers.
-        This is the case, when two equal residues in the same chain have
-        the same (or a masked) `res_id`.
+        The following rules apply:
+
+        - Only the annotation categories that exist in all elements are transferred.
+        - The box of the first element that has a box is transferred, if any.
+        - The bonds of all elements are concatenated, if any element has associated bonds.
+        For elements without a :class:`BondList` an empty :class:`BondList` is assumed.
 
         Examples
         --------
 
-        >>> import os.path
-        >>> file = CIFFile()
-        >>> set_structure(file, atom_array)
-        >>> file.write(os.path.join(path_to_directory, "structure.cif"))
-
+        >>> atoms1 = array(
+        ...     [
+        ...         Atom([1, 2, 3], res_id=1, atom_name="N"),
+        ...         Atom([4, 5, 6], res_id=1, atom_name="CA"),
+        ...         Atom([7, 8, 9], res_id=1, atom_name="C"),
+        ...     ]
+        ... )
+        >>> atoms2 = array(
+        ...     [
+        ...         Atom([1, 2, 3], res_id=2, atom_name="N"),
+        ...         Atom([4, 5, 6], res_id=2, atom_name="CA"),
+        ...         Atom([7, 8, 9], res_id=2, atom_name="C"),
+        ...     ]
+        ... )
+        >>> print(concatenate([atoms1, atoms2]))
+                    1      N                1.000    2.000    3.000
+                    1      CA               4.000    5.000    6.000
+                    1      C                7.000    8.000    9.000
+                    2      N                1.000    2.000    3.000
+                    2      CA               4.000    5.000    6.000
+                    2      C                7.000    8.000    9.000
         """
-        _check_non_empty(array)
+        # Ensure that the atoms can be iterated over multiple times
+        if not isinstance(atoms, Sequence):
+            atoms = list(atoms)
 
-        block = _get_or_create_block(pdbx_file, data_block)
-        Category = block.subcomponent_class()
-        Column = Category.subcomponent_class()
-
-        # Fill PDBx columns from information
-        # in structures' attribute arrays as good as possible
-        atom_site = Category()
-        atom_site["group_PDB"] = np.where(array.hetero, "HETATM", "ATOM")
-        atom_site["type_symbol"] = np.copy(array.element)
-        atom_site["label_atom_id"] = np.copy(array.atom_name)
-        if "altloc_id" in array.get_annotation_categories():
-            atom_site["label_alt_id"] = np.copy(array.altloc_id)
-        else:
-            atom_site["label_alt_id"] = Column(
-                # AtomArrays do not store altloc atoms
-                np.full(array.array_length(), "."),
-                np.full(array.array_length(), MaskValue.INAPPLICABLE),
-            )
-        atom_site["label_comp_id"] = np.copy(array.res_name)
-        atom_site["label_asym_id"] = np.copy(array.chain_id)
-        if "chain_entity" in array.get_annotation_categories():
-            atom_site["label_entity_id"] = np.copy(array.chain_entity)
-        else:
-            atom_site["label_entity_id"] = _determine_entity_id(array.chain_id)
-        atom_site["label_seq_id"] = np.copy(array.res_id)
-        atom_site["pdbx_PDB_ins_code"] = Column(
-            np.copy(array.ins_code),
-            np.where(array.ins_code == "", MaskValue.INAPPLICABLE, MaskValue.PRESENT),
-        )
-        atom_site["auth_seq_id"] = atom_site["label_seq_id"]
-        atom_site["auth_comp_id"] = atom_site["label_comp_id"]
-        atom_site["auth_asym_id"] = atom_site["label_asym_id"]
-        atom_site["auth_atom_id"] = atom_site["label_atom_id"]
-
-        annot_categories = array.get_annotation_categories()
-        if "atom_id" in annot_categories:
-            atom_site["id"] = np.copy(array.atom_id)
-        if "b_factor" in annot_categories:
-            atom_site["B_iso_or_equiv"] = np.copy(array.b_factor)
-        if "occupancy" in annot_categories:
-            atom_site["occupancy"] = np.copy(array.occupancy)
-        if "charge" in annot_categories:
-            atom_site["pdbx_formal_charge"] = Column(
-                np.array([f"{int(c):+d}" if c != 0 else "?" for c in array.charge]),
-                np.where(array.charge == 0, MaskValue.MISSING, MaskValue.PRESENT),
-            )
-
-        # Handle all remaining custom fields
-        if len(extra_fields) > 0:
-            # ... check to avoid clashes with standard annotations
-            _standard_annotations = [
-                "hetero",
-                "element",
-                "atom_name",
-                "res_name",
-                "chain_id",
-                "res_id",
-                "ins_code",
-                "atom_id",
-                "b_factor",
-                "occupancy",
-                "charge",
-            ]
-            _reserved_annotation_names = list(atom_site.keys()) + _standard_annotations
-
-            for annot in extra_fields:
-                if annot in _reserved_annotation_names:
-                    raise ValueError(
-                        f"Annotation name '{annot}' is reserved and cannot be written to as extra field. "
-                        "Please choose another name."
-                    )
-                atom_site[annot] = np.copy(array.get_annotation(annot))
-
-        if array.bonds is not None:
-            struct_conn = _set_inter_residue_bonds(array, atom_site)
-            if struct_conn is not None:
-                block["struct_conn"] = struct_conn
-            if include_bonds:
-                chem_comp_bond = _set_intra_residue_bonds(array, atom_site)
-                if chem_comp_bond is not None:
-                    block["chem_comp_bond"] = chem_comp_bond
-
-        # In case of a single model handle each coordinate
-        # simply like a flattened array
-        if isinstance(array, AtomArray) or (isinstance(array, AtomArrayStack) and array.stack_depth() == 1):
-            # 'ravel' flattens coord without copy
-            # in case of stack with stack_depth = 1
-            atom_site["Cartn_x"] = np.copy(np.ravel(array.coord[..., 0]))
-            atom_site["Cartn_y"] = np.copy(np.ravel(array.coord[..., 1]))
-            atom_site["Cartn_z"] = np.copy(np.ravel(array.coord[..., 2]))
-            atom_site["pdbx_PDB_model_num"] = np.ones(array.array_length(), dtype=np.int32)
-        # In case of multiple models repeat annotations
-        # and use model-specific coordinates
-        else:
-            atom_site = _repeat(atom_site, array.stack_depth())
-            coord = np.reshape(array.coord, (array.stack_depth() * array.array_length(), 3))
-            atom_site["Cartn_x"] = np.copy(coord[:, 0])
-            atom_site["Cartn_y"] = np.copy(coord[:, 1])
-            atom_site["Cartn_z"] = np.copy(coord[:, 2])
-            atom_site["pdbx_PDB_model_num"] = np.repeat(
-                np.arange(1, array.stack_depth() + 1, dtype=np.int32),
-                repeats=array.array_length(),
-            )
-        if "atom_id" not in annot_categories:
-            # Count from 1
-            atom_site["id"] = np.arange(1, len(atom_site["group_PDB"]) + 1)
-        block["atom_site"] = atom_site
-
-        # Write box into file
-        if array.box is not None:
-            # PDBx files can only store one box for all models
-            # -> Use first box
-            if array.box.ndim == 3:
-                box = array.box[0]
+        length = 0
+        depth = None
+        element_type = None
+        common_categories = set(atoms[0].get_annotation_categories())
+        box = None
+        has_bonds = False
+        for element in atoms:
+            if element_type is None:
+                if not isinstance(element, (AtomArray, AtomArrayStack)):
+                    raise TypeError("Expected 'AtomArray' or 'AtomArrayStack', " f"but got '{type(element).__name__}'")
+                element_type = type(element)
             else:
-                box = array.box
-            len_a, len_b, len_c, alpha, beta, gamma = unitcell_from_vectors(box)
-            cell = Category()
-            cell["length_a"] = len_a
-            cell["length_b"] = len_b
-            cell["length_c"] = len_c
-            cell["angle_alpha"] = np.rad2deg(alpha)
-            cell["angle_beta"] = np.rad2deg(beta)
-            cell["angle_gamma"] = np.rad2deg(gamma)
-            block["cell"] = cell
+                if not isinstance(element, element_type):
+                    raise TypeError(f"Cannot concatenate '{type(element).__name__}' " f"with '{element_type.__name__}'")
+            length += element.array_length()
+            if isinstance(element, AtomArrayStack):
+                if depth is None:
+                    depth = element.stack_depth()
+                else:
+                    if element.stack_depth() != depth:
+                        raise IndexError("The stack depths are not equal")
+            common_categories &= set(element.get_annotation_categories())
+            if element.box is not None and box is None:
+                box = element.box
+            if element.bonds is not None:
+                has_bonds = True
 
-    pdbx.set_structure = set_structure
-    # fmt: on
-
-
-def _update_coord() -> None:
-    """Patch the `coord` function to use isinstance (necessary for AtomArrayPlus)"""
-
-    def coord(item):
-        """
-        Get the atom coordinates of the given array.
-
-        This may be directly and :class:`Atom`, :class:`AtomArray` or
-        :class:`AtomArrayStack` or
-        alternatively an (n x 3) or (m x n x 3)  :class:`ndarray`
-        containing the coordinates.
-
-        Parameters
-        ----------
-        item : Atom or AtomArray or AtomArrayStack or ndarray
-            Returns the :attr:`coord` attribute, if `item` is an
-            :class:`Atom`, :class:`AtomArray` or :class:`AtomArrayStack`.
-            Directly returns the input, if `item` is a :class:`ndarray`.
-
-        Returns
-        -------
-        coord : ndarray
-            Atom coordinates.
-        """
-
-        if isinstance(item, (Atom, struc.atoms._AtomArrayBase)):
-            return item.coord
-        elif isinstance(item, np.ndarray):
-            return item.astype(np.float32, copy=False)
+        # Use depth to decide: AtomArrayStack sets depth, AtomArray (and subclasses) leave it None.
+        # Prefer depth over element_type so subclasses / re-exports of AtomArray still get the correct type.
+        if depth is None:
+            concat_atoms = AtomArray(length)
         else:
-            return np.array(item, dtype=np.float32)
+            concat_atoms = AtomArrayStack(depth, length)
+        concat_atoms.coord = np.concatenate([element.coord for element in atoms], axis=-2)
+        for category in common_categories:
+            concat_atoms.set_annotation(
+                category,
+                np.concatenate([element.get_annotation(category) for element in atoms], axis=0),
+            )
+        concat_atoms.box = box
+        if has_bonds:
+            # Concatenate bonds of all elements
+            concat_atoms.bonds = BondList.concatenate(
+                [element.bonds if element.bonds is not None else BondList(element.array_length()) for element in atoms]
+            )
 
-    struc.atoms.coord = coord
+        return concat_atoms
 
-    # These pyx files also need to be updated with the new version
-    struc.celllist.to_coord = coord
-    struc.sasa.CellList = struc.celllist.CellList
+    struc.atoms.concatenate = concatenate
+    struc.concatenate = concatenate
+
+
+def _update_set_inter_residue_bonds() -> None:
+    """Patch ``_set_inter_residue_bonds`` to add custom ``transformation_id`` fields to struct_conn."""
+    import biotite.structure.io.pdbx.convert as pdbx_convert
+    from biotite.structure.io.pdbx.convert import (
+        _filter_bonds,
+        _filter_canonical_links,
+    )
+    from biotite.structure.io.pdbx.convert import (
+        _set_inter_residue_bonds as _set_inter_residue_bonds_original,
+    )
+
+    # ruff: noqa
+    def _set_inter_residue_bonds(array, atom_site):
+        struct_conn = _set_inter_residue_bonds_original(array, atom_site)
+        if struct_conn is None:
+            return None
+        if "transformation_id" in array.get_annotation_categories():
+            bond_array = _filter_bonds(array, "inter")
+            bond_array = bond_array[~_filter_canonical_links(array, bond_array)]
+            _add_transformation_id_to_struct_conn(struct_conn, array, bond_array)
+        return struct_conn
+
+    pdbx_convert._set_inter_residue_bonds = _set_inter_residue_bonds
 
 
 def monkey_patch_biotite() -> None:
@@ -465,7 +384,7 @@ def monkey_patch_biotite() -> None:
     _enable_segment_slices_in_atom_arrays()
     _update_get_residue_starts()
     _update_array()
-    _update_pdbx_set_structure()
-    _update_coord()  # TODO: Remove once biotite 1.5.0 is released (will contain this fix)
+    _concatenate()
+    _update_set_inter_residue_bonds()
 
     _HAS_BEEN_PATCHED = True

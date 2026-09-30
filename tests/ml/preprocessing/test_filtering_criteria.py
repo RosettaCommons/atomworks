@@ -1,19 +1,17 @@
-"""
-PyTest function to test filtering criteria.
+"""Test preprocessing filtering criteria.
+
 Tested criteria includes:
 - The detection and resolutions of clashes within a structure
 - The exclusion of non-polymers bonded to a polymer via a non-biological bond
 """
 
-from __future__ import annotations
-
 from typing import Any
 
-import pandas as pd
 import pytest
 
+from atomworks.ml.preprocessing.preprocess import preprocess
 from atomworks.ml.utils.testing import get_pdb_mirror_path
-from tests.ml.preprocessing.conftest import DATA_PREPROCESSOR
+from tests.ml.preprocessing.conftest import TEST_CONFIG
 
 FILTERING_CRITERIA_TEST_CASES = [
     # Clashing test cases
@@ -30,7 +28,6 @@ FILTERING_CRITERIA_TEST_CASES = [
     },
     # Non-biological bond test cases
     {"pdb_id": "1pak", "pn_units_to_keep": ["A_1"], "pn_units_to_remove": ["B_1"]},
-    # 2pnf - non-biological bonds
 ]
 
 
@@ -39,16 +36,8 @@ def test_filtering_criteria(test_case: dict[str, Any]):
     pdb_id = test_case["pdb_id"]
     path = get_pdb_mirror_path(pdb_id)
 
-    rows = DATA_PREPROCESSOR.get_rows(path)
-    df = pd.DataFrame(rows)
-    pn_unit_iids = eval(df.iloc[0]["all_pn_unit_iids_after_processing"])
-
-    assert set(pn_unit_iids) >= set(df["q_pn_unit_iid"].unique().tolist())
-
-    # ...assert that all of the rows have the same PN units
-    assert (
-        df["all_pn_unit_iids_after_processing"] == df["all_pn_unit_iids_after_processing"].iloc[0]
-    ).all(), "Not all rows have the same pn_units"
+    _, pn_units, _ = preprocess(path, TEST_CONFIG)
+    pn_unit_iids = {p.pn_unit_iid for p in pn_units}
 
     pn_units_to_keep = set(test_case["pn_units_to_keep"])
     pn_units_to_remove = set(test_case["pn_units_to_remove"])

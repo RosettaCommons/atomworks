@@ -4,8 +4,8 @@ import pandas as pd
 import pytest
 from biotite.structure import AtomArray
 
-from atomworks.constants import STANDARD_AA, STANDARD_DNA, STANDARD_RNA
-from atomworks.ml.datasets.parsers import PNUnitsDFParser, load_example_from_metadata_row
+from atomworks.constants import PDB_MIRROR_PATH, STANDARD_AA, STANDARD_DNA, STANDARD_RNA
+from atomworks.ml.datasets.loaders import create_structure_loader
 from atomworks.ml.preprocessing.constants import TRAINING_SUPPORTED_CHAIN_TYPES, ChainType
 from atomworks.ml.transforms.atomize import AtomizeByCCDName
 from atomworks.ml.transforms.base import Compose
@@ -25,6 +25,14 @@ from atomworks.ml.transforms.filters import (
 from atomworks.ml.utils.rng import create_rng_state_from_seeds, rng_state
 from atomworks.ml.utils.testing import cached_parse
 from atomworks.ml.utils.token import get_token_count, get_token_starts
+
+PN_UNIT_LOADER = create_structure_loader(
+    path_colname="pdb_id",
+    base_path=PDB_MIRROR_PATH,
+    extension=".cif.gz",
+    sharding_pattern="/1:3/",
+    column_mapping={"query_pn_unit_iids": ["q_pn_unit_iid"]},
+)
 
 
 @pytest.mark.parametrize("test_case", [{"pdb_id": "1s2k"}])
@@ -180,7 +188,7 @@ def test_remove_unsupported_chain_types(pdb_id: str, pn_units_df: pd.DataFrame):
     assert not rows.empty
 
     for _, row in rows.iterrows():
-        data = load_example_from_metadata_row(row, PNUnitsDFParser())
+        data = PN_UNIT_LOADER(row)
         is_unsupported_type = row["q_pn_unit_type"] not in TRAINING_SUPPORTED_CHAIN_TYPES
         original_atom_array = data["atom_array"].copy()
 
@@ -299,7 +307,7 @@ def test_filter_to_specified_pn_units(test_case: str, pn_units_df: pd.DataFrame)
     rows = rows.iloc[:1]
 
     for _, row in rows.iterrows():
-        data = load_example_from_metadata_row(row, PNUnitsDFParser())
+        data = PN_UNIT_LOADER(row)
 
         # Apply transforms
         # fmt: off
@@ -411,15 +419,15 @@ def test_randomly_remove_ligands():
         categories_100_percent["all"] == expected_remaining_100_percent
     ), f"With 100% probability, only free-floating ligands should be removed. Expected {len(expected_remaining_100_percent)}, got {categories_100_percent['counts']['all']}"
 
-    # Test with 50% probability multiple times to verify randomness works
+    # Test with 50% probability across 20 explicit seeded rngs.
     results_50_percent = []
-    for seed in range(10):  # Run 10 times with different seeds
-        with rng_state(create_rng_state_from_seeds(np_seed=seed)):
-            result_50_percent = random_remove_pn_units_by_annotation_query(
-                atom_array_with_covalent_mods.copy(),
-                query="~is_polymer & ~is_covalent_modification",
-                delete_probability=0.5,
-            )
+    for seed in range(20):
+        result_50_percent = random_remove_pn_units_by_annotation_query(
+            atom_array_with_covalent_mods.copy(),
+            query="~is_polymer & ~is_covalent_modification",
+            delete_probability=0.5,
+            rng=np.random.default_rng(seed),
+        )
         categories_50_percent = _categorize_pn_units(result_50_percent)
         results_50_percent.append(categories_50_percent["all"])
 

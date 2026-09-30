@@ -7,7 +7,7 @@ from typing import Any
 
 from torch.utils.data import ConcatDataset, Dataset
 
-from .base import ExampleIDMixin
+from .base import ExampleIDProtocol
 
 logger = logging.getLogger("datasets")
 
@@ -15,18 +15,16 @@ logger = logging.getLogger("datasets")
 class ConcatDatasetWithID(ConcatDataset):
     """Equivalent to :class:`torch.utils.data.ConcatDataset` but allows accessing examples by ID.
 
-    Provides ID-based access across multiple datasets that implement :class:`ExampleIDMixin`.
+    Provides ID-based access across multiple datasets that implement :class:`ExampleIDProtocol`.
     """
 
-    # TODO: Do I need all of these _raise_if etc. etc. here? Can I just check that the wrapped datasets inherit somehow from ExampleIDMixin?
+    datasets: list[ExampleIDProtocol]
 
-    datasets: list[ExampleIDMixin]
-
-    def __init__(self, datasets: list[ExampleIDMixin]):
+    def __init__(self, datasets: list[ExampleIDProtocol]):
         """Initialize ConcatDatasetWithID.
 
         Args:
-            datasets: List of datasets that implement ExampleIDMixin.
+            datasets: List of datasets that implement ExampleIDProtocol.
         """
         super().__init__(datasets)
 
@@ -161,7 +159,7 @@ class ConcatDatasetWithID(ConcatDataset):
         return self.get_dataset_by_idx(idx)
 
 
-def get_row_and_index_by_example_id(dataset: ExampleIDMixin, example_id: str) -> dict:
+def get_row_and_index_by_example_id(dataset: ExampleIDProtocol, example_id: str) -> dict:
     """Retrieve a row and its index from a nested dataset structure by its example ID.
 
     Args:
@@ -180,7 +178,8 @@ def get_row_and_index_by_example_id(dataset: ExampleIDMixin, example_id: str) ->
         dataset = dataset.get_dataset_by_idx(_local_idx)
         _local_idx = dataset.id_to_idx(example_id)
 
-    row = dataset.data.loc[example_id]
+    idx_local = dataset.id_to_idx(example_id)
+    row = dataset.metadata.get_row(idx_local)
     return {"row": row, "index": idx}
 
 
@@ -222,7 +221,7 @@ class FallbackDatasetWrapper(Dataset):
 
         for i, idx in enumerate(idxs):
             dataset = self.dataset if i == 0 else self.fallback_dataset
-            dataset_name = "Primary dataset" if i == 0 else f"Fallback {i}/{len(idxs) - 1}"
+            dataset_name = "Primary dataset" if i == 0 else f"Fallback {i}/{len(idxs)-1}"
 
             try:
                 return dataset[idx]
@@ -238,11 +237,11 @@ class FallbackDatasetWrapper(Dataset):
 
                 # Log fallback attempt if not the last one
                 if i < len(idxs) - 1:
-                    logger.warning(f"({dataset_name}): Trying fallback index {idxs[i + 1]}.{example_id}")
+                    logger.warning(f"({dataset_name}): Trying fallback index {idxs[i+1]}.{example_id}")
 
         # All attempts failed
         logger.error(
-            f"(Exceeded all {len(idxs) - 1} fallbacks. Training will crash now. Errors: {error_list} for examples: {example_id_list})"
+            f"(Exceeded all {len(idxs)-1} fallbacks. Training will crash now. Errors: {error_list} for examples: {example_id_list})"
         )
         raise RuntimeError(f"All attempts failed for indices {idxs}. See error_list for details.") from ExceptionGroup(
             "All fallback attempts failed", error_list

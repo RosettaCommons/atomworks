@@ -1,17 +1,21 @@
 import copy
 import logging
 import numbers
+import warnings
 from collections import defaultdict
 from collections.abc import Sequence
-from typing import Any, Generic, TypeVar, Union
+from typing import Any, Generic, Literal, TypeVar, Union
 
 import biotite.structure as struc
 import numpy as np
-from biotite.structure import AtomArray, AtomArrayStack
+from biotite.structure import AtomArray, AtomArrayStack, repeat
+
+from atomworks.io.utils.selection import get_annotation_categories
 
 logger = logging.getLogger("atomworks.io")
 
 T = TypeVar("T")
+AnnotationMismatchPolicy = Literal["raise", "warn", "drop"]
 
 
 def _get_sensible_default(dtype: Any) -> Any:
@@ -404,54 +408,124 @@ class AnnotationList2D(Generic[T]):
 
 
 class _AtomArrayPlusBase:
-    """
-    Mixin for AtomArrayPlus and AtomArrayPlusStack to support 2D (pairwise) annotations.
+    """Shared system-wide and pairwise annotation support for AtomArrayPlus and AtomArrayPlusStack."""
 
-    Provides methods for setting, getting, copying, and comparing 2D annotations.
-    """
-
+    _annot_0d: dict[str, np.ndarray]
     _annot_2d: dict[str, "AnnotationList2D"]
 
     def __init__(self, *args, **kwargs) -> None:
+        self._annot_0d: dict[str, np.ndarray] = {}
         self._annot_2d: dict[str, AnnotationList2D] = {}
+        self._custom_ccd_registry: dict[str, Any] = {}
+
+    def _get_annot_0d(self) -> dict[str, np.ndarray]:
+        """Return system-annotation storage, initializing it if absent."""
+        return self.__dict__.setdefault("_annot_0d", {})
+
+    def _n_body_annotations(self, n_body: int) -> dict:
+        if n_body == 0:
+            return self._get_annot_0d()
+        if n_body == 2:
+            return self._annot_2d
+        raise ValueError(f"n_body must be 0, 1 or 2, got {n_body!r}")
+
+    def set_annotation(self, category: str, array: Any, *, n_body: int = 1) -> None:
+        """Set a system scalar (0), per-atom array (1), or sparse AnnotationList2D (2).
+
+        The default delegates to Biotite unchanged. Scalars are copied; pairwise annotations
+        are revalidated in a new container retaining their arrays. System values survive atom slicing.
+        """
+        if n_body == 1:
+            return super().set_annotation(category, array)
+        annotations = self._n_body_annotations(n_body)
+        if n_body == 0:
+            array = np.asarray(array)
+            if array.ndim != 0:
+                raise ValueError(f"System annotation '{category}' must be a scalar, got shape {array.shape}.")
+            array = array.copy()
+        elif not isinstance(array, AnnotationList2D) or array.n_atoms != self.array_length():
+            raise ValueError(
+                f"Pairwise annotation '{category}' must be an AnnotationList2D for {self.array_length()} atoms."
+            )
+        else:
+            array = AnnotationList2D(self.array_length(), array.pairs, array.values)
+        annotations[category] = array
+
+    def get_annotation(self, category: str, *, n_body: int = 1) -> np.ndarray | AnnotationList2D:
+        """Get an annotation; defaults to Biotite's per-atom annotations."""
+        if n_body == 1:
+            return super().get_annotation(category)
+        try:
+            return self._n_body_annotations(n_body)[category]
+        except KeyError:
+            raise ValueError(f"{n_body}-body annotation category '{category}' does not exist") from None
+
+    def get_annotation_categories(self, *, n_body: int = 1) -> list[str]:
+        """List annotation names at the requested body order (per-atom by default)."""
+        if n_body == 1:
+            return super().get_annotation_categories()
+        return list(self._n_body_annotations(n_body))
+
+    def del_annotation(self, category: str, *, n_body: int = 1) -> None:
+        """Delete an annotation at the requested body order."""
+        if n_body == 1:
+            return super().del_annotation(category)
+        self._n_body_annotations(n_body).pop(category, None)
+
+    def _copy_annotations(self, clone: AtomArray | AtomArrayStack, *, n_body: int = 1) -> None:
+        """Copy annotations of one body order; delegate per-atom copying to Biotite."""
+        if n_body == 1:
+            return super()._copy_annotations(clone)
+        annotations = self._n_body_annotations(n_body)
+        copied = (
+            {name: np.copy(value) for name, value in annotations.items()} if n_body == 0 else copy.deepcopy(annotations)
+        )
+        setattr(clone, f"_annot_{n_body}d", copied)
+
+    def __eq_0d_annotations__(self, other: Any, equal_nan: bool = True) -> bool:
+        """Whether this structure's 0D annotations match another's."""
+        self_0d = self._get_annot_0d()
+        other_0d = other._get_annot_0d() if isinstance(other, _AtomArrayPlusBase) else {}
+        if set(self_0d) != set(other_0d):
+            return False
+        return all(
+            np.array_equal(
+                value,
+                other_0d[name],
+                equal_nan=equal_nan and value.dtype.kind in "fc" and other_0d[name].dtype.kind in "fc",
+            )
+            for name, value in self_0d.items()
+        )
 
     def set_annotation_2d(self, name: str, pairs: Sequence[Sequence[int]], values: Sequence[Any]) -> None:
-        """
-        Set (create or replace) a 2D annotation.
-
-        Args:
-            name (str): Name of the annotation.
-            pairs (Sequence[Sequence[int]]): List of (i, j) pairs.
-            values (Sequence[Any]): List of values for each pair.
-        """
-        if not isinstance(pairs, np.ndarray) or not np.issubdtype(pairs.dtype, np.integer):
-            pairs = np.array(pairs, dtype=np.int32)
-        if not isinstance(values, np.ndarray):
-            values = np.array(values)
-        self._annot_2d[name] = AnnotationList2D(self.array_length(), pairs, values)
+        """Deprecated: use set_annotation(name, AnnotationList2D(...), n_body=2)."""
+        warnings.warn(
+            "Use set_annotation(..., n_body=2) instead of set_annotation_2d().", DeprecationWarning, stacklevel=2
+        )
+        self.set_annotation(name, AnnotationList2D(self.array_length(), pairs, values), n_body=2)
 
     def get_annotation_2d(self, name: str) -> "AnnotationList2D":
-        """Return a 2D annotation (AnnotationList2D)."""
-        if name not in self._annot_2d:
-            raise ValueError(f"2D annotation category '{name}' does not exist")
-        return self._annot_2d[name]
+        """Deprecated: use get_annotation(name, n_body=2)."""
+        warnings.warn(
+            "Use get_annotation(..., n_body=2) instead of get_annotation_2d().", DeprecationWarning, stacklevel=2
+        )
+        return self.get_annotation(name, n_body=2)
 
     def get_annotation_2d_categories(self) -> list[str]:
-        """Return a list of all 2D annotation names (categories)."""
-        return list(self._annot_2d.keys())
+        """Deprecated: use get_annotation_categories(n_body=2)."""
+        warnings.warn(
+            "Use get_annotation_categories(n_body=2) instead of get_annotation_2d_categories().",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.get_annotation_categories(n_body=2)
 
     def del_annotation_2d(self, name: str) -> None:
-        """Remove a 2D annotation category.
-
-        Args:
-            name: The 2D annotation category to remove.
-        """
-        if name in self._annot_2d:
-            del self._annot_2d[name]
-
-    def _copy_2d_annotations(self, clone: Any) -> None:
-        """Deep copy 2D annotations to the clone."""
-        clone._annot_2d = copy.deepcopy(self._annot_2d)
+        """Deprecated: use del_annotation(name, n_body=2)."""
+        warnings.warn(
+            "Use del_annotation(..., n_body=2) instead of del_annotation_2d().", DeprecationWarning, stacklevel=2
+        )
+        self.del_annotation(name, n_body=2)
 
     def __eq_2d_annotations__(self, other: Any, equal_nan: bool = True) -> bool:
         """
@@ -478,12 +552,37 @@ class _AtomArrayPlusBase:
         """Subset all 2D annotations using the given item/index."""
         return {k: v[item] for k, v in self._annot_2d.items()}
 
+    def _warn_on_conversion_loss(self, src_cls: str, dst_cls: str) -> None:
+        """Log warnings for 0D/2D annotations and custom CCD entries discarded on downcast."""
+        if self._get_annot_0d():
+            logger.warning(
+                "Converting %s to %s will discard 0D annotations: %s",
+                src_cls,
+                dst_cls,
+                list(self._get_annot_0d()),
+            )
+        if self._annot_2d:
+            logger.warning(
+                "Converting %s to %s will discard 2D annotations: %s",
+                src_cls,
+                dst_cls,
+                list(self._annot_2d.keys()),
+            )
+        custom_ccd_registry = getattr(self, "_custom_ccd_registry", None)
+        if custom_ccd_registry:
+            logger.warning(
+                "Converting %s to %s will discard custom CCD registry entries: %s",
+                src_cls,
+                dst_cls,
+                list(custom_ccd_registry.keys()),
+            )
+
 
 class AtomArrayPlus(_AtomArrayPlusBase, AtomArray):
     """
-    Extension of AtomArray supporting arbitrary 2D (pairwise) annotations.
+    Extension of AtomArray supporting system-wide and sparse pairwise annotations.
 
-    2D annotations are stored as sparse lists of (i, j, value), accessible via set/get_annotation_2d methods.
+    Use set/get_annotation with n_body=0 for system scalars or n_body=2 for AnnotationList2D values.
     Automatically filters 2D annotations on slicing, following BondList semantics.
     """
 
@@ -504,16 +603,25 @@ class AtomArrayPlus(_AtomArrayPlusBase, AtomArray):
         """
         obj = cls(len(atom_array))
         vars(obj).update(vars(atom_array))
+        obj._annot_0d = {}
         obj._annot_2d = {}
+        obj._custom_ccd_registry = dict(getattr(atom_array, "_custom_ccd_registry", {}))
         return obj
 
-    def as_atom_array(self) -> AtomArray:
+    def as_atom_array(self, suppress_loss_warnings: bool = False) -> AtomArray:
         """
         Convert the AtomArrayPlus object back to an AtomArray object (removes 2D annotations).
+
+        Args:
+          suppress_loss_warnings: If ``True``, do not warn when 2D annotations or custom
+            CCD registry entries are discarded. Used by internal callers that reconstruct
+            that state on the result.
 
         Returns:
             AtomArray: A copy of this object as a plain AtomArray.
         """
+        if not suppress_loss_warnings:
+            self._warn_on_conversion_loss("AtomArrayPlus", "AtomArray")
         atom_array = AtomArray.__copy_create__(self)
         AtomArray.__copy_fill__(self, atom_array)
         return atom_array
@@ -539,10 +647,13 @@ class AtomArrayPlus(_AtomArrayPlusBase, AtomArray):
         new_obj = self.__class__.__new__(self.__class__)
 
         # Copy AtomArray internals
+        _METADATA_ATTRS = {"_annot_0d", "_annot_2d", "_custom_ccd_registry"}  # noqa: N806
         for attr in self.__dict__:
-            if attr != "_annot_2d":
+            if attr not in _METADATA_ATTRS:
                 setattr(new_obj, attr, getattr(result, attr))
+        self._copy_annotations(new_obj, n_body=0)
         new_obj._annot_2d = self.__getitem_2d_annotations__(item)
+        new_obj._custom_ccd_registry = dict(getattr(self, "_custom_ccd_registry", {}))
         return new_obj
 
     def __copy_create__(self) -> "AtomArrayPlus":
@@ -562,7 +673,9 @@ class AtomArrayPlus(_AtomArrayPlusBase, AtomArray):
             clone (AtomArrayPlus): The freshly instantiated copy to fill.
         """
         super().__copy_fill__(clone)
-        self._copy_2d_annotations(clone)
+        self._copy_annotations(clone, n_body=0)
+        self._copy_annotations(clone, n_body=2)
+        clone._custom_ccd_registry = dict(getattr(self, "_custom_ccd_registry", {}))
 
     def equal_annotations(self, item: Any, equal_nan: bool = True) -> bool:
         """
@@ -575,8 +688,10 @@ class AtomArrayPlus(_AtomArrayPlusBase, AtomArray):
         Returns:
             bool: True if the annotations are equal, False otherwise.
         """
-        return super().equal_annotations(item, equal_nan=equal_nan) and self.__eq_2d_annotations__(
-            item, equal_nan=equal_nan
+        return (
+            super().equal_annotations(item, equal_nan=equal_nan)
+            and self.__eq_0d_annotations__(item, equal_nan=equal_nan)
+            and self.__eq_2d_annotations__(item, equal_nan=equal_nan)
         )
 
 
@@ -611,15 +726,26 @@ class AtomArrayPlusStack(_AtomArrayPlusBase, AtomArrayStack):
         new_stack = cls(atom_array_stack.stack_depth(), atom_array_stack.array_length())
         # ... copy all attributes from the original atom array stack
         vars(new_stack).update(vars(atom_array_stack))
+        new_stack._annot_0d = {}
         # ... initialize empty 2D annotation dictionary
         new_stack._annot_2d = {}
         # ... initialize empty per-stack annotation dictionary
         new_stack._annot_per_stack = {}
+        # ... preserve custom CCD registry
+        new_stack._custom_ccd_registry = dict(getattr(atom_array_stack, "_custom_ccd_registry", {}))
 
         return new_stack
 
-    def as_atom_array_stack(self) -> AtomArrayStack:
-        """Convert the AtomArrayPlusStack back to an AtomArrayStack object (removes 2D annotations and per-stack annotations)."""
+    def as_atom_array_stack(self, suppress_loss_warnings: bool = False) -> AtomArrayStack:
+        """Convert the AtomArrayPlusStack back to an AtomArrayStack object (removes 2D annotations and per-stack annotations).
+
+        Args:
+          suppress_loss_warnings: If ``True``, do not warn when 2D annotations or custom
+            CCD registry entries are discarded. Used by internal callers that reconstruct
+            that state on the result.
+        """
+        if not suppress_loss_warnings:
+            self._warn_on_conversion_loss("AtomArrayPlusStack", "AtomArrayStack")
         atom_array_stack = AtomArrayStack.__copy_create__(self)
         AtomArrayStack.__copy_fill__(self, atom_array_stack)
         return atom_array_stack
@@ -627,9 +753,12 @@ class AtomArrayPlusStack(_AtomArrayPlusBase, AtomArrayStack):
     def get_array(self, index: int) -> AtomArrayPlus:
         """Obtain the AtomArrayPlus instance of the stack at the specified index."""
         array = AtomArrayPlus.from_atom_array(super().get_array(index))
+        self._copy_annotations(array, n_body=0)
         # Copy 2D annotations
         for name, ann in self._annot_2d.items():
             array._annot_2d[name] = ann
+        # Copy custom CCD registry
+        array._custom_ccd_registry = dict(getattr(self, "_custom_ccd_registry", {}))
 
         # Apply per-stack annotations for this index
         for name, annot in self._annot_per_stack.items():
@@ -646,19 +775,19 @@ class AtomArrayPlusStack(_AtomArrayPlusBase, AtomArrayStack):
 
     def set_per_stack_annotation(self, name: str, array: np.ndarray) -> None:
         """
-        Set a per-stack 1D annotation with shape (stack_depth, array_length).
+        Set a per-stack 1D annotation with shape (stack_depth, array_length, ...).
 
         Args:
             name: The name of the annotation.
-            array: Array with shape (stack_depth, array_length).
+            array: Array with shape (stack_depth, array_length, ...).
 
         Raises:
             ValueError: If the array shape is incorrect.
         """
         array = np.asarray(array)
-        if array.shape != (self.stack_depth(), self.array_length()):
+        if array.shape[:2] != (self.stack_depth(), self.array_length()):
             raise ValueError(
-                f"Expected array shape ({self.stack_depth()}, {self.array_length()}), but got {array.shape}"
+                f"Expected array shape ({self.stack_depth()}, {self.array_length()},...), but got {array.shape}"
             )
         self._annot_per_stack[name] = array
 
@@ -728,6 +857,8 @@ class AtomArrayPlusStack(_AtomArrayPlusBase, AtomArrayStack):
         # The parent method returns an AtomArrayStack, but we need to convert it to AtomArrayPlusStack
         # and copy over our special annotations
         new_stack = AtomArrayPlusStack.from_atom_array_stack(result)
+        new_stack._custom_ccd_registry = dict(getattr(self, "_custom_ccd_registry", {}))
+        self._copy_annotations(new_stack, n_body=0)
 
         # Case 3a: Two-dimensional indexing (stack[:, 0:10]) - slice both stack and atom dimensions
         if isinstance(index, tuple) and len(index) == 2:
@@ -743,7 +874,7 @@ class AtomArrayPlusStack(_AtomArrayPlusBase, AtomArrayStack):
         # Case 3b: One-dimensional indexing (stack[1:3], stack[mask]) - only stack dimension
         else:
             # Keep all 2D annotations since they apply to all atoms
-            new_stack._annot_2d = copy.deepcopy(self._annot_2d)
+            self._copy_annotations(new_stack, n_body=2)
 
             # Filter per-stack annotations using only the stack index
             for name, annot in self._annot_per_stack.items():
@@ -758,12 +889,17 @@ class AtomArrayPlusStack(_AtomArrayPlusBase, AtomArrayStack):
     def __copy_fill__(self, clone: "AtomArrayPlusStack") -> None:
         """Fill the clone with all data from this instance, including a deep copy of 2D annotations and per-stack annotations."""
         super().__copy_fill__(clone)
-        self._copy_2d_annotations(clone)
+        self._copy_annotations(clone, n_body=0)
+        self._copy_annotations(clone, n_body=2)
         clone._annot_per_stack = {name: np.copy(annot) for name, annot in self._annot_per_stack.items()}
+        clone._custom_ccd_registry = dict(getattr(self, "_custom_ccd_registry", {}))
 
     def equal_annotations(self, item: Any, equal_nan: bool = True) -> bool:
         """Check if the annotations of this AtomArrayPlusStack are equal to another AtomArrayPlusStack."""
         if not super().equal_annotations(item, equal_nan=equal_nan):
+            return False
+
+        if not self.__eq_0d_annotations__(item, equal_nan=equal_nan):
             return False
 
         if not self.__eq_2d_annotations__(item, equal_nan=equal_nan):
@@ -808,7 +944,10 @@ class AtomArrayPlusStack(_AtomArrayPlusBase, AtomArrayStack):
         self.set_per_stack_annotation(name, values)
 
 
-def as_atom_array(array: AtomArrayPlus | AtomArray | struc.Atom | list[struc.Atom]) -> AtomArray:
+def as_atom_array(
+    array: AtomArrayPlus | AtomArray | struc.Atom | list[struc.Atom],
+    suppress_loss_warnings: bool = False,
+) -> AtomArray:
     """
     Ensures that an AtomArrayPlus, AtomArray, list of Atoms, or Atom object is converted to an AtomArray.
 
@@ -817,13 +956,16 @@ def as_atom_array(array: AtomArrayPlus | AtomArray | struc.Atom | list[struc.Ato
     Args:
         array: The input to convert, which can be an AtomArrayPlus, AtomArray,
                a single Atom, or a list of Atoms.
+        suppress_loss_warnings: If ``True``, do not warn when 2D annotations or
+            custom CCD registry entries are discarded during an AtomArrayPlus
+            conversion.
 
     Returns:
         AtomArray: The converted atom array.
     """
     if isinstance(array, AtomArrayPlus):
         # ... AtomArrayPlus (must check before AtomArray, as AtomArray is a subclass of AtomArrayPlus)
-        return array.as_atom_array()
+        return array.as_atom_array(suppress_loss_warnings=suppress_loss_warnings)
     if isinstance(array, AtomArray):
         # ... unchanged
         return array
@@ -853,48 +995,220 @@ def as_atom_array_plus(array: AtomArrayPlus | AtomArray | struc.Atom | list[stru
     return AtomArrayPlus.from_atom_array(as_atom_array(array))
 
 
-def concatenate_atom_array_plus(arrays: list[AtomArrayPlus | AtomArray | struc.Atom]) -> AtomArrayPlus:
-    """
-    Concatenate multiple AtomArrayPlus objects, including their 2D annotations.
+def _merge_custom_ccd_registries(arrays: Sequence[Any]) -> dict[str, Any]:
+    """Merge ``_custom_ccd_registry`` dicts from ``arrays``, rejecting conflicting entries."""
+    merged: dict[str, Any] = {}
+    for arr in arrays:
+        registry = getattr(arr, "_custom_ccd_registry", None)
+        if not registry:
+            continue
+        for res_name, entry in registry.items():
+            existing = merged.get(res_name)
+            if existing is not None and existing is not entry:
+                existing_bonds = existing.bonds.as_array() if existing.bonds is not None else None
+                entry_bonds = entry.bonds.as_array() if entry.bonds is not None else None
+                same = (
+                    existing.array_length() == entry.array_length()
+                    and np.array_equal(existing.atom_name, entry.atom_name)
+                    and np.array_equal(existing.element, entry.element)
+                    and np.array_equal(existing_bonds, entry_bonds)
+                )
+                if not same:
+                    raise ValueError(
+                        f"Conflicting custom CCD registry entries for residue {res_name!r}: "
+                        "the same code is registered with different AtomArrays across inputs."
+                    )
+            merged[res_name] = entry
+    return merged
 
-    Only annotations present in all arrays are concatenated.
+
+def _fill_missing_standard_annotations_for_concatenation(
+    arrays: list[AtomArrayPlus],
+) -> list[AtomArrayPlus]:
+    """Copy inputs and fill the union of their registered StandardAnnotations."""
+    # StandardAnnotationBase imports AnnotationList2D from this module.
+    from atomworks.io.utils.standard_annotations import STANDARD_ANNOTATIONS
+
+    present = {
+        n_body: set().union(*(get_annotation_categories(array, n_body=n_body) for array in arrays)) for n_body in (1, 2)
+    }
+    filled_arrays = [array.copy() for array in arrays]
+    for annotation_cls in STANDARD_ANNOTATIONS:
+        if annotation_cls.n_body == 0:
+            continue
+        names = present[annotation_cls.n_body].intersection((annotation_cls.full_name, *annotation_cls.aliases))
+        if not names:
+            continue
+        for array in filled_arrays:
+            value = annotation_cls.annotation(array, default="generate")
+            for alias in names - {annotation_cls.full_name}:
+                if annotation_cls.n_body == 1:
+                    array.set_annotation(alias, value)
+                else:
+                    array.set_annotation_2d(alias, pairs=value.pairs, values=value.values)
+            annotation_cls.set_annotation(array, value)
+
+    return filled_arrays
+
+
+def _merge_0d_annotations(arrays: Sequence[Any]) -> dict[str, np.ndarray]:
+    """Copy agreed system values; missing values do not veto, conflicts raise."""
+    from atomworks.io.utils.standard_annotations import STANDARD_ANNOTATIONS
+
+    carriers = [annot for arr in arrays if (annot := arr._get_annot_0d())]
+    if not carriers:
+        return {}
+
+    fields_by_name = {
+        field: (annotation_cls.full_name, *annotation_cls.aliases)
+        for annotation_cls in STANDARD_ANNOTATIONS
+        if annotation_cls.n_body == 0
+        for field in (annotation_cls.full_name, *annotation_cls.aliases)
+    }
+    merged: dict[str, np.ndarray] = {}
+    for name in {name for annot in carriers for name in annot}:
+        values = [annot[field] for annot in carriers for field in fields_by_name.get(name, (name,)) if field in annot]
+        equal_nan = all(value.dtype.kind in "fc" for value in values)
+        if not all(np.array_equal(values[0], value, equal_nan=equal_nan) for value in values[1:]):
+            raise ValueError(f"Cannot concatenate conflicting system annotation '{name}'.")
+        merged[name] = np.copy(values[0])
+    return merged
+
+
+def concatenate_atom_array_plus(
+    arrays: list[AtomArrayPlus | AtomArray | struc.Atom],
+    *,
+    on_annotation_mismatch_policy: AnnotationMismatchPolicy = "raise",
+    fill_missing_standard_annotations: bool = False,
+) -> AtomArrayPlus:
+    """Concatenate structures while preserving bonds, registries, and annotations.
+
+    Missing registered StandardAnnotations can optionally be filled before
+    remaining annotation mismatches are handled by ``on_annotation_mismatch_policy``.
+    System values present in any input are copied; conflicting system values always raise.
 
     Args:
-        arrays (list[AtomArrayPlus]): List of AtomArrayPlus objects to concatenate.
+        arrays: Structures to concatenate.
+        on_annotation_mismatch_policy: How to handle annotation categories that
+            are absent from at least one input. ``"raise"`` rejects the mismatch,
+            ``"warn"`` warns before dropping mismatched categories, ``"drop"``
+            drops them silently.
+        fill_missing_standard_annotations: Fill registered StandardAnnotations
+            that are missing from some inputs on copies before handling any
+            remaining mismatches. Defaults to ``False``.
 
     Returns:
-        AtomArrayPlus: Concatenated AtomArrayPlus object.
+        Concatenated structure.
+
+    Raises:
+        ValueError: If the policy is invalid or is ``"raise"`` and annotations
+            differ between inputs, or if system values conflict regardless of policy.
     """
-    # Use standard AtomArray concatenation for base AtomArrays
-    #  (Biotite's concatenate is optimized for lists of AtomArrays)
-    base_arrays = [as_atom_array(arr) for arr in arrays]
-    arr_cat = struc.concatenate(base_arrays)
+    arrays_plus = [as_atom_array_plus(array) for array in arrays]
+
+    valid_policies = {"raise", "warn", "drop"}
+    if on_annotation_mismatch_policy not in valid_policies:
+        raise ValueError(
+            f"Invalid on_annotation_mismatch_policy {on_annotation_mismatch_policy!r}; "
+            f"expected one of {sorted(valid_policies)}."
+        )
+
+    if fill_missing_standard_annotations:
+        arrays_plus = _fill_missing_standard_annotations_for_concatenation(arrays_plus)
+
+    categories_1d = [set(array.get_annotation_categories()) for array in arrays_plus]
+    categories_2d = [set(array.get_annotation_categories(n_body=2)) for array in arrays_plus]
+    common_1d = set.intersection(*categories_1d) if categories_1d else set()
+    common_2d = set.intersection(*categories_2d) if categories_2d else set()
+    mismatched_1d = (set.union(*categories_1d) if categories_1d else set()) - common_1d
+    mismatched_2d = (set.union(*categories_2d) if categories_2d else set()) - common_2d
+    if mismatched_1d or mismatched_2d:
+        mismatch_parts = []
+        if mismatched_1d:
+            mismatch_parts.append(f"1D annotations {sorted(mismatched_1d)}")
+        if mismatched_2d:
+            mismatch_parts.append(f"2D annotations {sorted(mismatched_2d)}")
+        mismatch_message = "Annotation mismatch across inputs: " + "; ".join(mismatch_parts)
+        if on_annotation_mismatch_policy == "raise":
+            raise ValueError(mismatch_message)
+        if on_annotation_mismatch_policy == "warn":
+            warnings.warn(f"{mismatch_message}; dropping them.", UserWarning, stacklevel=2)
+
+    arr_cat = struc.concatenate(arrays_plus)
+    if arr_cat.box is not None:
+        arr_cat.box = arr_cat.box.copy()
 
     # Find common annotation names for 2D annotations
-    all_names = [set(arr._annot_2d.keys()) for arr in arrays if hasattr(arr, "_annot_2d")]
+    all_names = [set(arr._annot_2d.keys()) for arr in arrays_plus]
     common_names = set.intersection(*all_names) if all_names else set()
 
-    n_atoms_list = [len(arr) for arr in base_arrays]
+    n_atoms_list = [len(arr) for arr in arrays_plus]
     annotations_2d = {}
 
     for name in common_names:
-        empty_annotation = lambda array: AnnotationList2D(array.array_length(), [], [])  # noqa: E731
-        lists: list[AnnotationList2D] = [
-            arr._annot_2d[name] if hasattr(arr, "_annot_2d") else empty_annotation(as_atom_array(arr)) for arr in arrays
-        ]
+        lists: list[AnnotationList2D] = [arr._annot_2d[name] for arr in arrays_plus]
         annotations_2d[name] = AnnotationList2D.concatenate(lists, n_atoms_list)
 
     # Create new AtomArrayPlus and assign annotations
     result = AtomArrayPlus.from_atom_array(arr_cat)
-    for attr in arr_cat.__dict__:
-        setattr(result, attr, getattr(arr_cat, attr))
+    result._annot_0d = _merge_0d_annotations(arrays_plus)
     result._annot_2d = annotations_2d
+    result._custom_ccd_registry = _merge_custom_ccd_registries(arrays_plus)
 
     return result
 
 
+def repeat_atom_array_plus(
+    atoms: AtomArray | AtomArrayPlus | AtomArrayStack | AtomArrayPlusStack, coord: np.ndarray
+) -> AtomArrayPlus:
+    """Add support for AtomArrayPlus and AtomArrayPlusStack in biotite's `repeat` function.
+
+    This function should always be used within ``atomworks`` instead of biotite's native `repeat`.
+    This function depends on imports from `atomworks.io`, so it is excluded from the biotite monkey-patch.
+
+    atoms (AtomArray | AtomArrayPlus | AtomArrayStack | AtomArrayPlusStack): The atom array or stack to repeat.
+    coord (np.ndarray): The coordinates for the repeated array.
+
+    For full documentation of the base function, see https://www.biotite-python.org/latest/apidoc/biotite.structure.repeat.html
+    """
+
+    repetitions = len(coord)
+    repeated_array = repeat(atoms, coord)
+
+    if isinstance(atoms, AtomArrayPlus):
+        repeated_array = as_atom_array_plus(repeated_array)
+    elif isinstance(atoms, AtomArrayPlusStack):
+        repeated_array = as_atom_array_plus_stack(repeated_array)
+        for per_stack_annot_name in atoms.get_per_stack_annotation_categories():
+            original_annot = atoms.get_per_stack_annotation(per_stack_annot_name)
+            repeated_array.set_per_stack_annotation(per_stack_annot_name, np.tile(original_annot, (1, repetitions)))
+
+    if isinstance(atoms, _AtomArrayPlusBase):
+        atoms._copy_annotations(repeated_array, n_body=0)
+
+    # Copy over 2D annotations, if any
+    for category in get_annotation_categories(atoms, n_body=2):
+        original_annot = atoms.get_annotation(category, n_body=2)
+        annot_values = np.tile(original_annot.values, repetitions)
+
+        # Update the indices of the 2-body pairs within the repeat regions
+        num_pairs = original_annot.pairs.shape[0]
+        annot_pairs = np.tile(original_annot.pairs, (repetitions, 1))
+        offsets = np.repeat(np.arange(repetitions) * atoms.array_length(), num_pairs)
+        annot_pairs += offsets[:, None]
+
+        repeated_array.set_annotation(
+            category, AnnotationList2D(repeated_array.array_length(), annot_pairs, annot_values), n_body=2
+        )
+
+    return repeated_array
+
+
 def concatenate_any(
     arrays: list[AtomArrayPlus | AtomArray | struc.Atom | list[struc.Atom]],
+    *,
+    on_annotation_mismatch_policy: AnnotationMismatchPolicy = "raise",
+    fill_missing_standard_annotations: bool = False,
 ) -> AtomArrayPlus | AtomArray:
     """
     Concatenate a list of AtomArrayPlus or AtomArray objects.
@@ -903,6 +1217,12 @@ def concatenate_any(
 
     Args:
         arrays (list[Any]): List of arrays to concatenate.
+        on_annotation_mismatch_policy: Forwarded to
+            :func:`concatenate_atom_array_plus` when an input is an
+            :class:`AtomArrayPlus`.
+        fill_missing_standard_annotations: Forwarded to
+            :func:`concatenate_atom_array_plus` when an input is an
+            :class:`AtomArrayPlus`.
 
     Returns:
         Any: Concatenated array of the appropriate type.
@@ -911,7 +1231,11 @@ def concatenate_any(
         raise ValueError("Input list is empty.")
 
     if any(isinstance(arr, AtomArrayPlus) for arr in arrays):
-        return concatenate_atom_array_plus(arrays)
+        return concatenate_atom_array_plus(
+            arrays,
+            on_annotation_mismatch_policy=on_annotation_mismatch_policy,
+            fill_missing_standard_annotations=fill_missing_standard_annotations,
+        )
 
     return struc.concatenate(arrays)
 
@@ -920,19 +1244,33 @@ def insert_atoms(
     arr: AtomArray | AtomArrayPlus,
     new_atoms: list[AtomArray | AtomArrayPlus | struc.Atom],
     insert_positions: list[int],
+    *,
+    on_annotation_mismatch_policy: AnnotationMismatchPolicy = "raise",
+    fill_missing_standard_annotations: bool = False,
 ) -> AtomArray | AtomArrayPlus:
-    """
-    Insert atoms into an AtomArray or AtomArrayPlus BEFORE the specified positions.
+    """Insert atoms into an AtomArray or AtomArrayPlus before specified positions.
 
     Atoms are first concatenated to the end, then the array is sorted so that the new atoms appear at the specified positions.
     The function is robust to both AtomArray and AtomArrayPlus, and preserves 2D annotations and bonds.
+
+    Args:
+        arr: Array into which atoms are inserted.
+        new_atoms: Atoms or arrays to insert.
+        insert_positions: Position before which each corresponding entry in
+            ``new_atoms`` is inserted.
+        on_annotation_mismatch_policy: Forwarded to :func:`concatenate_any`.
+        fill_missing_standard_annotations: Forwarded to :func:`concatenate_any`.
     """
     n_atoms_orig = arr.array_length()
     assert isinstance(new_atoms, list) and isinstance(
         new_atoms[0], AtomArray | AtomArrayPlus | struc.Atom
     ), "new_atoms must be a list of AtomArray, AtomArrayPlus, or Atom objects."
     assert len(new_atoms) == len(insert_positions), "Each new atom must have a corresponding insert position."
-    arr_all = concatenate_any([arr, *new_atoms])
+    arr_all = concatenate_any(
+        [arr, *new_atoms],
+        on_annotation_mismatch_policy=on_annotation_mismatch_policy,
+        fill_missing_standard_annotations=fill_missing_standard_annotations,
+    )
 
     # Build a mapping from position to list of new atom indices to insert there
     insert_map = defaultdict(list)
@@ -965,8 +1303,7 @@ def stack_atom_array_plus(arrays: list[AtomArrayPlus]) -> AtomArrayPlusStack:
     """
     Create an AtomArrayPlusStack from a list of AtomArrayPlus.
 
-    All atom arrays must have an equal number of atoms and equal annotation arrays (including 2D annotations).
-    Arrays must have identical 1D annotations.
+    All atom arrays must have an equal number of atoms and equal annotations at every body order.
 
     TODO: Optionally, allow differing annotations (which will be converted to per-stack annotations)
 
@@ -993,16 +1330,16 @@ def stack_atom_array_plus(arrays: list[AtomArrayPlus]) -> AtomArrayPlusStack:
             )
 
     # Create a stack of AtomArrays...
-    atom_arrays = [array.as_atom_array() for array in arrays]
+    atom_arrays = [array.as_atom_array(suppress_loss_warnings=True) for array in arrays]
     atom_array_stack = struc.stack(atom_arrays)
 
     # ... and convert to AtomArrayPlusStack
     array_stack = AtomArrayPlusStack.from_atom_array_stack(atom_array_stack)
 
-    # Add 2D annotations from the first array to the stack (only for those 2D annotations that are present in all arrays)
-    for name in ref_array.get_annotation_2d_categories():
-        if all(name in array.get_annotation_2d_categories() for array in arrays):
-            array_stack._annot_2d[name] = ref_array.get_annotation_2d(name)
+    ref_array._copy_annotations(array_stack, n_body=0)
+    ref_array._copy_annotations(array_stack, n_body=2)
+
+    array_stack._custom_ccd_registry = _merge_custom_ccd_registries(arrays)
 
     return array_stack
 

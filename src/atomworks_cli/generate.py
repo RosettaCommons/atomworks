@@ -1,6 +1,4 @@
-"""MSA generation command using MMseqs2."""
-
-from __future__ import annotations
+"""MSA generation command using MMseqs2 or HHblits."""
 
 import logging
 from pathlib import Path
@@ -10,6 +8,7 @@ import typer
 
 from atomworks.enums import MSAFileExtension
 from atomworks.ml.preprocessing.msa.generating import (
+    HHblitsSearchConfig,
     MMseqs2SearchConfig,
     MSAGenerationConfig,
     make_msas_from_csv,
@@ -63,13 +62,13 @@ def generate(
     gpu: bool | None = typer.Option(
         None,
         "--gpu/--no-gpu",
-        help="Use GPU acceleration (auto-detects if not specified).",
+        help="(MMseqs2) Use GPU acceleration (auto-detects if not specified)",
     ),
     num_iterations: int = typer.Option(
         3,
         "--num-iterations",
         "-n",
-        help="Number of MMseqs2 search iterations.",
+        help="(MMseqs2) Number of search iterations",
     ),
     max_final_sequences: int = typer.Option(
         10_000,
@@ -79,18 +78,18 @@ def generate(
     use_env: bool = typer.Option(
         True,
         "--use-env/--no-env",
-        help="Include environmental (metagenomic) database.",
+        help="(MMseqs2) Include environmental (metagenomic) database",
     ),
-    num_workers: int = typer.Option(
-        32,
-        "--num-workers",
+    threads: int = typer.Option(
+        4,
+        "--threads",
         "-j",
-        help="Number of CPU threads.",
+        help="Number of CPU threads for search operations (used by both MMseqs2 and HHblits)",
     ),
     sensitivity: float | None = typer.Option(
         8.0,
         "--sensitivity",
-        help="MMseqs2 sensitivity (lower = faster, sparser MSAs).",
+        help="(MMseqs2) Sensitivity (lower = faster, sparser MSAs)",
     ),
     verbose: bool = typer.Option(
         False,
@@ -106,12 +105,21 @@ def generate(
     existing_msa_dirs: str | None = typer.Option(
         None,
         "--existing-msa-dirs",
-        help="Comma-separated list of MSA directories to check (uses LOCAL_MSA_DIRS env var if not specified).",
+        help="Comma-separated MSA directories to check (uses PROTEIN_MSA_DIRS env var if not specified)",
+    ),
+    backend: str = typer.Option(
+        "mmseqs2",
+        "--backend",
+        "-b",
+        help="MSA generation backend: 'mmseqs2' (default) or 'hhblits' (CPU-only)",
+    ),
+    hhblits_mem: int = typer.Option(
+        64,
+        "--hhblits-mem",
+        help="(HHblits) Memory limit in GB",
     ),
 ) -> None:
-    """Generate MSAs from sequences in a CSV file using MMseqs2.
-
-    Before using this command users must first install MMseqs2.
+    """Generate MSAs from sequences in a CSV file using MMseqs2 or HHblits.
 
     Examples:
         # Single-column CSV
@@ -134,9 +142,17 @@ def generate(
     if existing_msa_dirs:
         msa_dirs = [Path(d.strip()) for d in existing_msa_dirs.split(",")]
 
-    # Create search config with only sensitivity control
+    # Build backend-specific config
+    hhblits_search_config = None
+    if backend == "hhblits":
+        hhblits_search_config = HHblitsSearchConfig(mem=hhblits_mem)
+        if gpu:
+            logger.info("Note: HHblits is CPU-only; --gpu flag will be ignored for the HHblits backend")
+
+    # Create search config with sensitivity and iterations control
     search_config = MMseqs2SearchConfig(
         s=sensitivity,
+        num_iterations=num_iterations,
     )
 
     # Create generation config
@@ -144,13 +160,14 @@ def generate(
         sharding_pattern=sharding_pattern,
         output_extension=output_extension,
         gpu=gpu,
-        num_iterations=num_iterations,
         use_env=use_env,
-        threads=num_workers,
+        threads=threads,
         max_final_sequences=max_final_sequences,
         check_existing=check_existing,
         existing_msa_dirs=msa_dirs,
         search_config=search_config,
+        backend=backend,
+        hhblits_search_config=hhblits_search_config,
     )
 
     # Display configuration
@@ -158,18 +175,23 @@ def generate(
     typer.echo(f"  CSV File: {csv_file}")
     typer.echo(f"  Sequence Column: {sequence_column or 'auto-detect'}")
     typer.echo(f"  Output Directory: {output_dir}")
-    typer.echo(f"  GPU Enabled: {config.gpu}")
+    typer.echo(f"  Backend: {config.backend}")
     typer.echo(f"  Max Final Sequences: {config.max_final_sequences}")
-    typer.echo(f"  Iterations: {config.num_iterations}")
-    typer.echo(f"  Threads: {config.threads}")
-    typer.echo(f"  Use Environmental DB: {config.use_env}")
     typer.echo(f"  Output Extension: {config.output_extension}")
     typer.echo(f"  Sharding Pattern: {config.sharding_pattern}")
-    typer.echo(f"  Sensitivity: {config.search_config.s}")
     typer.echo(f"  Check Existing: {config.check_existing}")
     if config.check_existing:
-        dirs_display = config.existing_msa_dirs if config.existing_msa_dirs else "LOCAL_MSA_DIRS env var"
+        dirs_display = config.existing_msa_dirs if config.existing_msa_dirs else "PROTEIN_MSA_DIRS env var"
         typer.echo(f"  MSA Directories: {dirs_display}")
+    if config.backend == "hhblits":
+        typer.echo(f"  Threads: {config.threads}")
+        typer.echo(f"  HHblits Memory: {hhblits_search_config.mem} GB")
+    else:
+        typer.echo(f"  GPU Enabled: {config.gpu}")
+        typer.echo(f"  Iterations: {config.search_config.num_iterations}")
+        typer.echo(f"  Threads: {config.threads}")
+        typer.echo(f"  Use Environmental DB: {config.use_env}")
+        typer.echo(f"  Sensitivity: {config.search_config.s}")
 
     try:
         typer.secho("\n🚀 Starting MSA generation...", fg=typer.colors.CYAN, bold=True)

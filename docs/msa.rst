@@ -3,7 +3,9 @@ Multiple Sequence Alignment in AtomWorks
 
 AtomWorks provides several command-line tools for Multiple Sequence Alignment (MSA) operations.
 
---------------
+Install AtomWorks with the ML extra. Filtering requires hhfilter from HH-suite
+on PATH. Generation requires the selected MMseqs2 or HHblits backend and configured
+sequence databases, plus hhfilter for filtering the results. Finding and organizing existing files do not run a sequence search.
 
 Find
 ----
