@@ -1,26 +1,15 @@
-"""Generate ColabFold-style multiple sequence alignments (MSAs) using MMseqs2.
+"""Generate MSAs from protein sequences using MMseqs2 or HHblits.
 
-Provides functions to generate MSAs from protein sequences using the MMseqs2 search pipeline adapted from ColabFold.
-MSA files are automatically organized with proper hashing, sharding, and compression.
+Supports both GPU-accelerated MMseqs2 and CPU-based HHblits backends. MSA files are
+automatically organized with proper hashing, sharding, and compression.
 
-Examples:
-    Generate MSAs with custom configuration:
-
+Example:
     .. code-block:: python
 
-       from atomworks.ml.preprocessing.msa.generation import make_msas_mmseqs, MSAGenerationConfig
+       from atomworks.ml.preprocessing.msa.generating import make_msas_from_csv, MSAGenerationConfig
 
-       config = MSAGenerationConfig(gpu=True, threads=16, max_final_sequences=5000)
-       sequences = ["MSYIWRQLGSPTVAITLSVSTVIYVTVICPIVFIHLFGDHL...", "MKKKEVEKDDLIENASRVASCISIFLIIASTTMYIFIGLKI..."]
-       make_msas_mmseqs(sequences, "output_msas/", config)
-
-    Generate MSAs from a CSV file with defaults:
-
-    .. code-block:: python
-
-       from atomworks.ml.preprocessing.msa.generation import make_msas_from_csv
-
-       make_msas_from_csv("sequences.csv", "sequence_column", "output_msas/")
+       config = MSAGenerationConfig(backend="hhblits", threads=8, max_final_sequences=5000)
+       make_msas_from_csv("sequences.csv", "output_msas/", sequence_column="seq", config=config)
 
 References:
     * Mirdita, M. et al. (2022). ColabFold: making protein folding accessible to all. *Nature Methods*, 19, 679-682.
@@ -31,20 +20,30 @@ References:
 
 import dataclasses
 import logging
+import math
 import os
 import shutil
 import subprocess
 import tempfile
 import time
+import uuid
 from os import PathLike
 from pathlib import Path
 
 import pandas as pd
+from tqdm import tqdm
 
 from atomworks.constants import _load_env_var
 from atomworks.enums import MSAFileExtension
-from atomworks.ml.executables.mmseqs2 import MMseqs2
-from atomworks.ml.preprocessing.msa.filtering import HHFilterConfig, MSAFilterConfig, filter_msas
+from atomworks.ml.executables.hhblits import HHblits
+from atomworks.ml.executables.mmseqs2 import MODULE_OUTPUT_POS, MMseqs2
+from atomworks.ml.preprocessing.msa.filtering import (
+    HHFilterConfig,
+    MSAFilterConfig,
+    count_sequences_in_msa,
+    filter_msas,
+    run_hhfilter,
+)
 from atomworks.ml.preprocessing.msa.finding import find_msas
 from atomworks.ml.preprocessing.msa.organizing import MSAOrganizationConfig, organize_msas
 from atomworks.ml.utils.misc import hash_sequence
@@ -71,6 +70,9 @@ logger.info(
 def create_fasta_with_hashed_headers(sequences: list[str], output_file: PathLike) -> None:
     """Create a FASTA file from sequence strings with SHA-256 hashed headers.
 
+    Note: For wrapped sequences with deduplication, see
+    :py:func:`~atomworks.ml.preprocessing.utils.fasta.create_fasta_file_from_df`.
+
     Args:
         sequences: List of protein sequence strings.
         output_file: Path to the output FASTA file.
@@ -81,20 +83,6 @@ def create_fasta_with_hashed_headers(sequences: list[str], output_file: PathLike
             f.write(f">{header}\n{sequence_string}\n")
 
 
-MODULE_OUTPUT_POS = {
-    "align": 4,
-    "convertalis": 4,
-    "expandaln": 5,
-    "filterresult": 4,
-    "lndb": 2,
-    "mergedbs": 2,
-    "mvdb": 2,
-    "pairaln": 4,
-    "result2msa": 4,
-    "search": 3,
-}
-
-
 @dataclasses.dataclass
 class MMseqs2SearchConfig:
     """Configuration for MMseqs2 search parameters.
@@ -103,6 +91,8 @@ class MMseqs2SearchConfig:
 
     Args:
         filter: Whether to filter the MSA.
+        num_iterations: Number of MMseqs2 search iterations.
+        max_seqs: Maximum number of cluster centers in the MSA.
         search_eval: Search e-value threshold.
         expand_eval: E-value threshold for expandaln.
         expand_max_seq_id: Maximum sequence identity for expandaln.
@@ -125,44 +115,98 @@ class MMseqs2SearchConfig:
     """
 
     filter: bool = True
+    num_iterations: int = 3
+    max_seqs: int = 10_000
     search_eval: float = 0.1
-    expand_eval: float = 1e-3
+    expand_eval: float = math.inf
     expand_max_seq_id: float = 0.95
-    align_eval: int = 10
+    align_eval: float = 10.0
     diff: int = 3000
     qsc: float = -20.0
     filter_qsc: float = 0.0
     filter_max_seq_id: float = 0.95
     filter_min_enable: int = 1000
     filter_qid: str = "0.0,0.2,0.4,0.6,0.8,1.0"
-    max_accept: int = 10_000
+    max_accept: int = 1_000_000
     prefilter_mode: int = 0
     s: float = 8.0  # Set to None to use k-score instead
     db_load_mode: int = 2
 
 
 @dataclasses.dataclass
+class HHblitsSearchConfig:
+    """Configuration for HHblits iterative search parameters.
+
+    Default values match the original HHblits MSA generation pipeline. Database paths
+    are loaded from ``HHBLITS_UNIREF30_DB_PATH`` and ``HHBLITS_BFD_DB_PATH`` env vars if not provided.
+
+    Args:
+        mact: MAC realignment threshold for HHblits.
+        maxfilt: Maximum hits allowed through prefilter.
+        neffmax: Maximum Neff (effective sequence count) value.
+        use_bfd: Whether to fall back to BFD when UniRef30 yields insufficient sequences.
+    """
+
+    uniref30_db_path: str | None = None
+    bfd_db_path: str | None = None
+    e_values: list[float] = dataclasses.field(default_factory=lambda: [1e-10, 1e-3])
+    bfd_e_value: float = 1e-3
+    min_seqs_high_cov: int = 2000
+    min_seqs_low_cov: int = 4000
+    high_cov: float = 75.0
+    low_cov: float = 50.0
+    identity: float = 90.0
+    max_filter_seqs: int = 100_000
+    n_iterations: int = 4
+    mem: int = 64
+    use_bfd: bool = True
+    mact: float = 0.35
+    maxfilt: int = 10_000_000
+    neffmax: float = 20.0
+    cov: int = 25
+    maxseq: int = 1_000_000
+    realign_max: int = 100_000_000
+
+    def __post_init__(self):
+        if self.uniref30_db_path is None:
+            self.uniref30_db_path = _load_env_var("HHBLITS_UNIREF30_DB_PATH")
+        if self.bfd_db_path is None:
+            self.bfd_db_path = _load_env_var("HHBLITS_BFD_DB_PATH")
+
+        if self.uniref30_db_path is None:
+            raise ValueError(
+                "uniref30_db_path is required for HHblits. "
+                "Set HHBLITS_UNIREF30_DB_PATH environment variable or provide uniref30_db_path parameter."
+            )
+        if self.use_bfd and self.bfd_db_path is None:
+            raise ValueError(
+                "bfd_db_path is required when use_bfd=True. "
+                "Set HHBLITS_BFD_DB_PATH environment variable, provide bfd_db_path parameter, or set use_bfd=False."
+            )
+
+
+@dataclasses.dataclass
 class MSAGenerationConfig:
-    """Configuration for MSA generation using MMseqs2.
+    """Configuration for MSA generation.
 
     This dataclass encapsulates all user-facing configuration options for MSA generation,
-    providing a clean interface while maintaining full configurability based on the
-    working ColabFold script parameters.
+    supporting both MMseqs2 and HHblits backends.
 
     Args:
         sharding_pattern: Directory sharding pattern for file organization.
         output_extension: File extension and compression for output files.
-        use_env: Whether to include environmental (metagenomic) database.
-        gpu: Whether to use GPU acceleration.
-        gpu_server: Whether to use GPU server (requires gpu=True).
-        num_iterations: Number of MMseqs2 search iterations.
-        max_seqs: Maximum number of cluster centers (NOT total sequences) in the MSA.
-        threads: Number of CPU threads to use.
-        use_local_temp_dir: Whether to use local temporary directory for intermediate files.
+        use_env: Whether to include environmental (metagenomic) database (MMseqs2 only).
+        gpu: Whether to use GPU acceleration (MMseqs2 only).
+        gpu_server: Whether to use GPU server (requires gpu=True, MMseqs2 only).
+        threads: Number of CPU threads for search operations (used by both MMseqs2 and HHblits).
+        use_local_temp_dir: Whether to use local temporary directory for intermediate files (MMseqs2 only).
         max_final_sequences: Maximum number of sequences in the final MSA after HHFilter.
         check_existing: Whether to check for existing MSAs before generation.
-        existing_msa_dirs: Directories to check for existing MSAs. If None, uses LOCAL_MSA_DIRS env var.
-        search_config: Advanced MMseqs2 search configuration.
+        existing_msa_dirs: Directories to check for existing MSAs. If None, uses PROTEIN_MSA_DIRS env var.
+        search_config: Advanced MMseqs2 search configuration (MMseqs2 only).
+        backend: MSA generation backend, either ``"mmseqs2"`` or ``"hhblits"``.
+        hhblits_search_config: HHblits search configuration (HHblits only). If None when using HHblits
+            backend, a default config is constructed at generation time.
 
     References:
         * Mirdita, M. et al. (2022). ColabFold: making protein folding accessible to all. *Nature Methods*, 19, 679-682.
@@ -173,16 +217,19 @@ class MSAGenerationConfig:
     use_env: bool = True
     gpu: bool = False
     gpu_server: bool = False
-    num_iterations: int = 3
-    max_seqs: int = 10000
-    threads: int = 32
+    threads: int = 4
     use_local_temp_dir: bool = True
     max_final_sequences: int = 10000
     check_existing: bool = False
     existing_msa_dirs: list[PathLike] | None = None
     search_config: MMseqs2SearchConfig = dataclasses.field(default_factory=lambda: MMseqs2SearchConfig())
+    backend: str = "mmseqs2"
+    hhblits_search_config: HHblitsSearchConfig | None = None
 
     def __post_init__(self):
+        if self.backend not in ("mmseqs2", "hhblits"):
+            raise ValueError(f"Invalid backend: {self.backend!r}. Must be 'mmseqs2' or 'hhblits'.")
+
         # If we're using GPU, also use the GPU server by default
         if self.gpu and not self.gpu_server:
             logger.info("GPU is enabled, setting gpu_server to True")
@@ -190,31 +237,73 @@ class MSAGenerationConfig:
 
 
 def _get_database_path(gpu: bool = False) -> Path:
-    """
-    Determine which database path to use, falling back from local to network paths.
+    """Determine which database path to use, falling back from local to network paths.
 
     Args:
-        gpu: Whether to use GPU databases
+        gpu: Whether to use GPU databases.
 
     Returns:
-        Path to the database directory
+        Path to the database directory.
+
+    Raises:
+        ValueError: If no database paths are configured.
     """
     if gpu:
         # For GPU, try local GPU path first, then network path
-        if Path(LOCAL_DB_PATH_GPU).exists():
+        if LOCAL_DB_PATH_GPU and Path(LOCAL_DB_PATH_GPU).exists():
             logger.info(f"Using local GPU database path: {LOCAL_DB_PATH_GPU}")
             return Path(LOCAL_DB_PATH_GPU)
-        else:
+        elif NET_DB_PATH_GPU:
             logger.info(f"Local GPU database path not found, using network path: {NET_DB_PATH_GPU}")
             return Path(NET_DB_PATH_GPU)
+        else:
+            raise ValueError(
+                "No GPU database paths configured. Please set COLABFOLD_LOCAL_DB_PATH_GPU "
+                "or COLABFOLD_NET_DB_PATH_GPU environment variables."
+            )
     else:
         # For CPU, try local CPU path first, then network path
-        if Path(LOCAL_DB_PATH_CPU).exists():
+        if LOCAL_DB_PATH_CPU and Path(LOCAL_DB_PATH_CPU).exists():
             logger.info(f"Using local CPU database path: {LOCAL_DB_PATH_CPU}")
             return Path(LOCAL_DB_PATH_CPU)
-        else:
+        elif NET_DB_PATH_CPU:
             logger.info(f"Local CPU database path not found, using network path: {NET_DB_PATH_CPU}")
             return Path(NET_DB_PATH_CPU)
+        else:
+            raise ValueError(
+                "No CPU database paths configured. Please set COLABFOLD_LOCAL_DB_PATH_CPU "
+                "or COLABFOLD_NET_DB_PATH_CPU environment variables."
+            )
+
+
+def _create_isolated_db_path(original_db_path: Path) -> tuple[Path, Path]:
+    """Create an isolated database path with symlinks to avoid GPU server socket conflicts.
+
+    When multiple jobs run concurrently on the same node using gpu_server mode, they share
+    the same /dev/shm socket file because MMseqs2 generates the socket ID from the database
+    path. By creating symlinks in a unique temp directory, each job gets a unique socket ID.
+
+    Args:
+        original_db_path: Path to the original database directory.
+
+    Returns:
+        Tuple of (isolated_db_path, temp_dir) where:
+        - isolated_db_path: Path to the symlinked database directory
+        - temp_dir: Path to the temp directory (caller should clean up)
+    """
+    # Create a unique temp directory for this job
+    unique_id = f"{os.getpid()}_{uuid.uuid4().hex[:8]}"
+    temp_dir = Path(tempfile.gettempdir()) / f"mmseqs_isolated_{unique_id}"
+    temp_dir.mkdir(parents=True, exist_ok=True)
+
+    # Create symlinks to all files in the original database directory
+    for item in original_db_path.iterdir():
+        link_path = temp_dir / item.name
+        if not link_path.exists():
+            link_path.symlink_to(item.resolve())
+
+    logger.info(f"Created isolated database path: {temp_dir} -> {original_db_path}")
+    return temp_dir, temp_dir
 
 
 def _make_mmseqs_db_from_fasta(fasta_file: PathLike, output_dir: PathLike) -> Path:
@@ -229,7 +318,18 @@ def _make_mmseqs_db_from_fasta(fasta_file: PathLike, output_dir: PathLike) -> Pa
     """
     mmseqs2 = MMseqs2.get_or_initialize()
     output_db = Path(output_dir) / "qdb"
-    subprocess.check_call([str(mmseqs2.get_bin_path()), "createdb", str(fasta_file), str(output_db)])
+    subprocess.check_call(
+        [
+            str(mmseqs2.get_bin_path()),
+            "createdb",
+            str(fasta_file),
+            str(output_db),
+            "--shuffle",
+            "0",
+            "--dbtype",
+            "1",
+        ]
+    )
     return output_db
 
 
@@ -311,10 +411,13 @@ def _run_mmseqs_search_and_filter(
     align_alt_ali: int = 10,
     qid: bool = False,
     filter_diff: int = 0,
-    filter_max_seq_id: float = 1.0,
-    filter_min_enable: int = 1000,
+    inner_filter_max_seq_id: float = 1.0,
+    inner_filter_min_enable: int = 100,
     profile_input: str = "qdb",
     tmp_dir: str = "tmp",
+    start_gpu_server: bool = False,
+    gpu_server_max_seqs: int = 10_000,
+    gpu_server_db_load_mode: int = 2,
 ) -> None:
     """Execute core ColabFold MSA generation pipeline.
 
@@ -343,10 +446,13 @@ def _run_mmseqs_search_and_filter(
         align_alt_ali: Number of alternative alignments to keep.
         qid: filterresult - Reduce diversity of output MSAs using min.seq. idendity with query sequences.
         filter_diff: filterresult - Keep at least this many seqs in each MSA block.
-        filter_max_seq_id: filterresult - Maximum sequence identity for filtering.
-        filter_min_enable: filterresult - Minimum number of sequences to keep in each MSA block.
+        inner_filter_max_seq_id: Inner filterresult - Maximum sequence identity for filtering.
+        inner_filter_min_enable: Inner filterresult - Minimum number of sequences to keep in each MSA block.
         profile_input: Profile input (usually qdb).
         tmp_dir: Temporary directory.
+        start_gpu_server: Whether to start (and stop) an MMseqs2 GPU server around the search.
+        gpu_server_max_seqs: ``--max-seqs`` for the GPU server (must match the search's max_seqs).
+        gpu_server_db_load_mode: ``--db-load-mode`` for the GPU server (must match the search's db_load_mode).
 
     References:
         * `ColabFold Paper`_ - MSA generation methodology
@@ -354,9 +460,14 @@ def _run_mmseqs_search_and_filter(
         .. _ColabFold Paper: https://www.nature.com/articles/s41592-022-01488-1
     """
 
-    if "--gpu-server" in search_param:
+    if start_gpu_server:
         logger.info("Setting up GPU server...")
-        gpu_server_process = _start_gpu_server(dbbase.joinpath(db_name), search_param[8], search_param[3], "1")
+        gpu_server_process = _start_gpu_server(
+            dbbase.joinpath(db_name),
+            max_seqs=gpu_server_max_seqs,
+            db_load_mode=gpu_server_db_load_mode,
+            prefilter_mode=1,  # GPU only supports ungapped prefilter
+        )
         logger.info("GPU server setup complete")
 
     _run_mmseqs(
@@ -372,7 +483,7 @@ def _run_mmseqs_search_and_filter(
         ],
     )
 
-    if "--gpu-server" in search_param:
+    if start_gpu_server:
         logger.info("Stopping GPU server...")
         gpu_server_process.terminate()  # Send SIGTERM
         gpu_server_process.wait()
@@ -444,9 +555,9 @@ def _run_mmseqs_search_and_filter(
             "--threads",
             str(threads),
             "--max-seq-id",
-            str(filter_max_seq_id),
+            str(inner_filter_max_seq_id),
             "--filter-min-enable",
-            str(filter_min_enable),
+            str(inner_filter_min_enable),
         ],
     )
 
@@ -483,16 +594,16 @@ def _mmseqs_search_monomer(
     use_env: bool = True,
     filter: bool = True,
     search_eval: float = 0.1,
-    expand_eval: float = 1e-3,
+    expand_eval: float = math.inf,
     expand_max_seq_id: float = 0.95,
-    align_eval: int = 10,
+    align_eval: float = 10.0,
     diff: int = 3000,
     qsc: float = -20.0,
     filter_qsc: float = 0.0,
     filter_max_seq_id: float = 0.95,
     filter_min_enable: int = 1000,
     filter_qid: str = "0.0,0.2,0.4,0.6,0.8,1.0",
-    max_accept: int = 10_000,  # this was 1000000 in the original ColabFold script
+    max_accept: int = 1_000_000,
     num_iterations: int = 3,
     max_seqs: int = 10_000,
     prefilter_mode: int = 0,
@@ -546,9 +657,12 @@ def _mmseqs_search_monomer(
         .. _ColabFold MMseqs2 Search Script: https://github.com/sokrypton/ColabFold/blob/main/colabfold/mmseqs/search.py
     """
     if filter:
-        align_eval = 1e-3
+        # ColabFold filter-mode overrides: these three values are hardcoded by the upstream
+        # pipeline when filter=True and intentionally discard user-supplied values.
+        # See https://github.com/sokrypton/ColabFold/blob/main/colabfold/mmseqs/search.py
+        align_eval = 10
         qsc = 0.8
-        max_accept = 10_000
+        max_accept = 100_000
 
     # check db types and make sure they exist
     used_dbs = [uniref_db]
@@ -610,7 +724,8 @@ def _mmseqs_search_monomer(
         "--max-seq-id",
         str(filter_max_seq_id),
     ]
-    expand_param = [
+    # UniRef expandaln: full params (matches ColabFold)
+    uniref_expand_param = [
         "--expansion-mode",
         "0",
         "-e",
@@ -619,6 +734,13 @@ def _mmseqs_search_monomer(
         str(int(filter)),
         "--max-seq-id",
         str(expand_max_seq_id),
+    ]
+    # Metagenomic expandaln: reduced params (matches ColabFold, preserves metagenomic diversity)
+    metagenomic_expand_param = [
+        "--expansion-mode",
+        "0",
+        "-e",
+        str(expand_eval),
     ]
 
     # search and filter uniref
@@ -633,11 +755,14 @@ def _mmseqs_search_monomer(
             db_load_mode,
             threads,
             search_param,
-            expand_param,
+            uniref_expand_param,
             filter_param,
             align_eval,
             max_accept,
             qsc,
+            start_gpu_server=bool(gpu_server),
+            gpu_server_max_seqs=max_seqs,
+            gpu_server_db_load_mode=db_load_mode,
         )
     else:
         logger.info(f"Skipping {uniref_db} search because uniref.a3m already exists")
@@ -654,13 +779,16 @@ def _mmseqs_search_monomer(
             db_load_mode,
             threads,
             search_param,
-            expand_param,
+            metagenomic_expand_param,
             filter_param,
             align_eval,
             max_accept,
             qsc,
             profile_input="prof_res",
             tmp_dir="tmp3",
+            start_gpu_server=bool(gpu_server),
+            gpu_server_max_seqs=max_seqs,
+            gpu_server_db_load_mode=db_load_mode,
         )
     elif use_env:
         logger.info(f"Skipping {metagenomic_db} search because bfd.mgnify30.metaeuk30.smag30.a3m already exists")
@@ -704,18 +832,247 @@ def _mmseqs_search_monomer(
         shutil.rmtree(base.joinpath("tmp3"))
 
 
+def _run_hhblits_search(
+    input_file: PathLike,
+    output_file: PathLike,
+    db_path: str,
+    config: HHblitsSearchConfig,
+    e_value: float,
+    cpu: int = 4,
+) -> None:
+    """Run a single HHblits search against a database.
+
+    Args:
+        input_file: Path to the input FASTA or A3M file.
+        output_file: Path to the output A3M file.
+        db_path: Path to the HH-suite formatted database.
+        config: HHblits search configuration.
+        e_value: E-value threshold for inclusion.
+        cpu: Number of CPU threads for HHblits (``-cpu``).
+    """
+    hhblits = HHblits.get_or_initialize()
+    hhblits.run_command(
+        "-i",
+        str(input_file),
+        "-oa3m",
+        str(output_file),
+        "-o",
+        "/dev/null",
+        "-mact",
+        str(config.mact),
+        "-maxfilt",
+        str(config.maxfilt),
+        "-neffmax",
+        str(config.neffmax),
+        "-cov",
+        str(config.cov),
+        "-cpu",
+        str(cpu),
+        "-nodiff",
+        "-realign_max",
+        str(config.realign_max),
+        "-maxseq",
+        str(config.maxseq),
+        "-maxmem",
+        str(config.mem),
+        "-n",
+        str(config.n_iterations),
+        "-d",
+        str(db_path),
+        "-e",
+        str(e_value),
+        "-v",
+        "0",
+    )
+
+
+def _hhblits_iterative_search_single(
+    sequence: str,
+    seq_hash: str,
+    output_dir: Path,
+    config: HHblitsSearchConfig,
+    cpu: int = 4,
+) -> Path | None:
+    """Run iterative HHblits search for a single sequence.
+
+    Searches UniRef30 with increasing e-value thresholds, filtering at each step.
+    Falls back to BFD if insufficient sequences are found.
+
+    Args:
+        sequence: Protein sequence string.
+        seq_hash: SHA-256 hash of the sequence.
+        output_dir: Directory for the final output A3M file.
+        config: HHblits search configuration.
+        cpu: Number of CPU threads for HHblits (``-cpu``).
+
+    Returns:
+        Path to the final A3M file, or None if no results were produced.
+    """
+    out_a3m = output_dir / f"{seq_hash}.a3m"
+
+    if out_a3m.exists():
+        logger.debug(f"Skipping {seq_hash}: output already exists at {out_a3m}")
+        return out_a3m
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_path = Path(tmp_dir)
+
+        # Write single-sequence FASTA
+        fasta_file = tmp_path / f"{seq_hash}.fasta"
+        fasta_file.write_text(f">{seq_hash}\n{sequence}\n")
+
+        prev_a3m: Path | str = fasta_file
+        result_a3m: Path | None = None
+
+        # Iterative UniRef30 searches with increasing e-values
+        for e_value in config.e_values:
+            uniref_out = tmp_path / f"uniref30.{e_value}.a3m"
+            _run_hhblits_search(prev_a3m, uniref_out, config.uniref30_db_path, config, e_value, cpu=cpu)
+
+            # Filter at high coverage
+            high_cov_file = tmp_path / f"uniref30.{e_value}.id{config.identity:.0f}cov{config.high_cov:.0f}.a3m"
+            run_hhfilter(
+                uniref_out, high_cov_file, maxseq=config.max_filter_seqs, id=config.identity, cov=config.high_cov
+            )
+
+            # Filter at low coverage
+            low_cov_file = tmp_path / f"uniref30.{e_value}.id{config.identity:.0f}cov{config.low_cov:.0f}.a3m"
+            run_hhfilter(
+                uniref_out, low_cov_file, maxseq=config.max_filter_seqs, id=config.identity, cov=config.low_cov
+            )
+
+            n_high = count_sequences_in_msa(high_cov_file)
+            n_low = count_sequences_in_msa(low_cov_file)
+            logger.debug(
+                f"[{seq_hash}] UniRef30 e={e_value}: {n_high} seqs at {config.high_cov}% cov, "
+                f"{n_low} seqs at {config.low_cov}% cov"
+            )
+
+            # Use low-coverage file as input for next iteration
+            prev_a3m = low_cov_file
+
+            if n_high > config.min_seqs_high_cov:
+                result_a3m = high_cov_file
+                break
+            elif n_low > config.min_seqs_low_cov:
+                result_a3m = low_cov_file
+                break
+
+        # Fall back to BFD if needed
+        if result_a3m is None and config.use_bfd and config.bfd_db_path:
+            e_value = config.bfd_e_value
+            bfd_out = tmp_path / f"bfd.{e_value}.a3m"
+            _run_hhblits_search(prev_a3m, bfd_out, config.bfd_db_path, config, e_value, cpu=cpu)
+
+            bfd_high_cov = tmp_path / f"bfd.{e_value}.id{config.identity:.0f}cov{config.high_cov:.0f}.a3m"
+            run_hhfilter(bfd_out, bfd_high_cov, maxseq=config.max_filter_seqs, id=config.identity, cov=config.high_cov)
+
+            bfd_low_cov = tmp_path / f"bfd.{e_value}.id{config.identity:.0f}cov{config.low_cov:.0f}.a3m"
+            run_hhfilter(bfd_out, bfd_low_cov, maxseq=config.max_filter_seqs, id=config.identity, cov=config.low_cov)
+
+            n_high = count_sequences_in_msa(bfd_high_cov)
+            n_low = count_sequences_in_msa(bfd_low_cov)
+            logger.debug(
+                f"[{seq_hash}] BFD e={e_value}: {n_high} seqs at {config.high_cov}% cov, "
+                f"{n_low} seqs at {config.low_cov}% cov"
+            )
+
+            prev_a3m = bfd_low_cov
+
+            if n_high > config.min_seqs_high_cov:
+                result_a3m = bfd_high_cov
+            elif n_low > config.min_seqs_low_cov:
+                result_a3m = bfd_low_cov
+
+        # If still no result, use the last processed file (if it's not just the input FASTA)
+        if result_a3m is None and Path(prev_a3m) != fasta_file and Path(prev_a3m).exists():
+            logger.info(f"[{seq_hash}] Insufficient sequences after all searches; using last processed file")
+            result_a3m = Path(prev_a3m)
+
+        # Copy result to output directory
+        if result_a3m is not None and result_a3m.exists():
+            output_dir.mkdir(parents=True, exist_ok=True)
+            shutil.copy(result_a3m, out_a3m)
+            return out_a3m
+
+    return None
+
+
+def make_msas_hhblits(
+    sequences: str | list[str],
+    output_dir: PathLike,
+    max_final_sequences: int = 10_000,
+    sharding_pattern: str = "/0:2/",
+    output_extension: str = MSAFileExtension.A3M_GZ.value,
+    search_config: HHblitsSearchConfig | None = None,
+    cpu: int = 4,
+) -> None:
+    """Generate MSAs from protein sequences using HHblits (CPU-only, HH-suite).
+
+    Runs iterative HHblits searches per sequence against UniRef30 (and optionally BFD),
+    then organizes and filters the results following the same post-processing as MMseqs2.
+
+    Args:
+        sequences: A single protein sequence string or list of protein sequences.
+        output_dir: Path to the output directory where MSA files will be saved.
+        max_final_sequences: Maximum number of sequences in final MSAs after filtering.
+        sharding_pattern: Directory sharding pattern (e.g., "/0:2/").
+        output_extension: Output file extension (.a3m, .a3m.gz, .a3m.zst, .afa, .afa.gz, .afa.zst).
+        search_config: HHblits search configuration. If None, uses defaults.
+        cpu: Number of CPU threads for HHblits (``-cpu``).
+    """
+    if isinstance(sequences, str):
+        sequences = [sequences]
+
+    if search_config is None:
+        search_config = HHblitsSearchConfig()
+
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    # Initialize HHblits executable
+    HHblits.get_or_initialize()
+
+    start_time = time.time()
+    for sequence in tqdm(sequences, desc="HHblits MSA generation", unit="seq"):
+        seq_hash = hash_sequence(sequence)
+        _hhblits_iterative_search_single(sequence, seq_hash, output_path, search_config, cpu=cpu)
+
+    logger.info(f"Completed {len(sequences)} sequences in {time.time() - start_time:.1f}s with HHblits")
+
+    # Organize MSAs using existing organization functionality
+    org_config = MSAOrganizationConfig(
+        input_extension=MSAFileExtension.A3M,
+        output_extension=output_extension,
+        sharding_pattern=sharding_pattern,
+        copy_files=False,
+    )
+
+    logger.info("Organizing MSA files...")
+    organize_msas(output_dir, output_dir, org_config)
+
+    # Filter MSA files to reduce sequence count and redundancy
+    if max_final_sequences is not None:
+        filter_config = MSAFilterConfig(
+            input_extension=output_extension,
+            output_extension=output_extension,
+            hhfilter=HHFilterConfig(max_sequences=max_final_sequences),
+        )
+        logger.info(f"Filtering MSA files to max {max_final_sequences} sequences...")
+        filter_msas(output_dir, output_dir, filter_config)
+
+
 def make_msas_mmseqs(
     sequences: str | list[str],
     output_dir: PathLike,
     gpu: bool = False,
     gpu_server: bool = False,
-    num_iterations: int = 3,
-    max_seqs: int = 10_000,
     use_local_temp_dir: bool = True,
     max_final_sequences: int = 10_000,
     sharding_pattern: str = "/0:2/",
     output_extension: str = MSAFileExtension.A3M_GZ.value,
     search_config: MMseqs2SearchConfig | None = None,
+    threads: int = 4,
 ) -> None:
     """Generate MSAs directly from protein sequences.
 
@@ -724,13 +1081,12 @@ def make_msas_mmseqs(
         output_dir: Path to the output directory where MSA files will be saved.
         gpu: Whether to use GPU acceleration.
         gpu_server: Whether to use GPU server (requires gpu=True).
-        num_iterations: Number of search iterations.
-        max_seqs: Maximum number of cluster centers.
         use_local_temp_dir: Whether to use local temporary directory for intermediate files.
         max_final_sequences: Maximum number of sequences in final MSAs after filtering.
         sharding_pattern: Directory sharding pattern (e.g., "/0:2/").
         output_extension: Output file extension (.a3m, .a3m.gz, .a3m.zst, .afa, .afa.gz, .afa.zst).
-        search_config: Advanced MMseqs2 search configuration.
+        search_config: Advanced MMseqs2 search configuration (includes ``num_iterations`` and ``max_seqs``).
+        threads: Number of CPU threads for MMseqs2 search.
 
     Examples:
         .. code-block:: python
@@ -765,32 +1121,47 @@ def make_msas_mmseqs(
     if gpu_server and not gpu:
         raise ValueError("gpu_server is True but gpu is False")
 
+    # Get the database path, creating isolated symlinks if using GPU server
+    # to avoid socket conflicts between concurrent jobs on the same node
+    original_db_path = _get_database_path(gpu=gpu)
+    isolated_db_dir = None
+    if gpu_server:
+        dbbase, isolated_db_dir = _create_isolated_db_path(original_db_path)
+    else:
+        dbbase = original_db_path
+
     start_time = time.time()
-    _mmseqs_search_monomer(
-        dbbase=_get_database_path(gpu=gpu),
-        base=Path(intermediate_dir),
-        uniref_db=Path(UNIREF30_DB_NAME),
-        metagenomic_db=Path(COLABFOLD_DB_NAME),
-        gpu=int(gpu),
-        gpu_server=int(gpu_server),
-        num_iterations=num_iterations,
-        max_seqs=max_seqs,
-        s=search_config.s,
-        filter=search_config.filter,
-        search_eval=search_config.search_eval,
-        expand_eval=search_config.expand_eval,
-        expand_max_seq_id=search_config.expand_max_seq_id,
-        align_eval=search_config.align_eval,
-        diff=search_config.diff,
-        qsc=search_config.qsc,
-        filter_qsc=search_config.filter_qsc,
-        filter_max_seq_id=search_config.filter_max_seq_id,
-        filter_min_enable=search_config.filter_min_enable,
-        filter_qid=search_config.filter_qid,
-        max_accept=search_config.max_accept,
-        prefilter_mode=search_config.prefilter_mode,
-        db_load_mode=search_config.db_load_mode,
-    )
+    try:
+        _mmseqs_search_monomer(
+            dbbase=dbbase,
+            base=Path(intermediate_dir),
+            uniref_db=Path(UNIREF30_DB_NAME),
+            metagenomic_db=Path(COLABFOLD_DB_NAME),
+            gpu=int(gpu),
+            gpu_server=int(gpu_server),
+            num_iterations=search_config.num_iterations,
+            max_seqs=search_config.max_seqs,
+            s=search_config.s,
+            filter=search_config.filter,
+            search_eval=search_config.search_eval,
+            expand_eval=search_config.expand_eval,
+            expand_max_seq_id=search_config.expand_max_seq_id,
+            align_eval=search_config.align_eval,
+            diff=search_config.diff,
+            qsc=search_config.qsc,
+            filter_qsc=search_config.filter_qsc,
+            filter_max_seq_id=search_config.filter_max_seq_id,
+            filter_min_enable=search_config.filter_min_enable,
+            filter_qid=search_config.filter_qid,
+            max_accept=search_config.max_accept,
+            prefilter_mode=search_config.prefilter_mode,
+            db_load_mode=search_config.db_load_mode,
+        )
+    finally:
+        # Clean up isolated database symlinks
+        if isolated_db_dir is not None and isolated_db_dir.exists():
+            shutil.rmtree(isolated_db_dir)
+            logger.info(f"Cleaned up isolated database path: {isolated_db_dir}")
     logger.info(
         f"Completed {len(sequences)} sequences in {time.time() - start_time} seconds with MMSeqs2 search and alignment"
     )
@@ -888,8 +1259,6 @@ def make_msas_from_csv(
         missing_sequences, _ = find_msas(
             sequences,
             msa_dirs=config.existing_msa_dirs,
-            shard_depths=[0, 1, 2, 3, 4],
-            extensions=[MSAFileExtension.A3M, MSAFileExtension.A3M_GZ],
         )
         sequences = missing_sequences
         logger.info(f"Found {len(sequences)} sequences needing MSA generation")
@@ -898,16 +1267,29 @@ def make_msas_from_csv(
             logger.info("All sequences already have MSAs, skipping generation")
             return
 
-    make_msas_mmseqs(
-        sequences=sequences,
-        output_dir=output_dir,
-        gpu=config.gpu,
-        gpu_server=config.gpu_server,
-        num_iterations=config.num_iterations,
-        max_seqs=config.max_seqs,
-        use_local_temp_dir=config.use_local_temp_dir,
-        max_final_sequences=config.max_final_sequences,
-        sharding_pattern=config.sharding_pattern,
-        output_extension=config.output_extension,
-        search_config=config.search_config,
-    )
+    if config.backend == "hhblits":
+        hhblits_config = (
+            config.hhblits_search_config if config.hhblits_search_config is not None else HHblitsSearchConfig()
+        )
+        make_msas_hhblits(
+            sequences=sequences,
+            output_dir=output_dir,
+            max_final_sequences=config.max_final_sequences,
+            sharding_pattern=config.sharding_pattern,
+            output_extension=config.output_extension,
+            search_config=hhblits_config,
+            cpu=config.threads,
+        )
+    else:
+        make_msas_mmseqs(
+            sequences=sequences,
+            output_dir=output_dir,
+            gpu=config.gpu,
+            gpu_server=config.gpu_server,
+            use_local_temp_dir=config.use_local_temp_dir,
+            max_final_sequences=config.max_final_sequences,
+            sharding_pattern=config.sharding_pattern,
+            output_extension=config.output_extension,
+            search_config=config.search_config,
+            threads=config.threads,
+        )

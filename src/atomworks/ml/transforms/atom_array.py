@@ -1,7 +1,5 @@
 """Transforms on atom arrays."""
 
-from __future__ import annotations
-
 import copy
 import logging
 from collections.abc import Callable, Iterator
@@ -13,7 +11,8 @@ import pandas as pd
 from biotite.structure import AtomArray, get_residue_count, spread_residue_wise
 
 from atomworks.enums import ChainType
-from atomworks.io.utils.testing import has_annotation
+from atomworks.io.utils.annotator import ensure_annotations
+from atomworks.io.utils.atom_array import has_annotation
 from atomworks.ml.transforms._checks import (
     check_atom_array_annotation,
     check_contains_keys,
@@ -44,19 +43,42 @@ def get_chain_instance_starts(array: AtomArray, add_exclusive_stop: bool = False
     Returns:
     - np.ndarray: An array of indices indicating the beginning of each chain instance.
     """
-    # This mask is 'true' at indices where the chain_iid changes
-    chain_iid_changes = array.chain_iid[1:] != array.chain_iid[:-1]
+    return get_group_instance_starts(array, group_by="chain_iid", add_exclusive_stop=add_exclusive_stop)
+
+
+def get_group_instance_starts(array: AtomArray, group_by: str, add_exclusive_stop: bool = False) -> np.ndarray:
+    """Get indices for an atom array, each indicating the beginning of a new group instance (e.g. chain_iid, molecule_iid, res_id, etc).
+
+    This is a more general version of `get_chain_instance_starts`, where the grouping can be defined by any annotation.
+
+    NOTE: Assumes that groups are contiguous within the AtomArray
+
+    Args:
+    - array (AtomArray): The atom array to get the group instance starts from.
+    - group_by (str): The annotation name to group by (e.g. "chain_iid", "molecule_iid", "res_id", etc).
+    - add_exclusive_stop (bool, optional): If True, add an exclusive stop to the group instance starts for the last group instance. Defaults to False.
+
+    Returns:
+    - np.ndarray: An array of indices indicating the beginning of each group instance.
+    """
+    assert (
+        group_by in array.get_annotation_categories()
+    ), f"Annotation '{group_by}' not found in atom array when trying to get group starts"
+    group_annotation = array.get_annotation(group_by)
+
+    # This is true at indices where the group annotation changes
+    group_changes = group_annotation[1:] != group_annotation[:-1]
 
     # Convert mask to indices
     # Add 1, to shift the indices from the end of a residue
     # to the start of a new chain instance
-    chain_iid_starts = np.where(chain_iid_changes)[0] + 1
+    group_starts = np.where(group_changes)[0] + 1
 
     # The first chain instance is not included yet -> Insert '[0]'
     if add_exclusive_stop:
-        return np.concatenate(([0], chain_iid_starts, [array.array_length()]))
+        return np.concatenate(([0], group_starts, [array.array_length()]))
     else:
-        return np.concatenate(([0], chain_iid_starts))
+        return np.concatenate(([0], group_starts))
 
 
 def chain_instance_iter(array: AtomArray) -> Iterator[AtomArray]:
@@ -268,6 +290,33 @@ def get_within_group_res_idx(atom_array: AtomArray, group_by: str) -> np.ndarray
     within_group_res_idx = struc.spread_residue_wise(atom_array, within_group_res_idx_per_residue)
 
     return within_group_res_idx
+
+
+def get_within_group_source_res_idx(atom_array: AtomArray, group_by: str) -> np.ndarray:
+    """Like get_within_group_res_idx but relies on the res_id field to preserve gaps that may exist in the original sequence.
+
+    NOTE: groups do not need to be contiguous
+
+    Args:
+        atom_array (AtomArray): The atom array to process.
+        group_by (str): The annotation name to group residues by (e.g., "chain_iid").
+
+    Returns:
+        np.ndarray: An array of within-group source residue indices for each atom in the atom array.
+    """
+
+    group_annotation = atom_array.get_annotation(group_by)
+
+    # Initialize as res_id
+    within_group_source_res_idx = atom_array.res_id.copy()
+
+    # Zero-index
+    for group in np.unique(group_annotation):
+        group_mask = group_annotation == group
+        min_res_id = np.min(within_group_source_res_idx[group_mask])
+        within_group_source_res_idx[group_mask] -= min_res_id
+
+    return within_group_source_res_idx
 
 
 def get_within_group_atom_idx(atom_array: AtomArray, group_by: str) -> np.ndarray:
@@ -496,8 +545,6 @@ class AddGlobalAtomIdAnnotation(Transform):
     Useful for keeping track of atoms after cropping, slicing or shuffling operations.
     """
 
-    incompatible_previous_transforms: ClassVar[list[str | Transform]] = ["AddGlobalAtomIdAnnotation"]
-
     def __init__(self, allow_overwrite: bool = False):
         """
         Args:
@@ -539,8 +586,6 @@ class AddGlobalTokenIdAnnotation(Transform):
 
     Useful for keeping track of tokens after cropping, slicing or shuffling operations.
     """
-
-    incompatible_previous_transforms: ClassVar[list[str | Transform]] = ["AddGlobalTokenIdAnnotation"]
 
     def __init__(self, allow_overwrite: bool = False):
         self.allow_overwrite = allow_overwrite
@@ -591,6 +636,25 @@ class AddWithinChainInstanceResIdx(Transform):
         # ... get within-chain residue index
         within_chain_res_idx = get_within_group_res_idx(atom_array, group_by="chain_iid")
         atom_array.set_annotation("within_chain_res_idx", within_chain_res_idx)
+
+        data["atom_array"] = atom_array
+        return data
+
+
+class AddWithinChainSourceResIdx(Transform):
+    """Within-chain residue index derived from ``res_id`` (0-indexed, gap-preserving).
+
+    Like :class:`AddWithinChainInstanceResIdx` but keeps internal gaps from ``res_id``.
+    Read by :class:`EncodeAF3TokenLevelFeatures` when ``use_source_residue_index=True``.
+    """
+
+    def check_input(self, data: dict[str, Any]) -> None:
+        check_atom_array_annotation(data, ["chain_iid", "res_id"])
+
+    def forward(self, data: dict[str, Any]) -> dict[str, Any]:
+        atom_array = data["atom_array"]
+
+        ensure_annotations(atom_array, "within_chain_source_res_idx")
 
         data["atom_array"] = atom_array
         return data

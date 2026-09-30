@@ -4,15 +4,24 @@ import biotite.structure as struc
 import numpy as np
 import pytest
 
+from atomworks.io import parse
+from atomworks.io.config import ParseConfig
+from atomworks.io.utils.annotator import ensure_annotations
 from atomworks.io.utils.atom_array_plus import (
     AnnotationList2D,
     AtomArrayPlus,
     AtomArrayPlusStack,
     concatenate_any,
+    concatenate_atom_array_plus,
     insert_atoms,
     stack_any,
     stack_atom_array_plus,
 )
+from atomworks.io.utils.io_utils import CIFWriteConfig, to_cif_buffer
+from atomworks.io.utils.standard_annotations import S_ATM, S_SEGMAX, S_SEGMIN
+from atomworks.io.utils.standard_annotations.base import Level, StandardAnnotationBase, StandardAnnotationMeta
+from atomworks.ml.conditions import C_DIS, C_SEQ
+from tests.conftest import TEST_DATA_DIR
 
 
 # --- Fixtures ---
@@ -223,6 +232,57 @@ def _make_single_atom(element: str, coord: list[float], annotations_2d: list[str
 class TestAtomArrayPlus:
     """Tests for AtomArrayPlus, including 2D annotation logic, slicing, copying, and equality."""
 
+    @pytest.mark.parametrize("as_bcif", [False, True])
+    def test_system_annotations_survive_structure_operations(self, monkeypatch, as_bcif):
+        """System scalars survive structure operations and CIF model selection; conflicting models raise."""
+        monkeypatch.setattr(StandardAnnotationMeta, "_registry", StandardAnnotationMeta._registry.copy())
+
+        class PointGroup(StandardAnnotationBase):
+            name = "testpointgroup"
+            n_body, level, dtype = 0, Level.SYSTEM, str
+            default_value = ""
+
+            @classmethod
+            def mask_from_annotation(cls, annotation):
+                return annotation != ""
+
+        config = ParseConfig.from_preset("minimal", load_standard_annotations=True, return_atom_array_plus=True)
+        atoms = parse(TEST_DATA_DIR / "io" / "6lyz.bcif", config=config)["asym_unit"][0]
+        value = np.array("C3")
+        PointGroup.set_annotation(atoms, value)
+        value[...] = "D2"
+        assert PointGroup.full_name not in atoms.get_annotation_categories()
+        for result in (
+            atoms.copy(),
+            atoms[:2],
+            concatenate_atom_array_plus([atoms, atoms]),
+            stack_atom_array_plus([atoms, atoms]),
+        ):
+            annotation = PointGroup.annotation(result)
+            assert annotation.shape == () and annotation.item() == "C3"
+            annotation[...] = "D2"
+            assert PointGroup.annotation(atoms).item() == "C3"
+        other = atoms.copy()
+        PointGroup.set_annotation(other, "D2")
+        with pytest.raises(ValueError, match="conflicting system annotation"):
+            concatenate_atom_array_plus([atoms, other])
+
+        config = config.replace(file_type="bcif" if as_bcif else "cif")
+        for second in (atoms, other):
+            buffer = to_cif_buffer(
+                [atoms, second], model_ids=[7, 3], as_bcif=as_bcif, config=CIFWriteConfig(include_chem_comp=False)
+            )
+            if second is other:
+                with pytest.raises(ValueError, match="Conflicting system values"):
+                    parse(buffer, config=config)
+            else:
+                assert PointGroup.annotation(parse(buffer, config=config)["asym_unit"]).item() == "C3"
+            for model, expected in ((1, "C3"), (-1, PointGroup.annotation(second).item())):
+                buffer.seek(0)
+                loaded = parse(buffer, config=config.replace(model=model))["asym_unit"]
+                assert PointGroup.annotation(loaded).item() == expected
+                assert PointGroup.mask(loaded).item()
+
     def test_set_and_get_annotation_2d(self, simple_array):
         """Test setting and retrieving a 2D annotation on AtomArrayPlus."""
         arr = simple_array.copy()
@@ -238,6 +298,14 @@ class TestAtomArrayPlus:
         ann2 = arr.get_annotation_2d("foo")
         assert np.array_equal(ann2.pairs, np.array([[1, 0]]))
         assert np.array_equal(ann2.values, np.array([24]))
+
+        source = AnnotationList2D(len(arr), [(0, 1)], [42])
+        arr.set_annotation("foo", source, n_body=2)
+        source.add_row(1, 2, 24)
+        assert len(arr.get_annotation("foo", n_body=2)) == 1
+        source.pairs[0, 0] = len(arr)
+        with pytest.raises(AssertionError, match="valid atom indices"):
+            arr.set_annotation("foo", source, n_body=2)
 
     def test_get_annotation_2d_categories(self, simple_array):
         """Test retrieving all 2D annotation names from AtomArrayPlus."""
@@ -285,6 +353,8 @@ class TestAtomArrayPlus:
     def test_concatenate_and_slice(self, multi_array_pair):
         """Test concatenation followed by slicing on AtomArrayPlus."""
         arr1, arr2 = deepcopy(multi_array_pair)
+        arr1.box = np.eye(3)
+        originals = [array.copy() for array in (arr1, arr2)]
         # ... concatenate
         arr_cat = concatenate_any([arr1, arr2])
 
@@ -299,6 +369,75 @@ class TestAtomArrayPlus:
         dense = dist.as_dense_array()
         assert np.all(np.isnan(dense))
         assert dense.shape == (3, 3)
+
+        arr_cat.coord[:] = -1
+        arr_cat.box[:] = 0
+        arr_cat.get_annotation_2d("dist").values[:] = -1
+        for array, original in zip((arr1, arr2), originals, strict=True):
+            np.testing.assert_array_equal(array.coord, original.coord)
+            np.testing.assert_array_equal(array.box, original.box)
+            np.testing.assert_array_equal(
+                array.get_annotation_2d("dist").values, original.get_annotation_2d("dist").values
+            )
+
+    def test_concatenate_fills_only_missing_standard_annotations(self):
+        """StandardAnnotations use union-with-defaults; ordinary annotations still use intersection."""
+        left = AtomArrayPlus(2)
+        right = AtomArrayPlus(2)
+        for chain_id, array in zip(("A", "B"), (left, right), strict=True):
+            array.chain_id[:] = chain_id
+            array.res_id[:] = [1, 2]
+            array.res_name[:] = "ALA"
+            array.atom_name[:] = "CA"
+            array.element[:] = "C"
+
+        S_ATM.set_annotation(left, np.array([False, True]))
+        S_ATM.set_annotation(right, np.array([True, False]))
+
+        S_SEGMIN.set_annotation(left, np.array([-1, 8]))
+        S_SEGMAX.set_annotation(left, np.array([-1, 12]))
+
+        C_SEQ.set_annotation(right, np.array(["ALA", "<M>"]))
+        ensure_annotations(left, "is_protein_backbone")
+
+        original_categories = [set(array.get_annotation_categories()) for array in (left, right)]
+        with pytest.raises(ValueError, match="Annotation mismatch across inputs"):
+            concatenate_atom_array_plus([left, right])
+        with pytest.warns(UserWarning, match="dropping them"):
+            warned = concatenate_atom_array_plus([left, right], on_annotation_mismatch_policy="warn")
+        dropped = concatenate_atom_array_plus([left, right], on_annotation_mismatch_policy="drop")
+        with pytest.raises(ValueError, match="is_protein_backbone"):
+            concatenate_atom_array_plus([left, right], fill_missing_standard_annotations=True)
+        with pytest.warns(UserWarning, match="is_protein_backbone"):
+            warned_and_filled = concatenate_atom_array_plus(
+                [left, right],
+                on_annotation_mismatch_policy="warn",
+                fill_missing_standard_annotations=True,
+            )
+        filled = concatenate_atom_array_plus(
+            [left, right],
+            on_annotation_mismatch_policy="drop",
+            fill_missing_standard_annotations=True,
+        )
+
+        shared_standard_fields = {S_ATM.full_name}
+        one_sided_standard_fields = {
+            S_SEGMIN.full_name,
+            S_SEGMAX.full_name,
+            C_SEQ.full_name,
+        }
+        assert shared_standard_fields | one_sided_standard_fields <= set(filled.get_annotation_categories())
+        assert shared_standard_fields <= set(dropped.get_annotation_categories())
+        assert one_sided_standard_fields.isdisjoint(dropped.get_annotation_categories())
+        assert set(warned.get_annotation_categories()) == set(dropped.get_annotation_categories())
+        assert set(warned_and_filled.get_annotation_categories()) == set(filled.get_annotation_categories())
+        assert "is_protein_backbone" not in filled.get_annotation_categories()
+        assert "is_protein_backbone" not in dropped.get_annotation_categories()
+
+        assert np.array_equal(S_SEGMIN.annotation(filled), [-1, 8, -1, -1])
+        assert np.array_equal(S_SEGMAX.annotation(filled), [-1, 12, -1, -1])
+        assert np.array_equal(C_SEQ.mask(filled), [False, False, True, False])
+        assert [set(array.get_annotation_categories()) for array in (left, right)] == original_categories
 
     def test_equality_and_nan_handling(self, simple_array):
         """Test equality and NaN handling for AtomArrayPlus 2D annotations."""
@@ -418,6 +557,24 @@ class TestAtomArrayPlus:
         assert sorted_bonds.shape == sorted_expected.shape
         assert np.all([any(np.array_equal(sb, se) for se in sorted_expected) for sb in sorted_bonds])
 
+    def test_insert_atoms_annotation_mismatch_policy(self):
+        """Annotation mismatch handling is forwarded through insertion."""
+        arr = AtomArrayPlus(1)
+        new_atom = AtomArrayPlus(1)
+        S_SEGMIN.set_annotation(new_atom, np.array([8]))
+
+        with pytest.raises(ValueError, match="Annotation mismatch across inputs"):
+            insert_atoms(arr, [new_atom], [1])
+
+        inserted = insert_atoms(
+            arr,
+            [new_atom],
+            [1],
+            fill_missing_standard_annotations=True,
+        )
+        assert np.array_equal(S_SEGMIN.mask(inserted), [False, True])
+        assert np.array_equal(S_SEGMIN.annotation(inserted), [-1, 8])
+
     def test_equal_annotations_with_per_stack(self, complete_atom_array_plus):
         """Test equality checking with per-stack annotations."""
         # Create two identical stacks
@@ -533,6 +690,15 @@ class TestAtomArrayPlusStack:
         wrong_shape = np.zeros((3, 4), dtype=float)
         with pytest.raises(ValueError, match=r"Expected array shape"):
             stack.set_per_stack_annotation("wrong_shape", wrong_shape)
+
+        # Test multidimensional per-stack annotations
+        annot = np.zeros((2, 4, 3), dtype=float)
+        stack.set_per_stack_annotation("annot", annot)
+        assert stack.get_per_stack_annotation("annot").shape == (2, 4, 3)
+
+        wrong_multidim = np.zeros((3, 4, 3), dtype=float)
+        with pytest.raises(ValueError, match=r"Expected array shape"):
+            stack.set_per_stack_annotation("wrong_multidim", wrong_multidim)
 
     def test_to_per_stack_annotation(self, complete_atom_array_plus):
         """Test converting a regular annotation to a per-stack annotation."""
@@ -795,6 +961,26 @@ class TestAtomArrayPlusStack:
 
         # Bonds are preserved
         assert stack2.bonds == stack.bonds
+
+
+@pytest.mark.parametrize("use_alias", [False, True])
+def test_concatenation_fills_missing_scalar_and_pair_conditions(use_alias):
+    left, right = AtomArrayPlus(2), AtomArrayPlus(1)
+    sequence_name = C_SEQ.aliases[0] if use_alias else C_SEQ.full_name
+    distance_name = C_DIS.aliases[0] if use_alias else C_DIS.full_name
+    left.set_annotation(sequence_name, np.array(["A1AAG", "<M>"]))
+    left.set_annotation_2d(distance_name, pairs=np.array([[0, 1]]), values=np.array([3.5]))
+
+    combined = concatenate_atom_array_plus([left, right], fill_missing_standard_annotations=True)
+
+    np.testing.assert_array_equal(C_SEQ.annotation(combined), ["A1AAG", "<M>", "<M>"])
+    np.testing.assert_array_equal(C_SEQ.mask(combined), [True, False, False])
+    distance = C_DIS.annotation(combined)
+    assert distance.n_atoms == 3
+    np.testing.assert_array_equal(distance.pairs, [[0, 1], [1, 0]])
+    np.testing.assert_array_equal(distance.values, [3.5, 3.5])
+    assert not C_SEQ.has_annotation(right)
+    assert not C_DIS.has_annotation(right)
 
 
 if __name__ == "__main__":

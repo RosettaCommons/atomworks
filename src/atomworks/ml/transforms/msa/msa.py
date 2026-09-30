@@ -1,8 +1,8 @@
 """Transforms on MSAs"""
 
-from __future__ import annotations
-
+import functools
 import logging
+import warnings
 from copy import deepcopy
 from os import PathLike
 from pathlib import Path
@@ -14,7 +14,7 @@ import torch.nn.functional as F  # noqa: N812
 from biotite.structure import AtomArray
 
 from atomworks.common import exists
-from atomworks.enums import ChainType
+from atomworks.enums import ChainType, MSAFileExtension
 from atomworks.ml.encoding_definitions import RF2AA_ATOM36_ENCODING, AF3SequenceEncoding, TokenEncoding
 from atomworks.ml.transforms._checks import (
     check_atom_array_annotation,
@@ -40,9 +40,13 @@ from atomworks.ml.transforms.msa._msa_featurizing_utils import (
     transform_ins_counts,
     uniformly_select_rows,
 )
-from atomworks.ml.transforms.msa._msa_loading_utils import get_msa_path, load_msa_data_from_path
+from atomworks.ml.transforms.msa._msa_loading_utils import (
+    get_msa_path,
+    load_msa,
+)
 from atomworks.ml.transforms.msa._msa_pairing_utils import join_multiple_msas_by_tax_id
-from atomworks.ml.utils.io import cache_to_disk_as_pickle
+from atomworks.ml.transforms.msa.msa_store import PackedMsaStore
+from atomworks.ml.utils import nested_dict
 from atomworks.ml.utils.misc import grouped_count
 from atomworks.ml.utils.token import apply_token_wise, get_token_count, get_token_starts
 
@@ -102,7 +106,7 @@ class PairAndMergePolymerMSAs(Transform):
         atom_array = data["atom_array"]
 
         # Create a map from unique entity IDs to constituent chain IDs
-        # We directly generate the mapping from the AtomArray since the `rcsb_entity` may be inaccurate post-processing
+        # We directly generate the mapping from the AtomArray since the `entity` may be inaccurate post-processing
         # We need entity-level information to pair chains that belong to separate entities; otherwise, we simply concatenate the MSAs
         chain_with_msa_entity_to_ids = {}
         chain_with_msa_id_to_entity = {}
@@ -191,6 +195,37 @@ class PairAndMergePolymerMSAs(Transform):
         return data
 
 
+@functools.cache
+def _get_msa_store(store_url: str, endpoint_url: str | None = None) -> PackedMsaStore:
+    """Process-wide cached packed MSA store."""
+    return PackedMsaStore(store_url, endpoint_url=endpoint_url)
+
+
+def _resolve_and_load_msa(
+    seq: str,
+    msa_dirs: list[dict],
+    chain_type: ChainType,
+    max_msa_sequences: int,
+    query_tax_id: str,
+) -> dict | None:
+    """Load MSA data for ``seq`` from the first matching source.
+
+    Each source is either a packed store (``{"store": <url>}``, content-addressed by sequence hash) or a
+    hashed-file directory (``{"dir", "extension", "directory_depth"}``, the existing layout).
+    """
+    suffix = MSAFileExtension.A3M if chain_type.is_protein() else MSAFileExtension.AFA
+    for src in msa_dirs:
+        if "store" in src:
+            raw = _get_msa_store(src["store"], src.get("endpoint_url")).get_bytes_for_seq(seq)
+            if raw is not None:
+                return load_msa(raw, chain_type, max_msa_sequences, query_tax_id, suffix=suffix)
+        else:
+            path = get_msa_path(seq, [src])
+            if path is not None:
+                return load_msa(path, chain_type, max_msa_sequences=max_msa_sequences, query_tax_id=query_tax_id)
+    return None
+
+
 def load_polymer_msas(
     atom_array: AtomArray,
     chain_info: dict,
@@ -202,79 +237,88 @@ def load_polymer_msas(
     raise_if_missing_msa_for_protein_of_length_n: int | None = None,
     unk_symbol: str = "X",
 ) -> dict[str, np.array]:
-    """
-    Load MSAs for all polymer chains in the AtomArray and store them in a dictionary. See the LoadPolymerMSAs transform for more information
+    """Load MSAs for all polymer chains in the AtomArray and store them in a dictionary. See the LoadPolymerMSAs transform for more information
+
     Args:
         atom_array (AtomArray): The AtomArray for the full structure
         chain_info (dict): A dictionary containing chain information, including:
-            - processed_entity_non_canonical_sequence: The non-canonical sequence for the chain
-            - processed_entity_canonical_sequence: The canonical sequence for the chain
             - chain_type: The type of the chain (e.g., protein, RNA)
             - msa_path (optional): The path to the MSA file for the chain, if available
+            - processed_entity_non_canonical_sequence (required if msa_path not provided): The non-canonical sequence for the chain
+            - processed_entity_canonical_sequence (required if msa_path not provided): The canonical sequence for the chain
         protein_msa_dirs (list[dict[str, str]]): The directories containing the protein MSAs and their associated file types.
         rna_msa_dirs (list[dict[str, str]]): The directories containing the RNA MSAs and their associated file types.
         max_msa_sequences (int): The maximum number of sequences to load from the MSA files. Defaults to 10_000.
-        msa_cache_dir (PathLike | None): The directory to cache the parsed MSA data (since loading from text files is slow). If None, caching is turned off.
+        msa_cache_dir (PathLike | None): **DEPRECATED**. MSA parsing has been optimized with Numba and caching is no longer necessary. This parameter is ignored.
         use_paths_in_chain_info (bool): Whether to use the MSA paths provided in the chain_info dictionary. If True, we will first check the chain_info dictionary for MSA paths.
         raise_if_missing_msa_for_protein_of_length_n (int | None): If provided, raises an error if a protein of length >= n is missing an MSA file.
+
     Returns:
         dict[str, np.array]: A dictionary mapping chain IDs to their corresponding MSA data
     """
     msas_by_chain_id = {}
 
-    # NOTE: If `msa_cache_dir` is `None`, the cache decorator will be a no-op
-    cached_load_msa_data_from_path = cache_to_disk_as_pickle(msa_cache_dir)(load_msa_data_from_path)
+    # msa_cache_dir is deprecated - ignore it
+    if msa_cache_dir is not None:
+        warnings.warn(
+            "msa_cache_dir is deprecated and will be removed in a future version. "
+            "MSA parsing has been optimized with Numba and caching is no longer necessary.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
     for chain_id in np.unique(atom_array.chain_id[np.isin(atom_array.chain_type, ChainType.get_polymers())]):
-        non_canonical_sequence = chain_info[chain_id]["processed_entity_non_canonical_sequence"]
-        canonical_sequence = chain_info[chain_id]["processed_entity_canonical_sequence"]
         chain_type = chain_info[chain_id]["chain_type"]
 
         # Set the query chain tax_id to "query" to avoid pairing issues downstream (we force all query sequences to be paired with themselves)
         # Subsequent occurrences of the query sequence will not have the "query" tax ID, and will be paired appropriately
         query_chain_msa_tax_id = "query"
 
-        # ... find the path
-        msa_file_path = None
+        # Inference-time override: a path in chain_info loads directly. Otherwise resolve by sequence below.
         if (
             use_paths_in_chain_info
             and "msa_path" in chain_info[chain_id]
             and chain_info[chain_id]["msa_path"] is not None
         ):
-            # Use provided path
-            msa_file_path = Path(chain_info[chain_id]["msa_path"])
+            msa_path = Path(chain_info[chain_id]["msa_path"])
+            assert msa_path.exists(), f"MSA file not found at given path: {msa_path}"
+            msa_data = load_msa(
+                msa_path, chain_type, max_msa_sequences=max_msa_sequences, query_tax_id=query_chain_msa_tax_id
+            )
         else:
-            # Check both canonical and non-canonical sequences
+            non_canonical_sequence = chain_info[chain_id]["processed_entity_non_canonical_sequence"]
+            canonical_sequence = chain_info[chain_id]["processed_entity_canonical_sequence"]
+
+            # Resolve from packed stores or hashed-file dirs (first hit wins)
+            # Try non-canonical then canonical, each with X->unk (protein) / U->T (RNA) substitution (RNA MSA pipelines use varying conventions; we accept both)
+            msa_dirs = (
+                protein_msa_dirs if chain_type.is_protein() else (rna_msa_dirs if chain_type == ChainType.RNA else [])
+            )
+            msa_data = None
             for sequence in [non_canonical_sequence, canonical_sequence]:
-                if chain_type.is_protein() and protein_msa_dirs:
-                    msa_file_path = get_msa_path(sequence, protein_msa_dirs)
-                    if msa_file_path is None and unk_symbol != "X":
-                        sequence = sequence.replace("X", unk_symbol)
-                        msa_file_path = get_msa_path(sequence, protein_msa_dirs)
-                elif chain_type == ChainType.RNA and rna_msa_dirs:
-                    msa_file_path = get_msa_path(sequence, rna_msa_dirs)
-                    if not msa_file_path:
-                        # Older MSAs replace U->T. If no matches try replacing
-                        msa_file_path = get_msa_path(sequence.replace("U", "T"), rna_msa_dirs)
-                if msa_file_path:
+                candidates = [sequence]
+                if chain_type.is_protein() and unk_symbol != "X":
+                    candidates.append(sequence.replace("X", unk_symbol))
+                elif chain_type == ChainType.RNA:
+                    candidates.append(sequence.replace("U", "T"))
+                for candidate in candidates:
+                    msa_data = _resolve_and_load_msa(
+                        candidate, msa_dirs, chain_type, max_msa_sequences, query_chain_msa_tax_id
+                    )
+                    if msa_data is not None:
+                        break
+                if msa_data is not None:
                     break
 
-        if msa_file_path is None:
-            # If no MSA file path is found, we skip this chain
-            if raise_if_missing_msa_for_protein_of_length_n is not None:  # noqa: SIM102
-                if chain_type.is_protein() and len(canonical_sequence) >= raise_if_missing_msa_for_protein_of_length_n:
-                    raise ValueError(f"MSA file not found for protein of length {len(canonical_sequence)}")
-            continue
-
-        assert msa_file_path.exists(), f"MSA file not found at given path: {msa_file_path}"
-
-        # ... load the MSA data from the specified path
-        msa_data = cached_load_msa_data_from_path(
-            msa_file_path=msa_file_path,
-            chain_type=chain_type,
-            max_msa_sequences=max_msa_sequences,
-            query_tax_id=query_chain_msa_tax_id,
-        )
+            if msa_data is None:
+                # No MSA found; skip this chain (optionally raising for long proteins).
+                if raise_if_missing_msa_for_protein_of_length_n is not None:  # noqa: SIM102
+                    if (
+                        chain_type.is_protein()
+                        and len(canonical_sequence) >= raise_if_missing_msa_for_protein_of_length_n
+                    ):
+                        raise ValueError(f"MSA file not found for protein of length {len(canonical_sequence)}")
+                continue
 
         if msa_data["msa"] is not None:
             msas_by_chain_id[chain_id] = {
@@ -299,10 +343,10 @@ class LoadPolymerMSAs(Transform):
     We check both the canonical and non-canonical sequences for MSAs, preferring the canonical sequence if both are present.
 
     Args:
-        protein_msa_dirs (list[dict]): The directories containing the protein MSAs and
-            their associated file types, as a list of dictionaries. If multiple
-            directories are provided, all of them will be searched. Keys in the dictionary
-            are:
+        protein_msa_dirs (list[dict] | None): The directories containing the protein MSAs and
+            their associated file types, as a list of dictionaries.
+            If multiple directories are given, all of them will be searched in the order provided.
+            Keys in the dictionary are:
                 - dir (str): The directory where the MSA files are stored.
                 - extension (str): The file extension of the MSA files (e.g., ".a3m.gz" or ".fasta").
                 - directory_depth (int, optional): The directory nesting depth, i.e., the MSA file
@@ -312,17 +356,16 @@ class LoadPolymerMSAs(Transform):
                 (a) The files must be named using the SHA-256 hash of the sequence (see `hash_sequence` in
                     `utils/misc`).
                 (b) Order matters - directories will be searched in the order provided, and the first match will be returned.
-        rna_msa_dirs (list[dict]): The directories containing the RNA MSAs and their
-            associated file types, as a list of dictionaries. See `protein_msa_dirs`
-            for directory structure details.
+        rna_msa_dirs (list[dict] | None): The directories containing the RNA MSAs and their
+            associated file types, as a list of dictionaries.
         use_paths_in_chain_info (bool): Whether to use the MSA paths provided in the chain_info dictionary.
             E.g., for inference mode. If True, we will first check the chain_info dictionary for MSA paths.
         max_msa_sequences (int, optional): The maximum number of sequences to load from
             the MSA files. Defaults to 10000. Only applies when loading; further
             sub-sampling of the MSA occurs downstream (e.g., for the standard or extra MSA stack).
             AF-3 used a large value (~16K), but our MSAs on disk are already pre-filtered to 10K.
-        msa_cache_dir (PathLike, optional): The directory to cache the parsed MSA data
-            (since loading from text files is slow). If None, caching is turned off.
+        msa_cache_dir (PathLike, optional): **DEPRECATED**. MSA parsing has been optimized
+            with Numba and caching is no longer necessary. This parameter is ignored.
         raise_if_missing_msa_for_protein_of_length_n (int | None): If provided, raises an error if a protein of length >= n is missing an MSA file.
         unk_symbol (string): The character to use for unknown residues.  Defaults to 'X'.
 
@@ -341,26 +384,38 @@ class LoadPolymerMSAs(Transform):
           filling the full MSA from the encoded MSA.
     """
 
-    max_msa_sequences: int
-    protein_msa_dirs: list[dict]
-    rna_msa_dirs: list[dict]
-
     def __init__(
         self,
-        protein_msa_dirs: list[
-            dict
-        ] = [],  # Example: [{"dir": "/path/to/protein/msas", "extension": ".a3m.gz", "directory_depth": 2}]
-        rna_msa_dirs: list[dict] = [],
+        protein_msa_dirs: list[dict] | None = None,
+        rna_msa_dirs: list[dict] | None = None,
         max_msa_sequences: int = 10000,
         msa_cache_dir: PathLike | None = None,
         use_paths_in_chain_info: bool = True,
         raise_if_missing_msa_for_protein_of_length_n: int | None = None,
         unk_symbol: str = "X",
     ):
+        if msa_cache_dir is not None:
+            warnings.warn(
+                "msa_cache_dir is deprecated and will be removed in a future version. "
+                "MSA parsing has been optimized with Numba and caching is no longer necessary.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+
+        if protein_msa_dirs is None:
+            protein_msa_dirs = []
+        else:
+            logger.info(f"Using protein MSA directories: {protein_msa_dirs}")
+
+        if rna_msa_dirs is None:
+            rna_msa_dirs = []
+        else:
+            logger.info(f"Using RNA MSA directories: {rna_msa_dirs}")
+
         self.max_msa_sequences = max_msa_sequences
         self.protein_msa_dirs = protein_msa_dirs
         self.rna_msa_dirs = rna_msa_dirs
-        self.msa_cache_dir = msa_cache_dir
+        self.msa_cache_dir = None  # Ignore msa_cache_dir, caching is deprecated
         self.use_paths_in_chain_info = use_paths_in_chain_info
         self.raise_if_missing_msa_for_protein_of_length_n = raise_if_missing_msa_for_protein_of_length_n
         self.unk_symbol = unk_symbol
@@ -388,8 +443,7 @@ class LoadPolymerMSAs(Transform):
 
 
 class EncodeMSA(Transform):
-    """
-    Encode a MSA from MSA-general integer representations to model-specific token indices using the Enoding.
+    """Encode a MSA from MSA-general integer representations to model-specific token indices using the Enoding.
 
     Args:
         token_encoding (TokenEncoding): The TokenEncoding object to use for encoding the MSA.
@@ -410,14 +464,14 @@ class EncodeMSA(Transform):
     requires_previous_transforms: ClassVar[list[str]] = ["LoadPolymerMSAs"]
 
     def __init__(self, encoding: TokenEncoding | AF3SequenceEncoding, token_to_use_for_gap: int | None = None):
-        # ... create a lookup table to map from MSA integers to token indices
+        # Lookup table to map from MSA integers to token indices
         lookup_for_encoding = np.zeros(len(MSA_INTEGER_TO_THREE_LETTER), dtype=int)
         for tmp_int, three_letter in MSA_INTEGER_TO_THREE_LETTER.items():
             if three_letter == GAP_THREE_LETTER and token_to_use_for_gap is not None:
-                # ... if we defined a substitute token for gaps, use it
+                # If we defined a substitute token for gaps, use it
                 lookup_for_encoding[tmp_int] = token_to_use_for_gap
             else:
-                # ... otherwise, we assume that the gap token is present in the encoding
+                # Otherwise, we assume that the gap token is present in the encoding
                 lookup_for_encoding[tmp_int] = encoding.token_to_idx[three_letter]
 
         self.lookup_for_encoding = lookup_for_encoding
@@ -428,23 +482,22 @@ class EncodeMSA(Transform):
 
     def forward(self, data: dict) -> dict:
         atom_array = data["atom_array"]
-        # ...loop through all of the polymer chain IDs still present in the atom array (may be a subset of `polymer_msas_by_chain_id`)
+        # Loop through all of the polymer chain IDs still present in the atom array (may be a subset of `polymer_msas_by_chain_id`)
         polymer_chain_ids = np.unique(atom_array.chain_id[atom_array.is_polymer])
         for chain_id in polymer_chain_ids:
-            # ...check if we have an MSA for this chain
+            # Check if we have an MSA for this chain
             if chain_id in data["polymer_msas_by_chain_id"]:
                 msa = data["polymer_msas_by_chain_id"][chain_id]["msa"]
-                # ...encode the MSA (to tokens integers), based on the lookup table
+                # Encode the MSA (to tokens integers), based on the lookup table
                 encoded_msa = self.lookup_for_encoding[msa]  # [n_rows, n_res_in_chain] (int)
-                # ...set the encoded MSA in the output in-place
                 data["polymer_msas_by_chain_id"][chain_id]["encoded_msa"] = encoded_msa
 
         return data
 
 
 class FillFullMSAFromEncoded(Transform):
-    """
-    Fills in the full MSA from the encoded MSA, using the atom array to determine the order of the tokens.
+    """Fills in the full MSA from the encoded MSA, using the atom array to determine the order of the tokens.
+
     Starts by creating full np.arrays with default values (padding tokens), and then fills in the encoded MSA by looping over chain instances.
 
     This function requires that all MSAs have the same number of rows, but does not require them to necessarily be paired.
@@ -457,6 +510,8 @@ class FillFullMSAFromEncoded(Transform):
         pad_token (str): The token used for padding in the MSA. The pad token should match the padding token used when padding unpaired MSA sequences.
         add_residue_is_paired_feature (bool): Whether to add a binary feature indicating whether a residue is part of a paired MSA.
             Must match the value used in PairAndMergePolymerMSAs.
+        encoded_seq_path (tuple[str, ...]): Path to the encoded query sequence in the data dict.
+            Uses :py:func:`~atomworks.ml.utils.nested_dict.getitem` for access. Defaults to ``("encoded", "seq")``.
 
     Returns:
         The full MSA, with padding, as a 2D np.array of integers, stored in `data["encoded"]["msa"]`.
@@ -501,20 +556,31 @@ class FillFullMSAFromEncoded(Transform):
 
     requires_previous_transforms: ClassVar[list[str]] = ["EncodeMSA", AtomizeByCCDName, AddWithinPolyResIdxAnnotation]
 
-    def __init__(self, pad_token: str, add_residue_is_paired_feature: bool = False):
+    def __init__(
+        self,
+        pad_token: str,
+        add_residue_is_paired_feature: bool = False,
+        encoded_seq_path: tuple[str, ...] = ("encoded", "seq"),
+    ):
         self.PAD_TOKEN = pad_token
         self.add_residue_is_paired_feature = add_residue_is_paired_feature
+        self.encoded_seq_path = encoded_seq_path
 
     def check_input(self, data: dict) -> None:
-        check_contains_keys(data, ["polymer_msas_by_chain_id", "encoded"])
+        check_contains_keys(data, ["polymer_msas_by_chain_id", "atom_array"])
 
     def forward(self, data: dict) -> dict:
         atom_array = data["atom_array"]
+        encoded_seq = nested_dict.getitem(data, self.encoded_seq_path)
+
+        # Ensure "encoded" dict exists for storing MSA output
+        if "encoded" not in data:
+            data["encoded"] = {}
 
         # If we have no polymer MSAs (either all polymer sequences have no MSAs, or we have no polymer sequences)...
         if len(data["polymer_msas_by_chain_id"]) == 0:
             # ... we set `full_encoded_msa` to be the query sequence (expanded to 2D)
-            full_encoded_msa = np.expand_dims(data["encoded"]["seq"], axis=0)  # [1, n_tokens_across_chains] (int)
+            full_encoded_msa = np.expand_dims(encoded_seq, axis=0)  # [1, n_tokens_across_chains] (int)
             num_tokens_in_example = full_encoded_msa.shape[1]
             data["full_msa_details"] = {
                 # ... we set `token_idx_has_msa` to all zeros
@@ -525,7 +591,7 @@ class FillFullMSAFromEncoded(Transform):
                 "msa_raw_ins": np.zeros((1, num_tokens_in_example), dtype=int),
             }
             if self.add_residue_is_paired_feature:
-                # ... we set `msa_residue_is_paired` to all zeros
+                # Set `msa_residue_is_paired` to all zeros
                 data["full_msa_details"]["msa_residue_is_paired"] = np.zeros((1, num_tokens_in_example), dtype=bool)
             data["encoded"]["msa"] = full_encoded_msa
             # ...and we early return!
@@ -588,7 +654,7 @@ class FillFullMSAFromEncoded(Transform):
 
             # Check if we have an MSA for this chain
             if chain_id in data["polymer_msas_by_chain_id"]:
-                # ... if so, get the encoded MSA and the mask
+                # If so, get the encoded MSA and the mask
                 chain_encoded_msa = data["polymer_msas_by_chain_id"][chain_id][
                     "encoded_msa"
                 ]  # [n_rows, n_res_in_chain] (int)
@@ -638,9 +704,9 @@ class FillFullMSAFromEncoded(Transform):
                     full_msa_residue_is_paired[:, mask] = subselected_residue_pairing
                 token_idx_has_msa[mask] = True  # [n_tokens_across_chains] (bool)
 
-        # ... for the first row, set the tokens directly from the output of the `Atomize` transform (i.e., the atomized tokens, and anything without an MSA)
-        # (Note that this also handles setting the MSA for polymers without MSAs, and non-polymers)
-        full_encoded_msa[0] = data["encoded"]["seq"]  # [n_tokens_across_chains] (int)
+        # For the first row, set the tokens directly from the output of the `Atomize` transform (i.e., the atomized tokens, and anything without an MSA)
+        # NOTE: This operation also handles setting the MSA for polymers without MSAs, and non-polymers
+        full_encoded_msa[0] = encoded_seq  # [n_tokens_across_chains] (int)
         full_msa_is_padded_mask[0] = False  # [n_tokens_across_chains] (bool)
         if self.add_residue_is_paired_feature:
             full_msa_residue_is_paired[0] = True  # [n_tokens_across_chains] (bool)
@@ -731,11 +797,11 @@ class FeaturizeMSALikeRF2AA(Transform):
         msa_is_padded_mask = data["full_msa_details"]["msa_is_padded_mask"]  # [n_rows, n_tokens_across_chains] (bool)
         msa_raw_ins = data["full_msa_details"]["msa_raw_ins"]  # [n_rows, n_tokens_across_chains] (int)
 
-        # ...select either the first `n_msa_cluster_representatives` rows or all rows, whichever is smaller
+        # Select either the first `n_msa_cluster_representatives` rows or all rows, whichever is smaller
         n_rows, n_seq = encoded_msa.shape
         n_msa_cluster_representatives = min(self.n_msa_cluster_representatives, n_rows)
 
-        # ...compute the raw MSA profile, which is required for the BERT-style masking of the MSA, where with a 10% probability, we replace
+        # Compute the raw MSA profile, which is required for the BERT-style masking of the MSA, where with a 10% probability, we replace
         # an amino acid with an amino sampled from the MSA profile at a given position
         full_msa_profile = grouped_count(
             encoded_msa,
@@ -746,12 +812,12 @@ class FeaturizeMSALikeRF2AA(Transform):
             ],
             n_tokens=self.encoding.n_tokens,  # ... return a float tensor
             dtype=torch.float,  # ... return a float tensor
-        ).squeeze()  # [n_tokens_across_chains, n_tokens] (float)
+        ).squeeze(0)  # [n_tokens_across_chains, n_tokens] (float)
         full_msa_profile /= (
             full_msa_profile.sum(dim=-1, keepdim=True) + self.eps
         )  # [n_tokens_across_chains, n_tokens] (float)
 
-        # ...generate a unique MSA (both cluster representative MSA and extra MSA) for each recycle (up to `n_recycles`)
+        # ... generate a unique MSA (both cluster representative MSA and extra MSA) for each recycle (up to `n_recycles`)
         msa_features_per_recycle_dict = {
             "first_row_of_msa": [],  # [n_tokens_across_chains] (int)
             "cluster_representatives_msa_ground_truth": [],  # [n_msa_cluster_representatives, n_tokens_across_chains] (int)
@@ -1068,11 +1134,9 @@ class FeaturizeMSALikeAF3(Transform):
         check_contains_keys(data, ["encoded", "full_msa_details"])
 
     def forward(self, data: dict) -> dict:
-        # ...unpack the MSA data
         encoded_msa = data["encoded"]["msa"]  # [n_rows, n_tokens_across_chains] (int)
         msa_is_padded_mask = data["full_msa_details"]["msa_is_padded_mask"]  # [n_rows, n_tokens_across_chains] (bool)
 
-        # ...get the MSA features
         msa_features = featurize_msa_like_af3(
             encoded_msa=encoded_msa,
             n_recycles=self.n_recycles,
@@ -1084,7 +1148,6 @@ class FeaturizeMSALikeAF3(Transform):
             residue_is_paired=data["full_msa_details"].get("msa_residue_is_paired", None),
         )
 
-        # ...add them to the data dictionary
         data["msa_features"] = msa_features
         return data
 
@@ -1100,7 +1163,7 @@ def featurize_msa_like_af3(
     residue_is_paired: torch.Tensor | None = None,
 ) -> dict[str, list[torch.Tensor]]:
     """Functional version of FeaturizeMSALikeAF3. See FeaturizeMSALikeAF3 for more details."""
-    # ...select either the first `n_msa` rows or all rows, whichever is smaller
+    # Select either the first `n_msa` rows or all rows, whichever is smaller
     n_rows, _ = encoded_msa.shape
     n_msa = min(n_msa, n_rows)
 
@@ -1112,7 +1175,7 @@ def featurize_msa_like_af3(
         eps=eps,
     )
 
-    # ...generate features for each recycle
+    # Generate features for each recycle...
     msa_features_per_recycle_dict = {
         "msa": [],  # [n_msa, n_tokens_across_chains, n_tokens] (float)
         "has_insertion": [],  # [n_msa, n_tokens_across_chains] (bool)
@@ -1123,10 +1186,10 @@ def featurize_msa_like_af3(
         msa_features_per_recycle_dict["residue_is_paired"] = []
 
     for _ in range(n_recycles):
-        # ...uniformly select n_msa sequences from the n_rows sequences in the (paired) MSA
+        # Uniformly select n_msa sequences from the n_rows sequences in the (paired) MSA
         selected_indices, _ = uniformly_select_rows(n_rows, n_msa, preserve_first_index=True)
 
-        # ...fill in the MSA features
+        # Fill in the MSA features
         msa_features_per_recycle_dict["msa"].append(
             F.one_hot(encoded_msa[selected_indices], num_classes=encoding.n_tokens)
         )
@@ -1135,7 +1198,8 @@ def featurize_msa_like_af3(
         if exists(residue_is_paired):
             msa_features_per_recycle_dict["residue_is_paired"].append(residue_is_paired[selected_indices])
 
-    # ...and the features that do not differ across recycles
+    # ... and the features that do not differ across recycles
+    ins_mean = transform_ins_counts(ins_mean)
     msa_static_features_dict = {
         "profile": full_msa_profile,  # [n_tokens_across_chains, n_tokens] (float)
         "insertion_mean": ins_mean,  # [n_tokens_across_chains] (float)
@@ -1155,10 +1219,10 @@ def get_full_msa_profile_and_insertion_mean(
     eps: float = 1e-6,
 ) -> tuple[torch.Tensor, torch.Tensor]:
     """Computes the full MSA profile and insertion mean on the untruncated MSA"""
-    # ...select either the first `n_msa` rows or all rows, whichever is smaller
+    # Select either the first `n_msa` rows or all rows, whichever is smaller
     n_rows, n_seq = encoded_msa.shape
 
-    # ...compute the FULL MSA token profile (e.g., before truncation to `n_msa` sequences)
+    # Compute the FULL MSA token profile (e.g., before truncation to `n_msa` sequences)
     full_msa_profile = grouped_count(
         encoded_msa,
         mask=~msa_is_padded_mask,  # ... ignore padding when computing the profile
@@ -1168,13 +1232,15 @@ def get_full_msa_profile_and_insertion_mean(
         ],
         n_tokens=encoding.n_tokens,  # ... return a float tensor
         dtype=torch.float,  # ... return a float tensor
-    ).squeeze()  # [n_tokens_across_chains, n_tokens] (float)
-    # ...normalize
+    ).squeeze(0)  # [n_tokens_across_chains, n_tokens] (float)
+
+    # (Normalize)
     full_msa_profile /= full_msa_profile.sum(dim=-1, keepdim=True) + eps  # [n_tokens_across_chains, n_tokens] (float)
 
-    # ...compute the FULL MSA deletion (insertion) profile (e.g., before truncation to `n_msa` sequences)
+    # ... compute the FULL MSA deletion (insertion) profile (e.g., before truncation to `n_msa` sequences)
     ins_mean = (msa_raw_ins * ~msa_is_padded_mask).sum(dim=0).float()  # [n_tokens] (float)
-    # ... normalize
+
+    # (Normalize)
     ins_mean /= (~msa_is_padded_mask).sum(dim=0) + eps  # [n_tokens] (float)
 
     return full_msa_profile, ins_mean

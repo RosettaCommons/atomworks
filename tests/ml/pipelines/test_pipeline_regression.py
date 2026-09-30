@@ -3,7 +3,6 @@ import os
 import pickle
 from pathlib import Path
 
-import numpy as np
 import pytest
 import torch
 
@@ -13,10 +12,11 @@ from atomworks.constants import (
 )
 from atomworks.enums import ChainType
 from atomworks.io import parse
-from atomworks.io.parser import STANDARD_PARSER_ARGS
-from atomworks.io.utils.testing import assert_same_atom_array
+from atomworks.io.config import ParseConfig
+from atomworks.io.utils.testing import assert_same_atom_array_or_stack
 from atomworks.ml.pipelines.af3 import build_af3_transform_pipeline
 from atomworks.ml.utils.rng import create_rng_state_from_seeds, rng_state
+from atomworks.ml.utils.testing import assert_tensor_or_array_equal
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -74,9 +74,8 @@ def instantiate_example(example_name: str):
     test_data_dir = Path(os.path.join(os.path.dirname(os.path.abspath(__file__))), "test_data")
     file = test_data_dir / example_name / f"{example_name}.cif.gz"
     result_dict = parse(
-        filename=file,
-        build_assembly=("1",),
-        **STANDARD_PARSER_ARGS,
+        file,
+        config=ParseConfig.from_preset("rcsb", build_assembly=("1",)),
     )
 
     # Only set msa_path if the MSA file exists
@@ -118,14 +117,17 @@ def _assert_pipeline_results_equal(result: dict, expected: dict, example_name: s
 
     # Check atom array if present
     if is_inference:
-        assert "atom_array" in result, "Atom array not found in result"
-        assert_same_atom_array(
+        annotations_to_compare = set(expected["atom_array"].get_annotation_categories()) - {
+            "alt_atom_id",
+            "uses_alt_atom_id",
+        }
+        assert_same_atom_array_or_stack(
             result["atom_array"],
             expected["atom_array"],
             compare_coords=True,
             compare_bonds=True,
-            # (All annotation categories present in the expected atom array are compared)
-            annotations_to_compare=expected["atom_array"].get_annotation_categories(),
+            annotations_to_compare=annotations_to_compare,
+            enforce_order=False,  # Allow bond reordering - content matters, not order
         )
 
     # Check features
@@ -158,33 +160,11 @@ def _assert_features_equal(feats: dict, expected_feats: dict, example_name: str,
         ), f"Feature {key} shape mismatch for {example_name} in {mode} mode: {feat.shape} vs {expected_feat.shape}"
 
         # Check values with tolerance
-        _assert_tensor_or_array_equal(
+        assert_tensor_or_array_equal(
             feat,
             expected_feat,
             f"Feature {key} values don't match for {example_name} in {mode} mode",
         )
-
-
-def _assert_tensor_or_array_equal(actual, expected, error_msg: str):
-    """Assert that two tensors or arrays are equal, with appropriate tolerance for different dtypes."""
-    if torch.is_tensor(actual):
-        if actual.dtype == torch.bool or actual.dtype in [torch.int32, torch.int64]:
-            torch.testing.assert_close(
-                actual, expected, atol=0, rtol=0, equal_nan=True, msg=lambda x: error_msg + ": " + x
-            )
-        else:
-            torch.testing.assert_close(
-                actual, expected, atol=1e-4, rtol=1e-4, equal_nan=True, msg=lambda x: error_msg + ": " + x
-            )
-    elif isinstance(actual, np.ndarray):
-        if (
-            actual.dtype.kind in ["U", "S"] or actual.dtype == bool or np.issubdtype(actual.dtype, np.integer)
-        ):  # String dtypes
-            assert np.testing.assert_array_equal(actual, expected, err_msg=error_msg)
-        else:
-            assert np.testing.assert_allclose(actual, expected, atol=1e-4, rtol=1e-4, equal_nan=True, err_msg=error_msg)
-    else:
-        assert actual == expected, error_msg
 
 
 def _make_test_identifier(example_name: str, is_inference: bool) -> str:

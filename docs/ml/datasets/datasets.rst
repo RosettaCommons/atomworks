@@ -61,13 +61,13 @@ Basic Usage Examples
 .. code-block:: python
 
    from atomworks.ml.datasets import PandasDataset
-   from atomworks.ml.datasets.loaders import create_loader_with_query_pn_units
+   from atomworks.ml.datasets.loaders import create_structure_loader
 
    dataset = PandasDataset(
        data="metadata.parquet",
        name="interfaces_dataset",
-       loader=create_loader_with_query_pn_units(
-           pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"]
+       loader=create_structure_loader(
+           column_mapping={"query_pn_unit_iids": ["pn_unit_1_iid", "pn_unit_2_iid"]}
        )
    )
 
@@ -107,9 +107,9 @@ Common Loader Patterns
 
 .. code-block:: python
 
-   from atomworks.ml.datasets.loaders import create_base_loader
+   from atomworks.ml.datasets.loaders import create_structure_loader
 
-   loader = create_base_loader(
+   loader = create_structure_loader(
        example_id_colname="example_id",
        path_colname="path",
        assembly_id_colname="assembly_id",
@@ -121,10 +121,10 @@ Common Loader Patterns
 
 .. code-block:: python
 
-   from atomworks.ml.datasets.loaders import create_loader_with_query_pn_units
+   from atomworks.ml.datasets.loaders import create_structure_loader
 
-   loader = create_loader_with_query_pn_units(
-       pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"],
+   loader = create_structure_loader(
+       column_mapping={"query_pn_unit_iids": ["pn_unit_1_iid", "pn_unit_2_iid"]},
        base_path="/data/pdb",
        extension=".cif.gz"
    )
@@ -133,11 +133,13 @@ Common Loader Patterns
 
 .. code-block:: python
 
-   from atomworks.ml.datasets.loaders import create_loader_with_interfaces_and_pn_units_to_score
+   from atomworks.ml.datasets.loaders import create_structure_loader
 
-   loader = create_loader_with_interfaces_and_pn_units_to_score(
-       interfaces_to_score_colname="interfaces_to_score",
-       pn_units_to_score_colname="pn_units_to_score"
+   loader = create_structure_loader(
+       column_mapping={
+           "interfaces_to_score": "interfaces_to_score",
+           "pn_units_to_score": "pn_units_to_score",
+       }
    )
 
 Integration with Transform Pipelines

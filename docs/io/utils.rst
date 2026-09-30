@@ -10,6 +10,8 @@ Utilities
    utils/chain
    utils/io_utils
    utils/non_rcsb
+   utils/selection_syntax
+   utils/query
    utils/selection
    utils/sequence
    utils/testing

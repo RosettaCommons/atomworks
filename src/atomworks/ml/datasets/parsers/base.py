@@ -5,7 +5,9 @@ from typing import Any, ClassVar
 import pandas as pd
 
 from atomworks.io import parse
+from atomworks.io.config import ParseConfig
 from atomworks.io.parser import STANDARD_PARSER_ARGS
+from atomworks.io.utils.io_utils import infer_pdb_file_type
 
 
 class MetadataRowParser(ABC):
@@ -108,11 +110,12 @@ def load_example_from_metadata_row(
     merged_cif_parser_args = {**STANDARD_PARSER_ARGS, **cif_parser_args}
 
     # Use the parse function with the merged CIF parser arguments
-    result_dict = parse(
-        filename=parsed_row["path"],
-        build_assembly=(parsed_row["assembly_id"],),  # Convert list to tuple (make hashable)
-        **merged_cif_parser_args,
-    )
+    inferred_file_type = merged_cif_parser_args.get("file_type") or infer_pdb_file_type(parsed_row["path"])
+    if inferred_file_type in ("cif", "bcif"):
+        config = ParseConfig(**merged_cif_parser_args, build_assembly=(parsed_row["assembly_id"],))
+    else:
+        config = ParseConfig(**merged_cif_parser_args)
+    result_dict = parse(parsed_row["path"], config=config)
 
     # Combine the PDB output and the parsed output into our clean representation
     data = {

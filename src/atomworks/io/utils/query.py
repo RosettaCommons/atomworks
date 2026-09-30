@@ -1,6 +1,9 @@
 import ast
 import operator
+import re
 from collections.abc import Callable
+from functools import reduce
+from itertools import product
 from types import MappingProxyType
 from typing import Any
 
@@ -25,7 +28,20 @@ class QueryExpression:
 
         Select bonded atoms in specific residues:
             >>> expr = QueryExpression("has_bonds() & (res_name in ['ALA', 'GLY', 'VAL'])")
+
+        Combine path-selection syntax with predicates via ``sel('...')``:
+            >>> expr = QueryExpression("sel('[A,B]/ALA') & (x > 0)")
+
+        Combine derived StandardAnnotation masks using their exported shortcuts:
+            >>> expr = QueryExpression('sa_mask("C_CRD") & sa_mask("C_IDX")')
+
+        Expand a residue-wise reduction back to atoms:
+            >>> expr = QueryExpression("apply_and_spread('residue', atom_name == 'CA', 'any')")
     """
+
+    # Functions that take one string-like argument, as opposed to the
+    # zero-argument predicates below (``has_bonds()`` etc.).
+    STRING_ARG_FUNCTIONS = frozenset({"sa_mask", "sel"})
 
     # Map string operators to functions
     OPS = MappingProxyType(
@@ -49,6 +65,16 @@ class QueryExpression:
             ast.Invert: np.invert,
             ast.UAdd: operator.pos,
             ast.USub: operator.neg,
+        }
+    )
+    REDUCTIONS = MappingProxyType(
+        {
+            "all": np.all,
+            "any": np.any,
+            "max": np.max,
+            "mean": np.mean,
+            "min": np.min,
+            "sum": np.sum,
         }
     )
 
@@ -139,10 +165,55 @@ class QueryExpression:
             Dictionary mapping function names to callable functions.
         """
         functions = {
+            "apply_and_spread": lambda level, data, reduction: QueryExpression._apply_and_spread(
+                atom_array, level, data, reduction
+            ),
             "has_nan_coord": lambda: QueryExpression._has_nan_coord(atom_array),
             "has_bonds": lambda: QueryExpression._has_bonds(atom_array),
+            "sa_mask": lambda name: QueryExpression._standard_annotation_mask(atom_array, name),
+            # Bridge into the path-selection DSL: ``sel('A/ALA/1/[CA,CB]')`` returns a mask.
+            # Non-raising on empty match so it composes inside boolean expressions.
+            "sel": lambda selection_str: AtomSelectionStack.from_query(selection_str).get_mask(
+                atom_array, raise_on_empty=False
+            ),
         }
         return functions
+
+    @staticmethod
+    def _apply_and_spread(atom_array: AtomArray, level: str, data: Any, reduction: str) -> np.ndarray:
+        """Reduce query data at a structural level and spread it back to atoms."""
+        from atomworks.io.utils.standard_annotations.base import Level
+
+        if not isinstance(level, str):
+            raise TypeError("apply_and_spread() level must be a string")
+        if not isinstance(reduction, str):
+            raise TypeError("apply_and_spread() reduction must be a string")
+        if reduction not in QueryExpression.REDUCTIONS:
+            raise ValueError(
+                f"Unknown apply_and_spread() reduction '{reduction}'. "
+                f"Expected one of {sorted(QueryExpression.REDUCTIONS)}."
+            )
+        data = np.asarray(data)
+        if data.ndim == 0 or len(data) != atom_array.array_length():
+            raise ValueError(
+                "apply_and_spread() data must have one value per atom; "
+                f"got shape {data.shape} for {atom_array.array_length()} atoms."
+            )
+        return Level(level).apply_and_spread(atom_array, data, QueryExpression.REDUCTIONS[reduction])
+
+    @staticmethod
+    def _standard_annotation_mask(atom_array: AtomArray, name: str) -> np.ndarray:
+        """Derive a registered StandardAnnotation mask without storing it."""
+        # Lazy import avoids a cycle through StandardAnnotation defaults that use query utilities.
+        from atomworks.io.utils.standard_annotations import STANDARD_ANNOTATIONS
+
+        sa_cls = STANDARD_ANNOTATIONS.get(name)
+        if sa_cls.n_body != 1:
+            raise ValueError(
+                f"sa_mask('{name}') requires a one-body standard annotation, but "
+                f"`{sa_cls.full_name}` is {sa_cls.n_body}-body and has no per-atom mask."
+            )
+        return sa_cls.mask(atom_array)
 
     @staticmethod
     def _has_nan_coord(atom_array: AtomArray) -> np.ndarray:
@@ -166,7 +237,7 @@ class QueryExpression:
         Returns:
             Boolean numpy array indicating which atoms are involved in bonds.
         """
-        if not hasattr(atom_array, "bonds"):
+        if atom_array.bonds is None:
             return np.zeros(atom_array.array_length(), dtype=bool)
         _bonded_idxs = np.unique(atom_array.bonds.as_array()[:, :2])
         return np.isin(np.arange(atom_array.array_length()), _bonded_idxs)
@@ -200,7 +271,7 @@ class QueryExpression:
         # Check length
         if len(mask) != expected_length:
             raise ValueError(
-                f"Query resulted in mask of length {len(mask)}, but AtomArray has length {expected_length}"
+                f"Query resulted in mask of length {len(mask)}, " f"but AtomArray has length {expected_length}"
             )
 
         return mask
@@ -315,19 +386,33 @@ class QueryExpression:
 
         elif isinstance(node, ast.Call):
             # Handle function calls
-            if isinstance(node.func, ast.Name):
-                func_name = node.func.id
-                if func_name in functions:
-                    # Call the function (no arguments supported for now)
-                    if node.args or node.keywords:
-                        raise ValueError(f"Function '{func_name}' does not accept arguments")
-                    result = functions[func_name]()
-                    # Ensure it returns a boolean array of correct length
-                    return self._ensure_bool_array(result, atom_array.array_length())
-                else:
-                    raise NameError(f"Function '{func_name}' is not defined")
-            else:
+            if not isinstance(node.func, ast.Name):
                 raise ValueError("Complex function calls not supported")
+            func_name = node.func.id
+            if func_name not in functions:
+                raise NameError(f"Function '{func_name}' is not defined")
+
+            if func_name == "apply_and_spread":
+                if len(node.args) != 3 or node.keywords:
+                    raise ValueError("Function 'apply_and_spread' expects level, data, and reduction arguments")
+                level = self._eval_node(node.args[0], namespace, functions, atom_array)
+                data = self._eval_node(node.args[1], namespace, functions, atom_array)
+                reduction = self._eval_node(node.args[2], namespace, functions, atom_array)
+                return functions[func_name](level, data, reduction)
+            elif func_name in self.STRING_ARG_FUNCTIONS:
+                if len(node.args) != 1 or node.keywords:
+                    raise ValueError(f"Function '{func_name}' expects a single argument")
+                argument = self._eval_node(node.args[0], namespace, functions, atom_array)
+                if not isinstance(argument, str):
+                    raise TypeError(f"Function '{func_name}' argument must evaluate to a string")
+                result = functions[func_name](argument)
+            else:
+                # Zero-argument predicates (has_bonds(), has_nan_coord()).
+                if node.args or node.keywords:
+                    raise ValueError(f"Function '{func_name}' does not accept arguments")
+                result = functions[func_name]()
+            # Ensure it returns a boolean array of correct length
+            return self._ensure_bool_array(result, atom_array.array_length())
 
         elif isinstance(node, ast.Name):
             if node.id in namespace:
@@ -392,3 +477,408 @@ def idxs(atom_array: AtomArray | AtomArrayStack, expr: str) -> np.ndarray:
     """
     querier = QueryExpression(expr)
     return querier.idxs(atom_array)
+
+
+# ---------------------------------------------------------------------------
+# Path-selection DSL
+#
+# A terse, path-like selection language over five ordered fields:
+#     CHAIN_ID / RES_NAME / RES_ID / ATOM_NAME / TRANSFORMATION_ID
+#
+# It complements the :py:class:`QueryExpression` language above and is bridged
+# into it via the ``sel('...')`` function, e.g. ``arr.query("sel('[A,B]/ALA') & (x > 0)")``.
+# ---------------------------------------------------------------------------
+
+
+class AtomSelection:
+    """A single-valued selection of atoms in a molecular structure.
+
+    A selection is specified by ``chain_id``, ``res_name``, ``res_id``, ``atom_name``,
+    and (optionally) ``transformation_id``. Each field is either an exact value or the
+    wildcard ``"*"`` (match anything). Fields are combined with logical AND.
+
+    For example:
+        - specifying only ``chain_id`` selects all atoms in that chain
+        - specifying ``chain_id`` and ``res_name`` selects all atoms of that residue type in that chain
+        - specifying only ``atom_name`` selects all atoms with that name, in any chain/residue
+
+    For multi-valued selections (lists, ranges, unions), use :py:class:`AtomSelectionStack`.
+    """
+
+    def __init__(
+        self,
+        chain_id: str = "*",
+        res_name: str = "*",
+        res_id: int | str = "*",
+        atom_name: str = "*",
+        transformation_id: int | str = "*",
+    ):
+        self.chain_id = chain_id
+        self.res_name = res_name
+        self.atom_name = atom_name
+        self.res_id = int(res_id) if res_id != "*" else res_id
+        self.transformation_id = str(transformation_id)
+
+    def __str__(self) -> str:
+        parts = [self.chain_id, self.res_name, str(self.res_id), self.atom_name, str(self.transformation_id)]
+
+        # Remove trailing '*' values
+        while parts and parts[-1] == "*":
+            parts.pop()
+
+        return "/".join(parts)
+
+    def __repr__(self) -> str:
+        return str(self)
+
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, str):
+            # Convert the string to an AtomSelection for comparison
+            other = self.from_selection_str(other)
+
+        if not isinstance(other, AtomSelection):
+            return False
+
+        return (
+            self.chain_id == other.chain_id
+            and self.res_name == other.res_name
+            and self.res_id == other.res_id
+            and self.atom_name == other.atom_name
+            and self.transformation_id == other.transformation_id
+        )
+
+    @classmethod
+    def from_selection_str(cls, selection_string: str) -> "AtomSelection":
+        """Create a selection from ``CHAIN/RES_NAME/RES_ID/ATOM/TRANSFORM`` syntax.
+
+        ``"*"`` acts as a wildcard for any field; trailing fields may be omitted and default to ``"*"``.
+        Bracket-list syntax (``[...]``) is not accepted here - use :py:meth:`AtomSelectionStack.from_query`
+        or the query ``sel('...')`` function for multi-valued selections.
+
+        Examples:
+            >>> AtomSelection.from_selection_str("A/ALA/1/CA")
+            A/ALA/1/CA
+            >>> AtomSelection.from_selection_str("*/ALA/*/CB")
+            */ALA/*/CB
+        """
+        selection = parse_selection_string(selection_string)
+        return cls(
+            chain_id=selection.chain_id,
+            res_name=selection.res_name,
+            res_id=selection.res_id,
+            atom_name=selection.atom_name,
+            transformation_id=selection.transformation_id,
+        )
+
+    @classmethod
+    def from_pymol_str(cls, pymol_string: str) -> "AtomSelection":
+        """Create a selection from a PyMOL atom label ``CHAIN/RES_NAME`RES_ID/ATOM``.
+
+        Such strings are produced by clicking an atom/residue in PyMOL, e.g. ``"A/ASP`37/OD2"``.
+        ``"*"`` may be used as a wildcard. ``transformation_id`` is not supported by PyMOL strings.
+        """
+        selection = parse_pymol_string(pymol_string)
+        return cls(
+            chain_id=selection.chain_id,
+            res_name=selection.res_name,
+            res_id=selection.res_id,
+            atom_name=selection.atom_name,
+        )
+
+    def get_mask(self, atom_array: AtomArray, raise_on_empty: bool = True) -> np.ndarray:
+        """Create a boolean mask for this selection on ``atom_array``.
+
+        Args:
+          raise_on_empty: If ``True`` (default), raise :py:class:`ValueError` when the selection
+            matches no atoms. Set ``False`` for union/composition contexts (used by ``sel('...')``).
+        """
+        return get_mask_from_atom_selection(atom_array, self, raise_on_empty=raise_on_empty)
+
+    def get_idxs(self, atom_array: AtomArray) -> np.ndarray:
+        """Get the indices of atoms selected by this AtomSelection."""
+        return np.where(self.get_mask(atom_array))[0]
+
+
+def parse_selection_string(selection_string: str) -> AtomSelection:
+    """Parse a ``CHAIN/RES_NAME/RES_ID/ATOM/TRANSFORM`` string into an :py:class:`AtomSelection`.
+
+    ``"*"`` acts as a wildcard for any field. Trailing fields may be omitted and default to ``"*"``.
+
+    Raises:
+      ValueError: If bracket-list syntax ``[...]`` is used (multi-valued selections must go through
+        :py:meth:`AtomSelectionStack.from_query`).
+    """
+    if "[" in selection_string or "]" in selection_string:
+        raise ValueError(
+            f"Bracket-list syntax '[...]' is not supported for single selections: {selection_string!r}. "
+            "Use AtomSelectionStack.from_query(...) or the query sel('...') function instead."
+        )
+    granularity_tiers = ["chain_id", "res_name", "res_id", "atom_name", "transformation_id"]
+    values = selection_string.split("/")
+
+    # Create a dictionary with available tiers and values
+    selection_dict = {tier: value for tier, value in zip(granularity_tiers, values, strict=False) if value != "*"}
+
+    return AtomSelection(**selection_dict)
+
+
+def parse_pymol_string(pymol_string: str) -> AtomSelection:
+    """Parse a PyMOL ``CHAIN/RES_NAME`RES_ID/ATOM`` string into an :py:class:`AtomSelection`.
+
+    Wildcards (``"*"``) are supported; ``transformation_id`` is not.
+    """
+    # Replace backtick with slash to standardize the format
+    standardized_string = pymol_string.replace("`", "/")
+    return parse_selection_string(standardized_string)
+
+
+def get_mask_from_selection_string(atom_array: AtomArray, selection_string: str) -> np.ndarray:
+    """Create a boolean mask from a ``CHAIN/RES_NAME/RES_ID/ATOM/TRANSFORM`` selection string.
+
+    ``"*"`` acts as a wildcard for any field.
+    """
+    return get_mask_from_atom_selection(atom_array, parse_selection_string(selection_string))
+
+
+def get_mask_from_atom_selection(
+    atom_array: AtomArray, atom_selection: AtomSelection, raise_on_empty: bool = True
+) -> np.ndarray:
+    """Create a boolean mask from an :py:class:`AtomSelection`.
+
+    Args:
+      raise_on_empty: If ``True`` (default), raise :py:class:`ValueError` when no atoms match.
+    """
+    mask = np.ones(atom_array.array_length(), dtype=bool)
+
+    # ``"*"`` is the wildcard; an empty/omitted string field is treated as wildcard too (this also
+    # avoids touching a possibly-absent ``transformation_id`` annotation on a trailing-slash select).
+    # ``res_id`` is the exception: it is an int and ``0`` is a real residue id, so it must compare
+    # against the sentinel directly rather than via truthiness (``0`` is falsy).
+    if atom_selection.chain_id and atom_selection.chain_id != "*":
+        mask &= atom_array.chain_id == atom_selection.chain_id
+
+    if atom_selection.res_name and atom_selection.res_name != "*":
+        mask &= atom_array.res_name == atom_selection.res_name
+
+    if atom_selection.res_id != "*":
+        mask &= atom_array.res_id == atom_selection.res_id
+
+    if atom_selection.atom_name and atom_selection.atom_name != "*":
+        mask &= atom_array.atom_name == atom_selection.atom_name
+
+    if atom_selection.transformation_id and atom_selection.transformation_id != "*":
+        mask &= atom_array.transformation_id == atom_selection.transformation_id
+
+    if raise_on_empty and not np.any(mask):
+        raise ValueError(f"No atoms found for selection: {atom_selection}")
+
+    return mask
+
+
+class AtomSelectionStack:
+    """A union (logical OR) of :py:class:`AtomSelection` objects.
+
+    Enables a single string to select multiple atoms/segments via
+    :py:meth:`from_query` (extended syntax with ``[...]`` lists and ranges) or
+    :py:meth:`from_contig` (contiguous residue ranges).
+    """
+
+    def __init__(self, selections: list[AtomSelection]):
+        self.selections = selections
+
+    @classmethod
+    def from_contig(cls, contig: str) -> "AtomSelectionStack":
+        """Create a stack from contiguous residue ranges like ``"A1-2, B3-10"``."""
+        # First define a regex that matches the elements of the contig string
+        CONTIG_REGEX = re.compile(r"([A-Za-z]+)(\d+)-(\d+)")  # noqa
+        selections = []
+        for selection in contig.replace(" ", "").split(","):
+            match = CONTIG_REGEX.match(selection)
+            if not match:
+                raise ValueError(f"Invalid contig string: {selection}")
+            chain_id, start, stop = match.groups()
+            # Create a new AtomSelection for each match
+            for i in range(int(start), int(stop) + 1):
+                # Create a new AtomSelection for each residue in the range
+                atom_selection = AtomSelection(chain_id=chain_id, res_id=i)
+                selections.append(atom_selection)
+        return cls(selections)
+
+    @classmethod
+    def from_query(cls, query: str | list[str]) -> "AtomSelectionStack":
+        """Create a stack from the extended path-selection syntax.
+
+        Grammar (fields in order ``CHAIN/RES_NAME/RES_ID/ATOM/TRANSFORM``, trailing fields
+        default to ``"*"``):
+
+        - Each field is a scalar (``A``), the wildcard ``*``, or a bracket list ``[a, b, ...]``.
+        - Inside a bracket list, each item is a scalar or - for ``res_id`` only - an inclusive
+          range ``lo-hi`` (e.g. ``[1-5, 9, 12-14]``). Ranges must be bracketed; a bare ``5-10``
+          is not a range.
+        - Multiple whole tokens, separated by top-level commas (or given as a ``list[str]``),
+          are unioned. Commas inside ``[...]`` are part of the list, not token separators.
+
+        Examples:
+            >>> AtomSelectionStack.from_query("[A,B]/ALA/1/[CA,CB]")  # 4 selections, unioned
+            >>> AtomSelectionStack.from_query("A/*/[5-10]")  # residues 5..10 in chain A
+            >>> AtomSelectionStack.from_query("A/*/[5-10], B/*/[3-8]")  # different range per chain
+        """
+        tokens = cls._parse_query_tokens(query)
+        selections: list[AtomSelection] = []
+        for token in tokens:
+            field_values = cls._parse_token_fields(token)
+            selections.extend(cls._build_selections_from_fields(field_values))
+        return cls(selections)
+
+    @staticmethod
+    def _split_top_level(string: str, sep: str) -> list[str]:
+        """Split ``string`` on ``sep`` only at bracket depth 0 (commas inside ``[...]`` are kept)."""
+        parts: list[str] = []
+        buf: list[str] = []
+        depth = 0
+        for ch in string:
+            if ch == "[":
+                depth += 1
+            elif ch == "]":
+                depth -= 1
+            if ch == sep and depth == 0:
+                parts.append("".join(buf))
+                buf = []
+            else:
+                buf.append(ch)
+        parts.append("".join(buf))
+        return parts
+
+    @classmethod
+    def _parse_query_tokens(cls, query: str | list[str]) -> list[str]:
+        """Split query input into individual (bracket-aware) union tokens."""
+        items = [query] if isinstance(query, str) else list(query)
+        raw = [tok for item in items for tok in cls._split_top_level(item, ",")]
+        return [tok.strip() for tok in raw if tok.strip()]
+
+    @classmethod
+    def _parse_token_fields(cls, token: str) -> dict[str, list[Any]]:
+        """Parse a single token into per-field option lists."""
+        parts = token.split("/")
+        while len(parts) < 5:
+            parts.append("*")
+        chain_val, res_name_val, res_id_val, atom_name_val, trans_id_val = parts[:5]
+        return {
+            "chain_id": cls._parse_field_value(chain_val, is_res_id=False),
+            "res_name": cls._parse_field_value(res_name_val, is_res_id=False),
+            "res_id": cls._parse_field_value(res_id_val, is_res_id=True),
+            "atom_name": cls._parse_field_value(atom_name_val, is_res_id=False),
+            "transformation_id": cls._parse_field_value(trans_id_val, is_res_id=False),
+        }
+
+    @classmethod
+    def _parse_field_value(cls, value: str, *, is_res_id: bool = False) -> list[Any]:
+        """Parse a single field into a list of options (expanding ``[...]`` lists and ranges)."""
+        v = value.strip()
+        if v in ("*", ""):
+            return ["*"]
+        if "[" in v or "]" in v:
+            if not (v.startswith("[") and v.endswith("]")):
+                raise ValueError(f"Malformed bracket list in selection field: {v!r}")
+            items = [item.strip() for item in v[1:-1].split(",") if item.strip()]
+            if not items:
+                raise ValueError(f"Empty bracket list in selection field: {v!r}")
+            options: list[Any] = []
+            for item in items:
+                options.extend(cls._expand_item(item, is_res_id=is_res_id))
+            return options
+        # Bare value: scalar only (ranges must be wrapped in brackets)
+        return cls._scalar_option(v, is_res_id=is_res_id)
+
+    @classmethod
+    def _expand_item(cls, item: str, *, is_res_id: bool = False) -> list[Any]:
+        """Expand a single bracket-list item (scalar, wildcard, or res_id range) into options."""
+        if item == "*":
+            return ["*"]
+        if is_res_id:
+            match = re.fullmatch(r"(-?\d+)-(-?\d+)", item)
+            if match:
+                start_i, stop_i = int(match.group(1)), int(match.group(2))
+                step = 1 if start_i <= stop_i else -1
+                return list(range(start_i, stop_i + step, step))
+        return cls._scalar_option(item, is_res_id=is_res_id)
+
+    @staticmethod
+    def _scalar_option(value: str, *, is_res_id: bool = False) -> list[Any]:
+        """Coerce a single scalar field value into a one-element option list."""
+        if is_res_id:
+            try:
+                return [int(value)]
+            except ValueError:
+                raise ValueError(
+                    f"Invalid res_id {value!r}: ranges must be wrapped in brackets, e.g. '[5-10]'."
+                ) from None
+        return [value]
+
+    @classmethod
+    def _build_selections_from_fields(cls, field_values: dict[str, list[Any]]) -> list[AtomSelection]:
+        """Build the Cartesian product of per-field options into individual selections."""
+        return [
+            AtomSelection(chain_id=c, res_name=r, res_id=i, atom_name=a, transformation_id=t)
+            for c, r, i, a, t in product(
+                field_values["chain_id"],
+                field_values["res_name"],
+                field_values["res_id"],
+                field_values["atom_name"],
+                field_values["transformation_id"],
+            )
+        ]
+
+    def get_mask(self, atom_array: AtomArray | AtomArrayStack, raise_on_empty: bool = True) -> np.ndarray:
+        """Create a boolean mask by unioning (logical OR) all member selections.
+
+        Args:
+          raise_on_empty: Passed through to each member selection. If ``True`` (default),
+            a member matching no atoms raises :py:class:`ValueError`. ``sel('...')`` sets this
+            to ``False`` so unions degrade gracefully.
+        """
+        if not self.selections:
+            return np.zeros(atom_array.array_length(), dtype=bool)
+        masks = [selection.get_mask(atom_array, raise_on_empty=raise_on_empty) for selection in self.selections]
+        return reduce(np.logical_or, masks)
+
+    def get_center_of_mass(self, atom_array: AtomArray | AtomArrayStack) -> np.ndarray:
+        """Return the center of mass of the selected atoms."""
+        mask = self.get_mask(atom_array)
+        if not np.any(mask):
+            raise ValueError("No atoms selected by the AtomSelectionStack.")
+
+        if isinstance(atom_array, AtomArray):
+            return atom_array.coord[mask].mean(axis=0)
+        elif isinstance(atom_array, AtomArrayStack):
+            return atom_array.coord[:, mask].mean(axis=1)
+        else:
+            raise ValueError(f"Cannot get center of mass for {type(atom_array)}!")
+
+    def get_principal_components(self, atom_array: AtomArray | AtomArrayStack) -> np.ndarray:
+        """Return principal axes (eigenvectors) of the selected atoms via SVD.
+
+        Returns:
+          ``(3, 3)`` array for :py:class:`~biotite.structure.AtomArray`.
+          ``(n_models, 3, 3)`` array for :py:class:`~biotite.structure.AtomArrayStack`.
+        """
+        mask = self.get_mask(atom_array)
+        if not np.any(mask):
+            raise ValueError("No atoms selected by the AtomSelectionStack.")
+
+        if isinstance(atom_array, AtomArray):
+            coords = atom_array.coord[mask]  # (N_atoms, 3)
+            coords_centered = coords - coords.mean(axis=0)
+            # SVD for principal axes
+            _, _, vh = np.linalg.svd(coords_centered, full_matrices=False)
+            return vh.T  # (3, 3), columns are principal axes
+        elif isinstance(atom_array, AtomArrayStack):
+            coords = atom_array.coord[:, mask, :]  # (n_models, N_atoms, 3)
+            pcs = []
+            for model_coords in coords:
+                model_centered = model_coords - model_coords.mean(axis=0)
+                _, _, vh = np.linalg.svd(model_centered, full_matrices=False)
+                pcs.append(vh.T)  # (3, 3)
+            return np.stack(pcs, axis=0)  # (n_models, 3, 3)
+        else:
+            raise ValueError(f"Cannot get principal components for {type(atom_array)}!")

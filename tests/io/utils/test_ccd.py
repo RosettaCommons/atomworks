@@ -1,16 +1,15 @@
-import os
-
 import numpy as np
 import pytest
 
-from atomworks.constants import CCD_MIRROR_PATH
 from atomworks.io.utils.ccd import (
+    _get_base_ccd_template,
     atom_array_from_ccd_code,
-    get_ccd_component_from_mirror,
+    get_polymerization_atoms,
+    register_custom_ccd_entry,
+    unregister_custom_ccd_entry,
 )
 
 
-@pytest.mark.parametrize("ccd_mirror_path", [CCD_MIRROR_PATH, None])
 @pytest.mark.parametrize(
     "ccd_code,expected_coord_type,coord_preferences",
     [
@@ -18,13 +17,11 @@ from atomworks.io.utils.ccd import (
         ("HEM", "ideal_pdbx", ("ideal_pdbx", "model")),  # HEM should use ideal_pdbx
     ],
 )
-def test_coordinate_fallback_behavior(
-    ccd_mirror_path: os.PathLike | None, ccd_code: str, expected_coord_type: str, coord_preferences: tuple[str, ...]
-):
+def test_coordinate_fallback_behavior(ccd_code: str, expected_coord_type: str, coord_preferences: tuple[str, ...]):
     """Test coordinate fallback behavior for different CCD codes."""
     # Test with fallback preferences
-    fallback_result = atom_array_from_ccd_code(ccd_code, ccd_mirror_path=ccd_mirror_path, coords=coord_preferences)
-    expected_result = atom_array_from_ccd_code(ccd_code, ccd_mirror_path=ccd_mirror_path, coords=(expected_coord_type,))
+    fallback_result = atom_array_from_ccd_code(ccd_code, coords=coord_preferences)
+    expected_result = atom_array_from_ccd_code(ccd_code, coords=(expected_coord_type,))
 
     # Should match the expected coordinate type
     np.testing.assert_array_equal(
@@ -38,10 +35,8 @@ def test_coordinate_fallback_behavior(
         reversed_prefs = tuple(reversed(coord_preferences))
         if reversed_prefs[0] != expected_coord_type:
             # If the first preference in reversed order is different from expected, result should be different
-            reversed_result = atom_array_from_ccd_code(ccd_code, ccd_mirror_path=ccd_mirror_path, coords=reversed_prefs)
-            first_pref_result = atom_array_from_ccd_code(
-                ccd_code, ccd_mirror_path=ccd_mirror_path, coords=(reversed_prefs[0],)
-            )
+            reversed_result = atom_array_from_ccd_code(ccd_code, coords=reversed_prefs)
+            first_pref_result = atom_array_from_ccd_code(ccd_code, coords=(reversed_prefs[0],))
 
             np.testing.assert_array_equal(
                 reversed_result.coord,
@@ -51,26 +46,26 @@ def test_coordinate_fallback_behavior(
 
 
 def test_coordinate_fallback_with_mirror():
-    """Test coordinate fallback with get_ccd_component_from_mirror."""
-    # Test H5C with mirror - should fall back to model
-    h5c_mirror_fallback = get_ccd_component_from_mirror("H5C", coords=("ideal_pdbx", "model"))
-    h5c_mirror_model = get_ccd_component_from_mirror("H5C", coords=("model",))
+    """Test coordinate fallback using atom_array_from_ccd_code (works with Biotite fallback)."""
+    # Test H5C - should fall back to model
+    h5c_fallback = atom_array_from_ccd_code("H5C", coords=("ideal_pdbx", "model"))
+    h5c_model = atom_array_from_ccd_code("H5C", coords=("model",))
 
     np.testing.assert_array_equal(
-        h5c_mirror_fallback.coord,
-        h5c_mirror_model.coord,
-        err_msg="H5C mirror fallback should match model coordinates",
+        h5c_fallback.coord,
+        h5c_model.coord,
+        err_msg="H5C fallback should match model coordinates",
     )
 
-    # Test HEM with mirror - should use ideal_pdbx
-    hem_mirror_ideal = get_ccd_component_from_mirror("HEM", coords=("ideal_pdbx", "model"))
-    hem_mirror_model = get_ccd_component_from_mirror("HEM", coords=("model",))
+    # Test HEM - should use ideal_pdbx
+    hem_ideal = atom_array_from_ccd_code("HEM", coords=("ideal_pdbx", "model"))
+    hem_model = atom_array_from_ccd_code("HEM", coords=("model",))
 
     with pytest.raises(AssertionError):
         np.testing.assert_array_equal(
-            hem_mirror_ideal.coord,
-            hem_mirror_model.coord,
-            err_msg="HEM mirror ideal and model coordinates should be different",
+            hem_ideal.coord,
+            hem_model.coord,
+            err_msg="HEM ideal and model coordinates should be different",
         )
 
 
@@ -106,6 +101,47 @@ def test_no_coordinates_fallback():
     result = atom_array_from_ccd_code("H5C", coords=("ideal_pdbx",))  # H5C doesn't have ideal PDBx coordinates
     # Should be all NaNs
     assert np.all(np.isnan(result.coord)), "Should have NaN coordinates"
+
+
+def test_custom_ccd_codes_bypass_cache():
+    """Non-standard CCD codes must bypass the cache so re-registration is visible."""
+    custom_code = "ZZTEST:0"
+    mol_a = atom_array_from_ccd_code("ALA", coords=None)
+    mol_b = atom_array_from_ccd_code("GLY", coords=None)
+
+    try:
+        register_custom_ccd_entry(custom_code, mol_a)
+        assert len(_get_base_ccd_template(custom_code, "", "keep")) == len(mol_a)
+
+        register_custom_ccd_entry(custom_code, mol_b)
+        assert len(_get_base_ccd_template(custom_code, "", "keep")) == len(mol_b)
+    finally:
+        unregister_custom_ccd_entry(custom_code)
+
+
+@pytest.mark.parametrize(
+    "ccd_code,expected",
+    [
+        ("ALA", ("C", "N")),  # canonical peptide atom names
+        ("DA", ("O3'", "P")),  # canonical nucleotide atom names
+        ("CRO", ("C3", "N1")),  # GFP chromophore: derived from the CCD's leaving-atom flags
+        ("3DA", ("O2'", "P")),  # cordycepin: no O3', so it links 2'->5' via an override
+        ("4DG", (None, "P")),  # acyclic guanine phosphonate: a 3' terminus, nothing exits
+    ],
+)
+def test_get_polymerization_atoms(ccd_code: str, expected: tuple[str | None, str | None]):
+    """Polymerization atoms resolve via canonical names, the CCD's own annotations, or an override."""
+    assert get_polymerization_atoms(ccd_code) == expected
+
+
+def test_get_polymerization_atoms_prefers_canonical_names_over_overrides(cleanup_registry):
+    """A custom component registered under an overridden code resolves by its own atom names."""
+    custom_ncaa = atom_array_from_ccd_code("TRP", coords=None)
+    custom_ncaa.res_name[:] = "3DA"
+    register_custom_ccd_entry("3DA", custom_ncaa)
+
+    # Without the canonical-names check first, this would return the nucleotide override ("O2'", "P").
+    assert get_polymerization_atoms("3DA") == ("C", "N")
 
 
 if __name__ == "__main__":

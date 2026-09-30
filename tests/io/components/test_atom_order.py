@@ -1,5 +1,6 @@
 import pytest
 
+from atomworks.io.config import ParseConfig
 from atomworks.io.parser import parse
 from tests.io.conftest import get_pdb_path
 
@@ -17,5 +18,5 @@ TEST_CASES = [
 @pytest.mark.parametrize("pdb_id", TEST_CASES)
 def test_atom_order(pdb_id: str):
     path = get_pdb_path(pdb_id)
-    result = parse(filename=path, add_missing_atoms=True, build_assembly=None)
+    result = parse(path, config=ParseConfig(add_missing_atoms=True, build_assembly=None))
     assert result is not None

@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 atomworks documentation
-======================
+=======================
 
 Welcome to **atomworks** — a toolkit for converting, parsing, and manipulating biological structure and sequence data, inspired by the Biotite library. Quickly convert between formats, extract features, and prepare data for machine learning or structural analysis.
 
@@ -18,6 +18,7 @@ Welcome to **atomworks** — a toolkit for converting, parsing, and manipulating
    :caption: Navigation
 
    tutorial/index
+   how_to_build_a_model/index
    cookbook
    installation
    glossary

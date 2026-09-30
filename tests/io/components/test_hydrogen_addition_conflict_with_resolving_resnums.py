@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import numpy as np
 import pytest
 
@@ -14,7 +12,7 @@ TEST_CASES = ["1iau"]
 @pytest.mark.parametrize("pdbid", TEST_CASES)
 def test_resnum_duplication_resolve(pdbid: str):
     # Not excluding crystallization aids
-    out1 = parse(filename=get_pdb_path(pdbid), hydrogen_policy="infer")
+    out1 = parse(get_pdb_path(pdbid))
     out1 = out1["assemblies"]["1"][0]
     ids = out1[out1.res_name == "NAG"].res_id
     print(ids)

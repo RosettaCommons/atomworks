@@ -1,8 +1,6 @@
 """Command line interface for managing a local PDB mmCIF mirror."""
 
 # ruff: noqa: B008
-from __future__ import annotations
-
 import functools
 import operator
 import os

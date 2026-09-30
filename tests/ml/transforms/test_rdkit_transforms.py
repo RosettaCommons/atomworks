@@ -6,7 +6,7 @@ from atomworks.ml.encoding_definitions import RF2AA_ATOM36_ENCODING
 from atomworks.ml.transforms.atom_array import AddGlobalAtomIdAnnotation
 from atomworks.ml.transforms.atomize import AtomizeByCCDName
 from atomworks.ml.transforms.base import Compose
-from atomworks.ml.transforms.covalent_modifications import FlagAndReassignCovalentModifications
+from atomworks.ml.transforms.covalent_modifications import AnnotateCovalentModifications
 from atomworks.ml.transforms.filters import HandleUndesiredResTokens, RemoveHydrogens
 from atomworks.ml.transforms.rdkit_utils import (
     AddRDKitMoleculesForAtomizedMolecules,
@@ -61,7 +61,7 @@ def test_add_rdkit_molecules_for_atomized_molecules(test_case):
         [
             AddGlobalAtomIdAnnotation(),
             RemoveHydrogens(),
-            FlagAndReassignCovalentModifications(),
+            AnnotateCovalentModifications(),
             HandleUndesiredResTokens(["UNL"]),
             AtomizeByCCDName(
                 atomize_by_default=True,
@@ -118,7 +118,7 @@ def test_generate_rdkit_conformers(test_case):
         [
             AddGlobalAtomIdAnnotation(),
             RemoveHydrogens(),
-            FlagAndReassignCovalentModifications(),
+            AnnotateCovalentModifications(),
             HandleUndesiredResTokens(["UNL"]),
             AtomizeByCCDName(
                 atomize_by_default=True,

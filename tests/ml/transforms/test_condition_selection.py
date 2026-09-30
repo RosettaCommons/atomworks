@@ -8,7 +8,7 @@ from atomworks.io.transforms.atom_array import (
     remove_hydrogens,
     remove_waters,
 )
-from atomworks.ml.conditions.annotator import ensure_annotations
+from atomworks.io.utils.annotator import ensure_annotations
 from atomworks.ml.transforms import mask_generator as mg
 from atomworks.ml.utils.rng import create_rng_state_from_seeds, rng_state
 from atomworks.ml.utils.testing import cached_parse

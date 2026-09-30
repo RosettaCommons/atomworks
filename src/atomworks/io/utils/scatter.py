@@ -2,6 +2,9 @@ from collections.abc import Callable
 
 import biotite.structure as struc
 import numpy as np
+from jaxtyping import Int, Shaped
+
+Array = np.ndarray
 
 
 # Group-wise operations (= non-contiguous or contiguous groups) ------------------------------
@@ -160,6 +163,30 @@ def apply_and_spread_group_wise(group: np.ndarray, data: np.ndarray, func: Calla
     return spread_group_wise(group, aggregated)
 
 
+def safe_scatter(
+    source_values: Shaped[Array, "s *rest"],  # noqa: F821
+    mapping: Int[Array, "s"],  # noqa: F821
+    target: Shaped[Array, "t *rest"],  # noqa: F821
+) -> Shaped[Array, "t *rest"]:  # noqa: F821
+    """Scatter ``source_values`` onto a copy of ``target``: source ``i`` writes to ``target[mapping[i]]``,
+    ``mapping[i] == -1`` drops it. A string ``target`` dtype is widened so long labels are not truncated.
+
+    >>> safe_scatter(np.array([10, 20, 30]), np.array([2, -1, 0]), np.zeros(4, dtype=int))
+    array([30,  0, 10,  0])
+    """
+    if len(source_values) != len(mapping):
+        raise ValueError(
+            f"source_values ({len(source_values)}) and mapping ({len(mapping)}) must have the same length."
+        )
+    if target.dtype.kind in "US":
+        out = target.astype(np.result_type(target.dtype, np.asarray(source_values).dtype))
+    else:
+        out = target.copy()
+    matched = mapping >= 0
+    out[mapping[matched]] = source_values[matched]
+    return out
+
+
 # Segment-wise operations (= contiguous groups) --------------------------------
 def get_segments(*arrays: np.ndarray, add_exclusive_stop: bool = False) -> np.ndarray:
     """
@@ -208,10 +235,49 @@ def get_segments(*arrays: np.ndarray, add_exclusive_stop: bool = False) -> np.nd
 apply_segment_wise = struc.segments.apply_segment_wise
 spread_segment_wise = struc.segments.spread_segment_wise
 
+NUMPY_REDUCE_FUNCS = {
+    np.any: np.logical_or.reduceat,
+    np.all: np.logical_and.reduceat,
+    np.maximum: np.maximum.reduceat,
+    np.minimum: np.minimum.reduceat,
+    np.max: np.maximum.reduceat,
+    np.min: np.minimum.reduceat,
+    np.add: np.add.reduceat,
+    np.sum: np.add.reduceat,
+}
 
-def apply_and_spread_segment_wise(segment: np.ndarray, data: np.ndarray, func: Callable) -> np.ndarray:
+
+def apply_and_spread_segment_wise(
+    segment: np.ndarray,
+    data: np.ndarray,
+    func: Callable,
+    axis: int | None = None,
+) -> np.ndarray:
+    """Apply a segment-wise reduction and broadcast the result back to all original positions.
+
+    Uses :py:obj:`NUMPY_REDUCE_FUNCS` for common numpy ufuncs when ``axis`` is ``None``.
+
+    Args:
+        segment: 1D array of segment start/stop indices (with exclusive stop appended).
+        data: The input data array.
+        func: The function to apply to each segment.
+        axis: The axis along which to apply the function. If ``None``, the function
+            is applied to the entire segment.
+
+    Returns:
+        A new array with the same shape as ``data``, where the result of the
+        function applied to each segment has been spread across the elements
+        of that segment.
+
+    Example:
+        >>> import numpy as np
+        >>> segment = np.array([0, 3, 6])
+        >>> data = np.array([1, 2, 3, 4, 5, 6])
+        >>> apply_and_spread_segment_wise(segment, data, np.sum)
+        array([ 6,  6,  6, 15, 15, 15])
     """
-    Apply a segment-wise reduction and broadcast the result back to all original positions.
-    """
-    aggregated = apply_segment_wise(segment, data, func)
+    if func in NUMPY_REDUCE_FUNCS and axis is None:
+        aggregated = NUMPY_REDUCE_FUNCS[func](data, segment[:-1])
+    else:
+        aggregated = apply_segment_wise(segment, data, func, axis)
     return spread_segment_wise(segment, aggregated)

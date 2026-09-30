@@ -1,7 +1,7 @@
 Cookbook
 ========
 
-The atomworks cookbook is intended to be a quick reference for various common tasks. Note the code snippets may not be complete as-written, and may require imports or other prepratory steps.
+The atomworks cookbook is intended to be a quick reference for various common tasks. Note the code snippets may not be complete as-written, and may require imports or other preparatory steps.
 
 As the AtomArray object comes from biotite, the `biotite documentation <https://www.biotite-python.org/latest/tutorial/structure/index.html>`__ and `api reference <https://www.biotite-python.org/latest/apidoc/biotite.structure.html>`__ contains additional resources for working with it.
 
@@ -11,26 +11,30 @@ Input
 Standard Local File Input
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Accepts common structure input formats (mmCIF, PDB, mmjson and BCIF/BinaryCIF), both with filenames and file-like objects. CIF files can be gzip compressed. 
+Accepts common structure input formats (mmCIF, PDB, mmjson and BCIF/BinaryCIF), both with filenames and file-like objects. CIF files can also be gzip- or Zstandard-compressed.
 
-See :doc:`the Parser tutorial page <tutorial/parser>` for details on parameters and output. You can also find the API docs for the ``parse`` function :func:`here <atomworks.io.parser.parse>`. (Defaults for selected keyword arguments shown.)::
+See :doc:`the Parser tutorial page <tutorial/parser>` for details on parameters and output. You can also find the API docs for the ``parse`` function :func:`here <atomworks.io.parser.parse>`. Import the modules used by each recipe explicitly; examples assume input filenames and arrays have been supplied.::
 
-    result_dict = atomworks.io.parse(filename,
-            add_missing_atoms=True,
-            remove_waters=True,
-            hydrogen_policy="keep",
-            )
+    from atomworks.io import parse
+    from atomworks.io.config import ParseConfig
+
+    result_dict = parse(
+        filename,
+        config=ParseConfig(add_missing_atoms=True, remove_waters=True, hydrogen_policy="keep"),
+    )
 
     # Extract relevant AtomArray:
     asym_unit = result_dict["asym_unit"][0]       # The full asymmetric unit
     assembly = result_dict["assemblies"]["1"][0]  # The Biological Assembly/biounit (possibly comprising multiple asym_units)
 
 Load from Clean Files
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
-The :func:`~atomworks.io.utils.io_utils.load_any` function is suitable for previously processed structures (e.g. those which have already passed through an atomworks preparation pipeline)::
+Use the minimal parser preset for previously processed structures. It avoids
+adding missing atoms and retains waters, while still applying the parser's
+remaining normalization rules::
 
-    atom_array = atomworks.io.utils.io_utils.load_any( filename )
+    atom_array = parse(filename, config="minimal")["asym_unit"][0]
 
 Database Input
 ~~~~~~~~~~~~~~
@@ -61,9 +65,9 @@ The following is a simple procedure for how to create an annotated AtomArray fro
    # ccd_list is just a list with one CCD code per entry.
 
    atom_array = atomworks.io.tools.inference.sequence_to_annotated_atom_array( ccd_list, chain_id, chain_type=chain_type )
-   # Caution! The atom array will not contain coordinates. 
+   # Caution! The atom array will not contain coordinates.
 
-API docs for these functions: 
+API docs for these functions:
 
 - :attr:`~atomworks.enums.ChainType.POLYPEPTIDE_L`
 - :func:`~atomworks.io.tools.fasta.one_letter_to_ccd_code`
@@ -78,15 +82,39 @@ mmCIF output
 
 :func:`~atomworks.io.utils.io_utils.to_cif_file` supports `.cif`, `.cif.gz` and `.bcif` outputs::
 
-    atomworks.io.utils.io_utils.to_cif_file( atom_array, filename )
+    from atomworks.io.utils.io_utils import CIFWriteConfig, to_cif_buffer, to_cif_file
+
+    to_cif_file(atom_array, filename, chain_disambiguation="chain_iid")
+
+For an in-memory CIF that retains assembly transformation identity, pass a CIFWriteConfig::
+
+    buffer = to_cif_buffer(
+        atom_array,
+        config=CIFWriteConfig(
+            include_entity_categories=True,
+            chain_disambiguation="transformation_id",
+        ),
+    )
+    restored = parse(buffer, config="minimal")["asym_unit"][0]
+
+Use chain_iid disambiguation for external readers; transformation_id is an
+AtomWorks convention. Standard annotations and custom fields depend on the
+writer options and reader. Re-running parse also applies preparation rules;
+it is not an exact serialization check.
 
 Legacy PDB output
 ~~~~~~~~~~~~~~~~~
 
 While the use of :func:`~atomworks.io.utils.io_utils.to_pdb_string` is possible for creating legacy PDB files, use of mmCIF instead is recommended::
 
-    with open( filename ) as f:
-        f.write( atomworks.io.utils.io_utils.to_pdb_string( atom_array ) )
+    import numpy as np
+
+    resolved = atom_array[np.isfinite(atom_array.coord).all(axis=-1)]
+    with open(filename, "w") as f:
+        f.write(atomworks.io.utils.io_utils.to_pdb_string(resolved))
+
+PDB cannot store missing coordinates and has stricter chain, residue, and atom
+identifier limits than mmCIF. This recipe excludes atoms with missing coordinates.
 
 SDF/SMILES output
 ~~~~~~~~~~~~~~~~~
@@ -96,7 +124,7 @@ This procedure may not work reliably for multi-residue AtomArrays (or too-small 
     rdmol = atomworks.io.tools.rdkit.atom_array_to_rdkit( atom_array )
 
     smiles = rdkit.Chem.MolToSmiles( rdmol )
-    
+
     with rdkit.Chem.SDWriter( sdf_filename ) as w:
         w.write( rdmol )
 
@@ -109,9 +137,9 @@ API docs for these functions:
 FASTA output
 ~~~~~~~~~~~~
 
-`biotite.to_sequence <https://www.biotite-python.org/latest/apidoc/biotite.structure.to_sequence.html#biotite.structure.to_sequence>`_ will raise an error if the atom_array contains non-polymeric residues::
+`biotite.structure.to_sequence <https://www.biotite-python.org/latest/apidoc/biotite.structure.to_sequence.html#biotite.structure.to_sequence>`_ will raise an error if the atom_array contains non-polymeric residues::
 
-    results = biotite.to_sequence( atom_array )
+    results = biotite.structure.to_sequence( atom_array )
 
     seq_list = results[0] # The second entry in the returned tuple is chain_start_indices
 
@@ -136,7 +164,7 @@ AtomArray can be subsetted by indexing with a Boolean array, resulting in anothe
     chainA  = atom_array[ atom_array.chain_id == "A" ]
     gly     = atom_array[ atom_array.res_name == "GLY" ]
     polymer = atom_array[ atom_array.is_polymer ]
-    not_bb  = atom_array[ ~atom_array.is_backbone_atom ]
+    not_bb  = atom_array[ ~biotite.structure.filter_peptide_backbone(atom_array) ]
     res_B34 = atom_array[ (atom_array.chain_id == "B") & (atom_array.res_id == 34) ] # Parenthesis are needed.
 
 :mod:`~atomworks.io.transforms.atom_array` contains a number of helpful utility functions (primarily used in structure loading)::
@@ -144,12 +172,16 @@ AtomArray can be subsetted by indexing with a Boolean array, resulting in anothe
     no_waters = atomworks.io.transforms.atom_array.remove_waters( atom_array )
     no_ccd    = atomworks.io.transforms.atom_array.remove_ccd_components( atom_array, ccd_code_list )
     no_hydro  = atomworks.io.transforms.atom_array.remove_hydrogens( atom_array )
-    with_hydrogens = atomworks.io.transforms.atom_array.add_hydrogen_atom_positions( atom_array )
 
 
 The ``biotite.structure`` module contains a number of `filter <https://www.biotite-python.org/latest/apidoc/biotite.structure.html#filters>`_ functions to help subset the AtomArray::
 
     sugars = atom_array[ biotite.structure.filter_carbohydrates(atom_array) ]
+
+These selections assume the annotations are present. A biological assembly may
+have multiple copies sharing chain and residue IDs. Select a chain_iid or
+pn_unit_iid first when you need one instance. The backbone filter above selects
+protein backbone atoms.
 
 Changing annotations
 ~~~~~~~~~~~~~~~~~~~~
@@ -157,7 +189,7 @@ Changing annotations
 Note this naive manipulation doesn't update the ``_id/_iid/pn_unit/molecule/etc.`` identity correspondences::
 
     atom_array.chain_id[ atom_array.is_polymer ] = "A"
-    atom_array.res_id[ atom_array.resid == 1004 ] = 4
+    atom_array.res_id[ atom_array.res_id == 1004 ] = 4
 
 Coordinate Manipulation
 -----------------------
@@ -181,11 +213,11 @@ Alignment
 If the AtomArrays have identical atom layouts::
 
     superimposed, transformation = biotite.structure.superimpose( fixed, mobile )
-    
-    superimposed2 = transformation.apply( mobile2 ) # Apply same transformation to different AtomArray 
+
+    superimposed2 = transformation.apply( mobile2 ) # Apply same transformation to different AtomArray
 
 If the structures aren't identical, the following uses sequence alignments to find pairings::
-    
+
     superimposed, transformation, fixed_indices, mobile_indices = biotite.structure.superimpose_homologs( fixed, mobile )
 
 If there's low sequence similarity, the following uses structural similarity to find pairings::
@@ -252,4 +284,3 @@ Other
 -----
 
 If there are other common tasks you think are worth including here, please `open an issue <https://github.com/RosettaCommons/atomworks/issues>`_ on Github.
-

@@ -11,8 +11,6 @@ Then run the printed command to generate the flame fraph from the Memray output 
 +-----------------------------------------------------------------------------------------+
 """
 
-from __future__ import annotations
-
 import logging
 
 from tqdm import tqdm

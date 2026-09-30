@@ -7,7 +7,7 @@ on:
 
 jobs:
   release_and_docs:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted]
     permissions:
       contents: write
       packages: write
@@ -30,6 +30,11 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Create isolated Python environment
+        run: |
+          python -m venv "$RUNNER_TEMP/docs-venv"
+          echo "$RUNNER_TEMP/docs-venv/bin" >> "$GITHUB_PATH"
 
       - name: Install Python build dependencies
         run: |

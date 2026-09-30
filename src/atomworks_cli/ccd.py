@@ -2,8 +2,6 @@
 
 # ruff: noqa: B008
 
-from __future__ import annotations
-
 import functools
 import operator
 import os

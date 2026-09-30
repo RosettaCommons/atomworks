@@ -1,23 +1,26 @@
 import numpy as np
 import pytest
+from biotite.structure import AtomArray
 
 from atomworks.io.transforms.atom_array import is_any_coord_nan
 from atomworks.io.utils.io_utils import load_any
 from atomworks.io.utils.query import QueryExpression, idxs, mask, query
+from atomworks.io.utils.standard_annotations import S_ATM
 from atomworks.io.utils.testing import get_pdb_path
+from atomworks.ml.conditions import C_IDX, C_NTR
 
 
 @pytest.fixture(scope="module")
 def atom_array():
     """Cache the loaded atom array for all tests in this module."""
-    atom_array = load_any(get_pdb_path("6lyz"), model=1)
+    atom_array = load_any(get_pdb_path("6lyz"), model=1, include_bonds=True)
     return atom_array
 
 
 @pytest.fixture(scope="module")
 def atom_array_stack():
     """Cache the loaded atom array stack for all tests in this module."""
-    atom_array_stack = load_any(get_pdb_path("6lyz"))
+    atom_array_stack = load_any(get_pdb_path("6lyz"), include_bonds=True)
     return atom_array_stack
 
 
@@ -319,6 +322,26 @@ class TestSpecialCases:
         assert isinstance(result2, type(atom_array))
 
 
+@pytest.mark.parametrize(
+    "expr, expected",
+    [
+        # bare path selection via sel()
+        ("sel('A/*/*/CA')", lambda a: (a.chain_id == "A") & (a.atom_name == "CA")),
+        # path selection intersected with a query predicate
+        ("sel('A/*/*/CA') & (res_id < 50)", lambda a: (a.chain_id == "A") & (a.atom_name == "CA") & (a.res_id < 50)),
+        # bracket list inside sel()
+        ("sel('A/*/*/[CA,CB]')", lambda a: (a.chain_id == "A") & np.isin(a.atom_name, ["CA", "CB"])),
+        # top-level comma unions tokens inside sel()
+        ("sel('A/*/*/CA, A/*/*/CB')", lambda a: (a.chain_id == "A") & np.isin(a.atom_name, ["CA", "CB"])),
+        # empty sel() is non-raising: contributes an all-False mask and composes with |
+        ("sel('ZZ/*/*/CA') | (atom_name == 'CA')", lambda a: a.atom_name == "CA"),
+    ],
+)
+def test_sel_in_query(atom_array, expr, expected):
+    """``sel('...')`` bridges path-selection syntax into query expressions."""
+    assert np.array_equal(mask(atom_array, expr), expected(atom_array))
+
+
 def test_query_expression_reuse(atom_array):
     """Test that QueryExpression can be reused across different arrays."""
 
@@ -340,3 +363,35 @@ def test_query_expression_reuse(atom_array):
     idxs1 = expr.idxs(atom_array)
     idxs2 = expr.idxs(atom_array)
     assert np.array_equal(idxs1, idxs2)
+
+
+def test_standard_annotation_mask_query(atom_array):
+    array = atom_array.copy()
+    expected = np.arange(array.array_length()) % 2 == 0
+    C_IDX.set_annotation(array, expected)
+
+    assert np.array_equal(mask(array, "sa_mask('index')"), expected)
+    assert np.array_equal(mask(array, f"sa_mask('{C_IDX.full_name}')"), expected)
+
+
+def test_standard_annotation_mask_query_resolves_shortcuts_and_storage_aliases(atom_array):
+    array = atom_array.copy()
+    expected = np.arange(array.array_length()) % 2 == 0
+    array.set_annotation("mask_n-terminus_1_residue", expected)
+    S_ATM.set_annotation(array, expected)
+
+    assert np.array_equal(mask(array, "sa_mask('C_NTR')"), expected)
+    assert np.array_equal(mask(array, f"sa_mask('{C_NTR.full_name}')"), expected)
+    assert np.array_equal(mask(array, "sa_mask('mask_n-terminus_1_residue')"), expected)
+    assert np.array_equal(mask(array, "sa_mask('S_ATM')"), expected)
+
+
+def test_apply_and_spread_query():
+    array = AtomArray(4)
+    array.chain_id = np.array(["A", "A", "A", "A"])
+    array.res_id = np.array([1, 1, 2, 2])
+    array.atom_name = np.array(["N", "CA", "N", "C"])
+    array.set_annotation("b_factor", np.array([1.0, 3.0, 4.0, 6.0]))
+
+    assert mask(array, "apply_and_spread('residue', atom_name == 'CA', 'any')").tolist() == [True, True, False, False]
+    assert mask(array, "apply_and_spread('residue', b_factor, 'mean') > 4").tolist() == [False, False, True, True]
