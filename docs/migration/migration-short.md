@@ -11,14 +11,14 @@ from atomworks.io import parse
 from atomworks.io.config import ParseConfig
 
 config = ParseConfig.from_preset(
-    "rcsb",                    # Includes MSE → MET, like STANDARD_PARSER_ARGS
+    "rcsb",
     hydrogen_policy="remove",
     build_assembly="first",
 )
 result = parse("structure.cif", config=config)
 ```
 
-Surviving bare keyword options and `filename=` remain accepted with deprecation warnings. Remove `fix_formal_charges` and `fix_bond_types`: these flags no longer exist; completing missing atoms now includes chemistry sanitization. `hydrogen_policy="infer"` is no longer a supported parser policy; use explicit protonation if needed. `ParseConfig()` does **not** enable MSE → MET; the `"rcsb"` preset does. [Parser and configuration](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/config.py).
+Surviving bare keyword options and `filename=` remain accepted with deprecation warnings. Remove `fix_formal_charges` and `fix_bond_types`: these flags no longer exist; completing missing atoms now includes chemistry sanitization. `hydrogen_policy="infer"` is no longer a supported parser policy; use explicit protonation if needed. [Parser and configuration](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/config.py).
 
 ## 2. Check changed charges and covalent chemistry
 
