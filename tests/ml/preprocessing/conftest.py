@@ -1,5 +1,6 @@
-from atomworks.ml.preprocessing.get_pn_unit_data_from_structure import DataPreprocessor
+from atomworks.ml.preprocessing.preprocess import PreprocessConfig
 
-DATA_PREPROCESSOR = DataPreprocessor(
-    polymer_pn_unit_limit=50,  # Set to 50 for processing speed during testing
+# Test configuration with lower polymer limit for speed
+TEST_CONFIG = PreprocessConfig(
+    polymer_pn_unit_limit=50,
 )

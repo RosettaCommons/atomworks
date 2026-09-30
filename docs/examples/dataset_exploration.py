@@ -225,13 +225,12 @@ print(interfaces_df.head())
 # **NOTE**: Because a given PDB ID may contain many interfaces and thus may appear multiple times in our dataset, we must also incorporate the `assembly_id` and the `pn_unit_iids` of the two interacting chains within the `example_id`.
 
 from atomworks.ml.datasets import PandasDataset
-from atomworks.ml.datasets.loaders import create_loader_with_query_pn_units
+from atomworks.ml.datasets.loaders import create_structure_loader
 
 dataset = PandasDataset(
     data=interfaces_df,
     name="interfaces_dataset",
-    # We use a pre-built loader that takes in a list of column names and returns a loader function
-    loader=create_loader_with_query_pn_units(pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"]),
+    loader=create_structure_loader(column_mapping={"query_pn_unit_iids": ["pn_unit_1_iid", "pn_unit_2_iid"]}),
     transform=pipe,
 )
 
@@ -239,7 +238,7 @@ print(f"Created PandasDataset with {len(dataset)} examples")
 
 ########################################################################
 # Related Examples
-# ----------------
+# ---------------
 #
 # - :doc:`load_and_visualize_structures` - Learn how to load and explore protein structures
 # - :doc:`pocket_conditioning_transform` - Create custom transforms for ligand pocket identification and ML feature generation

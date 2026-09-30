@@ -4,6 +4,7 @@ import biotite.structure as struc
 import numpy as np
 from biotite.structure import AtomArray
 
+from atomworks.io.utils.scatter import NUMPY_REDUCE_FUNCS
 from atomworks.io.utils.sequence import (
     is_glycine,
     is_protein_unknown,
@@ -21,7 +22,9 @@ def get_token_starts(array: AtomArray, add_exclusive_stop: bool = False) -> np.n
 
     Inspired by `biotite.structure.get_residue_starts`.
 
-    A new token starts:
+    If a ``token_id`` annotation is present, token boundaries are determined solely by changes in ``token_id``.
+
+    Otherwise, a new token starts:
       - If `atomize` is True
       - If either the chain ID, residue ID, insertion code
         or residue name changes from one to the next atom.
@@ -38,36 +41,39 @@ def get_token_starts(array: AtomArray, add_exclusive_stop: bool = False) -> np.n
         # ... early exit if the array is empty
         return np.array([])
 
-    # These mask are 'true' at indices where the value changes
-    if "atomize" in array.get_annotation_categories():
-        atomize_positions = array.atomize
+    if "token_id" in array.get_annotation_categories():
+        token_change_mask = array.token_id[1:] != array.token_id[:-1]
     else:
-        atomize_positions = np.zeros(array.array_length(), dtype=bool)
+        # ... default: a token boundary is any change in chain / residue /
+        # insertion / residue name, or an explicit ``atomize`` flag.
+        if "atomize" in array.get_annotation_categories():
+            atomize_positions = array.atomize
+        else:
+            atomize_positions = np.zeros(array.array_length(), dtype=bool)
 
-    if "chain_iid" in array.get_annotation_categories():
-        chain_id_changes = array.chain_iid[1:] != array.chain_iid[:-1]
-    else:
-        chain_id_changes = array.chain_id[1:] != array.chain_id[:-1]
+        if "chain_iid" in array.get_annotation_categories():
+            chain_id_changes = array.chain_iid[1:] != array.chain_iid[:-1]
+        else:
+            chain_id_changes = array.chain_id[1:] != array.chain_id[:-1]
 
-    res_id_changes = array.res_id[1:] != array.res_id[:-1]
-    ins_code_changes = array.ins_code[1:] != array.ins_code[:-1]
-    res_name_changes = array.res_name[1:] != array.res_name[:-1]
+        res_id_changes = array.res_id[1:] != array.res_id[:-1]
+        ins_code_changes = array.ins_code[1:] != array.ins_code[:-1]
+        res_name_changes = array.res_name[1:] != array.res_name[:-1]
 
-    # If any of these annotation arrays change, a new residue starts
-    residue_change_mask = (
-        chain_id_changes | res_id_changes | ins_code_changes | res_name_changes | atomize_positions[1:]
-    )
+        token_change_mask = (
+            chain_id_changes | res_id_changes | ins_code_changes | res_name_changes | atomize_positions[1:]
+        )
 
     # Convert mask to indices
     # Add 1, to shift the indices from the end of a residue
     # to the start of a new residue
-    residue_starts = np.where(residue_change_mask)[0] + 1
+    token_starts = np.where(token_change_mask)[0] + 1
 
     # The first residue is not included yet -> Insert '[0]'
     if add_exclusive_stop:
-        return np.concatenate(([0], residue_starts, [array.array_length()]))
+        return np.concatenate(([0], token_starts, [array.array_length()]))
     else:
-        return np.concatenate(([0], residue_starts))
+        return np.concatenate(([0], token_starts))
 
 
 def get_token_count(array: AtomArray) -> int:
@@ -167,6 +173,20 @@ def apply_token_wise(
     """Analogous to biotite's `apply_residue_wise`."""
     if token_starts is None:
         token_starts = get_token_starts(array, add_exclusive_stop=True)
+    # Fast path: reduce boolean tokens in NumPy without a Python loop; other inputs use the generic implementation.
+    if (
+        type(data) is np.ndarray
+        and data.dtype == bool
+        and data.ndim == 1
+        and axis in (None, 0, -1)
+        and len(data)
+        and any(function is candidate for candidate in (np.any, np.all, np.min, np.max))
+        and len(token_starts) > 1
+        and token_starts[0] == 0
+        and token_starts[-1] == len(data)
+        and np.all(np.diff(token_starts) > 0)
+    ):
+        return NUMPY_REDUCE_FUNCS[function](data, token_starts[:-1])
     return struc.segments.apply_segment_wise(token_starts, data, function, axis)
 
 

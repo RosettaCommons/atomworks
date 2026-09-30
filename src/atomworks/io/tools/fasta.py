@@ -1,12 +1,17 @@
-"""
-Convenience utils for working with (generalized) FASTA files.
-"""
+"""Convenience utils for working with (generalized) FASTA files."""
 
 import logging
 import os
 import re
+from collections import Counter
 
-from atomworks.constants import CCD_MIRROR_PATH
+from atomworks.constants import (
+    CCD_MIRROR_PATH,
+    STANDARD_AA_ONE_LETTER,
+    STANDARD_DNA,
+    STANDARD_DNA_ONE_LETTER,
+    STANDARD_RNA,
+)
 from atomworks.enums import ChainType
 from atomworks.io.utils.ccd import (
     check_ccd_codes_are_available,
@@ -81,3 +86,72 @@ def one_letter_to_ccd_code(
         seq_with_ccd_ids.append(chem_comp_id)
 
     return seq_with_ccd_ids
+
+
+def infer_chain_type_from_one_letter(seq: str | list[str]) -> ChainType:
+    """Infer chain type from one-letter sequence notation.
+
+    Supports all common sequence input formats:
+
+    - Simple one-letter: ``"ACDEFG"``
+    - Parenthesized notation: ``"(DA)(DT)(DG)"`` (PDB format for DNA/RNA disambiguation)
+    - Mixed with non-canonical amino acids: ``"ACDE(SEP)FG"``
+
+    Args:
+      seq: Sequence as string or list (supports all notation types).
+
+    Returns:
+      Inferred chain type (POLYPEPTIDE_L, DNA, or RNA).
+
+    Raises:
+      ValueError: If chain type cannot be inferred from the sequence.
+
+    See Also:
+      :py:func:`~atomworks.io.utils.non_rcsb.infer_chain_type_from_three_letter` -
+      For CCD code arrays from parsed structures.
+    """
+    # Convert string to list if necessary
+    if isinstance(seq, str):
+        seq = split_generalized_fasta_sequence(seq)
+
+    # Define one-letter code sets
+    protein_codes = set(STANDARD_AA_ONE_LETTER)
+    dna_codes = set(STANDARD_DNA_ONE_LETTER)
+    rna_codes = set(STANDARD_RNA)
+
+    hits = Counter()
+    for letter in seq:
+        if letter.startswith("("):
+            # Parenthesized notation - strip and check against CCD codes
+            ccd_code = letter.strip("()")
+            if ccd_code in STANDARD_DNA:
+                # DNA is commonly provided like (DA), (DT), etc.
+                hits["dna"] += 1
+            elif ccd_code in STANDARD_RNA:
+                # We also support RNA codes like (A), (U), etc; though these are less common
+                hits["rna"] += 1
+            else:
+                hits["unknown"] += 1
+        else:
+            # Single-letter code checks
+            if letter in protein_codes:
+                hits["protein"] += 1
+            if letter in dna_codes:
+                hits["dna"] += 1
+            if letter in rna_codes:
+                hits["rna"] += 1
+
+    # Heuristics:
+    # If the sequence contains more protein hits than DNA or RNA hits, it's probably a protein
+    if hits["protein"] > hits["dna"] and hits["protein"] > hits["rna"]:
+        return ChainType.POLYPEPTIDE_L
+
+    # Else, if the sequence is all RNA hits, it's probably RNA
+    elif hits["rna"] == len(seq):
+        return ChainType.RNA
+
+    # Else, if the sequence is all DNA hits, it's probably DNA
+    elif hits["dna"] == len(seq):
+        return ChainType.DNA
+
+    raise ValueError(f"Could not infer chain type from sequence: {seq=}")

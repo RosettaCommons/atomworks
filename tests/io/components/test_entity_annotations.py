@@ -3,6 +3,7 @@ import pytest
 from biotite.structure import AtomArray
 
 from atomworks.common import not_isin
+from atomworks.io.config import ParseConfig
 from atomworks.io.parser import parse
 from atomworks.io.transforms.atom_array import annotate_entities
 from tests.io.conftest import get_pdb_path
@@ -69,8 +70,8 @@ def validate_molecule_entity_annotations(atom_array: AtomArray, test_case: dict)
 def test_add_molecule_entity_annotation(test_case: dict):
     path = get_pdb_path(test_case["pdb_id"])
     result = parse(
-        filename=path,
-        build_assembly="all",
+        path,
+        config=ParseConfig(build_assembly="all"),
     )
     assert result is not None
     assembly_atom_array = result["assemblies"]["1"][0]  # Check the first model of the first assembly
@@ -86,8 +87,8 @@ def test_add_molecule_entity_annotation_on_modified_pdb():
     pdb_id = "1hge"
     path = get_pdb_path(pdb_id)
     result = parse(
-        filename=path,
-        build_assembly="all",
+        path,
+        config=ParseConfig(build_assembly="all"),
     )
     atom_array = result["assemblies"]["1"][0]  # First model
 
@@ -166,7 +167,7 @@ def test_regenerate_and_add_chain_entity_annotation(test_case):
     - Add the chain entity annotation to the atom array
     """
     path = get_pdb_path(test_case["pdb_id"])
-    result = parse(filename=path, hydrogen_policy="remove")
+    result = parse(path, config=ParseConfig(hydrogen_policy="remove"))
     atom_array = result["assemblies"]["1"][0]  # First model, first assembly
 
     for equivalent_chains in test_case["equivalent_chains"]:

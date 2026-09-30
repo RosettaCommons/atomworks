@@ -1,7 +1,5 @@
 """Transforms for augmentation of nucleic acids"""
 
-from __future__ import annotations
-
 import logging
 import os
 import pathlib
@@ -548,7 +546,7 @@ class PadDNA(Transform):
 
         # check for clash between newly generated DNA coords and the original non-DNA coords
         all_new_array = component_first + component_third + component_fourth + component_sixth
-        if is_clash(all_new_array, atom_array_non_dna):
+        if is_clash(all_new_array, remove_nan_coords(atom_array_non_dna)):
             logger.warning(
                 "PadDNA failed. PadDNA found a clash between newly generated DNA coords and the original non-DNA coords."
             )
@@ -592,7 +590,12 @@ class PadDNA(Transform):
 
         # ... compute all base-pairs based on the structure
         dna_array_no_nan = remove_nan_coords(dna_array)
-        _base_pair_idxs = base_pairs(dna_array_no_nan, no_hbond_dist_cut=self.no_hbond_dist_cut)
+        try:
+            _base_pair_idxs = base_pairs(dna_array_no_nan, no_hbond_dist_cut=self.no_hbond_dist_cut)
+        except Exception as e:
+            # Base pair detection threw exception, do not pad
+            logger.warning(f"PadDNA base-pair detection failed ({e!r}); skipping padding.")
+            return data
 
         if not len(_base_pair_idxs):
             # ... early stop if no base-pairs are found
@@ -629,6 +632,17 @@ class PadDNA(Transform):
             except AssertionError:
                 logger.warning(
                     f"In PadDNA, _get_residue_info_for_dna_chains() failed for duplex {chain1_iid}:{chain2_iid}. Skipping."
+                )
+                continue
+
+            # If DNA has _any_ occ != 1 bases, do not try to extend
+            #       the resulting pose will almost certainly be wrong
+            chain1_occ = dna_array.occupancy[dna_array.chain_iid == chain1_iid]
+            chain2_occ = dna_array.occupancy[dna_array.chain_iid == chain2_iid]
+            if (chain1_occ != 1).any() or (chain2_occ != 1).any():
+                logger.warning(
+                    f"DNA duplex {chain1_iid}:{chain2_iid} has non-fully-resolved atoms (occupancy != 1). "
+                    "Skipping in PadDNA."
                 )
                 continue
 

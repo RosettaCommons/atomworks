@@ -2,31 +2,29 @@
 binding poses in protein pockets. Created in Part 4 of the How to Build
 a Model with AtomWorks tutorial."""
 
-import torch
+import argparse
+from pathlib import Path
+
 import pandas as pd
 import pytorch_lightning as pl
-from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
-from torch.utils.data import DataLoader, Dataset
-
-from atomworks.ml.datasets import PandasDataset
-from atomworks.ml.datasets.loaders import create_loader_with_query_pn_units
-from atomworks.ml.transforms.filters import RemoveHydrogens, RemoveUnresolvedAtoms
-from atomworks.ml.transforms.base import ConvertToTorch, Compose
+import torch
 
 # NOTE: These imports match the tutorial text and assume you run train.py from
-# the directory that contains transforms.py and model.py. 
-
-from transforms import CropToPocket, FeaturizeForDocking
+# the directory that contains transforms.py and model.py.
 from model import PocketDockGNN
+from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
+from torch.utils.data import DataLoader, Dataset
+from transforms import CropToPocket, FeaturizeForDocking
 
-torch.set_float32_matmul_precision("medium")
-pl.seed_everything(42)
+from atomworks.ml.datasets import PandasDataset
+from atomworks.ml.datasets.loaders import create_structure_loader
+from atomworks.ml.transforms.base import Compose, ConvertToTorch
+from atomworks.ml.transforms.filters import RemoveHydrogens, RemoveUnresolvedAtoms
 
 CONFIG = {
     "hidden_dim": 128,
     "num_layers": 3,
     "learning_rate": 1e-3,
-    "batch_size": 1,
     "max_epochs": 5,
     "pocket_radius": 10.0,
     "num_workers": 0,
@@ -47,48 +45,51 @@ TENSOR_KEYS = [
 class RobustDataset(Dataset):
     def __init__(self, dataset: PandasDataset):
         self.dataset = dataset
-        self.failed = []
+        self.failed: list[int] = []
 
     def __len__(self):
         return len(self.dataset)
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: int) -> dict | None:
         try:
             return self.dataset[idx]
-        except Exception:
+        except (OSError, ValueError, KeyError, IndexError) as exc:
+            print(f"Skipping example {idx}: {exc}")
             self.failed.append(idx)
             return None
 
 
-def collate_fn(batch):
+def collate_fn(batch: list[dict | None]) -> dict[str, torch.Tensor] | None:
     batch = [b for b in batch if b is not None]
     if len(batch) == 0:
         return None
 
-    return {
-        k: torch.stack([example[k] for example in batch])
-        for k in TENSOR_KEYS
-        if k in batch[0]
-    }
+    return {k: torch.stack([example[k] for example in batch]) for k in TENSOR_KEYS}
 
 
 def build_pipeline(radius: float) -> Compose:
-    return Compose([
-        RemoveHydrogens(),
-        RemoveUnresolvedAtoms(),
-        CropToPocket(radius=radius),
-        FeaturizeForDocking(),
-        ConvertToTorch(keys=TENSOR_KEYS),
-    ])
+    return Compose(
+        [
+            RemoveHydrogens(),
+            RemoveUnresolvedAtoms(),
+            CropToPocket(radius=radius),
+            FeaturizeForDocking(),
+            ConvertToTorch(keys=TENSOR_KEYS),
+        ]
+    )
 
 
-def build_dataset(parquet_path: str, name: str, radius: float, max_examples: int = None):
+def build_dataset(parquet_path: str, name: str, radius: float, max_examples: int | None = None) -> RobustDataset:
     df = pd.read_parquet(parquet_path)
     if max_examples is not None:
         df = df.head(max_examples).reset_index(drop=True)
 
-    loader = create_loader_with_query_pn_units(
-        pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"]
+    loader = create_structure_loader(
+        altloc_seed_colname="altloc_seed",
+        column_mapping={
+            "query_pn_unit_iids": ["pn_unit_1_iid", "pn_unit_2_iid"],
+            "query_is_polymer": ["pn_unit_1_is_polymer", "pn_unit_2_is_polymer"],
+        },
     )
 
     dataset = PandasDataset(
@@ -97,15 +98,14 @@ def build_dataset(parquet_path: str, name: str, radius: float, max_examples: int
         id_column="example_id",
         loader=loader,
         transform=build_pipeline(radius),
-        save_failed_examples_to_dir="failed_examples/",
     )
     return RobustDataset(dataset)
 
 
-def build_dataloader(dataset, shuffle: bool) -> DataLoader:
+def build_dataloader(dataset: RobustDataset, shuffle: bool) -> DataLoader:
     return DataLoader(
         dataset,
-        batch_size=CONFIG["batch_size"],
+        batch_size=1,
         shuffle=shuffle,
         num_workers=CONFIG["num_workers"],
         collate_fn=collate_fn,
@@ -113,16 +113,27 @@ def build_dataloader(dataset, shuffle: bool) -> DataLoader:
     )
 
 
-def main():
+def main() -> None:
+    """Train and evaluate on Part 1 split files."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--splits-dir", type=Path, default=Path("splits"))
+    parser.add_argument("--output-dir", type=Path, default=Path("tutorial_run"))
+    parser.add_argument("--max-epochs", type=int, default=CONFIG["max_epochs"])
+    parser.add_argument("--max-train", type=int, default=CONFIG["max_train"])
+    parser.add_argument("--max-val", type=int, default=CONFIG["max_val"])
+    parser.add_argument("--max-test", type=int, default=CONFIG["max_test"])
+    args = parser.parse_args()
+    torch.set_float32_matmul_precision("medium")
+    pl.seed_everything(42)
     print("Building datasets...")
     train_dataset = build_dataset(
-        "splits/train.parquet", "docking_train", CONFIG["pocket_radius"], CONFIG["max_train"]
+        args.splits_dir / "train.parquet", "docking_train", CONFIG["pocket_radius"], args.max_train
     )
     val_dataset = build_dataset(
-        "splits/val.parquet", "docking_val", CONFIG["pocket_radius"], CONFIG["max_val"]
+        args.splits_dir / "validation.parquet", "docking_val", CONFIG["pocket_radius"], args.max_val
     )
     test_dataset = build_dataset(
-        "splits/test.parquet", "docking_test", CONFIG["pocket_radius"], CONFIG["max_test"]
+        args.splits_dir / "test.parquet", "docking_test", CONFIG["pocket_radius"], args.max_test
     )
 
     print(f"  Train: {len(train_dataset):,} examples")
@@ -141,7 +152,7 @@ def main():
     print(f"\nModel parameters: {sum(p.numel() for p in model.parameters()):,}")
 
     periodic_checkpoint = ModelCheckpoint(
-        dirpath="checkpoints/",
+        dirpath=args.output_dir / "checkpoints",
         filename="pocketdockgnn-{epoch:02d}-{step}",
         every_n_train_steps=50,
         save_last=True,
@@ -149,8 +160,8 @@ def main():
     )
 
     best_checkpoint = ModelCheckpoint(
-        dirpath="checkpoints/",
-        filename="pocketdockgnn-best-{epoch:02d}-{val/loss:.4f}",
+        dirpath=args.output_dir / "checkpoints",
+        filename="pocketdockgnn-best-{epoch:02d}",
         monitor="val/loss",
         mode="min",
         save_top_k=3,
@@ -169,12 +180,13 @@ def main():
     ]
 
     trainer = pl.Trainer(
-        max_epochs=CONFIG["max_epochs"],
-        accelerator="gpu",
+        max_epochs=args.max_epochs,
+        accelerator="auto",
         devices=1,
         callbacks=callbacks,
-        log_every_n_steps=10,
-        val_check_interval=50,
+        log_every_n_steps=1,
+        default_root_dir=args.output_dir,
+        check_val_every_n_epoch=1,
         enable_progress_bar=True,
     )
 
@@ -188,6 +200,8 @@ def main():
     print(f"\nFailed examples during training: {len(train_dataset.failed)}")
     print(f"Failed examples during val:      {len(val_dataset.failed)}")
     print(f"Best checkpoint:                {best_checkpoint.best_model_path}")
+    if not best_checkpoint.best_model_path:
+        raise RuntimeError("No validation checkpoint was saved; inspect skipped examples")
 
     print("\nEvaluating on test set...")
     trainer.test(

@@ -4,8 +4,6 @@ Convenience utils for common validation checks in transforms.
 All checks take a `data` dictionary as input and raise an error if the check fails.
 """
 
-from __future__ import annotations
-
 from typing import Any
 
 from atomworks.io.utils.selection import get_annotation_categories

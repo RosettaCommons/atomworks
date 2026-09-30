@@ -8,4 +8,4 @@ Example Usage
 .. code-block:: python
 
    from atomworks.io.transforms.atom_array import remove_ccd_components
-   cleaned = remove_ccd_components(atom_array)
+   cleaned = remove_ccd_components(atom_array, ["HOH"])

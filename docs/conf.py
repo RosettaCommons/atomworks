@@ -44,10 +44,11 @@ extensions = [
     "sphinx.ext.viewcode",  # Add source code links
     "sphinx.ext.napoleon",  # Google/NumPy style docstrings
     "sphinx_gallery.gen_gallery",  # Generates auto_examples/ from examples/
-    "myst_parser", # Support for Markdown files
-    "sphinx_design", # For better layout and design components
+    "myst_parser",  # Support Markdown tutorial pages
+    "sphinx_design",  # Render collapsible tutorial code examples
 ]
 
+myst_heading_anchors = 3
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "examples/GALLERY_HEADER.rst", "ml/preprocessing.rst"]
@@ -98,7 +99,3 @@ sphinx_gallery_conf = {
     "thumbnail_size": (350, 350),
     "default_thumb_file": "./_static/atomworks_logo_color.svg",
 }
-
-html_js_files = [
-     ('https://scripts.simpleanalyticscdn.com/latest.js', {'async': 'async', 'defer': 'defer'}),
-]

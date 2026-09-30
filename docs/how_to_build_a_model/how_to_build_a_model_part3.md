@@ -21,9 +21,9 @@
 ## Introduction
 This is the third tutorial in the **How to Build a Model Using AtomWorks** series. So far you have:
 
-- Parquet files for your `train`/`val`/`test` splits ([Part 1](how_to_build_a_model_part1.md)).
-- A loader that turns each parquet row into a protein-ligand structure ([Part 2](how_to_build_a_model_part2.md#wiring-up-the-dataset-and-loader)).
-- A transform pipeline that crops the pocket and converts it into tensors ([Part 2](how_to_build_a_model_part2.md#building-the-transform-pipeline)).
+- Parquet files for your `train`/`validation`/`test` splits ([Part 1](how_to_build_a_model_part1.md)).
+- A loader that turns each parquet row into a protein-ligand structure ([Part 2](how_to_build_a_model_part2.md)).
+- A transform pipeline that crops the pocket and produces model features ([Part 2](how_to_build_a_model_part2.md)).
 
 **In this installment, you will write the neural network that consumes those tensors and predicts 3D coordinates for every atom.**
 
@@ -46,7 +46,7 @@ Before starting this part of the tutorial series it is assumed that you have:
 Before writing any code, we have to decide what architecture to use. For this tutorial we use a simple message-passing **graph neural network (GNN)**. A GNN is a natural choice because our data is already a graph: the bond graph is stored in `edge_index`, and each atom is a node with an atomic-number feature.
 
 ```{note}
-We use a GNN as an example model architecture. This tutorial focuses on using AtomWorks to build and train a model, rather than on the details of how GNNs work.
+We use a GNN as an example model architecture. Bond edges connect atoms within the protein and ligand, but do not connect the two. A pooled pocket-coordinate feature therefore gives ligand atoms a simple summary of protein context. This tutorial focuses on the AtomWorks pipeline rather than docking-model design.
 ```
 
 ```{warning}
@@ -63,13 +63,13 @@ To keep the example small and trainable on a single GPU, we use:
 
 - **3 GNN layers**: enough to propagate information a few hops through the bond graph.
 - **128 hidden dimensions**: small enough to train on a single GPU.
-- **Mean squared error (MSE)** between predicted and target coordinates.
+- **Mean squared error (MSE)** between predicted and target ligand coordinates.
 
 (aw_build_model_p3_goal)=
 ## The Goal of `model.py`
 We will write the model in `model.py`. It needs to:
 
-- Take atom types, coordinates, and bond edges as input.
+- Take atom types, coordinates, bond edges, and the ligand mask as input.
 - Pass information along the atom graph.
 - Predict 3D coordinates for each atom.
 - Expose train/val/test steps through a `LightningModule`.
@@ -78,7 +78,7 @@ We will write the model in `model.py`. It needs to:
 ## Imports and Class Definition
 Import PyTorch, Lightning, and the basic building blocks. [`torch`](https://pytorch.org/) provides tensors and tensor ops; [`torch.nn`](https://docs.pytorch.org/docs/2.13/nn.html) provides layers like `Linear`, `Embedding`, and `LayerNorm`; [`pytorch_lightning`](https://lightning.ai/docs/pytorch/stable/index) provides `LightningModule`, which packages the model, loss, logging, and optimizer setup into one class.
 
-Lets start off `model.py` by importing these modules and begining our `PocketDockGNN` class that inherits from `Lightning Module`:
+Let us start `model.py` by importing these modules and beginning our `PocketDockGNN` class that inherits from `LightningModule`:
 ````{dropdown} Click to see the code
 ```python
 import torch
@@ -102,7 +102,7 @@ Write `__init__` and save the hyperparameters so Lightning can restore them from
         hidden_dim: int = 128,
         num_layers: int = 3,
         learning_rate: float = 1e-3,
-    ):
+    ) -> None:
         super().__init__()
         self.save_hyperparameters()
         self.learning_rate = learning_rate
@@ -114,7 +114,7 @@ These arguments mean:
 - **`num_atom_types=119`** - one embedding-table entry for each atomic number from 0 to 118. (We are using 0 to denote an unknown atom type.)
 - **`hidden_dim`** - the width of the learned per-atom representation.
 - **`num_layers`** - how many rounds of message passing to run.
-- **`learning_rate`** - step size for the [Adam optimizer](https://www.geeksforgeeks.org/deep-learning/adam-optimizer/).
+- **`learning_rate`** - step size for the [Adam optimizer](https://docs.pytorch.org/docs/stable/generated/torch.optim.Adam.html).
 
 (aw_build_model_p3_layers)=
 ## Building the Layers
@@ -130,12 +130,12 @@ Each atom arrives as an integer atomic number. A neural network works better wit
 ````
 
 ### Combine atom type with input coordinates
-For each atom, the model combines its learned atom-type embedding with its three input coordinates. We concatenate these features and project the resulting vector back to hidden_dim.
+For each atom, the model combines its learned atom-type embedding with its three input coordinates and the three coordinates of the protein pocket center. We concatenate these features and project the resulting vector back to `hidden_dim`. The pocket center gives ligand atoms protein context even though the bond graph has no protein-ligand edges.
 
 ````{dropdown} Click to see the code
 ```python
         self.input_proj = nn.Sequential(
-            nn.Linear(hidden_dim + 3, hidden_dim),
+            nn.Linear(hidden_dim + 6, hidden_dim),
             nn.ReLU(),
             nn.Linear(hidden_dim, hidden_dim),
         )
@@ -192,7 +192,7 @@ After message passing, each atom has a learned hidden representation. The output
 ````
 
 ### Define the loss
-For the tutorial we use mean squared error between predicted and target coordinates.
+For the tutorial we use mean squared error between predicted and target ligand coordinates.
 
 ````{dropdown} Click to see the code
 ```python
@@ -204,8 +204,8 @@ For the tutorial we use mean squared error between predicted and target coordina
 ## The Forward Pass
 Now write `forward()`. It does four things in order:
 
-1. Embed the atomic numbers.
-2. Concatenate those embeddings with the input coordinates and project.
+1. Compute the center of the protein pocket and embed the atomic numbers.
+2. Concatenate those embeddings with the input coordinates and pocket center, then project.
 3. Run message passing over the bond graph. For each layer, compute a message for every atom, route each source message to its destination atom using `edge_index`, sum the incoming messages per destination, and update each atom with a residual connection.
 4. Project to coordinates.
 
@@ -216,13 +216,17 @@ Now write `forward()`. It does four things in order:
         atomic_numbers: torch.Tensor,
         input_coords: torch.Tensor,
         edge_index: torch.Tensor,
+        is_ligand: torch.Tensor,
     ) -> torch.Tensor:
+        if not (~is_ligand).any():
+            raise ValueError("Batch has no protein pocket atoms")
+        pocket_center = input_coords[~is_ligand].mean(dim=0).expand_as(input_coords)
         x = self.atom_embedding(atomic_numbers)
-        x = self.input_proj(torch.cat([x, input_coords], dim=-1))
+        x = self.input_proj(torch.cat([x, input_coords, pocket_center], dim=-1))
 
         src, dst = edge_index[0], edge_index[1]
 
-        for conv, update, norm in zip(self.conv_layers, self.update_layers, self.layer_norms):
+        for conv, update, norm in zip(self.conv_layers, self.update_layers, self.layer_norms, strict=True):
             messages = conv(x)
             agg = torch.zeros_like(x)
             agg.scatter_add_(0, dst.unsqueeze(-1).expand(-1, x.size(-1)), messages[src])
@@ -242,11 +246,11 @@ Now write `forward()`. It does four things in order:
 ## One Shared Train/Val/Test Step
 Lightning calls separate methods for training, validation, and test, but the logic is almost identical, so write it once in a helper. Skip `None` batches (these come from failed examples, which we handle in [Part 4](how_to_build_a_model_part4.md)), remove the leading batch dimension added by the `DataLoader` (we use `batch_size=1`), run the model, and compute the coordinate loss.
 
-The full-coordinate MSE is fine for optimization, but docking quality is best judged on the ligand atoms alone, so we also log a ligand RMSD.
+Compute MSE over ligand atoms, the coordinates this model is meant to place. Log ligand RMSD in angstroms as an easier-to-interpret metric.
 
 ````{dropdown} Click to see the code
 ```python
-    def _shared_step(self, batch: dict, stage: str) -> torch.Tensor:
+    def _shared_step(self, batch: dict[str, torch.Tensor] | None, stage: str) -> torch.Tensor | None:
         if batch is None:
             return None
         # Remove the batch dimension added by DataLoader (batch_size=1)
@@ -256,8 +260,10 @@ The full-coordinate MSE is fine for optimization, but docking quality is best ju
         edge_index     = batch["edge_index"].squeeze(0)       # (2, E)
         is_ligand      = batch["is_ligand"].squeeze(0)        # (N,)
 
-        pred_coords = self(atomic_numbers, input_coords, edge_index)
-        loss = self.loss_fn(pred_coords, target_coords)
+        pred_coords = self(atomic_numbers, input_coords, edge_index, is_ligand)
+        if not is_ligand.any():
+            raise ValueError("Batch has no ligand atoms")
+        loss = self.loss_fn(pred_coords[is_ligand], target_coords[is_ligand])
 
         with torch.no_grad():
             ligand_rmsd = torch.sqrt(
@@ -278,13 +284,13 @@ The stage-specific methods become tiny wrappers around the shared step.
 
 ````{dropdown} Click to see the code
 ```python
-    def training_step(self, batch: dict, batch_idx: int) -> torch.Tensor:
+    def training_step(self, batch: dict[str, torch.Tensor] | None, batch_idx: int) -> torch.Tensor | None:
         return self._shared_step(batch, "train")
 
-    def validation_step(self, batch: dict, batch_idx: int) -> None:
+    def validation_step(self, batch: dict[str, torch.Tensor] | None, batch_idx: int) -> None:
         self._shared_step(batch, "val")
 
-    def test_step(self, batch: dict, batch_idx: int) -> None:
+    def test_step(self, batch: dict[str, torch.Tensor] | None, batch_idx: int) -> None:
         self._shared_step(batch, "test")
 ```
 ````
@@ -295,7 +301,7 @@ Tell Lightning which optimizer to use. Here we use [Adam](https://docs.pytorch.o
 
 ````{dropdown} Click to see the code
 ```python
-    def configure_optimizers(self):
+    def configure_optimizers(self) -> torch.optim.Optimizer:
         return torch.optim.Adam(self.parameters(), lr=self.learning_rate)
 ```
 ````
@@ -341,4 +347,4 @@ With `transforms.py` and `model.py` in place, you are ready to wire everything i
 
 **Message passing:** the process of computing a message from each node, aggregating messages at each destination node, and updating node states.
 
-**RMSD (root-mean-square deviation):**: the square root of the mean squared distance between predicted and true atom positions; a standard structural-accuracy metric.
+**RMSD (root-mean-square deviation):** the square root of the mean squared distance between predicted and true atom positions; a standard structural-accuracy metric.

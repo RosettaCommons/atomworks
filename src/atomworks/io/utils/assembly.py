@@ -6,16 +6,17 @@ __all__ = ["build_assemblies_from_asym_unit"]
 
 from typing import Literal
 
+import biotite.structure as struc
 import biotite.structure.io.pdbx as pdbx
 import numpy as np
 from biotite.structure import AtomArrayStack
-from biotite.structure.atoms import repeat
 from biotite.structure.io.pdbx import CIFCategory
 
 from atomworks.io.transforms.atom_array import (
     add_iid_annotations_to_assemblies,
     maybe_fix_non_polymer_at_symmetry_center,
 )
+from atomworks.io.utils.atom_array_plus import AtomArrayPlusStack, as_atom_array_plus_stack, repeat_atom_array_plus
 
 
 def _matrix_rotate(v: np.ndarray, matrix: np.ndarray) -> np.ndarray:
@@ -60,8 +61,8 @@ def _parse_transformations(struct_oper: CIFCategory) -> dict[str, tuple[np.ndarr
 
 
 def _apply_assembly_transformation(
-    structure: AtomArrayStack, transformation_dict: dict, operation: tuple[str]
-) -> AtomArrayStack:
+    structure: AtomArrayStack | AtomArrayPlusStack, transformation_dict: dict, operation: tuple[str]
+) -> AtomArrayStack | AtomArrayPlusStack:
     """
     Get subassembly by applying the given operation to the input
     structure containing affected asym IDs.
@@ -81,7 +82,12 @@ def _apply_assembly_transformation(
     # Add a dimension to coord to match expected shape or `repeat` (first dimension is # repeats)
     coord = coord[np.newaxis, ...]
 
-    return repeat(structure, coord)
+    out_stack = repeat_atom_array_plus(structure, coord)
+
+    if isinstance(structure, AtomArrayPlusStack):
+        out_stack = as_atom_array_plus_stack(out_stack)
+
+    return out_stack
 
 
 def _build_bioassembly_from_asym_unit(
@@ -132,7 +138,7 @@ def _build_bioassembly_from_asym_unit(
 
     # get the transformations and apply to affected asym IDs
     transformations = _parse_transformations(struct_oper_category)  # {id: rotation, translation}
-    assemblies = {}
+    assembly_parts: dict[str, list] = {}
     for _id, op_expr, asym_id_expr in zip(
         assembly_gen_category["assembly_id"].as_array(str),
         assembly_gen_category["oper_expression"].as_array(str),
@@ -154,8 +160,12 @@ def _build_bioassembly_from_asym_unit(
                     # for referencing the operation later on
                     operation = "".join(operation)
                 sub_assembly.set_annotation("transformation_id", np.full(sub_assembly.array_length(), operation))
-                # Merge the chains with asym IDs for this operation with chains from other operations
-                assemblies[_id] = assemblies[_id] + sub_assembly if _id in assemblies else sub_assembly
+                assembly_parts.setdefault(_id, []).append(sub_assembly)
+
+    # Concatenate all parts per assembly in one operation
+    assemblies = {}
+    for _id, parts in assembly_parts.items():
+        assemblies[_id] = parts[0] if len(parts) == 1 else struc.concatenate(parts)
 
     return assemblies
 
@@ -197,3 +207,33 @@ def build_assemblies_from_asym_unit(
             assemblies[idx] = maybe_fix_non_polymer_at_symmetry_center(assembly)
 
     return assemblies
+
+
+def get_identity_op_expr_category() -> CIFCategory:
+    return CIFCategory.deserialize(
+        """_pdbx_struct_oper_list.id                   1 
+        _pdbx_struct_oper_list.type                 'identity operation' 
+        _pdbx_struct_oper_list.name                 1_555 
+        _pdbx_struct_oper_list.symmetry_operation   x,y,z 
+        _pdbx_struct_oper_list.matrix[1][1]         1.0000000000 
+        _pdbx_struct_oper_list.matrix[1][2]         0.0000000000 
+        _pdbx_struct_oper_list.matrix[1][3]         0.0000000000 
+        _pdbx_struct_oper_list.vector[1]            0.0000000000 
+        _pdbx_struct_oper_list.matrix[2][1]         0.0000000000 
+        _pdbx_struct_oper_list.matrix[2][2]         1.0000000000 
+        _pdbx_struct_oper_list.matrix[2][3]         0.0000000000 
+        _pdbx_struct_oper_list.vector[2]            0.0000000000 
+        _pdbx_struct_oper_list.matrix[3][1]         0.0000000000 
+        _pdbx_struct_oper_list.matrix[3][2]         0.0000000000 
+        _pdbx_struct_oper_list.matrix[3][3]         1.0000000000 
+        _pdbx_struct_oper_list.vector[3]            0.0000000000 """  # noqa: W291
+    )
+
+
+def get_identity_assembly_gen_category(chain_ids: list[str]) -> CIFCategory:
+    return CIFCategory.deserialize(
+        f"""_pdbx_struct_assembly_gen.assembly_id 1
+        _pdbx_struct_assembly_gen.oper_expression 1
+        _pdbx_struct_assembly_gen.asym_id_list {",".join(chain_ids)}
+        """
+    )

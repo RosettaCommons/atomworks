@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 from atomworks.ml.transforms.base import Compose
-from atomworks.ml.transforms.covalent_modifications import FlagAndReassignCovalentModifications
+from atomworks.ml.transforms.covalent_modifications import AnnotateCovalentModifications
 from atomworks.ml.utils.testing import cached_parse
 
 COVALENT_MODIFICATION_TEST_CASES = [
@@ -31,7 +31,7 @@ def test_covalent_modifications(test_case: dict[str, Any]):
     unprocessed_atom_array = data["atom_array"]
     covalent_modification_pipeline = Compose(
         [
-            FlagAndReassignCovalentModifications(),
+            AnnotateCovalentModifications(),
         ]
     )
     result_with_covalent_modifications = covalent_modification_pipeline(data)

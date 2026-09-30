@@ -1,7 +1,5 @@
 """Transforms that filter an AtomArray, removing chains, residues, or atoms based on some criteria"""
 
-from __future__ import annotations
-
 from collections.abc import Sequence
 from functools import lru_cache
 from typing import Any, ClassVar
@@ -243,7 +241,8 @@ def random_remove_pn_units_by_annotation_query(
         rng: Random number generator for probabilistic deletion
     """
     if rng is None:
-        rng = np.random.default_rng()
+        # Seed from the global stream; an unseeded default_rng() ignores the seed.
+        rng = np.random.default_rng(np.random.randint(0, 2**32))
 
     # Apply query to get mask of atoms matching the criteria
     query_expr = QueryExpression(query)
@@ -280,10 +279,10 @@ class RandomlyRemovePNUnitsByAnnotationQuery(Transform):
     Args:
         query: Query string in atomworks.io query syntax to identify pn_units to potentially delete
         delete_probability: Probability of deleting matched pn_units (0.0 = never delete, 1.0 = always delete)
-        rng_seed: Random seed for reproducibility (default: 42)
+        rng_seed: Fixed seed. ``None`` (default) seeds per call from the global numpy stream.
     """
 
-    def __init__(self, query: str, delete_probability: float = 1.0, rng_seed: int = 42):
+    def __init__(self, query: str, delete_probability: float = 1.0, rng_seed: int | None = None):
         self.query = query
         self.delete_probability = delete_probability
         self.rng_seed = rng_seed
@@ -292,7 +291,12 @@ class RandomlyRemovePNUnitsByAnnotationQuery(Transform):
         check_atom_array_annotation(data, ["pn_unit_iid"])
 
     def forward(self, data: dict) -> dict:
-        rng = data.get("rng", np.random.default_rng(self.rng_seed))
+        rng = data.get("rng")
+        if rng is None:
+            # A fresh default_rng(self.rng_seed) per call gave every example the same draw.
+            # Seed from the global stream instead, which PyTorch seeds per dataloader worker.
+            seed = self.rng_seed if self.rng_seed is not None else np.random.randint(0, 2**32)
+            rng = np.random.default_rng(seed)
 
         data["atom_array"] = random_remove_pn_units_by_annotation_query(
             data["atom_array"], self.query, self.delete_probability, rng
@@ -306,7 +310,7 @@ class RandomlyRemoveLigands(RandomlyRemovePNUnitsByAnnotationQuery):
     def check_input(self, data: dict) -> None:
         check_atom_array_annotation(data, ["is_polymer", "is_covalent_modification"])
 
-    def __init__(self, delete_probability: float = 1.0, rng_seed: int = 42):
+    def __init__(self, delete_probability: float = 1.0, rng_seed: int | None = None):
         query = "~is_polymer & ~is_covalent_modification"
         super().__init__(query=query, delete_probability=delete_probability, rng_seed=rng_seed)
 
@@ -408,12 +412,13 @@ class HandleUndesiredResTokens(Transform):
         - For undesired residues in non-polymer residues:
             - Remove the entire non-polymer (pn_unit_iid)
         - For undesired residues in polymer residues:
+            - If in undesired_tokens_never_map do nothing
             - Map to the closest canonical residue name (if possible)
             - Else, map to an unknown residue name (if possible, i.e if backbone atoms are present)
             - Else, atomize
     """
 
-    def __init__(self, undesired_res_tokens: list | tuple):
+    def __init__(self, undesired_res_tokens: list | tuple, undesired_tokens_never_map: list | tuple | None = None):
         """
         HandleUndesiredResTokens is a Transform that removes undesired residue tokens from an AtomArray.
 
@@ -425,11 +430,14 @@ class HandleUndesiredResTokens(Transform):
         Args:
             - undesired_res_tokens (list | tuple): A list or tuple of undesired residue names to be removed
               or mapped.
+            - undesired_tokens_never_map (list | tuple): A list or tuple of undesired residue names that are
+              NOT mapped when polymeric (but are removed as ligands).
 
         Example:
             >>> transform = HandleUndesiredResTokens(undesired_res_tokens=["PTR", "SO4"])
         """
         self.undesired_res_tokens = undesired_res_tokens
+        self.undesired_tokens_never_map = undesired_tokens_never_map or ()
 
     def check_input(self, data: dict) -> None:
         check_contains_keys(data, ["atom_array"])
@@ -476,6 +484,9 @@ class HandleUndesiredResTokens(Transform):
 
         # Mark undesired residues
         to_remove = np.isin(atom_array.res_name, self.undesired_res_tokens)
+
+        # polymeric residues in 'undesired_tokens_never_map' are not removed
+        to_remove &= ~(atom_array.is_polymer & np.isin(atom_array.res_name, self.undesired_tokens_never_map))
 
         # Case 1: Undesired residue is part of non-polymer:
         #  - Remove the entire non-polymer (pn_unit_iid)

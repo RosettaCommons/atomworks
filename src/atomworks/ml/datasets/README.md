@@ -27,7 +27,7 @@ dataset = FileDataset.from_directory(
 
 ```python
 from atomworks.ml.datasets import PandasDataset
-from atomworks.ml.datasets.loaders import create_loader_with_query_pn_units
+from atomworks.ml.datasets.loaders import create_structure_loader
 from atomworks.ml.transforms.base import Compose
 from atomworks.ml.transforms.crop import CropSpatialLikeAF3
 
@@ -35,8 +35,8 @@ from atomworks.ml.transforms.crop import CropSpatialLikeAF3
 dataset = PandasDataset(
     data="path/to/metadata.parquet",
     name="interfaces",
-    loader=create_loader_with_query_pn_units(
-        pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"]
+    loader=create_structure_loader(
+        column_mapping={"query_pn_unit_iids": ["pn_unit_1_iid", "pn_unit_2_iid"]}
     ),
     transform=Compose([
         CropSpatialLikeAF3(crop_size=384),
@@ -46,6 +46,23 @@ dataset = PandasDataset(
 ```
 
 ## Core Concepts
+
+### MetadataIndex
+
+`MetadataIndex` is a shared component that handles parquet/DataFrame loading, filtering, and ID-mapping for all dataset backends. Every dataset that uses tabular metadata delegates to a `MetadataIndex` instance, ensuring consistent filtering and ID lookup behavior.
+
+```python
+from atomworks.ml.datasets import MetadataIndex
+
+index = MetadataIndex(
+    data="metadata.parquet",
+    name="my_dataset",
+    id_column="example_id",
+    filters=["resolution < 2.5"],
+)
+print(len(index))              # Number of filtered examples
+print(index.get_example_id(0)) # First example's ID
+```
 
 ### The Three-Step Pipeline
 
@@ -104,7 +121,7 @@ dataset = FileDataset.from_directory(
 
 #### `PandasDataset`
 
-For tabular datasets stored as DataFrames or Parquet/CSV files.
+For tabular datasets stored as DataFrames or Parquet/CSV files. Delegates all metadata, filtering, and ID logic to a `MetadataIndex` internally.
 
 ```python
 dataset = PandasDataset(
@@ -125,6 +142,25 @@ dataset = PandasDataset(
 
 **ID-Based Access:** Set an `id_column` to enable `dataset.id_to_idx()` and `idx_to_id()` methods.
 
+#### `AseDBDataset`
+
+For molecular structures stored in ASE LMDB databases. Requires a metadata parquet file mapping example IDs to LMDB indices.
+
+```python
+from atomworks.ml.datasets.ase_dataset import AseDBDataset
+from atomworks.ml.datasets.loaders.ase import create_ase_loader
+
+dataset = AseDBDataset(
+    lmdb_path="/data/omol25/",
+    name="omol25",
+    data="omol25_metadata.parquet",
+    id_column="example_id",
+    lmdb_idx_column="lmdb_idx",
+    filters=["num_atoms < 200"],
+    loader=create_ase_loader(per_atom_properties=["forces"]),
+)
+```
+
 ### Loader Functions
 
 Loaders are functions that convert dataset-specific raw data into a standard format for Transforms.
@@ -134,10 +170,10 @@ Loaders are functions that convert dataset-specific raw data into a standard for
 Use loader factory functions to create loaders with common patterns:
 
 ```python
-from atomworks.ml.datasets.loaders import create_base_loader, create_loader_with_query_pn_units
+from atomworks.ml.datasets.loaders import create_structure_loader
 
 # Basic loader for simple datasets
-loader = create_base_loader(
+loader = create_structure_loader(
     example_id_colname="example_id",
     path_colname="structure_path",
     assembly_id_colname="assembly_id",
@@ -148,8 +184,8 @@ loader = create_base_loader(
 )
 
 # Loader with query pn_units (for cropping)
-loader = create_loader_with_query_pn_units(
-    pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"],  # For interfaces
+loader = create_structure_loader(
+    column_mapping={"query_pn_unit_iids": ["pn_unit_1_iid", "pn_unit_2_iid"]},
     base_path="/data/pdb",
     extension=".cif.gz"
 )

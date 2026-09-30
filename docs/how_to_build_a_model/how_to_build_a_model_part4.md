@@ -25,7 +25,7 @@
 ## Introduction
 This is the fourth and final tutorial in the **How to Build a Model Using AtomWorks** series. By now you have:
 
-- Parquet files for your `train`/`val`/`test` splits ([Part 1](how_to_build_a_model_part1.md)).
+- Parquet files for your `train`/`validation`/`test` splits ([Part 1](how_to_build_a_model_part1.md)).
 - A loader that turns each parquet row into a protein-ligand structure ([Part 2](how_to_build_a_model_part2.md)).
 - A transform pipeline that crops the pocket and converts it into tensors ([Part 2](how_to_build_a_model_part2.md)).
 - A `PocketDockGNN` model in `model.py` ([Part 3](how_to_build_a_model_part3.md)).
@@ -41,7 +41,7 @@ This tutorial completes the training script using the [AtomWorks API](../api_ref
 Before starting this part it is assumed that you have:
 - Completed [Parts 1–3](index.rst), with `transforms.py` and `model.py` in place.
 - A working installation of [PyTorch](https://pytorch.org/) and [PyTorch Lightning](https://lightning.ai/docs/pytorch/stable).
-- Access to a GPU (the example trainer is configured for a single GPU, but you can change the accelerator).
+- A CPU or GPU; the trainer chooses an available accelerator.
 
 (aw_build_model_p4_overview)=
 ## What the Training Script Does
@@ -58,13 +58,13 @@ The model sees a pocket-centered graph with five tensors:
 - **`input_coords`**: protein pocket coordinates are kept, ligand coordinates are zeroed out.
 - **`target_coords`**: the true coordinates the model should predict.
 - **`edge_index`**: bond graph connectivity.
-- **`is_ligand`**: a boolean mask for which atoms belong to the ligand.
+- **`is_ligand`**: a boolean mask for which atoms belong to the ligand; the model uses its complement to pool protein pocket coordinates.
 
 In other words, the task is: *given the protein pocket context and the ligand atoms, predict the ligand's 3D placement.*
 
 (aw_build_model_p4_imports)=
 ## Imports and Global Settings
-In a new file, `model.py`, import PyTorch, PyTorch Lightning, the AtomWorks dataset utilities used in the previous scripts, the transforms you wrote in Part 2, and the model class from Part 3.
+In a new file, `train.py`, import PyTorch, PyTorch Lightning, the AtomWorks dataset utilities used in the previous scripts, the transforms you wrote in Part 2, and the model class from Part 3.
 
 ````{dropdown} Click to see the code
 ```python
@@ -73,11 +73,13 @@ import pandas as pd
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
 from torch.utils.data import DataLoader, Dataset
+from pathlib import Path
+import argparse
 
 from atomworks.ml.datasets import PandasDataset
-from atomworks.ml.datasets.loaders import create_loader_with_query_pn_units
+from atomworks.ml.datasets.loaders import create_structure_loader
 from atomworks.ml.transforms.filters import RemoveHydrogens, RemoveUnresolvedAtoms
-from atomworks.ml.transforms.base import ConvertToTorch, Compose
+from atomworks.ml.transforms.base import Compose, ConvertToTorch
 
 from transforms import CropToPocket, FeaturizeForDocking
 from model import PocketDockGNN
@@ -85,14 +87,16 @@ from model import PocketDockGNN
 Note that we now also import {py:class}`~atomworks.ml.transforms.base.ConvertToTorch`, which turns the NumPy features from `FeaturizeForDocking` into `torch` tensors.
 ````
 
-Add two small global settings: 
-- `torch.set_float32_matmul_precision("medium")`: a practical speed/precision trade-off for training. 
+Add two small global settings:
+- `torch.set_float32_matmul_precision("medium")`: a practical speed/precision trade-off for training.
 - `pl.seed_everything(42)`: makes runs more reproducible.
 
 ````{dropdown} Click to see the code
 ```python
 torch.set_float32_matmul_precision("medium")
 pl.seed_everything(42)
+
+# Call these in main() before training.
 ```
 ````
 
@@ -106,7 +110,6 @@ CONFIG = {
     "hidden_dim": 128,
     "num_layers": 3,
     "learning_rate": 1e-3,
-    "batch_size": 1,
     "max_epochs": 5,
     "pocket_radius": 10.0,
     "num_workers": 0,
@@ -123,7 +126,7 @@ The `max_*` values cap how many examples we use so the run stays small and fast 
 
 (aw_build_model_p4_keys)=
 ## List the Tensor Keys
-Your featurization step produces five tensors. Store those once in a `TENSOR_KEYS` list so the rest of the file can reuse the same list. This list is used both to tell `ConvertToTorch` what to convert and to tell the collate function what to stack.
+Your featurization step produces five tensors. Store those once in a `TENSOR_KEYS` list so the rest of the file can reuse the same list. This list tells `ConvertToTorch` what to convert and the collate function what to stack.
 
 ````{dropdown} Click to see the code
 ```python
@@ -160,7 +163,8 @@ class RobustDataset(Dataset):
     def __getitem__(self, idx):
         try:
             return self.dataset[idx]
-        except Exception:
+        except (OSError, ValueError, KeyError, IndexError) as exc:
+            print(f"Skipping example {idx}: {exc}")
             self.failed.append(idx)
             return None
 ```
@@ -180,7 +184,6 @@ def collate_fn(batch):
     return {
         k: torch.stack([example[k] for example in batch])
         for k in TENSOR_KEYS
-        if k in batch[0]
     }
 ```
 With `batch_size=1`, this stacks a single example and adds a leading dimension of size 1, which the model's `_shared_step` removes with `.squeeze(0)`.
@@ -209,13 +212,17 @@ Write one function that takes a split parquet path and returns a ready-to-use da
 
 ````{dropdown} Click to see the code
 ```python
-def build_dataset(parquet_path: str, name: str, radius: float, max_examples: int = None):
+def build_dataset(parquet_path: str, name: str, radius: float, max_examples: int | None = None) -> RobustDataset:
     df = pd.read_parquet(parquet_path)
     if max_examples is not None:
         df = df.head(max_examples).reset_index(drop=True)
 
-    loader = create_loader_with_query_pn_units(
-        pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"]
+    loader = create_structure_loader(
+        altloc_seed_colname="altloc_seed",
+        column_mapping={
+            "query_pn_unit_iids": ["pn_unit_1_iid", "pn_unit_2_iid"],
+            "query_is_polymer": ["pn_unit_1_is_polymer", "pn_unit_2_is_polymer"],
+        },
     )
 
     dataset = PandasDataset(
@@ -224,11 +231,10 @@ def build_dataset(parquet_path: str, name: str, radius: float, max_examples: int
         id_column="example_id",
         loader=loader,
         transform=build_pipeline(radius),
-        save_failed_examples_to_dir="failed_examples/",
     )
     return RobustDataset(dataset)
 ```
-`save_failed_examples_to_dir` writes any example that fails inside the AtomWorks pipeline to disk so you can inspect it later.
+The wrapper prints the failing row index and exception so skipped examples remain visible. Keep at least one valid example in each split.
 ````
 
 Then write one small helper to build dataloaders consistently. This keeps the script tidy and reuses the same settings for train, validation, and test.
@@ -238,7 +244,7 @@ Then write one small helper to build dataloaders consistently. This keeps the sc
 def build_dataloader(dataset, shuffle: bool) -> DataLoader:
     return DataLoader(
         dataset,
-        batch_size=CONFIG["batch_size"],
+        batch_size=1,
         shuffle=shuffle,
         num_workers=CONFIG["num_workers"],
         collate_fn=collate_fn,
@@ -249,7 +255,7 @@ def build_dataloader(dataset, shuffle: bool) -> DataLoader:
 
 (aw_build_model_p4_build)=
 ## Build the Datasets and Dataloaders
-Now the main script body. Start by building the three datasets.
+Now the main script body. Start by building the three datasets. The downloadable script accepts `--splits-dir`, `--output-dir`, `--max-epochs`, and example caps. Set `output_dir = Path("tutorial_run")` for the snippets below.
 
 ````{dropdown} Click to see the code
 ```python
@@ -258,7 +264,7 @@ train_dataset = build_dataset(
     "splits/train.parquet", "docking_train", CONFIG["pocket_radius"], CONFIG["max_train"]
 )
 val_dataset = build_dataset(
-    "splits/val.parquet", "docking_val", CONFIG["pocket_radius"], CONFIG["max_val"]
+    "splits/validation.parquet", "docking_val", CONFIG["pocket_radius"], CONFIG["max_val"]
 )
 test_dataset = build_dataset(
     "splits/test.parquet", "docking_test", CONFIG["pocket_radius"], CONFIG["max_test"]
@@ -300,12 +306,12 @@ print(f"\nModel parameters: {sum(p.numel() for p in model.parameters()):,}")
 
 (aw_build_model_p4_callbacks)=
 ## Checkpointing and Early Stopping
-Before creating the trainer, define the callbacks. Use `periodic_checkpoint` to give recovery points during training, and `best_checkpoint` to keep the best models by `val/loss`.
+Before creating the trainer, define the callbacks. Put checkpoints under `output_dir`. Use `periodic_checkpoint` to give recovery points during training, and `best_checkpoint` to keep the best models by `val/loss`.
 
 ````{dropdown} Click to see the code
 ```python
 periodic_checkpoint = ModelCheckpoint(
-    dirpath="checkpoints/",
+    dirpath=output_dir / "checkpoints",
     filename="pocketdockgnn-{epoch:02d}-{step}",
     every_n_train_steps=50,
     save_last=True,
@@ -313,8 +319,8 @@ periodic_checkpoint = ModelCheckpoint(
 )
 
 best_checkpoint = ModelCheckpoint(
-    dirpath="checkpoints/",
-    filename="pocketdockgnn-best-{epoch:02d}-{val/loss:.4f}",
+    dirpath=output_dir / "checkpoints",
+    filename="pocketdockgnn-best-{epoch:02d}",
     monitor="val/loss",
     mode="min",
     save_top_k=3,
@@ -343,22 +349,29 @@ Now define the trainer itself with the [PyTorch Lightning `Trainer`](https://lig
 ```python
 trainer = pl.Trainer(
     max_epochs=CONFIG["max_epochs"],
-    accelerator="gpu",
+    accelerator="auto",
     devices=1,
     callbacks=callbacks,
-    log_every_n_steps=10,
-    val_check_interval=50,
+    log_every_n_steps=1,
+    default_root_dir=output_dir,
+    check_val_every_n_epoch=1,
     enable_progress_bar=True,
 )
 ```
 ````
 
 ```{tip}
-If you do not have a GPU available, set `accelerator="cpu"` (and drop `devices=1`) to run the small capped example on CPU.
+The small capped example runs on CPU when no GPU is available.
 ```
 
 (aw_build_model_p4_fit)=
 ## Train and Evaluate
+With `train.parquet`, `validation.parquet`, and `test.parquet` in `splits/`, run the downloaded scripts from one directory:
+
+```bash
+python train.py --splits-dir splits --output-dir tutorial_run
+```
+
 Call `fit()` to train.
 
 ````{dropdown} Click to see the code
@@ -379,6 +392,8 @@ After training, print some diagnostics: how many examples were skipped, and whic
 print(f"\nFailed examples during training: {len(train_dataset.failed)}")
 print(f"Failed examples during val:      {len(val_dataset.failed)}")
 print(f"Best checkpoint:                {best_checkpoint.best_model_path}")
+if not best_checkpoint.best_model_path:
+    raise RuntimeError("No validation checkpoint was saved; inspect skipped examples")
 ```
 ````
 
@@ -407,25 +422,31 @@ You have now built a complete, if simplified, machine-learning pipeline with Ato
 
 (aw_build_model_p4_inference)=
 ## Running Inference on a Trained Model
-`trainer.test()` reports metrics, but it does not hand you the predicted poses. To get coordinates for a new pocket-ligand example, reload the best checkpoint and call the model directly. You can find a `inference.py` script in the [tutorial files](./scripts/index.rst).
+`trainer.test()` reports metrics, but it does not hand you the predicted poses. To get coordinates for a new pocket-ligand example, reload the best checkpoint and call the model directly. You can find an `inference.py` script in the [tutorial files](./scripts/index.rst). After training, pass the best checkpoint path printed by `train.py`:
+
+```bash
+python inference.py PATH_TO_BEST_CHECKPOINT --split splits/test.parquet
+```
 
 ````{dropdown} Click to see the code
 ```python
-model = PocketDockGNN.load_from_checkpoint(best_checkpoint.best_model_path)
+model = PocketDockGNN.load_from_checkpoint(best_checkpoint.best_model_path, map_location="cpu")
 model.eval()
 
-batch = next(iter(test_loader))
+batch = next((example for example in test_loader if example is not None), None)
+if batch is None:
+    raise ValueError("No usable examples in inference split")
 atomic_numbers = batch["atomic_numbers"].squeeze(0)
 input_coords = batch["input_coords"].squeeze(0)
 edge_index = batch["edge_index"].squeeze(0)
 is_ligand = batch["is_ligand"].squeeze(0)
 
 with torch.no_grad():
-    pred_coords = model(atomic_numbers, input_coords, edge_index)
+    pred_coords = model(atomic_numbers, input_coords, edge_index, is_ligand)
 
 predicted_ligand_coords = pred_coords[is_ligand]
 ```
-The `.squeeze(0)` calls undo the batch dimension `DataLoader` adds, matching what `_shared_step` does internally. Only the rows where `is_ligand` is `True` are the coordinates you asked the model to predict. The rest are the (unchanged) protein pocket context.
+The `.squeeze(0)` calls undo the batch dimension `DataLoader` adds, matching what `_shared_step` does internally. Only the rows where `is_ligand` is `True` are ligand predictions. Other rows are unconstrained protein predictions and should not be interpreted as a fixed pocket.
 ````
 
 ```{note}

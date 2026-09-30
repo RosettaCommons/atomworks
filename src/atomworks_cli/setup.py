@@ -1,9 +1,6 @@
 """Setup utilities for AtomWorks."""
 # ruff: noqa: B008
 
-from __future__ import annotations
-
-import os
 import tarfile
 import tempfile
 import urllib.request
@@ -84,12 +81,12 @@ def setup_tests(
     3) Download any missing PDB mmCIFs listed there into the given PDB mirror path using rsync.
 
     Example:
-        atomworks setup tests --pdb-mirror-path /data/rcsb/mmcif
+        atomworks setup tests
     """
     typer.echo("Setting up AtomWorks test environment...")
 
     # Resolve PDB mirror path
-    pdb_mirror_path = Path(os.getenv("PDB_MIRROR_PATH") or tests_data_dir / "pdb")
+    pdb_mirror_path = tests_data_dir / "pdb"
 
     # Download and extract test pack
     tests_data_dir.mkdir(parents=True, exist_ok=True)

@@ -24,6 +24,10 @@ def create_fasta_file_from_df(
 ) -> None:
     """Create a FASTA file from sequences stored as a dataframe in a Parquet file.
 
+    Wraps sequences to 80 characters per line, filters null/all-X sequences, and deduplicates.
+    For simple unwrapped FASTA from a list of sequences, see
+    :py:func:`~atomworks.ml.preprocessing.msa.generating.create_fasta_with_hashed_headers`.
+
     Args:
         pn_units_df (pd.DataFrame | PathLike | str): Dataframe, as a path Parquet or object directly, containing a column with the sequences to be clustered.
         sequence_col_name (str): The name of the column containing the canonical sequences to be clustered.

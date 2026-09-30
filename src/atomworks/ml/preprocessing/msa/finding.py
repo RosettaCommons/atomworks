@@ -1,6 +1,7 @@
 """Find existing MSA files and their locations."""
 
 import logging
+import warnings
 from os import PathLike
 from pathlib import Path
 
@@ -11,28 +12,6 @@ from atomworks.enums import MSAFileExtension
 from atomworks.ml.utils.misc import hash_sequence
 
 logger = logging.getLogger(__name__)
-
-
-def get_msa_dirs_from_env(raise_if_not_set: bool = True) -> list[Path] | None:
-    """Parse LOCAL_MSA_DIRS environment variable into Path objects.
-
-    Returns:
-        List of Path objects for MSA directories from environment variable.
-        None if LOCAL_MSA_DIRS is not set or empty and raise_if_not_set is False.
-
-    Raises:
-        ValueError: If LOCAL_MSA_DIRS is not set or empty and raise_if_not_set is True.
-    """
-    local_msa_dirs = _load_env_var("LOCAL_MSA_DIRS")
-    if not local_msa_dirs:
-        if raise_if_not_set:
-            raise ValueError("LOCAL_MSA_DIRS environment variable is not set or empty")
-        else:
-            return None
-
-    dirs = [Path(dir_path.strip()) for dir_path in local_msa_dirs.split(",")]
-
-    return dirs
 
 
 def get_msa_depth_and_ext_from_folder(folder: Path, max_depth: int = 10) -> tuple[int, MSAFileExtension]:
@@ -53,10 +32,10 @@ def get_msa_depth_and_ext_from_folder(folder: Path, max_depth: int = 10) -> tupl
         ValueError: If no MSA files are found within max_depth levels.
 
     Examples:
-        For structure like `/msa/ab/cd/abcd123.a3m.gz`:
+        For structure like ``/msa/ab/cd/abcd123.a3m.gz``:
 
-           depth, ext = get_msa_depth_and_ext_from_folder(Path("/msa"))
-           # Returns: (2, MSAFileExtension.A3M_GZ)
+        >>> depth, ext = get_msa_depth_and_ext_from_folder(Path("/msa"))
+        >>> # Returns: (2, MSAFileExtension.A3M_GZ)
     """
     if not folder.exists():
         raise ValueError(f"Folder does not exist: {folder}")
@@ -68,22 +47,28 @@ def get_msa_depth_and_ext_from_folder(folder: Path, max_depth: int = 10) -> tupl
     depth = 0
 
     while depth <= max_depth:
-        found_subdir = False
-        # Check if current directory contains any MSA files
+        # Separate file detection from subdirectory selection for efficiency:
+        # First check all files for MSA matches, then find first subdir if needed
+        files = []
+        subdirs = []
         for item in current_dir.iterdir():
             if item.is_file():
-                for ext_str in msa_extensions:
-                    if item.name.endswith(ext_str):
-                        matching_ext = MSAFileExtension(ext_str)
-                        return depth, matching_ext
-            else:  # it's a directory
-                next_subdir = item
-                found_subdir = True
+                files.append(item)
+            else:
+                subdirs.append(item)
 
-        if not found_subdir:
+        # Check files for MSA matches
+        for item in files:
+            for ext_str in msa_extensions:
+                if item.name.endswith(ext_str):
+                    matching_ext = MSAFileExtension(ext_str)
+                    return depth, matching_ext
+
+        # No MSA files found, descend into first subdirectory (sorted for determinism)
+        if not subdirs:
             break
 
-        current_dir = next_subdir
+        current_dir = min(subdirs)  # Deterministic: pick lexicographically first
         depth += 1
 
     raise ValueError(
@@ -92,98 +77,176 @@ def get_msa_depth_and_ext_from_folder(folder: Path, max_depth: int = 10) -> tupl
     )
 
 
-def _build_msa_file_paths(
-    sequence_hash: str, msa_dir: Path, shard_depths: list[int], extensions: list[str]
-) -> list[Path]:
-    """Build all possible MSA file paths for a sequence hash.
+def _auto_detect_msa_dir_metadata(msa_dir: Path) -> dict | None:
+    """Auto-detect MSA directory metadata (depth and extension).
+
+    Args:
+        msa_dir: Path to the MSA directory.
+
+    Returns:
+        Dict with 'dir', 'extension', 'directory_depth' keys, or None if
+        detection fails or directory doesn't exist.
+    """
+    if not msa_dir.exists():
+        logger.warning(f"MSA directory does not exist: {msa_dir}")
+        return None
+    try:
+        depth, ext = get_msa_depth_and_ext_from_folder(msa_dir)
+        return {
+            "dir": str(msa_dir),
+            "extension": ext.value,
+            "directory_depth": depth,
+        }
+    except ValueError as e:
+        logger.warning(f"Could not auto-detect MSA format for {msa_dir}: {e}")
+        return None
+
+
+def get_msa_dirs(
+    env_var_name: str = "PROTEIN_MSA_DIRS",
+    raise_if_not_set: bool = False,
+) -> list[dict]:
+    """Get MSA directories with auto-detected metadata from an environment variable.
+
+    Args:
+        env_var_name: Environment variable with comma-separated paths.
+        raise_if_not_set: Raise if env var is unset. Defaults to ``False``.
+
+    Returns:
+        List of dicts with ``dir``, ``extension``, and ``directory_depth`` keys.
+    """
+    msa_dirs_str = _load_env_var(env_var_name)
+    if not msa_dirs_str:
+        if raise_if_not_set:
+            raise ValueError(f"{env_var_name} environment variable is not set or empty")
+        return []
+
+    # Parse comma-separated paths
+    msa_dirs = [Path(p.strip()) for p in msa_dirs_str.split(",") if p.strip()]
+
+    result = []
+    for msa_dir in msa_dirs:
+        metadata = _auto_detect_msa_dir_metadata(msa_dir)
+        if metadata is not None:
+            result.append(metadata)
+
+    return result
+
+
+# Backwards compatibility alias
+def get_msa_dirs_from_env(raise_if_not_set: bool = False) -> list[dict]:
+    """Deprecated: Use :py:func:`get_msa_dirs` instead."""
+    warnings.warn(
+        "get_msa_dirs_from_env is deprecated, use get_msa_dirs('PROTEIN_MSA_DIRS') instead",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return get_msa_dirs("PROTEIN_MSA_DIRS", raise_if_not_set=raise_if_not_set)
+
+
+def _build_msa_file_path(sequence_hash: str, msa_dir: str, depth: int, extension: str) -> Path:
+    """Build the MSA file path for a sequence hash.
 
     Args:
         sequence_hash: Hash of the protein sequence.
         msa_dir: Base MSA directory.
-        shard_depths: List of sharding depths to check.
-        extensions: List of file extensions to check.
+        depth: Shard depth (0 = flat, 2 = "ab/cd/" style).
+        extension: File extension (e.g., ".a3m.gz").
 
     Returns:
-        List of possible file paths for the sequence.
+        Path to the MSA file.
     """
-    possible_paths = []
+    # Build shard path like "ab/cd/" for depth 2 with hash "abcd123..."
+    shard_path = "".join([f"{sequence_hash[(i*2):(i+1)*2]}/" for i in range(depth)])
+    return Path(msa_dir) / shard_path / f"{sequence_hash}{extension}"
 
-    for shard_depth in shard_depths:
-        # Build shard path like "ab/cd/" for depth 2 with hash "abcd123..."
-        shard_path = "".join([f"{sequence_hash[(i * 2) : (i + 1) * 2]}/" for i in range(shard_depth)])
 
-        for extension in extensions:
-            file_path = msa_dir / shard_path / f"{sequence_hash}{extension}"
-            possible_paths.append(file_path)
+def _normalize_msa_dirs(msa_dirs: list[dict] | list[PathLike] | None) -> list[dict]:
+    """Normalize MSA directories to list of dicts with metadata.
 
-    return possible_paths
+    Args:
+        msa_dirs: MSA directories in one of three formats:
+            - None: Load from PROTEIN_MSA_DIRS env var
+            - list[PathLike]: Simple format, auto-detects metadata for each directory
+            - list[dict]: Pre-computed format with 'dir', 'extension', 'directory_depth' keys
+
+    Returns:
+        List of dicts with 'dir', 'extension', 'directory_depth' keys.
+
+    Raises:
+        TypeError: If list contains mixed types (must be all dicts or all PathLike).
+    """
+    if msa_dirs is None:
+        return get_msa_dirs(raise_if_not_set=False)
+
+    if not msa_dirs:
+        return []
+
+    # Check if already in dict format - validate all elements are dicts
+    if isinstance(msa_dirs[0], dict):
+        if not all(isinstance(d, dict) for d in msa_dirs):
+            raise TypeError("msa_dirs must be homogeneous: all elements must be dicts or all PathLike, not mixed")
+        return msa_dirs
+
+    # Simple PathLike format - auto-detect metadata for each directory
+    result = []
+    for msa_dir in msa_dirs:
+        metadata = _auto_detect_msa_dir_metadata(Path(msa_dir))
+        if metadata is not None:
+            result.append(metadata)
+
+    return result
 
 
 def sequence_has_msa(
     sequence: str,
-    msa_dirs: list[PathLike] | None = None,
-    shard_depths: list[int] | None = None,
-    extensions: list[MSAFileExtension] | None = None,
+    msa_dirs: list[dict] | list[PathLike] | None = None,
 ) -> bool:
     """Check if a sequence has an existing MSA file in any directory.
 
     Args:
         sequence: Protein sequence to check.
-        msa_dirs: Directories to search. If None, uses LOCAL_MSA_DIRS env var.
-        shard_depths: Sharding levels to check. Defaults to [0, 1, 2, 3, 4].
-        extensions: File extensions to check. Defaults to [A3M, A3M_GZ, A3M_ZST].
+        msa_dirs: Directories to search. Accepts:
+            - None: Uses PROTEIN_MSA_DIRS env var
+            - list[PathLike]: Simple format, auto-detects metadata
+            - list[dict]: Pre-computed format with 'dir', 'extension', 'directory_depth' keys
 
     Returns:
         True if MSA exists, False otherwise.
     """
-    # Set defaults
-    if msa_dirs is None:
-        msa_dirs = get_msa_dirs_from_env()
-    else:
-        msa_dirs = [Path(d) for d in msa_dirs]
-
-    if shard_depths is None:
-        shard_depths = [0, 1, 2, 3, 4]
-
-    if extensions is None:
-        extensions = [MSAFileExtension.A3M, MSAFileExtension.A3M_GZ, MSAFileExtension.A3M_ZST]
-
-    # Convert extensions to string list
-    extension_strs = [ext.value if isinstance(ext, MSAFileExtension) else str(ext) for ext in extensions]
-
-    # Filter existing directories
-    existing_dirs = [d for d in msa_dirs if d.exists()]
-    if not existing_dirs:
-        logger.warning("No existing MSA directories found")
+    normalized_dirs = _normalize_msa_dirs(msa_dirs)
+    if not normalized_dirs:
+        logger.warning("No MSA directories found")
         return False
 
     sequence_hash = hash_sequence(sequence)
 
-    for msa_dir in existing_dirs:
-        possible_paths = _build_msa_file_paths(sequence_hash, msa_dir, shard_depths, extension_strs)
-
-        # Return True as soon as we find the first existing file
-        for path in possible_paths:
-            if path.exists():
-                logger.debug(f"Found existing MSA for sequence hash {sequence_hash}: {path}")
-                return True
+    for dir_info in normalized_dirs:
+        path = _build_msa_file_path(
+            sequence_hash,
+            dir_info["dir"],
+            dir_info["directory_depth"],
+            dir_info["extension"],
+        )
+        if path.exists():
+            logger.debug(f"Found existing MSA for sequence hash {sequence_hash}: {path}")
+            return True
 
     return False
 
 
 def find_msas(
     sequences: list[str],
-    msa_dirs: list[PathLike] | None = None,
-    shard_depths: list[int] | None = None,
-    extensions: list[MSAFileExtension] | None = None,
+    msa_dirs: list[dict] | list[PathLike] | None = None,
 ) -> tuple[list[str], dict[str, Path]]:
     """Find existing MSA files for sequences and return missing sequences with MSA path mapping.
 
     Args:
         sequences: Protein sequences to find MSAs for.
-        msa_dirs: Directories to search. If None, uses LOCAL_MSA_DIRS env var.
-        shard_depths: Sharding levels to check. Defaults to [0, 1, 2, 3, 4].
-        extensions: File extensions to check. Defaults to [A3M, A3M_GZ, A3M_ZST].
+        msa_dirs: Directories to search. Accepts:
+            - None: Uses PROTEIN_MSA_DIRS env var
+            - list[PathLike]: Simple format, auto-detects metadata
+            - list[dict]: Pre-computed format with 'dir', 'extension', 'directory_depth' keys
 
     Returns:
         Tuple of (missing_sequences, sequence_to_msa_path) where:
@@ -191,43 +254,25 @@ def find_msas(
         - sequence_to_msa_path: Dict mapping sequences to their MSA file paths
 
     Examples:
-        Find MSAs with default settings:
+        Find MSAs with default settings (uses PROTEIN_MSA_DIRS env var):
 
         .. code-block:: python
 
            sequences = ["MKKKEVE...", "MSYIWRQ..."]
            missing, found_paths = find_msas(sequences)
 
-        Find MSAs in specific directories:
+        Find MSAs with explicit directories:
 
         .. code-block:: python
 
-           from pathlib import Path
-
-           dirs = [Path("/projects/msa/chembl"), Path("/projects/msa/mmseqs_gpu")]
+           dirs = get_msa_dirs("MY_MSA_DIRS")
            missing, found_paths = find_msas(sequences, msa_dirs=dirs)
     """
     logger.info(f"Finding MSAs for {len(sequences)} sequences")
 
-    # Set defaults
-    if msa_dirs is None:
-        msa_dirs = get_msa_dirs_from_env()
-    else:
-        msa_dirs = [Path(d) for d in msa_dirs]
-
-    if shard_depths is None:
-        shard_depths = [0, 1, 2, 3, 4]
-
-    if extensions is None:
-        extensions = [MSAFileExtension.A3M, MSAFileExtension.A3M_GZ, MSAFileExtension.A3M_ZST]
-
-    # Convert extensions to string list
-    extension_strs = [ext.value if isinstance(ext, MSAFileExtension) else str(ext) for ext in extensions]
-
-    # Filter existing directories
-    existing_dirs = [d for d in msa_dirs if d.exists()]
-    if not existing_dirs:
-        logger.warning("No existing MSA directories found")
+    normalized_dirs = _normalize_msa_dirs(msa_dirs)
+    if not normalized_dirs:
+        logger.warning("No MSA directories found")
         return sequences.copy(), {}
 
     # Find MSAs for each sequence
@@ -239,14 +284,16 @@ def find_msas(
         found_path = None
 
         # Search for MSA file in all directories
-        for msa_dir in existing_dirs:
-            possible_paths = _build_msa_file_paths(sequence_hash, msa_dir, shard_depths, extension_strs)
-            for path in possible_paths:
-                if path.exists():
-                    found_path = path
-                    logger.debug(f"Found existing MSA for sequence hash {sequence_hash}: {path}")
-                    break
-            if found_path:
+        for dir_info in normalized_dirs:
+            path = _build_msa_file_path(
+                sequence_hash,
+                dir_info["dir"],
+                dir_info["directory_depth"],
+                dir_info["extension"],
+            )
+            if path.exists():
+                found_path = path
+                logger.debug(f"Found existing MSA for sequence hash {sequence_hash}: {path}")
                 break
 
         if found_path:

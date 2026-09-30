@@ -13,12 +13,14 @@ app = typer.Typer(help="AtomWorks command-line interface")
 
 # Import commands to register them with the root app and expose sub-apps
 from . import ccd as _ccd  # noqa: E402
+from . import cluster as _cluster  # noqa: E402
 from . import msa as _msa  # noqa: E402
 from . import pdb as _pdb  # noqa: E402, T100
 from . import setup as _setup  # noqa: E402
 
 # Expose namespaced groups: `atomworks ccd ...`, ...
 app.add_typer(_ccd.app, name="ccd")
+app.add_typer(_cluster.app, name="cluster")
 app.add_typer(_msa.app, name="msa")
 app.add_typer(_pdb.app, name="pdb")
 app.add_typer(_setup.app, name="setup")
