@@ -6,7 +6,7 @@ import pytest
 from biotite.structure import AtomArray
 
 from atomworks.enums import ChainType
-from atomworks.io.utils.ccd import get_chem_comp_leaving_atom_names
+from atomworks.io.utils.link_chemistry import get_chem_comp_leaving_atom_groups
 from atomworks.ml.transforms.filters import HandleUndesiredResTokens
 
 # Non-canonical residues found inside protein chains whose canonical parent is unambiguous
@@ -35,7 +35,12 @@ def _make_polymer_residue(res_name: str, *, keep_leaving_group: bool) -> AtomArr
     residue = residue[residue.element != "H"]
 
     if not keep_leaving_group:
-        leaving = {str(name) for names in get_chem_comp_leaving_atom_names(res_name).values() for name in names}
+        leaving = {
+            str(name)
+            for groups in get_chem_comp_leaving_atom_groups(res_name).values()
+            for group in groups
+            for name in group
+        }
         residue = residue[~np.isin(residue.atom_name, list(leaving))]
 
     n_atoms = residue.array_length()
@@ -54,11 +59,7 @@ def _apply(residue: AtomArray, res_name: str) -> AtomArray:
 
 @pytest.mark.parametrize(("res_name", "expected_canonical"), MAPPABLE_RESIDUES)
 def test_residue_inside_a_polymer_maps_to_closest_canonical(res_name: str, expected_canonical: str):
-    """A residue in a chain is substituted even though it has lost its leaving group.
-
-    Before the fix these were atomized, because the canonical template demanded an `OXT`
-    that polymerisation had already removed.
-    """
+    """A residue in a chain is substituted even though it has lost its leaving group."""
     result = _apply(_make_polymer_residue(res_name, keep_leaving_group=False), res_name)
 
     assert set(map(str, result.res_name)) == {
@@ -80,3 +81,40 @@ def test_chain_terminus_retains_its_leaving_group(res_name: str, expected_canoni
     assert "OXT" in set(
         map(str, result.atom_name)
     ), f"{res_name} at a chain terminus should keep its OXT, got {sorted(set(map(str, result.atom_name)))}"
+
+
+@pytest.mark.parametrize(("res_name", "expected_canonical"), MAPPABLE_RESIDUES)
+def test_missing_required_backbone_atom_prevents_substitution(res_name: str, expected_canonical: str):
+    """A missing backbone N prevents both canonical and unknown-residue substitution."""
+    residue = _make_polymer_residue(res_name, keep_leaving_group=False)
+    residue = residue[residue.atom_name != "N"]
+    original = residue.copy()
+
+    result = _apply(residue, res_name)
+
+    assert np.all(result.res_name == res_name)
+    assert result.atomize.all()
+    np.testing.assert_array_equal(result.atom_name, original.atom_name)
+    np.testing.assert_array_equal(result.coord, original.coord)
+    np.testing.assert_array_equal(result.bonds.as_array(), original.bonds.as_array())
+
+
+@pytest.mark.parametrize(("res_name", "expected_canonical"), MAPPABLE_RESIDUES)
+@pytest.mark.parametrize("keep_leaving_group", [False, True], ids=["internal", "terminal"])
+def test_substitution_preserves_retained_atom_annotations_and_bonds(
+    res_name: str, expected_canonical: str, keep_leaving_group: bool
+):
+    """Filtering preserves each retained atom's annotations, coordinates, and bond indices."""
+    residue = _make_polymer_residue(res_name, keep_leaving_group=keep_leaving_group)
+    residue.set_annotation("source_atom_index", np.arange(len(residue)))
+    canonical_names = struc.info.residue(expected_canonical).atom_name
+    expected = residue[np.isin(residue.atom_name, canonical_names)]
+    expected.res_name[:] = expected_canonical
+
+    result = _apply(residue, res_name)
+
+    np.testing.assert_array_equal(result.coord, expected.coord)
+    assert set(result.get_annotation_categories()) == set(expected.get_annotation_categories())
+    for annotation in expected.get_annotation_categories():
+        np.testing.assert_array_equal(result.get_annotation(annotation), expected.get_annotation(annotation))
+    np.testing.assert_array_equal(result.bonds.as_array(), expected.bonds.as_array())

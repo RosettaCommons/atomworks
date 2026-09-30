@@ -13,7 +13,7 @@ from biotite.structure import AtomArray, AtomArrayStack
 from atomworks.common import exists, not_isin
 from atomworks.constants import HYDROGEN_LIKE_SYMBOLS
 from atomworks.enums import ChainType, ChainTypeInfo
-from atomworks.io.utils.ccd import get_chem_comp_leaving_atom_names
+from atomworks.io.utils.link_chemistry import get_chem_comp_leaving_atom_groups
 from atomworks.io.utils.query import QueryExpression
 from atomworks.io.utils.selection import get_annotation
 from atomworks.io.utils.sequence import get_1_from_3_letter_code, get_3_from_1_letter_code
@@ -409,8 +409,8 @@ def _leaving_atom_names(res_name: str) -> frozenset[str]:
     required when matching an observed residue against a free-monomer CCD template.
     """
     names: set[str] = set()
-    for displaced_atom_names in get_chem_comp_leaving_atom_names(res_name).values():
-        names |= {str(name) for name in displaced_atom_names}
+    for groups in get_chem_comp_leaving_atom_groups(res_name).values():
+        names |= {str(name) for group in groups for name in group}
     return frozenset(names)
 
 
@@ -472,8 +472,7 @@ class HandleUndesiredResTokens(Transform):
             if not has_hydrogens:
                 canonical_res = canonical_res[not_isin(canonical_res.element, HYDROGEN_LIKE_SYMBOLS)]
 
-            # Leaving atoms are absent from every residue inside a polymer, so they must not
-            # be required else no residue in a chain can ever match.
+            # Polymerization can displace CCD leaving atoms; require only the other template atoms.
             required_atom_names = canonical_res.atom_name[
                 not_isin(canonical_res.atom_name, list(_leaving_atom_names(canonical_res_name)))
             ]
