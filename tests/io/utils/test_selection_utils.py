@@ -2,15 +2,17 @@ import biotite.structure as struc
 import numpy as np
 import pytest
 
-from atomworks.io.utils.selection import (
+from atomworks.io.utils.query import (
     AtomSelection,
     AtomSelectionStack,
-    ChainIdxSlice,
-    ResIdxSlice,
     get_mask_from_selection_string,
-    get_residue_starts,
     parse_pymol_string,
     parse_selection_string,
+)
+from atomworks.io.utils.selection import (
+    ChainIdxSlice,
+    ResIdxSlice,
+    get_residue_starts,
 )
 
 
@@ -180,6 +182,10 @@ def test_get_mask_from_selection_string(basic_atom_array: struc.AtomArray):
     assert np.array_equal(mask, expected_mask)
     assert np.array_equal(mask, AtomSelection.from_selection_str("A/ALA").get_mask(basic_atom_array))
 
+    # Empty/omitted fields act as wildcards; a trailing slash must not touch transformation_id
+    assert list(np.where(get_mask_from_selection_string(basic_atom_array, "A//1"))[0]) == [0, 1]
+    assert list(np.where(get_mask_from_selection_string(basic_atom_array, "A/ALA/1/CA/"))[0]) == [1]
+
     # Test no match raises ValueError
     with pytest.raises(ValueError, match="No atoms found for selection: A/VAL/1/CB"):
         get_mask_from_selection_string(basic_atom_array, "A/VAL/1/CB")
@@ -252,22 +258,57 @@ def test_atom_selection_stack_get_principle_components(basic_atom_array: struc.A
         assert np.allclose(np.abs(pcs_stack[i]), np.abs(expected_pcs))
 
 
-def test_atom_selection_stack_from_query_ranges(basic_atom_array: struc.AtomArray) -> None:
-    """Select a range of residue IDs within a chain using extended syntax."""
-    selection_stack = AtomSelectionStack.from_query("A/*/1-2")
-    mask = selection_stack.get_mask(basic_atom_array)
-    # Expect residues 1 and 2 in chain A (first four atoms)
-    expected_mask = np.array([True, True, True, True, False, False], dtype=bool)
-    assert np.array_equal(mask, expected_mask)
+@pytest.fixture
+def bracket_array() -> struc.AtomArray:
+    """chain A spans res_id -1..2 (to exercise 0/negatives/ranges); chain B has res_id 1."""
+    return struc.array(
+        [
+            struc.Atom(np.array([0, 0, 0]), chain_id="A", res_id=-1, res_name="ALA", atom_name="N"),
+            struc.Atom(np.array([0, 0, 0]), chain_id="A", res_id=0, res_name="GLY", atom_name="CA"),
+            struc.Atom(np.array([0, 0, 0]), chain_id="A", res_id=1, res_name="VAL", atom_name="N"),
+            struc.Atom(np.array([0, 0, 0]), chain_id="A", res_id=1, res_name="VAL", atom_name="CA"),
+            struc.Atom(np.array([0, 0, 0]), chain_id="A", res_id=2, res_name="LEU", atom_name="CA"),
+            struc.Atom(np.array([0, 0, 0]), chain_id="B", res_id=1, res_name="ALA", atom_name="N"),
+            struc.Atom(np.array([0, 0, 0]), chain_id="B", res_id=1, res_name="ALA", atom_name="CA"),
+        ]
+    )
 
 
-def test_atom_selection_stack_from_query_multiple_tokens(basic_atom_array: struc.AtomArray) -> None:
-    """Union of multiple selection tokens."""
-    selection_stack = AtomSelectionStack.from_query(["A/ALA", "B/VAL"])  # include ALA in chain A and VAL in chain B
-    mask = selection_stack.get_mask(basic_atom_array)
-    # Expect ALA in chain A (first two atoms) and VAL in chain B (last two atoms)
-    expected_mask = np.array([True, True, False, False, True, True], dtype=bool)
-    assert np.array_equal(mask, expected_mask)
+@pytest.mark.parametrize(
+    "query, expected_indices",
+    [
+        ("[A,B]/*/*/N", [0, 2, 5]),  # chain list
+        ("A/*/*/[N,CA]", [0, 1, 2, 3, 4]),  # atom-name list
+        ("[A,B]/*/*/[N,CA]", [0, 1, 2, 3, 4, 5, 6]),  # cartesian product of two lists
+        ("A/*/[1-2]", [2, 3, 4]),  # bracketed range
+        ("A/*/[0]", [1]),  # res_id 0 filters (not a wildcard)
+        ("A/*/[-1-0]", [0, 1]),  # negative range through 0
+        ("A/*/[-1,2]", [0, 4]),  # negative id + scalar in a list
+        ("[A, B]/*/*/N", [0, 2, 5]),  # whitespace inside brackets ignored
+        ("A/*/[1], B/*/[1]", [2, 3, 5, 6]),  # top-level comma unions tokens
+        (["A/GLY", "B/ALA"], [1, 5, 6]),  # list input unions tokens
+    ],
+)
+def test_from_query_masks(bracket_array: struc.AtomArray, query: str | list[str], expected_indices: list[int]) -> None:
+    """``from_query`` extended syntax: ``[...]`` lists, bracket-only ranges (incl. 0/negatives), unions."""
+    mask = AtomSelectionStack.from_query(query).get_mask(bracket_array)
+    assert list(np.where(mask)[0]) == expected_indices
+
+
+@pytest.mark.parametrize(
+    "call",
+    [
+        lambda: AtomSelectionStack.from_query("A/*/5-10"),  # bare range must be bracketed
+        lambda: AtomSelectionStack.from_query("A/[]/1"),  # empty bracket list
+        lambda: AtomSelectionStack.from_query("A/[B,C"),  # unbalanced bracket
+        lambda: AtomSelectionStack.from_query("A/*/[1-2"),  # unbalanced bracket (res_id)
+        lambda: AtomSelection.from_selection_str("[A,B]/ALA"),  # single selection rejects lists
+        lambda: parse_selection_string("A/*/[1-5]"),  # single selection rejects lists
+    ],
+)
+def test_invalid_selection_raises(call) -> None:
+    with pytest.raises(ValueError):
+        call()
 
 
 if __name__ == "__main__":

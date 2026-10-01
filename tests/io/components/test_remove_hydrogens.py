@@ -1,8 +1,9 @@
 import numpy as np
 import pytest
 
+from atomworks.io.config import ParseConfig
 from atomworks.io.parser import parse
-from atomworks.io.utils.testing import assert_same_atom_array
+from atomworks.io.utils.testing import assert_same_atom_array_or_stack
 from tests.io.conftest import get_pdb_path
 
 TEST_CASES = ["2w3o"]
@@ -14,9 +15,8 @@ def test_remove_hydrogens(pdb_id: str):
 
     # First, we load without hydrogens...
     result_no_hydrogens = parse(
-        filename=path,
-        build_assembly="all",
-        hydrogen_policy="remove",
+        path,
+        config=ParseConfig(build_assembly="all", hydrogen_policy="remove"),
     )
     atom_array_no_hydrogens = result_no_hydrogens["assemblies"]["1"][0]  # First bioassembly, first model
 
@@ -25,9 +25,8 @@ def test_remove_hydrogens(pdb_id: str):
 
     # Then, we load with hydrogens...
     result_with_hydrogens = parse(
-        filename=path,
-        build_assembly="all",
-        hydrogen_policy="keep",
+        path,
+        config=ParseConfig(build_assembly="all", hydrogen_policy="keep"),
     )
 
     # ...assert that there are hydrogens
@@ -38,7 +37,7 @@ def test_remove_hydrogens(pdb_id: str):
     atom_array_with_hydrogens_filtered = atom_array_with_hydrogens[atom_array_with_hydrogens.atomic_number != 1]
 
     # ...and assert that the atom arrays are the same
-    assert_same_atom_array(
+    assert_same_atom_array_or_stack(
         atom_array_no_hydrogens,
         atom_array_with_hydrogens_filtered,
         annotations_to_compare=["chain_id", "res_name", "res_id", "atom_name", "element"],

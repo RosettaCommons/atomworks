@@ -25,16 +25,20 @@ from atomworks.constants import (
 )
 from atomworks.enums import ChainType, ChainTypeInfo
 from atomworks.io import parse
+from atomworks.io.config import ParseConfig
 from atomworks.io.parser import STANDARD_PARSER_ARGS
-from atomworks.io.template import build_template_atom_array
-from atomworks.io.tools.fasta import one_letter_to_ccd_code, split_generalized_fasta_sequence
+from atomworks.io.template import add_missing_atoms_for_chain, infer_bonds_from_residue_names
+from atomworks.io.tools.fasta import (
+    infer_chain_type_from_one_letter,
+    one_letter_to_ccd_code,
+    split_generalized_fasta_sequence,
+)
+from atomworks.io.tools.rdkit import atom_array_from_rdkit, inchi_to_rdkit
+from atomworks.io.utils.annotator import ensure_annotations
 from atomworks.io.utils.bonds import (
-    correct_bond_types_for_nucleophilic_additions,
-    correct_formal_charges_for_specified_atoms,
-    get_inferred_polymer_bonds,
-    get_struct_conn_bonds,
+    get_coarse_graph_as_nodes_and_edges,
+    get_connected_nodes,
     hash_atom_array,
-    spoof_struct_conn_dict_from_string,
 )
 from atomworks.io.utils.ccd import (
     atom_array_from_ccd_code,
@@ -45,6 +49,7 @@ from atomworks.io.utils.ccd import (
 )
 from atomworks.io.utils.chain import create_chain_id_generator
 from atomworks.io.utils.io_utils import CIF_LIKE_EXTENSIONS, read_any
+from atomworks.io.utils.query import AtomSelection
 
 logger = logging.getLogger("atomworks.io")
 
@@ -56,10 +61,15 @@ class ChemicalComponent(ABC):  # noqa: B024
     @staticmethod
     def from_dict(args_dict: dict) -> "ChemicalComponent":
         if "seq" in args_dict:
+            args_dict = {k: v for k, v in args_dict.items() if k != "is_polymer"}
             return SequenceComponent(**args_dict)
         elif "smiles" in args_dict:
             return SmilesComponent(**args_dict)
-        elif "path" in args_dict and args_dict["path"].endswith(".sdf"):
+        elif "inchi" in args_dict:
+            return InChIComponent(**args_dict)
+        elif "path" in args_dict and str(args_dict["path"]).lower().endswith(
+            (".sdf", ".sdf.gz", ".sdf.gzip", ".sdf.zst")
+        ):
             return SDFComponent(**args_dict)
         elif "path" in args_dict and any(extension in args_dict["path"] for extension in CIF_LIKE_EXTENSIONS):
             return CIFOrPDBFileComponent(**args_dict)
@@ -73,40 +83,14 @@ class ChemicalComponent(ABC):  # noqa: B024
 class SequenceComponent(ChemicalComponent):
     seq: str | list[str]
     chain_type: ChainType | None = None
-    is_polymer: bool | None = None
     chain_id: str | None = None
+    include_bonds: bool = True
     msa_path: os.PathLike | None = None
 
     @staticmethod
-    def infer_chain_type(seq: str) -> ChainType:
-        if isinstance(seq, str):
-            seq = split_generalized_fasta_sequence(seq)
-
-        hits = Counter()
-        for letter in seq:
-            if letter in Protein._valid_one_letter_codes():
-                hits["protein"] += 1
-            if letter in DNA._valid_one_letter_codes():
-                hits["dna"] += 1
-            if letter in RNA._valid_one_letter_codes():
-                hits["rna"] += 1
-            if letter.startswith("("):
-                hits["unknown"] += 1
-
-        # Heuristics:
-        # If the sequence contains more protein hits than DNA or RNA hits, it's probably a protein
-        if hits["protein"] > hits["dna"] and hits["protein"] > hits["rna"]:
-            return ChainType.POLYPEPTIDE_L
-
-        # Else, if the sequence is all RNA hits, it's probably RNA
-        elif hits["rna"] == len(seq):
-            return ChainType.RNA
-
-        # Else, if the sequence is all DNA hits, it's probably DNA
-        elif hits["dna"] == len(seq):
-            return ChainType.DNA
-
-        raise ValueError(f"Could not infer chain type from sequence: {seq=}")
+    def infer_chain_type(seq: str | list[str]) -> ChainType:
+        """Infer chain type from sequence notation."""
+        return infer_chain_type_from_one_letter(seq)
 
     @staticmethod
     def assert_valid_chain_type(seq: list[str], chain_type: ChainType, allow_other: bool = False) -> bool:
@@ -133,24 +117,24 @@ class SequenceComponent(ChemicalComponent):
         seq: str | list[str], *, chain_type: ChainType | str = None, is_polymer: bool | None = None
     ) -> "SequenceComponent":
         chain_type = chain_type or SequenceComponent.infer_chain_type(seq)
-        is_polymer = is_polymer or chain_type in ChainType.get_polymers()
 
         if chain_type in ChainTypeInfo.PROTEINS:
-            return Protein(seq=seq, chain_type=chain_type, is_polymer=is_polymer)
+            return Protein(seq=seq, chain_type=chain_type)
         elif chain_type == ChainType.RNA:
-            return RNA(seq=seq, chain_type=chain_type, is_polymer=is_polymer)
+            return RNA(seq=seq, chain_type=chain_type)
         elif chain_type == ChainType.DNA:
-            return DNA(seq=seq, chain_type=chain_type, is_polymer=is_polymer)
+            return DNA(seq=seq, chain_type=chain_type)
         else:
-            return SequenceComponent(seq=seq, chain_type=chain_type, is_polymer=is_polymer)
+            return SequenceComponent(seq=seq, chain_type=chain_type)
+
+    @property
+    def is_polymer(self) -> bool:
+        return self.chain_type.is_polymer()
 
     def __post_init__(self):
         # If the chain type is not provided, infer it from the sequence
         self.chain_type = self.chain_type or SequenceComponent.infer_chain_type(self.seq)
         self.chain_type = ChainType.as_enum(self.chain_type)
-
-        # If the is_polymer is not provided, infer it from the sequence
-        self.is_polymer = self.is_polymer or self.chain_type.is_polymer()
 
         # If the sequence is a string, split it into a list of one-letter codes
         if isinstance(self.seq, str):
@@ -196,6 +180,15 @@ class SmilesComponent(LigandComponent):
 
 
 @dataclass
+class InChIComponent(LigandComponent):
+    inchi: str
+    chain_type: ChainType | str = "non-polymer"
+    is_polymer: bool = False
+    chain_id: str | None = None
+    res_name: str = UNKNOWN_LIGAND
+
+
+@dataclass
 class SDFComponent(LigandComponent):
     path: os.PathLike | io.StringIO
     chain_type: ChainType | str = "non-polymer"
@@ -209,6 +202,7 @@ class CIFOrPDBFileComponent(ChemicalComponent):
     path: os.PathLike | io.StringIO
     msa_paths: dict[str, os.PathLike] | None = None
     custom_parse_kwargs: dict[str, Any] | None = None
+    chain_id: str | None = None
 
     def __post_init__(self):
         """Initialize the component by parsing the structure file."""
@@ -216,6 +210,9 @@ class CIFOrPDBFileComponent(ChemicalComponent):
             self._parse_ccd_style_cif()
         else:
             self._parse_standard_pdb_or_cif()
+
+        # Validate and apply chain_id if provided
+        self._validate_and_apply_chain_id()
 
     def _is_ccd_cif_file(self) -> bool:
         """Check if we are given a CCD CIF file, which by convention includes the _chem_comp_atom field but not the atom_site field"""
@@ -256,8 +253,12 @@ class CIFOrPDBFileComponent(ChemicalComponent):
         if self.custom_parse_kwargs is None:
             self.custom_parse_kwargs = {}
 
-        # We add missing atoms later to the fully-concatenated inference AtomArray
-        parse_kwargs = {**STANDARD_PARSER_ARGS, "add_missing_atoms": False} | self.custom_parse_kwargs
+        # We add missing atoms later to the fully-concatenated inference AtomArray.
+        parse_kwargs = {
+            **STANDARD_PARSER_ARGS,
+            "add_missing_atoms": False,
+            "return_atom_array_plus": False,
+        } | self.custom_parse_kwargs
 
         if parse_kwargs["add_missing_atoms"]:
             logger.warning(
@@ -265,7 +266,7 @@ class CIFOrPDBFileComponent(ChemicalComponent):
                 "It is recommended to set this argument to False in initial CIFOrPDBFileComponent parsing."
             )
 
-        parsing_results = parse(self.path, **parse_kwargs)
+        parsing_results = parse(self.path, config=ParseConfig(**parse_kwargs))
 
         if "assemblies" in parsing_results:
             assemblies = parsing_results["assemblies"]
@@ -292,6 +293,31 @@ class CIFOrPDBFileComponent(ChemicalComponent):
         structure_file_atom_array = atom_array_stack[0]
         self.chain_ids = np.unique(structure_file_atom_array.chain_id)
         self.atom_array = structure_file_atom_array
+
+    def _validate_and_apply_chain_id(self) -> None:
+        """Validate chain_id can be applied and assign it if provided.
+
+        Raises:
+            ValueError: If chain_id is provided but structure has multiple molecules.
+        """
+        if self.chain_id is None:
+            return
+
+        # Check if structure is a single connected molecule using bond connectivity
+        # Use chain_id level for the coarse graph
+        nodes, edges = get_coarse_graph_as_nodes_and_edges(self.atom_array, "chain_id")
+        connected_components = get_connected_nodes(nodes, edges)
+
+        if len(connected_components) > 1:
+            raise ValueError(
+                f"Cannot assign chain_id '{self.chain_id}' to CIF file '{self.path}': "
+                f"structure contains {len(connected_components)} disconnected molecules. "
+                f"chain_id can only be assigned when all atoms form a single connected molecule."
+            )
+
+        # Assign the chain_id to all atoms
+        self.atom_array.chain_id = np.full(len(self.atom_array), self.chain_id)
+        self.chain_ids = np.array([self.chain_id])
 
 
 @dataclass
@@ -358,27 +384,69 @@ def read_chai_fasta(fasta_path: Path) -> list[ChemicalComponent]:
     return components
 
 
+def build_chain_atom_array(
+    seq: list[str],
+    chain_id: str,
+    chain_type: ChainType,
+    *,
+    include_bonds: bool = False,
+    ccd_mirror_path: os.PathLike = CCD_MIRROR_PATH,
+) -> AtomArray:
+    """Build an AtomArray from a sequence of CCD codes for a single chain.
+
+    Calls :py:func:`add_missing_atoms_for_chain` directly to build complete chains
+    from CCD templates, then patches ``occupancy`` to ``1.0`` since every atom in
+    the result is conceptually present (not unresolved).
+
+    Args:
+        seq: Sequence of three-letter CCD codes.
+        chain_id: Chain ID for all residues.
+        chain_type: Chain type (determines ``is_polymer`` and other annotations).
+        include_bonds: If ``True``, infer bonds, remove leaving atoms, and fix charges/bond types
+            via :py:func:`infer_bonds_from_residue_names`. Defaults to ``False``.
+        ccd_mirror_path: Path to local CCD mirror.
+
+    Returns:
+        AtomArray with residue IDs ``1..len(seq)``, ``occupancy=1.0``, and ``b_factor=nan``.
+    """
+    chain_type = ChainType.as_enum(chain_type)
+    templates, _ = add_missing_atoms_for_chain(
+        sequence=list(seq),
+        res_ids=list(range(1, len(seq) + 1)),
+        chain_id=chain_id,
+        chain_type=chain_type,
+        ccd_mirror_path=ccd_mirror_path,
+    )
+
+    atom_array = struc.concatenate(templates)
+    atom_array.set_annotation("occupancy", np.ones(len(atom_array)))
+
+    if include_bonds:
+        atom_array = infer_bonds_from_residue_names(
+            atom_array,
+            sanitize=True,
+            ccd_mirror_path=ccd_mirror_path,
+        )
+
+    return atom_array
+
+
 def sequence_to_annotated_atom_array(
     seq: list[str],
     chain_id: str,
     *,
     chain_type: ChainType | str = None,
-    is_polymer: bool | None = None,
+    include_bonds: bool = True,
     ccd_mirror_path: os.PathLike = CCD_MIRROR_PATH,
-    custom_residues: dict[str, AtomArray] | None = None,
     **kwargs,
 ) -> AtomArray:
-    if isinstance(seq, str) and is_polymer:
+    if isinstance(seq, str):
         seq = one_letter_to_ccd_code(
             split_generalized_fasta_sequence(seq), chain_type=chain_type, check_ccd_codes=False
         )
 
-    # Turn the sequence into a numpy array
     seq = np.asarray(seq)
-
-    chain_type = chain_type or SequenceComponent.infer_chain_type(seq)
-    chain_type = ChainType.as_enum(chain_type)
-    is_polymer = is_polymer or chain_type.is_polymer()
+    chain_type = ChainType.as_enum(chain_type or SequenceComponent.infer_chain_type(seq))
 
     # Ensure that the sequence is a valid combination of existing 3-letter CCD codes
     ccd_codes_in_seq = set(seq)
@@ -388,54 +456,15 @@ def sequence_to_annotated_atom_array(
             f"is not in the CCD, use a SMILES string or SDF file instead."
         )
 
-    codes_to_check = ccd_codes_in_seq - set(custom_residues.keys()) if custom_residues else ccd_codes_in_seq
-    check_ccd_codes_are_available(codes_to_check, ccd_mirror_path=ccd_mirror_path, mode="raise")
+    check_ccd_codes_are_available(ccd_codes_in_seq, ccd_mirror_path=ccd_mirror_path, mode="raise")
 
-    # ... create a list of atoms based on the reference CCD entries
-    atom_array = build_template_atom_array(
-        chain_info_dict={
-            chain_id: {
-                "res_name": seq,
-                "res_id": np.arange(1, len(seq) + 1),
-                "chain_type": chain_type,
-                "is_polymer": is_polymer,
-            }
-        },
-        atom_array=None,
-        remove_hydrogens=False,  # we keep hydrogens here, to allow fixing formal charges
-        use_ccd_charges=True,
+    return build_chain_atom_array(
+        seq,
+        chain_id,
+        chain_type,
+        include_bonds=include_bonds,
         ccd_mirror_path=ccd_mirror_path,
-        custom_residues=custom_residues,
     )
-
-    # ... add the atomic number annotation (vs. element, which is a string)
-    atom_array = ta.add_atomic_number_annotation(atom_array)
-
-    # Compute bonds and leaving groups
-    n_atoms = atom_array.array_length()
-    polymer_bonds, polymer_bonds_leaving_atoms = get_inferred_polymer_bonds(atom_array)
-    polymer_bonds = struc.BondList(n_atoms, polymer_bonds)
-    # ... add bonds to the atom array
-    atom_array.bonds = atom_array.bonds.merge(polymer_bonds)
-    # ... remove the leaving groups
-    atom_array = atom_array[np.setdiff1d(np.arange(n_atoms), polymer_bonds_leaving_atoms)]
-
-    # ... remove index annotation and leaving group annotations
-    _annotations_to_remove = (
-        "is_n_terminal_atom",
-        "is_c_terminal_atom",
-        "is_leaving_atom",
-    )
-    for annotation in _annotations_to_remove:
-        atom_array.del_annotation(annotation)
-
-    # Add custom annotations
-    atom_array.set_annotation("occupancy", np.ones(atom_array.array_length()))
-    atom_array.set_annotation("is_polymer", np.full(atom_array.array_length(), is_polymer))
-    atom_array.set_annotation("chain_type", np.full(atom_array.array_length(), chain_type))
-    atom_array.set_annotation("b_factor", np.full(atom_array.array_length(), np.nan))
-
-    return atom_array
 
 
 def smiles_to_annotated_atom_array(
@@ -474,7 +503,53 @@ def smiles_to_annotated_atom_array(
     array.set_annotation("res_name", np.full(array.array_length(), res_name))
     array.set_annotation("chain_id", np.full(array.array_length(), chain_id))
     array.set_annotation("is_polymer", np.full(array.array_length(), is_polymer))
-    array.set_annotation("chain_type", np.full(array.array_length(), ChainType.as_enum(chain_type)))
+    array.set_annotation("chain_type", np.full(array.array_length(), ChainType.as_enum(chain_type), dtype=np.int8))
+    array.set_annotation("b_factor", np.full(array.array_length(), np.nan))
+    array.set_annotation("stereo", np.full(array.array_length(), "N"))
+    array.set_annotation("is_backbone_atom", np.full(array.array_length(), False))
+
+    return array
+
+
+def inchi_to_annotated_atom_array(
+    inchi: str,
+    chain_id: str,
+    *,
+    chain_type: ChainType | str = "non-polymer",
+    is_polymer: bool = False,
+    res_name: str = UNKNOWN_LIGAND,
+) -> AtomArray:
+    """Convert an InChI string to an annotated AtomArray.
+
+    Args:
+        inchi: The InChI string representing the molecule.
+        chain_id: The chain ID to assign.
+        chain_type: The chain type. Defaults to "non-polymer".
+        is_polymer: Whether the component is a polymer. Defaults to False.
+        res_name: The residue name. Defaults to UNKNOWN_LIGAND.
+
+    Returns:
+        AtomArray with standard ligand annotations.
+    """
+    mol = inchi_to_rdkit(inchi)
+    try:
+        # ... generate a conformer
+        mol = Chem.AddHs(mol)
+        params = AllChem.ETKDGv3()
+        params.maxAttempts = 1
+        AllChem.EmbedMultipleConfs(mol, numConfs=1, params=params)
+    except Exception:
+        pass
+
+    array = atom_array_from_rdkit(mol)
+
+    # Update annotations
+    array.set_annotation("occupancy", np.ones(array.array_length()))
+    array.set_annotation("hetero", np.full(array.array_length(), True))
+    array.set_annotation("res_name", np.full(array.array_length(), res_name))
+    array.set_annotation("chain_id", np.full(array.array_length(), chain_id))
+    array.set_annotation("is_polymer", np.full(array.array_length(), is_polymer))
+    array.set_annotation("chain_type", np.full(array.array_length(), ChainType.as_enum(chain_type), dtype=np.int8))
     array.set_annotation("b_factor", np.full(array.array_length(), np.nan))
     array.set_annotation("stereo", np.full(array.array_length(), "N"))
     array.set_annotation("is_backbone_atom", np.full(array.array_length(), False))
@@ -507,7 +582,7 @@ def sdf_to_annotated_atom_array(
     array.set_annotation("res_name", np.full(array.array_length(), res_name))
     array.set_annotation("chain_id", np.full(array.array_length(), chain_id))
     array.set_annotation("is_polymer", np.full(array.array_length(), is_polymer))
-    array.set_annotation("chain_type", np.full(array.array_length(), ChainType.as_enum(chain_type)))
+    array.set_annotation("chain_type", np.full(array.array_length(), ChainType.as_enum(chain_type), dtype=np.int8))
     array.set_annotation("b_factor", np.full(array.array_length(), np.nan))
     array.set_annotation("stereo", np.full(array.array_length(), "N"))
     array.set_annotation("is_backbone_atom", np.full(array.array_length(), False))
@@ -537,7 +612,7 @@ def ccd_code_to_annotated_atom_array(
     array.set_annotation("res_name", np.full(array.array_length(), ccd_code))
     array.set_annotation("chain_id", np.full(array.array_length(), chain_id))
     array.set_annotation("is_polymer", np.full(array.array_length(), is_polymer))
-    array.set_annotation("chain_type", np.full(array.array_length(), ChainType.as_enum(chain_type)))
+    array.set_annotation("chain_type", np.full(array.array_length(), ChainType.as_enum(chain_type), dtype=np.int8))
 
     return array
 
@@ -597,13 +672,58 @@ def build_msa_paths_by_chain_id_from_component_list(components: list[ChemicalCom
     return msa_paths_by_chain_id
 
 
+def _finalize_inference_atom_array(atom_array: AtomArray) -> AtomArray:
+    """Add standard post-concat annotations to a concatenated inference atom array."""
+    ensure_annotations(atom_array, "chem_comp_type", "atomic_number")
+
+    if "transformation_id" not in atom_array.get_annotation_categories():
+        atom_array.set_annotation("transformation_id", np.full(len(atom_array), "1"))
+
+    # Entity + ID annotations must come before IIDs (iid = id + "_" + transformation_id)
+    atom_array = ta.add_id_and_entity_annotations(atom_array)
+    atom_array = ta.add_iid_annotations(atom_array)
+
+    return atom_array
+
+
+def _add_bonds_from_strings(
+    atom_array: AtomArray,
+    bond_strings: list[tuple[str, str]],
+) -> AtomArray:
+    """Add explicit covalent bonds from CHAIN/RESNAME/RESID/ATOMNAME string pairs.
+
+    Bonds are added as SINGLE bonds. Post-processing (leaving-atom removal, charge and
+    bond-type correction) is handled by a subsequent call to
+    :py:func:`~atomworks.io.template.infer_bonds_from_residue_names`.
+
+    Uses :py:class:`~atomworks.io.utils.query.AtomSelection` to parse bond strings,
+    supporting wildcards (``"*"``) and the same syntax as the rest of the selection API.
+    """
+    if not bond_strings:
+        return atom_array
+
+    raw_bonds = []
+    for atom1_str, atom2_str in bond_strings:
+        idx1 = AtomSelection.from_selection_str(atom1_str).get_idxs(atom_array)
+        idx2 = AtomSelection.from_selection_str(atom2_str).get_idxs(atom_array)
+        if len(idx1) != 1 or len(idx2) != 1:
+            raise ValueError(
+                f"Bond specification must resolve to exactly one atom each: "
+                f"{atom1_str!r} → {len(idx1)} atoms, {atom2_str!r} → {len(idx2)} atoms"
+            )
+        raw_bonds.append((int(idx1[0]), int(idx2[0]), struc.BondType.SINGLE))
+
+    new_bonds = struc.BondList(atom_array.array_length(), np.array(raw_bonds, dtype=np.uint32))
+    atom_array.bonds = atom_array.bonds.merge(new_bonds) if atom_array.bonds is not None else new_bonds
+    return atom_array
+
+
 def components_to_atom_array(
     components: list[ChemicalComponent | dict],
     bonds: list[str] | None = None,
     return_components: bool = False,
-    custom_residues: dict[str, AtomArray | SDFComponent | dict] | None = None,
 ) -> AtomArray | list[ChemicalComponent]:
-    """Build an AtomArray from a list of ChemicalComponent objects and supporting details (bonds, custom residues).
+    """Build an AtomArray from a list of ChemicalComponent objects and supporting details (bonds).
 
     Args:
         components (list[ChemicalComponent | dict]): List of ChemicalComponent objects or dictionaries that can be
@@ -616,11 +736,11 @@ def components_to_atom_array(
             e.g., [("A/THR/4/CG", "D/L:1/0/O13"), ("A/CYS/5/SG",  "A/CYS/137/SG")]
         return_components (bool): If True, return the components list as well as the AtomArray. Useful for e.g., mapping
             components to generated chain IDs or inferred chain types.
-        custom_residues: A dictionary of custom residues to be used as "spoof" CCD entries. Can be given either as
-            AtomArrays directly or as dictionary specifying paths to CIF files (must include atom names).
 
     NOTE: If manually specifying bonds, we recommend visualizing the bond graph with `matplotlib` to ensure that the bonds are correctly
     NOTE: The res_id numbering follows the RCSB convention (1-indexed)
+    NOTE: Custom CCD entries can be registered using :py:func:`~atomworks.io.utils.ccd.register_custom_ccd_entry`
+          to override standard CCD definitions before calling this function.
 
     Returns:
         AtomArray: The assembled AtomArray, used for visualization or inference.
@@ -680,18 +800,6 @@ def components_to_atom_array(
     # Instantiate a chain id generator
     chain_id_generator = create_chain_id_generator(chain_ids)
 
-    # Convert the custom_residues to a dictionary mapping strings to AtomArrays, if given
-    if custom_residues:
-        for key, value in custom_residues.items():
-            if isinstance(value, dict):
-                chemical_component = ChemicalComponent.from_dict(value)
-                atom_array = chemical_component.atom_array
-
-                # Delete the res_id annotation (otherwise users must set it correctly)
-                atom_array.del_annotation("res_id")
-
-                custom_residues[key] = atom_array
-
     atom_arrays = []
     ligand_hash_to_id = KeyToIntMapper()  # ... to keep track of identical ligands
     for component in components:
@@ -710,9 +818,15 @@ def components_to_atom_array(
         component.chain_id = component.chain_id or next(chain_id_generator)
 
         if isinstance(component, SequenceComponent):
-            atom_arrays.append(sequence_to_annotated_atom_array(**component.as_dict(), custom_residues=custom_residues))
+            # include_bonds=False: global bond inference runs after all chains are concatenated
+            atom_arrays.append(sequence_to_annotated_atom_array(**{**component.as_dict(), "include_bonds": False}))
         elif isinstance(component, SmilesComponent):
             ligand_array = smiles_to_annotated_atom_array(**component.as_dict())
+            if component.res_name == UNKNOWN_LIGAND:
+                ligand_array = assign_res_name_from_atom_array_hash(ligand_array, ligand_hash_to_id)
+            atom_arrays.append(ligand_array)
+        elif isinstance(component, InChIComponent):
+            ligand_array = inchi_to_annotated_atom_array(**component.as_dict())
             if component.res_name == UNKNOWN_LIGAND:
                 ligand_array = assign_res_name_from_atom_array_hash(ligand_array, ligand_hash_to_id)
             atom_arrays.append(ligand_array)
@@ -726,65 +840,35 @@ def components_to_atom_array(
         else:
             raise ValueError(f"Unknown chemical component type: {type(component)}")
 
-    # ... add (possibly spoofed) annotations to each AtomArray
-    for atom_array in atom_arrays:
-        if "transformation_id" not in atom_array.get_annotation_categories():
-            atom_array.set_annotation("transformation_id", np.full(atom_array.array_length(), "1"))
-        if "charge" not in atom_array.get_annotation_categories():
-            atom_array.set_annotation("charge", np.zeros(atom_array.array_length(), dtype=int))
-        if "b_factor" not in atom_array.get_annotation_categories():
-            atom_array.set_annotation("b_factor", np.full(atom_array.array_length(), np.nan))
-        if "occupancy" not in atom_array.get_annotation_categories():
-            atom_array.set_annotation("occupancy", np.ones(atom_array.array_length(), dtype=float))
-        if "atom_id" not in atom_array.get_annotation_categories():
-            # This is 1-indexed for consistency with the PDB. However, biotite 0-indexes it if not present in the CIF.
-            atom_array.set_annotation("atom_id", np.arange(1, atom_array.array_length() + 1))
+    # add required per-array annotations before concatenation so biotite does not fill
+    # missing annotations with defaults when arrays have heterogeneous annotation sets
+    for arr in atom_arrays:
+        if "b_factor" not in arr.get_annotation_categories():
+            arr.set_annotation("b_factor", np.full(arr.array_length(), np.nan))
+        if "transformation_id" not in arr.get_annotation_categories():
+            arr.set_annotation("transformation_id", np.full(arr.array_length(), "1"))
 
     # ... concatenate all atom arrays into a single AtomArray
     atom_array = struc.concatenate(atom_arrays)
 
-    # TODO: We may be able to simplify by casting to a buffer and running `parse`
-
-    # ... add the chain_iid annotation
-    ta.add_chain_iid_annotation(atom_array)
-
+    # ... add explicit struct-conn bonds before infer_bonds_from_residue_names so they
+    #     participate in leaving-atom removal and charge/bond-type correction
     if bonds:
-        # ... spoof the struct_conn CIFCategory
-        struct_conn_dict = spoof_struct_conn_dict_from_string(bonds)
+        atom_array = _add_bonds_from_strings(atom_array, bonds)
 
-        # ... get the bonds and leaving atoms
-        struct_conn_bonds, struct_conn_leaving_atom_idxs = get_struct_conn_bonds(
-            atom_array=atom_array, struct_conn_dict=struct_conn_dict, add_bond_types=["covale"], raise_on_failure=True
-        )
-        struct_conn_bonds = struc.BondList(atom_array.array_length(), struct_conn_bonds)
-
-        # ... add the bonds to the AtomArray
-        atom_array.bonds = atom_array.bonds.merge(struct_conn_bonds)
-
-        # ... record which atoms make inter-residue bonds
-        atoms_with_inter_bonds = np.unique(struct_conn_bonds.as_array()[:, :2])
-        makes_inter_bond = np.zeros(len(atom_array), dtype=bool)
-        makes_inter_bond[atoms_with_inter_bonds] = True
-
-        # ... and remove the leaving atoms
-        is_leaving = np.zeros(len(atom_array), dtype=bool)
-        is_leaving[struct_conn_leaving_atom_idxs] = True
-        atom_array = atom_array[~is_leaving]
-        makes_inter_bond = makes_inter_bond[~is_leaving]
-
-        # ... fix charges of newly bonded atoms, where needed
-        atom_array = correct_formal_charges_for_specified_atoms(atom_array, to_update=makes_inter_bond)
-
-        # ... fix bond orders of newly bonded atoms, where needed (e.g., convert double bonds to single bonds during nucleophilic additions)
-        atom_array = correct_bond_types_for_nucleophilic_additions(atom_array, to_update=makes_inter_bond)
+    # ... infer CCD bonds, remove leaving atoms, fix charges and bond types.
+    #     Merges with existing bonds (including struct-conn bonds added above).
+    atom_array = infer_bonds_from_residue_names(
+        atom_array,
+        sanitize=True,
+    )
 
     # ... remove hydrogens
     atom_array = ta.remove_hydrogens(atom_array)
 
-    # ... add (pn_unit, molecule) x (id, iid) entity annotations
-    atom_array = ta.add_id_and_entity_annotations(atom_array)
-    atom_array = ta.add_pn_unit_iid_annotation(atom_array)
-    atom_array = ta.add_molecule_iid_annotation(atom_array)
+    # ... add atomic_number, transformation_id, and all IID/entity/ID annotations.
+    #     Must come AFTER bond inference so molecule_id reflects full bond connectivity.
+    atom_array = _finalize_inference_atom_array(atom_array)
 
     # Raise an error if chain_ids with the same name correspond to different entities
     for chain_id in np.unique(atom_array.chain_id):

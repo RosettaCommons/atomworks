@@ -1,10 +1,34 @@
 """IO-specific test fixtures and utilities for atomworks.io tests."""
 
+import gzip
+
+import pytest
+import zstandard as zstd
+
 from atomworks.enums import ChainType
+from atomworks.io.utils.ccd import custom_ccd_residues
 from atomworks.io.utils.testing import get_pdb_path  # noqa: F401
 from tests.conftest import TEST_DATA_DIR
 
 TEST_DATA_IO = TEST_DATA_DIR / "io"
+
+
+@pytest.fixture(params=["", ".gz", ".gzip", ".zst"])
+def compressed_example(request, tmp_path):
+    """Make independently compressed copies of existing structure fixtures."""
+
+    def compress(path):
+        if not request.param:
+            return path
+        destination = tmp_path / (path.name + request.param)
+        data = path.read_bytes()
+        destination.write_bytes(
+            zstd.ZstdCompressor(level=3).compress(data) if request.param == ".zst" else gzip.compress(data)
+        )
+        return destination
+
+    return compress
+
 
 CHAIN_TYPE_TEST_CASES = [
     {
@@ -76,3 +100,14 @@ CHAIN_TYPE_TEST_CASES = [
         },
     },
 ]
+
+
+@pytest.fixture
+def cleanup_registry():
+    """Clean up CCD registry after test, restoring original state.
+
+    Uses the custom_ccd_residues context manager with an empty dict
+    to save/restore registry state without registering new entries.
+    """
+    with custom_ccd_residues({}):
+        yield

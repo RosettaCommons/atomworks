@@ -153,12 +153,12 @@ def test_bond_type_filtering(test_case: tuple):
     # Record the total number of bonds present
     total_num_bonds = atom_array_all_bonds.bonds.as_array().shape[0]
 
-    # Check the number of coordination bonds
-    # NOTE: This is done only as a sanity check. Since the `chem_comp_bond` field (used for intra-residue bonds)
-    # does not distinguish coordinate bonds from covalent bonds, and since no canonical inter-residue bonds are
-    # coordination bonds, any bonds marked as coordination bonds must originate from the `struct_conn` category.
-    num_coord_bonds_in_atom_array = sum(atom_array_all_bonds.bonds.as_array()[:, 2] == struc.BondType.COORDINATION)
-    assert num_coord_bonds_in_atom_array == num_coord_bonds_struct_conn
+    # Count coordination bonds.
+    # NOTE: Parsing retypes every metal-incident bond to COORDINATION regardless of its source, so this total
+    # is *not* the `struct_conn` count -- intra-residue metal bonds from `chem_comp_bond` (e.g. the heme Fe-N
+    # bonds in 1n45) are coordination bonds too. What `struct_conn` filtering controls is the *difference*
+    # between the two parses, which is asserted below.
+    num_coord_bonds_all = sum(atom_array_all_bonds.bonds.as_array()[:, 2] == struc.BondType.COORDINATION)
 
     # Parse AtomArray from CIF, including only covalent bonds from `struct_conn`
     result = parse(
@@ -174,9 +174,10 @@ def test_bond_type_filtering(test_case: tuple):
     # Record the total number of bonds present
     total_num_bonds_no_struct_conn_coord_or_disulfide = atom_array_covalent_only.bonds.as_array().shape[0]
 
-    # Check that there are no parsed coordination bonds
-    num_coord_bonds_in_atom_array = sum(atom_array_covalent_only.bonds.as_array()[:, 2] == struc.BondType.COORDINATION)
-    assert num_coord_bonds_in_atom_array == 0
+    # Dropping `metalc` removes exactly the struct_conn coordination bonds; metal bonds inferred from the
+    # CCD remain and stay typed COORDINATION.
+    num_coord_bonds_covalent_only = sum(atom_array_covalent_only.bonds.as_array()[:, 2] == struc.BondType.COORDINATION)
+    assert num_coord_bonds_all - num_coord_bonds_covalent_only == num_coord_bonds_struct_conn
 
     # We cannot directly detect disulfides, but we can infer how many were filtered out
     num_filtered_disulfide_bonds = (

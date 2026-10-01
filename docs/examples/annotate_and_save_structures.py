@@ -26,6 +26,7 @@ import biotite.structure as struc
 import numpy as np
 
 from atomworks.io import parse
+from atomworks.io.config import ParseConfig
 from atomworks.io.utils.io_utils import to_cif_file
 from atomworks.io.utils.testing import get_pdb_path_or_buffer
 from atomworks.io.utils.visualize import view
@@ -37,7 +38,8 @@ example_pdb_id = "101m"  # Myoglobin with heme
 pdb_path = get_pdb_path_or_buffer(example_pdb_id)
 
 # Parse the structure (no need to add missing atoms, since we would just remove them in the following step)
-atom_array = parse(pdb_path, add_missing_atoms=False, fix_formal_charges=False)["assemblies"]["1"][0]
+config = ParseConfig(add_missing_atoms=False)
+atom_array = parse(pdb_path, config=config)["assemblies"]["1"][0]
 
 print(f"Loaded structure with {len(atom_array)} atoms")
 print(f"Chains: {np.unique(atom_array.chain_id)}")

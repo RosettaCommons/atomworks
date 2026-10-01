@@ -16,5 +16,15 @@ logger.setLevel(_log_level)
 warnings.filterwarnings("once", category=DeprecationWarning)
 
 
-# We need to import parse here to ensure that the version string is set
-from atomworks.io.parser import parse  # noqa: E402
+# Expose loading separately from preparation; importing parse also sets the version string.
+from atomworks.io._loaders import load_cif, load_pdb  # noqa: E402
+from atomworks.io.parser import get_config, parse, parse_atom_array, prepare_atom_array  # noqa: E402
+
+__all__ = [
+    "get_config",
+    "load_cif",
+    "load_pdb",
+    "parse",
+    "parse_atom_array",
+    "prepare_atom_array",
+]

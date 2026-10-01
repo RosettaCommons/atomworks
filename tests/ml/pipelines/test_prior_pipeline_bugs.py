@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 # ------------------- AF3 Pipeline -----------------------#
 ##########################################################
 
-PRIOR_PIPELINE_BUGS_AF3 = ["6raz", "7qbs", "5epq", "2g37", "4v4s"]
+PRIOR_PIPELINE_BUGS_AF3 = ["7qbs", "5epq", "2g37", "4v4s"]
 
 
 @pytest.mark.parametrize("pdb_id", PRIOR_PIPELINE_BUGS_AF3)

@@ -1,6 +1,6 @@
 [project]
 name = "atomworks"
-version = "2.2.1"
+version = "2.1.1"
 description = "A research-oriented data toolkit for training biomolecular deep-learning foundation models"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -25,28 +25,27 @@ dependencies = [
     # ... generic tools
     "cython>=3.0.0", # Cython compiler for C extensions
     "cytoolz>=0.12.3", # Cython-optimized tools for itertools and functional programming
-    "tqdm>=4.65.0", # Fast, extensible progress bar for loops and more
+    "tqdm>=4.66.3", # Fast, extensible progress bar for loops and more
     # ... CLI & config management
     "typer>=0.12.5", # Modern CLI framework
     # ... linear algebra, maths & ml
     "numpy>=1.25.0",
+    "jaxtyping>=0.2.17", # Array annotations used by core IO
     "scipy>=1.13.1",
     # ... data tools
     "pandas>=2.2", # Data manipulation and analysis
-    "pyarrow>=23.0.1", # Columnar data format for efficient data storage and processing  # TODO: Test later versions
+    "pyarrow>=23.0.1", # Columnar data format for efficient data storage and processing
     # ... compression
     "zstandard>=0.21.0", # Zstandard compression for MSA files and other data
     # ... bioinformatics
     "py3Dmol>=2.2.1", # Python wrapper for 3Dmol.js
     "pymol-remote>=0.0.5", # Remote access to PyMOL from Python (has no dependencies)
-    "biotite==1.4.0", # Pinned — biotite upgrades have broken atomworks in the past
-    "hydride>=1.2.3", # Biotite-supported tool for hydrogen addition
+    # Pinned exactly: atomworks monkey-patches biotite internals and ``atomworks/__init__.py``
+    # refuses to import against any other version. A ``>=`` floor here silently resolves to a
+    # newer biotite that then fails at import time.
+    "biotite==1.6.0", # Biotite is a Python library for bioinformatics
     # ... small molecule libraries
     "rdkit>=2024.3.5",
-    "urllib3>=2.7.0",
-    "pillow>=12.2.0",
-    "idna>=3.15",
-    "requests>=2.33.0",
 ]
 
 [project.optional-dependencies]
@@ -54,9 +53,13 @@ ml = [
     # atomworks-ml dependencies
     "torch>=2.2.0",
     "einops>=0.7.0",
-    "jaxtyping>=0.2.17",
     "beartype>=0.18.0",
-    "filelock>=3.20.3"
+    "numba>=0.60.0",
+]
+
+s3 = [
+    # Reading blob stores / parquet directly from ``s3://`` URLs
+    "boto3",
 ]
 
 ase = [
@@ -64,12 +67,21 @@ ase = [
     "ase>=3.22.0",  # Atomic Simulation Environment
     "ase-db-backends>=0.10.0",  # Database backends for ASE (PostgreSQL, MySQL, LMDB)
     "lmdb>=1.5.0",  # LMDB backend for ASE database support (required for .aselmdb files)
-    "cryptography>=46.0.7",
 ]
 
 openbabel = [
     # Optional openbabel dependency
     "openbabel-wheel>=3.1.1.22",
+]
+
+posebusters = [
+    # PoseBusters: structural validity checks for docked/predicted poses
+    "posebusters>=0.6.0",
+]
+
+catcif = [
+    # catcif: concatenated CIF archive format support
+    "catcif-tools",
 ]
 
 dev = [
@@ -84,8 +96,8 @@ dev = [
     "pytest-benchmark>=5.0.0", # benchmark tests for speed
     # Jupyter notebooks
     "ipykernel>=6.28.0", # IPython kernel for Jupyter
-    "tornado>6.5.5",
-    "python-dotenv>=1.2.2",
+    # CLI
+    "fire>=0.5.0", # CLI generation library
 ]
 
 docs = [
@@ -93,15 +105,18 @@ docs = [
     "sphinx-gallery>=0.19.0",
     "pydata-sphinx-theme>=0.16.1",
     "matplotlib>=3.10.0",
-    "Pygments>=2.20.0",
+    "myst-parser>=4.0.0", # Support Markdown tutorial pages
+    "sphinx-design>=0.6.0", # Render collapsible tutorial code examples
 ]
 
 [dependency-groups]
 # Reference optional dependencies for native uv compatability (in addition to the pip compatability)
 dev = ["atomworks[dev]"]
-ml = ["atomworks[ml]"] 
+ml = ["atomworks[ml]"]
 docs = ["atomworks[docs]"]
 openbabel = ["atomworks[openbabel]"]
+posebusters = ["atomworks[posebusters]"]
+catcif = ["atomworks[catcif]"]
 
 [project.urls]
 homepage = "https://rosettacommons.github.io/atomworks/latest/index.html"
@@ -247,6 +262,7 @@ testpaths = "tests"  # Only run tests in the tests directory (speeds up collecti
 norecursedirs = "docs *.egg-info .git .tox htmlcov"
 addopts = "--import-mode=importlib"
 pythonpath = ["src/atomworks", "tests"]
+env_files = ".env"  # Automatically load .env file before running tests (via pytest-dotenv)
 markers = [
     "requires_internet: marks tests that require an internet connection",
     "requires_pymol_remote: marks tests that require a PyMOL remote connection to run",

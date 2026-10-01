@@ -9,8 +9,11 @@ Example Usage
 .. code-block:: python
 
    from atomworks.io.parser import parse
-   result = parse(filename="/databases/rcsb/cif/ne/3nez.cif.gz")
+   result = parse(source="/databases/rcsb/cif/ne/3nez.cif.gz")
    print(result["chain_info"])
+
+   # The file type is also inferred for mmJSON paths, including .json.gz.
+   json_result = parse(source="/path/to/structure.json.gz")
 
 Returned Dictionary
 -------------------
@@ -31,18 +34,18 @@ Parsing Arguments
      - Type
      - Default
      - Description
-   * - filename
+   * - source
      - PathLike / io.StringIO / io.BytesIO
      - —
-     - Path to the structural file. Supports .cif, .cif.gz, .pdb, etc.
+     - Path to the structural file. Supports .cif, .cif.gz, .pdb, .json, .json.gz, etc.
    * - add_missing_atoms
      - bool
      - True
-     - Add missing atoms to the structure. Useful for unresolved residues. Also adds intra- and inter-residue bonds.
+     - Add missing atoms to the structure. Useful for unresolved residues. Also adds intra- and inter-residue bonds, and sanitizes them: removes leaving atoms and fixes bond orders, charges, and amide nitrogens.
    * - add_id_and_entity_annotations
      - bool
      - True
-     - Add id and entity annotations at chain, pn-unit, and molecule level to the AtomArray.
+     - **Deprecated.** ID and entity annotations are now always added. This parameter will be removed in a future version.
    * - add_bond_types_from_struct_conn
      - list[str]
      - ["covale"]
@@ -63,10 +66,6 @@ Parsing Arguments
      - bool
      - True
      - Fix arginine naming ambiguity.
-   * - fix_formal_charges
-     - bool
-     - True
-     - Fix formal charges on atoms involved in inter-residue bonds.
    * - convert_mse_to_met
      - bool
      - False
@@ -76,9 +75,9 @@ Parsing Arguments
      - None
      - Remove hydrogens from structure. Deprecated; use hydrogen_policy instead.
    * - hydrogen_policy
-     - "keep" / "remove" / "infer"
+     - "keep" / "remove"
      - "keep"
-     - Whether to keep, remove, or infer hydrogens.
+     - Whether to keep or remove hydrogens.
    * - model
      - int or None
      - None

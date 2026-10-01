@@ -17,7 +17,7 @@ from biotite.structure import AtomArray, AtomArrayStack
 from biotite.structure.io import mol, pdb, pdbx
 
 from atomworks.constants import ATOMIC_NUMBER_TO_ELEMENT, METAL_ELEMENTS
-from atomworks.io.utils.io_utils import read_any, to_cif_string
+from atomworks.io.utils.io_utils import CIFWriteConfig, read_any, to_cif_string
 
 logger = logging.getLogger("atomworks.io")
 
@@ -107,8 +107,7 @@ def view(
     # Convert the structure to a temporary CIF string for interacting with py3Dmol
     _tmp_cif_str = to_cif_string(
         structure,
-        _allow_ambiguous_bond_annotations=True,
-        include_entity_poly=False,
+        config=CIFWriteConfig(include_entity_categories=False),
     )
     # ... add the structure model to the view in mmCIF format
     view.addModel(_tmp_cif_str, "structure", format="mmcif")
@@ -317,12 +316,11 @@ def view_pymol(
         format = "bcif" if as_bcif else "cif"
         buffer = to_cif_string(
             structure,
-            id=id,
-            _allow_ambiguous_bond_annotations=True,
-            include_entity_poly=True,
-            include_nan_coords=False,
-            include_bonds=True,
-            extra_fields=[],
+            config=CIFWriteConfig(
+                id=id,
+                include_entity_categories=False,
+                include_nan_coords=False,
+            ),
             as_bcif=as_bcif,
         )
     elif isinstance(structure, pdbx.CIFFile | pdb.PDBFile | mol.SDFile | pdbx.CIFBlock):

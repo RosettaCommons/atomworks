@@ -32,8 +32,10 @@ class RandomlyMirrorInputs(Transform):
     """
     This component reflects inputs with a user-provided probability.
 
-    Only protein and ligand comonents are reflected, nucleic acids are not.  Ligand name mapping
-    is properly handled by giving mirrored ligands a unique identifier.
+    Only complexes with *only* proteins and ligands components are reflected;
+    nucleic acids are not.
+
+    Ligand name mapping is properly handled by giving mirrored ligands a unique identifier.
 
     Inputs:
       mirror_prob: the fraction of the time non-NA containing inputs are mirrored.

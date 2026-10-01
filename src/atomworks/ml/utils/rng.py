@@ -3,8 +3,6 @@ Utilities for managing the random number generators in the current process.
 Inspired by: https://github.com/Lightning-AI/pytorch-lightning/blob/709a2a9d3b79b0a436eb2d271fbeecf8a7ba1352/src/lightning/fabric/utilities/seed.py
 """
 
-from __future__ import annotations
-
 import random
 from collections.abc import Generator
 from contextlib import contextmanager

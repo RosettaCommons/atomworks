@@ -1,6 +1,4 @@
-import copy
 import logging
-import time
 from typing import Any
 
 import numpy as np
@@ -88,9 +86,7 @@ def _validate_msa_results(test_case: dict[str, Any], result: dict[str, Any], cha
 @pytest.fixture
 def load_polymer_msas_transform():
     """Fixture to create a LoadPolymerMSAs transformation pipeline."""
-    return LoadPolymerMSAs(
-        protein_msa_dirs=PROTEIN_MSA_DIRS, rna_msa_dirs=RNA_MSA_DIRS, max_msa_sequences=2_000, msa_cache_dir=None
-    )
+    return LoadPolymerMSAs(protein_msa_dirs=PROTEIN_MSA_DIRS, rna_msa_dirs=RNA_MSA_DIRS, max_msa_sequences=2_000)
 
 
 @pytest.mark.parametrize("test_case", MSA_TEST_CASES)
@@ -106,49 +102,6 @@ def test_load_msas(test_case: dict[str, Any], load_polymer_msas_transform: LoadP
     result = output["polymer_msas_by_chain_id"][test_case["chain_id"]]
 
     _validate_msa_results(test_case, result, chain_type)
-
-
-@pytest.mark.slow
-@pytest.mark.parametrize("test_case", MSA_TEST_CASES)
-def test_cache_msas(test_case: dict[str, Any], tmp_path: str, load_polymer_msas_transform):
-    """Tests the MSA caching functionality by loading the same MSA with and without caching and comparing the results."""
-    data = cached_parse(test_case["pdb_id"], convert_mse_to_met=True)
-
-    # Load with caching turned off
-    start_time = time.time()
-    out_without_cache = load_polymer_msas_transform(copy.deepcopy(data))
-    first_run_time = time.time() - start_time
-
-    # Load with caching turned on
-    cache_pipeline = LoadPolymerMSAs(
-        protein_msa_dirs=PROTEIN_MSA_DIRS,
-        rna_msa_dirs=RNA_MSA_DIRS,
-        max_msa_sequences=2_000,
-        msa_cache_dir=tmp_path / "msa_cache",
-    )
-
-    # (Warmup, which caches the MSA)
-    out_with_cache_1 = cache_pipeline(copy.deepcopy(data))
-
-    # ... and again, loading from cache
-    start_time = time.time()
-    out_with_cache_2 = cache_pipeline(copy.deepcopy(data))
-    last_run_time = time.time() - start_time
-
-    # The results should be the same
-    chain_id = test_case["chain_id"]
-    for key in out_without_cache["polymer_msas_by_chain_id"][chain_id]:
-        assert np.array_equal(
-            out_without_cache["polymer_msas_by_chain_id"][chain_id][key],
-            out_with_cache_1["polymer_msas_by_chain_id"][chain_id][key],
-        )
-        assert np.array_equal(
-            out_with_cache_1["polymer_msas_by_chain_id"][chain_id][key],
-            out_with_cache_2["polymer_msas_by_chain_id"][chain_id][key],
-        )
-
-    # The second run should be faster than non-cached MSA loading
-    assert last_run_time < first_run_time * 0.7, "Cached MSA loading should be >2x faster than non-cached"
 
 
 def _check_coverage_for_pdb_id(
@@ -172,7 +125,7 @@ def _check_coverage_for_pdb_id(
 
     # Load MSAs
     load_polymer_msas_transform = LoadPolymerMSAs(
-        protein_msa_dirs=protein_msa_dirs, rna_msa_dirs=rna_msa_dirs, max_msa_sequences=2_000, msa_cache_dir=None
+        protein_msa_dirs=protein_msa_dirs, rna_msa_dirs=rna_msa_dirs, max_msa_sequences=2_000
     )
     output = load_polymer_msas_transform(data)
 
@@ -207,14 +160,19 @@ def test_inference_msa_transform(test_case):
     chain_id = test_case["chain_id"]
     chain_type = data["chain_info"][chain_id]["chain_type"]
 
-    # ... spoof the MSA path in the chain info
+    # ... spoof the MSA path in the chain info and remove keys users won't have access to.
+    keys_to_remove = ["processed_entity_non_canonical_sequence", "processed_entity_canonical_sequence"]
     if chain_type.is_protein():
         sequence = data["chain_info"][chain_id]["processed_entity_non_canonical_sequence"]
-        data["chain_info"][chain_id]["msa_path"] = get_msa_path(sequence, PROTEIN_MSA_DIRS)
+        msa_path = get_msa_path(sequence, PROTEIN_MSA_DIRS)
+        data["chain_info"][chain_id]["msa_path"] = msa_path
     elif chain_type == ChainType.RNA:
         # HACK: Replace U with T to match the RNA MSA file names (legacy issue)
         sequence = data["chain_info"][chain_id]["processed_entity_non_canonical_sequence"].replace("U", "T")
-        data["chain_info"][chain_id]["msa_path"] = get_msa_path(sequence, RNA_MSA_DIRS)
+        msa_path = get_msa_path(sequence, RNA_MSA_DIRS)
+        data["chain_info"][chain_id]["msa_path"] = msa_path
+    for key in keys_to_remove:
+        data["chain_info"][chain_id].pop(key, None)
 
     # Inference MSA pipeline
     inference_pipeline = LoadPolymerMSAs(

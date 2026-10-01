@@ -12,14 +12,16 @@ logger = logging.getLogger(__name__)
 # Mapping of MMseqs2 modules to their output parameter positions
 # Used to detect existing outputs and skip redundant operations
 MODULE_OUTPUT_POS = {
-    "createdb": 2,
-    "search": 3,
-    "expandaln": 4,
     "align": 4,
-    "filterdb": 3,
-    "result2msa": 3,
-    "convertalis": 3,
-    "createseqfiledb": 2,
+    "convertalis": 4,
+    "expandaln": 5,
+    "filterresult": 4,
+    "lndb": 2,
+    "mergedbs": 2,
+    "mvdb": 2,
+    "pairaln": 4,
+    "result2msa": 4,
+    "search": 3,
 }
 
 

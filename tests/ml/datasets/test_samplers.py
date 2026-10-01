@@ -1,8 +1,16 @@
 import pandas as pd
+import pyarrow as pa
 import pytest
+import torch
 from torch.utils.data import ConcatDataset, Dataset, SequentialSampler
 
-from atomworks.ml.samplers import DistributedMixedSampler, LoadBalancedDistributedSampler, MixedSampler
+from atomworks.ml.samplers import (
+    DistributedMixedSampler,
+    LoadBalancedDistributedSampler,
+    MixedSampler,
+    calculate_weights_by_inverse_cluster_size,
+    calculate_weights_for_pdb_dataset_df,
+)
 
 
 class DummyDataset(Dataset):
@@ -138,6 +146,87 @@ def test_load_balanced_distributed_sampler(dummy_dataset_with_n_tokens):
 
     # Ensure that indices are disjoint (except for the last index, which may be the same due to padding)
     assert set(indices_rank_0[:-1]).isdisjoint(set(indices_rank_1[:-1]))
+
+
+# ---------------------------------------------------------------------------
+# Weight function tests
+# ---------------------------------------------------------------------------
+
+# Minimal table with 6 rows covering three clusters:
+#   A (size 3): pdb 1abc (altloc seeds 0 and 1) + pdb 2abc (no altlocs)
+#   B (size 1): pdb 3abc (no altlocs), pure nucleic acid
+#   C (size 2): pdb 4abc (no altlocs, involves LOI) + pdb 5abc (no altlocs, peptide)
+_WEIGHT_DATA = {
+    "cluster": ["A", "A", "A", "B", "C", "C"],
+    "pdb_id": ["1abc", "1abc", "2abc", "3abc", "4abc", "5abc"],
+    "altloc_seed": [0, 1, None, None, None, None],
+    "n_prot": [1, 1, 2, 0, 1, 0],
+    "n_nuc": [0, 0, 0, 1, 0, 0],
+    "n_ligand": [0, 0, 0, 0, 1, 0],
+    "n_peptide": [0, 0, 0, 0, 0, 2],
+    "involves_loi": [False, False, False, False, True, False],
+}
+
+
+@pytest.fixture(params=["pandas", "pyarrow"])
+def weight_table(request):
+    df = pd.DataFrame(_WEIGHT_DATA)
+    if request.param == "pyarrow":
+        return pa.Table.from_pandas(df)
+    return df
+
+
+def test_calculate_weights_by_inverse_cluster_size(weight_table):
+    # Without altloc: weights = 1/cluster_size
+    # cluster sizes: A=3, B=1, C=2
+    expected_no_altloc = torch.tensor([1 / 3, 1 / 3, 1 / 3, 1.0, 0.5, 0.5], dtype=torch.float64)
+    weights = calculate_weights_by_inverse_cluster_size(weight_table, cluster_column="cluster")
+    assert torch.allclose(weights.double(), expected_no_altloc)
+
+    # With altloc: effective cluster size = sum of altloc weights per cluster
+    # 1abc has 2 altloc seeds → contributes 1/2+1/2=1.0 to cluster A; 2abc contributes 1.0
+    # effective sizes: A=2, B=1, C=2
+    expected_altloc = torch.tensor([1 / 4, 1 / 4, 1 / 2, 1.0, 1 / 2, 1 / 2], dtype=torch.float64)
+    weights = calculate_weights_by_inverse_cluster_size(
+        weight_table, cluster_column="cluster", altloc_seed_column="altloc_seed", pdb_id_column="pdb_id"
+    )
+    assert torch.allclose(weights.double(), expected_altloc)
+
+
+def test_calculate_weights_for_pdb_dataset_df(weight_table):
+    alphas = {"a_prot": 1.0, "a_nuc": 0.5, "a_ligand": 2.0, "a_peptide": 0.25, "a_loi": 3.0}
+
+    # Without altloc: w = (beta/cluster_size) * (n_prot + n_nuc + n_ligand + n_peptide + 2*is_loi)
+    # row 0 (A): (1/3)*(1)         = 1/3
+    # row 1 (A): (1/3)*(1)         = 1/3
+    # row 2 (A): (1/3)*(2)         = 2/3
+    # row 3 (B): (1/1)*(0.5)       = 0.5
+    # row 4 (C): (1/2)*(1+2+3)     = 3
+    # row 5 (C): (1/2)*(2*0.25)    = 0.25
+    expected_no_altloc = torch.tensor([1 / 3, 1 / 3, 2 / 3, 0.5, 3.0, 0.25], dtype=torch.float64)
+    weights = calculate_weights_for_pdb_dataset_df(weight_table, alphas=alphas, beta=1.0, cluster_column="cluster")
+    assert torch.allclose(weights.double(), expected_no_altloc)
+
+    # With altloc: effective cluster size = sum of altloc weights per cluster
+    # altloc weights: 1abc→1/2, 1abc→1/2, 2abc→1, 3abc→1, 4abc→1, 5abc→1
+    # effective sizes: A = 1/2+1/2+1 = 2, B = 1, C = 1+1 = 2
+    # w = (1/eff_cluster_size) * altloc_weight * (n_prot + n_nuc + n_ligand + n_peptide + 2*is_loi)
+    # row 0 (A, 1abc): (1/2) * (1/2) * (1)         = 1/4
+    # row 1 (A, 1abc): (1/2) * (1/2) * (1)         = 1/4
+    # row 2 (A, 2abc): (1/2) * 1     * (2)         = 1.0
+    # row 3 (B, 3abc): (1/1) * 1     * (0.5)       = 0.5
+    # row 4 (C, 4abc): (1/2) * 1     * (1+2+3)     = 3.0
+    # row 5 (C, 5abc): (1/2) * 1     * (2*0.25)    = 0.25
+    expected_altloc = torch.tensor([1 / 4, 1 / 4, 1.0, 0.5, 3.0, 0.25], dtype=torch.float64)
+    weights = calculate_weights_for_pdb_dataset_df(
+        weight_table,
+        alphas=alphas,
+        beta=1.0,
+        cluster_column="cluster",
+        altloc_seed_column="altloc_seed",
+        pdb_id_column="pdb_id",
+    )
+    assert torch.allclose(weights.double(), expected_altloc)
 
 
 if __name__ == "__main__":
