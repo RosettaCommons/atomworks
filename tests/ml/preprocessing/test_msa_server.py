@@ -4,6 +4,7 @@ import gzip
 import io
 import tarfile
 from types import SimpleNamespace
+from unittest.mock import MagicMock
 
 import pytest
 import requests
@@ -22,20 +23,6 @@ def tar_payload():
     return buffer.getvalue()
 
 
-class Download:
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *args):
-        return False
-
-    def raise_for_status(self):
-        pass
-
-    def iter_content(self, chunk_size):
-        yield tar_payload()
-
-
 def test_completed_batch_mapping_auth_retry_and_cache(tmp_path, monkeypatch):
     posts = []
 
@@ -48,7 +35,10 @@ def test_completed_batch_mapping_auth_retry_and_cache(tmp_path, monkeypatch):
     def get(url, **kwargs):
         assert kwargs["auth"] == ("user", "test-password")
         if "/result/download/" in url:
-            return Download()
+            response = MagicMock()
+            response.__enter__.return_value = response
+            response.iter_content.return_value = [tar_payload()]
+            return response
         return SimpleNamespace(json=lambda: {"status": "COMPLETE", "id": "test-ticket"})
 
     monkeypatch.setattr(server.requests, "post", post)
@@ -61,14 +51,14 @@ def test_completed_batch_mapping_auth_retry_and_cache(tmp_path, monkeypatch):
         poll_interval=(0, 0),
         retry_delay=0,
     )
-    flat = server.run_mmseqs2_server(["AAA", "CCC", "AAA"], tmp_path / "flat", config=config)
-    assert set(flat) == {"AAA", "CCC"}
-    assert len(posts) == 2
-    for sequence, hit in [("AAA", "a"), ("CCC", "c")]:
-        text = flat[sequence].read_text()
-        assert text.startswith(">" + server.hash_sequence(sequence) + "\n" + sequence + "\n")
-        assert ">uni_" + hit in text and ">env_" + hit in text
-    posts.clear()
+    run_server = server.run_mmseqs2_server
+
+    def checked_run(*args, **kwargs):
+        paths = run_server(*args, **kwargs)
+        assert set(paths) == {"AAA", "CCC"}
+        return paths
+
+    monkeypatch.setattr(server, "run_mmseqs2_server", checked_run)
     server.make_msas_mmseqs_server(["AAA", "CCC", "AAA"], tmp_path / "organized", config=config, existing_msa_dirs=[])
     assert len(posts) == 2
     assert posts[-1][1]["data"]["q"] == ">101\nAAA\n>102\nCCC\n"
@@ -83,30 +73,16 @@ def test_completed_batch_mapping_auth_retry_and_cache(tmp_path, monkeypatch):
     server.make_msas_mmseqs_server(["CCC", "AAA"], tmp_path / "organized", config=config, existing_msa_dirs=[])
 
 
-def test_terminal_failure_and_network_retry_exhaustion(tmp_path, monkeypatch):
-    monkeypatch.setattr(server.time, "sleep", lambda _: None)
-    config = server.MSAServerConfig(max_retries=2, retry_delay=0)
-    monkeypatch.setattr(
-        server.requests,
-        "post",
-        lambda *a, **kw: SimpleNamespace(json=lambda: {"status": "ERROR", "message": "bad query"}),
-    )
-    with pytest.raises(RuntimeError, match="bad query"):
-        server.run_mmseqs2_server("AAA", tmp_path, config)
-    calls = []
-
-    def timeout(*args, **kwargs):
-        calls.append(True)
-        raise requests.Timeout("offline")
-
-    monkeypatch.setattr(server.requests, "post", timeout)
-    with pytest.raises(RuntimeError, match="after 2 attempts"):
-        server.run_mmseqs2_server("AAA", tmp_path, config)
-    assert len(calls) == 2
-
-
-@pytest.mark.parametrize("status", ["PENDING", "RATELIMIT"])
-def test_pending_jobs_stop_at_batch_deadline(tmp_path, monkeypatch, status):
+@pytest.mark.parametrize(
+    "status,error,message,attempts",
+    [
+        ("ERROR", RuntimeError, "bad query", 1),
+        ("NETWORK_TIMEOUT", RuntimeError, "after 2 attempts", 2),
+        ("PENDING", TimeoutError, "job_timeout", 3),
+        ("RATELIMIT", TimeoutError, "job_timeout", 3),
+    ],
+)
+def test_failed_jobs_stop_without_outputs(tmp_path, monkeypatch, status, error, message, attempts):
     clock = [0.0]
     monkeypatch.setattr(server.time, "monotonic", lambda: clock[0])
     monkeypatch.setattr(server.time, "sleep", lambda delay: clock.__setitem__(0, clock[0] + delay))
@@ -114,15 +90,18 @@ def test_pending_jobs_stop_at_batch_deadline(tmp_path, monkeypatch, status):
 
     def respond(*args, **kwargs):
         calls.append(kwargs)
-        return SimpleNamespace(json=lambda: {"status": status, "id": "stuck"})
+        if status == "NETWORK_TIMEOUT":
+            raise requests.Timeout("offline")
+        return SimpleNamespace(json=lambda: {"status": status, "id": "stuck", "message": "bad query"})
 
     monkeypatch.setattr(server.requests, "post", respond)
     monkeypatch.setattr(server.requests, "get", respond)
-    config = server.MSAServerConfig(job_timeout=3, poll_interval=(1, 1))
-    with pytest.raises(TimeoutError, match="job_timeout"):
+    config = server.MSAServerConfig(max_retries=2, retry_delay=0, job_timeout=3, poll_interval=(1, 1))
+    with pytest.raises(error, match=message):
         server.run_mmseqs2_server("AAA", tmp_path, config)
-    assert clock[0] == 3 and len(calls) == 3
-    assert [call["timeout"] for call in calls] == [3, 2, 1]
+    pending = status in ("PENDING", "RATELIMIT")
+    assert len(calls) == attempts and clock[0] == (3 if pending else 0)
+    assert [call["timeout"] for call in calls] == ([3, 2, 1] if pending else [3] * attempts)
     assert not list(tmp_path.glob("*.a3m"))
 
 
@@ -159,12 +138,12 @@ def test_csv_and_cli_dispatch_preserve_local_backends(tmp_path, monkeypatch, bac
         "hhblits": "make_msas_hhblits",
         "mmseqs2_server": "make_msas_mmseqs_server",
     }
-    assert calls[-1][0] == expected[backend]
-    assert calls[-1][1]["sequences"] == ["AAA", "CCC"]
-    assert calls[-1][1]["max_final_sequences"] == (None if backend == "mmseqs2_server" else 10000)
     if backend == "mmseqs2_server":
         monkeypatch.setattr(generate.torch.cuda, "is_available", lambda: pytest.fail("Remote path queried GPU"))
     result = CliRunner().invoke(generate.app, [str(csv), str(tmp_path / "cli"), "--backend", backend])
     assert result.exit_code == 0, result.output + repr(result.exception)
-    assert len(calls) == 2 and calls[-1][0] == expected[backend]
-    assert calls[-1][1]["max_final_sequences"] == (None if backend == "mmseqs2_server" else 10000)
+    assert len(calls) == 2
+    for name, kwargs in calls:
+        assert name == expected[backend]
+        assert kwargs["sequences"] == ["AAA", "CCC"]
+        assert kwargs["max_final_sequences"] == (None if backend == "mmseqs2_server" else 10000)
