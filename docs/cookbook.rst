@@ -13,7 +13,7 @@ Standard Local File Input
 
 Accepts common structure input formats (mmCIF, PDB, mmjson and BCIF/BinaryCIF), both with filenames and file-like objects. CIF files can also be gzip- or Zstandard-compressed.
 
-See :doc:`the Parser tutorial page <tutorial/parser>` for details on parameters and output. You can also find the API docs for the ``parse`` function :func:`here <atomworks.io.parser.parse>`. Import the modules used by each recipe explicitly; examples assume input filenames and arrays have been supplied.::
+See :doc:`the Parser tutorial page <tutorial/parser>` for details on parameters and output. You can also find the API docs for the ``parse`` function :func:`here <atomworks.io.parser.parse>`. The example below shows how to set a few common options with ``ParseConfig`` (their defaults are shown)::
 
     from atomworks.io import parse
     from atomworks.io.config import ParseConfig
@@ -30,9 +30,9 @@ See :doc:`the Parser tutorial page <tutorial/parser>` for details on parameters 
 Load from Clean Files
 ~~~~~~~~~~~~~~~~~~~~~
 
-Use the minimal parser preset for previously processed structures. It avoids
-adding missing atoms and retains waters, while still applying the parser's
-remaining normalization rules::
+For previously processed structures (e.g. those which have already passed through
+an AtomWorks preparation pipeline), use the ``minimal`` parser preset. This keeps
+waters and loads the structure without adding missing atoms::
 
     atom_array = parse(filename, config="minimal")["asym_unit"][0]
 
@@ -86,7 +86,9 @@ mmCIF output
 
     to_cif_file(atom_array, filename, chain_disambiguation="chain_iid")
 
-For an in-memory CIF that retains assembly transformation identity, pass a CIFWriteConfig::
+You can also write a CIF to an in-memory buffer and read it back into AtomWorks.
+The example below keeps track of the different copies of a chain in a biological
+assembly using ``transformation_id``::
 
     buffer = to_cif_buffer(
         atom_array,
@@ -97,10 +99,12 @@ For an in-memory CIF that retains assembly transformation identity, pass a CIFWr
     )
     restored = parse(buffer, config="minimal")["asym_unit"][0]
 
-Use chain_iid disambiguation for external readers; transformation_id is an
-AtomWorks convention. Standard annotations and custom fields depend on the
-writer options and reader. Re-running parse also applies preparation rules;
-it is not an exact serialization check.
+If you plan to open the CIF in another program, use ``chain_disambiguation="chain_iid"``
+to give each chain copy a unique name. The ``transformation_id`` option keeps the
+original chain names and records the copies in a form AtomWorks can read.
+To save additional annotations, check the writer options and whether the program
+reading the file supports them. Parsing the file again can still change some
+annotations, even with the ``minimal`` preset.
 
 Legacy PDB output
 ~~~~~~~~~~~~~~~~~
@@ -113,8 +117,8 @@ While the use of :func:`~atomworks.io.utils.io_utils.to_pdb_string` is possible 
     with open(filename, "w") as f:
         f.write(atomworks.io.utils.io_utils.to_pdb_string(resolved))
 
-PDB cannot store missing coordinates and has stricter chain, residue, and atom
-identifier limits than mmCIF. This recipe excludes atoms with missing coordinates.
+This example leaves out atoms with missing coordinates, which PDB cannot store.
+Use mmCIF if your chain, residue, or atom identifiers exceed the limits of the PDB format.
 
 SDF/SMILES output
 ~~~~~~~~~~~~~~~~~
@@ -178,10 +182,10 @@ The ``biotite.structure`` module contains a number of `filter <https://www.bioti
 
     sugars = atom_array[ biotite.structure.filter_carbohydrates(atom_array) ]
 
-These selections assume the annotations are present. A biological assembly may
-have multiple copies sharing chain and residue IDs. Select a chain_iid or
-pn_unit_iid first when you need one instance. The backbone filter above selects
-protein backbone atoms.
+Each selection uses annotations on the AtomArray, such as ``occupancy`` or
+``is_polymer``. If your assembly contains several copies of the same chain,
+select by ``chain_iid`` or ``pn_unit_iid`` to choose just one copy before selecting
+its residues. The backbone filter in the example applies to proteins.
 
 Changing annotations
 ~~~~~~~~~~~~~~~~~~~~
