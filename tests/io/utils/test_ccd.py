@@ -103,8 +103,8 @@ def test_no_coordinates_fallback():
     assert np.all(np.isnan(result.coord)), "Should have NaN coordinates"
 
 
-def test_custom_ccd_codes_bypass_cache():
-    """Non-standard CCD codes must bypass the cache so re-registration is visible."""
+def test_custom_ccd_codes_follow_reregistration():
+    """Non-standard CCD lookups must reflect the latest registered definition."""
     custom_code = "ZZTEST:0"
     mol_a = atom_array_from_ccd_code("ALA", coords=None)
     mol_b = atom_array_from_ccd_code("GLY", coords=None)

@@ -1,7 +1,9 @@
 import functools
 import logging
 import os
+import pickle
 import threading
+from collections import OrderedDict
 from collections.abc import Callable, Generator, Iterable
 from contextlib import contextmanager
 from pathlib import Path
@@ -40,6 +42,8 @@ logger = logging.getLogger(__name__)
 # Global thread-safe registry for custom CCD entries
 _ccd_registry_lock = threading.RLock()
 _ccd_registry: dict[str, struc.AtomArray] = {}
+_ccd_registry_caches: dict[str, dict[Callable, Callable]] = {}
+_ccd_registry_cache_pool: OrderedDict[tuple[str, bytes], dict[Callable, Callable]] = OrderedDict()
 
 
 @functools.cache
@@ -229,14 +233,19 @@ def get_available_ccd_codes(ccd_mirror_path: os.PathLike | None = CCD_MIRROR_PAT
     with _ccd_registry_lock:
         registry_codes = frozenset(_ccd_registry.keys())
 
+    return _merge_ccd_codes(standard_codes, registry_codes)
+
+
+@functools.lru_cache(maxsize=32)
+def _merge_ccd_codes(standard_codes: frozenset[str], registry_codes: frozenset[str]) -> frozenset[str]:
     return standard_codes | registry_codes
 
 
 def _standard_ccd_only_cache(cache_decorator: Callable) -> Callable:
-    """Wrap a cache decorator to skip caching for non-standard or registry-overridden codes.
+    """Cache standard CCD lookups and isolate caches for registered component definitions.
 
-    Registry codes are checked first and never cached, so an override of a real code is
-    never shadowed by a bundled template that was resolved (and cached) earlier.
+    Registered definitions have separate caches; identical definitions can reuse a bounded pool.
+    Unregistered, non-standard codes are not cached.
     """
 
     def decorator(func: Callable) -> Callable:
@@ -245,11 +254,23 @@ def _standard_ccd_only_cache(cache_decorator: Callable) -> Callable:
         @functools.wraps(func)
         def wrapper(ccd_code: str, *args: Any, **kwargs: Any) -> Any:
             code_upper = ccd_code.upper()
-            if code_upper in _ccd_registry or code_upper not in get_standard_ccd_codes():
-                return func(ccd_code, *args, **kwargs)
-            return cached(ccd_code, *args, **kwargs)
+            with _ccd_registry_lock:
+                if code_upper in _ccd_registry:
+                    component_caches = _ccd_registry_caches.setdefault(code_upper, {})
+                    if func not in component_caches:
+                        component_caches[func] = cache_decorator(func)
+                    return component_caches[func](ccd_code, *args, **kwargs)
+                if code_upper not in get_standard_ccd_codes():
+                    return func(ccd_code, *args, **kwargs)
+                return cached(ccd_code, *args, **kwargs)
 
-        wrapper.cache_clear = getattr(cached, "cache_clear", None)
+        def cache_clear() -> None:
+            with _ccd_registry_lock:
+                cached.cache_clear()
+                for component_caches in (*_ccd_registry_caches.values(), *_ccd_registry_cache_pool.values()):
+                    component_caches.pop(func, None)
+
+        wrapper.cache_clear = cache_clear
         wrapper.cache_info = getattr(cached, "cache_info", None)
         return wrapper
 
@@ -726,9 +747,8 @@ def get_chem_comp_type(
 ) -> str:
     """Get the chemical component type for a CCD code.
 
-    Routes through :func:`atom_array_from_ccd_code` so the custom CCD registry
-    is the single interception point.  Falls back to inference from ``atom_names``
-    when the code is unknown.
+    Checks the custom CCD registry before bundled definitions. Falls back to
+    inference from ``atom_names`` when the code is unknown.
 
     Args:
         ccd_code: The CCD code for the component. E.g. ``"ALA"`` for alanine.
@@ -740,6 +760,11 @@ def get_chem_comp_type(
         >>> get_chem_comp_type("ALA")
         'L-PEPTIDE LINKING'
     """
+    with _ccd_registry_lock:
+        entry = _ccd_registry.get(ccd_code.upper())
+        if entry is not None and len(entry) > 0 and "chem_comp_type" in entry.get_annotation_categories():
+            return entry.chem_comp_type[0]
+
     try:
         arr = atom_array_from_ccd_code(ccd_code, ccd_mirror_path, coords=None)
         if len(arr) > 0 and "chem_comp_type" in arr.get_annotation_categories():
@@ -834,9 +859,9 @@ def _derive_polymerization_atoms_from_template(
     return exiting, entering
 
 
-@functools.lru_cache(maxsize=1024)
+@_standard_ccd_only_cache(functools.lru_cache(maxsize=1024))
 def _get_polymerization_atoms_cached(res_name: str) -> tuple[str | None, str | None]:
-    """Cached lookup for canonical (non-registry) residues only."""
+    """Look up polymerization atoms for the active component definition."""
     cct = get_chem_comp_type(res_name)
     canonical = CHEM_TYPE_POLYMERIZATION_ATOMS.get(cct)
     if canonical is None:
@@ -880,11 +905,6 @@ def get_polymerization_atoms(res_name: str) -> tuple[str | None, str | None]:
     :pyfunc:`_derive_polymerization_atoms_from_template`. Each side is resolved independently and
     may be ``None``.
     """
-    # Skip cache for custom registry entries (mutable state)
-    if res_name.upper() in _ccd_registry:
-        return _get_polymerization_atoms_cached.__wrapped__(res_name)
-
-    # Use cached lookup for canonical CCD entries (immutable state)
     return _get_polymerization_atoms_cached(res_name)
 
 
@@ -1161,6 +1181,13 @@ def _atoms_and_bonds_match(a: struc.AtomArray, b: struc.AtomArray) -> bool:
     return _bonds_to_dict(a) == _bonds_to_dict(b)
 
 
+@functools.lru_cache(maxsize=1024)
+def _get_bundled_ideal_coordinates(code: str) -> dict[str, np.ndarray]:
+    """Return read-only coordinate references for internal template supplementation."""
+    bundled = atom_array_from_bundled_ccd_code(code)
+    return dict(zip(bundled.atom_name, bundled.coord, strict=False))
+
+
 def _fill_ideal_coords_from_bundled_ccd(code: str, entry: struc.AtomArray) -> None:
     """Fill NaN coordinates on a registry ``entry`` in place from the bundled CCD, matched by atom name.
 
@@ -1170,10 +1197,9 @@ def _fill_ideal_coords_from_bundled_ccd(code: str, entry: struc.AtomArray) -> No
     if not missing.any():
         return
     try:
-        bundled = atom_array_from_bundled_ccd_code(code)
+        name_to_coord = _get_bundled_ideal_coordinates(code)
     except (ValueError, KeyError):
         return
-    name_to_coord = dict(zip(bundled.atom_name, bundled.coord, strict=False))
     if not set(map(str, entry.atom_name)).issubset(name_to_coord):
         return
     for i in np.where(missing)[0]:
@@ -1203,7 +1229,7 @@ def register_custom_ccd_entry(code: str, atom_array: struc.AtomArray) -> None:
         )
 
     # Warn when the custom entry is overwriting AND differs from an existing standard CCD entry.
-    if code in get_standard_ccd_codes():
+    if logger.isEnabledFor(logging.WARNING) and code in get_standard_ccd_codes():
         try:
             differs = not _atoms_and_bonds_match(entry, atom_array_from_ccd_code(code))
         except Exception:
@@ -1221,6 +1247,17 @@ def register_custom_ccd_entry(code: str, atom_array: struc.AtomArray) -> None:
                 f"Overwriting existing custom CCD entry for '{code}' in registry. " "Previous entry will be replaced."
             )
         _ccd_registry[code] = entry
+        try:
+            key = (code, pickle.dumps(entry, protocol=5))
+        except (pickle.PicklingError, TypeError, AttributeError):
+            # Unserializable custom annotations still support caching within this registration.
+            component_caches = {}
+        else:
+            component_caches = _ccd_registry_cache_pool.setdefault(key, {})
+            _ccd_registry_cache_pool.move_to_end(key)
+            if len(_ccd_registry_cache_pool) > 128:
+                _ccd_registry_cache_pool.popitem(last=False)
+        _ccd_registry_caches[code] = component_caches
 
 
 def register_custom_ccd_entries(entries: dict[str, struc.AtomArray]) -> None:
@@ -1236,6 +1273,7 @@ def unregister_custom_ccd_entry(code: str) -> bool:
     with _ccd_registry_lock:
         was_present = code in _ccd_registry
         _ccd_registry.pop(code, None)
+        _ccd_registry_caches.pop(code, None)
 
     if was_present:
         logger.info(f"Unregistered custom CCD entry: {code}")
@@ -1260,6 +1298,7 @@ def clear_custom_ccd_registry() -> int:
     with _ccd_registry_lock:
         count = len(_ccd_registry)
         _ccd_registry.clear()
+        _ccd_registry_caches.clear()
 
     if count > 0:
         logger.info(f"Cleared {count} custom CCD entries")
@@ -1290,6 +1329,7 @@ def custom_ccd_residues(entries: dict[str, struc.AtomArray]) -> Generator[None, 
         with _ccd_registry_lock:
             _ccd_registry.clear()
             _ccd_registry.update(saved_registry)
+            _ccd_registry_caches.clear()
 
 
 def register_custom_residues_from_atom_array(

@@ -2,7 +2,7 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from biotite.structure import AtomArray, BondType
+from biotite.structure import AtomArray, BondList, BondType
 
 from atomworks.io.config import ParseConfig
 from atomworks.io.parser import parse
@@ -12,7 +12,11 @@ from atomworks.io.utils.bonds import (
     correct_formal_charges_for_specified_atoms,
     hash_atom_array,
 )
-from atomworks.io.utils.link_chemistry import get_chem_comp_leaving_atom_groups, resolve_leaving_atoms
+from atomworks.io.utils.link_chemistry import (
+    get_chem_comp_leaving_atom_groups,
+    get_inter_residue_atom_mask,
+    resolve_leaving_atoms,
+)
 from tests.io.conftest import TEST_DATA_IO, get_pdb_path
 
 TEST_DATA_DIR = Path(__file__).parent
@@ -243,6 +247,29 @@ def test_coordination_preserves_leaving_atoms_and_valence(hydrogen_policy):
     np.testing.assert_array_equal(get_bond_degree_per_atom(resolved), degree)
     if hydrogen_policy == "remove":
         np.testing.assert_array_equal(resolved.nhyd, before.nhyd)
+
+
+def test_inter_residue_bonds_preserve_assembly_and_insertion_identity():
+    atoms = AtomArray(7)
+    atoms.chain_id[:] = "A"
+    atoms.chain_id[4] = "B"
+    atoms.res_id[:] = [1, 1, 1, 1, 1, 2, 3]
+    atoms.ins_code[3] = "A"
+    atoms.set_annotation("transformation_id", np.array([0, 0, 1, 0, 0, 0, 0]))
+    atoms.bonds = BondList(
+        7,
+        np.array(
+            [
+                [0, 1, BondType.SINGLE],
+                [0, 2, BondType.SINGLE],
+                [0, 3, BondType.SINGLE],
+                [0, 4, BondType.SINGLE],
+                [0, 5, BondType.SINGLE],
+                [0, 6, BondType.COORDINATION],
+            ]
+        ),
+    )
+    np.testing.assert_array_equal(get_inter_residue_atom_mask(atoms), [True, False, True, True, True, True, False])
 
 
 if __name__ == "__main__":

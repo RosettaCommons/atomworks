@@ -283,9 +283,10 @@ def _validate_label_seq_ids(cif_block: pdbx.CIFBlock | pdbx.BinaryCIFBlock) -> N
     if entity_ids is None or entity is None or not {"id", "type"}.issubset(entity):
         return
     entity_types = dict(zip(entity["id"].as_array(str), entity["type"].as_array(str), strict=True))
-    invalid_polymer = missing & np.array(
-        [entity_types.get(entity_id, "").strip().lower() == "polymer" for entity_id in entity_ids]
-    )
+    polymer_ids = [
+        entity_id for entity_id, entity_type in entity_types.items() if entity_type.strip().lower() == "polymer"
+    ]
+    invalid_polymer = missing & np.isin(entity_ids, polymer_ids)
     if invalid_polymer.any():
         asym_id = asym_ids[np.flatnonzero(invalid_polymer)[0]]
         raise ValueError(

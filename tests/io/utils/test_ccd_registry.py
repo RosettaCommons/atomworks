@@ -6,16 +6,21 @@ import pytest
 
 from atomworks.io import parse
 from atomworks.io.config import ParseConfig
-from atomworks.io.tools.rdkit import atom_array_to_rdkit
+from atomworks.io.tools.rdkit import atom_array_to_rdkit, ccd_code_to_rdkit
 from atomworks.io.utils.ccd import (
     _get_base_ccd_template,
     atom_array_from_ccd_code,
     build_ccd_entries_from_cif_block,
+    clear_custom_ccd_registry,
     custom_ccd_residues,
+    get_atom_names_for_residue,
+    get_polymerization_atoms,
     parse_ccd_cif,
     register_custom_ccd_entry,
+    unregister_custom_ccd_entry,
 )
 from atomworks.io.utils.io_utils import read_any, to_cif_file
+from atomworks.io.utils.link_chemistry import get_chem_comp_leaving_atom_groups
 from tests.conftest import TEST_DATA_DIR
 
 
@@ -24,8 +29,7 @@ def test_registry_basic_operations(cleanup_registry):
     custom_ala = atom_array_from_ccd_code("ALA").copy()
     custom_ala.charge[:] = 99  # Marker to verify custom entry
 
-    # Poison the memoized template cache with the bundled ALA before registering; the
-    # registry-aware bypass in _standard_ccd_only_cache must still resolve the override.
+    # Populate the standard template cache before registering an override.
     assert not np.all(_get_base_ccd_template("ALA", "", hydrogen_policy="keep").charge == 99)
 
     register_custom_ccd_entry("ALA", custom_ala)
@@ -34,6 +38,74 @@ def test_registry_basic_operations(cleanup_registry):
     # get_atom_names_for_residue) now resolve the custom entry.
     assert np.all(atom_array_from_ccd_code("ALA").charge == 99)
     assert np.all(_get_base_ccd_template("ALA", "", hydrogen_policy="keep").charge == 99)
+
+
+@pytest.mark.parametrize("code", ["ALA", "CUSTOM_CACHE_TEST"])
+def test_registry_cached_chemistry_tracks_replacement_and_nested_contexts(cleanup_registry, code):
+    """Derived templates and leaving groups follow registry changes and exception restoration."""
+    ala = atom_array_from_ccd_code("ALA")
+    gly = atom_array_from_ccd_code("GLY")
+    gly.is_leaving_atom[:] = False
+    gly.charge[:] = 2
+
+    with custom_ccd_residues({code: ala}):
+        expected_groups = get_chem_comp_leaving_atom_groups(code)
+        assert expected_groups
+        assert "CB" in get_atom_names_for_residue(code, "")[0]
+        for _ in range(2):
+            with (
+                pytest.raises(RuntimeError, match="restore registry"),
+                custom_ccd_residues({code: gly}),
+            ):
+                assert get_chem_comp_leaving_atom_groups(code) == {}
+                assert "CB" not in get_atom_names_for_residue(code, "")[0]
+                assert np.all(_get_base_ccd_template(code, "", "keep").charge == 2)
+                raise RuntimeError("restore registry")
+            assert get_chem_comp_leaving_atom_groups(code) == expected_groups
+            assert "CB" in get_atom_names_for_residue(code, "")[0]
+
+        register_custom_ccd_entry(code, gly)
+        assert get_chem_comp_leaving_atom_groups(code) == {}
+        assert "CB" not in get_atom_names_for_residue(code, "")[0]
+        assert unregister_custom_ccd_entry(code)
+        assert ("CB" in get_atom_names_for_residue(code, "")[0]) == (code == "ALA")
+        register_custom_ccd_entry(code, gly)
+        assert get_chem_comp_leaving_atom_groups(code) == {}
+        clear_custom_ccd_registry()
+        assert ("CB" in get_atom_names_for_residue(code, "")[0]) == (code == "ALA")
+
+
+def test_registry_leaving_groups_reuse_work_without_sharing_mutable_input(cleanup_registry, monkeypatch):
+    """Repeated chemistry lookups reuse graph work while registered inputs remain isolated."""
+    from atomworks.io.utils import link_chemistry
+
+    link_chemistry._get_chem_comp_leaving_atom_groups_cached.cache_clear()
+    entry = atom_array_from_ccd_code("ALA")
+    register_custom_ccd_entry("ALA", entry)
+    original = link_chemistry._find_connected_components_after_removal
+    traversals = 0
+
+    def count_traversals(graph, node):
+        nonlocal traversals
+        traversals += 1
+        return original(graph, node)
+
+    monkeypatch.setattr(link_chemistry, "_find_connected_components_after_removal", count_traversals)
+    groups = get_chem_comp_leaving_atom_groups("ALA")
+    first_traversals = traversals
+    assert first_traversals > 0
+    unregister_custom_ccd_entry("ALA")
+    register_custom_ccd_entry("ALA", entry.copy())
+    assert get_chem_comp_leaving_atom_groups("ALA") == groups
+    assert traversals == first_traversals
+    entry.is_leaving_atom[:] = False
+    returned = atom_array_from_ccd_code("ALA")
+    returned.is_leaving_atom[:] = False
+    for _ in range(3):
+        assert get_chem_comp_leaving_atom_groups("ALA") == groups
+    assert traversals == first_traversals
+    register_custom_ccd_entry("ALA", entry)
+    assert get_chem_comp_leaving_atom_groups("ALA") == {}
 
 
 def test_registry_rdkit_fallback_with_problematic_cif(cleanup_registry):
@@ -177,3 +249,64 @@ def test_authored_annotations_during_atom_completion(tmp_path, ccd_code, authore
         assert np.array_equal(template.get_annotation(name), expected_values)
         if name != "is_leaving_atom":  # Preparation removes this temporary annotation.
             assert np.array_equal(parsed.get_annotation(name), expected_values)
+
+
+def test_registry_polymerization_tracks_component_type(cleanup_registry):
+    entry = atom_array_from_ccd_code("ALA")
+    with custom_ccd_residues({"ALA": entry}):
+        assert get_polymerization_atoms("ALA") == ("C", "N")
+        entry.chem_comp_type[:] = "NON-POLYMER"
+        with custom_ccd_residues({"ALA": entry}):
+            assert get_polymerization_atoms("ALA") == (None, None)
+        assert get_polymerization_atoms("ALA") == ("C", "N")
+
+
+@pytest.mark.parametrize("changed_field", ["charge", "bonds", "atom_name"])
+def test_registry_cache_distinguishes_component_content(cleanup_registry, changed_field):
+    entry = atom_array_from_ccd_code("ALA")
+    with custom_ccd_residues({"ALA": entry}):
+        _get_base_ccd_template("ALA", "", "keep")
+    if changed_field == "bonds":
+        entry.bonds.remove_bond(0, 1)
+    elif changed_field == "atom_name":
+        entry.atom_name[0] = "NX"
+    else:
+        getattr(entry, changed_field)[0] += 1
+    with custom_ccd_residues({"ALA": entry}):
+        actual = _get_base_ccd_template("ALA", "", "keep")
+        if changed_field == "bonds":
+            np.testing.assert_array_equal(actual.bonds.as_array(), entry.bonds.as_array())
+        else:
+            np.testing.assert_array_equal(getattr(actual, changed_field), getattr(entry, changed_field))
+
+
+def test_registry_rdkit_cache_preserves_coordinates_and_returns_copies(cleanup_registry):
+    entry = atom_array_from_ccd_code("ALA")
+    with custom_ccd_residues({"ALA": entry}):
+        mol = ccd_code_to_rdkit("ALA")
+        original_coords = mol.GetConformer().GetPositions().copy()
+        mol.GetConformer().SetAtomPosition(0, (99, 99, 99))
+        np.testing.assert_array_equal(ccd_code_to_rdkit("ALA").GetConformer().GetPositions(), original_coords)
+    entry.coord += 1
+    with custom_ccd_residues({"ALA": entry}):
+        np.testing.assert_array_equal(ccd_code_to_rdkit("ALA").GetConformer().GetPositions(), entry.coord)
+
+
+def test_registry_accepts_unserializable_custom_annotations(cleanup_registry):
+    entry = atom_array_from_ccd_code("ALA")
+    entry.set_annotation("callback", np.full(len(entry), lambda: None, dtype=object))
+    with custom_ccd_residues({"CUSTOM_CACHE_TEST": entry}):
+        assert "CB" in get_atom_names_for_residue("CUSTOM_CACHE_TEST", "")[0]
+        actual = atom_array_from_ccd_code("CUSTOM_CACHE_TEST")
+        assert actual.callback[0] is entry.callback[0]
+
+
+def test_registry_filled_coordinates_do_not_share_bundled_storage(cleanup_registry):
+    expected = atom_array_from_ccd_code("ALA").coord.copy()
+    entry = atom_array_from_ccd_code("ALA", coords=None)
+    with custom_ccd_residues({"ALA": entry}):
+        returned = atom_array_from_ccd_code("ALA")
+        np.testing.assert_array_equal(returned.coord, expected)
+        returned.coord[:] = 99
+    with custom_ccd_residues({"ALA": entry}):
+        np.testing.assert_array_equal(atom_array_from_ccd_code("ALA").coord, expected)

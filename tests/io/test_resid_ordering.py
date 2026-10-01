@@ -32,3 +32,17 @@ def test_cif_identity_invariants():
     block["atom_site"]["label_entity_id"] = ["1", "2"]
     with pytest.raises(ValueError, match="maps to multiple label_entity_id"):
         _validate_label_seq_ids(block)
+
+
+@pytest.mark.parametrize("entity_type", ["polymer", " Polymer ", "non-polymer", "water"])
+def test_cif_missing_sequence_identity_depends_on_entity_type(entity_type):
+    block = pdbx.CIFBlock()
+    block["atom_site"] = pdbx.CIFCategory(
+        {"label_asym_id": ["A", "B", "C"], "label_seq_id": ["1", ".", "?"], "label_entity_id": ["1", "2", "3"]}
+    )
+    block["entity"] = pdbx.CIFCategory({"id": ["1", "2"], "type": ["polymer", entity_type]})
+    if entity_type.strip().lower() == "polymer":
+        with pytest.raises(ValueError, match="polymer label_asym_id 'B' has missing label_seq_id"):
+            _validate_label_seq_ids(block)
+    else:
+        _validate_label_seq_ids(block)

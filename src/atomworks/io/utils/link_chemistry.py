@@ -422,16 +422,10 @@ def _get_inter_residue_bonds(atom_array: struc.AtomArray) -> np.ndarray:
     if "transformation_id" in atom_array.get_annotation_categories():
         group_by.append("transformation_id")
 
-    # For each bond, check if atoms are in same residue
-    bond_atom1_keys = [tuple(atom_array.get_annotation(field)[bonds_array[:, 0]]) for field in group_by]
-    bond_atom2_keys = [tuple(atom_array.get_annotation(field)[bonds_array[:, 1]]) for field in group_by]
-
-    # Stack keys into arrays for comparison
-    atom1_residue_keys = np.column_stack(bond_atom1_keys)
-    atom2_residue_keys = np.column_stack(bond_atom2_keys)
-
-    # Find bonds where atoms are in different residues
-    is_inter_bond = np.any(atom1_residue_keys != atom2_residue_keys, axis=1)
+    is_inter_bond = np.zeros(len(bonds_array), dtype=bool)
+    for field in group_by:
+        values = atom_array.get_annotation(field)
+        is_inter_bond |= values[bonds_array[:, 0]] != values[bonds_array[:, 1]]
 
     return bonds_array[is_inter_bond]
 
