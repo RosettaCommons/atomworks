@@ -12,6 +12,8 @@ __all__ = [
     "to_cif_buffer",
     "to_cif_file",
     "to_cif_string",
+    "to_pdb_buffer",
+    "to_pdb_string",
 ]
 import contextlib
 import io
