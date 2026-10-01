@@ -1,9 +1,11 @@
 import logging
 
 import numpy as np
+import pandas as pd
 import pytest
 
 from atomworks.ml.datasets import PandasDataset
+from tests.ml.conftest import SHARED_TEST_FILTERS, TEST_PN_UNITS_FILTERS
 
 # NOTE: See the conftest for the filters applied to pn_units_dataset, which are validated below
 
@@ -13,6 +15,11 @@ def test_filter_impact(pn_units_df, rf2aa_pn_units_dataset):
     original_data_length = len(pn_units_df)
     filtered_data_length = len(rf2aa_pn_units_dataset)
     assert filtered_data_length < original_data_length, "Filter did not reduce the number of rows"
+    expected = pn_units_df.copy()
+    for query in SHARED_TEST_FILTERS + TEST_PN_UNITS_FILTERS:
+        expected = expected.query(query)
+    expected.set_index("example_id", drop=False, inplace=True)
+    pd.testing.assert_frame_equal(rf2aa_pn_units_dataset.data, expected)
 
 
 def test_deposition_date_filter(rf2aa_pn_units_dataset):

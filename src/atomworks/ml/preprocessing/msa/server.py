@@ -6,7 +6,7 @@ ColabFold-compatible MMseqs2 server (the public ``https://api.colabfold.com`` by
 self-hosted deployment) and the resulting a3m files are downloaded. No local databases, no mmseqs
 binary and no GPU are required.
 
-The output is byte-compatible with the local backend: one ``<hash>.a3m.gz`` per input sequence in a
+The output uses the same file layout as the local backend: one ``<hash>.a3m.gz`` per input sequence in a
 hash-sharded directory, where ``<hash>`` is :py:func:`~atomworks.ml.utils.misc.hash_sequence` of the
 query. Everything downstream (finding, filtering, loading) is therefore unchanged.
 
@@ -98,6 +98,7 @@ class MSAServerConfig:
         api_key_header: Name of the header carrying an API key (mutually exclusive with basic auth).
         api_key_value: Value of the API key header. Falls back to ``MSA_SERVER_API_KEY``.
         user_agent: ``User-Agent`` sent with every request. The public server asks clients to identify themselves.
+        job_timeout: Overall deadline per batch, including retries and download, in seconds.
         request_timeout: Per-request timeout, in seconds.
         poll_interval: Lower and upper bound (in seconds) of the jittered delay between status polls.
         max_retries: Maximum number of consecutive failed network calls (or job resubmissions) before giving up.
@@ -112,10 +113,11 @@ class MSAServerConfig:
     use_env: bool = True
     use_filter: bool = True
     username: str | None = None
-    password: str | None = None
+    password: str | None = dataclasses.field(default=None, repr=False)
     api_key_header: str | None = None
-    api_key_value: str | None = None
+    api_key_value: str | None = dataclasses.field(default=None, repr=False)
     user_agent: str = "atomworks"
+    job_timeout: float = 1800.0
     request_timeout: float = 6.02
     poll_interval: tuple[float, float] = (5.0, 10.0)
     max_retries: int = 5
@@ -145,8 +147,14 @@ class MSAServerConfig:
 
         self.host_url = self.host_url.rstrip("/")
 
+        for name in ("request_timeout", "job_timeout"):
+            value = getattr(self, name)
+            if not math.isfinite(value) or value <= 0:
+                raise ValueError(f"`{name}` must be finite and positive, got {value}")
+        if not math.isfinite(self.retry_delay) or self.retry_delay < 0:
+            raise ValueError("`retry_delay` must be finite and non-negative")
         low, high = self.poll_interval
-        if low < 0 or high < low:
+        if not math.isfinite(low) or not math.isfinite(high) or low < 0 or high < low:
             raise ValueError(f"`poll_interval` must be a non-negative (low, high) pair, got {self.poll_interval}")
         if self.batch_size < 1:
             raise ValueError(f"`batch_size` must be at least 1, got {self.batch_size}")
@@ -166,13 +174,21 @@ def _build_query_fasta(sequences: list[str]) -> str:
     return "".join(f">{_FIRST_QUERY_ID + i}\n{sequence}\n" for i, sequence in enumerate(sequences))
 
 
-def _request_kwargs(config: MSAServerConfig) -> dict[str, Any]:
+def _remaining_time(deadline: float) -> float:
+    """Return the remaining batch budget or stop an overdue server job."""
+    remaining = deadline - time.monotonic()
+    if remaining <= 0:
+        raise TimeoutError("MSA server job exceeded job_timeout")
+    return remaining
+
+
+def _request_kwargs(config: MSAServerConfig, deadline: float) -> dict[str, Any]:
     """Build the shared `requests` keyword arguments (headers, auth, timeout) for a call."""
     headers = {"User-Agent": config.user_agent}
     if config.api_key_header and config.api_key_value:
         headers[config.api_key_header] = config.api_key_value
 
-    kwargs: dict[str, Any] = {"headers": headers, "timeout": config.request_timeout}
+    kwargs: dict[str, Any] = {"headers": headers, "timeout": min(config.request_timeout, _remaining_time(deadline))}
     if config.username is not None or config.password is not None:
         kwargs["auth"] = (config.username or "", config.password or "")
     return kwargs
@@ -191,7 +207,7 @@ def _parse_json_response(response: requests.Response) -> dict[str, Any]:
     return payload
 
 
-def _submit(sequences: list[str], mode: str, config: MSAServerConfig) -> dict[str, Any]:
+def _submit(sequences: list[str], mode: str, config: MSAServerConfig, deadline: float) -> dict[str, Any]:
     """Submit a batch of sequences to the server.
 
     Args:
@@ -205,29 +221,30 @@ def _submit(sequences: list[str], mode: str, config: MSAServerConfig) -> dict[st
     response = requests.post(
         f"{config.host_url}/ticket/msa",
         data={"q": _build_query_fasta(sequences), "mode": mode},
-        **_request_kwargs(config),
+        **_request_kwargs(config, deadline),
     )
     return _parse_json_response(response)
 
 
-def _status(ticket_id: str, config: MSAServerConfig) -> dict[str, Any]:
+def _status(ticket_id: str, config: MSAServerConfig, deadline: float) -> dict[str, Any]:
     """Query the status of a submitted ticket."""
-    response = requests.get(f"{config.host_url}/ticket/{ticket_id}", **_request_kwargs(config))
+    response = requests.get(f"{config.host_url}/ticket/{ticket_id}", **_request_kwargs(config, deadline))
     return _parse_json_response(response)
 
 
-def _download(ticket_id: str, dest: PathLike, config: MSAServerConfig) -> None:
+def _download(ticket_id: str, dest: PathLike, config: MSAServerConfig, deadline: float) -> None:
     """Download the result tarball of a completed ticket to `dest`."""
     with requests.get(
-        f"{config.host_url}/result/download/{ticket_id}", stream=True, **_request_kwargs(config)
+        f"{config.host_url}/result/download/{ticket_id}", stream=True, **_request_kwargs(config, deadline)
     ) as response:
         response.raise_for_status()
         with open(dest, "wb") as f:
             for chunk in response.iter_content(chunk_size=1024 * 1024):
+                _remaining_time(deadline)
                 f.write(chunk)
 
 
-def _with_retries(call: Callable[[], _T], config: MSAServerConfig, description: str) -> _T:
+def _with_retries(call: Callable[[], _T], config: MSAServerConfig, description: str, deadline: float) -> _T:
     """Call `call`, retrying transient network failures up to `config.max_retries` times.
 
     Args:
@@ -244,19 +261,22 @@ def _with_retries(call: Callable[[], _T], config: MSAServerConfig, description: 
     last_error: Exception | None = None
     for attempt in range(1, config.max_retries + 1):
         try:
-            return call()
-        except Exception as e:  # any network failure is worth retrying
+            _remaining_time(deadline)
+            result = call()
+            _remaining_time(deadline)
+            return result
+        except requests.RequestException as e:
             last_error = e
             logger.warning(f"Error while {description} (attempt {attempt}/{config.max_retries}): {e}")
             if attempt < config.max_retries:
-                time.sleep(config.retry_delay)
+                time.sleep(min(config.retry_delay, _remaining_time(deadline)))
 
     raise RuntimeError(f"Failed while {description} after {config.max_retries} attempts") from last_error
 
 
-def _sleep_between_polls(config: MSAServerConfig) -> float:
+def _sleep_between_polls(config: MSAServerConfig, deadline: float) -> float:
     """Sleep for a jittered interval between status polls, returning the number of seconds slept."""
-    delay = random.uniform(*config.poll_interval)
+    delay = min(random.uniform(*config.poll_interval), _remaining_time(deadline))
     time.sleep(delay)
     return delay
 
@@ -289,35 +309,37 @@ def _run_batch(sequences: list[str], tar_path: Path, config: MSAServerConfig) ->
     Raises:
         RuntimeError: If the server reports an error, is under maintenance, or the job never completes.
     """
+    deadline = time.monotonic() + config.job_timeout
     mode = _select_mode(config)
-    submit = functools.partial(_submit, sequences, mode, config)
+    submit = functools.partial(_submit, sequences, mode, config, deadline)
 
     with tqdm(
         desc=f"MMseqs2 server ({len(sequences)} sequences)", unit="s", bar_format="{l_bar}{bar}| {n:.0f}s"
     ) as bar:
         for resubmission in range(1, config.max_retries + 1):
-            result = _with_retries(submit, config, "submitting sequences to the MSA server")
+            result = _with_retries(submit, config, "submitting sequences to the MSA server", deadline)
             while result.get("status") in _RESUBMIT_STATUSES:
-                _sleep_between_polls(config)
-                result = _with_retries(submit, config, "submitting sequences to the MSA server")
+                _sleep_between_polls(config, deadline)
+                result = _with_retries(submit, config, "submitting sequences to the MSA server", deadline)
             _raise_on_error_status(result)
 
             ticket_id = result.get("id")
             if not ticket_id:
                 raise RuntimeError(f"MSA server accepted the job but returned no ticket id: {result!r}")
-            poll = functools.partial(_status, ticket_id, config)
+            poll = functools.partial(_status, ticket_id, config, deadline)
 
             while result.get("status") in _PENDING_STATUSES:
-                slept = _sleep_between_polls(config)
+                slept = _sleep_between_polls(config, deadline)
                 bar.update(slept)
-                result = _with_retries(poll, config, f"polling ticket {ticket_id}")
+                result = _with_retries(poll, config, f"polling ticket {ticket_id}", deadline)
 
             _raise_on_error_status(result)
             if result.get("status") == "COMPLETE":
                 _with_retries(
-                    functools.partial(_download, ticket_id, tar_path, config),
+                    functools.partial(_download, ticket_id, tar_path, config, deadline),
                     config,
                     f"downloading results for ticket {ticket_id}",
+                    deadline,
                 )
                 return
 
@@ -506,7 +528,7 @@ def _msa_dirs_to_check(output_dir: Path, existing_msa_dirs: list[PathLike] | Non
     """Resolve the directories to search for already-generated MSAs.
 
     The output directory is always checked (it is the natural cache); explicitly requested
-    directories are checked in addition, falling back to ``LOCAL_MSA_DIRS`` when none are given.
+    directories are checked in addition, falling back to ``PROTEIN_MSA_DIRS`` when none are given.
     """
     if existing_msa_dirs is None:
         existing_msa_dirs = get_msa_dirs_from_env(raise_if_not_set=False) or []
@@ -526,9 +548,7 @@ def make_msas_mmseqs_server(
 ) -> None:
     """Generate MSAs from protein sequences using a remote MMseqs2 server.
 
-    Signature-compatible with :py:func:`~atomworks.ml.preprocessing.msa.generating.make_msas_mmseqs`
-    (the local backend), so the two are interchangeable. Output is written to the same hash-sharded,
-    compressed layout.
+    Output uses the same hash-sharded, compressed layout as local generation.
 
     Args:
         sequences: A single protein sequence string or list of protein sequences.
@@ -541,7 +561,7 @@ def make_msas_mmseqs_server(
             remote-backend user may not have installed.
         check_existing: Whether to skip sequences that already have an MSA.
         existing_msa_dirs: Additional directories to check for existing MSAs. The output directory is
-            always checked. If None, falls back to the LOCAL_MSA_DIRS env var (when set).
+            always checked. If None, falls back to the PROTEIN_MSA_DIRS env var (when set).
 
     Examples:
         .. code-block:: python
@@ -566,8 +586,6 @@ def make_msas_mmseqs_server(
         sequences, _ = find_msas(
             sequences,
             msa_dirs=_msa_dirs_to_check(output_path, existing_msa_dirs),
-            shard_depths=[0, 1, 2, 3, 4],
-            extensions=[MSAFileExtension.A3M, MSAFileExtension.A3M_GZ, MSAFileExtension.A3M_ZST],
         )
         if not sequences:
             logger.info("All sequences already have MSAs, skipping generation")

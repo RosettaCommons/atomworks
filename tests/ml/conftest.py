@@ -5,17 +5,12 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
-from dotenv import load_dotenv
 
 from atomworks.constants import AF3_EXCLUDED_LIGANDS_REGEX, PDB_MIRROR_PATH, _load_env_var
 from atomworks.io.parser import STANDARD_PARSER_ARGS
 from atomworks.io.tools.inference import SequenceComponent
 from atomworks.ml.datasets import ConcatDatasetWithID, PandasDataset
-from atomworks.ml.datasets.loaders import (
-    create_base_loader,
-    create_loader_with_interfaces_and_pn_units_to_score,
-    create_loader_with_query_pn_units,
-)
+from atomworks.ml.datasets.loaders import create_structure_loader
 from atomworks.ml.pipelines.af3 import build_af3_transform_pipeline
 from atomworks.ml.pipelines.rf2aa import build_rf2aa_transform_pipeline
 from atomworks.ml.preprocessing.constants import TRAINING_SUPPORTED_CHAIN_TYPES_INTS
@@ -29,15 +24,6 @@ from tests.conftest import TEST_DATA_DIR
 
 
 def pytest_configure(config):
-    # Get the directory where conftest.py is located
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-
-    # Construct path to .env file in the parent directory
-    dotenv_path = os.path.join(current_dir, "../..", ".env")
-
-    # Load the environment variables
-    load_dotenv(dotenv_path, override=True)
-
     # We require a PDB mirror (of at least a subset of the PDB) for the AtomWorks.ml tests
     pdb_mirror_path = os.environ.get("PDB_MIRROR_PATH")
     if not pdb_mirror_path:
@@ -176,7 +162,10 @@ def rf2aa_pn_units_dataset(pn_units_df):
         data=pn_units_df,
         name="rf2aa_pn_units",
         id_column="example_id",
-        loader=create_loader_with_query_pn_units(pn_unit_iid_colnames=["q_pn_unit_iid"], base_path=PDB_MIRROR_PATH),
+        loader=create_structure_loader(
+            base_path=PDB_MIRROR_PATH,
+            column_mapping={"query_pn_unit_iids": ["q_pn_unit_iid"]},
+        ),
         transform=build_rf2aa_transform_pipeline(
             protein_msa_dirs=PROTEIN_MSA_DIRS,
             rna_msa_dirs=RNA_MSA_DIRS,
@@ -200,8 +189,9 @@ def rf2aa_interfaces_dataset(interfaces_df):
         data=interfaces_df,
         name="rf2aa_interfaces",
         id_column="example_id",
-        loader=create_loader_with_query_pn_units(
-            pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"], base_path=PDB_MIRROR_PATH
+        loader=create_structure_loader(
+            base_path=PDB_MIRROR_PATH,
+            column_mapping={"query_pn_unit_iids": ["pn_unit_1_iid", "pn_unit_2_iid"]},
         ),
         transform=build_rf2aa_transform_pipeline(
             protein_msa_dirs=PROTEIN_MSA_DIRS,
@@ -231,11 +221,15 @@ def rf2aa_validation_dataset(af3_validation_df):
     return PandasDataset(
         data=af3_validation_df,
         name="rf2aa_validation",
-        loader=create_loader_with_interfaces_and_pn_units_to_score(
+        loader=create_structure_loader(
             path_colname="pdb_id",
             base_path=str(PDB_MIRROR_PATH),
             extension=".cif.gz",
             sharding_pattern="/1:3/",
+            column_mapping={
+                "interfaces_to_score": "interfaces_to_score",
+                "pn_units_to_score": "pn_units_to_score",
+            },
         ),
         transform=build_rf2aa_transform_pipeline(
             protein_msa_dirs=PROTEIN_MSA_DIRS,
@@ -263,7 +257,10 @@ def af3_pn_units_dataset(pn_units_df):
     return PandasDataset(
         data=pn_units_df,
         name="af3_pn_units",
-        loader=create_loader_with_query_pn_units(pn_unit_iid_colnames=["q_pn_unit_iid"], base_path=PDB_MIRROR_PATH),
+        loader=create_structure_loader(
+            base_path=PDB_MIRROR_PATH,
+            column_mapping={"query_pn_unit_iids": ["q_pn_unit_iid"]},
+        ),
         transform=build_af3_transform_pipeline(
             protein_msa_dirs=PROTEIN_MSA_DIRS,
             rna_msa_dirs=RNA_MSA_DIRS,
@@ -286,8 +283,9 @@ def af3_interfaces_dataset(interfaces_df):
     return PandasDataset(
         data=interfaces_df,
         name="af3_interfaces",
-        loader=create_loader_with_query_pn_units(
-            pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"], base_path=PDB_MIRROR_PATH
+        loader=create_structure_loader(
+            base_path=PDB_MIRROR_PATH,
+            column_mapping={"query_pn_unit_iids": ["pn_unit_1_iid", "pn_unit_2_iid"]},
         ),
         transform=build_af3_transform_pipeline(
             protein_msa_dirs=PROTEIN_MSA_DIRS,
@@ -316,11 +314,15 @@ def af3_validation_dataset(af3_validation_df):
     return PandasDataset(
         data=af3_validation_df,
         name="af3_validation",
-        loader=create_loader_with_interfaces_and_pn_units_to_score(
+        loader=create_structure_loader(
             path_colname="pdb_id",
             base_path=PDB_MIRROR_PATH,
             extension=".cif.gz",
             sharding_pattern="/1:3/",
+            column_mapping={
+                "interfaces_to_score": "interfaces_to_score",
+                "pn_units_to_score": "pn_units_to_score",
+            },
         ),
         transform=build_af3_transform_pipeline(
             protein_msa_dirs=PROTEIN_MSA_DIRS,
@@ -342,7 +344,7 @@ def af2_distillation_dataset_no_metadata(af2_distillation_df_no_metadata):
     return PandasDataset(
         data=af2_distillation_df_no_metadata,
         name="af3_af2fb_distillation_no_metadata",
-        loader=create_base_loader(
+        loader=create_structure_loader(
             base_path=str(TEST_DATA_ML / "af2_distillation" / "cif"),
             extension=".cif",
         ),
@@ -363,7 +365,7 @@ def af2_distillation_dataset_with_metadata(af2_distillation_df_with_metadata):
     return PandasDataset(
         data=af2_distillation_df_with_metadata,
         name="af3_af2fb_distillation_with_metadata",
-        loader=create_base_loader(),
+        loader=create_structure_loader(),
         transform=build_af3_transform_pipeline(
             protein_msa_dirs=PROTEIN_MSA_DIRS,
             rna_msa_dirs=[],

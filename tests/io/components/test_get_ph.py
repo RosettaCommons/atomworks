@@ -20,7 +20,6 @@ def test_get_ph(test_case: dict):
         filename=path,
         add_missing_atoms=False,
         remove_ccds=[],
-        hydrogen_policy="infer",
     )
     assert result["metadata"]["crystallization_details"]["pH"] == test_case["pH"]
 

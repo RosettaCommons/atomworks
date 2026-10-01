@@ -243,49 +243,27 @@ class AddRF2AATraversalDistanceMatrix(Transform):
         return data
 
 
-def get_bond_distances(atom_array: AtomArray) -> np.ndarray:
-    """Returns the bond distance (adjacency) list as a 1D array."""
-    coords = atom_array.coord
-    atom1_idxs, atom2_idxs, _ = atom_array.bonds.as_array().T
-    return np.linalg.norm(coords[atom1_idxs] - coords[atom2_idxs], axis=1)
-
-
-def get_bond_distance_matrix(atom_array: AtomArray) -> np.ndarray:
-    """Returns the bond adjacency matrix with bond distances as values."""
-    atom1_idxs, atom2_idxs, _ = atom_array.bonds.as_array().T
-    bond_distances = get_bond_distances(atom_array)
-    bond_distance_matrix = np.full((atom_array.array_length(), atom_array.array_length()), np.inf)
-    bond_distance_matrix[atom1_idxs, atom2_idxs] = bond_distances
-    bond_distance_matrix[atom2_idxs, atom1_idxs] = bond_distances
-    return bond_distance_matrix
-
-
-def get_af3_token_bond_features(atom_array: AtomArray, distance_cutoff: float = 2.4) -> np.ndarray:
+def get_af3_token_bond_features(atom_array: AtomArray) -> np.ndarray:
     """
     Generates AF3-style token bond features for an AtomArray.
-    For bonds between multi-atom tokens (i.e., residues), we define the "bond distance" as the minimum distance between an atom of one token and any atom of the other token.
 
     From AF3:
         Returns a 2D matrix indicating if there is a bond between any atom in
         token i and token j, restricted to just polymer-ligand and ligand-ligand
-        bonds and bonds less than 2.4 Å during training.
+        bonds.
+
+    Note:
+        Distance-based bond filtering is handled during parsing via `filter_bonds_by_distance`.
 
     Args:
         - atom_array (AtomArray): The input AtomArray containing atomic coordinates and bond information.
-        - distance_cutoff (float, optional): The maximum distance (in Angstroms) for considering a bond. Defaults to 2.4.
 
     Returns:
         - np.ndarray: A boolean matrix where True indicates a bond between tokens that meets the specified criteria.
     """
     token_start_end_idxs = get_token_starts(atom_array, add_exclusive_stop=True)
     token_starts = token_start_end_idxs[:-1]
-    token_bonds = apply_segment_wise_2d(get_bond_distance_matrix(atom_array), token_start_end_idxs, np.min)
-
-    # remove bonds above distance cutoff
-    token_bonds = token_bonds < distance_cutoff
-
-    # remove token self-bonds
-    np.fill_diagonal(token_bonds, False)
+    token_bonds = _atom_adjacency_to_token_adjacency(atom_array.bonds.adjacency_matrix(), token_start_end_idxs)
 
     # remove poly-poly bonds
     is_poly_poly_bond = np.outer(~atom_array.atomize[token_starts], ~atom_array.atomize[token_starts])
@@ -298,33 +276,31 @@ class AddAF3TokenBondFeatures(Transform):
     Transform that generates AF3-style token bond features for an AtomArray.
 
     This transform creates a 2D matrix indicating if there is a bond between any atom in
-    token i and token j, restricted to just polymer-ligand and ligand-ligand bonds and
-    bonds less than a specified distance cutoff.
+    token i and token j, restricted to just polymer-ligand and ligand-ligand bonds.
 
-    Args:
-        - distance_cutoff (float, optional): The maximum distance (in Angstroms) for considering a bond.
-            Defaults to 2.4.
-
-    Returns:
-        - dict: A dictionary containing the input data and the new 'af3_token_bond_features' key with
-            the computed boolean matrix.
+    Note:
+        Distance-based bond filtering is handled during parsing via `filter_bonds_by_distance`.
+        The `distance_cutoff` argument has been removed - if you were using it, the filtering
+        now happens automatically in parse.
     """
 
     requires_previous_transforms: ClassVar[list[str | Transform]] = ["AtomizeByCCDName"]
 
-    def __init__(self, distance_cutoff: float = 2.4):
-        self.distance_cutoff = distance_cutoff
+    def __init__(self, **kwargs):
+        if "distance_cutoff" in kwargs:
+            raise DeprecationWarning(
+                "The `distance_cutoff` argument has been removed from AddAF3TokenBondFeatures. "
+                "Distance-based bond filtering is now handled during parsing via `filter_bonds_by_distance`. "
+                "Please remove this argument from your code."
+            )
 
     def check_input(self, data: dict) -> None:
-        check_contains_keys(data, ["atom_array"])
-        check_is_instance(data, "atom_array", AtomArray)
-        check_nonzero_length(data, "atom_array")
         check_atom_array_has_bonds(data)
         check_atom_array_annotation(data, ["is_polymer", "atomize"])
 
     def forward(self, data: dict) -> dict:
         atom_array = data["atom_array"]
-        af3_token_bond_features = get_af3_token_bond_features(atom_array, self.distance_cutoff)
+        af3_token_bond_features = get_af3_token_bond_features(atom_array)
 
         if "feats" not in data:
             data["feats"] = {}

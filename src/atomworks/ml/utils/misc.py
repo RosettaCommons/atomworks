@@ -78,19 +78,14 @@ def cumcount(a: np.ndarray) -> np.ndarray:
     return (np.arange(n) - dfill(b))[i]
 
 
-def hash_sequence(sequence: str) -> str:
-    """
-    Generate a SHA-256 hash for the given sequence and return a compressed string format of the hash.
+def hash_sequence(sequence: str, length: int | None = 11) -> str:
+    """SHA-256 hex digest of ``sequence``, truncated to ``length`` chars (``None`` = full 64-char digest).
 
-    Args:
-        sequence (str): The sequence to be hashed.
-
-    Returns:
-        str: The compressed hash string format.
+    The default 11 is the legacy hashed-file-directory key; the packed MSA store passes a longer prefix
+    (``MSA_KEY_LEN``, collision-safe at scale). Same hash everywhere — only the truncation differs.
     """
-    sha256_hash = hashlib.sha256(sequence.encode()).hexdigest()
-    compressed_name = sha256_hash[:11]  # Using first 11 characters for simplicity
-    return compressed_name
+    digest = hashlib.sha256(sequence.encode()).hexdigest()
+    return digest if length is None else digest[:length]
 
 
 @lru_cache(maxsize=1)

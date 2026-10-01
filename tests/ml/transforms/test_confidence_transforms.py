@@ -21,7 +21,7 @@ from atomworks.ml.transforms.base import (
     Compose,
     ConvertToTorch,
 )
-from atomworks.ml.transforms.covalent_modifications import FlagAndReassignCovalentModifications
+from atomworks.ml.transforms.covalent_modifications import AnnotateCovalentModifications
 from atomworks.ml.transforms.encoding import EncodeAF3TokenLevelFeatures, EncodeAtomArray
 from atomworks.ml.transforms.filters import RemoveHydrogens, RemoveNucleicAcidTerminalOxygen, RemoveTerminalOxygen
 from atomworks.ml.utils.testing import cached_parse
@@ -69,7 +69,7 @@ def test_add_is_real_atom(test_case: dict[str, Any]):
         [
             # Base pipeline
             RemoveHydrogens(),
-            FlagAndReassignCovalentModifications(),
+            AnnotateCovalentModifications(),
             AddGlobalAtomIdAnnotation(),
             AtomizeByCCDName(
                 atomize_by_default=True,
@@ -124,7 +124,7 @@ def test_add_frame_indices(test_case: dict[str, Any]):
         [
             # Base pipeline
             RemoveHydrogens(),
-            FlagAndReassignCovalentModifications(),
+            AnnotateCovalentModifications(),
             AddGlobalAtomIdAnnotation(),
             AtomizeByCCDName(
                 atomize_by_default=True,

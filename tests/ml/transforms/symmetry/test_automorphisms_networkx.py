@@ -1,3 +1,5 @@
+from unittest.mock import Mock
+
 import biotite.structure as struc
 import numpy as np
 import pytest
@@ -7,6 +9,7 @@ from atomworks.ml.encoding_definitions import AF3_TOKENS
 from atomworks.ml.transforms.atomize import AtomizeByCCDName
 from atomworks.ml.transforms.symmetry import (
     FindAutomorphismsWithNetworkX,
+    count_heavy_neighbors,
     find_automorphisms_with_networkx,
     generate_automorphisms_from_atom_array_with_networkx,
 )
@@ -40,6 +43,16 @@ def test_find_automorphisms_from_atom_array_with_networkx(test_case: dict):
     automorphisms = generate_automorphisms_from_atom_array_with_networkx(residue_atom_array)
 
     assert len(automorphisms) == test_case["expected_automorphisms"], f"Failed for CCD code: {test_case['ccd_code']}"
+    factory = Mock(return_value=residue_atom_array)
+    options = {"hash_key": object(), "normalize_bond_orders": True, "max_automorphs": 1000}
+    for _ in range(2):
+        np.testing.assert_array_equal(
+            generate_automorphisms_from_atom_array_with_networkx(factory, **options), automorphisms, strict=True
+        )
+    assert factory.call_count == 1
+    limited = generate_automorphisms_from_atom_array_with_networkx(factory, **(options | {"max_automorphs": 1}))
+    assert factory.call_count == 2
+    np.testing.assert_array_equal(limited, generate_automorphisms_from_atom_array_with_networkx(residue_atom_array, 1))
 
 
 def test_manual_generate_automorphs_with_networkx():
@@ -79,7 +92,7 @@ def array_in_list(array: np.ndarray, list_of_arrays: list[np.ndarray] | np.ndarr
     return any(np.array_equal(array, item) for item in list_of_arrays)
 
 
-TEST_PDB_IDS = ["4js1", "6gej", "6wtf"]
+TEST_PDB_IDS = ["4js1", "6gej", "6wtf", "2jof"]
 
 
 @pytest.mark.parametrize("pdb_id", TEST_PDB_IDS)
@@ -100,6 +113,11 @@ def test_find_automorphisms_within_entire_structure(pdb_id: str):
     automorphisms = find_automorphisms_transform(output)["automorphisms"]
 
     atom_array = output["atom_array"]
+    repeated = find_automorphisms_with_networkx(atom_array)
+    assert len(repeated) == len(automorphisms)
+    for actual, expected in zip(repeated, automorphisms, strict=True):
+        np.testing.assert_array_equal(actual, expected, strict=True)
+    n_heavy_neighbors = count_heavy_neighbors(atom_array)
     for automorphism in automorphisms:
         # ...get the identity
         residue = atom_array[automorphism[0]]
@@ -108,6 +126,8 @@ def test_find_automorphisms_within_entire_structure(pdb_id: str):
         # skip of "OXT" is present in the residue (it's a terminal residue, and will have a different number of automorphisms)
         if "OXT" in residue.atom_name:
             continue
+
+        residue.set_annotation("n_heavy_neighbors", n_heavy_neighbors[automorphism[0]])
 
         # ...if it's a glycine, there should be no automorphisms
         if residue_name == "GLY":
@@ -132,8 +152,16 @@ def test_find_automorphisms_within_entire_structure(pdb_id: str):
         if residue_name == "ILE":
             assert len(automorphism) == 1, "Isoleucine should have no automorphisms."
 
-        # ...calculate automorphisms
-        local_automorphisms = generate_automorphisms_from_atom_array_with_networkx(residue)
+        # ... backbone atoms only look swappable once the peptide bonds are severed
+        moved_atom_names = residue.atom_name[get_indices_of_non_constant_columns(automorphism)]
+        assert not (
+            set(moved_atom_names) & {"N", "CA", "C", "O"}
+        ), f"{residue_name} automorphism permutes backbone atoms {moved_atom_names}."
+
+        # ... calculate automorphisms (colored as in `find_automorphisms_with_networkx`)
+        local_automorphisms = generate_automorphisms_from_atom_array_with_networkx(
+            residue, node_features=["element", "n_heavy_neighbors"]
+        )
 
         assert len(local_automorphisms) == len(
             automorphism

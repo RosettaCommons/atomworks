@@ -17,7 +17,7 @@ from atomworks.ml.transforms.chirals import (
     get_dih,
     get_rf2aa_chiral_features,
 )
-from atomworks.ml.transforms.covalent_modifications import FlagAndReassignCovalentModifications
+from atomworks.ml.transforms.covalent_modifications import AnnotateCovalentModifications
 from atomworks.ml.transforms.crop import CropSpatialLikeAF3
 from atomworks.ml.transforms.filters import RemoveHydrogens
 from atomworks.ml.transforms.openbabel_utils import (
@@ -217,7 +217,7 @@ def test_chiral_featurization_with_covalent_modification(test_case: dict):
         [
             AddGlobalAtomIdAnnotation(),
             RemoveHydrogens(),
-            FlagAndReassignCovalentModifications(),
+            AnnotateCovalentModifications(),
             AtomizeByCCDName(atomize_by_default=True, res_names_to_ignore=RF2AA_ATOM36_ENCODING.tokens),
             AddOpenBabelMoleculesForAtomizedMolecules(),
             GetChiralCentersFromOpenBabel(),
@@ -248,7 +248,7 @@ def test_chiral_featurize_after_cropping():
     pipe = Compose(
         [
             AddGlobalAtomIdAnnotation(),
-            FlagAndReassignCovalentModifications(),
+            AnnotateCovalentModifications(),
             AtomizeByCCDName(atomize_by_default=True, res_names_to_ignore=RF2AA_ATOM36_ENCODING.tokens),
             AddOpenBabelMoleculesForAtomizedMolecules(),
             CropSpatialLikeAF3(crop_size=128),

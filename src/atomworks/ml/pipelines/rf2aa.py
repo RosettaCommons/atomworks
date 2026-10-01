@@ -34,7 +34,7 @@ from atomworks.ml.transforms.bonds import (
     AddTokenBondAdjacency,
 )
 from atomworks.ml.transforms.chirals import AddRF2AAChiralFeatures
-from atomworks.ml.transforms.covalent_modifications import FlagAndReassignCovalentModifications
+from atomworks.ml.transforms.covalent_modifications import AnnotateCovalentModifications
 from atomworks.ml.transforms.crop import CropContiguousLikeAF3, CropSpatialLikeAF3
 from atomworks.ml.transforms.encoding import EncodeAtomArray, atom_array_from_encoding
 from atomworks.ml.transforms.feature_aggregation.rf2aa import AggregateFeaturesLikeRF2AA
@@ -322,7 +322,7 @@ def build_rf2aa_transform_pipeline(
         # ...sample residues to atomize (in RF2AA, with some probability, we atomize protein residues randomly)
         # TODO: SampleResiduesToAtomize
         # ...handle covalent modifications by atomizing and attaching the bonded residue to the non-polymer
-        FlagAndReassignCovalentModifications(),
+        AnnotateCovalentModifications(),
         # ...flag non-polymers for atomization (in case there are polymer tokens outside of a polymer)
         FlagNonPolymersForAtomization(),
         # ...atomize
