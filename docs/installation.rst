@@ -55,19 +55,6 @@ To install in a fresh environment:
    make env
 
 
-Security constraints for new environments
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-From a checkout, you can apply optional security constraints when installing::
-
-   uv pip install -c constraints/security.txt ".[ml,ase,dev,docs]"
-
-Select only the extras you need. Constraints restrict versions without installing
-unrequested extras. They select a newer Torch for new ML environments; the
-library's broader Torch range is unchanged. Check model and CUDA compatibility
-before upgrading an existing environment. See ``constraints/README.md`` for the
-audit scope and commands.
-
 3. Running the Test Suite
 -------------------------
 
