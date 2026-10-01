@@ -15,12 +15,12 @@ Accepts common structure input formats (mmCIF, PDB, mmjson and BCIF/BinaryCIF), 
 
 See :doc:`the Parser tutorial page <tutorial/parser>` for details on parameters and output. You can also find the API docs for the ``parse`` function :func:`here <atomworks.io.parser.parse>`. The example below shows how to set a few common options with ``ParseConfig`` (their defaults are shown)::
 
-    from atomworks.io import parse
-    from atomworks.io.config import ParseConfig
+    import atomworks.io
+    import atomworks.io.config
 
-    result_dict = parse(
+    result_dict = atomworks.io.parse(
         filename,
-        config=ParseConfig(add_missing_atoms=True, remove_waters=True, hydrogen_policy="keep"),
+        config=atomworks.io.config.ParseConfig(add_missing_atoms=True, remove_waters=True, hydrogen_policy="keep"),
     )
 
     # Extract relevant AtomArray:
@@ -34,7 +34,9 @@ For previously processed structures (e.g. those which have already passed throug
 an AtomWorks preparation pipeline), use the ``minimal`` parser preset. This keeps
 waters and loads the structure without adding missing atoms::
 
-    atom_array = parse(filename, config="minimal")["asym_unit"][0]
+    import atomworks.io
+
+    atom_array = atomworks.io.parse(filename, config="minimal")["asym_unit"][0]
 
 Database Input
 ~~~~~~~~~~~~~~
@@ -82,22 +84,25 @@ mmCIF output
 
 :func:`~atomworks.io.utils.io_utils.to_cif_file` supports `.cif`, `.cif.gz` and `.bcif` outputs::
 
-    from atomworks.io.utils.io_utils import CIFWriteConfig, to_cif_buffer, to_cif_file
+    import atomworks.io.utils.io_utils
 
-    to_cif_file(atom_array, filename, chain_disambiguation="chain_iid")
+    atomworks.io.utils.io_utils.to_cif_file(atom_array, filename, chain_disambiguation="chain_iid")
 
 You can also write a CIF to an in-memory buffer and read it back into AtomWorks.
 The example below keeps track of the different copies of a chain in a biological
 assembly using ``transformation_id``::
 
-    buffer = to_cif_buffer(
+    import atomworks.io
+    import atomworks.io.utils.io_utils
+
+    buffer = atomworks.io.utils.io_utils.to_cif_buffer(
         atom_array,
-        config=CIFWriteConfig(
+        config=atomworks.io.utils.io_utils.CIFWriteConfig(
             include_entity_categories=True,
             chain_disambiguation="transformation_id",
         ),
     )
-    restored = parse(buffer, config="minimal")["asym_unit"][0]
+    restored = atomworks.io.parse(buffer, config="minimal")["asym_unit"][0]
 
 If you plan to open the CIF in another program, use ``chain_disambiguation="chain_iid"``
 to give each chain copy a unique name. The ``transformation_id`` option keeps the
@@ -111,9 +116,10 @@ Legacy PDB output
 
 While the use of :func:`~atomworks.io.utils.io_utils.to_pdb_string` is possible for creating legacy PDB files, use of mmCIF instead is recommended::
 
-    import numpy as np
+    import atomworks.io.utils.io_utils
+    import numpy
 
-    resolved = atom_array[np.isfinite(atom_array.coord).all(axis=-1)]
+    resolved = atom_array[numpy.isfinite(atom_array.coord).all(axis=-1)]
     with open(filename, "w") as f:
         f.write(atomworks.io.utils.io_utils.to_pdb_string(resolved))
 
