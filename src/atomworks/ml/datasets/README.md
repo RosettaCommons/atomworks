@@ -27,7 +27,7 @@ dataset = FileDataset.from_directory(
 
 ```python
 from atomworks.ml.datasets import PandasDataset
-from atomworks.ml.datasets.loaders import create_loader_with_query_pn_units
+from atomworks.ml.datasets.loaders import create_structure_loader
 from atomworks.ml.transforms.base import Compose
 from atomworks.ml.transforms.crop import CropSpatialLikeAF3
 
@@ -35,8 +35,8 @@ from atomworks.ml.transforms.crop import CropSpatialLikeAF3
 dataset = PandasDataset(
     data="path/to/metadata.parquet",
     name="interfaces",
-    loader=create_loader_with_query_pn_units(
-        pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"]
+    loader=create_structure_loader(
+        column_mapping={"query_pn_unit_iids": ["pn_unit_1_iid", "pn_unit_2_iid"]}
     ),
     transform=Compose([
         CropSpatialLikeAF3(crop_size=384),
@@ -45,36 +45,24 @@ dataset = PandasDataset(
 )
 ```
 
-### ASE LMDB Dataset
+## Core Concepts
+
+### MetadataIndex
+
+`MetadataIndex` is a shared component that handles parquet/DataFrame loading, filtering, and ID-mapping for all dataset backends. Every dataset that uses tabular metadata delegates to a `MetadataIndex` instance, ensuring consistent filtering and ID lookup behavior.
 
 ```python
-from atomworks.ml.datasets import ASELMDBDataset
-from atomworks.ml.datasets.loaders import create_ase_atoms_loader, create_ase_materials_loader
+from atomworks.ml.datasets import MetadataIndex
 
-# OMol25/OMat24-style datasets are ASE DB-compatible LMDB files (*.aselmdb).
-dataset = ASELMDBDataset.from_directory(
-    directory="/path/to/omol25/train",
-    name="omol25_train",
-    loader=create_ase_atoms_loader(),  # Optional: adds an AtomArray for AtomWorks transforms
+index = MetadataIndex(
+    data="metadata.parquet",
+    name="my_dataset",
+    id_column="example_id",
+    filters=["resolution < 2.5"],
 )
-
-example = dataset[0]
-atoms = example["atoms"]          # ASE Atoms object with flattened atoms.info metadata
-atom_array = example["atom_array"]  # Biotite AtomArray created by the loader
-
-materials_dataset = ASELMDBDataset.from_directory(
-    directory="/path/to/omat24/rattled-300-subsampled",
-    name="omat24_rattled",
-    loader=create_ase_materials_loader(),
-)
-material = materials_dataset[0]
-fractional_coordinates = material["fractional_coordinates"]
-lattice_lengths = material["lattice_lengths"]
-lattice_angles = material["lattice_angles"]
-space_group = material["space_group"]
+print(len(index))              # Number of filtered examples
+print(index.get_example_id(0)) # First example's ID
 ```
-
-## Core Concepts
 
 ### The Three-Step Pipeline
 
@@ -133,7 +121,7 @@ dataset = FileDataset.from_directory(
 
 #### `PandasDataset`
 
-For tabular datasets stored as DataFrames or Parquet/CSV files.
+For tabular datasets stored as DataFrames or Parquet/CSV files. Delegates all metadata, filtering, and ID logic to a `MetadataIndex` internally.
 
 ```python
 dataset = PandasDataset(
@@ -154,29 +142,24 @@ dataset = PandasDataset(
 
 **ID-Based Access:** Set an `id_column` to enable `dataset.id_to_idx()` and `idx_to_id()` methods.
 
-#### `ASELMDBDataset`
+#### `AseDBDataset`
 
-For ASE DB-compatible LMDB shards, including FAIR Chemistry datasets such as OMol25, OMat24, and OPoly26.
+For molecular structures stored in ASE LMDB databases. Requires a metadata parquet file mapping example IDs to LMDB indices.
 
 ```python
-dataset = ASELMDBDataset(
-    paths="/data/omol25/train",  # Directory scanned recursively for *.aselmdb files
-    name="omol25_train",
-    return_type="record",        # "record" (default), "atoms", or "row"
-    readonly=True,
-    readahead=False,
+from atomworks.ml.datasets.ase_dataset import AseDBDataset
+from atomworks.ml.datasets.loaders.ase import create_ase_loader
+
+dataset = AseDBDataset(
+    lmdb_path="/data/omol25/",
+    name="omol25",
+    data="omol25_metadata.parquet",
+    id_column="example_id",
+    lmdb_idx_column="lmdb_idx",
+    filters=["num_atoms < 200"],
+    loader=create_ase_loader(per_atom_properties=["forces"]),
 )
 ```
-
-**Record output:** The default output is a dictionary containing `atoms` (ASE `Atoms`), `key_value_pairs`, `data`, `calculator_results`, and `extra_info`.
-
-**AtomArray loading:** Use `create_ase_atoms_loader()` when ASE molecule records need to flow through AtomWorks transform pipelines.
-
-**ID Mapping:** By default, IDs are generated as `<shard_id>:<ase_row_id>` for fast reversible lookup. To use an OMol/OPoly metadata field such as `sid`, pass `example_id_key="sid"` and `build_id_index=True`.
-
-**Materials loading:** Use `create_ase_materials_loader()` for periodic materials datasets. It adds `fractional_coordinates`, `lattice_vectors`, `lattice_lengths`, `lattice_angles`, `cell_parameters`, `space_group`, and `parent_space_group`.
-
-**Optional dependencies:** Install with `atomworks[ase]` to enable ASE LMDB support.
 
 ### Loader Functions
 
@@ -187,10 +170,10 @@ Loaders are functions that convert dataset-specific raw data into a standard for
 Use loader factory functions to create loaders with common patterns:
 
 ```python
-from atomworks.ml.datasets.loaders import create_base_loader, create_loader_with_query_pn_units
+from atomworks.ml.datasets.loaders import create_structure_loader
 
 # Basic loader for simple datasets
-loader = create_base_loader(
+loader = create_structure_loader(
     example_id_colname="example_id",
     path_colname="structure_path",
     assembly_id_colname="assembly_id",
@@ -201,8 +184,8 @@ loader = create_base_loader(
 )
 
 # Loader with query pn_units (for cropping)
-loader = create_loader_with_query_pn_units(
-    pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"],  # For interfaces
+loader = create_structure_loader(
+    column_mapping={"query_pn_unit_iids": ["pn_unit_1_iid", "pn_unit_2_iid"]},
     base_path="/data/pdb",
     extension=".cif.gz"
 )

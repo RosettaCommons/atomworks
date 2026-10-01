@@ -1,3 +1,4 @@
+import numpy as np
 import pytest
 import torch
 
@@ -126,3 +127,25 @@ def test_get_random_rots_and_rigids(device):
     assert r_single.shape == (3, 3)
     assert t_single.shape == (3,)
     assert torch.allclose(torch.det(r_single), torch.tensor(1.0, device=device), atol=1e-6)
+
+
+@pytest.mark.parametrize("mode", ["numpy", "torch"])
+def test_get_random_rots_is_uniform(mode, device):
+    batch_size = 8192
+    numpy_state = np.random.get_state()
+    try:
+        np.random.seed(42)
+        with torch.random.fork_rng(devices=[device] if device.type == "cuda" else []):
+            torch.manual_seed(42)
+            rotations = get_random_rots(batch_size, mode=mode, device=device)
+    finally:
+        np.random.set_state(numpy_state)
+
+    if isinstance(rotations, torch.Tensor):
+        rotations = rotations.cpu().numpy()
+
+    identity = np.broadcast_to(np.eye(3), rotations.shape)
+    np.testing.assert_allclose(rotations @ rotations.transpose(0, 2, 1), identity, atol=1e-6)
+    np.testing.assert_allclose(np.linalg.det(rotations), 1.0, atol=1e-6)
+    np.testing.assert_allclose(rotations.mean(axis=0), 0.0, atol=0.03)
+    np.testing.assert_allclose((rotations**2).mean(axis=0), 1.0 / 3.0, atol=0.03)

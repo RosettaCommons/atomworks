@@ -4,7 +4,7 @@ import pytest
 
 from atomworks.constants import STANDARD_AA, STANDARD_DNA, STANDARD_RNA
 from atomworks.io.utils.sequence import STANDARD_PURINE_RESIDUES, STANDARD_PYRIMIDINE_RESIDUES
-from atomworks.io.utils.testing import assert_same_atom_array
+from atomworks.io.utils.testing import assert_same_atom_array_or_stack
 from atomworks.ml.encoding_definitions import RF2AA_ATOM36_ENCODING
 from atomworks.ml.transforms.atom_array import (
     AddGlobalAtomIdAnnotation,
@@ -16,6 +16,7 @@ from atomworks.ml.transforms.base import Compose
 from atomworks.ml.utils.testing import cached_parse
 from atomworks.ml.utils.token import (
     apply_segment_wise_2d,
+    apply_token_wise,
     get_af3_token_center_masks,
     get_af3_token_representative_masks,
     get_token_count,
@@ -25,7 +26,9 @@ from atomworks.ml.utils.token import (
 
 
 @pytest.mark.parametrize("pdb_id", ["6lyz", "5ocm"])
-def test_tokens_are_residues_without_atomization(pdb_id: str):
+@pytest.mark.parametrize("function", [np.any, np.all, np.min, np.max, np.sum])
+@pytest.mark.parametrize("dtype", [bool, np.int32, np.float32])
+def test_tokens_are_residues_without_atomization(pdb_id: str, function, dtype):
     data = cached_parse(pdb_id)
     atom_array = data["atom_array"]
 
@@ -36,7 +39,11 @@ def test_tokens_are_residues_without_atomization(pdb_id: str):
         == struc.get_residue_starts(atom_array, add_exclusive_stop=True)
     )
     for res_1, res_2 in zip(struc.residue_iter(atom_array), token_iter(atom_array), strict=False):
-        assert_same_atom_array(res_1, res_2)
+        assert_same_atom_array_or_stack(res_1, res_2)
+    values = (atom_array.element == "C").astype(dtype)
+    for axis in (None, 0, -1):
+        expected = struc.apply_residue_wise(atom_array, values, function, axis=axis)
+        np.testing.assert_array_equal(apply_token_wise(atom_array, values, function, axis=axis), expected, strict=True)
 
 
 @pytest.mark.parametrize("pdb_id", ["6lyz", "5ocm"])
@@ -47,6 +54,9 @@ def test_tokens_are_atoms_with_full_atomization(pdb_id: str):
     assert get_token_count(atom_array) == len(atom_array)
     assert np.all(get_token_starts(atom_array) == np.arange(len(atom_array)))
     assert np.all(get_token_starts(atom_array, add_exclusive_stop=True) == np.arange(len(atom_array) + 1))
+    for function in (np.any, np.all, np.min, np.max):
+        values = atom_array.element == "C"
+        np.testing.assert_array_equal(apply_token_wise(atom_array, values, function), values, strict=True)
 
 
 def test_apply_segment_wise_2d():
@@ -55,6 +65,11 @@ def test_apply_segment_wise_2d():
     assert np.all(
         apply_segment_wise_2d(array, segment_start_end_idxs, reduce_func=np.sum) == np.array([[12, 9], [15, 9]])
     )
+    for starts in (segment_start_end_idxs, np.array([0, 0, 3]), np.array([1, 3]), np.array([0])):
+        for values in (array > 4, array[:, 0] > 4):
+            expected = struc.segments.apply_segment_wise(starts, values, np.any, axis=0)
+            actual = apply_token_wise(None, values, np.any, axis=0, token_starts=starts)
+            np.testing.assert_array_equal(actual, expected, strict=True)
 
 
 @pytest.mark.parametrize("pdb_id", ["6lyz", "5ocm"])

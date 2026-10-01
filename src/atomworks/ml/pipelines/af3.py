@@ -13,6 +13,7 @@ from atomworks.ml.transforms.atom_array import (
     AddGlobalAtomIdAnnotation,
     AddGlobalTokenIdAnnotation,
     AddWithinChainInstanceResIdx,
+    AddWithinChainSourceResIdx,
     AddWithinPolyResIdxAnnotation,
     ComputeAtomToTokenMap,
     CopyAnnotation,
@@ -38,7 +39,7 @@ from atomworks.ml.transforms.bonds import AddAF3TokenBondFeatures
 from atomworks.ml.transforms.center_random_augmentation import CenterRandomAugmentation
 from atomworks.ml.transforms.chirals import AddAF3ChiralFeatures
 from atomworks.ml.transforms.covalent_modifications import (
-    FlagAndReassignCovalentModifications,
+    AnnotateCovalentModifications,
 )
 from atomworks.ml.transforms.crop import CropContiguousLikeAF3, CropSpatialLikeAF3
 from atomworks.ml.transforms.diffusion.batch_structures import (
@@ -207,7 +208,7 @@ def build_af3_transform_pipeline(
                 False: PadDNA(p_skip=pad_dna_p_skip) if pad_dna_p_skip > 0 else Identity(),
             },
         ),
-        FlagAndReassignCovalentModifications(),
+        AnnotateCovalentModifications(),
         FlagNonPolymersForAtomization(),
         AddGlobalAtomIdAnnotation(allow_overwrite=True),
         AtomizeByCCDName(
@@ -219,6 +220,7 @@ def build_af3_transform_pipeline(
         RemoveNucleicAcidTerminalOxygen(),
         AddWithinChainInstanceResIdx(),
         AddWithinPolyResIdxAnnotation(),
+        AddWithinChainSourceResIdx(),
     ]
 
     # Crop

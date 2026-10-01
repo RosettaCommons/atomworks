@@ -61,44 +61,15 @@ Basic Usage Examples
 .. code-block:: python
 
    from atomworks.ml.datasets import PandasDataset
-   from atomworks.ml.datasets.loaders import create_loader_with_query_pn_units
+   from atomworks.ml.datasets.loaders import create_structure_loader
 
    dataset = PandasDataset(
        data="metadata.parquet",
        name="interfaces_dataset",
-       loader=create_loader_with_query_pn_units(
-           pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"]
+       loader=create_structure_loader(
+           column_mapping={"query_pn_unit_iids": ["pn_unit_1_iid", "pn_unit_2_iid"]}
        )
    )
-
-**ASE LMDB datasets** (for OMol25/OMat24/OPoly26-style ``*.aselmdb`` shards):
-
-.. code-block:: python
-
-   from atomworks.ml.datasets import ASELMDBDataset
-   from atomworks.ml.datasets.loaders import create_ase_atoms_loader, create_ase_materials_loader
-
-   dataset = ASELMDBDataset.from_directory(
-       directory="/path/to/omol25/train",
-       name="omol25_train",
-       loader=create_ase_atoms_loader(),
-   )
-
-   example = dataset[0]
-   atoms = example["atoms"]            # ASE Atoms
-   atom_array = example["atom_array"]  # Biotite AtomArray
-
-   materials_dataset = ASELMDBDataset.from_directory(
-       directory="/path/to/omat24/rattled-300-subsampled",
-       name="omat24_rattled",
-       loader=create_ase_materials_loader(),
-   )
-
-   material = materials_dataset[0]
-   fractional_coordinates = material["fractional_coordinates"]
-   lattice_lengths = material["lattice_lengths"]
-   lattice_angles = material["lattice_angles"]
-   space_group = material["space_group"]
 
 **Custom loaders** for specialized use cases:
 
@@ -136,9 +107,9 @@ Common Loader Patterns
 
 .. code-block:: python
 
-   from atomworks.ml.datasets.loaders import create_base_loader
+   from atomworks.ml.datasets.loaders import create_structure_loader
 
-   loader = create_base_loader(
+   loader = create_structure_loader(
        example_id_colname="example_id",
        path_colname="path",
        assembly_id_colname="assembly_id",
@@ -150,10 +121,10 @@ Common Loader Patterns
 
 .. code-block:: python
 
-   from atomworks.ml.datasets.loaders import create_loader_with_query_pn_units
+   from atomworks.ml.datasets.loaders import create_structure_loader
 
-   loader = create_loader_with_query_pn_units(
-       pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"],
+   loader = create_structure_loader(
+       column_mapping={"query_pn_unit_iids": ["pn_unit_1_iid", "pn_unit_2_iid"]},
        base_path="/data/pdb",
        extension=".cif.gz"
    )
@@ -162,11 +133,13 @@ Common Loader Patterns
 
 .. code-block:: python
 
-   from atomworks.ml.datasets.loaders import create_loader_with_interfaces_and_pn_units_to_score
+   from atomworks.ml.datasets.loaders import create_structure_loader
 
-   loader = create_loader_with_interfaces_and_pn_units_to_score(
-       interfaces_to_score_colname="interfaces_to_score",
-       pn_units_to_score_colname="pn_units_to_score"
+   loader = create_structure_loader(
+       column_mapping={
+           "interfaces_to_score": "interfaces_to_score",
+           "pn_units_to_score": "pn_units_to_score",
+       }
    )
 
 Integration with Transform Pipelines
@@ -214,3 +187,33 @@ This separation allows for:
 - **Composable transforms** that can be mixed and matched
 - **Easy testing** of individual components
 - **Clear debugging** when issues arise
+
+Periodic materials
+------------------
+
+Use the existing ``AseDBDataset`` with the materials loader for ASE LMDB shards::
+
+    from atomworks.ml.datasets.ase_dataset import AseDBDataset
+    from atomworks.ml.datasets.loaders import create_ase_materials_loader
+
+    dataset = AseDBDataset(
+        lmdb_path="materials_shards/",
+        name="materials",
+        loader=create_ase_materials_loader(include_atom_array=True),
+    )
+    sample = dataset[0]
+
+Install the ``ml`` and ``ase`` extras. Each sample includes Cartesian and fractional
+coordinates, cell vectors, lengths, angles, volume, and PBC. Available ASE row
+energy, forces and stress are retained. Molecular bond inference and preparation
+are not applied. Optional AtomArrays preserve the cell and initial charges without
+interpreting partial charges as formal charges.
+
+``space_group`` and ``parent_space_group`` are separate numeric labels supplied by
+the data source. Neither is computed from the coordinates, and parent/prototype
+labels are never promoted to current symmetry. Other metadata remains in
+``extra_info``. A full-rank cell is required; unwrapped fractional positions are
+returned by default. Wrapping affects only periodic axes.
+
+Use the existing metadata ``example_id`` and ``lmdb_idx`` columns to select or
+reorder examples. Source ASE row IDs remain available as ``source_row_id``.

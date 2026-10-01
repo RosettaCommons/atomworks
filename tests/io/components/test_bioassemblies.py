@@ -1,9 +1,10 @@
 import pytest
 from biotite.structure.io import pdbx
 
+from atomworks.io.config import ParseConfig
 from atomworks.io.parser import parse
 from atomworks.io.utils import io_utils
-from atomworks.io.utils.testing import assert_same_atom_array
+from atomworks.io.utils.testing import assert_same_atom_array_or_stack
 from tests.io.conftest import get_pdb_path
 
 MULTIPLE_ASSEMBLY_TEST_CASES = [
@@ -24,14 +25,15 @@ def test_assembly_counts(test_case: dict):
     filename = get_pdb_path(pdbid)
 
     # test the different build_assembly options
-    # build_assembly=None creates an identity assembly with IID annotations
-    out_no_assembly = parse(filename=filename, build_assembly=None, remove_ccds=[])
-    assert len(out_no_assembly["assemblies"]) == 1
+    # build_assembly=None returns no assemblies (only asymmetric unit)
+    out_no_assembly = parse(filename, config=ParseConfig(build_assembly=None, remove_ccds=[]))
+    assert len(out_no_assembly["assemblies"]) == 0
 
-    out_first = parse(filename=filename, build_assembly="first", remove_ccds=[])
+    # build_assembly="first" builds the first assembly with IID annotations
+    out_first = parse(filename, config=ParseConfig(build_assembly="first", remove_ccds=[]))
     assert len(out_first["assemblies"]) == 1
 
-    out_all = parse(filename=filename, build_assembly="all", remove_ccds=[])
+    out_all = parse(filename, config=ParseConfig(build_assembly="all", remove_ccds=[]))
     assert len(out_all["assemblies"]) == n_assemblies
 
 
@@ -52,20 +54,22 @@ def test_assembly_atom_coordinates(pdb_id: str):
         ],
         model=1,
     )
-    resolved_biotite_assembly = biotite_assembly[(biotite_assembly.occupancy > 0) & (biotite_assembly.element != "H")]
+    # Water molecules are unreliable; to match them we would need to infer residue bounudaries from atom names
+    resolved_biotite_assembly = biotite_assembly[
+        (biotite_assembly.occupancy > 0) & (biotite_assembly.element != "H") & (biotite_assembly.res_name != "HOH")
+    ]
 
     assembly = parse(
         filename=path,
         build_assembly="first",
         fix_arginines=False,
-        remove_waters=False,
+        remove_waters=True,
         hydrogen_policy="remove",
         remove_ccds=[],  # Do not remove crystallization solvents
-        ccd_mirror_path=None,  # Use Biotite's CCD mirror
     )["assemblies"]["1"][0]
     resolved_assembly = assembly[assembly.occupancy > 0]
 
-    assert_same_atom_array(
+    assert_same_atom_array_or_stack(
         resolved_biotite_assembly,
         resolved_assembly,
         annotations_to_compare=["chain_id", "res_name", "atom_name"],

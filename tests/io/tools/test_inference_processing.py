@@ -10,9 +10,11 @@ from biotite.structure import AtomArray
 
 from atomworks.enums import ChainType
 from atomworks.io import parse
+from atomworks.io.config import ParseConfig
 from atomworks.io.tools.fasta import split_generalized_fasta_sequence
 from atomworks.io.tools.inference import (
     ChemicalComponent,
+    CIFOrPDBFileComponent,
     Protein,
     SequenceComponent,
     SmilesComponent,
@@ -21,7 +23,8 @@ from atomworks.io.tools.inference import (
     one_letter_to_ccd_code,
     read_chai_fasta,
 )
-from atomworks.io.utils.testing import assert_same_atom_array
+from atomworks.io.utils.ccd import register_custom_ccd_entry
+from atomworks.io.utils.testing import assert_same_atom_array_or_stack
 from tests.io.conftest import TEST_DATA_IO, get_pdb_path
 
 
@@ -129,7 +132,7 @@ def bonds_glycan_glycan():
 
 
 @pytest.fixture
-def custom_residues():
+def custom_ncaa():
     return {
         "C:0": {
             "path": f"{TEST_DATA_IO}/example_ncaa.cif",
@@ -341,10 +344,10 @@ def test_sequence_component_validation():
         SmilesComponent(smiles="CCCC", chain_type=ChainType.POLYPEPTIDE_L)
 
     with pytest.raises(ValueError):
-        SequenceComponent(seq="(MET)ACGT", chain_type=ChainType.RNA, is_polymer=True)
+        SequenceComponent(seq="(MET)ACGT", chain_type=ChainType.RNA)
 
     with pytest.raises(ValueError):
-        SequenceComponent(seq="(DA)MKL", chain_type=ChainType.POLYPEPTIDE_L, is_polymer=True)
+        SequenceComponent(seq="(DA)MKL", chain_type=ChainType.POLYPEPTIDE_L)
 
 
 def test_full_chai_input(chai_fasta_input):
@@ -355,11 +358,13 @@ def test_full_chai_input(chai_fasta_input):
     assert np.unique(atom_array.chain_id).shape[0] == 4
 
 
-def test_full_components_input(dict_inputs, custom_residues):
+def test_full_components_input(dict_inputs, custom_ncaa, cleanup_registry):
+    custom_res_dict = custom_ncaa["C:0"]
+    custom_component = ChemicalComponent.from_dict(custom_res_dict)
+    register_custom_ccd_entry("C:0", custom_component.atom_array)
+
     components = sum(dict_inputs.values(), start=[])
-    atom_array, components = components_to_atom_array(
-        components, return_components=True, custom_residues=custom_residues
-    )
+    atom_array, components = components_to_atom_array(components, return_components=True)
 
     # Assert that the extracted chain IDs match the values recovered from the components
     extracted_chain_ids = [entry.get("chain_id", "") for entries in dict_inputs.values() for entry in entries]
@@ -394,11 +399,17 @@ def test_sdf_input(dict_inputs):
     assert not np.any(np.isnan(non_polymer_atom_array.coord))
 
 
-def test_custom_residues(dict_inputs, custom_residues):
+def test_custom_residues(dict_inputs, custom_ncaa, cleanup_registry):
+    # Register custom residue using registry
+
+    custom_res_dict = custom_ncaa["C:0"]
+    custom_component = ChemicalComponent.from_dict(custom_res_dict)
+    register_custom_ccd_entry("C:0", custom_component.atom_array)
+
     # (Name of the custom residue within the CIF file)
     custom_residue_name = "C:0"
 
-    atom_array = components_to_atom_array(dict_inputs["custom_residues"], custom_residues=custom_residues)
+    atom_array = components_to_atom_array(dict_inputs["custom_residues"])
 
     # ... all atoms should be part of the same chain (only one chain in the example)
     assert len(np.unique(atom_array.chain_id)) == 1
@@ -434,7 +445,7 @@ def test_recover_bonds_from_cif(dict_inputs):
 def test_same_atom_array_from_cif_and_inference():
     """Tests if the bonds inferred from the components are the same as the bonds in the CIF file."""
     transformation_id = "1"
-    data = parse(get_pdb_path("7rxs"), hydrogen_policy="remove")
+    data = parse(get_pdb_path("7rxs"), config=ParseConfig(hydrogen_policy="remove"))
     atom_array_from_cif = data["assemblies"][transformation_id][0]
 
     # ... extract the sequence and build inference input
@@ -477,6 +488,7 @@ def test_same_atom_array_from_cif_and_inference():
                 "molecule_iid",
                 "molecule_entity",
                 "pn_unit_entity",
+                "nhyd",  # nhyd is set from CCD template in CIF path but not in inference path
             }
         )
         is_ligand = not chain_atom_array_from_cif.is_polymer[0]
@@ -494,15 +506,77 @@ def test_same_atom_array_from_cif_and_inference():
                 chain_atom_array_from_cif, np.arange(1, struc.get_residue_count(chain_atom_array_from_cif) + 1)
             )
 
-        assert_same_atom_array(
+        assert_same_atom_array_or_stack(
             chain_atom_array_from_inference,
             chain_atom_array_from_cif,
             compare_coords=False,
             compare_bonds=True,
             annotations_to_compare=annotations_to_compare,
             enforce_order=False,
-            compare_bond_order=True,
+            compare_bond_order=not is_ligand,  # Can't compare bond order for ligands without atom_name
         )
+
+
+def test_cif_component_with_chain_id_single_molecule():
+    """Test chain_id assignment for single-molecule CIF file."""
+    # test_unl_ligand_with_bonds.cif is a single ligand
+    component = CIFOrPDBFileComponent(
+        path=f"{TEST_DATA_IO}/test_unl_ligand_with_bonds.cif",
+        chain_id="X",
+    )
+    assert np.all(component.atom_array.chain_id == "X")
+    assert np.array_equal(component.chain_ids, np.array(["X"]))
+
+
+def test_cif_component_with_chain_id_multi_molecule_raises():
+    """Test chain_id assignment fails for multi-molecule CIF file."""
+    # test_cif_loading_4q8n.cif.gz has multiple chains that are not covalently bonded
+    with pytest.raises(ValueError, match="disconnected molecules"):
+        CIFOrPDBFileComponent(
+            path=f"{TEST_DATA_IO}/test_cif_loading_4q8n.cif.gz",
+            chain_id="X",
+        )
+
+
+def test_cif_component_without_chain_id_preserves_original():
+    """Test that not providing chain_id preserves original chain IDs."""
+    component = CIFOrPDBFileComponent(
+        path=f"{TEST_DATA_IO}/test_cif_loading_4q8n.cif.gz",
+    )
+    # Original chain IDs should be preserved (multiple chains)
+    assert len(np.unique(component.atom_array.chain_id)) > 1
+
+
+def test_cif_component_with_chain_id_in_components_to_atom_array():
+    """Test that CIF components with chain_id work in components_to_atom_array."""
+    components = [
+        {"path": f"{TEST_DATA_IO}/test_unl_ligand_with_bonds.cif", "chain_id": "Z"},
+        {"seq": "ACDE", "chain_type": "polypeptide(l)", "chain_id": "A"},
+    ]
+    atom_array = components_to_atom_array(components)
+
+    # Check that both chain IDs are present
+    chain_ids = np.unique(atom_array.chain_id)
+    assert "Z" in chain_ids
+    assert "A" in chain_ids
+
+
+@pytest.mark.parametrize(
+    "seq,expected_chain_type",
+    [
+        # Canonical single-letter DNA format
+        ("CGCGAATTCGCG", ChainType.DNA),
+        # Parenthesized CCD format for DNA
+        ("(DC)(DG)(DC)(DG)(DA)(DA)(DT)(DT)(DC)(DG)(DC)(DG)", ChainType.DNA),
+        # Single-letter RNA format
+        ("ACGU", ChainType.RNA),
+        # Parenthesized CCD format for RNA
+        ("(A)(C)(G)(U)", ChainType.RNA),
+    ],
+)
+def test_dna_rna_chain_type_inference(seq, expected_chain_type):
+    """Test chain type inference for DNA/RNA sequences in both formats."""
+    assert SequenceComponent.infer_chain_type(seq) == expected_chain_type
 
 
 if __name__ == "__main__":

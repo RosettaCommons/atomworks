@@ -6,33 +6,57 @@ import sys
 from types import MappingProxyType
 from typing import Final
 
+import numpy as np
 from biotite.structure.bonds import BondType
 from toolz import keymap
 
 logger = logging.getLogger(__name__)
 
 
-def _load_env_var(var_name: str) -> str | None:
-    """Load an environment variable, returning None if it is not set.
+def _load_env_var(var_name: str, default: str | bool | None = None) -> str | bool | None:
+    """Load an environment variable.
 
     Args:
         var_name: The name of the environment variable to load.
+        default: The default value if not set. If default is a bool, will parse as bool.
 
     Returns:
-        The value of the environment variable, or None if not set.
+        - bool if the value is a boolean string (1/0, true/false, yes/no, on/off) or default is bool
+        - str if the value is a non-boolean string and default is not bool
+        - None if not set and no default provided
     """
-    try:
-        return os.environ[var_name]
-    except KeyError:
-        logger.warning(
-            f"Environment variable {var_name} not set. "
-            "Will not be able to use function requiring this variable. "
-            "To set it you may:\n"
-            "  (1) add the line 'export VAR_NAME=path/to/variable' to your .bashrc or .zshrc file\n"
-            "  (2) set it in your current shell with 'export VAR_NAME=path/to/variable'\n"
-            "  (3) write it to a .env file in the root of the atomworks.io repository"
-        )
-        return None
+    value = os.environ.get(var_name)
+
+    # Not set - return default or warn
+    if value is None:
+        if default is None:
+            logger.warning(
+                f"Environment variable {var_name} not set. "
+                "Will not be able to use function requiring this variable. "
+                "To set it you may:\n"
+                "  (1) add the line 'export VAR_NAME=path/to/variable' to your .bashrc or .zshrc file\n"
+                "  (2) set it in your current shell with 'export VAR_NAME=path/to/variable'\n"
+                "  (3) write it to a .env file in the root of the atomworks.io repository"
+            )
+        return default
+
+    # Auto-detect boolean or parse based on default type
+    value_lower = value.lower().strip()
+    if isinstance(default, bool) or value_lower in ("1", "true", "yes", "on", "0", "false", "no", "off"):
+        if value_lower in ("1", "true", "yes", "on"):
+            return True
+        elif value_lower in ("0", "false", "no", "off"):
+            return False
+        else:
+            logger.warning(
+                f"Invalid boolean value for {var_name}: {value!r}. "
+                f"Expected one of: 1, true, yes, on, 0, false, no, off. "
+                f"Using default: {default}"
+            )
+            return default if default is not None else False
+
+    # Return as string
+    return value
 
 
 CCD_MIRROR_PATH: Final[str] = _load_env_var("CCD_MIRROR_PATH")
@@ -49,15 +73,42 @@ Reference:
     `Protein Data Bank <https://www.rcsb.org/>`_
 """
 
+ALLOW_BIOTITE_CCD: Final[bool] = _load_env_var("ALLOW_BIOTITE_CCD", default=True)
+"""Whether to allow falling back to Biotite's built-in CCD when no local mirror is available."""
+
+# Defualt / unknown values for atoms
+
 UNKNOWN_ELEMENT: Final[str] = "X"
 """The element name for an unknown element."""
 
 UNKNOWN_ATOMIC_NUMBER: Final[int] = 0
 """The atomic number for an unknown element."""
 
+UNKNOWN_ATOM_NAME: Final[str] = "UNK"
+"""The atom name for an unknown atom."""
+
+UNKNOWN_COORD_VALUE: Final[float] = np.nan
+"""The coordinate value for an unknown atom."""
+
+DEFAULT_B_FACTOR: Final[float] = np.nan
+"""The default B-factor value for an atom."""
+
+DEFAULT_OCCUPANCY: Final[float] = 0.0
+"""The default occupancy value for an atom."""
+
+DEFAULT_CHARGE: Final[int] = 0
+"""The default charge value for an atom."""
+
+DEFAULT_INS_CODE: Final[str] = ""
+"""The default insertion code value for an atom."""
+
+DEFAULT_ALTLOC_ID: Final[str] = "."
+"""The default altloc ID value for an atom."""
+
 # fmt: off
 ELEMENT_NAME_TO_ATOMIC_NUMBER: Final[MappingProxyType[str, int]] = MappingProxyType(keymap(str.upper, {
-    "H": 1,    "He": 2,   "Li": 3,   "Be": 4,   "B": 5,   "C": 6,   "N": 7,    "O": 8,    "F": 9,   "Ne": 10,
+    "H": 1,    # Hydrogen (isotopes D, T handled via PDB_ISOTOPE_SYMBOL_TO_ELEMENT_SYMBOL)
+    "He": 2,   "Li": 3,   "Be": 4,   "B": 5,   "C": 6,   "N": 7,    "O": 8,    "F": 9,   "Ne": 10,
     "Na": 11,  "Mg": 12,  "Al": 13,  "Si": 14,  "P": 15,  "S": 16,  "Cl": 17,  "Ar": 18,  "K": 19,  "Ca": 20,
     "Sc": 21,  "Ti": 22,  "V": 23,   "Cr": 24,  "Mn": 25, "Fe": 26, "Co": 27,  "Ni": 28,  "Cu": 29, "Zn": 30,
     "Ga": 31,  "Ge": 32,  "As": 33,  "Se": 34,  "Br": 35, "Kr": 36, "Rb": 37,  "Sr": 38,  "Y": 39,  "Zr": 40,
@@ -94,13 +145,14 @@ Reference:
 """
 
 METAL_ELEMENTS: Final[frozenset[str]] = frozenset(map(str.upper, [
-    "Li", "Na", "K", "Rb", "Cs", "Be", "Mg", "Ca", "Sr", "Ba",
-    "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn",
-    "Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd",
-    "La", "Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu",
-    "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg",
-    "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md", "No", "Lr",
-    "Al", "Ga", "In", "Sn", "Tl", "Pb", "Bi",
+    "Li", "Na", "K", "Rb", "Cs", "Fr",                          # alkali metals
+    "Be", "Mg", "Ca", "Sr", "Ba", "Ra",                         # alkaline earth metals
+    "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn", # 3d transition metals
+    "Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", # 4d transition metals
+    "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg",        # 5d transition metals
+    "Al", "Ga", "In", "Sn", "Tl", "Pb", "Bi",                   # post-transition metals
+    "La", "Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu",  # lanthanides
+    "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md", "No", "Lr",   # actinides
 ]))
 """A set of all metal elements, all *UPPERCASE*.
 
@@ -111,6 +163,23 @@ Reference:
     `IUPAC Periodic Table - Metals <https://iupac.org/what-we-do/periodic-table-of-elements/>`_
 """
 # fmt: on
+
+# Common element groups
+CHNO_ELEMENTS: Final[frozenset[str]] = frozenset({"C", "H", "N", "O"})
+"""Carbon, Hydrogen, Nitrogen, Oxygen - the four core elements of organic chemistry."""
+
+CHNOPS_ELEMENTS: Final[frozenset[str]] = frozenset({"C", "H", "N", "O", "P", "S"})
+"""Carbon, Hydrogen, Nitrogen, Oxygen, Phosphorus, Sulfur - the six most abundant elements in living organisms."""
+
+# Bond distance thresholds (in Angstroms)
+BOND_DISTANCE_THRESHOLD_CHNO: Final[float] = 1.7
+"""Maximum bond distance for bonds involving only C, H, N, O atoms."""
+
+BOND_DISTANCE_THRESHOLD_CHNOPS: Final[float] = 2.4
+"""Maximum bond distance for bonds involving only C, H, N, O, P, S atoms."""
+
+BOND_DISTANCE_THRESHOLD_OTHER: Final[float] = 3.6
+"""Maximum bond distance for bonds involving metals or other elements."""
 
 # fmt: off
 CHEM_COMP_TYPES: Final[tuple[str, ...]] = tuple([
@@ -231,6 +300,38 @@ CHEM_TYPE_POLYMERIZATION_ATOMS: Final[MappingProxyType[str, tuple[str, str]]] = 
 )
 """A mapping of chemical component types to the atoms that they link when part of a polymer."""
 
+CCD_POLYMERIZATION_ATOM_OVERRIDES: Final[MappingProxyType[str, tuple[str | None, str | None]]] = MappingProxyType(
+    {
+        # Nucleotide analogues where an element other than oxygen sits at the 3' position, so the
+        # linkage cannot be recovered from the chemical component type's canonical ``O3'``.
+        "TSP": ("S3'", "P"),  # 3'-thio-thymidine
+        "US1": ("S", "P"),  # 2'-deoxy-3'-thiouridine
+        "C42": ("N", "P"),  # 3'-amino-2'-deoxy-cytidine (phosphoramidate)
+        "TCP": ("O3'", "CP"),  # 5'-methylthymidine; a methylene replaces the 5' phosphorus
+        "TFT": ("O2T", "P"),  # threofuranosyl (TNA); the tetrose sugar's 3'-equivalent is O2T
+        "3DA": ("O2'", "P"),  # 3'-deoxyadenosine (cordycepin); no O3', so it links 2'->5'
+        "8RJ": ("O2G", "P"),  # glycol nucleic acid; the free hydroxyl is O2G (5V1K)
+        "4DG": (None, "P"),  # acyclic guanine phosphonate; a 3' terminus, so nothing exits (3KD1/3KD5)
+        # Backbones that simply use non-canonical atom names, where the CCD entry flags a leaving
+        # group for only one side and the other side therefore cannot be derived.
+        "AEA": ("C5", "N1"),
+        "WCM": ("C14", "N5"),
+        # 2'-amino-2'-deoxyadenosine. Its sole leaving-atom flag is ``H2``
+        # on the purine ``C2``, which would otherwise be derived as a spurious exiting carbon.
+        "2AD": ("O3'", "N"),
+    }
+)
+"""Polymerization atoms for CCD entries whose own annotations cannot yield the right answer.
+
+Each entry is ``(exiting_atom, entering_atom)``, matching :py:func:`get_polymerization_atoms`, and
+every one is confirmed against ``struct_conn`` records in the PDB. Consulted only once a component
+is known not to carry the canonical atom names for its chemical component type, so a custom
+component registered under one of these codes is unaffected.
+"""
+
+MAX_CHEM_TYPE_LENGTH: Final[int] = max(len(chem_type) for chem_type in CHEM_COMP_TYPES)
+"""Maximum length of a valid chem_comp_type identifier. Determines the dtype of the `chem_comp_type` annotation."""
+
 STRUCT_CONN_BOND_TYPES: Final[frozenset[str]] = frozenset({"covale", "disulf", "metalc"})
 """A set of bond types that are considered when adding bonds to the atom array.
 
@@ -264,11 +365,12 @@ BIOTITE_BOND_TYPE_TO_BOND_ORDER: Final[MappingProxyType[BondType, int]] = Mappin
         BondType.AROMATIC_SINGLE: 1,  # 5
         BondType.AROMATIC_DOUBLE: 2,  # 6
         BondType.AROMATIC_TRIPLE: 3,  # 7
+        BondType.COORDINATION: 0,  # 8, excluded from covalent valence bookkeeping
     }
 )
 """Mapping from Biotite bond types to bond orders.
 
-NOTE: We do not include BondType.COORDINATION (8) and BondType.AROMATIC (9) as bond orders are not well-defined; they should be handled separately.
+NOTE: BondType.AROMATIC (9) has no well-defined bond order and must be handled separately.
 
 Reference:
     `biotite.structure.BondType <https://www.biotite-python.org/latest/apidoc/biotite.structure.BondType.html>`_
@@ -404,6 +506,28 @@ STANDARD_NA: Final[tuple[str, ...]] = STANDARD_RNA + STANDARD_DNA
 STANDARD_DNA_ONE_LETTER: Final[tuple[str, ...]] = tuple(sorted(["A", "C", "G", "T"]))
 """Tuple of the one-letter symbols for the standard 4 DNA nucleotides."""
 
+STANDARD_POLYMER_RESIDUES: Final[tuple[str, ...]] = (*STANDARD_AA, *STANDARD_RNA, *STANDARD_DNA)
+"""Tuple of all standard polymer residues (20 AA, 4 RNA, 4 DNA)."""
+
+UNKNOWN_POLYMER_RESIDUES: Final[tuple[str, ...]] = (UNKNOWN_AA, UNKNOWN_RNA, UNKNOWN_DNA)
+"""Tuple of unknown polymer residues (UNK, N, DN)."""
+
+
+STANDARD_AND_UNKNOWN_AA: Final[tuple[str, ...]] = (*STANDARD_AA, UNKNOWN_AA)
+"""Tuple of the CCD codes for the standard 20 amino acids + unknown (UNK)."""
+
+STANDARD_AND_UNKNOWN_RNA: Final[tuple[str, ...]] = (*STANDARD_RNA, UNKNOWN_RNA)
+"""Tuple of the CCD codes for the standard 4 RNA nucleotides + unknown (N)."""
+
+STANDARD_AND_UNKNOWN_DNA: Final[tuple[str, ...]] = (*STANDARD_DNA, UNKNOWN_DNA)
+"""Tuple of the CCD codes for the standard 4 DNA nucleotides + unknown (DN)."""
+
+STANDARD_AND_UNKNOWN_POLYMER_RESIDUES: Final[tuple[str, ...]] = (
+    *STANDARD_POLYMER_RESIDUES,
+    *UNKNOWN_POLYMER_RESIDUES,
+)
+"""Tuple of all standard and unknown polymer residues (AA, RNA, DNA)."""
+
 BIOTITE_DEFAULT_ANNOTATIONS: Final[tuple[str, ...]] = (
     "chain_id",
     "res_id",
@@ -413,6 +537,109 @@ BIOTITE_DEFAULT_ANNOTATIONS: Final[tuple[str, ...]] = (
     "element",
 )
 """The default mandatory annotations for Biotite AtomArrays."""
+
+BIOTITE_COMMON_OPTIONAL_ANNOTATIONS: Final[tuple[str, ...]] = (
+    "atom_id",
+    "charge",
+    "occupancy",
+    "b_factor",
+)
+"""Optional annotations commonly used in Biotite.
+
+They are saved by biotite `set_structure` by default, and hence by atomworks `to_cif_file`.
+They are not loaded by biotite `get_structure` by default, but they ARE loaded by default in atomworks `load_any`
+"""
+
+ALTLOC_DEFAULT_IDS: Final[tuple[str, ...]] = (".", "?", " ", "")
+"""Altloc ID values that indicate a default (non-alternate) atom position."""
+
+STANDARD_CIF_ANNOTATIONS: Final[frozenset[str]] = frozenset(
+    {
+        "chain_id",
+        "res_id",
+        "res_name",
+        "atom_name",
+        "atom_id",
+        "element",
+        "ins_code",
+        "hetero",
+        "altloc_id",
+        "charge",
+        "occupancy",
+        "b_factor",
+    }
+)
+"""All standard CIF annotations handled by Biotite, mandatory or optional.
+
+These are reserved names that are excluded from `extra_annotations`.
+"""
+
+ATOM_LEVEL_ANNOTATIONS: Final[tuple[str, ...]] = (
+    # +---- Standard mmCIF/Biotite atom-level annotations ----+
+    "atom_name",  # CCD atom name (e.g., "CA", "N", "O")
+    "element",  # Element symbol (e.g., "C", "N", "O")
+    "atom_id",  # Unique atom identifier
+    "altloc_id",  # Alternate location identifier (mutliple-occupancy models)
+    "charge",  # Atomic charge
+    "occupancy",  # Occupancy value
+    "b_factor",  # B-factor (temperature factor)
+    # +---- AtomWorks extensions ----+
+    "atomic_number",  # Atomic number (derived from element)
+)
+"""Standard atom-level annotations"""
+
+RESIDUE_LEVEL_ANNOTATIONS: Final[tuple[str, ...]] = (
+    # +---- Standard mmCIF/Biotite residue-level annotations ----+
+    "res_id",  # Residue ID (sequence number)
+    "res_name",  # Residue name (CCD 3-letter code)
+    "hetero",  # Hetero flag (non-standard residue)
+    "ins_code",  # Insertion code (legacy from PDB format, rarely used)
+    "label_alt_id",  # Alternate conformer ID — per-atom in mmCIF, but residue-level after altloc selection
+)
+"""Residue-level annotations - shared by all atoms in a residue."""
+
+CHAIN_LEVEL_ANNOTATIONS: Final[tuple[str, ...]] = (
+    # +---- Standard mmCIF/Biotite chain-level annotations ----+
+    "chain_id",  # Chain identifier (author chain ID)
+    # +---- AtomWorks extensions ----+
+    "chain_iid",  # Chain instance identifier (disambiguates across transforms)
+    "chain_entity",  # Chain entity identifier
+    "chain_type",  # Chain type as int enum (polypeptide, DNA, RNA, etc.)
+    "is_polymer",  # Convenience chain-level polymer flag (derived from chain_type)
+)
+"""Chain-level annotations."""
+
+PN_UNIT_LEVEL_ANNOTATIONS: Final[tuple[str, ...]] = (
+    "pn_unit_id",  # PN Unit identifier (Polymer XOR Non-polymer unit)
+    "pn_unit_iid",  # PN Unit instance identifier (disambiguates across transforms)
+    "pn_unit_entity",  # PN Unit entity identifier
+)
+"""PN Unit-level annotations - Polymer XOR Non-polymer unit annotations."""
+
+MOLECULE_LEVEL_ANNOTATIONS: Final[tuple[str, ...]] = (
+    "molecule_id",  # Molecule identifier
+    "molecule_iid",  # Molecule instance identifier (disambiguates across transforms)
+    "molecule_entity",  # Molecule entity identifier
+)
+"""Molecule-level annotations."""
+
+TRANSFORMATION_LEVEL_ANNOTATIONS: Final[tuple[str, ...]] = (
+    "transformation_id",  # Transformation identity in multi-transformation assemblies
+)
+"""Transformation-level annotations - for bio-assemblies."""
+
+ATOMWORKS_COMMON_ANNOTATIONS: Final[tuple[str, ...]] = (
+    ATOM_LEVEL_ANNOTATIONS
+    + RESIDUE_LEVEL_ANNOTATIONS
+    + CHAIN_LEVEL_ANNOTATIONS
+    + PN_UNIT_LEVEL_ANNOTATIONS
+    + MOLECULE_LEVEL_ANNOTATIONS
+    + TRANSFORMATION_LEVEL_ANNOTATIONS
+)
+"""All standard annotations used in AtomWorks.
+
+Includes both standard mmCIF/Biotite annotations and AtomWorks extensions.
+"""
 
 STANDARD_PYRIMIDINE_RESIDUES: Final[tuple[str, ...]] = ("C", "U", "DC", "DT")
 """Tuple of the CCD codes for the 4 standard pyrimidine nucleotides."""
@@ -438,8 +665,23 @@ WARNING: It is important that this remains a tuple, as it is used by `np.isin`
 DO_NOT_MATCH_CCD: Final[frozenset[str]] = frozenset((*WATER_LIKE_CCDS, UNKNOWN_LIGAND))
 """CCDs that should not be matched to a template for the purpose of adding missing atoms."""
 
-PEPTIDE_MAX_RESIDUES: Final[int] = 20
-"""The maximum number of residues until which we consider a protein-like sequence to be a peptide."""
+DEFAULT_CCD_ANNOTATIONS: Final[tuple[str, ...]] = (
+    "charge",
+    "stereo",
+    "is_aromatic",
+    "is_leaving_atom",
+    "is_backbone_atom",
+    "is_n_terminal_atom",
+    "is_c_terminal_atom",
+    "nhyd",
+)
+"""Common annotations derived from Chemical Component Dictionary (CCD) entries."""
+
+PEPTIDE_MAX_RESIDUES: Final[int] = 16
+"""The maximum number of residues until which we consider a protein-like sequence to be a peptide.
+
+NOTE: AF3 uses either 10 or 16 for this number in different places.
+"""
 
 PDB_ISOTOPE_SYMBOL_TO_ELEMENT_SYMBOL: Final[dict[str, str]] = {
     "D": "H",

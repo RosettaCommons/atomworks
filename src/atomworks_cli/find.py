@@ -1,7 +1,5 @@
 """Finding pre-computed MSAs on disk, and reporting missing sequences."""
 
-from __future__ import annotations
-
 import logging
 from pathlib import Path
 
@@ -36,7 +34,7 @@ def find(
     existing_msa_dirs: str | None = typer.Option(
         None,
         "--existing-msa-dirs",
-        help="Comma-separated MSA directories to find (uses LOCAL_MSA_DIRS env var if not specified)",
+        help="Comma-separated MSA directories to find (uses PROTEIN_MSA_DIRS env var if not specified)",
     ),
     missing_output: Path | None = typer.Option(
         None,
@@ -95,7 +93,7 @@ def find(
     if msa_dirs:
         typer.echo(f"  MSA Directories: {msa_dirs}")
     else:
-        typer.echo("  MSA Directories: LOCAL_MSA_DIRS env var")
+        typer.echo("  MSA Directories: PROTEIN_MSA_DIRS env var")
     typer.secho("=" * 35, fg=typer.colors.CYAN)
 
     try:
@@ -145,7 +143,7 @@ def find(
         )
         typer.secho(f"  Found MSAs: {found_count:,} ({coverage_percent:.1f}%)", fg=found_color)
         typer.secho(
-            f"  Missing MSAs: {missing_count:,} ({100 - coverage_percent:.1f}%)",
+            f"  Missing MSAs: {missing_count:,} ({100-coverage_percent:.1f}%)",
             fg=typer.colors.RED if missing_count > 0 else typer.colors.GREEN,
         )
 

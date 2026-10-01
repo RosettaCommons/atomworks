@@ -3,24 +3,77 @@
 Provides functions for file operations, directory scanning, and data loading.
 """
 
+import contextlib
 import gzip
 import hashlib
 import io
 import os
-import pickle
-from collections.abc import Callable
-from functools import wraps
+import time
+from collections.abc import Callable, Iterator
+from functools import cache, wraps
 from os import PathLike
 from pathlib import Path
 from typing import Any, TextIO
 
 import pandas as pd
 import pyarrow as pa
+import pyarrow.feather as feather
 import pyarrow.parquet as pq
 import zstandard as zstd
+from filelock import FileLock
 
+from atomworks.common import string_to_md5_hash
 from atomworks.io.utils.io_utils import apply_sharding_pattern, build_sharding_pattern
 from atomworks.ml.utils.misc import logger
+
+try:
+    import boto3
+    from botocore.client import BaseClient
+    from botocore.config import Config
+except ImportError:
+    boto3 = None
+    BaseClient = None
+
+
+@cache
+def _s3_client(endpoint_url: str | None = None) -> "BaseClient":
+    """Process-wide cached boto3 S3 client.
+
+    Region/credentials come from the ambient AWS config; ``endpoint_url`` defaults to ``$AWS_ENDPOINT_URL``.
+    """
+    if boto3 is None:
+        raise ImportError("boto3 is required for s3:// paths. Install it with: uv pip install boto3")
+    # virtual-host addressing, retry throttling with backoff, larger pool for DataLoader fan-out
+    config = Config(
+        max_pool_connections=50,
+        retries={"max_attempts": 10, "mode": "standard"},
+        s3={"addressing_style": "virtual"},
+    )
+    return boto3.client("s3", endpoint_url=endpoint_url or os.environ.get("AWS_ENDPOINT_URL"), config=config)
+
+
+def read_s3_bytes(
+    url: str, *, offset: int | None = None, length: int | None = None, endpoint_url: str | None = None
+) -> bytes:
+    """Read an ``s3://`` object (whole, or a ``[offset, offset+length)`` byte range) into memory."""
+    bucket, key = url[len("s3://") :].split("/", 1)
+    kwargs = {} if offset is None else {"Range": f"bytes={offset}-{offset + length - 1}"}
+    return _s3_client(endpoint_url).get_object(Bucket=bucket, Key=key, **kwargs)["Body"].read()
+
+
+_ZSTD_MAGIC = b"\x28\xb5\x2f\xfd"
+_GZIP_MAGIC = b"\x1f\x8b"
+
+
+def _decompress(raw: bytes) -> bytes:
+    """Auto-detect and decompress zstd/gzip data, or return the raw bytes."""
+    if raw[:4] == _ZSTD_MAGIC:
+        # stream_reader (not .decompress) so frames without an embedded content size still read
+        with zstd.ZstdDecompressor().stream_reader(io.BytesIO(raw)) as r:
+            return r.read()
+    if raw[:2] == _GZIP_MAGIC:
+        return gzip.decompress(raw)
+    return raw
 
 
 def open_file(filename: PathLike) -> TextIO:
@@ -35,6 +88,9 @@ def open_file(filename: PathLike) -> TextIO:
     Raises:
         AssertionError: If the file does not exist.
     """
+    # Pass an already-open text stream straight through (e.g. in-memory MSA bytes) — nothing on disk to open.
+    if hasattr(filename, "read"):
+        return filename
     filename = Path(filename)
     # ...assert that the file exists
     assert filename.exists(), f"File {filename} does not exist"
@@ -49,6 +105,20 @@ def open_file(filename: PathLike) -> TextIO:
         reader = dctx.stream_reader(fh)
         return io.TextIOWrapper(reader, encoding="utf-8")
     return filename.open("r")
+
+
+@contextlib.contextmanager
+def opened_file(filename: PathLike) -> "Iterator[TextIO]":
+    """Open `filename` for reading, closing it on exit only if this call opened it.
+
+    A caller-supplied stream is passed through by `open_file` and stays the caller's to close.
+    """
+    stream = open_file(filename)
+    try:
+        yield stream
+    finally:
+        if stream is not filename:
+            stream.close()
 
 
 def scan_directory(dir_path: PathLike, max_depth: int) -> list[str]:
@@ -140,11 +210,9 @@ def cache_based_on_subset_of_args(cache_keys: list[str], maxsize: int | None = N
     return decorator
 
 
-def cache_to_disk_as_pickle(
-    cache_dir: PathLike | None = None, use_gzip: bool = True, directory_depth: int = 2
-) -> Callable:
+def cache_to_disk_as_pickle(cache_dir: PathLike | None = None, *, directory_depth: int = 2) -> Callable:
     """
-    A decorator to cache the results of a function to disk as a pickle file.
+    Cache function results to disk as zstd-3 compressed pickle files.
 
     Creates a unique cached pickle file for each set of function arguments using an MD5 hash.
     If the cache file exists, the result is loaded from the file. Otherwise, the
@@ -155,7 +223,6 @@ def cache_to_disk_as_pickle(
     Args:
         cache_dir (PathLike or None): The directory where cache files will be stored, or
             `None` to disable caching.
-        use_gzip (bool): Whether to use gzip compression for the cache files.
         directory_depth (int): The depth of the directory structure for sharding cache files.
 
     Returns:
@@ -176,19 +243,15 @@ def cache_to_disk_as_pickle(
             # ... create a unique cache file path based on the MD5 hash of function arguments
             args_repr = f"{args}_{kwargs}"
             hash_hex = hashlib.md5(args_repr.encode()).hexdigest()
-            file_extension = ".pkl.gz" if use_gzip else ".pkl"
             sharding_pattern = build_sharding_pattern(depth=directory_depth, chars_per_dir=2)
             sharded_path = apply_sharding_pattern(hash_hex, sharding_pattern)
-            cache_file = Path(cache_dir) / sharded_path.with_suffix(file_extension)
+            cache_file = Path(cache_dir) / sharded_path.with_suffix(".pkl.zst")
 
             # ... check if cache file exists
-            open_func = gzip.open if use_gzip else open
             if cache_file.exists():
                 try:
                     # ... try to load the result from cache file
-                    with open_func(cache_file, "rb") as f:
-                        result = pickle.load(f)
-                    return result
+                    return pd.read_pickle(cache_file)
 
                 except Exception as e:
                     # (Fallback to executing the function, with a warning)
@@ -199,8 +262,7 @@ def cache_to_disk_as_pickle(
 
             # ... save the result to cache file, creating directories if necessary
             cache_file.parent.mkdir(parents=True, exist_ok=True)
-            with open_func(cache_file, "wb") as f:
-                pickle.dump(result, f)
+            pd.to_pickle(result, cache_file, compression={"method": "zstd", "level": 3})
 
             return result
 
@@ -237,6 +299,17 @@ def to_parquet_with_metadata(df: pd.DataFrame, filepath: PathLike, **kwargs: Any
     pq.write_table(table, filepath, **kwargs)
 
 
+def _readable_source(filepath: PathLike) -> Any:
+    """A pandas/pyarrow-readable source for ``filepath``: the local path, or an in-memory buffer for an
+    ``s3://`` URL (downloaded once via boto3, since the bare readers don't accept ``s3://``)."""
+    return io.BytesIO(read_s3_bytes(str(filepath))) if str(filepath).startswith("s3://") else filepath
+
+
+def read_csv(filepath: PathLike, **kwargs: Any) -> pd.DataFrame:
+    """``pd.read_csv`` that also accepts an ``s3://`` URL (read via boto3, like :func:`read_parquet_with_metadata`)."""
+    return pd.read_csv(_readable_source(filepath), **kwargs)
+
+
 def read_parquet_with_metadata(filepath: PathLike, **kwargs: Any) -> pd.DataFrame:
     """Convenience wrapper around pd.read_parquet that preserves metadata.
 
@@ -246,20 +319,70 @@ def read_parquet_with_metadata(filepath: PathLike, **kwargs: Any) -> pd.DataFram
 
     Returns:
         pandas DataFrame with metadata in .attrs attribute
+
+    ``filepath`` may be a local path or an ``s3://`` URL (downloaded once via boto3 — which reads the ambient
+    AWS profile, incl. endpoint + addressing_style — since bare ``pq.read_schema`` does not accept ``s3://``).
     """
-    # Read the parquet file using pyarrow
-    table = pq.read_table(filepath)
+    src = _readable_source(filepath)
 
-    # Extract metadata
-    raw_metadata = table.schema.metadata
-
-    # Convert bytes keys and values back to strings
+    # Read the parquet schema using pyarrow, then the DataFrame using pandas (from the same buffer for s3).
+    schema = pq.read_schema(src)
+    raw_metadata = schema.metadata or {}
     metadata_dict = {k.decode(): v.decode() for k, v in raw_metadata.items() if k not in (b"pandas", b"pyarrow_schema")}
 
-    # Read the DataFrame using pandas
-    df = pd.read_parquet(filepath, **kwargs)
-
-    # Attach metadata to DataFrame's attrs
+    if isinstance(src, io.BytesIO):
+        src.seek(0)
+    df = pd.read_parquet(src, **kwargs)
     df.attrs = metadata_dict
-
     return df
+
+
+def job_scoped_feather_path(
+    name: str,
+    *,
+    local_drive_mount: str,
+    job_id_env_var: str = "SLURM_JOB_ID",
+    content_key: Any = None,
+) -> str:
+    """Return ``<local_drive_mount>/<job_id>/<name>[-<hash>].feather``, namespaced per job.
+
+    Args:
+        name: Human-readable dataset name; the leading path component.
+        local_drive_mount: Root directory for feather files.
+        job_id_env_var: Environment variable used to namespace files per job.
+        content_key: Anything that decides what the feather *contains* (source path,
+            filters, columns). Two datasets sharing a ``name`` within one job must not
+            share a file unless this matches, so it is hashed into the filename.
+
+    Examples:
+        >>> a = job_scoped_feather_path("pdb", local_drive_mount="/tmp", content_key=["n_nuc == 0"])
+        >>> b = job_scoped_feather_path("pdb", local_drive_mount="/tmp", content_key=[])
+        >>> a != b
+        True
+    """
+    job_id = os.environ.get(job_id_env_var, f"manual_{os.getpid()}_{int(time.time())}")
+    # 16 hex chars, not 8: a collision here silently serves one dataset's rows to another,
+    # which is the failure this key exists to prevent.
+    suffix = f"-{string_to_md5_hash(repr(content_key), truncate=16)}" if content_key is not None else ""
+    return os.path.join(local_drive_mount, job_id, f"{name}{suffix}.feather")
+
+
+def build_feather_once(feather_path: str, build_table: Callable[[], pa.Table]) -> str:
+    """Build ``feather_path`` once under a lock, publishing atomically; return the path.
+
+    Ranks/workers race on the same path: the first to win the lock builds via ``build_table`` and
+    ``os.replace``s it into place (atomic on the same filesystem); the rest see the finished file and
+    skip. ``build_table`` is called only when the feather is missing, so the source read happens once.
+    """
+    os.makedirs(os.path.dirname(feather_path), exist_ok=True)
+    with FileLock(feather_path + ".lock"):
+        if not os.path.exists(feather_path):
+            tmp_path = f"{feather_path}.tmp.{os.getpid()}"
+            try:
+                feather.write_feather(build_table(), tmp_path, compression="uncompressed")
+                os.replace(tmp_path, feather_path)
+            except BaseException:
+                with contextlib.suppress(OSError):
+                    os.unlink(tmp_path)  # don't leave a partial temp behind on failure
+                raise
+    return feather_path

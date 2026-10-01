@@ -9,16 +9,19 @@ Example Usage
 .. code-block:: python
 
    from atomworks.io.parser import parse
-   result = parse(filename="/databases/rcsb/cif/ne/3nez.cif.gz")
+   result = parse(source="/databases/rcsb/cif/ne/3nez.cif.gz")
    print(result["chain_info"])
 
-What's in the Dictionary Returned by the Parser?
-------------------------------------------------
+   # The file type is also inferred for mmJSON paths, including .json.gz.
+   json_result = parse(source="/path/to/structure.json.gz")
+
+Returned Dictionary
+-------------------
 - **chain_info**: Mapping of chain IDs to sequence, type, and metadata
-- **ligand_info**: Information about ligands in the structure, if there are any
-- **asym_unit**: AtomArrayStack of the asymmetric unit, contains similar information to what is contained in a PDB file
+- **ligand_info**: Information about ligands in the structure
+- **asym_unit**: AtomArrayStack of the asymmetric unit
 - **assemblies**: Mapping of assembly IDs to AtomArrayStacks
-- **metadata**: Structure-level metadata, such as crystallization details, the method used to determine the structure, resolution, etc.
+- **metadata**: Structure-level metadata
 - **extra_info**: Internal-use information for caching and compatibility
 
 Parsing Arguments
@@ -31,18 +34,18 @@ Parsing Arguments
      - Type
      - Default
      - Description
-   * - filename
+   * - source
      - PathLike / io.StringIO / io.BytesIO
      - —
-     - Path to the structural file. Supports .cif, .cif.gz, .pdb, etc.
+     - Path to the structural file. Supports .cif, .cif.gz, .pdb, .json, .json.gz, etc.
    * - add_missing_atoms
      - bool
      - True
-     - Add missing atoms to the structure. Useful for unresolved residues. Also adds intra- and inter-residue bonds.
+     - Add missing atoms to the structure. Useful for unresolved residues. Also adds intra- and inter-residue bonds, and sanitizes them: removes leaving atoms and fixes bond orders, charges, and amide nitrogens.
    * - add_id_and_entity_annotations
      - bool
      - True
-     - Add id and entity annotations at chain, pn-unit, and molecule level to the AtomArray.
+     - **Deprecated.** ID and entity annotations are now always added. This parameter will be removed in a future version.
    * - add_bond_types_from_struct_conn
      - list[str]
      - ["covale"]
@@ -63,22 +66,18 @@ Parsing Arguments
      - bool
      - True
      - Fix arginine naming ambiguity.
-   * - fix_formal_charges
-     - bool
-     - True
-     - Fix formal charges on atoms involved in inter-residue bonds.
-   * - fix_bond_types
-     - bool
-     - True
-     - Whether to correct for nucleophilic additions on atoms involved in inter-residue bonds.
    * - convert_mse_to_met
      - bool
      - False
      - Convert selenomethionine (MSE) to methionine (MET).
+   * - remove_hydrogens
+     - bool or None
+     - None
+     - Remove hydrogens from structure. Deprecated; use hydrogen_policy instead.
    * - hydrogen_policy
-     - "keep" / "remove" / "infer"
+     - "keep" / "remove"
      - "keep"
-     - Whether to keep, remove, or infer hydrogens.
+     - Whether to keep or remove hydrogens.
    * - model
      - int or None
      - None
@@ -92,8 +91,7 @@ Parsing Arguments
      - None
      - Extra fields to include in the AtomArrayStack.
 
-
-Wrapper Arguments
+Caching Arguments
 -----------------
 
 .. list-table::
@@ -103,14 +101,6 @@ Wrapper Arguments
      - Type
      - Default
      - Description
-   * - file_type
-     - "cif" / "pdb" / "mmjson" / None
-     - None
-     - File type to parse. If None, inferred from filename extension.
-   * - ccd_mirror_path
-     - PathLike / None
-     - None
-     - Path to local mirror of the Chemical Component Dictionary. (Recommended)
    * - load_from_cache
      - bool
      - False

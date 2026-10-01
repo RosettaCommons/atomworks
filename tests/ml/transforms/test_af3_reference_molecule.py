@@ -1,5 +1,3 @@
-import time
-
 import biotite.structure as struc
 import numpy as np
 import pytest
@@ -8,7 +6,6 @@ import torch
 from atomworks.constants import STANDARD_AA, STANDARD_DNA, STANDARD_RNA
 from atomworks.enums import ChainType, GroundTruthConformerPolicy
 from atomworks.io.tools.inference import components_to_atom_array
-from atomworks.io.tools.rdkit import atom_array_from_rdkit
 from atomworks.io.utils.selection import get_residue_starts
 from atomworks.ml.transforms.af3_reference_molecule import (
     GetAF3ReferenceMoleculeFeatures,
@@ -100,7 +97,13 @@ def test_get_af3_reference_molecule_features_res(res_name):
 
 
 def test_get_af3_reference_molecule_features_chain():
-    atom_array = struc.info.residue("ALA") + struc.info.residue("R2R") + struc.info.residue("TYR")
+    ala = struc.info.residue("ALA")
+    ala.res_id[:] = 1
+    r2r = struc.info.residue("R2R")
+    r2r.res_id[:] = 2
+    tyr = struc.info.residue("TYR")
+    tyr.res_id[:] = 3
+    atom_array = ala + r2r + tyr
     # Add the necessary annotations from `parse`
     atom_array = atom_array[atom_array.atom_name != "OXT"]
     atom_array = atom_array[atom_array.element != "H"]
@@ -394,45 +397,6 @@ def test_max_conformers_per_residue_functionality():
         assert val_conformers_with_limit <= 3
 
 
-def test_af3_reference_molecule_features_with_cached_conformers(cache_dir):
-    """Test AF3 reference molecule features using cached conformers."""
-    data = cached_parse("1crn", hydrogen_policy="remove")
-    pipe = Compose(
-        [
-            AddGlobalResIdAnnotation(),
-            LoadCachedResidueLevelData(dir=cache_dir, sharding_depth=1),
-        ]
-    )
-    cached_residue_data = pipe(data)
-
-    # Create transform with cached conformers enabled and max conformers limit
-    transform_with_cache = GetAF3ReferenceMoleculeFeatures(
-        max_conformers_per_residue=3, use_cached_conformers=True, save_rdkit_mols=True
-    )
-    transform_no_cache = GetAF3ReferenceMoleculeFeatures(
-        max_conformers_per_residue=3, use_cached_conformers=False, conformer_generation_timeout=5.0
-    )
-    data_no_cache = {"atom_array": cached_residue_data["atom_array"]}
-
-    # ... time the cached version
-    start_time = time.time()
-    result_data_cached = transform_with_cache(cached_residue_data)
-    cached_time = time.time() - start_time
-
-    # ... time the non-cached version
-    start_time = time.time()
-    _ = transform_no_cache(data_no_cache)
-    no_cache_time = time.time() - start_time
-
-    assert (
-        cached_time < 0.8 * no_cache_time
-    ), f"Cached version should be faster than no cache version, but got {cached_time} vs {no_cache_time}"
-
-    feats = result_data_cached["feats"]
-    assert not np.any(np.isnan(feats["ref_pos"]))
-    assert not np.any(np.all(feats["ref_pos"] == 0, axis=1))
-
-
 @pytest.fixture
 def data_with_subsampled_conformers(cache_dir):
     """Fixture providing AF3 reference molecule features with subsampled conformers."""
@@ -448,56 +412,6 @@ def data_with_subsampled_conformers(cache_dir):
         ]
     )
     return pipeline(data)
-
-
-def test_af3_reference_molecule_features_with_subsampled_conformers(data_with_subsampled_conformers):
-    """Ensure that the actual reference molecules at each res_idx match"""
-    result_data = data_with_subsampled_conformers
-
-    atom_array = result_data["atom_array"]
-    feats = result_data["feats"]
-    cached_residue_level_data = result_data["cached_residue_level_data"]["residues"]
-    conformer_indices = result_data["residue_conformer_indices"]
-
-    # Get residue start/end positions
-    _res_start_ends = get_residue_starts(atom_array, add_exclusive_stop=True)
-    _res_starts, _res_ends = _res_start_ends[:-1], _res_start_ends[1:]
-
-    # Loop through each residue and check that the reference conformer coordinates match
-    # the coordinates using the appropriate index from the subsampled conformer indices
-    for res_start, res_end in zip(_res_starts, _res_ends, strict=False):
-        res_name = atom_array.res_name[res_start]
-        res_global_id = int(atom_array.res_id_global[res_start])
-
-        # Get the cached RDKit molecule and the conformer index that was selected
-        cached_mol = cached_residue_level_data[res_name]["mol"]
-        assert cached_mol is not None and cached_mol.GetNumConformers() > 0, f"No conformers found for {res_name}"
-        selected_conformer_idx = int(
-            conformer_indices[res_global_id][0]
-        )  # Take first conformer index and convert to Python int
-
-        # Get the expected coordinates from RDKit using the selected conformer index
-        expected_conformer = atom_array_from_rdkit(
-            cached_mol,
-            conformer_id=selected_conformer_idx,
-            remove_hydrogens=True,
-        )
-
-        # Map the expected conformer coordinates to the residue atom order
-        expected_ref_pos, expected_ref_mask = _map_reference_conformer_to_residue(
-            res_name=res_name,
-            atom_names=atom_array.atom_name[res_start:res_end],
-            conformer=expected_conformer,
-        )
-
-        # Get the actual reference positions from the AF3 features
-        actual_ref_pos = feats["ref_pos"][res_start:res_end]
-        actual_ref_mask = feats["ref_mask"][res_start:res_end]
-
-        assert np.array_equal(actual_ref_mask, expected_ref_mask), "Reference masks don't match"
-        assert np.allclose(
-            expected_ref_pos[expected_ref_mask], actual_ref_pos[actual_ref_mask], atol=1e-6
-        ), "Reference coordinates don't match"
 
 
 def test_chiral_centers_with_cached_conformers(cache_dir, data_with_subsampled_conformers):

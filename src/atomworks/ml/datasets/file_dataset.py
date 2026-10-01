@@ -7,14 +7,14 @@ from typing import Any
 
 from atomworks.ml.utils.io import scan_directory
 
-from .base import ExampleIDMixin, MolecularDataset
+from .base import MolecularDataset
 
 
 def _always_true(x: PathLike) -> bool:
     return True
 
 
-class FileDataset(MolecularDataset, ExampleIDMixin):
+class FileDataset(MolecularDataset):
     """Dataset that loads molecular data from individual files.
 
     Each file represents one example in the dataset. If creating a dataset from a

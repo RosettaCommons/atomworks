@@ -2,6 +2,7 @@ import numpy as np
 import py3Dmol
 import pytest
 from biotite.structure import AtomArray
+from biotite.structure.bonds import BondList
 
 from atomworks.io.transforms.atom_array import is_any_coord_nan
 from atomworks.io.utils.visualize import view
@@ -27,6 +28,7 @@ skip_if_no_pymol_remote = pytest.mark.skipif(
 def sample_atom_array():
     """Create a sample AtomArray for testing."""
     atoms = AtomArray(10)
+    atoms.bonds = BondList(10)
     atoms.set_annotation("chain_id", ["A"] * 5 + ["B"] * 5)
     atoms.set_annotation("element", [6] * 5 + [7] * 5)  # Carbon and Nitrogen
     atoms.set_annotation("res_id", list(range(1, 11)))
@@ -121,7 +123,7 @@ def test_view_pymol_remote(sample_atom_array):
     from atomworks.io.utils.visualize import get_pymol_session, view_pymol
     from tests.io.conftest import get_pdb_path
 
-    result = parse(get_pdb_path("5ocm"), ccd_mirror_path=None)
+    result = parse(get_pdb_path("5ocm"))
 
     array = result["assemblies"]["1"][0]
     obj_name = view_pymol(array)

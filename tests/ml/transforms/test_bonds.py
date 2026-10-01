@@ -18,7 +18,7 @@ from atomworks.ml.transforms.bonds import (
     _create_rf2aa_bond_features_matrix,
     get_token_bond_adjacency,
 )
-from atomworks.ml.transforms.covalent_modifications import FlagAndReassignCovalentModifications
+from atomworks.ml.transforms.covalent_modifications import AnnotateCovalentModifications
 from atomworks.ml.transforms.encoding import EncodeAF3TokenLevelFeatures
 from atomworks.ml.transforms.filters import RemoveHydrogens
 from atomworks.ml.utils.testing import cached_parse
@@ -296,7 +296,7 @@ def test_af3_token_bond_features(test_case: dict):
     pipe = Compose(
         [
             RemoveHydrogens(),
-            FlagAndReassignCovalentModifications(),
+            AnnotateCovalentModifications(),
             AtomizeByCCDName(
                 atomize_by_default=True,
                 res_names_to_ignore=STANDARD_AA,
