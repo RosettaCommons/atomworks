@@ -1,6 +1,7 @@
 """Dataset for loading molecular structures from ASE LMDB databases."""
 
 import logging
+import os
 import warnings
 from collections.abc import Callable
 from os import PathLike
@@ -67,6 +68,7 @@ class AseDBDataset(ShardedDataset):
         # ASE-specific shard state
         self._current_db = None
         self._current_ids: list | None = None
+        self._owner_pid = os.getpid()
 
         super().__init__(
             shard_path=lmdb_path,
@@ -83,6 +85,22 @@ class AseDBDataset(ShardedDataset):
             memory_map=memory_map,
             metadata=metadata,
         )
+
+    def __getstate__(self) -> dict[str, Any]:
+        """Serialize configuration without live LMDB handles or changing the parent reader."""
+        state = self.__dict__.copy()
+        state.update(_current_db=None, _current_ids=None, _current_shard_idx=None)
+        return state
+
+    def _ensure_shard_loaded(self, shard_idx: int) -> None:
+        """Reopen inherited handles in each DataLoader worker process."""
+        if self._owner_pid != os.getpid():
+            if self._current_db is not None:
+                # ASE close() accesses a property that otherwise reopens on a PID change.
+                self._current_db._env_pid = os.getpid()
+            self.close()
+            self._owner_pid = os.getpid()
+        super()._ensure_shard_loaded(shard_idx)
 
     def _get_shard_count(self, path: str) -> int:
         """Return the number of entries in an ASE shard."""
