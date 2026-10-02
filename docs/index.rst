@@ -21,6 +21,7 @@ Welcome to **atomworks** — a toolkit for converting, parsing, and manipulating
    how_to_build_a_model/index
    cookbook
    installation
+   migration/index
    glossary
    api_reference
    auto_examples/index
