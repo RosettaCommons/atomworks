@@ -268,7 +268,13 @@ def apply_extra_field_dtypes(
 
         if dtype is not None:
             try:
-                atom_array_stack.set_annotation(field_name, np.array(values, dtype=dtype))
+                # Fill CIF unknown/inapplicable markers and empty strings with the declared default.
+                # Object dtype permits mixing string input with numeric defaults before conversion.
+                if spec.get("default") is not None:
+                    values = np.where(np.isin(values, ["?", ".", ""]), spec["default"], values.astype(object))
+                converted = np.array(values, dtype=dtype)
+                atom_array_stack.del_annotation(field_name)
+                atom_array_stack.set_annotation(field_name, converted)
             except (ValueError, TypeError):
                 logger.warning(f"Could not convert field '{field_name}' to dtype {dtype}")
         elif field_name in (

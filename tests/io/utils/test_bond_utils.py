@@ -3,7 +3,9 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from biotite.structure import AtomArray, BondType
+from biotite.structure import AtomArray, BondList, BondType
+from biotite.structure.io.pdb import PDBFile
+from biotite.structure.io.pdbx import CIFFile, set_structure
 
 from atomworks.io.config import ParseConfig
 from atomworks.io.parser import parse
@@ -110,6 +112,28 @@ def test_fix_formal_charge_of_deprotonated_alanine(hydrogen_policy):
     oxygen = _atom_index(atoms, "A", 1, "ACT", "OXT")
     assert atoms.charge[oxygen] == 0
     assert atoms.bonds.get_bonds(oxygen)[1].tolist() == [BondType.SINGLE, BondType.SINGLE]
+
+
+@pytest.mark.parametrize(
+    ("pdb_id", "endpoint1", "endpoint2", "expected_valence"),
+    [
+        ("1e1y", ("A", 14, "SER", "OG"), ("C", 997, "PO3", "P"), 5),
+        ("8r2z", ("A", 47, "SER", "OG"), ("B", 301, "XR9", "B2"), 4),
+    ],
+)
+def test_parse_valid_charged_hypervalent_link(pdb_id, endpoint1, endpoint2, expected_valence):
+    """Charged P(V) and tetrahedral borate links retain their authored bond, charge, and valence."""
+    atoms = parse(
+        get_pdb_path(pdb_id),
+        config=ParseConfig.from_preset("rcsb", model=1, build_assembly=None),
+    )["asym_unit"][0]
+    atom1 = _atom_index(atoms, *endpoint1)
+    atom2 = _atom_index(atoms, *endpoint2)
+    neighbors, bond_types = atoms.bonds.get_bonds(atom1)
+
+    assert bond_types[neighbors == atom2].item() == BondType.SINGLE
+    assert atoms.charge[atom2] == -1
+    assert get_bond_degree_per_atom(atoms)[atom2] == expected_valence
 
 
 def test_hash_atom_array():
@@ -283,6 +307,86 @@ def test_rebuilding_preserves_reaction_state_links(altloc, add_missing_atoms):
     if altloc == "B":
         partners, types = atoms.bonds.get_bonds(int(np.flatnonzero(op3)[0]))
         assert np.any((atoms.element[partners] == "MG") & (types == BondType.COORDINATION))
+
+
+@pytest.mark.parametrize(
+    "residues,names,elements,expected_order",
+    [
+        (("LYS", "FMT"), ("NZ", "C"), ("N", "C"), BondType.SINGLE),
+        (("DLY", "PLP"), ("NZ", "C4A"), ("N", "C"), BondType.DOUBLE),
+        (("CYS", "ZN"), ("SG", "ZN"), ("S", "ZN"), BondType.COORDINATION),
+        (("VAL", "VAL"), ("C", "HXT"), ("C", "H"), BondType.SINGLE),
+        (("VAL", "VAL"), ("C", "Q1"), ("C", "D"), BondType.SINGLE),
+        (("VAL", "VAL", "VAL"), ("C", "HXT", "C"), ("C", "H", "C"), None),
+        (("UNK", "UNK"), ("H1", "H2"), ("H", "H"), BondType.SINGLE),
+        (("UNK", "UNK", "UNK"), ("H1", "H2", "H3"), ("H", "H", "H"), None),
+        (("UNK", "UNK"), ("X1", "X2"), ("C", "C"), None),
+    ],
+)
+def test_minimal_pdb_resolves_conect_orders_from_chemistry(residues, names, elements, expected_order):
+    """PDB CONECT gives topology; CCD chemistry supplies link order when known."""
+    atoms = AtomArray(len(elements))
+    atoms.chain_id = ["A", "B", "C"][: len(atoms)]
+    atoms.res_id[:] = 1
+    atoms.res_name = residues
+    atoms.atom_name = names
+    atoms.element = elements
+    atoms.hetero[:] = True
+    atoms.coord = np.arange(len(atoms), dtype=np.float32)[:, None] * [1.5, 0, 0]
+    atoms.bonds = BondList(len(atoms), np.array([[i, i + 1, BondType.SINGLE] for i in range(len(atoms) - 1)]))
+    file = PDBFile()
+    file.set_structure(atoms)
+    buffer = io.StringIO()
+    file.write(buffer)
+    assert "CONECT" in buffer.getvalue()
+    buffer.seek(0)
+    config = ParseConfig.from_preset("minimal", file_type="pdb", model=1, build_assembly=None)
+    if expected_order is None:
+        with pytest.raises(ValueError, match="Cannot infer link order"):
+            parse(buffer, config=config)
+        return
+    parsed = parse(buffer, config=config)["asym_unit"][0]
+    np.testing.assert_array_equal(parsed.bonds.as_array(), [[0, 1, expected_order]])
+    np.testing.assert_array_equal(parsed.coord, atoms.coord)
+
+
+@pytest.mark.parametrize("custom_partner", [0, 1])
+@pytest.mark.parametrize("order", [None, "?", ".", "sing", "doub", "arom"])
+def test_minimal_parse_preserves_links_without_ccd_templates(custom_partner, order):
+    """Custom components without definitions retain reported connectivity and explicit orders."""
+    atoms = AtomArray(2)
+    atoms.chain_id = ["A", "B"]
+    atoms.res_id[:] = 1
+    atoms.res_name = ["TYR", "TYR"]
+    atoms.res_name[custom_partner] = "CUSTOM"
+    atoms.atom_name = ["OH", "OH"]
+    atoms.element = ["O", "O"]
+    atoms.hetero[:] = True
+    atoms.coord = np.array([[0, 0, 0], [1.5, 0, 0]], dtype=np.float32)
+    atoms.bonds = BondList(2, np.array([[0, 1, BondType.SINGLE]]))
+    cif = CIFFile()
+    set_structure(cif, atoms)
+    for category in ("chem_comp_atom", "chem_comp_bond"):
+        if category in cif.block:
+            del cif.block[category]
+    if order is None:
+        del cif.block["struct_conn"]["pdbx_value_order"]
+    else:
+        cif.block["struct_conn"]["pdbx_value_order"] = [order]
+    buffer = io.StringIO()
+    cif.write(buffer)
+    buffer.seek(0)
+    config = ParseConfig.from_preset("minimal", model=1, build_assembly=None)
+    if order == "arom":
+        with pytest.raises(ValueError, match="Unsupported struct_conn bond order"):
+            parse(buffer, config=config)
+        return
+    parsed = parse(buffer, config=config)["asym_unit"][0]
+    expected_order = {"sing": BondType.SINGLE, "doub": BondType.DOUBLE}.get(order, BondType.ANY)
+    np.testing.assert_array_equal(parsed.bonds.as_array(), [[0, 1, expected_order]])
+    np.testing.assert_array_equal(parsed.coord, atoms.coord)
+    with pytest.raises(ValueError, match="missing CCD template"):
+        infer_link_order(parsed, 0, 1)
 
 
 @pytest.mark.parametrize("missing_order", ["?", ".", None, "arom"])

@@ -60,6 +60,14 @@ def test_masks_are_derived_from_annotations(minimal_atom_array):
     assert not any(name.startswith("mask_") for name in minimal_atom_array.get_annotation_categories())
 
 
+def test_setting_condition_replaces_string_alias_dtype(minimal_atom_array):
+    alias = C_NTR.aliases[0]
+    minimal_atom_array.set_annotation(alias, np.array(["?", "0", "1"]))
+    C_NTR.set_annotation(minimal_atom_array, np.array([False, True, False]))
+    assert minimal_atom_array.get_annotation(alias).dtype == np.dtype(bool)
+    np.testing.assert_array_equal(C_NTR.annotation(minimal_atom_array), [False, True, False])
+
+
 def test_direct_aliases_are_non_destructive_and_conflicts_raise(minimal_atom_array):
     alias = C_NTR.aliases[0]
     minimal_atom_array.set_annotation(alias, np.array([True, False, True]))

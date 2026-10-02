@@ -11,6 +11,7 @@ import biotite.structure as struc
 import networkx as nx
 import numpy as np
 from biotite.structure import AtomArray
+from rdkit import Chem, rdBase
 from rdkit.Chem import GetPeriodicTable
 
 from atomworks.constants import (
@@ -111,15 +112,36 @@ def filter_link_distances(
     return valid
 
 
+@functools.cache
+def _is_valid_rdkit_valence(element: str, charge: int, valence: int) -> bool:
+    """Test charge-dependent valence and radicals using explicit H as bond-order sum in a cached RDKit probe."""
+    charge_spec = f"{charge:+d}" if charge else ""
+    with rdBase.BlockLogs():
+        product = Chem.MolFromSmiles(f"[{element.title()}H{valence}{charge_spec}]")
+    return product is not None and product.GetAtomWithIdx(0).GetNumRadicalElectrons() == 0
+
+
+def _has_valid_rdkit_valence(atom_array: AtomArray, atom_idx: int) -> bool:
+    _, bond_types = atom_array.bonds.get_bonds(atom_idx)
+    valence = sum(BIOTITE_BOND_TYPE_TO_BOND_ORDER.get(struc.BondType(value), 1) for value in bond_types)
+    if "nhyd" in atom_array.get_annotation_categories():
+        valence += int(atom_array.nhyd[atom_idx])
+    return _is_valid_rdkit_valence(
+        str(atom_array.element[atom_idx]),
+        int(atom_array.charge[atom_idx]),
+        valence,
+    )
+
+
 def _valence_with_neutralization(element: str, reference_valence: int) -> int:
-    """Allow the reference or neutral default valence, without selecting a higher hypervalence.
+    """Allow the reference or neutral default valence.
 
     For example, O(-) with reference valence 1 can form a second bond and become neutral ester oxygen.
     """
     return max(reference_valence, GetPeriodicTable().GetDefaultValence(element.title()))
 
 
-def infer_link_order(atom_array: AtomArray, atom1: int, atom2: int) -> int:
+def infer_link_order(atom_array: AtomArray, atom1: int, atom2: int, *, allow_missing_templates: bool = False) -> int:
     """Infer an unspecified link order; the caller preserves recognized explicit orders.
 
     Reuse the CCD order for an existing bond within the same residue. Otherwise,
@@ -132,6 +154,9 @@ def infer_link_order(atom_array: AtomArray, atom1: int, atom2: int) -> int:
     - Carbonyl addition, with downstream C=O reduction to C-O(-), as in 1TQH.
     - Addition to neutral nitrogen with bond-order sum 3, producing four-coordinate N(+).
     These are candidates only; downstream chemistry must still validate the product.
+
+    When ``allow_missing_templates=True``, missing CCD definitions yield ``BondType.ANY``
+    so coordinate-only parsing can preserve reported links without inventing their order.
 
     Raises:
         ValueError: Required CCD template/atom/bond data are missing, or either
@@ -150,6 +175,8 @@ def infer_link_order(atom_array: AtomArray, atom1: int, atom2: int) -> int:
         try:
             template = atom_array_from_ccd_code(res_name, coords=None)
         except ValueError as error:
+            if allow_missing_templates:
+                return int(struc.BondType.ANY)
             raise ValueError(f"Cannot infer link order for {partners}: missing CCD template for {res_name}") from error
         matches = np.flatnonzero(template.atom_name == atom_name)
         if len(matches) != 1 or template.bonds is None:
@@ -169,9 +196,13 @@ def infer_link_order(atom_array: AtomArray, atom1: int, atom2: int) -> int:
         )
         # Both partners must support the order: in PDB 1DPN, O3' gives up one H, so O3'-P stays single.
         # Include unused valence: an unbonded atom need not displace anything, e.g. selenium in 7ZCY.
-        capacity = _valence_with_neutralization(template.element[matches[0]], int(orders.sum())) - int(
-            orders[retained].sum()
-        )
+        retained_valence = int(orders[retained].sum())
+        element = template.element[matches[0]]
+        capacity = _valence_with_neutralization(element, int(orders.sum())) - retained_valence
+        if capacity < order and _is_valid_rdkit_valence(
+            element, int(template.charge[matches[0]]), retained_valence + order
+        ):
+            capacity = order
 
         # Compatibility heuristics for under-annotated PDB links: the CCD may describe the unlinked reactant.
         # Allow these single-bond candidates despite insufficient capacity; downstream chemistry must still validate.
@@ -872,7 +903,10 @@ def correct_formal_charges_for_specified_atoms(atom_array: AtomArray, to_update:
             )
 
     default_valence = np.array([DEFAULT_VALENCE.get(elt, -10) for elt in atom_array.element[indices]])
-    valid = default_valence != -10
+    already_valid = np.fromiter(
+        (_has_valid_rdkit_valence(atom_array, int(idx)) for idx in indices), dtype=bool, count=len(indices)
+    )
+    valid = (default_valence != -10) & ~already_valid
     atom_array.charge[indices[valid]] = (degree - default_valence)[valid]
     return atom_array
 
@@ -927,6 +961,8 @@ def _validate_link_valence(atom_array: AtomArray, impacted: np.ndarray, *, compl
     degree = get_bond_degree_per_atom(atom_array)
     # Reject unresolved valence, e.g. the three-bond O3' from conflicting authored links in PDB 4V4S.
     for idx in np.flatnonzero(impacted):
+        if _has_valid_rdkit_valence(atom_array, int(idx)):
+            continue
         element, charge = atom_array.element[idx], atom_array.charge[idx]
         expected = DEFAULT_VALENCE.get(element)
         expected = expected if element == "C" or expected is None else expected + charge

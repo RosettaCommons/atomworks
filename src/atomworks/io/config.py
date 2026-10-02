@@ -37,6 +37,7 @@ class PrepareConfig:
             bond inference (removing leaving atoms, fixing bond orders for nucleophilic
             additions, correcting formal charges, and fixing charged amide nitrogens), which
             is only well-defined once templates supply the true hydrogen count per atom.
+            When ``False``, links without CCD templates retain unknown bond orders.
             Defaults to ``True``.
         add_bond_types_from_struct_conn: Bond types to add from the ``struct_conn``
             CIF category. Defaults to ``("covale",)``, meaning only covalent bonds are

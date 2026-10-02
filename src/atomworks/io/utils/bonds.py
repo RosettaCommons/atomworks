@@ -193,6 +193,8 @@ def get_struct_conn_bonds(
     add_bond_types: tuple[str, ...] = ("covale",),
     raise_on_failure: bool = False,
     distance_policy: LongBondPolicyType = "filter",
+    *,
+    allow_missing_templates: bool = False,
 ) -> struc.BondList:
     """Find inter-residue bonds from the CIF ``struct_conn`` category.
 
@@ -209,6 +211,7 @@ def get_struct_conn_bonds(
         raise_on_failure: If ``True``, raise on missing atoms or residues. Defaults to ``False``.
         distance_policy: How to handle implausibly long bonds. Explicit glycosylation links and
             covalent links between CCD-recognized carbohydrates are warned above 1.7 A but kept through 2.4 A.
+        allow_missing_templates: Preserve an unknown bond order when a CCD template is unavailable.
 
     Returns:
         A :py:class:`biotite.structure.BondList` ready to merge into the atom array's bond list.
@@ -346,7 +349,9 @@ def get_struct_conn_bonds(
         if order in STRUCT_CONN_BOND_ORDER_TO_INT:
             bond_types[i] = STRUCT_CONN_BOND_ORDER_TO_INT[order]
         elif order in ("?", ".", ""):
-            bond_types[i] = infer_link_order(atom_array, int(idx1[i]), int(idx2[i]))
+            bond_types[i] = infer_link_order(
+                atom_array, int(idx1[i]), int(idx2[i]), allow_missing_templates=allow_missing_templates
+            )
         else:
             raise ValueError(f"Unsupported struct_conn bond order: {order!r}")
 
@@ -770,6 +775,8 @@ def add_bonds_from_struct_conn(
     cif_block: pdbx.CIFBlock,
     add_bond_types_from_struct_conn: tuple[str, ...] = ("covale",),
     struct_conn_distance_policy: LongBondPolicyType = "filter",
+    *,
+    allow_missing_templates: bool = False,
 ) -> AtomArray | AtomArrayStack:
     """Convenience wrapper to add bonds to an AtomArray from a struct_conn CIF category.
 
@@ -789,6 +796,7 @@ def add_bonds_from_struct_conn(
         struct_conn_dict=struct_conn_dict,
         add_bond_types=add_bond_types_from_struct_conn,
         distance_policy=struct_conn_distance_policy,
+        allow_missing_templates=allow_missing_templates,
     )
     atom_array.bonds = atom_array.bonds.merge(new_bonds)
 

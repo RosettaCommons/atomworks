@@ -500,6 +500,7 @@ class StandardAnnotationBase(ABC, metaclass=StandardAnnotationMeta):
                     if cls.n_body == 0:
                         atom_array.set_annotation(alias, array, n_body=0)
                     else:
+                        atom_array.del_annotation(alias)
                         atom_array.set_annotation(alias, array)
 
         elif cls.n_body == 2:

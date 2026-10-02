@@ -2,8 +2,8 @@
 
 Detects H-bonds, hydrophobic contacts, pi-stacking, pi-cation, salt bridges,
 halogen bonds, and metal coordination between chains.  The
-:class:`AnnotateInteractions` transform adds pH-aware hydrogens (RDKit +
-Dimorphite-DL) if missing, writes 1D/2D annotations, then strips temporary H.
+:class:`AnnotateInteractions` transform adds pH-aware hydrogens
+(:mod:`atomworks.experimental.protonation`) if missing, writes 1D/2D annotations, then strips temporary H.
 Two H-bond geometry models are available, selected via ``hbond_model``:
 ``"rosetta"`` (O'Meara et al. 2015) and ``"plip"`` (Hubbard & Haider 2001).
 """
@@ -21,10 +21,10 @@ from biotite.structure import AtomArray
 from scipy.spatial import cKDTree
 
 from atomworks.constants import METAL_ELEMENTS, STANDARD_DNA, STANDARD_POLYMER_RESIDUES, STANDARD_RNA
+from atomworks.experimental.protonation import add_hydrogens
 from atomworks.io.tools.rdkit import atom_array_to_rdkit, suppress_rdkit_warnings
 from atomworks.io.utils.atom_array import chain_identifier
 from atomworks.io.utils.atom_array_plus import AnnotationList2D, as_atom_array_plus
-from atomworks.io.utils.protonation import ensure_hydrogens
 from atomworks.io.utils.scatter import safe_scatter
 from atomworks.io.utils.selection import get_annotation_categories
 from atomworks.ml.transforms._checks import check_atom_array_has_bonds, check_contains_keys, check_is_instance
@@ -284,7 +284,15 @@ def _build_na_tables() -> tuple[frozenset[tuple[str, str]], frozenset[tuple[str,
     donor: set[tuple[str, str]] = set(_DONOR_ATOMS_AA)
     acceptor: set[tuple[str, str]] = set(_ACCEPTOR_TABLE_AA)
     negative: set[tuple[str, str]] = set(_NEGATIVE_CHARGED_AA)
+    base_acceptors = {
+        "A": ("N1", "N3", "N7"),
+        "G": ("N3", "N7", "O6"),
+        "C": ("N3", "O2"),
+        "T": ("O2", "O4"),
+        "U": ("O2", "O4"),
+    }
     for na_res in (*STANDARD_DNA, *STANDARD_RNA):
+        acceptor.update((na_res, atom) for atom in base_acceptors[na_res.removeprefix("D")])
         for oa in ("OP1", "OP2", "O3'", "O5'", "O4'", "O2'"):
             acceptor.add((na_res, oa))
         negative.add((na_res, "OP1"))
@@ -1289,8 +1297,8 @@ def annotate_interactions(
     """Detect non-covalent interactions in a structure.
 
     For accurate H-bond detection the input should contain explicit
-    hydrogen atoms.  Use :func:`ensure_hydrogens` to add them via
-    RDKit + Dimorphite-DL, or call through :class:`AnnotateInteractions`
+    hydrogen atoms.  Add them with :func:`~atomworks.experimental.protonation.assign_hydrogens`
+    and :func:`~atomworks.experimental.protonation.add_hydrogens`, or call through :class:`AnnotateInteractions`
     which handles the H lifecycle automatically.
 
     All default thresholds match PLIP v3.0.0.
@@ -1419,7 +1427,7 @@ class AnnotateInteractions(Transform):
             # Work on a copy: add H, detect interactions, then transfer annotations
             # back to the original array. This ensures no original annotations are
             # lost during hydrogen addition / concatenation.
-            aap_h = as_atom_array_plus(ensure_hydrogens(aap.copy(), silence_lost_annotation_warnings=True))
+            aap_h = as_atom_array_plus(add_hydrogens(aap))
             added_h = len(aap_h) > len(aap)
 
             results = annotate_interactions(
@@ -1458,7 +1466,7 @@ class AnnotateInteractions(Transform):
 
             # Transfer interaction annotations from the copy back to the original.
             # Match by (chain_id, res_id, atom_name) to handle cases where
-            # ensure_hydrogens changed heavy atom count (e.g. input had partial H).
+            # protonation changed heavy atom count (e.g. input had partial H).
             _transfer_interaction_annotations(src=aap_h, dst=aap)
 
         data["atom_array"] = aap

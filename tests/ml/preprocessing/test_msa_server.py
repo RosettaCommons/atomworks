@@ -129,6 +129,7 @@ def test_csv_and_cli_dispatch_preserve_local_backends(tmp_path, monkeypatch, bac
     for name in ("make_msas_mmseqs", "make_msas_hhblits", "make_msas_mmseqs_server"):
         monkeypatch.setattr(generating, name, lambda _name=name, **kwargs: calls.append((_name, kwargs)))
     monkeypatch.setenv("HHBLITS_UNIREF30_DB_PATH", str(tmp_path / "dummy-db"))
+    monkeypatch.setenv("HHBLITS_BFD_DB_PATH", str(tmp_path / "dummy-bfd-db"))
     config = generating.MSAGenerationConfig(backend=backend)
     if backend == "hhblits":
         config.hhblits_search_config = generating.HHblitsSearchConfig(uniref30_db_path="dummy-db", use_bfd=False)

@@ -22,6 +22,17 @@ from atomworks.io.utils.standard_annotations.serialization import (
 
 logger = logging.getLogger(__name__)
 
+COMMON_EXTRA_FIELDS = {
+    "label_entity_id": {},
+    "atom_id": {},
+    "b_factor": {},
+    "occupancy": {},
+    "charge": {},
+    "auth_seq_id": {},
+    "nhyd": {"dtype": np.int64, "default": 0},
+    "label_alt_id": {},
+}
+
 
 def load_cif(
     filename: str | Path | io.StringIO | io.BytesIO,
@@ -52,10 +63,14 @@ def load_cif(
     # +------------ Annotations (CIF-specific) ------------+
 
     # NOTE: transformation_id is auto-injected by get_structure() for CIF files
-    common_extra_fields = merge_extra_fields(
-        ["label_entity_id", "atom_id", "b_factor", "occupancy", "charge", "auth_seq_id", "nhyd", "label_alt_id"],
-        extra_fields,
+    requested_fields = normalize_extra_fields(
+        list(cif_block["atom_site"].keys()) if extra_fields == "all" else extra_fields
     )
+    common_extra_fields = dict(COMMON_EXTRA_FIELDS)
+    for name, spec in requested_fields.items():
+        common_extra_fields[name] = common_extra_fields.get(name, {}) | {
+            key: value for key, value in spec.items() if value is not None
+        }
 
     # Sanity Check: extra_fields must not overlap with SA names saved as CIF extra-categories.
     # Scalar 1-body SAs live in atom_site and can coexist with user-provided extra_fields without
