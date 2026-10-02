@@ -44,6 +44,7 @@ extensions = [
     "sphinx.ext.viewcode",  # Add source code links
     "sphinx.ext.napoleon",  # Google/NumPy style docstrings
     "sphinx_gallery.gen_gallery",  # Generates auto_examples/ from examples/
+    "sphinxcontrib.typer",
     "myst_parser",  # Support Markdown tutorial pages
     "sphinx_design",  # Render collapsible tutorial code examples
 ]
@@ -51,7 +52,7 @@ extensions = [
 myst_heading_anchors = 3
 
 templates_path = ["_templates"]
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "examples/GALLERY_HEADER.rst", "ml/preprocessing.rst"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "examples/GALLERY_HEADER.rst"]
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
