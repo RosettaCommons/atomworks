@@ -22,5 +22,6 @@ Data Processing Modules
    ml/transforms/diffusion
    ml/transforms/dna
    ml/transforms/feature_aggregation
+   ml/msa_server
    ml/transforms/msa
    ml/utils
