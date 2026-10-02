@@ -12,7 +12,7 @@ import numpy as np
 from biotite.structure import AtomArray, AtomArrayStack, BondType
 from biotite.structure.io import pdbx
 
-from atomworks.common import sum_string_arrays, to_hashable
+from atomworks.common import sum_string_arrays
 from atomworks.constants import (
     BOND_DISTANCE_THRESHOLD_CHNO,
     BOND_DISTANCE_THRESHOLD_CHNOPS,
@@ -32,7 +32,7 @@ from atomworks.io.utils.ccd import (
 from atomworks.io.utils.link_chemistry import (
     _element_distance_thresholds,
     filter_link_distances,
-    infer_link_orders,
+    infer_link_order,
 )
 from atomworks.io.utils.link_chemistry import (
     correct_charged_amide_nitrogens as correct_charged_amide_nitrogens,
@@ -135,7 +135,7 @@ def build_bond_dict_for_atom_array(
             # Normalize custom bond keys to sorted tuples to match _bonds_to_dict's convention.
             normalized = {tuple(sorted(k)): v for k, v in bonds.items()}
             if res_name in result_dict:
-                result_dict[res_name].update(normalized)  # _bonds_to_dict returns a fresh dict, safe to mutate
+                result_dict[res_name].update(normalized)
             else:
                 result_dict[res_name] = normalized
 
@@ -309,17 +309,6 @@ def get_struct_conn_bonds(
         atom_indices.append(_find_matches(q_arrays, r_arrays))
     idx1, idx2 = atom_indices
 
-    # --- Vectorised bond type computation ---
-    pdbx_value_order = filtered.get("pdbx_value_order")
-    conn_type_arr = filtered["conn_type_id"]
-
-    if pdbx_value_order is not None:
-        bond_orders = np.vectorize(lambda s: STRUCT_CONN_BOND_ORDER_TO_INT.get(str(s), 1))(pdbx_value_order)
-        infer_link_orders(filtered, bond_orders)
-    else:
-        bond_orders = np.ones(n_rows, dtype=int)
-    bond_types = np.where(conn_type_arr == "metalc", int(struc.BondType.COORDINATION), bond_orders)
-
     # --- Filter missing bonds, log, and optionally raise ---
     # kept only for error logging
     chains = [filtered["ptnr1_label_asym_id"], filtered["ptnr2_label_asym_id"]]
@@ -344,6 +333,22 @@ def get_struct_conn_bonds(
             )
 
     valid = filter_link_distances(atom_array, filtered, idx1, idx2, valid, distance_policy)
+
+    # Assign bond types after atom matching and distance filtering; metal coordination has no covalent order.
+    # Preserve recognized explicit orders, infer missing/unknown orders from CCD chemistry, and reject other values.
+    pdbx_value_order = filtered.get("pdbx_value_order")
+    bond_types = np.empty(n_rows, dtype=int)
+    for i in np.flatnonzero(valid):
+        if filtered["conn_type_id"][i] == "metalc":
+            bond_types[i] = int(struc.BondType.COORDINATION)
+            continue
+        order = str(pdbx_value_order[i]) if pdbx_value_order is not None else "?"
+        if order in STRUCT_CONN_BOND_ORDER_TO_INT:
+            bond_types[i] = STRUCT_CONN_BOND_ORDER_TO_INT[order]
+        elif order in ("?", ".", ""):
+            bond_types[i] = infer_link_order(atom_array, int(idx1[i]), int(idx2[i]))
+        else:
+            raise ValueError(f"Unsupported struct_conn bond order: {order!r}")
 
     bonds_array = (
         np.stack([idx1[valid], idx2[valid], bond_types[valid]], axis=1) if valid.any() else np.empty((0, 3), dtype=int)
@@ -402,19 +407,20 @@ def get_coarse_graph_as_nodes_and_edges(
     else:
         _annots = atom_array.get_annotation(annotations[0])  # [n_atoms]
 
-    annot1 = _annots[atom1]  # [n_bonds, n_annotations]
-    annot2 = _annots[atom2]  # [n_bonds, n_annotations]
+    # Group atoms by annotation and assign sorted node indices.
+    nodes, atom_to_node = np.unique(_annots, axis=0, return_inverse=True)
+    if len(nodes) == 0:
+        return nodes, np.empty((0, 2), dtype=nodes.dtype)
 
-    nodes = np.unique(_annots, axis=0)  # [n_nodes, n_annotations]
-    self_edges = np.vstack([nodes, nodes]).T  # [n_nodes, 2]
-    edges = np.unique(np.vstack([self_edges, np.vstack([annot1, annot2]).T]), axis=0)  # [n_edges, 2]
+    # Include a self-edge for every node, including isolated nodes.
+    node_indices = np.arange(len(nodes))
+    self_edges = np.column_stack((node_indices, node_indices))
 
-    # Map nodes to integers
-    node_to_idx = {to_hashable(node): i for i, node in enumerate(nodes)}
-    if len(edges) > 0:
-        edges = np.apply_along_axis(
-            lambda x: (node_to_idx[to_hashable(x[0])], node_to_idx[to_hashable(x[1])]), 1, edges
-        )
+    # Map bonds between distinct nodes, then sort and deduplicate edges.
+    node1, node2 = atom_to_node[atom1], atom_to_node[atom2]
+    between_nodes = node1 != node2
+    bond_edges = np.column_stack((node1[between_nodes], node2[between_nodes]))
+    edges = np.unique(np.concatenate((self_edges, bond_edges)), axis=0)
 
     return nodes, edges
 

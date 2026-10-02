@@ -3,6 +3,8 @@ Parser
 
 The parser is the core entry point for converting structural and sequence files (mmCIF, PDB, FASTA, SMILES, etc.) into Biotite's AtomArray API. It supports extensive options for annotation, filtering, and caching.
 
+For custom ligands and safe read/write workflows, see :doc:`custom_ccd`.
+
 Example Usage
 -------------
 

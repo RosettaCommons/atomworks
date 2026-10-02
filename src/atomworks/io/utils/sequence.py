@@ -7,6 +7,7 @@ __all__ = [
 
 import functools
 import logging
+from collections import Counter
 from collections.abc import Sequence
 
 import numpy as np
@@ -237,28 +238,29 @@ def infer_chain_type_from_three_letter(ccd_code_seq: Sequence[str]) -> ChainType
         0,
     )
 
-    for res_name in ccd_code_seq:
+    # Classify each distinct component once, preserving its contribution to chain composition.
+    for res_name, count in Counter(ccd_code_seq).items():
         chem_comp = get_chem_comp_type(res_name, mode="warn")
 
         # Increment the count for the appropriate chain type category
         # (All amino acid-like chem types are considered "aa_like")
         if chem_comp in AA_LIKE_CHEM_TYPES:
-            chain_type_counts["aa_like"] += 1
+            chain_type_counts["aa_like"] += count
             # (We further differentiate between L- and D-polypeptides)
             if chem_comp in POLYPEPTIDE_D_CHEM_TYPES:
-                chain_type_counts[ChainType.POLYPEPTIDE_D] += 1
+                chain_type_counts[ChainType.POLYPEPTIDE_D] += count
             elif chem_comp in POLYPEPTIDE_L_CHEM_TYPES:
-                chain_type_counts[ChainType.POLYPEPTIDE_L] += 1
+                chain_type_counts[ChainType.POLYPEPTIDE_L] += count
 
         # (We differentiate between RNA and DNA)
         elif chem_comp in RNA_LIKE_CHEM_TYPES:
-            chain_type_counts[ChainType.RNA] += 1
+            chain_type_counts[ChainType.RNA] += count
         elif chem_comp in DNA_LIKE_CHEM_TYPES:
-            chain_type_counts[ChainType.DNA] += 1
+            chain_type_counts[ChainType.DNA] += count
 
         # (All other chem types are considered non-polymer)
         else:
-            chain_type_counts[ChainType.NON_POLYMER] += 1
+            chain_type_counts[ChainType.NON_POLYMER] += count
 
     # WARNING: The following logic is heuristic, and may fail in cases of multiple residues types within a chain.
 

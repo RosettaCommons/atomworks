@@ -8,6 +8,7 @@ References:
     `Biotite Structure Module <https://www.biotite-python.org/apidoc/biotite.structure.html>`_
 """
 
+import functools
 from collections.abc import Callable
 
 import biotite.structure as struc
@@ -371,6 +372,41 @@ def _update_set_inter_residue_bonds() -> None:
     pdbx_convert._set_inter_residue_bonds = _set_inter_residue_bonds
 
 
+def _update_cif_loop_parsing() -> None:
+    """Distribute CIF loop tokens by column without a Python operation per value.
+
+    Biotite still normalizes multiline fields and tokenizes quoted values. The flat
+    token list temporarily adds one reference per value while columns are sliced out.
+    """
+    from biotite.structure.io.pdbx import cif
+
+    original = cif.CIFCategory._deserialize_looped
+
+    @functools.wraps(original)
+    def deserialize_looped(lines: list[str]) -> dict[str, list[str]]:
+        column_names = []
+        for line in lines:
+            if line[0] != "_":
+                break
+            column_names.append(line.split(".")[1])
+
+        n_columns = len(column_names)
+        if not n_columns or len(set(column_names)) != n_columns:
+            return original(lines)
+
+        values = []
+        for line in lines[n_columns:]:
+            if line[0] == ";" or "'" in line or '"' in line:
+                values.extend(cif._split_one_line(line))
+            else:
+                values.extend(line.split())
+        if len(values) % n_columns:
+            raise cif.DeserializationError("Category contains columns with different lengths")
+        return {name: values[i::n_columns] for i, name in enumerate(column_names)}
+
+    cif.CIFCategory._deserialize_looped = staticmethod(deserialize_looped)
+
+
 def monkey_patch_biotite() -> None:
     """Monkey-patch biotite to add query, mask, and idxs methods to AtomArray and AtomArrayStack."""
     global _HAS_BEEN_PATCHED
@@ -386,5 +422,6 @@ def monkey_patch_biotite() -> None:
     _update_array()
     _concatenate()
     _update_set_inter_residue_bonds()
+    _update_cif_loop_parsing()
 
     _HAS_BEEN_PATCHED = True

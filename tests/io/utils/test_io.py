@@ -24,7 +24,13 @@ from atomworks.io.tools.inference import (
 from atomworks.io.transforms.atom_array import ensure_atom_array_stack
 from atomworks.io.transforms.categories import category_to_dict
 from atomworks.io.utils.atom_array_plus import AtomArrayPlus, as_atom_array_plus, concatenate_atom_array_plus
-from atomworks.io.utils.ccd import _get_ccd_block, atom_array_from_ccd_code, register_custom_ccd_entry
+from atomworks.io.utils.ccd import (
+    _get_ccd_block,
+    _get_standard_ccd_codes_cached,
+    atom_array_from_ccd_code,
+    get_atom_names_for_residue,
+    register_custom_ccd_entry,
+)
 from atomworks.io.utils.io_utils import (
     CIF_LIKE_EXTENSIONS,
     CIFWriteConfig,
@@ -414,6 +420,14 @@ def test_cif_assembly_roundtrip(pdb_id: str, assembly_id: str, mode: str):
             assert_same_annotation_cardinality(original, reloaded, cardinality_annotations)
 
 
+@pytest.fixture
+def forget_ccd_lookups():
+    """Drops the CCD lookups a test cached, keyed by mirror path alone, while it had turned the CCD off."""
+    yield
+    for lookup in (_get_standard_ccd_codes_cached, get_atom_names_for_residue):
+        lookup.cache_clear()
+
+
 @pytest.mark.parametrize(
     "pdb_id",
     [
@@ -451,7 +465,9 @@ def test_cif_assembly_roundtrip(pdb_id: str, assembly_id: str, mode: str):
         pytest.param(ParseConfig(hydrogen_policy="remove", add_missing_atoms=True), id="with_rebuild"),
     ],
 )
-def test_to_cif_file_roundtrip(pdb_id: str, reload_config: ParseConfig, biotite_ccd: str, monkeypatch):
+def test_to_cif_file_roundtrip(
+    pdb_id: str, reload_config: ParseConfig, biotite_ccd: str, monkeypatch, forget_ccd_lookups
+):
     """CIF roundtrip on diverse asymmetric units, with and without biotite CCD access.
 
     ``biotite_ccd="off"`` disables ``ALLOW_BIOTITE_CCD`` and clears

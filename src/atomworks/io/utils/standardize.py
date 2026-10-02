@@ -48,7 +48,9 @@ def _handle_unmatched_atom(
 
     # Apply policy
     if policy == "raise":
-        raise ValueError(msg)
+        raise ValueError(
+            f"{msg}. If this is a custom component, provide its chem_comp_atom and chem_comp_bond definitions."
+        )
     elif policy == "filter":
         logger.warning(f"{msg} - removing {atom_type_str} " f"(will be re-added by add_missing_atoms if valid)")
         atoms_to_keep[atom_idx] = False

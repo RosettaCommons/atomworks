@@ -229,7 +229,7 @@ def get_available_ccd_codes(ccd_mirror_path: os.PathLike | None = CCD_MIRROR_PAT
     with _ccd_registry_lock:
         registry_codes = frozenset(_ccd_registry.keys())
 
-    return standard_codes | registry_codes
+    return standard_codes if registry_codes.issubset(standard_codes) else standard_codes | registry_codes
 
 
 def _standard_ccd_only_cache(cache_decorator: Callable) -> Callable:
@@ -257,7 +257,7 @@ def _standard_ccd_only_cache(cache_decorator: Callable) -> Callable:
 
 
 def get_ccd_component_from_biotite(ccd_code: str, **parse_ccd_cif_kwargs) -> struc.AtomArray:
-    """Retrieves a component from the Chemical Component Dictionary using Biotite's built-in CCD.
+    """Retrieve an isolated copy of a cached component from Biotite's built-in CCD.
 
     Args:
         - ccd_code (str): The three-letter code of the chemical component to retrieve.
@@ -265,6 +265,14 @@ def get_ccd_component_from_biotite(ccd_code: str, **parse_ccd_cif_kwargs) -> str
     Returns:
         - AtomArray: The atomic structure of the requested component.
     """
+    if isinstance(parse_ccd_cif_kwargs.get("coords"), list):
+        parse_ccd_cif_kwargs["coords"] = tuple(parse_ccd_cif_kwargs["coords"])
+    return _get_ccd_component_from_biotite_cached(ccd_code, **parse_ccd_cif_kwargs)
+
+
+@immutable_lru_cache(maxsize=1000)
+def _get_ccd_component_from_biotite_cached(ccd_code: str, **parse_ccd_cif_kwargs) -> struc.AtomArray:
+    """Parse bundled components once per option set; return a deep copy per lookup."""
     try:
         block = _filter_biotite_ccd_for_ccd_code(ccd_code)
         atom_array = parse_ccd_cif(block, **parse_ccd_cif_kwargs)
@@ -835,12 +843,15 @@ def _derive_polymerization_atoms_from_template(
 
 
 @functools.lru_cache(maxsize=1024)
-def _get_polymerization_atoms_cached(res_name: str) -> tuple[str | None, str | None]:
+def _get_polymerization_atoms_cached(res_name: str, chain_type: ChainType | None) -> tuple[str | None, str | None]:
     """Cached lookup for canonical (non-registry) residues only."""
     cct = get_chem_comp_type(res_name)
     canonical = CHEM_TYPE_POLYMERIZATION_ATOMS.get(cct)
     if canonical is None:
         canonical = ChainTypeInfo.ATOMS_AT_POLYMER_BOND.get(get_chain_type_from_chem_comp_type(cct))
+    if canonical is None:
+        # Use the chain's convention for non-polymer caps, e.g. the terminal NH2 in PDB 3N95.
+        canonical = ChainTypeInfo.ATOMS_AT_POLYMER_BOND.get(chain_type)
     if canonical is None:
         return None, None
 
@@ -869,8 +880,8 @@ def _get_polymerization_atoms_cached(res_name: str) -> tuple[str | None, str | N
     )
 
 
-def get_polymerization_atoms(res_name: str) -> tuple[str | None, str | None]:
-    """Return the ``(leaving_atom, entering_atom)`` pair for a polymer bond.
+def get_polymerization_atoms(res_name: str, chain_type: ChainType | None = None) -> tuple[str | None, str | None]:
+    """Return candidate ``(leaving_atom, entering_atom)`` sites for a polymer bond.
 
     Looks up the canonical atoms for the chemical component type via :pyfunc:`get_chem_comp_type`
     against ``CHEM_TYPE_POLYMERIZATION_ATOMS`` (falling back to
@@ -878,14 +889,15 @@ def get_polymerization_atoms(res_name: str) -> tuple[str | None, str | None]:
     those atom names. A component that does not carry them falls back to
     ``CCD_POLYMERIZATION_ATOM_OVERRIDES``, and then to
     :pyfunc:`_derive_polymerization_atoms_from_template`. Each side is resolved independently and
-    may be ``None``.
+    may be ``None``. For caps, ``chain_type`` supplies candidate sites (``NH2`` gives ``(None, "N")``),
+    but does not establish that a bond exists.
     """
     # Skip cache for custom registry entries (mutable state)
     if res_name.upper() in _ccd_registry:
-        return _get_polymerization_atoms_cached.__wrapped__(res_name)
+        return _get_polymerization_atoms_cached.__wrapped__(res_name, chain_type)
 
     # Use cached lookup for canonical CCD entries (immutable state)
-    return _get_polymerization_atoms_cached(res_name)
+    return _get_polymerization_atoms_cached(res_name, chain_type)
 
 
 def get_unknown_ccd_code_for_chem_comp_type(chem_comp_type: str) -> str:
@@ -1039,6 +1051,13 @@ def add_annotations_from_ccd(
             return lambda v: (np.isnan(v) if np.issubdtype(v.dtype, np.floating) else np.zeros(len(v), dtype=bool))
 
     missing_value_checkers = {annot: _make_checker(annot) for annot in annotations}
+    present_annotations = atom_array.get_annotation_categories()
+    annotation_arrays = {
+        annot: atom_array.get_annotation(annot) for annot in annotations if annot in present_annotations
+    }
+    # Registry overrides remain reusable within this call without surviving registry changes.
+    get_template = functools.cache(_get_base_ccd_template)
+    matching_templates = {}
 
     # Process each unique residue
     for res_start, res_stop in zip(_res_starts, _res_stops, strict=False):
@@ -1055,7 +1074,7 @@ def add_annotations_from_ccd(
         # CCD is available - try to get template
         # (Some CCD files may be malformed, so catch parsing errors)
         try:
-            template = _get_base_ccd_template(res_name, str(ccd_mirror_path or ""), hydrogen_policy=hydrogen_policy)
+            template = get_template(res_name, str(ccd_mirror_path or ""), hydrogen_policy=hydrogen_policy)
         except (AttributeError, ValueError, KeyError) as e:
             logger.debug(f"CCD parsing failed for {res_name} (chain {chain_id}, res_id {res_id}): {e}")
             continue
@@ -1063,28 +1082,37 @@ def add_annotations_from_ccd(
         # Get atom names for this residue (direct slicing instead of boolean mask)
         residue_atom_names = atom_array.atom_name[res_start:res_stop]
 
-        # Select one naming convention for the entire residue using heavy atoms.
-        template_names = template.atom_name
-        if match_alt_atom_ids and "alt_atom_id" in template.get_annotation_categories():
-            heavy_names = residue_atom_names[~np.isin(atom_array.element[res_start:res_stop], HYDROGEN_LIKE_SYMBOLS)]
-            n_std = np.isin(heavy_names, template.atom_name).sum()
-            n_alt = np.isin(heavy_names, template.alt_atom_id).sum()
-            if n_alt > n_std:
-                template_names = template.alt_atom_id
+        # Repeated residues share a name layout even when partial or reordered.
+        heavy_mask = (
+            ~np.isin(atom_array.element[res_start:res_stop], HYDROGEN_LIKE_SYMBOLS) if match_alt_atom_ids else None
+        )
+        layout = res_name, tuple(residue_atom_names), tuple(heavy_mask) if heavy_mask is not None else ()
+        if layout not in matching_templates:
+            # Select one naming convention for the entire residue using heavy atoms.
+            template_names = template.atom_name
+            if match_alt_atom_ids and "alt_atom_id" in template.get_annotation_categories():
+                heavy_names = residue_atom_names[heavy_mask]
+                n_std = np.isin(heavy_names, template.atom_name).sum()
+                n_alt = np.isin(heavy_names, template.alt_atom_id).sum()
+                if n_alt > n_std:
+                    template_names = template.alt_atom_id
 
-        # Map residue atoms to template positions by name (handles partial residues)
-        template_len = len(template.atom_name)
-        residue_len = len(residue_atom_names)
-
-        if template_len == residue_len and np.array_equal(template_names, residue_atom_names):
-            # Perfect match - atoms already aligned, use sequential indices (O(n) fast path)
-            template_idxs = np.arange(template_len, dtype=np.intp)
-            residue_idxs = np.arange(residue_len, dtype=np.intp)
-        else:
-            # Atoms don't match perfectly - use intersection (O(n log n) fallback)
-            _, template_idxs, residue_idxs = np.intersect1d(
-                template_names, residue_atom_names, assume_unique=True, return_indices=True
+            if len(template) == len(residue_atom_names) and np.array_equal(template_names, residue_atom_names):
+                template_idxs = residue_idxs = np.arange(len(template), dtype=np.intp)
+            else:
+                _, template_idxs, residue_idxs = np.intersect1d(
+                    template_names, residue_atom_names, assume_unique=True, return_indices=True
+                )
+            template_annotations = template.get_annotation_categories()
+            matching_templates[layout] = (
+                residue_idxs,
+                [
+                    (annot, template.get_annotation(annot)[template_idxs])
+                    for annot in annotations
+                    if annot in template_annotations
+                ],
             )
+        residue_idxs, matched_annotations = matching_templates[layout]
 
         # Handle atoms that don't match the template according to ``on_mismatch``.
         if len(residue_idxs) != len(residue_atom_names):
@@ -1116,15 +1144,9 @@ def add_annotations_from_ccd(
         residue_global_idxs = res_start + residue_idxs
 
         # Copy annotations for matched atoms only
-        for annot in annotations:
-            if annot not in template.get_annotation_categories():
-                continue  # Skip if not in CCD
-
-            # Get template values for matched atoms
-            template_values = template.get_annotation(annot)[template_idxs]
-
+        for annot, template_values in matched_annotations:
             # Ensure annotation exists in atom_array
-            if annot not in atom_array.get_annotation_categories():
+            if annot not in annotation_arrays:
                 # Create annotation with default values
                 if annot in ["stereo", "alt_atom_id"]:
                     default = np.full(len(atom_array), "", dtype="<U1")
@@ -1135,18 +1157,20 @@ def add_annotations_from_ccd(
                 else:
                     default = np.zeros(len(atom_array), dtype=np.float32)
                 atom_array.set_annotation(annot, default)
+                annotation_arrays[annot] = atom_array.get_annotation(annot)
 
             # Determine if we should overwrite
             should_overwrite = overwrite_dict.get(annot, False)
+            values = annotation_arrays[annot]
 
             if should_overwrite:
                 # Overwrite matched atoms in this residue
-                atom_array.get_annotation(annot)[residue_global_idxs] = template_values
+                values[residue_global_idxs] = template_values
             else:
                 # Supplement only where missing (type-aware check)
-                current_values = atom_array.get_annotation(annot)[residue_global_idxs]
+                current_values = values[residue_global_idxs]
                 missing_mask = missing_value_checkers[annot](current_values)
-                atom_array.get_annotation(annot)[residue_global_idxs[missing_mask]] = template_values[missing_mask]
+                values[residue_global_idxs[missing_mask]] = template_values[missing_mask]
 
     return atom_array
 
