@@ -2,6 +2,7 @@
 
 import pickle
 import tempfile
+from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
@@ -38,6 +39,8 @@ TEST_CASES = [
     "6dmg",  # Multiconformer ligand
     "104d",  # DNA with MG ions
     "1a3g",  # Covalent modification, protein-ligand
+    "3n95",  # Terminal VAL-NH2 amide inferred from polymer sequence without an authored link.
+    "4aah",  # Vicinal Cys103-Cys104 disulfide must not suppress the C103-N104 backbone bond.
 ]
 
 ANNOTATIONS_TO_EXCLUDE = {
@@ -63,6 +66,14 @@ REGRESSION_PARSE_CONFIG = ParseConfig(
     model=None,
     return_atom_array_plus=True,
 )
+
+
+@pytest.fixture
+def regression_config(pdb_id: str) -> ParseConfig:
+    # Include disulfides to exercise 4AAH's adjacent-cysteine backbone attachment.
+    if pdb_id == "4aah":
+        return replace(REGRESSION_PARSE_CONFIG, add_bond_types_from_struct_conn=("covale", "disulf"))
+    return REGRESSION_PARSE_CONFIG
 
 
 def get_annotations_to_compare(
@@ -197,7 +208,7 @@ def _compare_parse_results(
 
 @pytest.mark.parametrize("pdb_id", TEST_CASES)
 @pytest.mark.parametrize("remove_hydrogens", [True, False], ids=["no_h", "with_h"])
-def test_regression_against_stored_result(pdb_id: str, remove_hydrogens: bool):
+def test_regression_against_stored_result(pdb_id: str, remove_hydrogens: bool, regression_config: ParseConfig):
     """Test that parse output matches stored regression baseline."""
     regression_dir = TEST_DATA_IO / "regression_tests"
     pickle_path = regression_dir / f"{pdb_id}.pkl"
@@ -205,8 +216,7 @@ def test_regression_against_stored_result(pdb_id: str, remove_hydrogens: bool):
     with pickle_path.open("rb") as f:
         expected_result = pickle.load(f)
 
-    path = get_pdb_path(pdb_id)
-    result = parse(path, config=REGRESSION_PARSE_CONFIG)
+    result = parse(get_pdb_path(pdb_id), config=regression_config)
     assert result is not None
 
     _compare_parse_results(result, expected_result, remove_hydrogens=remove_hydrogens)
@@ -214,8 +224,9 @@ def test_regression_against_stored_result(pdb_id: str, remove_hydrogens: bool):
 
 @pytest.mark.parametrize("pdb_id", TEST_CASES)
 @pytest.mark.parametrize("remove_hydrogens", [True, False], ids=["no_h", "with_h"])
-def test_regression_cif_roundtrip(pdb_id: str, remove_hydrogens: bool):
-    """Test CIF roundtrip.
+@pytest.mark.parametrize("file_type", ["cif", "bcif.zst"])
+def test_regression_cif_roundtrip(pdb_id: str, remove_hydrogens: bool, file_type: str, regression_config: ParseConfig):
+    """Test CIF/BCIF roundtrip.
 
     Gold-standard test that ensures:
     (a) Saving to CIF preserves all atoms
@@ -229,11 +240,10 @@ def test_regression_cif_roundtrip(pdb_id: str, remove_hydrogens: bool):
     with pickle_path.open("rb") as f:
         expected_result = pickle.load(f)
 
-    path = get_pdb_path(pdb_id)
-    result = parse(path, config=REGRESSION_PARSE_CONFIG)
+    result = parse(get_pdb_path(pdb_id), config=regression_config)
 
     with tempfile.TemporaryDirectory() as tmp_dir:
-        cif_path = Path(tmp_dir) / f"{pdb_id}_roundtrip.cif"
+        cif_path = Path(tmp_dir) / f"{pdb_id}_roundtrip.{file_type}"
 
         extra_cats = {
             "pdbx_struct_oper_list": category_to_dict(result["extra_info"]["struct_oper_category"]),
@@ -250,6 +260,7 @@ def test_regression_cif_roundtrip(pdb_id: str, remove_hydrogens: bool):
         reloaded_result = parse(
             cif_path,
             config=ParseConfig(
+                add_bond_types_from_struct_conn=regression_config.add_bond_types_from_struct_conn,
                 add_missing_atoms=False,
                 remove_waters=False,
                 remove_ccds=None,

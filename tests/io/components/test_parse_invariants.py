@@ -1,5 +1,6 @@
 import pytest
 
+from atomworks.io.config import ParseConfig
 from atomworks.io.parser import parse
 from tests.io.conftest import get_pdb_path
 from tests.io.utils.charge_invariants import check_charge_invariants
@@ -50,15 +51,26 @@ ERROR_TEST_CASES = [
     # 8cuy contains UNL (unknown ligand) residues — free-floating lipids with no CCD
     # template. Atoms have inter-residue bonds but zero intra-residue bonds.
     ("8cuy", ValueError, "missing CCD template"),
+    # 4v4s authors both O3'-P and O3'-OP2 links from A36 to YYG37; reject the three-bond oxygen.
+    ("4v4s", ValueError, r"Unresolved link valence at C/36/A/O3'.*bond-order sum=3"),
+    # 1N4E: thymine C=C addition needs explicit product bond orders, not a five-valent C(+).
+    ("1n4e", ValueError, "Cannot infer link order.*DT.*provide explicit product connectivity"),
+    # 8QIA: a Cys-flavin link does not specify C=N reduction or proton transfer.
+    ("8qia", ValueError, "Cannot infer link order.*FMN.*provide explicit product connectivity"),
+    # 6N0A: the Lys-Asn link does not specify substitution vs. addition at the amide carbonyl.
+    ("6n0a", ValueError, "Ambiguous link chemistry at ASN/CG.*amide carbonyl retains nitrogen"),
+    # 1DPN: a single incoming link does not specify which terminal P-O bond to promote.
+    ("1dpn", ValueError, "Unsupported bond-order rearrangement at TAF/P"),
 ]
 
 
 @pytest.mark.parametrize("pdb_id,expected_error,match", ERROR_TEST_CASES)
-def test_parse_expected_errors(pdb_id: str, expected_error: type, match: str):
+@pytest.mark.parametrize("hydrogen_policy", ["keep", "remove"], ids=["with_h", "no_h"])
+def test_parse_expected_errors(pdb_id: str, expected_error: type, match: str, hydrogen_policy: str):
     """PDB structures that should raise specific errors during parsing."""
     path = get_pdb_path(pdb_id)
     with pytest.raises(expected_error, match=match):
-        parse(filename=path)
+        parse(path, config=ParseConfig(hydrogen_policy=hydrogen_policy))
 
 
 if __name__ == "__main__":

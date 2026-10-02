@@ -207,6 +207,7 @@ def test_same_pipeline_outputs_from_cif_and_inference():
         "stereo",
         "b_factor",
         "alt_atom_id",
+        "label_alt_id",  # Sequence/SMILES inputs have no experimental alternate-conformer labels.
         "is_aromatic",
         "occupancy",
         "nhyd",  # nhyd may differ between CIF and inference paths due to H atom handling differences

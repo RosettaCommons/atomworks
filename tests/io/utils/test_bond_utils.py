@@ -1,3 +1,4 @@
+import io
 from pathlib import Path
 
 import numpy as np
@@ -6,13 +7,14 @@ from biotite.structure import AtomArray, BondType
 
 from atomworks.io.config import ParseConfig
 from atomworks.io.parser import parse
-from atomworks.io.template import get_empty_ccd_template
+from atomworks.io.template import get_empty_ccd_template, infer_bonds_from_residue_names
 from atomworks.io.utils.atom_array import get_bond_degree_per_atom
 from atomworks.io.utils.bonds import (
     correct_formal_charges_for_specified_atoms,
     hash_atom_array,
 )
-from atomworks.io.utils.link_chemistry import get_chem_comp_leaving_atom_groups, resolve_leaving_atoms
+from atomworks.io.utils.io_utils import read_any
+from atomworks.io.utils.link_chemistry import get_chem_comp_leaving_atom_groups, infer_link_order, resolve_leaving_atoms
 from tests.io.conftest import TEST_DATA_IO, get_pdb_path
 
 TEST_DATA_DIR = Path(__file__).parent
@@ -83,7 +85,8 @@ def test_leaving_group_computation(ccd_code, expected_leaving_groups):
     assert get_chem_comp_leaving_atom_groups(ccd_code) == expected_leaving_groups
 
 
-def test_fix_formal_charge_of_deprotonated_alanine():
+@pytest.mark.parametrize("hydrogen_policy", ["keep", "remove"])
+def test_fix_formal_charge_of_deprotonated_alanine(hydrogen_policy):
     ala = get_empty_ccd_template("ALA", res_id=1, hydrogen_policy="keep")
     assert np.array_equal(ala.charge, np.zeros(len(ala)))
 
@@ -94,6 +97,19 @@ def test_fix_formal_charge_of_deprotonated_alanine():
         ].charge
         == -1
     )
+
+    # Acetate's CCD O(-) can form a neutral ester without displacing H or changing internal bond orders.
+    atoms = get_empty_ccd_template("ACT", res_id=1, chain_id="A", hydrogen_policy=hydrogen_policy)
+    atoms += get_empty_ccd_template("ALA", res_id=2, chain_id="B", hydrogen_policy=hydrogen_policy)
+    atoms.coord[:] = 0
+    oxygen = _atom_index(atoms, "A", 1, "ACT", "OXT")
+    carbon = _atom_index(atoms, "B", 2, "ALA", "CB")
+    assert atoms.charge[oxygen] == -1
+    atoms.bonds.add_bond(oxygen, carbon, infer_link_order(atoms, oxygen, carbon))
+    atoms = infer_bonds_from_residue_names(atoms)
+    oxygen = _atom_index(atoms, "A", 1, "ACT", "OXT")
+    assert atoms.charge[oxygen] == 0
+    assert atoms.bonds.get_bonds(oxygen)[1].tolist() == [BondType.SINGLE, BondType.SINGLE]
 
 
 def test_hash_atom_array():
@@ -243,6 +259,53 @@ def test_coordination_preserves_leaving_atoms_and_valence(hydrogen_policy):
     np.testing.assert_array_equal(get_bond_degree_per_atom(resolved), degree)
     if hydrogen_policy == "remove":
         np.testing.assert_array_equal(resolved.nhyd, before.nhyd)
+
+
+@pytest.mark.parametrize("altloc", ["B", "C"])
+@pytest.mark.parametrize("add_missing_atoms", [False, True])
+def test_rebuilding_preserves_reaction_state_links(altloc, add_missing_atoms):
+    """6DP5's B state has OP3-Mg; only C has the U O3'-P link. Rebuilding must not mix them."""
+    atoms = parse(
+        get_pdb_path("6dp5"),
+        config=ParseConfig(
+            hydrogen_policy="remove",
+            add_bond_types_from_struct_conn=("covale", "metalc"),
+            altloc=altloc,
+            add_missing_atoms=add_missing_atoms,
+            build_assembly=None,
+        ),
+    )["asym_unit"][0]
+    oxygen = _atom_index(atoms, "B", 4, "U", "O3'")
+    phosphorus = _atom_index(atoms, "C", 1, "C", "P")
+    assert (phosphorus in atoms.bonds.get_bonds(oxygen)[0]) == (altloc == "C")
+    op3 = (atoms.chain_id == "C") & (atoms.res_id == 1) & (atoms.atom_name == "OP3")
+    assert op3.any() == (altloc == "B")
+    if altloc == "B":
+        partners, types = atoms.bonds.get_bonds(int(np.flatnonzero(op3)[0]))
+        assert np.any((atoms.element[partners] == "MG") & (types == BondType.COORDINATION))
+
+
+@pytest.mark.parametrize("missing_order", ["?", ".", None, "arom"])
+def test_struct_conn_infers_missing_orders_and_rejects_unsupported_orders(missing_order):
+    """1DPN's "?" DA O3'-TAF P link is single: O3' gives up one H, though TAF P loses a P=O."""
+    cif = read_any(get_pdb_path("1dpn"))
+    if missing_order is None:
+        del cif.block["struct_conn"]["pdbx_value_order"]
+    else:
+        cif.block["struct_conn"]["pdbx_value_order"] = [missing_order] * cif.block["struct_conn"].row_count
+    buffer = io.StringIO()
+    cif.write(buffer)
+    buffer.seek(0)
+    if missing_order == "arom":
+        # An unsupported explicit order must not silently become a single bond.
+        with pytest.raises(ValueError, match="Unsupported struct_conn bond order"):
+            parse(buffer, config=ParseConfig.from_preset("minimal", model=1))
+        return
+    atoms = parse(buffer, config=ParseConfig.from_preset("minimal", model=1))["asym_unit"][0]
+
+    partners, types = atoms.bonds.get_bonds(_atom_index(atoms, "A", 6, "DA", "O3'"))
+
+    assert types[partners == _atom_index(atoms, "A", 7, "TAF", "P")].tolist() == [BondType.SINGLE]
 
 
 if __name__ == "__main__":

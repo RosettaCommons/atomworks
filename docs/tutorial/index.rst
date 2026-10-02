@@ -21,5 +21,6 @@ Quick Install:
    :caption: Main Concepts
 
    parser
+   custom_ccd
    transforms
-   utils 
+   utils

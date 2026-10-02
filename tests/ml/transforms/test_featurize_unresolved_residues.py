@@ -52,6 +52,7 @@ def test_mask_residues_with_unresolved_backbone_atoms(pdb_id):
     assert np.all(updated_atom_array.occupancy[unchanged_residue_mask] == atom_array.occupancy[unchanged_residue_mask])
 
 
+# 7RCU includes a sequence-defined ACE-SER cap link with both attachment atoms unresolved.
 FEATURIZE_UNRESOLVED_RESIDUES_TEST_CASES = ["6wtf", "7rcu", "8e83", "7okl", "7z24"]
 
 

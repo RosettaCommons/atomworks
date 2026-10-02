@@ -125,6 +125,10 @@ def _standardize_and_complete(
     extra_field_specs = None
     if extra_fields is not None and extra_fields != "all":
         extra_field_specs = normalize_extra_fields(extra_fields, require_defaults=True)
+    # Preserve selected conformers through rebuilding; links must not cross reaction states (6DP5).
+    if "label_alt_id" in model.get_annotation_categories():
+        extra_field_specs = dict(extra_field_specs or {})
+        extra_field_specs["label_alt_id"] = {"default": ".", "dtype": model.label_alt_id.dtype}
 
     # Step 1: Standardize atom names (convert alt->std, filter non-matching)
     # Non-standard atoms will be filtered out (and re-added by add_missing_atoms)
@@ -220,9 +224,8 @@ def _retype_metal_bonds_to_coordination(model: AtomArray) -> AtomArray:
         return model
 
     # A bond qualifies if either of its two endpoint atoms is a metal.
-    metal_atoms = np.where(metal_mask)[0]
     bonds = model.bonds.as_array()  # (n_bonds, 3): atom_i, atom_j, bond_type
-    touches_metal = np.isin(bonds[:, 0], metal_atoms) | np.isin(bonds[:, 1], metal_atoms)
+    touches_metal = metal_mask[bonds[:, 0]] | metal_mask[bonds[:, 1]]
 
     if touches_metal.any():
         bonds[touches_metal, 2] = int(struc.BondType.COORDINATION)

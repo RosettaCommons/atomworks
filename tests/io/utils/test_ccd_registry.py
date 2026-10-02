@@ -16,6 +16,7 @@ from atomworks.io.utils.ccd import (
     register_custom_ccd_entry,
 )
 from atomworks.io.utils.io_utils import read_any, to_cif_file
+from atomworks.io.utils.standardize import standardize_atom_names
 from tests.conftest import TEST_DATA_DIR
 
 
@@ -118,6 +119,12 @@ def test_build_ccd_entries_collision_policy(cleanup_registry):
 
     entries = build_ccd_entries_from_cif_block(block, on_mismatch="ignore")
     assert set(map(str, entries["ATP"].atom_name)) == {"C1", "C2", "ZZ9"}
+
+    # Bond-only overrides do not define custom atoms; normal name validation explains what is missing.
+    del block["chem_comp_atom"]
+    assert build_ccd_entries_from_cif_block(block) == {}
+    with pytest.raises(ValueError, match="custom component.*chem_comp_atom and chem_comp_bond"):
+        standardize_atom_names(entries["ATP"])
 
 
 def test_unknown_peptide_without_component_metadata(tmp_path):

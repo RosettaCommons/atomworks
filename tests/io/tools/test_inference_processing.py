@@ -484,6 +484,7 @@ def test_same_atom_array_from_cif_and_inference():
                 "b_factor",
                 "is_aromatic",
                 "alt_atom_id",
+                "label_alt_id",  # Sequence/SMILES inputs have no experimental alternate-conformer labels.
                 "molecule_id",  # The molecule_id and all entity annotations may differ between the two
                 "molecule_iid",
                 "molecule_entity",
