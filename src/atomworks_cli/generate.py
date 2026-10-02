@@ -30,7 +30,7 @@ def generate(
         dir_okay=False,
         readable=True,
         resolve_path=True,
-        help="Path to and file name of the CSV file containing protein sequences.",
+        help="CSV file containing protein sequences",
     ),
     output_dir: Path = typer.Argument(
         ...,
@@ -39,26 +39,26 @@ def generate(
         dir_okay=True,
         writable=True,
         resolve_path=True,
-        help="Output directory for generated MSA files.",
+        help="Output directory for generated MSA files",
     ),
     sequence_column: str | None = typer.Option(
         None,
         "--sequence-column",
         "-c",
-        help="Name of column containing sequences (required if CSV has multiple columns).",
+        help="Name of column containing sequences (required if CSV has multiple columns)",
     ),
     # MSAGenerationConfig parameters
     sharding_pattern: str = typer.Option(
         "/0:2/",
         "--sharding-pattern",
         "-s",
-        help="Directory sharding pattern (e.g., '/0:2/').",
+        help="Directory sharding pattern (e.g., '/0:2/')",
     ),
     output_extension: str = typer.Option(
         MSAFileExtension.A3M_GZ.value,
         "--output-extension",
         "-o",
-        help="Output file extension (.a3m, .a3m.gz, .a3m.zst, .afa, .afa.gz, .afa.zst).",
+        help="Output file extension (.a3m, .a3m.gz, .a3m.zst, .afa, .afa.gz, .afa.zst)",
     ),
     gpu: bool | None = typer.Option(
         None,
@@ -96,12 +96,12 @@ def generate(
         False,
         "--verbose",
         "-v",
-        help="Enable verbose logging.",
+        help="Enable verbose logging",
     ),
     check_existing: bool = typer.Option(
         False,
         "--check-existing/--no-check-existing",
-        help="Check for existing MSAs before generation.",
+        help="Check for existing MSAs before generation",
     ),
     existing_msa_dirs: str | None = typer.Option(
         None,
