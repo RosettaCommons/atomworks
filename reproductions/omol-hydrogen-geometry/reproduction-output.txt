@@ -1,0 +1,16 @@
+PASS: all 38 supplied atoms and coordinates survive when P-H is present.
+PASS: assigning the declared neutral P-H state requests exactly one H.
+Traceback (most recent call last):
+  File "reproduce.py", line 46, in <module>
+    place_hydrogens(state)
+  File "<atomworks>/src/atomworks/experimental/protonation/_placement.py", line 782, in place_hydrogens
+    names, parents, kept_index, h_coord = _prepare_hydrogen_coordinates(atom_array)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<atomworks>/src/atomworks/experimental/protonation/_placement.py", line 680, in _prepare_hydrogen_coordinates
+    plan_by_rule(topology, ~fixed & ~table, parent, ancestors, geometry, template, cat("template_row", 3))
+  File "<atomworks>/src/atomworks/experimental/protonation/_placement.py", line 356, in plan_by_rule
+    shape = _hydrogen_parent_geometries(topo, atoms, m, n_build)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<atomworks>/src/atomworks/experimental/protonation/_placement.py", line 237, in _hydrogen_parent_geometries
+    raise ValueError(f"Atom {atom} ({topo.element[atom]}) has more hydrogens than free directions.")
+ValueError: Atom 4 (P) has more hydrogens than free directions.
