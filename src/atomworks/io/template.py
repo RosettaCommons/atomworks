@@ -1,6 +1,9 @@
 import functools
 import logging
 import os
+from bisect import bisect_left
+from collections import Counter
+from collections.abc import Iterable
 from itertools import pairwise
 from typing import Any, Literal
 
@@ -157,6 +160,20 @@ def get_empty_ccd_template(
     return template
 
 
+def _residue_keys(res_ids: Iterable[int]) -> list[tuple[int, int]]:
+    """Key each residue by ``(res_id, n)``, with ``n`` the number of earlier residues sharing the number.
+
+    A PDB chain can repeat a number under insertion codes (``1H``, ``1G``, ..., ``1``). ``chain_info``
+    and the atom array list those residues in file order, so ``n`` pairs them up.
+    """
+    seen = Counter()
+    keys = []
+    for res_id in map(int, res_ids):
+        keys.append((res_id, seen[res_id]))
+        seen[res_id] += 1
+    return keys
+
+
 def add_missing_atoms_for_chain(
     sequence: list[str],
     res_ids: list[int],
@@ -180,7 +197,8 @@ def add_missing_atoms_for_chain(
 
     Args:
         sequence: List of 3-letter CCD codes for this chain.
-        res_ids: List of residue IDs corresponding to ``sequence``.
+        res_ids: List of residue IDs corresponding to ``sequence``. A number repeated under
+            insertion codes is matched to the chain's residues in order.
         atom_array: Full structure (all chains).  Pass ``None`` to build from scratch.
         chain_mask: Boolean mask over ``atom_array`` selecting atoms in this chain.
             Required when ``atom_array`` is provided.
@@ -211,9 +229,9 @@ def add_missing_atoms_for_chain(
 
         # ... defaults
         chain_indices = np.array([], dtype=int)
-        res_id_to_bounds: dict[int, tuple[int, int]] = {}
-        sorted_existing_res_ids: list[int] = []
-        res_id_to_sorted_idx: dict[int, int] = {}
+        res_key_to_bounds: dict[tuple[int, int], tuple[int, int]] = {}
+        sorted_existing_res_keys: list[tuple[int, int]] = []
+        res_key_to_sorted_idx: dict[tuple[int, int], int] = {}
         chain_level_annots: dict[str, Any] = {
             "chain_id": chain_id,
             "chain_type": np.int8(chain_type),
@@ -246,15 +264,15 @@ def add_missing_atoms_for_chain(
         _res_start_ends = get_segments(*chain_annot_arrays, add_exclusive_stop=True)
         chain_res_starts, chain_res_ends = _res_start_ends[:-1], _res_start_ends[1:]
 
-        # O(1) lookup: res_id → (local_start, local_end)
-        res_id_to_bounds = {}
-        for i, start_idx in enumerate(chain_res_starts):
-            res_id_at_start = atom_array.res_id[chain_indices[start_idx]]
-            res_id_to_bounds[res_id_at_start] = (start_idx, chain_res_ends[i])
+        # O(1) lookup: (res_id, n) → (local_start, local_end)
+        res_keys = _residue_keys(atom_array.res_id[chain_indices[chain_res_starts]])
+        res_key_to_bounds = {
+            key: (start, end) for key, start, end in zip(res_keys, chain_res_starts, chain_res_ends, strict=True)
+        }
 
-        # Pre-compute sorted res_ids once (so that later we can do O(log n) lookups instead of O(n) .index() calls)
-        sorted_existing_res_ids = sorted(res_id_to_bounds.keys())
-        res_id_to_sorted_idx = {res_id: idx for idx, res_id in enumerate(sorted_existing_res_ids)}
+        # Pre-compute sorted res_keys once (so that later we can do O(log n) lookups instead of O(n) .index() calls)
+        sorted_existing_res_keys = sorted(res_key_to_bounds.keys())
+        res_key_to_sorted_idx = {res_key: idx for idx, res_key in enumerate(sorted_existing_res_keys)}
 
         # Copy chain-level and higher annotations from the FIRST atom in this chain
         chain_level_annots = {}
@@ -280,9 +298,10 @@ def add_missing_atoms_for_chain(
     templates_to_insert = []
     insertion_positions = []
 
-    for res_idx, (res_id, ccd_code) in enumerate(zip(res_ids, sequence, strict=True)):
+    for res_idx, (res_key, ccd_code) in enumerate(zip(_residue_keys(res_ids), sequence, strict=True)):
+        res_id = res_key[0]
         # +----- Build template for missing/partial residue -----+
-        if res_id not in res_id_to_bounds:
+        if res_key not in res_key_to_bounds:
             # CASE 1: Residue completely missing - need full template with annotations
             template_kwargs = {**chain_level_annots, "res_id": res_id, "occupancy": 0.0, "b_factor": np.nan}
 
@@ -305,7 +324,7 @@ def add_missing_atoms_for_chain(
             )
         else:
             # CASE 2: Residue exists - check what's missing
-            local_start, local_end = res_id_to_bounds[res_id]
+            local_start, local_end = res_key_to_bounds[res_key]
 
             # Validate residue name
             actual_res_name = atom_array.res_name[chain_indices[local_start]]
@@ -392,21 +411,21 @@ def add_missing_atoms_for_chain(
 
         # +----- Calculate insertion position for these atom(s) -----+
         # Determine index of next residue in sorted list
-        if res_id not in res_id_to_bounds:
+        if res_key not in res_key_to_bounds:
             # Missing residue: find where it should be in sorted order
-            next_idx = np.searchsorted(sorted_existing_res_ids, res_id)
+            next_idx = bisect_left(sorted_existing_res_keys, res_key)
         else:
             # Partial residue: insert after current residue
-            next_idx = res_id_to_sorted_idx[res_id] + 1
+            next_idx = res_key_to_sorted_idx[res_key] + 1
 
         # Calculate global insertion position based on next_idx
-        if next_idx >= len(sorted_existing_res_ids):
+        if next_idx >= len(sorted_existing_res_keys):
             # Insert at end of chain (or position 0 when building from scratch)
             global_insert_pos = int(chain_indices[-1]) + 1 if len(chain_indices) > 0 else 0
         else:
             # Insert before next residue
-            next_res_id = sorted_existing_res_ids[next_idx]
-            next_local_start = res_id_to_bounds[next_res_id][0]
+            next_res_key = sorted_existing_res_keys[next_idx]
+            next_local_start = res_key_to_bounds[next_res_key][0]
             global_insert_pos = chain_indices[next_local_start]
 
         templates_to_insert.append(atoms_to_insert)
