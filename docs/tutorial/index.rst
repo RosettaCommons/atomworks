@@ -22,4 +22,5 @@ Quick Install:
 
    parser
    transforms
-   utils 
+   utils
+   Build a model <../how_to_build_a_model/index>
