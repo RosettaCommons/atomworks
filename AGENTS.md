@@ -12,7 +12,7 @@ Keep this file concise enough to scan, but update it when commands, layout, or i
 - Do not create or switch branches, stage, commit, amend, rebase, stash, or push unless the user explicitly asks. When authorized, stage only intended paths and inspect the staged diff before committing.
 - Do not work directly on a shared integration branch such as `dev`, `staging`, `main`, or `production`. Use the branch and PR target requested by the user.
 - Use focused commits that form one logical unit. Conventional prefixes used here include `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, and `style`.
-- PRs normally target the branch from which the work was based. The internal repository commonly uses `dev`; the public contributor workflow in `docs/contributor_guide.rst` targets `staging`. Verify the intended remote and base rather than guessing.
+- PRs normally target the branch from which the work was based. The internal repository commonly uses `dev`; public 3.0 release PRs target `release/atomworks-3-0`. Verify the intended remote and base rather than guessing.
 - Before a PR, review every changed line, verify the target and changed-file list, remove debug artifacts and temporary files, and report exactly which checks ran.
 
 For PRs explicitly targeting `staging`, preserve the repository's promotion boundary. The PR diff must not include:

@@ -11,6 +11,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -69,6 +73,7 @@ jobs:
     env:
       OPENBLAS_NUM_THREADS: '1'
       OMP_NUM_THREADS: '1'
+      PYTHONPATH: ${{ github.workspace }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -94,6 +99,7 @@ jobs:
         if: always()
         with:
           name: scientific-test-reports
+          include-hidden-files: true
           path: |
             *tests.xml
             coverage.xml
@@ -160,12 +166,17 @@ jobs:
   deploy-docs:
     needs: [docs, publish]
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     concurrency:
       group: atomworks-versioned-docs
       cancel-in-progress: false
       queue: max
     permissions:
       contents: write
+      pages: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -181,12 +192,16 @@ jobs:
           ref: gh-pages
           path: gh-pages
       - run: python .github/release.py docs
-      - uses: peaceiris/actions-gh-pages@v4
+      - name: Preserve versioned documentation
+        working-directory: gh-pages
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          git diff --cached --quiet || git commit -m "docs: ${GITHUB_REF_NAME}"
+          git push origin HEAD:gh-pages
+      - uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: gh-pages
-          keep_files: false
-          force_orphan: false
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
+          path: gh-pages
+      - uses: actions/deploy-pages@v4
+        id: deployment
