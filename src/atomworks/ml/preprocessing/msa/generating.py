@@ -46,7 +46,6 @@ from atomworks.ml.preprocessing.msa.filtering import (
 )
 from atomworks.ml.preprocessing.msa.finding import find_msas
 from atomworks.ml.preprocessing.msa.organizing import MSAOrganizationConfig, organize_msas
-from atomworks.ml.preprocessing.msa.server import MSAServerConfig, make_msas_mmseqs_server
 from atomworks.ml.utils.misc import hash_sequence
 
 LOCAL_DB_PATH_GPU = _load_env_var("COLABFOLD_LOCAL_DB_PATH_GPU")
@@ -205,10 +204,7 @@ class MSAGenerationConfig:
         check_existing: Whether to check for existing MSAs before generation.
         existing_msa_dirs: Directories to check for existing MSAs. If None, uses PROTEIN_MSA_DIRS env var.
         search_config: Advanced MMseqs2 search configuration (MMseqs2 only).
-        backend: ``"mmseqs2"``, ``"hhblits"``, or remote ``"mmseqs2_server"``.
-        server_config: Remote server configuration; only constructed for the remote backend.
-        server_max_final_sequences: Optional local HHfilter limit for remote results.
-            None avoids requiring a local HHfilter binary.
+        backend: MSA generation backend, either ``"mmseqs2"`` or ``"hhblits"``.
         hhblits_search_config: HHblits search configuration (HHblits only). If None when using HHblits
             backend, a default config is constructed at generation time.
 
@@ -229,12 +225,10 @@ class MSAGenerationConfig:
     search_config: MMseqs2SearchConfig = dataclasses.field(default_factory=lambda: MMseqs2SearchConfig())
     backend: str = "mmseqs2"
     hhblits_search_config: HHblitsSearchConfig | None = None
-    server_config: MSAServerConfig | None = None
-    server_max_final_sequences: int | None = None
 
     def __post_init__(self):
-        if self.backend not in ("mmseqs2", "hhblits", "mmseqs2_server"):
-            raise ValueError(f"Invalid backend: {self.backend!r}. Must be 'mmseqs2', 'hhblits', or 'mmseqs2_server'.")
+        if self.backend not in ("mmseqs2", "hhblits"):
+            raise ValueError(f"Invalid backend: {self.backend!r}. Must be 'mmseqs2' or 'hhblits'.")
 
         # If we're using GPU, also use the GPU server by default
         if self.gpu and not self.gpu_server:
@@ -1260,7 +1254,7 @@ def make_msas_from_csv(
         config = MSAGenerationConfig()
 
     # Filter existing sequences if requested
-    if config.check_existing and config.backend != "mmseqs2_server":
+    if config.check_existing:
         logger.info(f"Finding existing MSAs among {len(sequences)} sequences...")
         missing_sequences, _ = find_msas(
             sequences,
@@ -1273,18 +1267,7 @@ def make_msas_from_csv(
             logger.info("All sequences already have MSAs, skipping generation")
             return
 
-    if config.backend == "mmseqs2_server":
-        make_msas_mmseqs_server(
-            sequences=sequences,
-            output_dir=output_dir,
-            config=config.server_config or MSAServerConfig(use_env=config.use_env),
-            max_final_sequences=config.server_max_final_sequences,
-            sharding_pattern=config.sharding_pattern,
-            output_extension=config.output_extension,
-            check_existing=config.check_existing,
-            existing_msa_dirs=config.existing_msa_dirs,
-        )
-    elif config.backend == "hhblits":
+    if config.backend == "hhblits":
         hhblits_config = (
             config.hhblits_search_config if config.hhblits_search_config is not None else HHblitsSearchConfig()
         )
