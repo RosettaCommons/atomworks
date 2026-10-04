@@ -7,7 +7,10 @@
 [![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](LICENSE.md)
 
 <div align="center">
-  <img src="docs/_static/atomworks_logo_color.svg" width="450" alt="atomworks logo">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/_static/atomworks_logo_dark.svg">
+    <img src="docs/_static/atomworks_logo_color.svg" width="450" alt="AtomWorks logo">
+  </picture>
 </div>
 
 **AtomWorks** is an open-source toolkit for biomolecular data processing and machine learning,
@@ -19,7 +22,7 @@ For models built with AtomWorks, see [Foundry](https://github.com/RosettaCommons
 
 Start with the [tutorials](docs/tutorial/index.rst), [examples](docs/examples), or
 [model-building tutorial](docs/how_to_build_a_model/index.rst).
-Moving from 2.x? See the [AtomWorks 3.0 migration guide](docs/migration/migration-short.md)
+Upgrading from 2.2 or earlier? See the [AtomWorks 2.3 migration guide](docs/migration/migration-short.md)
 for parser configuration, covalent chemistry, alternate conformers, and CIF round trips.
 
 AtomWorks is composed of two symbiotic libraries:
@@ -93,13 +96,14 @@ pip install "atomworks[ml]"               # IO plus PyTorch and ML pipelines
 pip install "atomworks[ml,openbabel,dev]"  # ML, Open Babel, and development tools
 ```
 
-To install the **AtomWorks 3.0 release branch** represented by this README directly with pip:
+To install the **AtomWorks 2.3 release branch** represented by this README directly with pip:
 
 ```shell
 pip install "atomworks[ml] @ git+https://github.com/RosettaCommons/atomworks.git@release/atomworks-3-0"
 ```
 
-The PyPI badge reports the published package version; the Git command selects the 3.0 release branch.
+The PyPI badge reports the published package version. The upcoming 2.3 release still uses
+the existing branch name `release/atomworks-3-0`.
 With [uv](https://docs.astral.sh/uv/), use `uv pip install` in place of `pip install`.
 
 Optional extras can be combined: `ml` (PyTorch), `openbabel` (Open Babel), `s3` (S3 storage),
@@ -113,7 +117,7 @@ for development environments and large-scale data access.
 ## Getting started
 
 Download a structure from the PDB and parse it into a standardized representation with
-sequence, chain, ligand, and assembly metadata. In AtomWorks 3.0, use `ParseConfig` to
+sequence, chain, ligand, and assembly metadata. In AtomWorks 2.3, use `ParseConfig` to
 make parsing choices explicit:
 
 ```python
