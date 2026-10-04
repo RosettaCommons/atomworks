@@ -337,7 +337,7 @@ def _blob_cif_loader_function(
         assembly_id_colname,
         altloc_seed_colname,
         column_mapping,
-        cache_key=json.dumps(["blob", store.data_dir, *location]),
+        cache_key=json.dumps(["blob", store.endpoint_url, store.data_dir, *location]),
     )
     if id_column != example_id_colname:
         out["extra_info"].pop(id_column, None)
@@ -389,12 +389,14 @@ def create_structure_loader(
     if storage == "blob":
         blob_dir = kwargs.pop("blob_dir").rstrip("/")
         endpoint_url = kwargs.pop("endpoint_url", None)
+        s3_config = kwargs.pop("s3_config", None)
+        store = BlobStore(f"{blob_dir}/data", endpoint_url=endpoint_url, s3_config=s3_config)
         example_id_colname = kwargs.pop("example_id_colname", "example_id")
         record_id_colname = kwargs.pop("record_id_colname", None) or example_id_colname
         return functools.partial(
             _blob_cif_loader_function,
-            store=BlobStore(f"{blob_dir}/data", endpoint_url=endpoint_url),
-            index=BlobIndex(f"{blob_dir}/index.parquet", id_column=record_id_colname),
+            store=store,
+            index=BlobIndex(f"{blob_dir}/index.parquet", id_column=record_id_colname, s3_config=store.s3_config),
             id_column=record_id_colname,
             example_id_colname=example_id_colname,
             column_mapping=column_mapping,

@@ -13,7 +13,13 @@ import pyarrow.feather as feather
 
 from atomworks.common import as_list
 from atomworks.constants import NA_VALUES
-from atomworks.ml.utils.io import build_feather_once, job_scoped_feather_path, read_csv, read_parquet_with_metadata
+from atomworks.ml.utils.io import (
+    build_feather_once,
+    job_scoped_feather_path,
+    read_csv,
+    read_parquet_with_metadata,
+    resolve_s3_config,
+)
 
 logger = logging.getLogger("datasets")
 
@@ -275,6 +281,9 @@ def _build_feather_index(
     """Build once (under a lock) and return the path to a memory-mappable feather index."""
     # Key by name *and* content (filters, columns, source): one name can mean different rows.
     source_key = str(data) if isinstance(data, PathLike | str) else None  # in-memory frame: name only
+    if source_key and source_key.startswith("s3://"):
+        load_kwargs = dict(load_kwargs or {})
+        load_kwargs["s3_config"] = resolve_s3_config(load_kwargs.get("s3_config"))
     feather_path = job_scoped_feather_path(
         name,
         local_drive_mount=local_drive_mount,

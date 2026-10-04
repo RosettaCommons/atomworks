@@ -9,11 +9,12 @@ import hashlib
 import io
 import os
 import time
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Iterator, Mapping
+from dataclasses import dataclass, replace
 from functools import cache, wraps
 from os import PathLike
 from pathlib import Path
-from typing import Any, TextIO
+from typing import Any, Literal, TextIO
 
 import pandas as pd
 import pyarrow as pa
@@ -28,6 +29,7 @@ from atomworks.ml.utils.misc import logger
 
 try:
     import boto3
+    from botocore import UNSIGNED
     from botocore.client import BaseClient
     from botocore.config import Config
 except ImportError:
@@ -35,30 +37,72 @@ except ImportError:
     BaseClient = None
 
 
+@dataclass(frozen=True)
+class S3ReadConfig:
+    """Connection options shared by metadata, blob indexes, and shard reads.
+
+    Credentials for signed reads come from boto3's credential chain. Set ``anonymous=True``
+    for public datasets. An omitted endpoint uses ``AWS_ENDPOINT_URL`` when configured.
+    """
+
+    endpoint_url: str | None = None
+    anonymous: bool = False
+    addressing_style: Literal["auto", "virtual", "path"] = "virtual"
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.anonymous, bool):
+            raise TypeError("anonymous must be a boolean")
+        if self.addressing_style not in {"auto", "virtual", "path"}:
+            raise ValueError("addressing_style must be 'auto', 'virtual', or 'path'")
+
+
+def resolve_s3_config(
+    s3_config: S3ReadConfig | Mapping[str, Any] | None = None, *, endpoint_url: str | None = None
+) -> S3ReadConfig:
+    """Resolve connection options, accepting a plain mapping for config-driven callers."""
+    config = S3ReadConfig(**s3_config) if isinstance(s3_config, Mapping) else s3_config or S3ReadConfig()
+    if endpoint_url and config.endpoint_url and endpoint_url != config.endpoint_url:
+        raise ValueError("endpoint_url and s3_config.endpoint_url must agree")
+    return replace(config, endpoint_url=endpoint_url or config.endpoint_url or os.environ.get("AWS_ENDPOINT_URL"))
+
+
 @cache
-def _s3_client(endpoint_url: str | None = None) -> "BaseClient":
+def _s3_client(s3_config: S3ReadConfig) -> "BaseClient":
     """Process-wide cached boto3 S3 client.
 
-    Region/credentials come from the ambient AWS config; ``endpoint_url`` defaults to ``$AWS_ENDPOINT_URL``.
+    Anonymous reads do not consult the credential chain.
     """
     if boto3 is None:
         raise ImportError("boto3 is required for s3:// paths. Install it with: uv pip install boto3")
-    # virtual-host addressing, retry throttling with backoff, larger pool for DataLoader fan-out
     config = Config(
         max_pool_connections=50,
         retries={"max_attempts": 10, "mode": "standard"},
-        s3={"addressing_style": "virtual"},
+        s3={"addressing_style": s3_config.addressing_style},
+        **({"signature_version": UNSIGNED} if s3_config.anonymous else {}),
     )
-    return boto3.client("s3", endpoint_url=endpoint_url or os.environ.get("AWS_ENDPOINT_URL"), config=config)
+    return boto3.client("s3", endpoint_url=s3_config.endpoint_url, config=config)
 
 
 def read_s3_bytes(
-    url: str, *, offset: int | None = None, length: int | None = None, endpoint_url: str | None = None
+    url: str,
+    *,
+    offset: int | None = None,
+    length: int | None = None,
+    endpoint_url: str | None = None,
+    s3_config: S3ReadConfig | Mapping[str, Any] | None = None,
 ) -> bytes:
     """Read an ``s3://`` object (whole, or a ``[offset, offset+length)`` byte range) into memory."""
+    if not url.startswith("s3://") or "/" not in url[len("s3://") :]:
+        raise ValueError(f"Expected s3://bucket/key, got {url!r}")
     bucket, key = url[len("s3://") :].split("/", 1)
+    if not bucket or not key:
+        raise ValueError(f"Expected s3://bucket/key, got {url!r}")
+    if (offset is None) != (length is None) or (offset is not None and (offset < 0 or length <= 0)):
+        raise ValueError("Byte ranges require offset >= 0 and length > 0 together")
     kwargs = {} if offset is None else {"Range": f"bytes={offset}-{offset + length - 1}"}
-    return _s3_client(endpoint_url).get_object(Bucket=bucket, Key=key, **kwargs)["Body"].read()
+    client = _s3_client(resolve_s3_config(s3_config, endpoint_url=endpoint_url))
+    with contextlib.closing(client.get_object(Bucket=bucket, Key=key, **kwargs)["Body"]) as body:
+        return body.read()
 
 
 _ZSTD_MAGIC = b"\x28\xb5\x2f\xfd"
@@ -299,31 +343,38 @@ def to_parquet_with_metadata(df: pd.DataFrame, filepath: PathLike, **kwargs: Any
     pq.write_table(table, filepath, **kwargs)
 
 
-def _readable_source(filepath: PathLike) -> Any:
+def _readable_source(filepath: PathLike, s3_config: S3ReadConfig | Mapping[str, Any] | None = None) -> Any:
     """A pandas/pyarrow-readable source for ``filepath``: the local path, or an in-memory buffer for an
     ``s3://`` URL (downloaded once via boto3, since the bare readers don't accept ``s3://``)."""
-    return io.BytesIO(read_s3_bytes(str(filepath))) if str(filepath).startswith("s3://") else filepath
+    path = str(filepath)
+    if path.startswith("s3://"):
+        return io.BytesIO(read_s3_bytes(path, s3_config=s3_config))
+    return filepath
 
 
-def read_csv(filepath: PathLike, **kwargs: Any) -> pd.DataFrame:
+def read_csv(
+    filepath: PathLike, *, s3_config: S3ReadConfig | Mapping[str, Any] | None = None, **kwargs: Any
+) -> pd.DataFrame:
     """``pd.read_csv`` that also accepts an ``s3://`` URL (read via boto3, like :func:`read_parquet_with_metadata`)."""
-    return pd.read_csv(_readable_source(filepath), **kwargs)
+    return pd.read_csv(_readable_source(filepath, s3_config), **kwargs)
 
 
-def read_parquet_with_metadata(filepath: PathLike, **kwargs: Any) -> pd.DataFrame:
+def read_parquet_with_metadata(
+    filepath: PathLike, *, s3_config: S3ReadConfig | Mapping[str, Any] | None = None, **kwargs: Any
+) -> pd.DataFrame:
     """Convenience wrapper around pd.read_parquet that preserves metadata.
 
     Args:
         filepath: Path to the parquet file.
+        s3_config: Connection options for S3 metadata, shared with the structure loader.
         **kwargs: Additional arguments to pass to pd.read_parquet.
 
     Returns:
         pandas DataFrame with metadata in .attrs attribute
 
-    ``filepath`` may be a local path or an ``s3://`` URL (downloaded once via boto3 — which reads the ambient
-    AWS profile, incl. endpoint + addressing_style — since bare ``pq.read_schema`` does not accept ``s3://``).
+    Remote metadata is downloaded once; structure shards can then be read by byte range.
     """
-    src = _readable_source(filepath)
+    src = _readable_source(filepath, s3_config)
 
     # Read the parquet schema using pyarrow, then the DataFrame using pandas (from the same buffer for s3).
     schema = pq.read_schema(src)

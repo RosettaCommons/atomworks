@@ -1,16 +1,20 @@
 """Ranged-read store and memory-mapped index for per-record-zstd ``.bin`` shards on local disk or a remote store."""
 
 import os
+from collections.abc import Mapping
+from typing import Any
 
 import pyarrow as pa
 import pyarrow.feather as feather
 
 from atomworks.ml.utils.io import (
+    S3ReadConfig,
     _decompress,
     build_feather_once,
     job_scoped_feather_path,
     read_parquet_with_metadata,
     read_s3_bytes,
+    resolve_s3_config,
 )
 
 
@@ -21,15 +25,24 @@ class BlobStore:
     config is stored, so the store is picklable across DataLoader workers.
     """
 
-    def __init__(self, data_dir: str, *, endpoint_url: str | None = None):
+    def __init__(
+        self,
+        data_dir: str,
+        *,
+        endpoint_url: str | None = None,
+        s3_config: S3ReadConfig | Mapping[str, Any] | None = None,
+    ):
         self.data_dir = str(data_dir).rstrip("/")
-        self.endpoint_url = endpoint_url
+        if "://" in self.data_dir and not self.data_dir.startswith("s3://"):
+            raise ValueError(f"Unsupported blob URI {self.data_dir!r}; use a local path or s3://bucket/key")
+        self.s3_config = resolve_s3_config(s3_config, endpoint_url=endpoint_url)
+        self.endpoint_url = self.s3_config.endpoint_url
 
     def get_bytes(self, shard: str, offset: int, length: int) -> bytes:
         """Fetch and decompress the record at ``[offset, offset+length)`` of ``shard``."""
         url = f"{self.data_dir}/{shard}"
-        if "://" in url:
-            raw = read_s3_bytes(url, offset=offset, length=length, endpoint_url=self.endpoint_url)
+        if url.startswith("s3://"):
+            raw = read_s3_bytes(url, offset=offset, length=length, s3_config=self.s3_config)
         else:
             with open(url, "rb") as f:
                 f.seek(offset)
@@ -51,11 +64,13 @@ class BlobIndex:
         id_column: str = "example_id",
         local_drive_mount: str | None = None,
         job_id_env_var: str = "SLURM_JOB_ID",
+        s3_config: S3ReadConfig | Mapping[str, Any] | None = None,
     ):
         self.index_path = str(index_path)
         self.id_column = id_column
         self.local_drive_mount = local_drive_mount or os.environ.get("LOCAL_DRIVE_MOUNT", "/tmp")
         self.job_id_env_var = job_id_env_var
+        self.s3_config = resolve_s3_config(s3_config)
         self.feather_path = self._build()
         self._open()
 
@@ -67,11 +82,13 @@ class BlobIndex:
             local_drive_mount=self.local_drive_mount,
             job_id_env_var=self.job_id_env_var,
             # `name` covers index_path only; build() also selects and sorts by id_column.
-            content_key=self.id_column,
+            content_key=(self.id_column, self.s3_config.endpoint_url),
         )
 
         def build() -> pa.Table:
-            df = read_parquet_with_metadata(self.index_path, columns=[self.id_column, "shard", "offset", "length"])
+            df = read_parquet_with_metadata(
+                self.index_path, columns=[self.id_column, "shard", "offset", "length"], s3_config=self.s3_config
+            )
             tbl = pa.Table.from_pandas(df, preserve_index=False)
             # Promote string -> large_string (int64 offsets): a huge id column exceeds Arrow's 2 GB
             # int32 string-offset limit, which would overflow in combine_chunks below.
