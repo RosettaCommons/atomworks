@@ -1,4 +1,4 @@
-# AtomWorks 2.2 and earlier → 2.3: detailed migration guide
+# AtomWorks 2.2 and earlier → 3.0: detailed migration guide
 
 Start with the I/O changes below: parser configuration, chemical corrections, alternate conformers, CIF round trips and parser caches. The [short guide](migration-short.md) covers the essential steps; additional ML migration notes follow the I/O sections.
 
@@ -14,7 +14,7 @@ options = {**STANDARD_PARSER_ARGS, "hydrogen_policy": "remove"}
 result = parse(filename="structure.cif", **options)
 ```
 
-For 2.3:
+For 3.0:
 
 ```python
 from atomworks.io import parse
@@ -26,7 +26,7 @@ result = parse("structure.cif", config=config)
 
 `ParseConfig` and `PrepareConfig` are frozen dataclasses. Derive a changed configuration with `config.replace(...)`; serialize it with `to_dict()`. Prefer an explicit constructor when migrating old dictionaries: `from_dict()` deliberately drops unknown keys, which can silently discard obsolete chemistry flags or misspellings. Bare surviving options still work with deprecation warnings; obsolete names passed directly to `parse()` produce `TypeError`. [Configuration](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/config.py), [parser](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/parser.py).
 
-| 2.2 and earlier usage or assumption | 2.3 action |
+| 2.2 and earlier usage or assumption | 3.0 action |
 |---|---|
 | `filename=path` | Use positional `source` or `source=path`; alias is deprecated. |
 | `STANDARD_PARSER_ARGS` | Use `ParseConfig.from_preset("rcsb")`; dictionary remains deprecated. |
@@ -84,7 +84,7 @@ Compare successful outputs and rejected inputs: matching atom counts alone do no
 
 ### Explicit protonation
 
-2.3 provides pH-aware protonation via RDKit/Dimorphite-DL. It is a separate chemical operation and will not numerically reproduce the old Hydride path:
+3.0 provides pH-aware protonation via RDKit/Dimorphite-DL. It is a separate chemical operation and will not numerically reproduce the old Hydride path:
 
 ```python
 from atomworks.io.utils.protonation import ensure_hydrogens
