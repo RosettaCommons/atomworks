@@ -18,7 +18,6 @@ author = "bakerlab"
 
 release = os.environ.get("ATOMWORKS_DOCS_VERSION", str(atomworks.__version__).removeprefix("v"))
 version = release
-switcher_version = release
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -64,7 +63,7 @@ html_theme_options = {
     "navbar_start": ["navbar-logo"],
     "switcher": {
         "json_url": "https://rosettacommons.github.io/atomworks/_static/switcher.json",
-        "version_match": switcher_version,
+        "version_match": release,
     },
 }
 

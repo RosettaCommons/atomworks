@@ -3,16 +3,11 @@
 Contributing
 ============
 
-Create a feature branch, make one focused change, and open a PR against
-``release/atomworks-3-0`` for the 3.0 release. Keep unfinished work in draft;
-public CI runs on drafts too. Preserve supplied chemistry, coordinates and
-annotations unless the change explicitly requires otherwise.
-
-Use descriptive names, small functions and Google-style docstrings. Keep commit
-messages conventional (for example, ``fix(io): preserve insertion codes``).
-Describe the resulting behavior in one sentence, followed by a few bullets for
-the changes and validation. Add regression tests for bugs; avoid unrelated
-formatting or refactors. Run ``make format`` and the relevant tests before review.
+Open focused PRs against ``release/atomworks-3-0``; unfinished work stays in draft.
+Preserve supplied chemistry, coordinates and annotations. Use descriptive names,
+small functions, Google-style docstrings and conventional commit messages.
+Describe the change in one sentence and a few bullets, including validation.
+Run ``make format`` and relevant tests; add regressions for bugs.
 
 Development and documentation
 -----------------------------
@@ -25,13 +20,11 @@ additional documentation dependencies and build with warnings treated as errors:
    uv pip install -e ".[ml,dev,docs,ase,openbabel]"
    python -m sphinx -W --keep-going -b html docs docs/_build/html
 
-The gallery executes the offline ``plot_protonation.py`` example. Public CI also
-checks scientific CPU tests, clean core-wheel installs, archive contents and
-formatting. Stored-result regressions use checksum-verified wwPDB revisions from
-``.github/ci/pdb_versions.tsv``; update inputs and expected results together when
-intentionally adopting a new deposition. Other fixture downloads record their
-hashes in CI artifacts. Infrastructure-dependent tests remain in the manual lab
-workflow.
+The gallery executes an offline parser/protonation/CIF round-trip example.
+Public CI checks scientific CPU tests, core-wheel installs, archive contents,
+formatting and docs. Stored-result inputs are pinned in ``.github/ci/pdb_versions.tsv``;
+update inputs and expected results together when adopting a new deposition.
+Infrastructure-dependent tests use the manual lab workflow.
 
 Publishing a release
 --------------------
@@ -50,9 +43,7 @@ One-time setup
   ``release_and_docs.yaml``, and environment ``pypi``. No API token is needed.
 - In GitHub Settings > Pages, select **GitHub Actions** as the publishing source.
   Allow version tags in the ``github-pages`` environment's deployment rules.
-  The workflow retains old versions in ``gh-pages`` and explicitly deploys the
-  assembled site; pushing that branch with ``GITHUB_TOKEN`` alone does not
-  `trigger Pages <https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site>`_.
+  The workflow preserves old versions in ``gh-pages`` and deploys the assembled site.
 
 Release 3.0.0
 ~~~~~~~~~~~~~
@@ -66,9 +57,7 @@ Release 3.0.0
    .. code-block:: bash
 
       git fetch origin
-      git switch release/atomworks-3-0
-      git pull --ff-only origin release/atomworks-3-0
-      git tag -a v3.0.0 -m "AtomWorks 3.0.0"
+      git tag -a v3.0.0 origin/release/atomworks-3-0 -m "AtomWorks 3.0.0"
       git push origin refs/tags/v3.0.0
 
 3. Wait for the tag's build, wheel, science and docs checks, then approve the

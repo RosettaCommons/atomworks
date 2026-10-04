@@ -151,13 +151,13 @@ Testing principles:
 
 ### Test data and regression policy
 
-Download the public parser test pack when necessary:
+Download the public CI fixtures when necessary:
 
 ```bash
-atomworks setup tests
+python .github/ci/setup_test_data.py
 ```
 
-The downloaded pack does not necessarily contain every PDB ID referenced by the entire suite. Prefer configured readable PDB/CCD mirrors when available. A `FileNotFoundError` below the selected mirror indicates missing test data; it is not permission to skip the test or loosen its assertions.
+Stored-result inputs use checksum-pinned wwPDB revisions. A `FileNotFoundError` indicates missing test data; do not skip the test or loosen its assertions.
 
 Regression baselines define intended scientific behavior. Never make a regression test pass by filtering mismatches, lowering overlap or numeric thresholds, excluding annotations, widening tolerances without scientific justification, or adding special-case skips. Determine whether the implementation, expectation, or environment is wrong. Regenerate stored baselines only with explicit user intent and explain the behavioral reason.
 
@@ -192,8 +192,8 @@ Public APIs need concise Google-style docstrings:
 Build the documentation with:
 
 ```bash
-uv pip install -e ".[ml,docs]"
-make -C docs html
+uv pip install -e ".[ml,docs,ase,openbabel]"
+python -m sphinx -W --keep-going -b html docs docs/_build/html
 ```
 
 Treat Sphinx warnings, broken references, and failed autodoc imports as problems to investigate. When building both AtomWorks and a vendoring project's docs, separate environments may be needed if their documentation requirements select incompatible dependency versions.

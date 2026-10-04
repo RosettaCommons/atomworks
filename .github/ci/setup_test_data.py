@@ -36,7 +36,7 @@ def fetch_pdb(pdb_id: str) -> str:
         if digest and hashlib.sha256(gzip.decompress(data)).hexdigest() != digest:
             raise ValueError(f"PDB {pdb_id} revision {revision} checksum mismatch")
         path.write_bytes(data)
-    return f"{hashlib.sha256(path.read_bytes()).hexdigest()}  {path}\n"
+    return f"{hashlib.sha256(data).hexdigest()}  {path}\n"
 
 
 if __name__ == "__main__":
