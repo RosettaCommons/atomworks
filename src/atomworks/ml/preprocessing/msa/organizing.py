@@ -19,7 +19,7 @@ from atomworks.io.utils.compression import transfer_with_compression
 from atomworks.io.utils.io_utils import apply_sharding_pattern, find_files_by_extension
 from atomworks.ml.preprocessing.msa.finding import sequence_has_msa
 from atomworks.ml.utils.io import open_file
-from atomworks.ml.utils.misc import hash_sequence
+from atomworks.ml.utils.misc import get_complex_id, hash_sequence
 
 logger = logging.getLogger(__name__)
 
@@ -198,6 +198,129 @@ def organize_msas(input_dir: PathLike, output_dir: PathLike, config: MSAOrganiza
                 pass  # Progress is tracked by tqdm
 
     logger.info(f"MSA file organization complete! Saved processed files to: {output_dir}")
+
+
+def organize_paired_msas(input_dir: PathLike, output_dir: PathLike, config: MSAOrganizationConfig | None = None) -> str:
+    """Organize raw per-chain a3m files from ONE paired/complex query into AtomWorks'
+    standard paired-MSA layout.
+
+    Unlike `organize_msas` (which treats every file in `input_dir` as an independent,
+    unrelated alignment -- one per unique sequence), this treats *all* files found in
+    `input_dir` as belonging to the SAME complex: their first sequences, collectively,
+    determine the complex_id (see
+    :py:func:`~atomworks.ml.utils.misc.get_complex_id`) -- computed from file content,
+    the same way `organize_msas` derives each file's identity from content, not
+    passed in or tracked separately by the caller.
+
+    Output layout: ``<output_dir>/<shard-of-complex_id>/<complex_id>/<chain_hash><extension>``
+    -- flat within the complex's own directory (a complex has few chains), but
+    complex_id itself is sharded the same way a sequence hash would be (a large
+    fine-tuning run can have many complexes). Discoverable via
+    :py:func:`~atomworks.ml.preprocessing.msa.finding.find_paired_msas` /
+    :py:func:`~atomworks.ml.preprocessing.msa.finding.get_paired_msa_path`.
+
+    Args:
+        input_dir: Directory containing one raw a3m file per chain in the complex
+            (recursively searched, same as `organize_msas`).
+        output_dir: Destination directory.
+        config: MSA processing configuration. `sharding_pattern` shards complex_id
+            (not the files within it, which are always flat). `check_existing` /
+            `existing_msa_dirs` / `num_workers` / `execution_model` are not used --
+            a complex has too few files to need parallelism, and existing-MSA
+            deduplication belongs at the sequence-submission level, before this is
+            ever called.
+
+    Returns:
+        The complex_id this batch of files was organized under.
+
+    Raises:
+        FileNotFoundError: If no MSA files are found or `input_dir` doesn't exist.
+        FileExistsError: If the complex's directory already exists (complete, or partial
+            from an interrupted run -- delete it to regenerate).
+    """
+    if config is None:
+        config = MSAOrganizationConfig()
+
+    input_path = Path(input_dir)
+    if not input_path.exists():
+        raise FileNotFoundError(f"Source directory not found: {input_dir}")
+
+    msa_files = find_files_by_extension(input_path, str(config.input_extension))
+    if not msa_files:
+        raise FileNotFoundError(f"No files with extension {config.input_extension} found in {input_dir}")
+
+    chain_hash_by_file: dict[Path, str] = {}
+    sequences: list[str] = []
+    for file_path in msa_files:
+        sequence = extract_first_sequence_from_msa(file_path)
+        sequences.append(sequence)
+        chain_hash_by_file[file_path] = hash_sequence(sequence)
+
+    complex_id = get_complex_id(sequences)
+    if config.sharding_pattern:
+        complex_dir = Path(output_dir) / apply_sharding_pattern(complex_id, config.sharding_pattern)
+    else:
+        complex_dir = Path(output_dir) / complex_id
+    # Paired files are row-aligned across chains, so never add to an existing complex
+    # directory: a partial one left by an interrupted run would otherwise end up mixing
+    # chains from two separate searches.
+    complex_dir.mkdir(parents=True, exist_ok=False)
+
+    for file_path, chain_hash in chain_hash_by_file.items():
+        dest = complex_dir / f"{chain_hash}{config.output_extension}"
+        transfer_with_compression(input_file=file_path, output_file=dest, move=not config.copy_files)
+
+    logger.info(f"Paired MSA organization complete! complex_id={complex_id}, saved to: {complex_dir}")
+    return complex_id
+
+
+def organize_template_alignments(
+    sequence_to_content: dict[str, str],
+    output_dir: PathLike,
+    sharding_pattern: str | None = "/0:2/",
+    output_extension: str = ".m8",
+) -> None:
+    """Organize raw ColabFold template-alignment hit tables (``pdb70.m8`` rows) into
+    AtomWorks' standard hash-sharded layout.
+
+    Uses the same sequence-hash/sharding convention as `organize_msas`, so a
+    sequence's template alignment and its unpaired MSA land at the corresponding
+    shard. Unlike MSA files, template hit tables don't self-identify their query
+    sequence (no FASTA-style header), so the sequence must be supplied explicitly
+    rather than extracted from file content.
+
+    Discoverable via :py:func:`~atomworks.ml.preprocessing.msa.finding.find_template_alignments`.
+
+    Args:
+        sequence_to_content: Maps each query sequence to its raw ``pdb70.m8`` hit
+            lines (tab-separated text, one hit per line). Sequences with falsy
+            content (no hits) are skipped -- no empty file is written.
+        output_dir: Destination directory for organized files.
+        sharding_pattern: Directory sharding pattern (e.g. "/0:2/"), matching
+            `organize_msas`'s convention.
+        output_extension: Output file extension.
+    """
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+
+    for sequence, content in sequence_to_content.items():
+        if not content:
+            continue
+
+        hashed_filename = Path(hash_sequence(sequence))
+        if sharding_pattern:
+            dest = output_path / apply_sharding_pattern(hashed_filename, sharding_pattern).with_suffix(output_extension)
+        else:
+            dest = output_path / hashed_filename.with_suffix(output_extension)
+
+        if dest.exists():
+            logger.debug(f"Output file already exists, skipping: {dest}")
+            continue
+
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text(content)
+
+    logger.info(f"Template alignment organization complete! Saved to: {output_dir}")
 
 
 def _build_output_path(dest_dir: Path, hashed_filename: Path, config: MSAOrganizationConfig) -> Path:

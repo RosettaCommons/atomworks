@@ -1,4 +1,14 @@
-"""Link chemistry: propose connectivity, then resolve and validate linked residues."""
+"""Build chemically valid products from authored inter-residue links.
+
+Link chemistry has three phases:
+
+1. Use the authored bond order, or infer a candidate order from both isolated CCD
+   reactants. CCD capacity limits inferred multiple bonds but does not veto a
+   candidate single-bond product.
+2. Make the local leaving-group, bond-order, protonation, and charge changes needed
+   to turn those reactants into the linked product.
+3. Reject the product unless every affected atom has a radical-free RDKit valence.
+"""
 
 import contextlib
 import functools
@@ -44,6 +54,17 @@ _GLYCOSYLATION_ROLES = (
     "s-glycosylation",
 )
 _MAX_GLYCOSYLATION_DISTANCE = 2.4
+_LINK_PRODUCT_CHARGES = {
+    ("B", 0, 4): -1,
+    ("C", 1, 4): 0,
+    ("N", 0, 4): 1,
+    ("O", -1, 2): 0,
+    ("O", 0, 1): -1,
+    ("P", 0, 4): 1,
+    ("S", 0, 3): 1,
+    ("SE", 0, 1): -1,
+    ("SE", 0, 3): 1,
+}
 
 
 def filter_link_distances(
@@ -150,10 +171,8 @@ def infer_link_order(atom_array: AtomArray, atom1: int, atom2: int, *, allow_mis
     hydrogen/leaving-group displacement plus unused valence, including neutralization.
     Thus O3'-P stays single in 1DPN, while unbonded selenium can accept a bond in 7ZCY.
 
-    For single-bond proposals, two PDB compatibility heuristics also permit:
-    - Carbonyl addition, with downstream C=O reduction to C-O(-), as in 1TQH.
-    - Addition to neutral nitrogen with bond-order sum 3, producing four-coordinate N(+).
-    These are candidates only; downstream chemistry must still validate the product.
+    Unspecified single bonds remain candidates because CCD entries describe the
+    isolated reactants. Product cleanup must make the linked structure valid.
 
     When ``allow_missing_templates=True``, missing CCD definitions yield ``BondType.ANY``
     so coordinate-only parsing can preserve reported links without inventing their order.
@@ -170,7 +189,6 @@ def infer_link_order(atom_array: AtomArray, atom1: int, atom2: int, *, allow_mis
     )
     # A leaving C=O can support a new C=N, e.g. the PLP-DLY link in PDB 1RCQ.
     order = max((int(get_leaving_atom_bond_type(*p) or 1) for p in partners), default=1)
-    single_addition = order == 1
     for res_name, atom_name in partners:
         try:
             template = atom_array_from_ccd_code(res_name, coords=None)
@@ -189,6 +207,8 @@ def infer_link_order(atom_array: AtomArray, atom1: int, atom2: int, *, allow_mis
             existing = types[template.atom_name[neighbors] == partners[1][1]]
             if len(existing):
                 return int(existing[0])
+        if order == 1:
+            continue
         orders = np.array([BIOTITE_BOND_TYPE_TO_BOND_ORDER.get(struc.BondType(t), 1) for t in types])
         leaving = {n for group in get_leaving_atom_groups(template).get(atom_name, ()) for n in group}
         retained = ~np.isin(template.element[neighbors], HYDROGEN_LIKE_SYMBOLS) & ~np.isin(
@@ -203,17 +223,6 @@ def infer_link_order(atom_array: AtomArray, atom1: int, atom2: int, *, allow_mis
             element, int(template.charge[matches[0]]), retained_valence + order
         ):
             capacity = order
-
-        # Compatibility heuristics for under-annotated PDB links: the CCD may describe the unlinked reactant.
-        # Allow these single-bond candidates despite insufficient capacity; downstream chemistry must still validate.
-        if single_addition and capacity < 1:
-            element = template.element[matches[0]]
-            # Carbonyl carbon: downstream cleanup can reduce C=O to C-O(-), preserving 1TQH behavior.
-            allows_carbonyl_addition = element == "C" and np.any((orders == 2) & (template.element[neighbors] == "O"))
-            # Neutral N with bond-order sum 3: an added bond can produce four-coordinate N(+) without displacement.
-            allows_nitrogen_cation = element == "N" and orders.sum() == 3 and template.charge[matches[0]] == 0
-            if allows_carbonyl_addition or allows_nitrogen_cation:
-                capacity = 1
 
         order = min(order, capacity)
     if order < 1:
@@ -242,21 +251,12 @@ def _element_distance_thresholds(
 
 
 def _has_existing_polymer_attachment(atom_array: AtomArray, atom1: int, atom2: int, atom_to_res: np.ndarray) -> bool:
-    """Respect attachments to the adjacent residue; reject competing attachments elsewhere."""
-    has_other_link = False
+    """Return whether an authored bond already joins the proposed residue pair."""
     for atom, other in ((atom1, atom2), (atom2, atom1)):
         neighbors, types = atom_array.bonds.get_bonds(atom)
         residues = atom_to_res[neighbors[types != struc.BondType.COORDINATION]]
-        # Includes the proposed bond itself and noncanonical attachments, e.g. 1XVK.
         if atom_to_res[other] in residues:
             return True
-        has_other_link |= np.any(residues != atom_to_res[atom])
-    if has_other_link:
-        raise ValueError(
-            f"Conflicting polymer attachment at {atom_array.chain_id[atom1]}/"
-            f"{atom_array.res_id[atom1]}:{atom_array.atom_name[atom1]}-"
-            f"{atom_array.res_id[atom2]}:{atom_array.atom_name[atom2]}"
-        )
     return False
 
 
@@ -301,8 +301,8 @@ def add_polymer_bonds(atom_array: AtomArray) -> AtomArray:
     For each candidate pair:
     - Preserve an existing attachment from either backbone site to the adjacent residue,
       including noncanonical attachments (1XVK); do not add a second backbone link.
-    - Allow side-chain crosslinks to coexist with the backbone (4AAH), but reject a
-      backbone site already attached to another residue outside the pair.
+    - Allow authored branches to coexist with the ordinary polymer bond; exact
+      product-valence validation later rejects unsupported chemistry.
     - Require free valence, H, or a declared leaving group at both sites, including
       sequence-defined caps (VAL-NH2 in 3N95 and unresolved ACE-SER in 7RCU).
 
@@ -310,8 +310,7 @@ def add_polymer_bonds(atom_array: AtomArray) -> AtomArray:
     and charge correction are handled later, not by this function.
 
     Raises:
-        ValueError: A backbone attachment conflicts or an endpoint has no capacity
-            for the inferred bond.
+        ValueError: An endpoint has no capacity for the inferred bond.
     """
     if atom_array.bonds is None or "chain_type" not in atom_array.get_annotation_categories():
         return atom_array
@@ -632,147 +631,324 @@ def _is_overvalent(atom_array: struc.AtomArray, atom_idx: int, degree: np.ndarra
 
 
 def _displace_hydrogens(atom_array: AtomArray, atom_idx: int, count: int, removed: set[int]) -> int:
-    """Detach up to ``count`` H, updating implicit counts and collecting explicit atoms for deletion."""
+    """Detach H, preferring implicit and unresolved explicit atoms."""
     implicit = 0
     if "nhyd" in atom_array.get_annotation_categories():
         implicit = min(count, int(atom_array.nhyd[atom_idx]))
         atom_array.nhyd[atom_idx] -= implicit
-    explicit = _find_bonded_hydrogens(atom_array, atom_idx)[: count - implicit]
+    explicit = _find_bonded_hydrogens(atom_array, atom_idx)
+    if len(explicit):
+        explicit = explicit[np.argsort(np.isfinite(atom_array.coord[explicit]).all(axis=-1))]
+    explicit = explicit[: count - implicit]
     for hydrogen in explicit:
         atom_array.bonds.remove_bond(atom_idx, int(hydrogen))
         removed.add(int(hydrogen))
     return implicit + len(explicit)
 
 
-def _maybe_fix_overvalent_carbon(
-    atom_array: AtomArray, atom_idx: int, degree: np.ndarray, removed: set[int], impacted: np.ndarray
-) -> None:
-    """Try to resolve an overvalent carbon involved in an inter-residue link.
+def _lower_multiple_bond(
+    atom_array: AtomArray,
+    atom_idx: int,
+    degree: np.ndarray,
+    require_overvalent_partner: bool,
+    impacted: np.ndarray,
+) -> bool:
+    """Lower one intra-residue C-C/C-N multiple bond created by an authored addition.
 
-    First reject an intra-residue C=C/C=N addition when the carbon has no removable
-    H or its multiple-bond partner is also overvalent. Removing H in these cases
-    could hide an unsupported reaction product (e.g. 1N4E and 8QIA).
+    Two product patterns are supported:
 
-    Otherwise, try these strategies in order, returning after the first applies:
+    1. Both pi-bond atoms gained links, so both are overvalent and the bond order
+       drops by one (the thymine photodimer in 1N4E).
+    2. Only ``atom_idx`` gained a link. With implicit H (``nhyd``), a linked N/O/S
+       donor transfers H to the other pi-bond atom and the bond order drops by one
+       (C=N in 8QIA, C≡N in 1U9X, and C=C in 2ZZ6). C≡C is not inferred.
 
-    1. **Hydrogen displacement:** remove one implicit or explicit bonded H, such
-       as the template H displaced from the ACE cap in 1J8Z. Explicit H bonds are
-       detached immediately, but the caller must delete the collected H atoms.
-    2. **Carbonyl addition:** when no H can be removed, reduce a C=O bond to C-O
-       and set the oxygen charge to -1 (e.g. SER OG attacking 4PA CAI in 1TQH).
-       Reject this inference if the carbon retains a single-bonded nitrogen in
-       its own residue: addition versus amide substitution needs an explicit
-       product definition, regardless of coordinates (e.g. ASN CG in 6N0A).
-
-    If neither strategy applies, leave the carbon unresolved for the caller's
-    final valence validation. No atoms are deleted from the array here.
-
-    Args:
-        atom_array: Structure whose bonds, hydrogen counts, and charges may be
-            modified in place.
-        atom_idx: Index of the overvalent carbon to examine.
-        degree: Per-atom bond-order sums, including hydrogens; updated in place.
-        removed: Set to which displaced explicit H indices are added for later deletion.
-        impacted: Boolean mask updated to include oxygen changed by carbonyl addition.
-
-    Raises:
-        ValueError: If resolving the link requires an unsupported multiple-bond
-            addition or an ambiguous amide-carbonyl reaction.
+    Return ``True`` only after applying one of these complete local products.
     """
     partners, types = atom_array.bonds.get_bonds(atom_idx)
     residue = struc.get_all_residue_positions(atom_array)
-    same_residue = residue[partners] == residue[atom_idx]
+    for partner, bond_type in zip(partners, types, strict=True):
+        partner = int(partner)
+        order = BIOTITE_BOND_TYPE_TO_BOND_ORDER.get(struc.BondType(bond_type), 1)
+        overvalent = _is_overvalent(atom_array, partner, degree)
+        if (
+            order <= 1
+            or atom_array.element[partner] not in ("C", "N")
+            or residue[partner] != residue[atom_idx]
+            or (require_overvalent_partner and not overvalent)
+        ):
+            continue
+        if not overvalent:
+            element = str(atom_array.element[partner])
+            if (element == "C" and order != 2) or not _has_valid_rdkit_valence(atom_array, partner):
+                continue
+            donors = partners[(residue[partners] != residue[atom_idx]) & (types == struc.BondType.SINGLE)]
+            for donor in donors:
+                donor = int(donor)
+                if (
+                    "nhyd" not in atom_array.get_annotation_categories()
+                    or atom_array.nhyd[donor] == 0
+                    or not _is_valid_rdkit_valence(
+                        str(atom_array.element[donor]), int(atom_array.charge[donor]), int(degree[donor] - 1)
+                    )
+                ):
+                    continue
+                atom_array.nhyd[donor] -= 1
+                atom_array.nhyd[partner] += 1
+                degree[donor] -= 1
+                degree[partner] += 1
+                impacted[donor] = True
+                break
+            else:
+                continue
+        atom_array.bonds.remove_bond(atom_idx, partner)
+        atom_array.bonds.add_bond(atom_idx, partner, struc.BondType(order - 1))
+        degree[[atom_idx, partner]] -= 1
+        impacted[[atom_idx, partner]] = True
+        return True
+    return False
 
-    # --- Guard: reject unsupported additions across C/C or C/N multiple bonds ---
-    # Do not disguise C=C/C=N additions as H substitution or invent proton transfers (1N4E, 8QIA).
-    multiple_bonded_partners = partners[
-        same_residue
-        & np.isin(atom_array.element[partners], ("C", "N"))
-        & np.array([BIOTITE_BOND_TYPE_TO_BOND_ORDER.get(struc.BondType(t), 1) > 1 for t in types])
-    ]
-    has_h = ("nhyd" in atom_array.get_annotation_categories() and atom_array.nhyd[atom_idx] > 0) or len(
-        _find_bonded_hydrogens(atom_array, atom_idx)
-    ) > 0
-    if len(multiple_bonded_partners) and (
-        not has_h or any(_is_overvalent(atom_array, int(i), degree) for i in multiple_bonded_partners)
-    ):
-        raise ValueError(
-            f"Unsupported link chemistry at {atom_array.res_name[atom_idx]}/{atom_array.atom_name[atom_idx]}: "
-            "C=C/C=N addition requires explicit product bond orders and protonation"
-        )
 
-    # --- Strategy 1: displace one bonded H (implicit or explicit) ---
-    # An added link can displace a template H, e.g. on the ACE cap in PDB 1J8Z.
+def _maybe_fix_overvalent_carbon(
+    atom_array: AtomArray, atom_idx: int, degree: np.ndarray, removed: set[int], impacted: np.ndarray
+) -> list[int]:
+    """Resolve one overvalent carbon after an authored link is added.
+
+    The cases are tried in this order:
+
+    1. Displace H from the linked carbon (the ACE cap in 1J8Z).
+    2. Replace a coordinate-missing terminal amide N while retaining C=O (the
+       ASN-LYS isopeptide in 6N0A). Resolved terminal atoms are never removed here.
+    3. Treat attack on C=O as carbonyl addition: C=O becomes C-O(-) (1TQH).
+    4. Treat attack on C=C/C=N/C≡N using :func:`_lower_multiple_bond` and donor-H
+       transfer (8QIA, 1U9X, and 2ZZ6).
+
+    Explicit H are collected in ``removed``; a missing terminal group is returned
+    for the caller to delete after its bonds are detached.
+    """
+    partners, types = atom_array.bonds.get_bonds(atom_idx)
     if _displace_hydrogens(atom_array, atom_idx, 1, removed):
         degree[atom_idx] -= 1
-        return
+        return []
 
-    # --- Strategy 2: carbonyl addition, only when no H can be displaced ---
-    # C=O becomes C-O(-), e.g. SER OG attacking the 4PA carbonyl in PDB 1TQH.
-    carbonyl_oxygens = partners[(atom_array.element[partners] == "O") & (types == struc.BondType.DOUBLE)]
-    if len(carbonyl_oxygens) == 0:
-        return  # No supported correction; the caller's final valence validation must reject unresolved carbon.
+    residue = struc.get_all_residue_positions(atom_array)
+    own = residue[partners] == residue[atom_idx]
+    heavy = ~np.isin(atom_array.element, HYDROGEN_LIKE_SYMBOLS)
+    has_carbonyl = np.any(own & (atom_array.element[partners] == "O") & (types == struc.BondType.DOUBLE))
+    if has_carbonyl and (~own & (types != struc.BondType.COORDINATION)).any():
+        for partner in partners[own & (types == struc.BondType.SINGLE)]:
+            partner = int(partner)
+            neighbors, _ = atom_array.bonds.get_bonds(partner)
+            if (
+                atom_array.element[partner] == "N"
+                and np.isnan(atom_array.coord[partner]).any()
+                and heavy[neighbors].sum() == 1
+            ):
+                return [partner, *_find_bonded_hydrogens(atom_array, partner)]
 
-    # Amide exception: retained N leaves substitution vs. addition ambiguous (ASN in 6N0A).
-    # Neither missing nor present N coordinates specify which product to build.
-    if np.any(same_residue & (atom_array.element[partners] == "N") & (types == struc.BondType.SINGLE)):
-        raise ValueError(
-            f"Ambiguous link chemistry at {atom_array.res_name[atom_idx]}/{atom_array.atom_name[atom_idx]}: "
-            "amide carbonyl retains nitrogen; provide an explicit product definition"
-        )
+    for oxygen, bond_type in zip(partners, types, strict=True):
+        if atom_array.element[oxygen] == "O" and bond_type == struc.BondType.DOUBLE:
+            oxygen = int(oxygen)
+            atom_array.bonds.remove_bond(atom_idx, oxygen)
+            atom_array.bonds.add_bond(atom_idx, oxygen, struc.BondType.SINGLE)
+            atom_array.charge[oxygen] = -1
+            degree[[atom_idx, oxygen]] -= 1
+            impacted[oxygen] = True
+            return []
 
-    oxygen = int(carbonyl_oxygens[0])
-    atom_array.bonds.remove_bond(atom_idx, oxygen)
-    atom_array.bonds.add_bond(atom_idx, oxygen, struc.BondType.SINGLE)
-    atom_array.charge[oxygen] = -1
-    degree[[atom_idx, oxygen]] -= 1
-    impacted[oxygen] = True
+    _lower_multiple_bond(atom_array, atom_idx, degree, False, impacted)
+    return []
 
 
-def _validate_leaving_bond_orders(atom_array: AtomArray) -> None:
-    """Reject unsupported bond-order deficits after CCD leaving atoms have been removed.
+def _restore_leaving_bond_orders_or_raise(atom_array: AtomArray) -> AtomArray:
+    """Restore bond order lost with a leaving group, or reject the product.
 
-    For each linked atom, compare its CCD leaving-bond order with the sum of its
-    inter-residue bond orders (excluding coordination). If the new links replace
-    less bond order than the leaving bond supplied, and the atom's current total
-    bond-order sum is below its CCD reference, require explicit product bond orders.
-
-    For example, TAF P in 1DPN loses a double-bonded oxygen but gains a single P-O
-    link. The link alone does not specify which remaining P-O bond should become
-    double, so we reject the ambiguity rather than choose a bond to promote.
-
-    Raises:
-        ValueError: A linked atom meets both deficit conditions above.
+    If a double-bonded leaving atom is replaced by a single authored link, promote
+    a same-residue terminal O/S/N bond from single to double. The promoted atom
+    must be able to lose H or neutralize an existing -1 charge, as for TAF
+    phosphorus in 1DPN. Reject any bond-order deficit that remains afterward.
     """
     inter_bonds = _get_inter_residue_bonds(atom_array)
     orders = [BIOTITE_BOND_TYPE_TO_BOND_ORDER.get(struc.BondType(bt), 1) for bt in inter_bonds[:, 2]]
     gained = np.bincount(inter_bonds[:, :2].ravel(), weights=np.repeat(orders, 2), minlength=len(atom_array))
     degree = get_bond_degree_per_atom(atom_array)
-    # Repeated attachment sites share CCD chemistry only for this validation call.
+    residue = struc.get_all_residue_positions(atom_array)
+    removed: set[int] = set()
     leaving_bond_type = functools.cache(get_leaving_atom_bond_type)
     for atom_idx in np.flatnonzero(gained):
         key = (atom_array.res_name[atom_idx], atom_array.atom_name[atom_idx])
         lost = BIOTITE_BOND_TYPE_TO_BOND_ORDER.get(leaving_bond_type(*key), 0)
-        if lost > gained[atom_idx]:
-            template = atom_array_from_ccd_code(key[0], coords=None)
-            expected = get_bond_degree_per_atom(template)[template.atom_name == key[1]].item()
-            # The incoming link does not determine which internal bond to promote, e.g. TAF in 1DPN.
-            if degree[atom_idx] < expected:
-                raise ValueError(
-                    f"Unsupported bond-order rearrangement at {key[0]}/{key[1]}: "
-                    "provide explicit product bond orders instead of inferring a replacement double bond"
+        if lost <= gained[atom_idx]:
+            continue
+        template = atom_array_from_ccd_code(key[0], coords=None)
+        expected = get_bond_degree_per_atom(template)[template.atom_name == key[1]].item()
+        for _ in range(min(int(lost - gained[atom_idx]), int(expected - degree[atom_idx]))):
+            neighbors, types = atom_array.bonds.get_bonds(int(atom_idx))
+            candidates = []
+            for neighbor in neighbors[
+                (types == struc.BondType.SINGLE)
+                & (residue[neighbors] == residue[atom_idx])
+                & np.isin(atom_array.element[neighbors], ("O", "S", "N"))
+            ]:
+                neighbor = int(neighbor)
+                bonded, _ = atom_array.bonds.get_bonds(neighbor)
+                heavy = bonded[~np.isin(atom_array.element[bonded], HYDROGEN_LIKE_SYMBOLS)]
+                has_h = bool(
+                    ("nhyd" in atom_array.get_annotation_categories() and atom_array.nhyd[neighbor])
+                    or len(_find_bonded_hydrogens(atom_array, neighbor))
                 )
+                charge = 0 if atom_array.charge[neighbor] == -1 else int(atom_array.charge[neighbor])
+                element = str(atom_array.element[neighbor])
+                product_valence = int(degree[neighbor] + 1 - has_h)
+                if (
+                    heavy.tolist() == [atom_idx]
+                    and (has_h or atom_array.charge[neighbor] == -1)
+                    and _is_valid_rdkit_valence(element, charge, product_valence)
+                ):
+                    product_state = (element, charge, product_valence)
+                    candidates.append((product_state, neighbor, has_h, charge))
+            if not candidates:
+                raise ValueError(f"Unsupported bond-order rearrangement at {key[0]}/{key[1]}")
+            if len({candidate[0] for candidate in candidates}) != 1:
+                raise ValueError(f"Ambiguous bond-order rearrangement at {key[0]}/{key[1]}")
+            _, neighbor, has_h, charge = min(candidates, key=lambda candidate: candidate[2])
+            if has_h:
+                _displace_hydrogens(atom_array, neighbor, 1, removed)
+            atom_array.bonds.remove_bond(int(atom_idx), neighbor)
+            atom_array.bonds.add_bond(int(atom_idx), neighbor, struc.BondType.DOUBLE)
+            atom_array.charge[neighbor] = charge
+            degree[atom_idx] += 1
+            degree[neighbor] += 1 - int(has_h)
+        if degree[atom_idx] < expected:
+            raise ValueError(
+                f"Unsupported bond-order rearrangement at {key[0]}/{key[1]}: "
+                "provide explicit product bond orders instead of inferring a replacement double bond"
+            )
+    return atom_array[~np.isin(np.arange(len(atom_array)), list(removed))] if removed else atom_array
 
 
-def _remove_ccd_leaving_atoms(atom_array: struc.AtomArray, inter_bonds: np.ndarray) -> struc.AtomArray:
+def _rebalance_terminal_heteroatoms(
+    atom_array: AtomArray, impacted: np.ndarray, degree: np.ndarray, removed: set[int]
+) -> None:
+    """Repair two terminal-heteroatom products without changing heavy-atom coordinates.
+
+    1. A new substituent on P/S may require P/S=O to become P/S-O(-), as in 1CUL
+       and 1U4N. Prefer the least metal-coordinated equivalent oxygen.
+    2. If an authored link uses a terminal O/S/N that was double-bonded in the CCD,
+       move that double bond to an equivalent single-bonded sibling, as in GLU OE1
+       in 1PPV and ADP O1B in 2CGL. Equivalent candidates must have the same charge
+       and H state; otherwise no choice is made and final validation rejects it.
+    """
+    residue = struc.get_all_residue_positions(atom_array)
+    for linked in np.flatnonzero(impacted):
+        linked = int(linked)
+        element = str(atom_array.element[linked])
+        if _has_valid_rdkit_valence(atom_array, linked):
+            continue
+        neighbors, types = atom_array.bonds.get_bonds(linked)
+
+        # Case 1: addition to a P/S center lowers one terminal oxo bond.
+        if element in ("P", "S"):
+            candidates = []
+            for oxygen in neighbors[(types == struc.BondType.DOUBLE) & (atom_array.element[neighbors] == "O")]:
+                oxygen = int(oxygen)
+                oxygen_neighbors, oxygen_types = atom_array.bonds.get_bonds(oxygen)
+                covalent = oxygen_neighbors[oxygen_types != struc.BondType.COORDINATION]
+                if (
+                    residue[oxygen] == residue[linked]
+                    and covalent.tolist() == [linked]
+                    and _is_valid_rdkit_valence(element, int(atom_array.charge[linked]), int(degree[linked] - 1))
+                ):
+                    candidates.append((int(np.sum(oxygen_types == struc.BondType.COORDINATION)), oxygen))
+            if candidates:
+                _, oxygen = min(candidates)
+                atom_array.bonds.remove_bond(linked, oxygen)
+                atom_array.bonds.add_bond(linked, oxygen, struc.BondType.SINGLE)
+                atom_array.charge[oxygen] = -1
+                degree[[linked, oxygen]] -= 1
+                impacted[oxygen] = True
+            continue
+
+        # Case 2: a linked terminal heteroatom transfers its double bond to a sibling.
+        if element not in ("O", "S", "N"):
+            continue
+        candidates = []
+        for center in neighbors[(types == struc.BondType.DOUBLE) & (residue[neighbors] == residue[linked])]:
+            center = int(center)
+            siblings, sibling_types = atom_array.bonds.get_bonds(center)
+            for sibling in siblings[
+                (sibling_types == struc.BondType.SINGLE)
+                & (residue[siblings] == residue[linked])
+                & (atom_array.element[siblings] == element)
+            ]:
+                sibling = int(sibling)
+                sibling_neighbors, sibling_neighbor_types = atom_array.bonds.get_bonds(sibling)
+                heavy_covalent = sibling_neighbors[
+                    (sibling_neighbor_types != struc.BondType.COORDINATION)
+                    & ~np.isin(atom_array.element[sibling_neighbors], HYDROGEN_LIKE_SYMBOLS)
+                ]
+                if heavy_covalent.tolist() != [center]:
+                    continue
+                explicit_h = _find_bonded_hydrogens(atom_array, sibling)
+                implicit_h = int(atom_array.nhyd[sibling]) if "nhyd" in atom_array.get_annotation_categories() else 0
+                has_h = bool(implicit_h or len(explicit_h))
+                charge = 0 if atom_array.charge[sibling] == -1 else int(atom_array.charge[sibling])
+                if _is_valid_rdkit_valence(element, charge, int(degree[sibling] + 1 - has_h)):
+                    signature = (int(atom_array.charge[sibling]), implicit_h, len(explicit_h))
+                    coordination = int(np.sum(sibling_neighbor_types == struc.BondType.COORDINATION))
+                    candidates.append((coordination, signature, center, sibling, has_h, charge))
+        if not candidates:
+            continue
+        coordination = min(candidate[0] for candidate in candidates)
+        candidates = [candidate for candidate in candidates if candidate[0] == coordination]
+        if len({candidate[1] for candidate in candidates}) != 1:
+            continue
+        _, _, center, sibling, has_h, charge = candidates[0]
+        if has_h:
+            _displace_hydrogens(atom_array, sibling, 1, removed)
+        atom_array.bonds.remove_bond(linked, center)
+        atom_array.bonds.add_bond(linked, center, struc.BondType.SINGLE)
+        atom_array.bonds.remove_bond(center, sibling)
+        atom_array.bonds.add_bond(center, sibling, struc.BondType.DOUBLE)
+        atom_array.charge[sibling] = charge
+        degree[linked] -= 1
+        degree[sibling] += 1 - int(has_h)
+        impacted[sibling] = True
+
+
+def _remove_ccd_leaving_atoms(
+    atom_array: struc.AtomArray,
+    inter_bonds: np.ndarray,
+    preserve_atom_mask: np.ndarray | None = None,
+) -> struc.AtomArray:
     """Remove CCD-defined leaving atoms for atoms that form inter-residue bonds.
 
-    Each bond sheds as many leaving groups as its order
+    Each unit of authored bond order consumes at most one CCD leaving group.
+    Groups already absent consume the budget first, then unprotected groups may be
+    removed unless they are themselves link endpoints. By default, finite-coordinate
+    atoms are protected. Canonical polymer bonds also consume their CCD leaving groups;
+    other protected atoms are retained. Thus 6W13 removes missing OP3 while
+    preserving resolved OP2, and internal peptide OXT atoms are removed.
     """
     leaving_atom_mask = np.zeros(len(atom_array), dtype=bool)
     has_nhyd = "nhyd" in atom_array.get_annotation_categories()
     _h_first = frozenset(s[0] for s in HYDROGEN_LIKE_SYMBOLS)
     atoms_with_inter_bonds = np.unique(inter_bonds[:, :2])
+    inter_bond_mask = np.zeros(len(atom_array), dtype=bool)
+    inter_bond_mask[atoms_with_inter_bonds] = True
+    polymer_link_mask = np.zeros(len(atom_array), dtype=bool)
+
+    polymerization_atoms = functools.cache(get_polymerization_atoms)
+    has_chain_type = "chain_type" in atom_array.get_annotation_categories()
+    for atom1, atom2, _ in inter_bonds:
+        atom1, atom2 = int(atom1), int(atom2)
+        sites = []
+        for atom in (atom1, atom2):
+            chain_type = ChainType.as_enum(atom_array.chain_type[atom]) if has_chain_type else None
+            sites.append(polymerization_atoms(str(atom_array.res_name[atom]), chain_type))
+        names = atom_array.atom_name
+        if (names[atom1], names[atom2]) in ((sites[0][0], sites[1][1]), (sites[0][1], sites[1][0])):
+            polymer_link_mask[[atom1, atom2]] = True
 
     def is_implicit_h(group: tuple[str, ...], present: set[str]) -> bool:
         """Identify absent hydrogen-only groups tracked by nhyd, excluding explicit hydrogens."""
@@ -790,7 +966,12 @@ def _remove_ccd_leaving_atoms(atom_array: struc.AtomArray, inter_bonds: np.ndarr
     sizes = np.diff(_rs)
     atom_to_res_start = np.repeat(_rs[:-1], sizes)
     atom_to_res_stop = np.repeat(_rs[1:], sizes)
-    observed_mask = np.isfinite(atom_array.coord).all(axis=-1)
+    if preserve_atom_mask is None:
+        preserve_atom_mask = np.isfinite(atom_array.coord).all(axis=-1)
+    else:
+        preserve_atom_mask = np.asarray(preserve_atom_mask, dtype=bool)
+    if preserve_atom_mask.shape != (len(atom_array),):
+        raise ValueError("preserve_atom_mask must match the AtomArray length")
     current_res_start = -1
 
     for atom_idx in atoms_with_inter_bonds:
@@ -804,13 +985,18 @@ def _remove_ccd_leaving_atoms(atom_array: struc.AtomArray, inter_bonds: np.ndarr
         if res_start != current_res_start:
             res_atom_names = atom_array.atom_name[res_start:res_stop]
             present = set(res_atom_names)
-            observed = set(res_atom_names[observed_mask[res_start:res_stop]])
+            preserved = set(res_atom_names[preserve_atom_mask[res_start:res_stop]])
+            linked = set(res_atom_names[inter_bond_mask[res_start:res_stop]])
             current_res_start = res_start
         still_attached = [g for g in groups if is_implicit_h(g, present) or not present.isdisjoint(g)]
-        still_attached.sort(key=lambda group: not observed.isdisjoint(group))
+        removable = [
+            group
+            for group in still_attached
+            if (polymer_link_mask[atom_idx] or preserved.isdisjoint(group)) and linked.isdisjoint(group)
+        ]
         budget = max(0, int(n_displaceable[atom_idx]) - (len(groups) - len(still_attached)))
 
-        for group in still_attached[:budget]:
+        for group in removable[:budget]:
             leaving_atom_mask[res_start:res_stop] |= (
                 res_atom_names == group[0] if len(group) == 1 else np.isin(res_atom_names, list(group))
             )
@@ -828,24 +1014,44 @@ def _remove_ccd_leaving_atoms(atom_array: struc.AtomArray, inter_bonds: np.ndarr
 
 
 def _resolve_overvalent_atoms(atom_array: AtomArray) -> tuple[AtomArray, np.ndarray]:
-    """Apply supported link corrections without letting atom order change the valence bookkeeping."""
+    """Apply product repairs in dependency order and return every changed atom.
+
+    Coupled pi-bond additions are handled before single-endpoint carbon repairs;
+    terminal resonance/oxo products come next; finally H or missing terminal groups
+    are displaced. Deferring deletion until the end keeps atom indices stable while
+    bond orders and valence totals are updated.
+    """
     impacted = get_inter_residue_atom_mask(atom_array)
     inter_atoms = np.flatnonzero(impacted)
     carbons = inter_atoms[atom_array.element[inter_atoms] == "C"]
     other_atoms = inter_atoms[atom_array.element[inter_atoms] != "C"]
     degree = get_bond_degree_per_atom(atom_array)
     removed = set()
-    # Validate carbon chemistry before donor H cleanup can hide an unsupported addition.
+    for idx in carbons:
+        if _is_overvalent(atom_array, int(idx), degree):
+            _lower_multiple_bond(atom_array, int(idx), degree, True, impacted)
+    _rebalance_terminal_heteroatoms(atom_array, impacted, degree, removed)
     for idx in [*carbons, *other_atoms]:
-        if idx in removed or not _is_overvalent(atom_array, idx, degree):
+        if idx in removed:
             continue
         element = atom_array.element[idx]
+        if element == "S" and degree[idx] == 3 and _displace_hydrogens(atom_array, int(idx), 1, removed):
+            degree[idx] -= 1
+            continue
+        if not _is_overvalent(atom_array, idx, degree):
+            continue
+        displace = []
         if element == "C":
-            _maybe_fix_overvalent_carbon(atom_array, idx, degree, removed, impacted)
+            displace = _maybe_fix_overvalent_carbon(atom_array, idx, degree, removed, impacted)
         elif element in ("N", "O"):
             # Displace only enough H to accommodate the added bond order.
             excess = int(degree[idx] - DEFAULT_VALENCE[element] - atom_array.charge[idx])
             _displace_hydrogens(atom_array, int(idx), excess, removed)
+        for gone in displace:
+            neighbors, _ = atom_array.bonds.get_bonds(int(gone))
+            for neighbor in neighbors:
+                atom_array.bonds.remove_bond(int(gone), int(neighbor))
+            removed.add(int(gone))
         degree = get_bond_degree_per_atom(atom_array)
     if not removed:
         return atom_array, impacted
@@ -853,8 +1059,20 @@ def _resolve_overvalent_atoms(atom_array: AtomArray) -> tuple[AtomArray, np.ndar
     return atom_array[keep], impacted[keep]
 
 
-def resolve_leaving_atoms(atom_array: struc.AtomArray) -> tuple[struc.AtomArray, np.ndarray]:
-    """Remove leaving atoms and fix valence for atoms involved in inter-residue bonds.
+def build_link_product(
+    atom_array: struc.AtomArray,
+    preserve_atom_mask: np.ndarray | None = None,
+) -> tuple[struc.AtomArray, np.ndarray]:
+    """Build local products for authored inter-residue bonds.
+
+    Remove CCD leaving groups, restore any bond order they supplied, and apply the
+    supported local product transformations. Charge normalization and final RDKit
+    validation happen later in :func:`resolve_link_chemistry`.
+
+    Args:
+        atom_array: Structure containing the authored links.
+        preserve_atom_mask: Atoms that must not be removed as leaving groups.
+            Finite-coordinate atoms are protected when omitted.
 
     Returns:
         ``(atom_array, impacted_mask)`` where ``impacted_mask`` marks atoms
@@ -868,15 +1086,21 @@ def resolve_leaving_atoms(atom_array: struc.AtomArray) -> tuple[struc.AtomArray,
     if len(inter_bonds) == 0:
         return atom_array, np.zeros(len(atom_array), dtype=bool)
 
-    atom_array = _remove_ccd_leaving_atoms(atom_array, inter_bonds)
-    _validate_leaving_bond_orders(atom_array)
+    atom_array = _remove_ccd_leaving_atoms(atom_array, inter_bonds, preserve_atom_mask)
+    atom_array = _restore_leaving_bond_orders_or_raise(atom_array)
     atom_array, impacted = _resolve_overvalent_atoms(atom_array)
-    _validate_link_valence(atom_array, impacted)
     return atom_array, impacted
 
 
-def correct_formal_charges_for_specified_atoms(atom_array: AtomArray, to_update: np.ndarray) -> AtomArray:
-    """Update selected atoms' formal charges from completed valence and hydrogen counts."""
+def apply_link_product_charges(atom_array: AtomArray, to_update: np.ndarray) -> AtomArray:
+    """Apply only explicit formal-charge transitions implied by link products.
+
+    The table covers tetrahedral borate, tetravalent N/P, three-coordinate S/Se,
+    one-coordinate selenolate, neutralized ester O, deprotonated terminal O, and
+    neutralization of a pre-existing C(+) after it reaches valence four. O(+) is
+    handled separately: three-coordinate O is accepted only when it has no O-O
+    bond. No generic ``bond_degree - default_valence`` charge inference is used.
+    """
     if (
         "nhyd" not in atom_array.get_annotation_categories()
         and not np.isin(atom_array.element, HYDROGEN_LIKE_SYMBOLS).any()
@@ -902,12 +1126,15 @@ def correct_formal_charges_for_specified_atoms(atom_array: AtomArray, to_update:
                 "unknown ligand (UNL) or otherwise lacking bonding information."
             )
 
-    default_valence = np.array([DEFAULT_VALENCE.get(elt, -10) for elt in atom_array.element[indices]])
-    already_valid = np.fromiter(
-        (_has_valid_rdkit_valence(atom_array, int(idx)) for idx in indices), dtype=bool, count=len(indices)
-    )
-    valid = (default_valence != -10) & ~already_valid
-    atom_array.charge[indices[valid]] = (degree - default_valence)[valid]
+    for idx, valence in zip(indices, degree, strict=True):
+        key = (str(atom_array.element[idx]).upper(), int(atom_array.charge[idx]), int(valence))
+        if key in _LINK_PRODUCT_CHARGES:
+            atom_array.charge[idx] = _LINK_PRODUCT_CHARGES[key]
+        elif key == ("O", 0, 3):
+            neighbors, types = atom_array.bonds.get_bonds(int(idx))
+            covalent = neighbors[types != struc.BondType.COORDINATION]
+            if not np.any(atom_array.element[covalent] == "O"):
+                atom_array.charge[idx] = 1
     return atom_array
 
 
@@ -925,16 +1152,16 @@ def _has_amide_bond(atom_array: AtomArray, n_idx: int, bonds_arr: np.ndarray) ->
     return False
 
 
-def correct_charged_amide_nitrogens(
+def _normalize_linked_amides(
     atom_array: struc.AtomArray,
     to_update: np.ndarray | None = None,
-) -> struc.AtomArray:
-    """Neutralize linked amide nitrogens, removing the excess H."""
+) -> tuple[struc.AtomArray, np.ndarray]:
+    """Neutralize linked amide nitrogens and preserve the affected-atom mask."""
     # Amide formation removes the excess N-H, e.g. LYS NZ linked to DHS in PDB 1QFE.
     if to_update is None:
         to_update = get_inter_residue_atom_mask(atom_array)
     if not np.any(to_update):
-        return atom_array
+        return atom_array, to_update
 
     bonds_arr = atom_array.bonds.as_array()
     n_mask = (atom_array.element == "N") & (atom_array.charge == 1) & to_update
@@ -952,38 +1179,61 @@ def correct_charged_amide_nitrogens(
         keep = np.ones(len(atom_array), dtype=bool)
         keep[list(h_to_remove)] = False
         atom_array = atom_array[keep]
+        to_update = to_update[keep]
 
-    return atom_array
+    return atom_array, to_update
 
 
-def _validate_link_valence(atom_array: AtomArray, impacted: np.ndarray, *, complete: bool = False) -> None:
-    """Validate link endpoints and repaired neighbors before and after charge normalization."""
+def correct_charged_amide_nitrogens(
+    atom_array: struc.AtomArray,
+    to_update: np.ndarray | None = None,
+) -> struc.AtomArray:
+    """Neutralize linked amide nitrogens, removing the excess H."""
+    return _normalize_linked_amides(atom_array, to_update)[0]
+
+
+def _validate_link_valence(atom_array: AtomArray, impacted: np.ndarray) -> None:
+    """Reject repaired atoms without a possible radical-free RDKit valence."""
     degree = get_bond_degree_per_atom(atom_array)
-    # Reject unresolved valence, e.g. the three-bond O3' from conflicting authored links in PDB 4V4S.
+    has_nhyd = "nhyd" in atom_array.get_annotation_categories()
     for idx in np.flatnonzero(impacted):
         if _has_valid_rdkit_valence(atom_array, int(idx)):
             continue
-        element, charge = atom_array.element[idx], atom_array.charge[idx]
-        expected = DEFAULT_VALENCE.get(element)
-        expected = expected if element == "C" or expected is None else expected + charge
-        incomplete = complete and expected is not None and degree[idx] != expected
-        # Neutral N can become N(+) upon alkylation; do not similarly hide a third oxygen bond with a charge.
-        nitrogen_cation = element == "N" and degree[idx] == 4 and charge in (0, 1)
-        # Validate connectivity before charge correction; a linked anion may become neutral (e.g. ester O).
-        overvalent = expected is not None and degree[idx] > _valence_with_neutralization(element, expected)
-        if incomplete or (overvalent and not nitrogen_cation):
-            raise ValueError(
-                f"Unresolved link valence at {atom_array.chain_id[idx]}/{atom_array.res_id[idx]}/"
-                f"{atom_array.res_name[idx]}/{atom_array.atom_name[idx]} "
-                f"(element={atom_array.element[idx]}, charge={atom_array.charge[idx]}, bond-order sum={degree[idx]:g})"
-            )
+        # Coordinate-only inputs may omit both H atoms and nhyd. In that case an
+        # under-valent heavy-atom graph is valid if implicit H can complete it.
+        if not has_nhyd and any(
+            _is_valid_rdkit_valence(str(atom_array.element[idx]), int(atom_array.charge[idx]), int(degree[idx] + n_h))
+            for n_h in range(1, 5)
+        ):
+            continue
+        raise ValueError(
+            f"Unresolved link valence at {atom_array.chain_id[idx]}/{atom_array.res_id[idx]}/"
+            f"{atom_array.res_name[idx]}/{atom_array.atom_name[idx]} "
+            f"(element={atom_array.element[idx]}, charge={atom_array.charge[idx]}, bond-order sum={degree[idx]:g})"
+        )
 
 
-def resolve_link_chemistry(atom_array: AtomArray) -> AtomArray:
-    """Resolve supported link chemistry and charges; raise if valence remains inconsistent."""
-    atom_array, impacted = resolve_leaving_atoms(atom_array)
+def resolve_link_chemistry(atom_array: AtomArray, preserve_atom_mask: np.ndarray | None = None) -> AtomArray:
+    """Build, normalize, and validate products for authored links.
+
+    The phases are deliberately explicit: build the linked product, apply only
+    supported charge/protonation changes, then validate every affected atom. Raise
+    rather than guessing when these local rules do not produce a valid product.
+
+    Args:
+        atom_array: Structure containing the authored links.
+        preserve_atom_mask: Atoms that must not be removed as leaving groups.
+            Finite-coordinate atoms are protected when omitted.
+    """
+    atom_array, impacted = build_link_product(atom_array, preserve_atom_mask)
     if not impacted.any():
         return atom_array
-    atom_array = correct_formal_charges_for_specified_atoms(atom_array, impacted)
-    _validate_link_valence(atom_array, impacted, complete=True)
-    return correct_charged_amide_nitrogens(atom_array, impacted)
+    atom_array = apply_link_product_charges(atom_array, impacted)
+    atom_array, impacted = _normalize_linked_amides(atom_array, impacted)
+    _validate_link_valence(atom_array, impacted)
+    return atom_array
+
+
+# Compatibility names retained for existing callers.
+resolve_leaving_atoms = build_link_product
+correct_formal_charges_for_specified_atoms = apply_link_product_charges

@@ -222,6 +222,9 @@ def _add_bonds(
             monovalent_hydrogen = bool(hydrogen_atoms) and all(
                 len(model.bonds.get_bonds(atom)[0]) == 1 for atom in hydrogen_atoms
             )
+            # Minimal PDB parsing skips product cleanup; do not accept a multiply bonded H/D/T.
+            if hydrogen_atoms and not monovalent_hydrogen:
+                raise ValueError("Cannot infer link order: hydrogen-like atoms must have exactly one bond")
             bonds[index, 2] = (
                 struc.BondType.SINGLE
                 if monovalent_hydrogen

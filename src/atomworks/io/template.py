@@ -516,6 +516,7 @@ def infer_bonds_from_residue_names(
     custom_bond_dict: dict[str, dict[tuple[str, str], int]] | None = None,
     sanitize: bool = True,
     ccd_mirror_path: os.PathLike = CCD_MIRROR_PATH,
+    preserve_atom_mask: np.ndarray | None = None,
 ) -> AtomArray:
     """Add bonds to an AtomArray, using the CCD as ground-truth.
 
@@ -539,6 +540,9 @@ def infer_bonds_from_residue_names(
             formal charges, and amide nitrogens. Requires hydrogens or nhyd
             annotation to be present. Defaults to ``True``.
         ccd_mirror_path: Path to local CCD mirror.
+        preserve_atom_mask: Atoms whose coordinates came from the input structure
+            and must not be removed as leaving groups. Finite coordinates are used
+            when omitted.
 
     Returns:
         AtomArray with bonds added and processed (modified in-place).
@@ -582,4 +586,4 @@ def infer_bonds_from_residue_names(
     # Add polymer inter-residue bonds, skipping pairs already bonded (e.g. via struct_conn)
     atom_array = add_polymer_bonds(atom_array)
 
-    return resolve_link_chemistry(atom_array) if sanitize else atom_array
+    return resolve_link_chemistry(atom_array, preserve_atom_mask) if sanitize else atom_array
