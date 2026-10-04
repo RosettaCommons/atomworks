@@ -74,9 +74,13 @@ def view(
         - structure (AtomArray): The atomic structure to be visualized.
         - zoom_to_selection (dict[str, int | str] | None, optional): A dictionary specifying the
             selection to zoom into. Defaults to None. Here are some examples:
+
                 - `{'serial': 35}` - will zoom to the atom with index 35 in the atom array
+
                 - `{'chain': 'A', 'resi': 35}` - will zoom to the residue id 35 in chain A
-                - `{'chain': 'C'} - will zoom to the entire chain C
+
+                - `{'chain': 'C'}` - will zoom to the entire chain C
+
             !WARNING! If the selection is wrong, the visualization will be empty.
         - show_hover (bool, optional): Whether to enable hover functionality to display atom details.
             Defaults to True.

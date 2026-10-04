@@ -142,13 +142,9 @@ class CIFWriteConfig:
             non-standard annotations. Defaults to empty list.
         extra_categories: Additional CIF categories as dict of {category_name: {column_name: value}}.
             Defaults to None.
-        chain_disambiguation: Method for disambiguating chains in multi-transformation assemblies.
-            - "transformation_id": Stores transformation_id in struct_conn symmetry fields.
-              Preserves original chain_id. Requires AtomWorks to read.
-            - "chain_iid": Writes chain_iid as chain_id to make chains unique.
-              Better compatibility with external software.
-            - None: No disambiguation. Raises error if chains are ambiguous.
-            Defaults to None.
+        chain_disambiguation: ``"transformation_id"`` stores transformations in struct_conn
+            symmetry fields and requires AtomWorks to read. ``"chain_iid"`` writes unique
+            chain IDs for interoperability. ``None`` (default) rejects ambiguous chains.
         save_standard_annotations: Whether to serialize registered
             :py:class:`~atomworks.io.utils.standard_annotations.base.StandardAnnotationBase` annotations
             (conditions, ``atomize``, etc.) present on the structure into custom CIF
@@ -158,12 +154,12 @@ class CIFWriteConfig:
             ``chem_comp_bond`` emission. Falls back to the structure's
             ``_custom_ccd_registry`` attribute (if available, only for AtomArrayPlus types),
             then bundled CCD.
-        chem_comp_source: Source of ``chem_comp_atom`` / ``chem_comp_bond`` rows:
-            - ``"array"`` — always the AtomArray itself (regardless of where it came from)
-            - ``"ccd"`` — always the CCD we have access to (AtomArray fallback if no template).
-            - ``"ccd_non_canonicals"`` — AtomArray for canonical residues, CCD for the rest.
+        chem_comp_source: ``"array"`` uses the input atoms; ``"ccd"`` uses CCD templates
+            with an AtomArray fallback; ``"ccd_non_canonicals"`` uses the AtomArray for
+            canonical residues and CCD templates for the rest.
         warn_on_ccd_without_registry: Warn on CCD write from a plain ``AtomArray``
             (no parse-time CCD snapshot). Set ``False`` to silence. Defaults to ``True``.
+
     Note:
         ``atom_site`` always includes an ``atom_array_index`` column (0, 1, …, n-1).
 
@@ -770,6 +766,7 @@ def _build_chem_comp_atom(
         source: Per-residue row source:
             - ``"array"`` — always the AtomArray itself.
             - ``"ccd"`` — always the CCD (AtomArray fallback if no template).
+
             - ``"ccd_non_canonicals"`` — AtomArray for canonical residues, CCD for the rest.
     """
     if isinstance(atom_array, struc.AtomArrayStack):
@@ -1475,10 +1472,12 @@ def to_cif_file(
             Example: {"reflns": {"d_mean": 1.0}, "my_metadata": {"hi": np.arange(10)}}
         chain_disambiguation: Method for disambiguating chains in multi-transformation assemblies.
             Defaults to "chain_iid".
+
             - "transformation_id": Stores transformation_id in struct_conn symmetry fields.
               Preserves original chain_id. Requires AtomWorks to read.
             - "chain_iid": Writes chain_iid as chain_id to make chains unique.
               Better compatibility with external software.
+
         save_standard_annotations: Whether to serialize registered
             :py:class:`~atomworks.io.utils.standard_annotations.base.StandardAnnotationBase` annotations
             (conditions, ``atomize``, etc.) present on the structure. Defaults to True.

@@ -1,15 +1,15 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![CI](https://github.com/RosettaCommons/atomworks/actions/workflows/lint_and_test.yaml/badge.svg?branch=release%2Fatomworks-3-0)](https://github.com/RosettaCommons/atomworks/actions/workflows/lint_and_test.yaml?query=branch%3Arelease%2Fatomworks-3-0)
+[![CI](https://github.com/RosettaCommons/atomworks/actions/workflows/release_and_docs.yaml/badge.svg?branch=release%2Fatomworks-3-0)](https://github.com/RosettaCommons/atomworks/actions/workflows/release_and_docs.yaml?query=branch%3Arelease%2Fatomworks-3-0)
 [![Codecov coverage](https://codecov.io/gh/RosettaCommons/atomworks/branch/release%2Fatomworks-3-0/graph/badge.svg)](https://codecov.io/gh/RosettaCommons/atomworks/tree/release%2Fatomworks-3-0)
 [![PyPI version](https://img.shields.io/pypi/v/atomworks.svg)](https://pypi.org/project/atomworks/)
-[![Python ≥3.11](https://img.shields.io/badge/python-%E2%89%A53.11-blue?logo=python&logoColor=white)](pyproject.toml)
-[![Documentation](https://img.shields.io/badge/docs-read-blue.svg)](docs/index.rst)
-[![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](LICENSE.md)
+[![Python ≥3.11](https://img.shields.io/badge/python-%E2%89%A53.11-blue?logo=python&logoColor=white)](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/pyproject.toml)
+[![Documentation](https://img.shields.io/badge/docs-read-blue.svg)](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/docs/index.rst)
+[![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/LICENSE.md)
 
 <div align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/_static/atomworks_logo_dark.svg">
-    <img src="docs/_static/atomworks_logo_color.svg" width="450" alt="AtomWorks logo">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/RosettaCommons/atomworks/release/atomworks-3-0/docs/_static/atomworks_logo_dark.svg">
+    <img src="https://raw.githubusercontent.com/RosettaCommons/atomworks/release/atomworks-3-0/docs/_static/atomworks_logo_color.svg" width="450" alt="AtomWorks logo">
   </picture>
 </div>
 
@@ -20,9 +20,9 @@ standardization, annotations, and composable learning pipelines into a shared at
 For models built with AtomWorks, see [Foundry](https://github.com/RosettaCommons/foundry)
 (RF3, RFD3, and MPNN) and [RFD4-Proteína](https://github.com/RosettaCommons/RFD4-Proteina).
 
-Start with the [tutorials](docs/tutorial/index.rst), [examples](docs/examples), or
-[model-building tutorial](docs/how_to_build_a_model/index.rst).
-Upgrading from 2.2 or earlier? See the [AtomWorks 2.3 migration guide](docs/migration/migration-short.md)
+Start with the [tutorials](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/docs/tutorial/index.rst), [examples](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/docs/examples), or
+[model-building tutorial](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/docs/how_to_build_a_model/index.rst).
+Upgrading from 2.2 or earlier? See the [AtomWorks 3.0 migration guide](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/docs/migration/migration-short.md)
 for parser configuration, covalent chemistry, alternate conformers, and CIF round trips.
 
 AtomWorks is composed of two symbiotic libraries:
@@ -44,7 +44,7 @@ AtomWorks is built atop [biotite](https://www.biotite-python.org/): We are grate
 
 - Parse, convert, and clean any common biological file (structure or sequence). For example, identifying and removing leaving groups, correcting bond order after nucleophilic addition, fixing charges, parsing covalent geometries, and appropriate treatment of structures with multiple occupancies and ligands at symmetry centers
 - Transform all data to a consistent `AtomArray` representation for further analysis or machine learning applications, regardless of initial source
-- Model missing atoms (those implied by the sequence but not represented in the coordinates) and initialize entity- and instance-level annotations (see the [glossary](docs/glossary.rst) for more detail on our composable naming conventions)
+- Model missing atoms (those implied by the sequence but not represented in the coordinates) and initialize entity- and instance-level annotations (see the [glossary](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/docs/glossary.rst) for more detail on our composable naming conventions)
 
 We have found `atomworks.io` to be generally useful to a broad bioinformatics and protein design audience; in many cases, `atomworks.io` can replace bespoke scripts and manual curation, enabling researchers to spend more time testing hypotheses and less time juggling dozens of tools and dependencies.
 
@@ -96,20 +96,20 @@ pip install "atomworks[ml]"               # IO plus PyTorch and ML pipelines
 pip install "atomworks[ml,openbabel,dev]"  # ML, Open Babel, and development tools
 ```
 
-To install the **AtomWorks 2.3 release branch** represented by this README directly with pip:
+To install the **AtomWorks 3.0 release branch** represented by this README directly with pip:
 
 ```shell
 pip install "atomworks[ml] @ git+https://github.com/RosettaCommons/atomworks.git@release/atomworks-3-0"
 ```
 
-The PyPI badge reports the published package version. The upcoming 2.3 release still uses
-the existing branch name `release/atomworks-3-0`.
+The PyPI badge reports the published package version. Development of 3.0 uses
+`release/atomworks-3-0`.
 With [uv](https://docs.astral.sh/uv/), use `uv pip install` in place of `pip install`.
 
 Optional extras can be combined: `ml` (PyTorch), `openbabel` (Open Babel), `s3` (S3 storage),
 `ase` (ASE databases), `posebusters` (structure validation), `catcif` (CIF archives),
 `dev` (development tools), and `docs` (documentation builds).
-See the [installation guide](docs/installation.rst) and [mirror setup](docs/mirrors.rst)
+See the [installation guide](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/docs/installation.rst) and [mirror setup](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/docs/mirrors.rst)
 for development environments and large-scale data access.
 
 ---
@@ -117,7 +117,7 @@ for development environments and large-scale data access.
 ## Getting started
 
 Download a structure from the PDB and parse it into a standardized representation with
-sequence, chain, ligand, and assembly metadata. In AtomWorks 2.3, use `ParseConfig` to
+sequence, chain, ligand, and assembly metadata. In AtomWorks 3.0, use `ParseConfig` to
 make parsing choices explicit:
 
 ```python
@@ -147,7 +147,7 @@ The output of `parse` includes:
 - **metadata** — Experimental and source information
 - **extra_info** — Cache and compatibility information
 
-See the [examples](docs/examples) and [parser API reference](docs/io/parser.rst)
+See the [examples](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/docs/examples) and [parser API reference](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/docs/io/parser.rst)
 for more parsing workflows and configuration options.
 
 If you just want to load a file, you can use the `load_any` function:
@@ -165,7 +165,7 @@ atom_array: AtomArray = load_any(structure_file, model=1)  # Load the first mode
 
 We welcome improvements!
 
-Please see the [contributor guide](docs/contributor_guide.rst) for contribution guidelines.
+Please see the [contributor guide](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/docs/contributor_guide.rst) for contribution guidelines.
 
 ## Acknowledgments
 

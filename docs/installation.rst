@@ -1,118 +1,59 @@
 Installation
 ============
 
-AtomWorks can be installed in several ways, depending on your workflow and environment. Below are the recommended methods:
-
-0. Prerequisites
------------------
-
-Before installing AtomWorks, ensure you have the following prerequisites:
-
-* Python 3.11 or higher
-* `dotenv <https://www.npmjs.com/package/dotenv>`_
-
-1. Installing via pip (recommended)
------------------------------------
-This is the easiest way to get started with AtomWorks.
+Use Python 3.11 or newer. Pip installs the core dependencies, including
+``python-dotenv`` and the supported Biotite version; Node.js is not required.
 
 .. code-block:: bash
 
-   pip install atomworks # base installation version without torch (for only atomworks.io)
-   pip install "atomworks[ml]" # with torch and ML dependencies (for atomworks.io plus atomworks.ml)
-   pip install "atomworks[dev]" # with development dependencies
-   pip install "atomworks[ml,dev]" # with all dependencies"
+   python -m pip install atomworks       # Structure IO without PyTorch
+   python -m pip install "atomworks[ml]" # IO and ML pipelines
 
-You can also install AtomWorks with `Open Babel <https://openbabel.org/>`_, an alternative to RDKit:
+Extras can be combined. Use ``openbabel`` for Open Babel, ``ase`` for ASE databases,
+``s3`` for S3, ``catcif`` for CIF archives, ``posebusters`` for structure validation,
+``dev`` for development tools, and ``docs`` for documentation builds.
 
-.. code-block:: bash
-
-   pip install "atomworks[openbabel]"
-
-or for all possible dependencies: 
+The upcoming 3.0 release is available from the existing release branch:
 
 .. code-block:: bash
 
-   pip install "atomworks[ml,openbabel,dev]"
+   python -m pip install "atomworks[ml] @ git+https://github.com/RosettaCommons/atomworks.git@release/atomworks-3-0"
 
-Open Babel is not automatically installed with AtomWorks due to its larger size and additional dependencies, only install it if you plan to use it.
-
-2. Development Installation
----------------------------
-For development:
+Development
+-----------
 
 .. code-block:: bash
 
    git clone https://github.com/RosettaCommons/atomworks.git
    cd atomworks
-   make install  # or pip install -e ".[dev]"
-
-To install in a fresh environment:
-
-.. code-block:: bash
-
-   git clone https://github.com/RosettaCommons/atomworks.git
-   cd atomworks
-   make env
-
-
-3. Running the Test Suite
--------------------------
-
-To run the AtomWorks test suite, you need to download the test data and configure environment variables.
-
-**Step 1: Download test data and the CCD mirror**
-
-From the repository root, run:
-
-.. code-block:: bash
-
+   python -m venv .venv
+   source .venv/bin/activate
+   python -m pip install -e ".[ml,dev,openbabel]"
    atomworks setup tests
-   atomworks ccd sync tests/data/ccd
+   pytest tests -m "not benchmark and not slow and not requires_digs"
+   pytest tests/experimental/protonation
 
-The first command extracts the test pack into ``tests/data/`` and downloads missing
-PDB structures listed in the pack into ``tests/data/pdb/``. Shared MSA, template,
-and metadata fixtures are provided under ``tests/data/shared/``.
+``atomworks setup tests`` downloads public fixtures and their PDB subset into
+``tests/data`` (the structure download requires ``rsync``). Tests use this local
+subset and Biotite's built-in CCD by default. A full CCD mirror is optional;
+tests requiring an unavailable GPU, mirror or external tool are marked accordingly.
+CI uses a checksum-pinned fixture archive and downloads the PDB subset over HTTPS.
+Missing required fixtures are errors, not skipped tests.
 
-The second command separately downloads a full CCD mirror into ``tests/data/ccd/``.
-This mirror is not supplied by the test pack. Both commands use explicit default
-or destination paths, so configure the environment after the downloads finish.
+For a complete CPU run, install the ``ase`` extra as well and omit ``not slow``.
+Use ``-n 2`` for parallel testing, or ``-n 1`` for memory-intensive tests.
+See :doc:`mirrors` for full PDB/CCD mirrors and environment configuration.
 
-**Step 2: Create a .env file**
-
-Create a ``.env`` file in the repository root with the paths to the test data:
-
-.. code-block:: bash
-
-   # For running tests with the test pack:
-   PDB_MIRROR_PATH=tests/data/pdb
-   CCD_MIRROR_PATH=tests/data/ccd
-
-You can copy ``.env.sample`` as a starting point:
+Documentation
+-------------
 
 .. code-block:: bash
 
-   cp .env.sample .env
-   # Then edit .env to set the paths above
+   python -m pip install -e ".[ml,docs,ase,openbabel]"
+   make -C docs html
 
-**Step 3: Run the tests**
-
-.. code-block:: bash
-
-   # Run all tests (excluding very slow ones)
-   pytest tests -m "not very_slow"
-
-   # Run tests in parallel for faster execution
-   pytest tests -m "not very_slow" -n auto
-
-   # Run a specific test file
-   pytest tests/io/components/test_parser.py
-
-
-4. Setting Up Full PDB/CCD Mirrors
-----------------------------------
-
-For production use or training on the full PDB, you'll want complete mirrors rather than the test subset. See :doc:`mirrors` for detailed instructions on:
-
-* Setting up a full PDB mirror (~100 GB)
-* Setting up a CCD mirror (~2 GB)
-* Configuring environment variables for production use
+The build executes the offline parser/protonation/CIF round-trip example.
+PR builds upload the rendered site as a ``documentation`` Actions artifact.
+Version tags publish only after the scientific CPU tests, installed-wheel checks
+and documentation build succeed; publication also requires the protected
+``pypi`` environment and its Trusted Publisher configuration.

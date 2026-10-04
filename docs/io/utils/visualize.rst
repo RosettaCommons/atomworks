@@ -1,5 +1,5 @@
 Visualization Utilities
-====================
+=======================
 
 .. automodule:: atomworks.io.utils.visualize
    :members:

@@ -131,8 +131,8 @@ make test
 # Full suite in parallel
 make parallel_test
 
-# Common local selection without very-slow tests
-PDB_MIRROR_PATH=tests/data/pdb pytest tests -m "not very_slow"
+# Common local selection without slow tests
+PDB_MIRROR_PATH=tests/data/pdb pytest tests -m "not slow"
 
 # Parser performance benchmarks
 pytest tests/io/speed --benchmark-time-unit=s --benchmark-warmup=False --benchmark-min-rounds=3
@@ -192,7 +192,7 @@ Public APIs need concise Google-style docstrings:
 Build the documentation with:
 
 ```bash
-uv pip install -r docs/docs_requirements.txt
+uv pip install -e ".[ml,docs]"
 make -C docs html
 ```
 

@@ -1,9 +1,11 @@
-name: Release and Deploy Versioned Docs
+name: CI and release
 
 on:
   push:
+    branches: [dev, main, production, release/atomworks-3-0]
     tags: ['v*']
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
 permissions:
@@ -34,8 +36,96 @@ jobs:
           path: dist/*
           if-no-files-found: error
 
-  publish:
+  wheel:
     needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: distributions
+          path: dist/
+      - name: Install core wheel and exercise it outside the checkout
+        run: |
+          python -m venv "$RUNNER_TEMP/core"
+          "$RUNNER_TEMP/core/bin/python" -m pip install dist/*.whl
+          cp docs/examples/plot_protonation.py "$RUNNER_TEMP/smoke.py"
+          cd "$RUNNER_TEMP"
+          core/bin/python -m pip check
+          core/bin/python -c "import importlib.util; assert importlib.util.find_spec('torch') is None"
+          core/bin/python smoke.py
+          core/bin/aw --help
+
+  science:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v6
+      - run: |
+          uv pip install --system torch --index-url https://download.pytorch.org/whl/cpu
+          uv pip install --system '.[ml,dev,openbabel,ase]'
+          uv pip check --system
+      - run: ruff format --check . && ruff check src tests .github
+      - uses: actions/cache@v4
+        with:
+          path: .ci-data
+          key: atomworks-test-pack-${{ hashFiles('.github/ci/test_pack.sha256') }}
+      - name: Fetch verified public fixtures
+        run: python .github/ci/setup_test_data.py
+      - name: Run scientific CPU tests, including experimental protonation
+        run: |
+          pytest tests -n 2 --dist=worksteal -m 'not benchmark and not slow and not requires_digs and not requires_pymol_remote and not requires_x3dna' --cov=atomworks --cov-report=xml --junitxml=tests.xml
+          pytest tests -n 1 -m 'slow and not benchmark and not requires_digs and not requires_pymol_remote and not requires_x3dna' --cov=atomworks --cov-append --cov-report=xml --junitxml=slow-tests.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: scientific-test-reports
+          path: |
+            *tests.xml
+            coverage.xml
+            .ci-data/pdb-sha256.txt
+      - uses: codecov/codecov-action@v5
+        if: success()
+        with:
+          files: coverage.xml
+          fail_ci_if_error: false
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v6
+      - run: |
+          uv pip install --system torch --index-url https://download.pytorch.org/whl/cpu
+          uv pip install --system '.[ml,docs,ase,openbabel]'
+      - name: Build documentation and execute the offline example
+        working-directory: docs
+        run: python -m sphinx -W --keep-going -b html . _build/html
+      - uses: actions/upload-artifact@v4
+        with:
+          name: documentation
+          path: docs/_build/html
+          if-no-files-found: error
+
+  publish:
+    needs: [build, wheel, science, docs]
     if: github.repository == 'RosettaCommons/atomworks' && startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     environment:
@@ -67,13 +157,13 @@ jobs:
           make_latest: legacy
           prerelease: ${{ needs.build.outputs.prerelease == 'true' }}
 
-  docs:
-    needs: build
-    if: github.repository == 'RosettaCommons/atomworks' && startsWith(github.ref, 'refs/tags/v')
+  deploy-docs:
+    needs: [docs, publish]
     runs-on: ubuntu-latest
     concurrency:
       group: atomworks-versioned-docs
       cancel-in-progress: false
+      queue: max
     permissions:
       contents: write
     steps:
@@ -81,21 +171,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install documentation dependencies
-        run: |
-          python -m pip install '.[ml,docs]' -r docs/docs_requirements.txt
-          python -m pip install packaging
-      - name: Build documentation for the tag
-        run: |
-          export ATOMWORKS_DOCS_VERSION="${GITHUB_REF_NAME#v}"
-          cd docs
-          python -m sphinx -b html . _build/html
+      - run: python -m pip install packaging
+      - uses: actions/download-artifact@v4
+        with:
+          name: documentation
+          path: docs/_build/html
       - uses: actions/checkout@v4
         with:
           ref: gh-pages
           path: gh-pages
-      - name: Prepare versioned documentation
-        run: python .github/release.py docs
+      - run: python .github/release.py docs
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -55,7 +55,7 @@ Aside from having AtomWorks and its dependencies installed, to build the documen
 
 .. code-block:: bash
 
-   uv pip install -r docs/docs_requirements.txt
+   uv pip install -e ".[ml,docs,ase,openbabel]"
 
 To build the documentation, navigate to the ``docs`` directory and run:
    

@@ -1,4 +1,4 @@
-# AtomWorks 2.2 and earlier → 2.3: detailed migration guide
+# AtomWorks 2.2 and earlier → 3.0: detailed migration guide
 
 Start with the I/O changes below: parser configuration, chemical corrections, alternate conformers, CIF round trips and parser caches. The [short guide](migration-short.md) covers the essential steps; additional ML migration notes follow the I/O sections.
 
@@ -14,7 +14,7 @@ options = {**STANDARD_PARSER_ARGS, "hydrogen_policy": "remove"}
 result = parse(filename="structure.cif", **options)
 ```
 
-For 2.3:
+For 3.0:
 
 ```python
 from atomworks.io import parse
@@ -26,7 +26,7 @@ result = parse("structure.cif", config=config)
 
 `ParseConfig` and `PrepareConfig` are frozen dataclasses. Derive a changed configuration with `config.replace(...)`; serialize it with `to_dict()`. Prefer an explicit constructor when migrating old dictionaries: `from_dict()` deliberately drops unknown keys, which can silently discard obsolete chemistry flags or misspellings. Bare surviving options still work with deprecation warnings; obsolete names passed directly to `parse()` produce `TypeError`. [Configuration](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/config.py), [parser](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/parser.py).
 
-| 2.2 and earlier usage or assumption | 2.3 action |
+| 2.2 and earlier usage or assumption | 3.0 action |
 |---|---|
 | `filename=path` | Use positional `source` or `source=path`; alias is deprecated. |
 | `STANDARD_PARSER_ARGS` | Use `ParseConfig.from_preset("rcsb")`; dictionary remains deprecated. |
@@ -84,16 +84,34 @@ Compare successful outputs and rejected inputs: matching atom counts alone do no
 
 ### Explicit protonation
 
-2.3 provides pH-aware protonation via RDKit/Dimorphite-DL. It is a separate chemical operation and will not numerically reproduce the old Hydride path:
+Protonation is a separate chemical operation. The experimental API separates pH-dependent
+charge/hydrogen assignment from coordinate placement:
 
 ```python
-from atomworks.io.utils.protonation import ensure_hydrogens
+from atomworks.experimental.protonation import assign_hydrogens, place_hydrogens
 
-# atoms is one prepared AtomArray with bonds and charge annotations.
-protonated = ensure_hydrogens(atoms.copy(), ph=7.4)
+atoms = result["asym_unit"][0]  # One AtomArray, not an AtomArrayStack
+state = assign_hydrogens(atoms, ph=7.4)
+protonated = place_hydrogens(state)
 ```
 
-It strips existing hydrogen-like atoms before rebuilding, needs bonds/charges, rejects AtomArrayStack, can change charges, and changes atom count/order by inserting hydrogens by residue. Recompute external masks/features afterwards. Free hydrogen atoms/ions are not preserved by this workflow. [Implementation and contract](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/utils/protonation.py#L546).
+`add_hydrogens(atoms, ph=7.4)` combines these steps. Inputs need bonds with stated
+orders, formal `charge`, and `pn_unit_iid` or `pn_unit_id` annotations. Parse metal
+coordination with `"metalc"` in `add_bond_types_from_struct_conn` when relevant.
+Assignment may change charges and remove hydrogens inconsistent with the chosen
+state; `hydrogens=` explicitly declares counts and overrides pH assignment.
+Placement keeps heavy-atom coordinates and retained hydrogen coordinates, inserts
+new hydrogens by residue, and preserves `atom_id` identity. Recompute positional
+masks after atom counts or ordering change. Unresolved atoms and metals marked
+`skip_hydrogen_placement` are not completed; unsupported geometry raises an error.
+A placement result is not evidence of downstream force-field parameter coverage.
+
+The legacy `atomworks.io.utils.protonation.ensure_hydrogens` remains available for
+compatibility. It strips input hydrogen-like atoms before rebuilding, so it is not
+a substitute when supplied hydrogen states or coordinates must be retained.
+
+See the [executed offline example](../auto_examples/plot_protonation) and the
+[current API](https://github.com/RosettaCommons/atomworks/tree/release/atomworks-3-0/src/atomworks/experimental/protonation).
 
 ## Alternate conformers
 
