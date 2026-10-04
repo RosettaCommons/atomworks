@@ -10,12 +10,19 @@ Example Usage
 
 .. code-block:: python
 
+   from atomworks.io.config import ParseConfig
    from atomworks.io.parser import parse
    result = parse(source="/databases/rcsb/cif/ne/3nez.cif.gz")
    print(result["chain_info"])
 
-   # The file type is also inferred for mmJSON paths, including .json.gz.
-   json_result = parse(source="/path/to/structure.json.gz")
+   # The file type is inferred from .mmjson, including compressed paths.
+   mmjson_result = parse(source="/path/to/structure.mmjson.gz")
+
+   # JSON filenames need an explicit format.
+   json_result = parse(source="/path/to/structure.json.gz", config=ParseConfig(file_type="mmjson"))
+
+For JSON content in an ``io.StringIO`` or ``io.BytesIO`` buffer, likewise pass
+``config=ParseConfig(file_type="mmjson")``; JSON buffer content is not auto-detected.
 
 Returned Dictionary
 -------------------
@@ -39,7 +46,7 @@ Parsing Arguments
    * - source
      - PathLike / io.StringIO / io.BytesIO
      - —
-     - Path to the structural file. Supports .cif, .cif.gz, .pdb, .json, .json.gz, etc.
+     - Structural path or buffer. Supports .cif, .cif.gz, .pdb, .mmjson, .mmjson.gz, etc.; .json paths and JSON buffers require an explicit mmjson file type.
    * - add_missing_atoms
      - bool
      - True

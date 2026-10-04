@@ -1,21 +1,29 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![CI](https://github.com/RosettaCommons/atomworks/actions/workflows/lint_and_test.yaml/badge.svg?branch=release%2Fatomworks-3-0)](https://github.com/RosettaCommons/atomworks/actions/workflows/lint_and_test.yaml)
+[![CI](https://github.com/RosettaCommons/atomworks/actions/workflows/lint_and_test.yaml/badge.svg?branch=release%2Fatomworks-3-0)](https://github.com/RosettaCommons/atomworks/actions/workflows/lint_and_test.yaml?query=branch%3Arelease%2Fatomworks-3-0)
+[![Codecov coverage](https://codecov.io/gh/RosettaCommons/atomworks/branch/release%2Fatomworks-3-0/graph/badge.svg)](https://codecov.io/gh/RosettaCommons/atomworks/tree/release%2Fatomworks-3-0)
 [![PyPI version](https://img.shields.io/pypi/v/atomworks.svg)](https://pypi.org/project/atomworks/)
-[![Python versions](https://img.shields.io/pypi/pyversions/atomworks.svg)](https://pypi.org/project/atomworks/)
-[![Documentation Status](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://rosettacommons.github.io/atomworks/latest/)
-[![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![Python ≥3.11](https://img.shields.io/badge/python-%E2%89%A53.11-blue?logo=python&logoColor=white)](pyproject.toml)
+[![Documentation](https://img.shields.io/badge/docs-read-blue.svg)](docs/index.rst)
+[![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](LICENSE.md)
 
 <div align="center">
-  <img src="docs/_static/atomworks_logo_color.svg" width="450" alt="atomworks logo">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/_static/atomworks_logo_dark.svg">
+    <img src="docs/_static/atomworks_logo_color.svg" width="450" alt="AtomWorks logo">
+  </picture>
 </div>
 
-**atomworks** is an open-source platform that maximizes research velocity for biomolecular modeling tasks. Much like how [Torchvision](https://docs.pytorch.org/vision/stable/index.html) enables rapid prototyping within the vision domain, and [Torchaudio](https://docs.pytorch.org/audio/main/) within the audio domain, AtomWorks aims to accelerate development and experimentation within biomolecular modeling.
+**AtomWorks** is an open-source toolkit for biomolecular data processing and machine learning,
+built on [Biotite](https://www.biotite-python.org/). It brings structure parsing, chemical
+standardization, annotations, and composable learning pipelines into a shared atom-level representation.
 
-> **⚠️ Notice:** We are currently finalizing some cleanup work within our repositories. Please expect the APIs (e.g., function and class names, inputs and outputs) to stabilize within the next one week. Thank you for your patience!
+For models built with AtomWorks, see [Foundry](https://github.com/RosettaCommons/foundry)
+(RF3, RFD3, and MPNN) and [RFD4-Proteína](https://github.com/RosettaCommons/RFD4-Proteina).
 
-If you're looking for the models themselves (e.g., RF3, RFD3, MPNN) that integrate with AtomWorks rather than the underlying framework, check out [Foundry](https://github.com/RosettaCommons/foundry)
-
-> **💡 Note:** Start with the [AtomWorks examples](https://rosettacommons.github.io/atomworks/latest/auto_examples/index.html) or the [model-building tutorial](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/docs/how_to_build_a_model/index.rst).
+Start with the [tutorials](docs/tutorial/index.rst), [examples](docs/examples), or
+[model-building tutorial](docs/how_to_build_a_model/index.rst).
+Upgrading from 2.2 or earlier? See the [AtomWorks 2.3 migration guide](docs/migration/migration-short.md)
+for parser configuration, covalent chemistry, alternate conformers, and CIF round trips.
 
 AtomWorks is composed of two symbiotic libraries:
 
@@ -30,21 +38,21 @@ AtomWorks is built atop [biotite](https://www.biotite-python.org/): We are grate
 
 ## atomworks.io
 
-> *A general-purpose Python toolkit for cleaning, standardizing, and manipulating with biomolecular structure files - built atop [biotite](https://www.biotite-python.org/):
+> *A general-purpose Python toolkit for cleaning, standardizing, and manipulating biomolecular structure files, built on [Biotite](https://www.biotite-python.org/).*
 
 **atomworks.io** lets you:
 
 - Parse, convert, and clean any common biological file (structure or sequence). For example, identifying and removing leaving groups, correcting bond order after nucleophilic addition, fixing charges, parsing covalent geometries, and appropriate treatment of structures with multiple occupancies and ligands at symmetry centers
 - Transform all data to a consistent `AtomArray` representation for further analysis or machine learning applications, regardless of initial source
-- Model missing atoms (those implied by the sequence but not represented in the coordinates) and initialize entity- and instance-level annotations (see the [glossary](https://rosettacommons.github.io/atomworks/latest/glossary.html) for more detail on our composable naming conventions)
+- Model missing atoms (those implied by the sequence but not represented in the coordinates) and initialize entity- and instance-level annotations (see the [glossary](docs/glossary.rst) for more detail on our composable naming conventions)
 
-We have found `atomworks.io` to be generally useful to a broad bioinformatics and protein design audience; in many cases, `atomworks.io` can replace bespoke scripts and manual curation, enabling researchers to spend more time testing hypothesis and less time juggling dozens of tools and dependencies.
+We have found `atomworks.io` to be generally useful to a broad bioinformatics and protein design audience; in many cases, `atomworks.io` can replace bespoke scripts and manual curation, enabling researchers to spend more time testing hypotheses and less time juggling dozens of tools and dependencies.
 
 ---
 
 ## atomworks.ml
 
-> *Modular, component-based library for dataset featurization within biomolecular deep learning workflows*
+> *Modular, component-based library for dataset featurization within biomolecular deep learning workflows.*
 
 **atomworks.ml** provides:
 
@@ -52,7 +60,10 @@ We have found `atomworks.io` to be generally useful to a broad bioinformatics an
 - An extensible framework, integrated with `atomworks.io`, to write `Transforms` for arbitrary use cases
 - Pre-built datasets and samplers suitable for most model training scenarios
 
-Within the AtomWorks paradigm, the output of each `Transform` is not an opaque dictionary with model-specific tensors but instead an updated version of our atom-level structural representation (Biotite's `AtomArray`). Operations within – and between – pipelines thus maintain a common vocabulary of inputs and outputs.
+Transforms consume and return dictionaries containing structural data, annotations, and features.
+Biotite's `AtomArray` provides the shared atom-level representation, and model-specific pipelines
+can convert these features into tensors. Operations within and between pipelines share a common
+vocabulary of inputs and outputs.
 
 We have found that `atomworks.ml` **dramatically** reduces the overhead of starting, and completing, many ML projects; research topics that once took months now achieve signal within weeks if not days, accelerating the pace of innovation.
 
@@ -73,41 +84,51 @@ We have found that `atomworks.ml` **dramatically** reduces the overhead of start
 ---
 
 ## Installation
-> Note: AtomWorks requires Python >= 3.11 and [`dotenv`](https://pypi.org/project/python-dotenv/#file-format)
+
+AtomWorks requires **Python 3.11 or newer**. Pip installs the core dependencies automatically,
+including `python-dotenv` and the compatible Biotite version.
+
+Install the latest published package from [PyPI](https://pypi.org/project/atomworks/):
 
 ```shell
-pip install atomworks # base installation version without torch (for only atomworks.io)
-pip install "atomworks[ml]" # with torch and ML dependencies (for atomworks.io plus atomworks.ml)
-pip install "atomworks[dev]" # with development dependencies
-pip install "atomworks[openbabel]" # with [Open Babel](https://openbabel.org/) and its dependencies
-pip install "atomworks[ml,openbabel,dev]" # with all dependencies
+pip install atomworks                     # Core structure IO; no PyTorch
+pip install "atomworks[ml]"               # IO plus PyTorch and ML pipelines
+pip install "atomworks[ml,openbabel,dev]"  # ML, Open Babel, and development tools
 ```
-*Running multiple of these installations will just add to the installed dependencies and will not install multiple installations of atomworks.*
 
-If you are using [uv](https://docs.astral.sh/uv/reference/policies/versioning/) for package management, you can install atomworks with:
+To install the **AtomWorks 2.3 release branch** represented by this README directly with pip:
 
 ```shell
-uv pip install "atomworks[ml,openbabel,dev]"
+pip install "atomworks[ml] @ git+https://github.com/RosettaCommons/atomworks.git@release/atomworks-3-0"
 ```
 
-For more advanced setup options (including how to run workflows via apptainers) see the [full documentation](https://rosettacommons.github.io/atomworks/latest/index.html).
+The PyPI badge reports the published package version. The upcoming 2.3 release still uses
+the existing branch name `release/atomworks-3-0`.
+With [uv](https://docs.astral.sh/uv/), use `uv pip install` in place of `pip install`.
+
+Optional extras can be combined: `ml` (PyTorch), `openbabel` (Open Babel), `s3` (S3 storage),
+`ase` (ASE databases), `posebusters` (structure validation), `catcif` (CIF archives),
+`dev` (development tools), and `docs` (documentation builds).
+See the [installation guide](docs/installation.rst) and [mirror setup](docs/mirrors.rst)
+for development environments and large-scale data access.
 
 ---
 
 ## Getting started
 
-This section contains information for how to get atomworks set up and a quick guide for using some of the features of atomworks.io to parse PDB files. To learn more about the features in atomworks.io and atomworks.ml, see the [external documentation](https://rosettacommons.github.io/atomworks/latest/). 
-
-To parse a pdb file (parse = load, clean, annotate relevant metadata such as entities, molecules, etc) you can use the `parse` function:
-
-> Note: To run the code in this section you will need to download the 3nez.cif.gz file yourself. See the [examples](https://rosettacommons.github.io/atomworks/latest/auto_examples/index.html) for how to download files from the PDB within a Python script. 
+Download a structure from the PDB and parse it into a standardized representation with
+sequence, chain, ligand, and assembly metadata. In AtomWorks 2.3, use `ParseConfig` to
+make parsing choices explicit:
 
 ```python
-
-from atomworks.io.parser import parse
+from atomworks.io import parse
+from atomworks.io.config import ParseConfig
+from biotite.database import rcsb
 from biotite.structure import AtomArrayStack
 
-result = parse(source="3nez.cif.gz")
+structure_file = rcsb.fetch("3nez", format="cif", target_path=".")
+config = ParseConfig.from_preset("rcsb", build_assembly="first")
+result = parse(structure_file, config=config)
 
 asym_unit: AtomArrayStack = result["asym_unit"]
 assemblies: dict[str, AtomArrayStack] = result["assemblies"]
@@ -124,9 +145,10 @@ The output of `parse` includes:
 - **asym_unit** — Structure (`AtomArrayStack`)
 - **assemblies** — Built biological assemblies (each are their own `AtomArrayStack`)
 - **metadata** — Experimental and source information
+- **extra_info** — Cache and compatibility information
 
-See [usage examples](https://rosettacommons.github.io/atomworks/latest/auto_examples/index.html) for more examples of the use of `parse()`. All of the provided examples make use of this method. 
-See [API reference documentation](https://rosettacommons.github.io/atomworks/latest/io/parser.html) for more information on this method.
+See the [examples](docs/examples) and [parser API reference](docs/io/parser.rst)
+for more parsing workflows and configuration options.
 
 If you just want to load a file, you can use the `load_any` function:
 
@@ -134,7 +156,7 @@ If you just want to load a file, you can use the `load_any` function:
 from atomworks.io.utils.io_utils import load_any
 from biotite.structure import AtomArray
 
-atom_array: AtomArray = load_any("3nez.cif.gz", model=1)  # model=1 means that we want to load the model 1 (i.e. the first model) rather than a stack of all models in the file
+atom_array: AtomArray = load_any(structure_file, model=1)  # Load the first model.
 ```
 
 ---
@@ -143,7 +165,7 @@ atom_array: AtomArray = load_any("3nez.cif.gz", model=1)  # model=1 means that w
 
 We welcome improvements!
 
-Please see the [contributors guide in the full documentation](https://rosettacommons.github.io/atomworks/latest/contributor_guide.html) for contribution guidelines.
+Please see the [contributor guide](docs/contributor_guide.rst) for contribution guidelines.
 
 ## Acknowledgments
 

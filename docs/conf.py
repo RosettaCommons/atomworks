@@ -42,6 +42,7 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "examples/GALLERY_HEADER
 
 html_theme = "pydata_sphinx_theme"
 html_static_path = ["_static"]
+html_css_files = ["navigation.css"]
 
 # Theme options
 html_theme_options = {
@@ -51,13 +52,14 @@ html_theme_options = {
     "globaltoc_collapse": False,
     "globaltoc_includehidden": True,
     "globaltoc_maxdepth": -1,  # Unlimited depth
-    "header_links_before_dropdown": 8,
-    "navbar_end": ["theme-switcher", "navbar-icon-links"],
+    "header_links_before_dropdown": 5,
+    "navbar_align": "left",
+    "navbar_end": ["version-switcher", "theme-switcher", "navbar-icon-links"],
     "logo": {
         "image_light": "_static/atomworks_logo_light.svg",
         "image_dark": "_static/atomworks_logo_dark.svg",
     },
-    "navbar_start": ["navbar-logo", "version-switcher"],
+    "navbar_start": ["navbar-logo"],
     "switcher": {
         "json_url": "https://rosettacommons.github.io/atomworks/_static/switcher.json",
         "version_match": switcher_version,
@@ -83,3 +85,7 @@ sphinx_gallery_conf = {
     "thumbnail_size": (350, 350),
     "default_thumb_file": "./_static/atomworks_logo_color.svg",
 }
+
+html_js_files = [
+    ("https://scripts.simpleanalyticscdn.com/latest.js", {"async": "async", "defer": "defer"}),
+]
