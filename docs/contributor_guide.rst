@@ -91,6 +91,7 @@ The existing ``gh-pages`` branch remains the documentation destination.
       python -m pip install build twine packaging
       python -m unittest discover -s .github/tests -v
       python -m build
+      python .github/release.py artifacts
       python -m twine check --strict dist/*
 
 3. Tag the reviewed commit with its exact version, for example ``v2.3.0`` or

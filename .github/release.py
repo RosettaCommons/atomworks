@@ -4,12 +4,31 @@ import json
 import os
 import shutil
 import sys
+import tarfile
 import tomllib
+import zipfile
 from pathlib import Path
 
 from packaging.version import Version
 
 DOCS_URL = "https://rosettacommons.github.io/atomworks"
+
+
+def verify_distributions(dist: Path, source: Path) -> None:
+    """Require every package source and data file in both release archives, byte for byte."""
+    (wheel,) = dist.glob("*.whl")
+    (sdist,) = dist.glob("*.tar.gz")
+    files = [path for path in source.rglob("*") if path.is_file() and "__pycache__" not in path.parts]
+    if not files:
+        raise ValueError(f"No package files found in {source}")
+    with zipfile.ZipFile(wheel) as binary, tarfile.open(sdist) as archive:
+        for path in files:
+            relative = path.relative_to(source).as_posix()
+            member = f"{sdist.name.removesuffix('.tar.gz')}/src/{relative}"
+            archived = archive.extractfile(member)
+            expected = path.read_bytes()
+            if archived is None or archived.read() != expected or binary.read(relative) != expected:
+                raise ValueError(f"Release archive differs from source: {relative}")
 
 
 def release_version(tag: str) -> Version:
@@ -68,6 +87,9 @@ def prepare_docs(tag: str, html: Path, pages: Path) -> None:
 
 
 if __name__ == "__main__":
+    if sys.argv[1:] == ["artifacts"]:
+        verify_distributions(Path("dist"), Path("src"))
+        raise SystemExit(0)
     tag = os.environ["GITHUB_REF_NAME"]
     version = verify_tag(tag, Path("pyproject.toml"))
     if sys.argv[1:] == ["verify"]:
@@ -76,4 +98,4 @@ if __name__ == "__main__":
     elif sys.argv[1:] == ["docs"]:
         prepare_docs(tag, Path("docs/_build/html"), Path("gh-pages"))
     else:
-        raise SystemExit("Usage: python .github/release.py {verify|docs}")
+        raise SystemExit("Usage: python .github/release.py {verify|docs|artifacts}")

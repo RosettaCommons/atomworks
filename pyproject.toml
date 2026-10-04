@@ -142,9 +142,11 @@ aw = "atomworks_cli.__main__:main"
 requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
-[tool.hatch.build]
-sources = ["src"]
+[tool.hatch.build.targets.wheel]
 packages = ["src/atomworks", "src/atomworks_cli"]
+
+[tool.hatch.build.targets.sdist]
+include = ["/src", "/README.md", "/LICENSE.md", "/pyproject.toml"]
 
 [tool.hatch.metadata]
 allow-direct-references = true

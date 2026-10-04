@@ -2,12 +2,14 @@
 
 import json
 import sys
+import tarfile
 import tempfile
 import unittest
+import zipfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from release import prepare_docs, verify_tag
+from release import prepare_docs, verify_distributions, verify_tag
 
 
 class ReleaseTests(unittest.TestCase):
@@ -29,6 +31,31 @@ class ReleaseTests(unittest.TestCase):
                 self.assertEqual(str(verify_tag(f"v{value}", self.project)), value)
                 with self.assertRaises(ValueError):
                     verify_tag("v9.0.0", self.project)
+
+    def test_distribution_contents(self) -> None:
+        source = self.root / "src"
+        package = source / "atomworks"
+        package.mkdir(parents=True)
+        (package / "__init__.py").write_text('"""AtomWorks."""\n')
+        (package / "parameters.json").write_text('{"charge": -1}\n')
+        dist = self.root / "dist"
+        dist.mkdir()
+        for case in ("complete", "empty-wheel", "missing-data", "changed-data", "relocated-source"):
+            with self.subTest(case=case):
+                with zipfile.ZipFile(dist / "atomworks-2.3.0-py3-none-any.whl", "w") as wheel:
+                    for path in package.iterdir():
+                        if case == "empty-wheel" or (case == "missing-data" and path.suffix == ".json"):
+                            continue
+                        data = b"{}" if case == "changed-data" and path.suffix == ".json" else path.read_bytes()
+                        wheel.writestr(path.relative_to(source).as_posix(), data)
+                with tarfile.open(dist / "atomworks-2.3.0.tar.gz", "w:gz") as archive:
+                    prefix = "" if case == "relocated-source" else "src/"
+                    archive.add(package, arcname=f"atomworks-2.3.0/{prefix}atomworks")
+                if case == "complete":
+                    verify_distributions(dist, source)
+                else:
+                    with self.assertRaises((KeyError, ValueError)):
+                        verify_distributions(dist, source)
 
     def test_rejects_nonrelease_tags(self) -> None:
         self.project.write_text('[project]\nversion = "2.3.0"\n')
