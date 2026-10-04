@@ -16,7 +16,7 @@ run_in_container() {
         --bind "$PWD:/workspace" \
         --bind "$ci_tmp:/tmp" \
         --pwd /workspace \
-        --env PYTHONPATH=/workspace/src \
+        --env PYTHONPATH=/workspace:/workspace/src \
         --env TMPDIR=/tmp \
         "$ATOMWORKS_CI_CONTAINER" "$@"
 }
