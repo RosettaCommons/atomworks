@@ -81,8 +81,8 @@ Step 3 — Configure an AF3-style dataset (example: train only on D-polypeptides
 Next we need to use the metadata to configure a dataset that we would like to sample from. This includes e.g. training cut-off, filters, transforms to apply, etc.
 Here's a simple example that:
 
-* Filters to D-polypeptide and L-polypeptide chains only (`POLYPEPTIDE_D` and `POLYPEPTIDE_L` -- to include additional chain types, replace the lists with the appropriate IDs (see `mapping <https://github.com/baker-laboratory/atomworks-dev/blob/dev/src/atomworks/enums.py>`_ in comments).
-* Excludes ligands in the AF3 list of excluded ligands, available at `atomworks.constants.AF3_EXCLUDED_LIGANDS_REGEX <https://github.com/baker-laboratory/atomworks-dev/blob/dev/src/atomworks/constants.py>`_.
+* Filters to D-polypeptide and L-polypeptide chains only (`POLYPEPTIDE_D` and `POLYPEPTIDE_L` -- to include additional chain types, replace the lists with the appropriate IDs (see `mapping <https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/src/atomworks/enums.py>`_ in comments).
+* Excludes ligands in the AF3 list of excluded ligands, available at `atomworks.constants.AF3_EXCLUDED_LIGANDS_REGEX <https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/src/atomworks/constants.py>`_.
 
 .. code-block:: yaml
 
@@ -182,7 +182,7 @@ You now have a full fledged dataset that you can use to train models on! If you 
 .. code-block::bash
   atomworks setup tests  # This will download the test pack to `tests/data` and unpack it there (~500 MB). 
 
-You will now have a mini PDB at `tests/data/pdb` and a mini custom CCD at `tests/data/ccd`. The distillation and metadata are in `data/ml/af2_distillation`, `data/ml/pdb_pn_units` and `data/ml/pdb_interfaces`. A dataset that uses all of these is for example `here <https://github.com/baker-laboratory/atomworks-dev/blob/dev/tests/ml/conftest.py>`_.
+You will now have a mini PDB at `tests/data/pdb` and a mini custom CCD at `tests/data/ccd`. The distillation and metadata are in `data/ml/af2_distillation`, `data/ml/pdb_pn_units` and `data/ml/pdb_interfaces`. A dataset that uses all of these is for example `here <https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/tests/ml/conftest.py>`_.
 
 To run the tests for the various datasets, you can run the following command:
 

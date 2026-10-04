@@ -12,6 +12,9 @@ from atomworks.io.utils.scatter import apply_and_spread_segment_wise as apply_an
 
 logger = logging.getLogger(__name__)
 
+# Preserve the numeric fallback for bond types without a defined order (plain aromatic).
+_BOND_ORDERS = np.array([BIOTITE_BOND_TYPE_TO_BOND_ORDER.get(bt, int(bt)) for bt in struc.BondType])
+
 
 def _count_explicit_h_neighbors(atom_array: AtomArray | AtomArrayStack) -> np.ndarray:
     """Per-atom count of explicit hydrogen atoms directly bonded to each atom."""
@@ -228,13 +231,8 @@ def get_bond_degree_per_atom(atom_array: AtomArray) -> np.ndarray:
     # Count both ends of each edge
     edge_list = atom_array.bonds._bonds[:, :2]
     bond_types = atom_array.bonds._bonds[:, -1]
-    weights = np.array([BIOTITE_BOND_TYPE_TO_BOND_ORDER.get(struc.BondType(bt), bt) for bt in bond_types])
-
-    degree = np.bincount(edge_list.ravel(), weights=np.repeat(weights, 2))
-
-    # ... pad in case of unbonded atoms
-    if len(degree) <= atom_array.array_length():
-        degree = np.pad(degree, (0, atom_array.array_length() - len(degree)))
+    weights = _BOND_ORDERS[bond_types]
+    degree = np.bincount(edge_list.ravel(), weights=np.repeat(weights, 2), minlength=atom_array.array_length())
 
     # ... add implicit hydrogens if nhyd annotation is present
     if "nhyd" in atom_array.get_annotation_categories():

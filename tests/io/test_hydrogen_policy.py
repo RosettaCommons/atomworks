@@ -3,8 +3,10 @@
 import biotite.structure as struc
 import numpy as np
 import pytest
+from biotite.structure.io import pdbx
 
 from atomworks.constants import STANDARD_AA
+from atomworks.experimental.protonation import assign_hydrogens, place_hydrogens
 from atomworks.io.config import ParseConfig
 from atomworks.io.parser import parse
 from atomworks.io.utils.atom_array import (
@@ -14,7 +16,6 @@ from atomworks.io.utils.atom_array import (
     remove_hydrogens,
 )
 from atomworks.io.utils.io_utils import to_cif_file
-from atomworks.io.utils.protonation import ensure_hydrogens
 from atomworks.io.utils.testing import assert_same_atom_array_or_stack, get_pdb_path
 
 
@@ -89,7 +90,9 @@ def test_atom_array_equivalence_keep_vs_remove(pdb_id):
 
 
 @pytest.mark.parametrize("pdb_id", ["1a8o", "6lyz", "1a1e"])
-def test_nhyd_roundtrip_via_cif(pdb_id, tmp_path):
+@pytest.mark.parametrize("missing_value", [None, "?", "."])
+@pytest.mark.parametrize("extra_fields", [None, "all"])
+def test_nhyd_roundtrip_via_cif(pdb_id, missing_value, extra_fields, tmp_path):
     """Ensure nhyd survives a save→reload cycle."""
     path = get_pdb_path(pdb_id)
 
@@ -97,15 +100,24 @@ def test_nhyd_roundtrip_via_cif(pdb_id, tmp_path):
 
     cif_path = tmp_path / f"{pdb_id}_nhyd.cif"
     to_cif_file(aa, cif_path, extra_fields=["nhyd"])
+    expected = aa.nhyd.copy()
+    if missing_value is not None:
+        cif = pdbx.CIFFile.read(cif_path)
+        counts = cif.block["atom_site"]["nhyd"].as_array(str)
+        index = np.flatnonzero(aa.atom_name == "CB")[0]
+        counts[index] = missing_value
+        cif.block["atom_site"]["nhyd"] = pdbx.CIFColumn(counts)
+        cif.write(cif_path)
+        expected[index] = 0
 
     aa_reloaded = parse(
         cif_path,
-        config=ParseConfig(hydrogen_policy="remove", add_missing_atoms=False),
+        config=ParseConfig(hydrogen_policy="remove", add_missing_atoms=False, extra_fields=extra_fields),
     )["asym_unit"][0]
 
     assert "nhyd" in aa_reloaded.get_annotation_categories()
     assert not np.isin(aa_reloaded.element, ["H", "D"]).any()
-    np.testing.assert_array_equal(aa.nhyd, aa_reloaded.nhyd)
+    np.testing.assert_array_equal(expected, aa_reloaded.nhyd)
 
 
 def _bonded_h_count(atom_array):
@@ -133,33 +145,38 @@ def _is_non_terminal_backbone_amide_n(atom_array):
 
 
 @pytest.mark.parametrize("pdb_id", ["1a8o", "6lyz", "1a1e"])
-def test_ensure_hydrogens_protonates_backbone_amide_nitrogens(pdb_id):
+def test_protonation_gives_backbone_amide_nitrogens_their_hydrogen(pdb_id):
     """Backbone amide N must get its H from implicit-H input, identically to explicit-H input."""
     path = get_pdb_path(pdb_id)
     config = {"add_missing_atoms": True}
 
     # The production path: H are implicit (carried in nhyd), no explicit H atoms
     aa_implicit = parse(path, config=ParseConfig(hydrogen_policy="remove", **config))["asym_unit"][0]
-    from_implicit = ensure_hydrogens(aa_implicit, silence_rdkit_warnings=True)
+    from_implicit = place_hydrogens(assign_hydrogens(aa_implicit))
 
     backbone_n = _is_non_terminal_backbone_amide_n(from_implicit)
     n_h = _bonded_h_count(from_implicit)[backbone_n]
     assert (n_h == 1).all(), f"{pdb_id}: {(n_h == 0).sum()} of {backbone_n.sum()} backbone amide N have no H"
 
-    # Explicit-H input must give the same protonation, atom for atom
+    # Explicit-H input gives the same protonation, heavy atom for heavy atom, except where it states
+    # a tautomer the implicit input leaves free (1A1E HIS62 is drawn as a cation)
     aa_explicit = parse(path, config=ParseConfig(hydrogen_policy="keep", **config))["asym_unit"][0]
-    from_explicit = ensure_hydrogens(aa_explicit, silence_rdkit_warnings=True)
-    n_heavy = len(aa_implicit)
-    np.testing.assert_array_equal(_bonded_h_count(from_implicit)[:n_heavy], _bonded_h_count(from_explicit)[:n_heavy])
+    from_explicit = place_hydrogens(assign_hydrogens(aa_explicit))
+    free = from_implicit.tautomer_free[~np.isin(from_implicit.element, ["H", "D"])]
+    per_heavy = []
+    for protonated in (from_implicit, from_explicit):
+        heavy = ~np.isin(protonated.element, ["H", "D"])
+        per_heavy.append(np.where(free, -1, _bonded_h_count(protonated)[heavy]))
+    np.testing.assert_array_equal(*per_heavy)
 
 
 @pytest.mark.parametrize("pdb_id", ["1a8o", "6lyz", "1a1e"])
-def test_ensure_hydrogens_survives_cif_roundtrip(pdb_id, tmp_path):
+def test_added_hydrogens_survive_cif_roundtrip(pdb_id, tmp_path):
     """Added H come back unchanged from a save->reload cycle."""
     aa = parse(get_pdb_path(pdb_id), config=ParseConfig(hydrogen_policy="remove", add_missing_atoms=True))["asym_unit"][
         0
     ]
-    protonated = ensure_hydrogens(aa, silence_rdkit_warnings=True)
+    protonated = place_hydrogens(assign_hydrogens(aa))
     assert np.isin(protonated.element, ["H", "D"]).any(), f"{pdb_id}: nothing was protonated"
 
     cif_path = tmp_path / f"{pdb_id}_protonated.cif"

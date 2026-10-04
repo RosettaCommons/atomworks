@@ -187,3 +187,33 @@ This separation allows for:
 - **Composable transforms** that can be mixed and matched
 - **Easy testing** of individual components
 - **Clear debugging** when issues arise
+
+Periodic materials
+------------------
+
+Use the existing ``AseDBDataset`` with the materials loader for ASE LMDB shards::
+
+    from atomworks.ml.datasets.ase_dataset import AseDBDataset
+    from atomworks.ml.datasets.loaders import create_ase_materials_loader
+
+    dataset = AseDBDataset(
+        lmdb_path="materials_shards/",
+        name="materials",
+        loader=create_ase_materials_loader(include_atom_array=True),
+    )
+    sample = dataset[0]
+
+Install the ``ml`` and ``ase`` extras. Each sample includes Cartesian and fractional
+coordinates, cell vectors, lengths, angles, volume, and PBC. Available ASE row
+energy, forces and stress are retained. Molecular bond inference and preparation
+are not applied. Optional AtomArrays preserve the cell and initial charges without
+interpreting partial charges as formal charges.
+
+``space_group`` and ``parent_space_group`` are separate numeric labels supplied by
+the data source. Neither is computed from the coordinates, and parent/prototype
+labels are never promoted to current symmetry. Other metadata remains in
+``extra_info``. A full-rank cell is required; unwrapped fractional positions are
+returned by default. Wrapping affects only periodic axes.
+
+Use the existing metadata ``example_id`` and ``lmdb_idx`` columns to select or
+reorder examples. Source ASE row IDs remain available as ``source_row_id``.

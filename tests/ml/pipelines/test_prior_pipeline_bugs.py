@@ -20,7 +20,8 @@ logger = logging.getLogger(__name__)
 # ------------------- AF3 Pipeline -----------------------#
 ##########################################################
 
-PRIOR_PIPELINE_BUGS_AF3 = ["7qbs", "5epq", "2g37", "4v4s"]
+# 4v4s's conflicting links are checked by tests/io/components/test_parse_invariants.py::test_parse_expected_errors.
+PRIOR_PIPELINE_BUGS_AF3 = ["7qbs", "5epq", "2g37"]
 
 
 @pytest.mark.parametrize("pdb_id", PRIOR_PIPELINE_BUGS_AF3)

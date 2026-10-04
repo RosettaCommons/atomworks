@@ -1,8 +1,10 @@
 import functools
 import logging
 import os
+from itertools import pairwise
 from typing import Any, Literal
 
+import biotite.structure as struc
 import numpy as np
 from biotite.structure import AtomArray
 from biotite.structure.bonds import connect_via_residue_names
@@ -21,8 +23,6 @@ from atomworks.io.utils.annotator import ensure_annotations
 from atomworks.io.utils.atom_array_plus import insert_atoms
 from atomworks.io.utils.bonds import (
     build_bond_dict_for_atom_array,
-    correct_charged_amide_nitrogens,
-    correct_formal_charges_for_specified_atoms,
 )
 from atomworks.io.utils.ccd import (
     _get_base_ccd_template,
@@ -33,9 +33,9 @@ from atomworks.io.utils.extra_fields import (
     get_default_array,
 )
 from atomworks.io.utils.link_chemistry import (
-    _add_polymer_inter_residue_bonds,
+    add_polymer_bonds,
     get_chem_comp_leaving_atom_groups,
-    resolve_leaving_atoms,
+    resolve_link_chemistry,
 )
 from atomworks.io.utils.scatter import get_segments
 
@@ -198,6 +198,9 @@ def add_missing_atoms_for_chain(
     """
     # ... get available CCD codes for proactive checking
     available_ccds = get_available_ccd_codes(str(ccd_mirror_path or ""))
+    # A custom CCD registry stays fixed while this chain is filled.
+    expected_atom_count = functools.cache(_non_terminal_expected_atom_count)
+    missing_atoms_template = functools.cache(_get_missing_atoms_template)
 
     if atom_array is None:
         # From-scratch: no existing atoms, every residue will be CASE 1
@@ -327,7 +330,7 @@ def add_missing_atoms_for_chain(
             # NOTE: Assumes that we have first standardized atom names
             is_terminal = res_idx == 0 or res_idx == len(sequence) - 1
             if not is_terminal:
-                expected = _non_terminal_expected_atom_count(
+                expected = expected_atom_count(
                     ccd_code,
                     str(ccd_mirror_path or ""),
                     hydrogen_policy,
@@ -348,7 +351,7 @@ def add_missing_atoms_for_chain(
             # CCD is available - get missing atoms template
             # For partial residues, we catch errors (e.g., unexpected atoms) and assume complete
             try:
-                missing_template = _get_missing_atoms_template(
+                missing_template = missing_atoms_template(
                     ccd_code, actual_atom_names_set, str(ccd_mirror_path or ""), hydrogen_policy
                 )
             except (ValueError, AttributeError) as e:
@@ -528,7 +531,7 @@ def infer_bonds_from_residue_names(
     - Correcting charged amide nitrogens
 
     Args:
-        atom_array: Structure to add bonds to.
+        atom_array: Structure to add bonds to. Requires a ``charge`` annotation, even when ``sanitize=False``.
         custom_bond_dict: Optional custom bonds. Maps residue names to
             ``{(atom1_name, atom2_name): bond_type_int}``. Overrides CCD for
             those residues.
@@ -541,6 +544,8 @@ def infer_bonds_from_residue_names(
         AtomArray with bonds added and processed (modified in-place).
     """
 
+    assert "charge" in atom_array.get_annotation_categories(), "Bond inference requires a 'charge' annotation."
+
     # Edge case: empty array
     if len(atom_array) == 0:
         return atom_array
@@ -552,12 +557,21 @@ def infer_bonds_from_residue_names(
         ccd_mirror_path=ccd_mirror_path,
     )
 
-    # Add CCD-based intra-residue bonds only
-    bonds = connect_via_residue_names(
-        atom_array,
-        inter_residue=False,
-        custom_bond_dict=custom_bond_dict,
-    )
+    # Reuse layouts only within this call, including repeated names from alternate locations.
+    residue_starts = struc.get_residue_starts(atom_array, add_exclusive_stop=True)
+    atom_names = atom_array.atom_name.tolist()
+    res_names = atom_array.res_name
+    bond_templates, bond_chunks = {}, []
+    for start, stop in pairwise(residue_starts):
+        key = res_names[start], tuple(atom_names[start:stop])
+        if key not in bond_templates:
+            bond_templates[key] = connect_via_residue_names(
+                atom_array[start:stop], inter_residue=False, custom_bond_dict=custom_bond_dict
+            ).as_array()
+        residue_bonds = bond_templates[key].copy()
+        residue_bonds[:, :2] += int(start)
+        bond_chunks.append(residue_bonds)
+    bonds = struc.BondList(len(atom_array), np.concatenate(bond_chunks))
 
     # Merge with existing bonds if present; otherwise, set new bonds
     if atom_array.bonds is not None:
@@ -566,22 +580,6 @@ def infer_bonds_from_residue_names(
         atom_array.bonds = bonds
 
     # Add polymer inter-residue bonds, skipping pairs already bonded (e.g. via struct_conn)
-    atom_array = _add_polymer_inter_residue_bonds(atom_array)
+    atom_array = add_polymer_bonds(atom_array)
 
-    if sanitize:
-        # 1. Resolve leaving atoms + bond order decrements for carbons
-        atom_array, impacted_mask = resolve_leaving_atoms(atom_array)
-
-        if not np.any(impacted_mask):
-            return atom_array
-
-        # 2. Fix formal charges
-        assert (
-            "charge" in atom_array.get_annotation_categories()
-        ), "Cannot fix charges: AtomArray has no 'charge' annotation."
-        atom_array = correct_formal_charges_for_specified_atoms(atom_array, to_update=impacted_mask)
-
-        # 3. Fix charged amide nitrogens
-        atom_array = correct_charged_amide_nitrogens(atom_array, to_update=impacted_mask)
-
-    return atom_array
+    return resolve_link_chemistry(atom_array) if sanitize else atom_array

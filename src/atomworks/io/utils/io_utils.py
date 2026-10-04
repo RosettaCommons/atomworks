@@ -12,6 +12,8 @@ __all__ = [
     "to_cif_buffer",
     "to_cif_file",
     "to_cif_string",
+    "to_pdb_buffer",
+    "to_pdb_string",
 ]
 import contextlib
 import io
@@ -969,18 +971,21 @@ def _write_categories_to_block(
 
 
 def _cif_to_bcif(cif_file: pdbx.CIFFile | pdbx.BinaryCIFFile) -> pdbx.BinaryCIFFile:
-    """Convert a given CIF file to an optimized BCIF file."""
-    from biotite.setup_ccd import _concatenate_blocks_into_category
-
+    """Convert to BCIF while preserving column values, missing-value masks, and ordering."""
     compressed_file = pdbx.BinaryCIFFile()
     for block_name, block in cif_file.items():
         compressed_block = pdbx.BinaryCIFBlock()
-        for category_name in block:
-            _tmp_cif_file = pdbx.CIFFile()
-            _tmp_cif_file[block_name] = block
-            compressed_block[category_name] = pdbx.compress(
-                _concatenate_blocks_into_category(_tmp_cif_file, category_name)
-            )
+        for category_name, category in block.items():
+            compressed_category = pdbx.BinaryCIFCategory()
+            for column_name, column in category.items():
+                data = pdbx.BinaryCIFData(column.data.array.copy())
+                if np.issubdtype(data.array.dtype, np.str_) or np.issubdtype(data.array.dtype, np.integer):
+                    data = pdbx.compress(data)
+                elif np.issubdtype(data.array.dtype, np.floating) and data.array.dtype.itemsize > 8:
+                    raise ValueError(f"BinaryCIF cannot losslessly represent {data.array.dtype} in {column_name!r}")
+                mask = column.mask.array.copy() if column.mask is not None else None
+                compressed_category[column_name] = pdbx.BinaryCIFColumn(data, mask)
+            compressed_block[category_name] = compressed_category
         compressed_file[block_name] = compressed_block
     return compressed_file
 

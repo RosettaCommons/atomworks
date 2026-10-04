@@ -6,6 +6,7 @@ on:
       - dev
       - main
       - production
+      - release/atomworks-3-0
     paths:
       - 'src/**'
       - 'tests/**'
@@ -16,6 +17,7 @@ on:
       - dev
       - staging
       - production
+      - release/atomworks-3-0
     paths:
       - 'src/**'
       - 'tests/**'
@@ -68,6 +70,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run tests
+        env:
+          ATOMWORKS_CI_CONTAINER: ${{ vars.ATOMWORKS_CI_CONTAINER }}
+          ATOMWORKS_CI_TEST_PACK: ${{ vars.ATOMWORKS_CI_TEST_PACK }}
         run: |
           export N_CPU=8
           srun --chdir=$PWD -p cpu -c $N_CPU -t 00:30:00 --mem=32G bash ./.github/ci/run_tests.sh

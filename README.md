@@ -1,5 +1,5 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![CI](https://github.com/baker-laboratory/atomworks-dev/actions/workflows/lint_and_test.yaml/badge.svg?branch=dev)](https://github.com/baker-laboratory/atomworks-dev/actions/workflows/lint_and_test.yaml)
+[![CI](https://github.com/RosettaCommons/atomworks/actions/workflows/lint_and_test.yaml/badge.svg?branch=release%2Fatomworks-3-0)](https://github.com/RosettaCommons/atomworks/actions/workflows/lint_and_test.yaml)
 [![PyPI version](https://img.shields.io/pypi/v/atomworks.svg)](https://pypi.org/project/atomworks/)
 [![Python versions](https://img.shields.io/pypi/pyversions/atomworks.svg)](https://pypi.org/project/atomworks/)
 [![Documentation Status](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://rosettacommons.github.io/atomworks/latest/)
@@ -15,7 +15,7 @@
 
 If you're looking for the models themselves (e.g., RF3, RFD3, MPNN) that integrate with AtomWorks rather than the underlying framework, check out [Foundry](https://github.com/RosettaCommons/foundry)
 
-> **💡 Note:** Start with the [AtomWorks examples](https://rosettacommons.github.io/atomworks/latest/auto_examples/index.html) or the [model-building tutorial](https://github.com/baker-laboratory/atomworks-dev/blob/dev/docs/how_to_build_a_model/index.rst).
+> **💡 Note:** Start with the [AtomWorks examples](https://rosettacommons.github.io/atomworks/latest/auto_examples/index.html) or the [model-building tutorial](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/docs/how_to_build_a_model/index.rst).
 
 AtomWorks is composed of two symbiotic libraries:
 

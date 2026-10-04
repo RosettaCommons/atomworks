@@ -60,6 +60,28 @@ These are documented regression/round-trip cases, not a claim that every structu
 
 For an existing model, preserve the old locked environment and a small set of its exact features. Compare by atom identity including assembly instance, not array offset alone. Review atom counts, charge/implicit-hydrogen annotations, bond topology and orders, masks and atomization. Evaluate the checkpoint on both feature sets and relevant scientific metrics. If necessary, retain the versioned 2.x preprocessing path for that checkpoint until retraining/fine-tuning or an explicitly validated adapter is available. Avoid silently mixing newly generated features with old cached training data.
 
+### Covalent links, reaction states and unsupported chemistry
+
+Link processing checks both attachment atoms before resolving leaving groups and charges. Recognized explicit `struct_conn` bond orders are retained; missing orders are inferred from both component templates, including hydrogens, declared leaving groups and available valence. An unsupported explicit order raises instead of silently becoming a single bond. A double bond in one component's leaving group does not by itself authorize a double bond to the other component. For example, the O3′–P connection in `1dpn` is inferred as single, while subsequent sanitization can still reject an unspecified internal bond rearrangement.
+
+Sequence adjacency also does not authorize arbitrary backbone chemistry. Polymer linking preserves an existing attachment to the adjacent residue, allows side-chain crosslinks alongside backbone bonds, and rejects competing backbone attachments or sites without available valence, a removable hydrogen or a declared leaving group. Metal coordination is excluded from covalent leaving-group removal and valence accounting; a coordination bond alone should not remove a donor's hydrogens or change its charge.
+
+Selected alternate-location labels are retained through missing-atom rebuilding so that authored links remain associated with the selected reaction state. In `6dp5`, the B conformer retains an OP3–magnesium coordination contact, while C has the O3′–P covalent link; rebuilding must not combine these states. Distance filtering also recognizes authored glycosylation: links identified by a glycosylation role, or covalent links between carbohydrates, can be retained through 2.4 Å with a warning when above the usual threshold. This includes the 2.211 Å ASN–NAG link in `2odp`; it is not a general relaxation for every covalent link.
+
+Sanitization resolves supported hydrogen displacement and carbonyl addition, then validates the resulting valence. It can raise `ValueError` when the input does not determine a supported product, including additions across C=C/C=N bonds requiring unspecified bond-order/protonation changes, an ambiguous amide carbonyl retaining nitrogen, or a leaving-group substitution requiring an unspecified replacement double bond. Supply the product's component definitions and explicit connectivity/bond orders when required; do not treat disabling completion or ignoring the exception as a chemical repair. Custom components need consistent `chem_comp_atom` and `chem_comp_bond` definitions.
+
+Extend the migration set with cases that exercise these decisions:
+
+| Structures | Behavior to compare |
+|---|---|
+| `1rcq`, `1dpn` | Inferred link order from both partners; rejection of unspecified product bond rearrangements where applicable. |
+| `3n95`, `4aah` | Sequence-defined terminal caps and coexistence of backbone bonds with side-chain crosslinks. |
+| `6dp5` | Conformer-specific covalent versus coordination links after rebuilding. |
+| `2odp` | Retention of an authored glycosylation link above the usual distance threshold. |
+| `1n4e`, `8qia`, `6n0a` | Unsupported or ambiguous product chemistry that requires an explicit definition. |
+
+Compare successful outputs and rejected inputs: matching atom counts alone do not establish matching bonds, charges, hydrogen counts or conformer annotations. [Link validation and resolution](https://github.com/RosettaCommons/atomworks/blob/b1c440e0b7b7e62c1cd6cd9bf337c9fc13d66c2a/src/atomworks/io/utils/link_chemistry.py), [bond and reaction-state tests](https://github.com/RosettaCommons/atomworks/blob/b1c440e0b7b7e62c1cd6cd9bf337c9fc13d66c2a/tests/io/utils/test_bond_utils.py), [rebuilding pipeline](https://github.com/RosettaCommons/atomworks/blob/b1c440e0b7b7e62c1cd6cd9bf337c9fc13d66c2a/src/atomworks/io/_pipeline.py).
+
 ### Explicit protonation
 
 3.0 provides pH-aware protonation via RDKit/Dimorphite-DL. It is a separate chemical operation and will not numerically reproduce the old Hydride path:
