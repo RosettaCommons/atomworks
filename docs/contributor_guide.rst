@@ -66,6 +66,49 @@ To build the documentation, navigate to the ``docs`` directory and run:
 If you are new to Sphinx, please refer to the `Sphinx documentation <https://www.sphinx-doc.org/en/master/>`_ for guidance on writing and formatting documentation.
 All of the documentation is written in reStructuredText (reST) format. For more information on reST, see the `reStructuredText Primer <https://docutils.sourceforge.io/docs/user/rst/quickstart.html>`_.
 
+Publishing a release
+--------------------
+
+Package versions are chosen explicitly in ``pyproject.toml``. Commits and branch
+pushes do not publish releases. The release workflow builds and validates packages
+on pull requests, then publishes only from matching ``v<version>`` tags in the
+public repository.
+
+Before the first tagged release, configure a protected GitHub environment named
+``pypi`` with required reviewers and version-tag deployment rules. Register a
+`PyPI trusted publisher <https://docs.pypi.org/trusted-publishers/creating-a-project-through-oidc/>`_
+for owner ``RosettaCommons``, repository ``atomworks``, workflow
+``release_and_docs.yaml``, and environment ``pypi``. No PyPI API token is needed.
+The existing ``gh-pages`` branch remains the documentation destination.
+
+1. Choose an unused release version and update ``project.version`` in
+   ``pyproject.toml`` through a reviewed PR. Keep conventional commit messages for
+   readable history; version increments are a maintainer decision.
+2. Run the normal tests and release checks:
+
+   .. code-block:: bash
+
+      python -m pip install build twine packaging
+      python -m unittest discover -s .github/tests -v
+      python -m build
+      python -m twine check --strict dist/*
+
+3. Tag the reviewed commit with its exact version, for example ``v3.0.0`` or
+   ``v3.0.0rc1``, and push that tag. Development/local version tags are rejected.
+4. Approve the ``pypi`` deployment after reviewing the build artifacts. The publish
+   job uploads those exact wheel and source archives. A separate job creates the
+   GitHub Release with the same archives and generated release notes.
+
+Documentation builds independently of package publishing. Each version has its
+own directory; ``latest`` always selects the newest stable version. Prereleases
+appear in the switcher without replacing ``latest``. Retrying an older release
+preserves newer documentation and existing version pages. The docs job is serialized
+so simultaneous tag builds do not overwrite each other's deployments.
+
+Use the Actions UI to rerun failed jobs without rebuilding successful artifacts.
+Manual workflow runs must select a version tag to publish; branch runs only build
+and validate. Never move a published tag or reuse a published version.
+
 Other Resources
 ---------------
 

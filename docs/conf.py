@@ -6,7 +6,6 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 import os
-import re
 import sys
 
 sys.path.insert(0, os.path.abspath("../src"))
@@ -17,24 +16,9 @@ project = "atomworks"
 copyright = "2025, bakerlab"
 author = "bakerlab"
 
-# Get the raw version from atomworks
-raw_version = atomworks.__version__
-print(f"Raw version from atomworks: {raw_version}")
-
-# Extract clean version for documentation
-# Handle formats like: v2.29.0, v2.29.0+dev26.ad450d1, v2.29.0-dirty, v2.29.0+dev26.ad450d1-dirty
-version_match = re.match(r"^v?(\d+\.\d+\.\d+)", str(raw_version))
-if version_match:
-    version = version_match.group(1)
-else:
-    # Fallback if regex doesn't match
-    version = str(raw_version).lstrip("v").split("+")[0].split("-")[0]
-
-print(f"Clean version for docs: {version}")
-
-# For version switcher, we want to match against the exact version format in switcher.json
-# This should match what your GitHub workflow generates
-switcher_version = version  # Use clean version for matching
+release = os.environ.get("ATOMWORKS_DOCS_VERSION", str(atomworks.__version__).removeprefix("v"))
+version = release
+switcher_version = release
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -75,7 +59,7 @@ html_theme_options = {
     },
     "navbar_start": ["navbar-logo", "version-switcher"],
     "switcher": {
-        "json_url": "https://rosettacommons.github.io/atomworks/latest/_static/switcher.json",
+        "json_url": "https://rosettacommons.github.io/atomworks/_static/switcher.json",
         "version_match": switcher_version,
     },
     "favicons": [

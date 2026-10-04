@@ -7,13 +7,8 @@
     > Format: `<type>[optional scope]: <subject>`  
     > Example: `fix(af3): add missing crop transform to the af3 pipeline`
     >
-    > This affects semantic versioning as follows:
-    > - `fix`: patch version increment (0.0.1 → 0.0.2)
-    > - `feat`: minor version increment (0.0.1 → 0.1.0) 
-    > - `BREAKING CHANGE`: major version increment (0.0.1 → 1.0.0)
-    > - All other types do not affect versioning
-    >
-    > The format ensures readable changelogs through auto-generation from commit messages.
+    > Maintainers choose the package version explicitly before creating a release tag.
+    > Commit conventions keep change history and release notes readable.
 
 - [ ] I have run `make format` on the codebase before submitting the PR (this autoformats the code and lints it).
 
