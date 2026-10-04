@@ -94,8 +94,8 @@ The existing ``gh-pages`` branch remains the documentation destination.
       python .github/release.py artifacts
       python -m twine check --strict dist/*
 
-3. Tag the reviewed commit with its exact version, for example ``v2.3.0`` or
-   ``v2.3.0rc1``, and push that tag. Development/local version tags are rejected.
+3. Tag the reviewed commit with its exact version, for example ``v3.0.0`` or
+   ``v3.0.0rc1``, and push that tag. Development/local version tags are rejected.
 4. Approve the ``pypi`` deployment after reviewing the build artifacts. The publish
    job uploads those exact wheel and source archives. A separate job creates the
    GitHub Release with the same archives and generated release notes.

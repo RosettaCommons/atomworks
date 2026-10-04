@@ -3,17 +3,10 @@
 import logging
 from pathlib import Path
 
-import torch
 import typer
 
+from atomworks.constants import DEFAULT_MSA_SERVER_URL
 from atomworks.enums import MSAFileExtension
-from atomworks.ml.preprocessing.msa.generating import (
-    HHblitsSearchConfig,
-    MMseqs2SearchConfig,
-    MSAGenerationConfig,
-    make_msas_from_csv,
-)
-from atomworks.ml.preprocessing.msa.server import DEFAULT_MSA_SERVER_URL, MSAServerConfig
 
 from .common import enable_logging
 
@@ -137,6 +130,16 @@ def generate(
         # With custom parameters
         atomworks msa generate sequences.csv output_msas/ --gpu --max-final-sequences 5000 --threads 16
     """
+    import torch
+
+    from atomworks.ml.preprocessing.msa.generating import (
+        HHblitsSearchConfig,
+        MMseqs2SearchConfig,
+        MSAGenerationConfig,
+        make_msas_from_csv,
+    )
+    from atomworks.ml.preprocessing.msa.server import MSAServerConfig
+
     enable_logging(verbose)
 
     # Auto-detect GPU if not specified

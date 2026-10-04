@@ -6,7 +6,6 @@ from pathlib import Path
 import typer
 
 from atomworks.enums import MSAFileExtension
-from atomworks.ml.preprocessing.msa.organizing import MSAOrganizationConfig, organize_msas
 
 from .common import enable_logging
 
@@ -106,6 +105,8 @@ def organize(
         # Check existing MSAs before organizing
         atomworks msa organize ./msas ./msas_organized --check-existing --existing-msa-dirs ./dir1,./dir2
     """
+    from atomworks.ml.preprocessing.msa.organizing import MSAOrganizationConfig, organize_msas
+
     if not sharding_pattern:
         sharding_pattern = None
 
