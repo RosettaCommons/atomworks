@@ -196,6 +196,35 @@ def test_default_signed_read_uses_environment_endpoint(s3_transport, monkeypatch
     assert "Authorization" in requests[0].headers
 
 
+@pytest.mark.parametrize("url", ["s3://public", "s3:///record.bin", "s3://public/"])
+def test_malformed_s3_uri_rejected_before_request(s3_transport, url):
+    _, requests = s3_transport
+    with pytest.raises(ValueError, match="Expected s3://bucket/key"):
+        read_s3_bytes(url)
+    assert not requests
+
+
+@pytest.mark.parametrize(
+    "options", [{"offset": 0}, {"length": 1}, {"offset": -1, "length": 1}, {"offset": 0, "length": 0}]
+)
+def test_invalid_byte_range_rejected_before_request(s3_transport, options):
+    _, requests = s3_transport
+    with pytest.raises(ValueError, match="Byte ranges require"):
+        read_s3_bytes("s3://public/record.bin", **options)
+    assert not requests
+
+
+def test_conflicting_endpoints_rejected_before_request(s3_transport):
+    _, requests = s3_transport
+    with pytest.raises(ValueError, match="must agree"):
+        read_s3_bytes(
+            "s3://public/record.bin",
+            endpoint_url="https://first.example",
+            s3_config=S3ReadConfig("https://second.example", anonymous=True),
+        )
+    assert not requests
+
+
 def test_local_metadata_preserves_parquet_attributes(tmp_path):
     path = tmp_path / "metadata.parquet"
     frame = pd.DataFrame({"example_id": ["a"], "value": [2]})
