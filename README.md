@@ -150,13 +150,12 @@ The output of `parse` includes:
 See the [examples](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/docs/examples) and [parser API reference](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/docs/io/parser.rst)
 for more parsing workflows and configuration options.
 
-If you just want to load a file, you can use the `load_any` function:
+For minimal processing, use the same parser with the `minimal` preset:
 
 ```python
-from atomworks.io.utils.io_utils import load_any
-from biotite.structure import AtomArray
+from atomworks.io import parse
 
-atom_array: AtomArray = load_any(structure_file, model=1)  # Load the first model.
+atom_array = parse(structure_file, config="minimal")["asym_unit"][0]
 ```
 
 ---
