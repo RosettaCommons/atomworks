@@ -376,7 +376,11 @@ def get_coarse_graph_as_nodes_and_edges(
             pass ``{BondType.COORDINATION}`` to prevent metal-ligand bonds from merging components.
 
     Returns:
-        tuple: Unique nodes (combinations of annotations), and edges as pairs of node indices.
+        tuple[np.ndarray, np.ndarray]: Nodes and edges:
+
+            - ``nodes``: An array of unique nodes, each represented by a combination of annotations.
+            - ``edges``: An array of edges, where each edge is a tuple of node indices representing a bond
+              between two nodes.
 
     Example:
         >>> atom_array = cached_parse("5ocm")["atom_array"]

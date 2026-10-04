@@ -158,7 +158,10 @@ def get_rf2aa_chiral_features(
     """Extracts chiral centers and featurize them for RF2AA.
 
     NOTE: Each row of output features contains the indices of the plane pairs and the signed ideal
-        dihedral angle for each chiral center. An entry ``[c, i, j, k, angle]``
+        dihedral angle for each chiral center. For example, the entry::
+
+            [c, i, j, k, angle]
+
         means that the atom at index c is a chiral center with atoms at indices (i, j, k) bonded
         to it. The signed dihedral angle angle is the signed angle between the planes (cij) and
         (ijk). The sign of the angle determines the chirality of the chiral center.

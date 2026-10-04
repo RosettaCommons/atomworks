@@ -260,14 +260,33 @@ def set_sampler_epoch(sampler: Sampler, epoch: int, add_random_offset: bool = Fa
 
 
 class DistributedMixedSampler(Sampler):
-    """Custom DistributedSampler implementation that samples from an arbitrary list of samplers with specified probabilities.
+    r"""Custom DistributedSampler implementation that samples from an arbitrary list of samplers with specified probabilities.
 
     Child samplers can be any type of non-distributed sampler, including a MixedSampler.
     After gathering all indices, shards the samples across nodes, ensuring each node receives a unique slice of the dataset.
 
-    Child samplers must not shard their own output. For 100 examples with probabilities
-    0.8 and 0.2, collect 80 and 20 samples respectively, then shard across replicas.
-    The order of ``datasets_info`` must match the associated ``ConcatDataset``.
+    Example:
+        Imagine we have the following sampling tree::
+
+                DistributedMixedSampler
+                           |
+                -------------------------
+                |                       |
+               0.8                     0.2
+             Sampler1              MixedSampler
+                                    /       \
+                                   0.9       0.1
+                                Sampler2   Sampler3
+
+        If we initialized DistributedMixedSampler with `n_examples_per_epoch=100` and `num_replicas=2`, it would collect 80 samples
+        from Sampler1 and 20 samples from the MixedSampler. The MixedSampler would in turn collect 18 samples from Sampler2 and 2 samples from Sampler3.
+        After collecting those 100 samples, the DistributedMixedSampler would shard the samples across the two nodes, ensuring each node receives a unique slice
+        of 50 examples.
+
+        If any of the child samplers were distributed samples, then the DistributedMixedSampler would not receive n_examples_per_epoch indices,
+        and we would raise an error.
+
+    NOTE: The order of the datasets in datasets_info MUST match the order of the datasets in the ConcatDataset associated with this MixedSampler.
 
     Args:
         datasets_info: List of dictionaries, where each dictionary must contain at a minimum:

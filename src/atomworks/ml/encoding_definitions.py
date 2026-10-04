@@ -453,8 +453,18 @@ This encoding is compatible with the conditional residue type feature used in pr
 foundation models, enabling unified handling of proteins, RNA, DNA, and small molecules
 in a single representation space.
 
-Use ``atom_array_to_encoding`` / ``atom_array_from_encoding`` to convert coordinates.
-Use ``token_to_idx`` / ``idx_to_token`` to encode or decode residue names.
+Usage:
+    UNIFIED_ATOM37_ENCODING serves as the single source of truth for:
+
+    - Atom37 layout operations (coordinate processing):
+
+        * atom_array_to_encoding() / atom_array_from_encoding()
+        * Converting between AtomArray and atom37 coordinate tensors
+
+    - Sequence encoding operations (residue type indices):
+
+        * Use UNIFIED_ATOM37_ENCODING.token_to_idx to encode residue names
+        * Use UNIFIED_ATOM37_ENCODING.idx_to_token to decode indices
 """
 # fmt: on
 
@@ -762,11 +772,17 @@ RF2AA_ATOM36_ENCODING = TokenEncoding(
         | {chem_type: UNKNOWN_RNA for chem_type in RNA_LIKE_CHEM_TYPES}
     ),
 )
-"""RF2AA all-atom encoding for proteins, nucleic acids and other elements.
+"""RF2AA all atom encoding for proteins, nucleic acids and various other elements
 
-Encodes up to 36 heavy atoms and hydrogens, with unknown tokens ``UNK`` (protein),
-``DN`` (DNA), and ``N`` (RNA). Covers 20 amino acids, 4 DNA bases, 4 RNA bases,
-unknown and mask tokens, the legacy ``HIS_D`` token, and 45 element tokens.
+- Encodes heavy atoms and hydrogens (max 36 in total)
+- Includes 3 unknown tokens: `UNK` for proteins, `DN` for dna, `N` for RNA
+- Covers:
+
+    - 20 amino acids (+ unknown, + mask),
+    - 4  DNA bases (+ unknown),
+    - 4  RNA bases (+ unknown),
+    - 1  outdated histindine token `HIS_D`
+    - 45 atom tokens (+ unknown)
 """
 # fmt: on
 
