@@ -18,7 +18,7 @@ from biotite.structure.io import pdbx
 
 import atomworks.io.transforms.atom_array as ta
 from atomworks.common import exists
-from atomworks.constants import HYDROGEN_LIKE_SYMBOLS, METAL_ELEMENTS
+from atomworks.constants import METAL_ELEMENTS
 from atomworks.io import template
 from atomworks.io.config import PrepareConfig
 from atomworks.io.transforms.categories import (
@@ -38,7 +38,6 @@ from atomworks.io.utils.bonds import add_bonds_from_struct_conn, filter_bonds_by
 from atomworks.io.utils.ccd import add_annotations_from_ccd
 from atomworks.io.utils.chain_info import build_chain_info, update_sequences_from_res_names
 from atomworks.io.utils.extra_fields import ExtraFieldsType, normalize_extra_fields
-from atomworks.io.utils.link_chemistry import infer_link_order
 from atomworks.io.utils.selection import get_annotation_categories
 from atomworks.io.utils.standardize import standardize_atom_names
 from atomworks.io.utils.testing import verify_atom_array_chain_info_consistency
@@ -213,22 +212,6 @@ def _add_bonds(
     # Retype metal-incident bonds to COORDINATION so metals are typed consistently and (via the
     # COORDINATION exclusion in add_id_and_entity_annotations) become their own molecule/entity.
     model = _retype_metal_bonds_to_coordination(model)
-    if model.bonds is not None:
-        bonds = model.bonds.as_array()
-        unknown_orders = np.flatnonzero(bonds[:, 2] == struc.BondType.ANY)
-        for index in unknown_orders:
-            atom1, atom2 = bonds[index, :2]
-            hydrogen_atoms = [int(atom) for atom in (atom1, atom2) if model.element[atom] in HYDROGEN_LIKE_SYMBOLS]
-            monovalent_hydrogen = bool(hydrogen_atoms) and all(
-                len(model.bonds.get_bonds(atom)[0]) == 1 for atom in hydrogen_atoms
-            )
-            bonds[index, 2] = (
-                struc.BondType.SINGLE
-                if monovalent_hydrogen
-                else infer_link_order(model, int(atom1), int(atom2), allow_missing_templates=not sanitize)
-            )
-        if len(unknown_orders):
-            model.bonds = struc.BondList(len(model), bonds)
     return model
 
 

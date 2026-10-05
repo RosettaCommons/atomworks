@@ -272,6 +272,16 @@ def test_components_to_atom_array_glycan(dict_inputs, bonds_glycan_glycan):
     assert len(chain_ids) == 3
 
 
+def test_generated_glycan_link_removes_leaving_oxygen_in_mixed_input(dict_inputs):
+    """Finite CCD ideal coordinates must not protect generated leaving atoms."""
+    components = dict_inputs["cif_path"] + dict_inputs["glycan_1"] + dict_inputs["glycan_2"]
+    atom_array = components_to_atom_array(components, bonds=[("G/NAG/1/C1", "H/NAG/1/O4")])
+    glycans = np.isin(atom_array.chain_id, ("G", "H"))
+
+    assert glycans.sum() == 29
+    assert not np.any((atom_array.chain_id == "G") & (atom_array.atom_name == "O1"))
+
+
 def test_components_to_atom_array_cif(dict_inputs):
     """Test modification of CIF file inputs and conversion of the modified CIF to AtomArray."""
     component_dicts = dict_inputs["cif_path"] + dict_inputs["dimer"]

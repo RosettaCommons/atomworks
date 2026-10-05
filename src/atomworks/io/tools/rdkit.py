@@ -544,7 +544,9 @@ def inchi_to_rdkit(inchi: str, *, sanitize: bool = True, timeout: int = 5, gener
     return mol
 
 
-def sdf_to_rdkit(sdf_path_or_buffer: io.StringIO | PathLike, *, sanitize: bool = True) -> Mol:
+def sdf_to_rdkit(
+    sdf_path_or_buffer: io.StringIO | PathLike, *, sanitize: bool = True, remove_hydrogens: bool = True
+) -> Mol:
     """
     Generate an RDKit molecule from an SDF file or buffer.
 
@@ -552,6 +554,9 @@ def sdf_to_rdkit(sdf_path_or_buffer: io.StringIO | PathLike, *, sanitize: bool =
         - sdf_path_or_buffer (io.StringIO | PathLike): Either a path to an SDF file or a StringIO buffer containing
             SDF-formatted molecule data
         - sanitize (bool): Whether to sanitize the molecule during parsing. Default is True.
+        - remove_hydrogens (bool): Whether to drop the hydrogens the file states, as RDKit does by
+            default. ``False`` keeps them, for a caller reading an SDF as the structure it describes.
+            Default is True.
 
     Returns:
         - Mol: The RDKit molecule generated from the SDF data
@@ -569,7 +574,7 @@ def sdf_to_rdkit(sdf_path_or_buffer: io.StringIO | PathLike, *, sanitize: bool =
         raise TypeError("Input must be either a path or a StringIO buffer")
 
     supplier = Chem.SDMolSupplier()
-    supplier.SetData(sdf_data, sanitize=sanitize)
+    supplier.SetData(sdf_data, sanitize=sanitize, removeHs=remove_hydrogens)
     try:
         mol = next(supplier)
     except StopIteration:
@@ -599,8 +604,8 @@ def atom_array_from_rdkit(
         - mol: The RDKit molecule to convert.
         - set_coord_if_available: Whether to set the coordinates from the RDKit molecule if
             a conformer is available.
-        - conformer_id: The conformer ID to use for coordinates. If None, the first
-          conformer is used.
+        - conformer_id: The RDKit ID of the conformer to use for coordinates, not its position in the
+          conformer list. If None, the first conformer is used. An unknown ID raises ``ValueError``.
         - remove_hydrogens: Whether to remove any explicit hydrogen atoms.
         - remove_inferred_atoms: Whether to remove any atoms that do not carry the `rdkit_atom_id` annotation.
 
@@ -622,8 +627,6 @@ def atom_array_from_rdkit(
     n_conformers = mol.GetNumConformers()
     if set_coord_if_available and n_conformers > 0:
         conformer_id = conformer_id if conformer_id is not None else -1
-        if conformer_id >= n_conformers:
-            raise ValueError(f"Conformer ID {conformer_id} out of range for molecule with {n_conformers} conformers")
         coords = mol.GetConformer(conformer_id).GetPositions()
 
     # Set atoms
@@ -674,7 +677,7 @@ def atom_array_from_rdkit(
     # Set extra annotations
     annotations = mol._annotations if hasattr(mol, "_annotations") else {}
     if len(annotations) > 0:
-        # Create mapping of array idx <> annotation idx via the openbabel atom id:
+        # Create mapping of array idx <> annotation idx via the rdkit atom id:
         _rdkit_id_to_annotation_idx = {
             rdkit_atom_id: idx for idx, rdkit_atom_id in enumerate(annotations["rdkit_atom_id"])
         }
@@ -685,14 +688,14 @@ def atom_array_from_rdkit(
                 array_idx_to_annotation_idx.append((idx, _rdkit_id_to_annotation_idx[atom.rdkit_atom_id]))
         array_idx_to_annotation_idx = np.array(array_idx_to_annotation_idx)
 
-        # Exit if there are no annotations to set
+        # Transfer nothing if no atom matches, but still apply the output filters below
         if len(array_idx_to_annotation_idx) == 0:
             logger.warning(
                 "No rdkit atoms match any annotation. You may want to check that you are "
                 "using the @preserve_annotations decorator correctly. And set the "
-                "rdkit pickle options to preserve properties. Returning."
+                "rdkit pickle options to preserve properties. Skipping annotation transfer."
             )
-            return atom_array
+            annotations = {}
 
         for key, val in annotations.items():
             if key in ["coord", "charge"]:
@@ -809,7 +812,7 @@ def atom_array_to_rdkit(
         mol.AddAtom(rdatom)
 
     # Set coordinates first
-    set_coord = set_coord or not np.any(np.isnan(atom_array.coord))
+    set_coord = not np.any(np.isnan(atom_array.coord)) if set_coord is None else set_coord
     if set_coord:
         # ... add conformer (at id 0)
         conf_id = mol.AddConformer(Chem.Conformer(len(atom_array)), assignId=True)

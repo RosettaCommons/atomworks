@@ -62,25 +62,26 @@ For an existing model, preserve the old locked environment and a small set of it
 
 ### Covalent links, reaction states and unsupported chemistry
 
-Link processing checks both attachment atoms before resolving leaving groups and charges. Recognized explicit `struct_conn` bond orders are retained; missing orders are inferred from both component templates, including hydrogens, declared leaving groups and available valence. An unsupported explicit order raises instead of silently becoming a single bond. A double bond in one component's leaving group does not by itself authorize a double bond to the other component. For example, the O3′–P connection in `1dpn` is inferred as single, while subsequent sanitization can still reject an unspecified internal bond rearrangement.
+Link processing proposes connectivity, resolves the linked product, then validates its valence with RDKit. Recognized explicit `struct_conn` bond orders are retained; missing multiple-bond orders are constrained by both component templates. A candidate single bond is not rejected solely because an isolated CCD reactant is saturated: product formation may displace atoms or change internal bonds and charges. An unsupported explicit order raises instead of silently becoming a single bond. A double bond in one component's leaving group does not by itself authorize a double bond to the other component.
 
-Sequence adjacency also does not authorize arbitrary backbone chemistry. Polymer linking preserves an existing attachment to the adjacent residue, allows side-chain crosslinks alongside backbone bonds, and rejects competing backbone attachments or sites without available valence, a removable hydrogen or a declared leaving group. Metal coordination is excluded from covalent leaving-group removal and valence accounting; a coordination bond alone should not remove a donor's hydrogens or change its charge.
+Sequence adjacency also does not authorize arbitrary backbone chemistry. Polymer linking preserves an existing attachment to the adjacent residue and allows side-chain crosslinks alongside backbone bonds; the resulting product must still pass chemistry validation. Metal coordination is excluded from covalent leaving-group removal and valence accounting; a coordination bond alone should not remove a donor's hydrogens or change its charge.
 
 Selected alternate-location labels are retained through missing-atom rebuilding so that authored links remain associated with the selected reaction state. In `6dp5`, the B conformer retains an OP3–magnesium coordination contact, while C has the O3′–P covalent link; rebuilding must not combine these states. Distance filtering also recognizes authored glycosylation: links identified by a glycosylation role, or covalent links between carbohydrates, can be retained through 2.4 Å with a warning when above the usual threshold. This includes the 2.211 Å ASN–NAG link in `2odp`; it is not a general relaxation for every covalent link.
 
-Sanitization resolves supported hydrogen displacement and carbonyl addition, then validates the resulting valence. It can raise `ValueError` when the input does not determine a supported product, including additions across C=C/C=N bonds requiring unspecified bond-order/protonation changes, an ambiguous amide carbonyl retaining nitrogen, or a leaving-group substitution requiring an unspecified replacement double bond. Supply the product's component definitions and explicit connectivity/bond orders when required; do not treat disabling completion or ignoring the exception as a chemical repair. Custom components need consistent `chem_comp_atom` and `chem_comp_bond` definitions.
+Sanitization handles supported leaving-group substitution, addition across multiple bonds, hydrogen transfer, resonance changes and product charges while preserving observed atoms. Unsupported products still raise `ValueError`; for example, `1vq7` requires an invalid phosphorus bond-order sum of seven. Supply the product's component definitions and explicit connectivity/bond orders when required; do not treat disabling completion or ignoring the exception as a chemical repair. Custom components need consistent `chem_comp_atom` and `chem_comp_bond` definitions.
 
 Extend the migration set with cases that exercise these decisions:
 
 | Structures | Behavior to compare |
 |---|---|
-| `1rcq`, `1dpn` | Inferred link order from both partners; rejection of unspecified product bond rearrangements where applicable. |
+| `1rcq`, `1dpn` | Inferred link order and the resulting linked product's bond orders and valence. |
 | `3n95`, `4aah` | Sequence-defined terminal caps and coexistence of backbone bonds with side-chain crosslinks. |
 | `6dp5` | Conformer-specific covalent versus coordination links after rebuilding. |
 | `2odp` | Retention of an authored glycosylation link above the usual distance threshold. |
-| `1n4e`, `8qia`, `6n0a` | Unsupported or ambiguous product chemistry that requires an explicit definition. |
+| `1n4e`, `8qia`, `6n0a` | Thymine photodimer formation, addition across C=N with hydrogen transfer, and substitution of an unresolved ASN nitrogen. |
+| `6w13`, `1vq7` | Preservation of observed phosphate oxygen and rejection of an invalid phosphorus product. |
 
-Compare successful outputs and rejected inputs: matching atom counts alone do not establish matching bonds, charges, hydrogen counts or conformer annotations. [Link validation and resolution](https://github.com/RosettaCommons/atomworks/blob/b1c440e0b7b7e62c1cd6cd9bf337c9fc13d66c2a/src/atomworks/io/utils/link_chemistry.py), [bond and reaction-state tests](https://github.com/RosettaCommons/atomworks/blob/b1c440e0b7b7e62c1cd6cd9bf337c9fc13d66c2a/tests/io/utils/test_bond_utils.py), [rebuilding pipeline](https://github.com/RosettaCommons/atomworks/blob/b1c440e0b7b7e62c1cd6cd9bf337c9fc13d66c2a/src/atomworks/io/_pipeline.py).
+Compare successful outputs and rejected inputs: matching atom counts alone do not establish matching bonds, charges, hydrogen counts or conformer annotations. [Link validation and resolution](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/src/atomworks/io/utils/link_chemistry.py), [product regressions](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/tests/io/utils/test_link_product_regressions.py), [rebuilding pipeline](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/src/atomworks/io/_pipeline.py).
 
 ### Explicit protonation
 
@@ -106,9 +107,8 @@ masks after atom counts or ordering change. Unresolved atoms and metals marked
 `skip_hydrogen_placement` are not completed; unsupported geometry raises an error.
 A placement result is not evidence of downstream force-field parameter coverage.
 
-The legacy `atomworks.io.utils.protonation.ensure_hydrogens` remains available for
-compatibility. It strips input hydrogen-like atoms before rebuilding, so it is not
-a substitute when supplied hydrogen states or coordinates must be retained.
+The legacy `atomworks.io.utils.protonation.ensure_hydrogens` API is removed in 3.0.
+Use the experimental API above; dev’s protonation implementation is authoritative.
 
 See the [executed offline example](../auto_examples/plot_protonation) and the
 [current API](https://github.com/RosettaCommons/atomworks/tree/release/atomworks-3-0/src/atomworks/experimental/protonation).
