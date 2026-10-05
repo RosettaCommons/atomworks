@@ -350,6 +350,7 @@ def find_template_alignments(
     Args:
         sequences: Protein sequences to find template alignments for.
         template_dirs: Directories to search. Accepts:
+
             - None: No directories (all sequences reported missing).
             - list[PathLike]: Auto-assumes ``.m8`` / directory_depth=2 (matching
               `organize_template_alignments`'s defaults).
