@@ -66,9 +66,9 @@ jobs:
           core/bin/python -c "import importlib.util; assert importlib.util.find_spec('torch') is None"
           core/bin/python smoke.py
           core/bin/aw --help
-          for command in generate filter find organize; do
-            core/bin/aw msa "$command" --help
-          done
+          core/bin/aw msa --help
+          if core/bin/aw msa >msa.log 2>&1; then exit 1; fi
+          grep -F "pip install 'atomworks[ml]'" msa.log
 
   science:
     runs-on: ubuntu-latest
@@ -87,6 +87,9 @@ jobs:
           uv pip install --system torch --index-url https://download.pytorch.org/whl/cpu
           uv pip install --system '.[ml,dev,openbabel,ase]'
           uv pip check --system
+          for command in generate filter find organize; do
+            aw msa "$command" --help
+          done
       - run: ruff format --check . && ruff check src tests .github
       - name: Download public test fixtures
         run: |

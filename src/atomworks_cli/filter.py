@@ -7,6 +7,7 @@ from pathlib import Path
 import typer
 
 from atomworks.enums import MSAFileExtension
+from atomworks.ml.preprocessing.msa.filtering import HHFilterConfig, MSAFilterConfig, filter_msas
 
 from .common import enable_logging
 
@@ -93,9 +94,6 @@ def filter(
         atomworks msa filter "0*" ./filtered_msas --max-sequences 1000
         atomworks msa filter "*/msas" ./filtered_msas --max-sequences 1000
     """
-    # Keep CLI help available without the optional ML dependencies.
-    from atomworks.ml.preprocessing.msa.filtering import HHFilterConfig, MSAFilterConfig, filter_msas
-
     hhfilter_config = HHFilterConfig(
         max_sequences=max_sequences,
         max_identity_percent=max_identity,

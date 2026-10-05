@@ -59,7 +59,6 @@ from typing import Any, TypeVar
 import requests
 from tqdm import tqdm
 
-from atomworks.constants import DEFAULT_MSA_SERVER_URL
 from atomworks.enums import MSAFileExtension
 from atomworks.ml.preprocessing.msa.filtering import HHFilterConfig, MSAFilterConfig, filter_msas
 from atomworks.ml.preprocessing.msa.finding import find_msas, get_msa_dirs_from_env
@@ -67,6 +66,9 @@ from atomworks.ml.preprocessing.msa.organizing import MSAOrganizationConfig, org
 from atomworks.ml.utils.misc import hash_sequence
 
 logger = logging.getLogger(__name__)
+
+DEFAULT_MSA_SERVER_URL = "https://api.colabfold.com"
+"""Public ColabFold MMseqs2 API endpoint."""
 
 UNIREF_A3M_FILENAME = "uniref.a3m"
 """Name of the UniRef alignment inside the server's result tarball."""

@@ -8,7 +8,6 @@ from unittest.mock import MagicMock
 
 import pytest
 import requests
-import torch
 
 from atomworks.ml.preprocessing.msa import server
 
@@ -123,6 +122,7 @@ def test_csv_and_cli_dispatch_preserve_local_backends(tmp_path, monkeypatch, bac
 
     from atomworks.ml.preprocessing.msa import generating
     from atomworks_cli import generate
+    from atomworks_cli.__main__ import app
 
     csv = tmp_path / "sequences.csv"
     csv.write_text("seq\nAAA\nCCC\nAAA\n")
@@ -141,8 +141,8 @@ def test_csv_and_cli_dispatch_preserve_local_backends(tmp_path, monkeypatch, bac
         "mmseqs2_server": "make_msas_mmseqs_server",
     }
     if backend == "mmseqs2_server":
-        monkeypatch.setattr(torch.cuda, "is_available", lambda: pytest.fail("Remote path queried GPU"))
-    result = CliRunner().invoke(generate.app, [str(csv), str(tmp_path / "cli"), "--backend", backend])
+        monkeypatch.setattr(generate.torch.cuda, "is_available", lambda: pytest.fail("Remote path queried GPU"))
+    result = CliRunner().invoke(app, ["msa", "generate", str(csv), str(tmp_path / "cli"), "--backend", backend])
     assert result.exit_code == 0, result.output + repr(result.exception)
     assert len(calls) == 2
     for name, kwargs in calls:
