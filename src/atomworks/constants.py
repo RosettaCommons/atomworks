@@ -13,7 +13,7 @@ from toolz import keymap
 logger = logging.getLogger(__name__)
 
 DEFAULT_MSA_SERVER_URL: Final[str] = "https://api.colabfold.com"
-"""Public ColabFold MMseqs2 API endpoint."""
+"""Shared server/CLI default; importing it does not require optional ML dependencies."""
 
 
 def _load_env_var(var_name: str, default: str | bool | None = None) -> str | bool | None:

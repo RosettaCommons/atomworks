@@ -1,4 +1,4 @@
-"""Release checks use temporary files and never publish packages or documentation."""
+"""Check package contents, tag consistency, and docs promotion without publishing."""
 
 import json
 import sys

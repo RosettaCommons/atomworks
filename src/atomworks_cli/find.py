@@ -72,6 +72,7 @@ def find(
         # Find MSAs with custom MSA directories
         atomworks msa find sequences.csv --existing-msa-dirs /path/msa1,/path/msa2
     """
+    # Keep CLI help available without the optional ML dependencies.
     from atomworks.ml.preprocessing.msa.finding import find_msas
 
     enable_logging(verbose)

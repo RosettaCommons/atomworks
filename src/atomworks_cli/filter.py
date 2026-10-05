@@ -93,6 +93,7 @@ def filter(
         atomworks msa filter "0*" ./filtered_msas --max-sequences 1000
         atomworks msa filter "*/msas" ./filtered_msas --max-sequences 1000
     """
+    # Keep CLI help available without the optional ML dependencies.
     from atomworks.ml.preprocessing.msa.filtering import HHFilterConfig, MSAFilterConfig, filter_msas
 
     hhfilter_config = HHFilterConfig(

@@ -66,6 +66,9 @@ jobs:
           core/bin/python -c "import importlib.util; assert importlib.util.find_spec('torch') is None"
           core/bin/python smoke.py
           core/bin/aw --help
+          for command in generate filter find organize; do
+            core/bin/aw msa "$command" --help
+          done
 
   science:
     runs-on: ubuntu-latest
@@ -119,7 +122,7 @@ jobs:
           uv pip install --system '.[ml,docs,ase,openbabel]' -r docs/docs_requirements.txt
       - name: Build documentation and execute the offline example
         working-directory: docs
-        run: python -m sphinx --keep-going -b html . _build/html
+        run: make html
       - uses: actions/upload-artifact@v4
         with:
           name: documentation

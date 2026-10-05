@@ -130,6 +130,7 @@ def generate(
         # With custom parameters
         atomworks msa generate sequences.csv output_msas/ --gpu --max-final-sequences 5000 --threads 16
     """
+    # Keep CLI help available without the optional ML dependencies.
     import torch
 
     from atomworks.ml.preprocessing.msa.generating import (
