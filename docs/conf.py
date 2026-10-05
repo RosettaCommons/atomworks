@@ -55,6 +55,7 @@ html_theme_options = {
     "globaltoc_maxdepth": -1,  # Unlimited depth
     "header_links_before_dropdown": 8,
     "navbar_end": ["theme-switcher", "navbar-icon-links"],
+    "github_url": "https://github.com/" + os.environ.get("GITHUB_REPOSITORY", "RosettaCommons/atomworks"),
     "logo": {
         "image_light": "_static/atomworks_logo_light.svg",
         "image_dark": "_static/atomworks_logo_dark.svg",

@@ -74,3 +74,9 @@ For production use or training on the full PDB, you'll want complete mirrors rat
 * Setting up a full PDB mirror (~100 GB)
 * Setting up a CCD mirror (~2 GB)
 * Configuring environment variables for production use
+
+
+.. toctree::
+   :maxdepth: 1
+
+   migration/index
