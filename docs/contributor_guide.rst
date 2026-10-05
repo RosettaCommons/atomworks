@@ -105,8 +105,8 @@ One-time repository setup:
 - Configure the PyPI ``atomworks`` Trusted Publisher: owner ``RosettaCommons``,
   repository ``atomworks``, workflow ``release_and_docs.yaml``, environment ``pypi``.
 - Protect the ``pypi`` environment with reviewer approval and allow version tags.
-- Set GitHub Pages Source to **GitHub Actions** and allow version tags in
-  ``github-pages``. The workflow preserves versioned pages in ``gh-pages``.
+- Keep GitHub Pages Source as **Deploy from a branch**, using ``gh-pages`` and
+  ``/ (root)``. The workflow preserves versioned pages on that branch.
 
 For 3.0.0, merge the reviewed PRs, wait for CI on the final release commit, and
 confirm that ``project.version`` is ``3.0.0`` and the tag/PyPI version are unused.
