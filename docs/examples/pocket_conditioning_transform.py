@@ -29,7 +29,7 @@ This example demonstrates how to create custom Transform classes in AtomWorks us
 # Conventions
 # -----------
 # **A.** Store information in ``AtomArray`` annotations, not in the state dictionary.
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 # This ensures robustness when atoms are added/removed downstream.
 #
@@ -39,7 +39,7 @@ This example demonstrates how to create custom Transform classes in AtomWorks us
 # - ❌ Store ``pocket_atom_indices`` in dictionary (which creates significant dependencies with operations that delete or re-order atoms)
 #
 # **B.** Within ``forward()``, call a stand-alone function with the same name as the transform class.
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 # We thus maintain an object-oriented and a functional API, making our core logic re-usable and testable outside of the ``Transform`` framework.
 #

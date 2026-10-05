@@ -290,7 +290,7 @@ AF2_ATOM14_ENCODING = TokenEncoding(
 """AF2's atom14 encoding.
 
 Reference:
-    `AlphaFold residue_constants.py <https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/common/residue_constants.py#L505>`_
+    `AlphaFold residue_constants.py <https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/common/residue_constants.py#L505>`__
 """
 
 AF2_ATOM37_ENCODING = TokenEncoding(
@@ -328,7 +328,7 @@ AF2_ATOM37_WITH_ATOMIZATION = TokenEncoding(
 """AF2's atom37 encoding with atomization support.
 
 Reference:
-    `AlphaFold residue_constants.py <https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/common/residue_constants.py#L492-L544>`_
+    `AlphaFold residue_constants.py <https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/common/residue_constants.py#L492-L544>`__
 """
 
 # fmt: off
@@ -437,9 +437,10 @@ UNIFIED_ATOM37_ENCODING = TokenEncoding(
 """Unified atom37 encoding for all token types in ConditionalResidueTypeSeqFeat.
 
 Provides a comprehensive 37-slot encoding that encompasses:
+
 - Class 0: MASK token (special masking token)
 - Classes 1-20: Standard amino acids (ALA, ARG, ASN, ASP, CYS, GLN, GLU, GLY, HIS, ILE,
-                LEU, LYS, MET, PHE, PRO, SER, THR, TRP, TYR, VAL)
+  LEU, LYS, MET, PHE, PRO, SER, THR, TRP, TYR, VAL)
 - Class 21: UNK (unknown amino acid)
 - Classes 22-25: RNA nucleotides (A, C, G, U)
 - Class 26: N (unknown RNA)
@@ -454,10 +455,14 @@ in a single representation space.
 
 Usage:
     UNIFIED_ATOM37_ENCODING serves as the single source of truth for:
+
     - Atom37 layout operations (coordinate processing):
+
         * atom_array_to_encoding() / atom_array_from_encoding()
         * Converting between AtomArray and atom37 coordinate tensors
+
     - Sequence encoding operations (residue type indices):
+
         * Use UNIFIED_ATOM37_ENCODING.token_to_idx to encode residue names
         * Use UNIFIED_ATOM37_ENCODING.idx_to_token to decode indices
 """
@@ -768,14 +773,16 @@ RF2AA_ATOM36_ENCODING = TokenEncoding(
     ),
 )
 """RF2AA all atom encoding for proteins, nucleic acids and various other elements
-    - Encodes heavy atoms and hydrogens (max 36 in total)
-    - Includes 3 unknown tokens: `UNK` for proteins, `DN` for dna, `N` for RNA
-    - Covers:
-        - 20 amino acids (+ unknown, + mask),
-        - 4  DNA bases (+ unknown),
-        - 4  RNA bases (+ unknown),
-        - 1  outdated histindine token `HIS_D`
-        - 45 atom tokens (+ unknown)
+
+- Encodes heavy atoms and hydrogens (max 36 in total)
+- Includes 3 unknown tokens: `UNK` for proteins, `DN` for dna, `N` for RNA
+- Covers:
+
+    - 20 amino acids (+ unknown, + mask),
+    - 4  DNA bases (+ unknown),
+    - 4  RNA bases (+ unknown),
+    - 1  outdated histindine token `HIS_D`
+    - 45 atom tokens (+ unknown)
 """
 # fmt: on
 

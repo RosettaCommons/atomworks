@@ -1,5 +1,5 @@
 MSA Transforms
-=============
+==============
 
 This module contains transformations for multiple sequence alignment (MSA) tasks.
 

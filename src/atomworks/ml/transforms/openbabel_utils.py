@@ -159,7 +159,7 @@ def atom_array_to_openbabel(
             print(f"Number of atoms: {obmol.NumAtoms()}")
             # Number of atoms: 5
             # Print atom information
-            print("\nAtom information:")
+            print("\\nAtom information:")
             for atom in openbabel.OBMolAtomIter(obmol):
                 print(
                     f"Atomic number: {atom.GetAtomicNum()}, Coordinates: ({atom.GetX():.1f}, {atom.GetY():.1f}, {atom.GetZ():.1f})"
