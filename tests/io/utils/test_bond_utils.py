@@ -312,19 +312,19 @@ def test_rebuilding_preserves_reaction_state_links(altloc, add_missing_atoms):
 @pytest.mark.parametrize(
     "residues,names,elements,expected_order",
     [
-        (("LYS", "FMT"), ("NZ", "C"), ("N", "C"), BondType.SINGLE),
-        (("DLY", "PLP"), ("NZ", "C4A"), ("N", "C"), BondType.DOUBLE),
+        (("LYS", "FMT"), ("NZ", "C"), ("N", "C"), BondType.ANY),
+        (("DLY", "PLP"), ("NZ", "C4A"), ("N", "C"), BondType.ANY),
         (("CYS", "ZN"), ("SG", "ZN"), ("S", "ZN"), BondType.COORDINATION),
-        (("VAL", "VAL"), ("C", "HXT"), ("C", "H"), BondType.SINGLE),
-        (("VAL", "VAL"), ("C", "Q1"), ("C", "D"), BondType.SINGLE),
-        (("VAL", "VAL", "VAL"), ("C", "HXT", "C"), ("C", "H", "C"), None),
-        (("UNK", "UNK"), ("H1", "H2"), ("H", "H"), BondType.SINGLE),
-        (("UNK", "UNK", "UNK"), ("H1", "H2", "H3"), ("H", "H", "H"), None),
-        (("UNK", "UNK"), ("X1", "X2"), ("C", "C"), None),
+        (("VAL", "VAL"), ("C", "HXT"), ("C", "H"), BondType.ANY),
+        (("VAL", "VAL"), ("C", "Q1"), ("C", "D"), BondType.ANY),
+        (("VAL", "VAL", "VAL"), ("C", "HXT", "C"), ("C", "H", "C"), BondType.ANY),
+        (("UNK", "UNK"), ("H1", "H2"), ("H", "H"), BondType.ANY),
+        (("UNK", "UNK", "UNK"), ("H1", "H2", "H3"), ("H", "H", "H"), BondType.ANY),
+        (("UNK", "UNK"), ("X1", "X2"), ("C", "C"), BondType.ANY),
     ],
 )
-def test_minimal_pdb_resolves_conect_orders_from_chemistry(residues, names, elements, expected_order):
-    """PDB CONECT gives topology; CCD chemistry supplies link order when known."""
+def test_minimal_pdb_preserves_conect_connectivity_and_unknown_orders(residues, names, elements, expected_order):
+    """Preserve CONECT links without chemistry inference; metals retain coordination typing."""
     atoms = AtomArray(len(elements))
     atoms.chain_id = ["A", "B", "C"][: len(atoms)]
     atoms.res_id[:] = 1
@@ -341,12 +341,10 @@ def test_minimal_pdb_resolves_conect_orders_from_chemistry(residues, names, elem
     assert "CONECT" in buffer.getvalue()
     buffer.seek(0)
     config = ParseConfig.from_preset("minimal", file_type="pdb", model=1, build_assembly=None)
-    if expected_order is None:
-        with pytest.raises(ValueError, match="Cannot infer link order"):
-            parse(buffer, config=config)
-        return
     parsed = parse(buffer, config=config)["asym_unit"][0]
-    np.testing.assert_array_equal(parsed.bonds.as_array(), [[0, 1, expected_order]])
+    # Even unusual hydrogen connectivity is preserved rather than validated or repaired.
+    expected_bonds = [[i, i + 1, expected_order] for i in range(len(atoms) - 1)]
+    np.testing.assert_array_equal(parsed.bonds.as_array(), expected_bonds)
     np.testing.assert_array_equal(parsed.coord, atoms.coord)
 
 
