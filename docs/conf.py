@@ -48,7 +48,9 @@ extensions = [
     "sphinx_design",  # Render collapsible tutorial code examples
 ]
 
-myst_heading_anchors = 3
+myst_heading_anchors = 4
+napoleon_use_ivar = True
+html_favicon = "_static/favicon-32x32.png"
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "examples/GALLERY_HEADER.rst", "ml/preprocessing.rst"]
@@ -78,18 +80,6 @@ html_theme_options = {
         "json_url": "https://rosettacommons.github.io/atomworks/latest/_static/switcher.json",
         "version_match": switcher_version,
     },
-    "favicons": [
-        {
-            "rel": "icon",
-            "sizes": "16x16",
-            "href": "favicon-16x16.png",
-        },
-        {
-            "rel": "icon",
-            "sizes": "32x32",
-            "href": "favicon-32x32.png",
-        },
-    ],
 }
 
 sphinx_gallery_conf = {

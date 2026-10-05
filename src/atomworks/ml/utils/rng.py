@@ -69,6 +69,7 @@ def rng_state(
             If no rng_state_dict is provided, the RNG states are set to the current state of the RNGs. If the
             rng_state_dict only contains a subset of the RNG states, the other RNG states are set to the current
             state of the RNGs.
+
         include_cuda: Whether to allow this function to also control the torch.cuda random number generator.
             Set this to False when using the function in a forked process where CUDA re-initialization is
             prohibited. Defaults to True.
@@ -86,7 +87,7 @@ def rng_state(
             # Inside the context manager with fixed seeds
             with rng_state(create_rng_state_from_seeds(np_seed=42, torch_seed=42, py_seed=42)) as rng_state_dict:
                 my_state = serialize_rng_state_dict(rng_state_dict)
-                print("\nWithin context manager:")
+                print("\\nWithin context manager:")
                 print("NumPy:", np.random.random(3))  # [0.37454012 0.95071431 0.73199394]
                 print("PyTorch:", torch.rand(3))  # tensor([0.8823, 0.9150, 0.3829])
                 print(
@@ -94,7 +95,7 @@ def rng_state(
                 )  # [0.6394267984578837, 0.025010755222666936, 0.27502931836911926]
 
             # Back to the original state outside the context manager
-            print("\nBack outside the context manager:")
+            print("\\nBack outside the context manager:")
             print("NumPy:", np.random.random(3))  # [0.75479377 0.99594641 0.70411424]
             print("PyTorch:", torch.rand(3))  # tensor([0.2757, 0.5345, 0.1754])
             print(
@@ -103,7 +104,7 @@ def rng_state(
 
             # Inside the context manager with fixed seeds
             with rng_state(eval(my_state)):
-                print("\nWithin context manager:")
+                print("\\nWithin context manager:")
                 print("NumPy:", np.random.random(3))  # [0.37454012 0.95071431 0.73199394]
                 print("PyTorch:", torch.rand(3))  # tensor([0.8823, 0.9150, 0.3829])
                 print(
