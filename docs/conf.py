@@ -48,12 +48,12 @@ extensions = [
     "sphinx_design",  # Render collapsible tutorial code examples
 ]
 
-myst_heading_anchors = 4
-napoleon_use_ivar = True
+myst_heading_anchors = 3
 html_favicon = "_static/favicon-32x32.png"
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "examples/GALLERY_HEADER.rst", "ml/preprocessing.rst"]
+napoleon_use_ivar = True
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
