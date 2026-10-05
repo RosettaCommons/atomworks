@@ -27,6 +27,7 @@ extensions = [
     "sphinx.ext.viewcode",  # Add source code links
     "sphinx.ext.napoleon",  # Google/NumPy style docstrings
     "sphinx_gallery.gen_gallery",  # Generates auto_examples/ from examples/
+    "sphinxcontrib.typer",
     "myst_parser",  # Support Markdown tutorial pages
     "sphinx_design",  # Render collapsible tutorial code examples
 ]
@@ -35,7 +36,7 @@ myst_heading_anchors = 3
 html_favicon = "_static/favicon-32x32.png"
 
 templates_path = ["_templates"]
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "examples/GALLERY_HEADER.rst", "ml/preprocessing.rst"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "examples/GALLERY_HEADER.rst"]
 napoleon_use_ivar = True
 
 # -- Options for HTML output -------------------------------------------------

@@ -27,3 +27,4 @@ Welcome to **atomworks** — a toolkit for converting, parsing, and manipulating
    auto_examples/index
    contributor_guide
    mirrors
+   msa
