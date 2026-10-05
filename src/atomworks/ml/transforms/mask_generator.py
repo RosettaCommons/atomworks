@@ -20,9 +20,9 @@ from scipy.spatial import KDTree
 from atomworks.common import exists
 from atomworks.constants import STANDARD_AA_TIP_ATOM_NAMES
 from atomworks.enums import ChainType
-from atomworks.io.utils.atom_array import apply_and_spread
 from atomworks.io.utils.bonds import _atom_array_to_networkx_graph
 from atomworks.io.utils.query import QueryExpression
+from atomworks.io.utils.scatter import apply_and_spread_segment_wise
 from atomworks.io.utils.selection import annot_start_stop_idxs
 from atomworks.ml.utils.token import get_token_starts
 
@@ -62,7 +62,7 @@ class SampleSeed(abc.ABC):
     def _get_already_sampled(self, atom_array: AtomArray, total_mask: np.ndarray) -> np.ndarray:
         if exists(self.avoid_same):
             segments = annot_start_stop_idxs(atom_array, annots=self.avoid_same, add_exclusive_stop=True)
-            already_sampled = apply_and_spread(segments, total_mask, np.any)
+            already_sampled = apply_and_spread_segment_wise(segments, total_mask, np.any)
         else:
             already_sampled = total_mask
         return already_sampled
@@ -286,7 +286,7 @@ class GrowToSegment(GrowMask):
         )
         atom_mask = np.zeros(atom_array.array_length(), dtype=bool)
         atom_mask[seed_idx] = True
-        atom_mask = apply_and_spread(segment_start_stop_idxs, atom_mask, np.any)
+        atom_mask = apply_and_spread_segment_wise(segment_start_stop_idxs, atom_mask, np.any)
         return atom_mask
 
 
@@ -687,7 +687,7 @@ class CheckResidueBudget(CheckBudget):
         n_res = len(res_starts) - 1
         assert self.n_min_residues <= n_res, f"Can never satisfy budget with {self.n_min_residues=}<= {n_res=}"
 
-        res_mask_atom_lvl = apply_and_spread(res_starts, total_mask, self.reduce)
+        res_mask_atom_lvl = apply_and_spread_segment_wise(res_starts, total_mask, self.reduce)
         res_mask_res_lvl = res_mask_atom_lvl[res_starts[:-1]]
         n_selected_res = res_mask_res_lvl.sum()
         if n_selected_res < self.n_min_residues:
@@ -713,7 +713,7 @@ class CheckTokenBudget(CheckBudget):
         n_tokens = len(token_starts)
         assert self.n_min_tokens <= n_tokens, f"Can never satisfy budget with {self.n_min_tokens=}<= {n_tokens=}"
 
-        token_mask_atom_lvl = apply_and_spread(token_starts, total_mask, np.any)
+        token_mask_atom_lvl = apply_and_spread_segment_wise(token_starts, total_mask, np.any)
         token_mask_token_lvl = token_mask_atom_lvl[token_starts[:-1]]
         n_selected_tokens = token_mask_token_lvl.sum()
         if n_selected_tokens < self.n_min_tokens:

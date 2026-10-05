@@ -44,6 +44,9 @@ def mask_residues_with_specific_unresolved_atoms(
     Returns:
         AtomArray: The modified atom array.
     """
+    # Early return for empty arrays
+    if len(atom_array) == 0:
+        return atom_array
 
     # Use default AF-3 frame atoms if not specified
     if chain_type_to_atom_names is None:

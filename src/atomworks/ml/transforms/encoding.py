@@ -24,30 +24,50 @@ from atomworks.ml.transforms._checks import (
     check_is_instance,
     check_nonzero_length,
 )
-from atomworks.ml.transforms.atom_array import get_within_entity_idx
+from atomworks.ml.transforms.atom_array import (
+    add_global_token_id_annotation,
+    get_within_entity_idx,
+)
 from atomworks.ml.transforms.base import Transform
 from atomworks.ml.utils.token import get_token_count, get_token_starts, token_iter
 
 logger = getLogger(__name__)
 
 
+def _resolve_atom_token_name(atom_array: AtomArray, atomize_token: str | None, atom_index: int = 0) -> str | int:
+    """Resolve the token name for the atom at ``atom_index``.
+
+    If *atomize_token* is provided, uses that literal string.  Otherwise
+    falls back to the atom's ``atomic_number`` annotation or an
+    element-name lookup via :data:`ELEMENT_NAME_TO_ATOMIC_NUMBER`.
+    """
+    if atomize_token is not None:
+        return atomize_token
+    if "atomic_number" in atom_array.get_annotation_categories():
+        return atom_array.atomic_number[atom_index]
+    return ELEMENT_NAME_TO_ATOMIC_NUMBER[atom_array.element[atom_index].upper()]
+
+
 def atom_array_to_encoded_resnames(
     atom_array: AtomArray,
     encoding: TokenEncoding,
-    atomize_token: str = "<A>",
+    atomize_token: str | None = None,
+    res_names: np.ndarray | None = None,
 ) -> np.ndarray:
     """Encode residue types from an AtomArray.
 
     Encodes at token level, then spreads to atom level for efficiency.
     Handles proteins, DNA, RNA, atomized residues (ligands, ions), and unknown tokens.
 
-    For atomized residues, uses the atomize_token.
+    For atomized residues, uses the atomize_token if provided. If None, uses atomic number tokens.
     For masked/to-be-generated residues, use the `<M>` (mask) token.
 
     Args:
         atom_array: AtomArray with token_id annotation.
         encoding: TokenEncoding defining the mapping (e.g., UNIFIED_ATOM37_ENCODING).
-        atomize_token: Token to use for atomized residues. Defaults to `<A>`.
+        atomize_token: Token to use for atomized residues. If None, uses atomic number tokens.
+        res_names: Optional [n_atoms] residue-name source overriding ``atom_array.res_name`` (e.g. a
+            conditioning annotation). Atomized tokens are unaffected.
 
     Returns:
         Array of token type indices with shape [n_atoms], where each index
@@ -61,24 +81,26 @@ def atom_array_to_encoded_resnames(
     n_tokens = get_token_count(atom_array)
     token_encoded_seq = np.empty(n_tokens, dtype=int)
 
-    # Check if atom array has atomize annotation
-    has_atomize = "atomize" in atom_array.get_annotation_categories()
-
+    # ensure that atomize annotation exists
+    assert "atomize" in atom_array.get_annotation_categories(), "Atomize annotation is required for encoding"
+    source = atom_array.res_name if res_names is None else res_names
+    token_starts = get_token_starts(atom_array)
+    token_res_name = source[token_starts]
     # Iterate over tokens and encode token names (token-level encoding)
-    for i, token in enumerate(token_iter(atom_array)):
-        # Case 1: atomized tokens (ligands, ions) or single-atom tokens
-        # Use atomize_token
-        if (has_atomize and token.atomize[0]) or len(token) == 1:
-            token_name = atomize_token
+    for i, start in enumerate(token_starts):
+        # Case 1: atomized tokens (ligands, ions)
+        if atom_array.atomize[start]:
+            token_is_atom = True
+            token_name = _resolve_atom_token_name(atom_array, atomize_token, start)
 
         # Case 2: residue tokens (proteins, DNA, RNA)
         # Use res_name as token identifier
         else:
-            token_name = token.res_name[0]
+            token_name = token_res_name[i]
+            token_is_atom = False
 
         # Resolve unknown tokens (e.g., UNK for unknown AA, N for unknown RNA, DN for unknown DNA)
         if token_name not in encoding.token_to_idx:
-            token_is_atom = (has_atomize and token.atomize[0]) or len(token) == 1
             token_name = encoding.resolve_unknown_token_name(token_name, token_is_atom)
             assert token_name in encoding.token_to_idx, f"Unknown token name: {token_name}"
 
@@ -102,6 +124,8 @@ def atom_array_to_encoding(
         "transformation_id",
     ],
     coord_annotation: str = "coord",
+    atomize_token: str | None = None,
+    atomize_atom_name: str | None = None,
 ) -> dict:
     """
     Encode an atom array using a specified `TokenEncoding`.
@@ -117,7 +141,6 @@ def atom_array_to_encoding(
           the atom array has the `atomize` annotation, in which case the number of tokens may exceed the
           number of residues.
 
-    TODO: Refactor so that `atom_array_to_encoding` uses `atom_array_to_encoded_resnames` internally.
     TODO: Vectorize
 
     Args:
@@ -136,6 +159,8 @@ def atom_array_to_encoding(
           ["chain_id", "chain_entity", "molecule_iid", "chain_iid", "transformation_id"].
         - coord_annotation (str, optional): The annotation of the AtomArray containing the coordinates to encode.
           Defaults to "coord".
+        - atomize_token (str | None, optional): Token to use for atomized residues. If None, uses atomic numbers.
+        - atomize_atom_name (str | None, optional): Atom name to use for atomized residues when atomize_token is set.
 
     Returns:
         - dict: A dictionary containing the following keys:
@@ -166,6 +191,15 @@ def atom_array_to_encoding(
     encoded_seq = np.empty(n_token, dtype=int)  # [n_token] (int)
     encoded_token_is_atom = np.empty(n_token, dtype=bool)  # [n_token] (bool)
 
+    if atomize_token is not None:
+        if "atomize" not in atom_array.get_annotation_categories():
+            atom_array.set_annotation("atomize", np.zeros(atom_array.array_length(), dtype=bool))
+        if "token_id" not in atom_array.get_annotation_categories():
+            atom_array = add_global_token_id_annotation(atom_array)
+        token_starts = get_token_starts(atom_array, add_exclusive_stop=False)
+        atom_level_encoded_seq = atom_array_to_encoded_resnames(atom_array, encoding, atomize_token=atomize_token)
+        encoded_seq = atom_level_encoded_seq[token_starts]
+
     # init additional annotation
     extra_annot_counters = {}
     extra_annot_encoded = {}
@@ -181,12 +215,8 @@ def atom_array_to_encoding(
         # ... extract token name
         # ... case 1: atom tokens (e.g. 6 - for carbon)
         if (has_atomize and token.atomize[0]) or len(token) == 1:
-            token_name = (
-                token.atomic_number[0]
-                if "atomic_number" in token.get_annotation_categories()
-                else ELEMENT_NAME_TO_ATOMIC_NUMBER[token.element[0].upper()]
-            )
             token_is_atom = True
+            token_name = _resolve_atom_token_name(token, atomize_token)
         # ... case 2: residue tokens (e.g. "ALA")
         else:
             token_name = token.res_name[0]
@@ -197,14 +227,18 @@ def atom_array_to_encoding(
             assert token_name in encoding.token_to_idx, f"Unknown token name: {token_name}"
 
         # Encode sequence
-        encoded_seq[i] = encoding.token_to_idx[token_name]
+        if atomize_token is None:
+            encoded_seq[i] = encoding.token_to_idx[token_name]
 
         # Encode if token is an `atom-level` token or a `residue-level` token
         encoded_token_is_atom[i] = token_is_atom
 
         # Encode coords
         for atom in token:
-            atom_name = str(token_name) if token_is_atom else atom.atom_name
+            if token_is_atom and atomize_token is not None:
+                atom_name = atomize_atom_name if atomize_atom_name is not None else "X"
+            else:
+                atom_name = str(token_name) if token_is_atom else atom.atom_name
             # (token_name, atom_name) is e.g.
             #  ... ('ALA', 'CA') if  token_is_atom=False
             #  ... ('UNK', whatever) if token_is_atom=False but we had to resolve an unknown token
@@ -214,7 +248,7 @@ def atom_array_to_encoding(
             if (token_name, atom_name) in encoding.atom_to_idx:
                 to_idx = encoding.atom_to_idx[(token_name, atom_name)]
                 encoded_coord[i, to_idx, :] = getattr(atom, coord_annotation)
-                encoded_mask[i, to_idx] = atom.occupancy > occupancy_threshold
+                encoded_mask[i, to_idx] = getattr(atom, "occupancy", 1.0) > occupancy_threshold
 
             # ... case 2: atom name does not exist for token, but token is an `unknown` token,
             #  so it's `ok` to not match
@@ -395,6 +429,8 @@ class EncodeAtomArray(Transform):
             "transformation_id",
         ],
         coord_annotation: str = "coord",
+        atomize_token: str | None = None,
+        atomize_atom_name: str | None = None,
     ):
         """
         Convert an atom array to an encoding.
@@ -409,7 +445,10 @@ class EncodeAtomArray(Transform):
                 of a given `id` will be encoded as `0`, and each subsequent occurrence will be encoded as `1`, `2`, etc.
                 Defaults to ["chain_id", "chain_entity", "molecule_iid", "chain_iid", "transformation_id"].
             - `coord_annotation` (str, optional): The annotation of the AtomArray containing the coordinates to encode.
-                Defaults to "coord," but in same cases we may want to use a different annotation (e.g., if we imputed coordinates)
+                Defaults to "coord," but in same cases we may want to use a different annotation (e.g., if we imputed coordinates).
+            - `atomize_token` (str | None, optional): Token to use for atomized residues. If None, uses atomic number tokens.
+            - `atomize_atom_name` (str | None, optional): Atom name to use for atomized residues when `atomize_token` is set.
+                Typically set alongside `atomize_token`. If `atomize_token` is None, this argument is ignored.
         """
         if not isinstance(encoding, TokenEncoding):
             raise ValueError(f"Encoding must be a `TokenEncoding`, but got: {type(encoding)}.")
@@ -418,6 +457,8 @@ class EncodeAtomArray(Transform):
         self.occupancy_threshold = occupancy_threshold
         self.extra_annotations = extra_annotations
         self.coord_annotation = coord_annotation
+        self.atomize_token = atomize_token
+        self.atomize_atom_name = atomize_atom_name
 
     def check_input(self, data: dict[str, Any]) -> None:
         required = ["occupancy", *([self.coord_annotation] if self.coord_annotation not in (None, "coord") else [])]
@@ -433,6 +474,8 @@ class EncodeAtomArray(Transform):
             occupancy_threshold=self.occupancy_threshold,
             extra_annotations=self.extra_annotations,
             coord_annotation=self.coord_annotation,
+            atomize_token=self.atomize_token,
+            atomize_atom_name=self.atomize_atom_name,
         )
 
         data["encoded"] = encoded
@@ -527,24 +570,32 @@ class EncodeAF3TokenLevelFeatures(Transform):
 
     Reference:
         `Section 2.8 of the AF3 supplementary (Table 5) <https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf>`_
+
+    Note:
+        When ``use_source_residue_index=True``,
+        :class:`~atomworks.ml.transforms.atom_array.AddWithinChainSourceResIdx` must run
+        earlier in the pipeline so the ``within_chain_source_res_idx`` annotation is present.
     """
 
-    def __init__(self, sequence_encoding: AF3SequenceEncoding):
+    def __init__(self, sequence_encoding: AF3SequenceEncoding, use_source_residue_index: bool = False):
         self.sequence_encoding = sequence_encoding
+        # If False (default): use within_chain_res_idx (np.arange per chain, gap-blind).
+        # If True: derive residue_index from res_id to preserve gap spacing.
+        self.use_source_residue_index = use_source_residue_index
 
     def check_input(self, data: dict[str, Any]) -> None:
         check_contains_keys(data, ["atom_array"])
         check_is_instance(data, "atom_array", AtomArray)
-        check_atom_array_annotation(
-            data,
-            [
-                "atomize",
-                "pn_unit_iid",
-                "chain_entity",
-                "res_name",
-                "within_chain_res_idx",
-            ],
-        )
+        required_annotations = [
+            "atomize",
+            "pn_unit_iid",
+            "chain_entity",
+            "res_name",
+            "within_chain_res_idx",
+        ]
+        if self.use_source_residue_index:
+            required_annotations.append("within_chain_source_res_idx")
+        check_atom_array_annotation(data, required_annotations)
 
     def forward(self, data: dict[str, Any]) -> dict[str, Any]:
         atom_array = data["atom_array"]
@@ -554,7 +605,11 @@ class EncodeAF3TokenLevelFeatures(Transform):
 
         # ... identifier tokens
         # ... (residue)
-        residue_index = token_level_array.within_chain_res_idx
+        if self.use_source_residue_index:
+            # gap-aware: relpos diffs > 1 across internal res_id gaps
+            residue_index = token_level_array.within_chain_source_res_idx
+        else:
+            residue_index = token_level_array.within_chain_res_idx
         # ... (token)
         token_index = np.arange(len(token_starts))
         # ... (chain instance)

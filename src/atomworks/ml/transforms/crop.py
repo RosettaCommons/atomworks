@@ -1,5 +1,6 @@
 import itertools
 import logging
+import warnings
 from typing import ClassVar
 
 import numpy as np
@@ -27,32 +28,145 @@ logger = logging.getLogger("atomworks.ml")
 
 
 class CropTransformBase(Transform):
-    """
-    Base class for crop-type transforms.
-    """
+    """Base for crops that record retained source indices in ``crop_info["crop_atom_idxs"]``."""
 
-    def __init__(self, annotate_crop_boundary: bool = False, crop_boundary_radius: float = 6.0, **kwargs):
+    def __init__(
+        self,
+        crop_size: int | None = None,
+        crop_size_range: tuple[int, int] | tuple[float, float] | None = None,
+        max_crop_size: int | None = None,
+        p_no_subcrop: float = 0.0,
+        annotate_crop_boundary: bool = False,
+        crop_boundary_radius: float = 6.0,
+        **kwargs,
+    ):
+        self.crop_size = crop_size
+        self.crop_size_range = crop_size_range
+        self.max_crop_size = max_crop_size
+        self.p_no_subcrop = p_no_subcrop
         self.annotate_crop_boundary = annotate_crop_boundary
         self.crop_boundary_radius = crop_boundary_radius
 
     def _validate(self) -> None:
-        assert self.crop_size > 0, "Crop size must be greater than 0"
+        _validate_crop_size_spec(self.crop_size, self.crop_size_range, self.max_crop_size)
+
+    def _resolve_crop_size(self, reference_length: int | None = None) -> int:
+        """Resolve the crop size to use for this call (see `sample_dynamic_crop_size`)."""
+        return sample_dynamic_crop_size(
+            self.crop_size,
+            self.crop_size_range,
+            reference_length=reference_length,
+            max_crop_size=self.max_crop_size,
+            p_no_subcrop=self.p_no_subcrop,
+        )
 
     def __call__(self, data: dict) -> dict:
         if self.annotate_crop_boundary:
-            atom_array = data["atom_array"]
-            atom_array.set_annotation("precrop_hash", compute_local_hash(atom_array, self.crop_boundary_radius))
+            uncropped = data["atom_array"]
 
         data = super().__call__(data)
 
-        if self.annotate_crop_boundary:
+        # Crops return a sliced array; validation skips preserve the input object.
+        if self.annotate_crop_boundary and data["atom_array"] is not uncropped:
             atom_array = data["atom_array"]
-            postcrop_hash = compute_local_hash(atom_array, self.crop_boundary_radius)
-            atom_array.set_annotation("at_crop_boundary", atom_array.precrop_hash != postcrop_hash)
-            # ... delete the precrop hash
-            atom_array.del_annotation("precrop_hash")
+            removed = ~is_any_coord_nan(uncropped)
+            removed[data["crop_info"]["crop_atom_idxs"]] = False
+            at_boundary = np.zeros(len(atom_array), dtype=bool)
+            if removed.any():
+                # A retained atom is at the boundary exactly when it has a removed neighbor within the radius.
+                valid = ~is_any_coord_nan(atom_array)
+                tree = KDTree(uncropped.coord[removed])
+                at_boundary[valid] = (
+                    tree.query_ball_point(atom_array.coord[valid], r=self.crop_boundary_radius, return_length=True) > 0
+                )
+            atom_array.set_annotation("at_crop_boundary", at_boundary)
 
         return data
+
+
+def _validate_crop_size_spec(
+    crop_size: int | None,
+    crop_size_range: tuple[int, int] | tuple[float, float] | None,
+    max_crop_size: int | None,
+) -> None:
+    """Validate the combination of `crop_size` and `crop_size_range` (see `sample_dynamic_crop_size`)."""
+    if not exists(crop_size_range):
+        assert crop_size is not None, "Either crop_size or crop_size_range must be set"
+        assert crop_size > 0, "Crop size must be greater than 0"
+        return
+
+    assert crop_size is None, "crop_size must be None when crop_size_range is set, to avoid ambiguity"
+    assert len(crop_size_range) == 2, f"crop_size_range must be a (min, max) pair, got {crop_size_range}"
+    lo, hi = crop_size_range
+    assert type(lo) is type(hi) and isinstance(
+        lo, int | float
+    ), f"crop_size_range must be a pair of the same type (both int or both float), got {crop_size_range}"
+    assert 0 < lo <= hi, f"crop_size_range must be (min, max) with 0 < min <= max, got {crop_size_range}"
+
+    if exists(max_crop_size):
+        assert max_crop_size > 0, f"max_crop_size must be greater than 0, got {max_crop_size}"
+
+    if isinstance(lo, float):
+        assert hi <= 1.0, f"crop_size_range fractions must be in (0, 1], got {crop_size_range}"
+        assert exists(
+            max_crop_size
+        ), "max_crop_size must be set when crop_size_range is fraction-based, to bound the sampled crop size"
+    elif exists(max_crop_size):
+        assert max_crop_size >= lo, (
+            f"max_crop_size ({max_crop_size}) must be >= crop_size_range's lower bound ({lo}), otherwise the "
+            "sampled crop size would always be clamped below the configured range"
+        )
+
+
+def sample_dynamic_crop_size(
+    crop_size: int | None,
+    crop_size_range: tuple[int, int] | tuple[float, float] | None,
+    reference_length: int | None = None,
+    max_crop_size: int | None = None,
+    p_no_subcrop: float = 0.0,
+) -> int:
+    """Resolve the crop size to use, optionally sampling uniformly from `crop_size_range`.
+
+    Args:
+        crop_size: The fixed crop size to use when `crop_size_range` is not given. Must be `None`
+            when `crop_size_range` is given.
+        crop_size_range: An inclusive ``(min, max)`` range to sample the crop size from uniformly.
+            Either a pair of absolute token counts (``int``), or a pair of fractions (``float``,
+            in ``(0, 1]``) of `reference_length`. Fraction-based ranges require both
+            `reference_length` and `max_crop_size` to be set, so the sampled crop size cannot grow
+            unboundedly with the size of the structure.
+        reference_length: The length (e.g. total number of tokens) used to resolve a
+            fraction-based `crop_size_range`.
+        max_crop_size: Upper bound applied to the sampled crop size. Required when
+            `crop_size_range` is fraction-based.
+        p_no_subcrop: Probability of returning the full budget (`max_crop_size`) instead of
+            sampling `crop_size_range` -- no sub-crop this call. Only used with `crop_size_range`.
+
+    Returns:
+        The concrete crop size to use for this call.
+    """
+    if not exists(crop_size_range):
+        return crop_size
+
+    # Skip the sub-crop this call: return the full budget (a no-op when the structure fits).
+    if p_no_subcrop > 0.0 and np.random.random() < p_no_subcrop:
+        return max_crop_size if exists(max_crop_size) else int(crop_size_range[1])
+
+    lo, hi = crop_size_range
+
+    if isinstance(lo, float):
+        assert exists(reference_length), "reference_length must be provided when crop_size_range is fraction-based"
+        lo, hi = lo * reference_length, hi * reference_length
+
+    # ... sample uniformly among the integers in the inclusive [lo, hi] range
+    lo, hi = int(np.ceil(lo)), int(np.floor(hi))
+    hi = max(hi, lo)  # guard against an empty integer range after rounding a narrow fraction-based span
+    sampled = np.random.randint(lo, hi + 1)
+
+    if exists(max_crop_size):
+        sampled = min(sampled, max_crop_size)
+
+    return max(sampled, 1)
 
 
 def compute_local_hash(atom_array: AtomArray, radius: float = 6.0) -> np.ndarray:
@@ -73,12 +187,9 @@ def compute_local_hash(atom_array: AtomArray, radius: float = 6.0) -> np.ndarray
     is_valid = ~is_any_coord_nan(atom_array)
     kdtree = KDTree(atom_array.coord[is_valid])
 
-    # ... query local neighbourhoods
-    neighbour_idxs: list[list[int]] = kdtree.query_ball_tree(kdtree, r=radius)
-
     # ... use number of neighbours as hash (# TODO: elaborate this if needed)
     num_neighbours = np.zeros(n_atoms, dtype=int)
-    num_neighbours[is_valid] = list(map(len, neighbour_idxs))
+    num_neighbours[is_valid] = kdtree.query_ball_point(atom_array.coord[is_valid], r=radius, return_length=True)
 
     return num_neighbours
 
@@ -179,7 +290,8 @@ def get_spatial_crop_center(
     atom_array: AtomArray,
     query_pn_unit_iids: list[str],
     cutoff_distance: float = 15.0,
-    raise_if_missing_query: bool = True,
+    raise_if_missing_crop_center: bool = True,
+    raise_if_missing_query: bool | None = None,
 ) -> np.ndarray:
     """
     Sample a crop center from a spatial region of the atom array.
@@ -199,13 +311,22 @@ def get_spatial_crop_center(
         atom_array (AtomArray): The array containing atom information.
         query_pn_unit_iids (list[str]): List of PN unit instance IDs to query.
         cutoff_distance (float, optional): The distance cutoff to consider for spatial proximity. Defaults to 15.0.
-        raise_if_missing_query (bool): Whether to raise an Exception if no crop centers are found, e.g. if the
+        raise_if_missing_crop_center (bool): Whether to raise an Exception if no crop centers are found, e.g. if the
             query pn_unit(s) are not present due to a previous filtering step. Defaults to `True`. If `False`, a random
             pn_unit will be selected for the crop center.
+        raise_if_missing_query (bool | None): Deprecated. Use ``raise_if_missing_crop_center`` instead.
 
     Returns:
         np.ndarray: A boolean mask indicating the crop center.
     """
+    if raise_if_missing_query is not None:
+        warnings.warn(
+            "raise_if_missing_query is deprecated, use raise_if_missing_crop_center instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        raise_if_missing_crop_center = raise_if_missing_query
+
     # ... get mask for query polymer/non-polymer unit
     is_query_pn_unit = np.isin(atom_array.pn_unit_iid, query_pn_unit_iids)
 
@@ -213,7 +334,7 @@ def get_spatial_crop_center(
     is_occupied = atom_array.occupancy > 0
 
     # ... optionally provide a fallback when not all query pn_units are present
-    if not raise_if_missing_query:
+    if not raise_if_missing_crop_center:
         available_query_pn_unit_iids = np.unique(atom_array.pn_unit_iid[is_query_pn_unit])
 
         # If only one of the query pn_units is present, we will just use that
@@ -236,23 +357,30 @@ def get_spatial_crop_center(
         # If there's only one query unit, we don't need to check for spatial proximity,
         # so we can just return the mask for the query unit.
         can_be_crop_center = is_query_pn_unit & is_occupied
-        assert np.any(
-            can_be_crop_center
-        ), f"No crop center found! It appears `query_pn_unit_iid` {query_pn_unit_iids} is not in the atom array or unresolved."
+        if not np.any(can_be_crop_center):
+            if raise_if_missing_crop_center:
+                raise AssertionError(
+                    f"No crop center found! It appears `query_pn_unit_iid` {query_pn_unit_iids} "
+                    "is not in the atom array or unresolved."
+                )
+            else:
+                logger.warning(
+                    f"No crop center found for query pn_unit {query_pn_unit_iids}. "
+                    "All atoms may be unresolved (occupancy == 0). Falling back to full unit mask."
+                )
+                can_be_crop_center = is_query_pn_unit
 
         return can_be_crop_center
 
     is_at_interface = np.zeros_like(is_query_pn_unit, dtype=bool)
-    for pn_unit_1_iid, pn_unit_2_iid in itertools.combinations(query_pn_unit_iids, 2):
-        # ... get mask, indices, and kdtree for pn_unit_1
-        pn_unit_1_mask = (atom_array.pn_unit_iid == pn_unit_1_iid) & is_occupied
-        pn_unit_1_indices = np.where(pn_unit_1_mask)[0]
-        _tree1 = KDTree(atom_array.coord[pn_unit_1_mask])
+    query_units = {}
+    for unit_id in query_pn_unit_iids:
+        mask = (atom_array.pn_unit_iid == unit_id) & is_occupied
+        query_units[unit_id] = (np.where(mask)[0], KDTree(atom_array.coord[mask]))
 
-        # ... get mask, indices, and kdtree for pn_unit_2
-        pn_unit_2_mask = (atom_array.pn_unit_iid == pn_unit_2_iid) & is_occupied
-        pn_unit_2_indices = np.where(pn_unit_2_mask)[0]
-        _tree2 = KDTree(atom_array.coord[pn_unit_2_mask])
+    for pn_unit_1_iid, pn_unit_2_iid in itertools.combinations(query_pn_unit_iids, 2):
+        pn_unit_1_indices, _tree1 = query_units[pn_unit_1_iid]
+        pn_unit_2_indices, _tree2 = query_units[pn_unit_2_iid]
 
         dists = _tree1.sparse_distance_matrix(_tree2, max_distance=cutoff_distance, output_type="coo_matrix")
 
@@ -263,7 +391,16 @@ def get_spatial_crop_center(
     # ... assemble final crop mask
     can_be_crop_center = is_query_pn_unit & is_at_interface & is_occupied
 
-    assert np.any(can_be_crop_center), "No crop center found!"
+    if not np.any(can_be_crop_center):
+        if raise_if_missing_crop_center:
+            raise AssertionError("No crop center found!")
+
+        # Fall back to all occupied query atoms when no interface atoms exist
+        # (e.g., disconnected fragments beyond cutoff_distance)
+        logger.warning("No interface atoms found between query pn_units. Falling back to all occupied query atoms.")
+        can_be_crop_center = is_query_pn_unit & is_occupied
+        assert np.any(can_be_crop_center), "No crop center found even after fallback!"
+
     return can_be_crop_center
 
 
@@ -345,7 +482,15 @@ class CropContiguousLikeAF3(CropTransformBase):
         - AF2 Multimer https://www.biorxiv.org/content/10.1101/2021.10.04.463034v2.full.pdf
 
     Attributes:
-        crop_size (int): The maximum number of tokens to crop.
+        crop_size (int | None): The maximum number of tokens to crop. Either this or
+            `crop_size_range` must be set (not both).
+        crop_size_range (tuple[int, int] | tuple[float, float] | None): If set, the crop size is
+            resampled uniformly from this inclusive ``(min, max)`` range on every call, instead of
+            using a fixed `crop_size` (which must then be `None`). Either a pair of absolute token
+            counts, or a pair of fractions of the total number of tokens (requires `max_crop_size`).
+            Defaults to `None`.
+        max_crop_size (int | None): Upper bound on the sampled crop size. Required when
+            `crop_size_range` is fraction-based. Defaults to `None`.
         keep_uncropped_atom_array (bool): Whether to keep the uncropped atom array in the data.
             If `True`, the uncropped atom array will be stored in the `crop_info` dictionary
             under the key `"atom_array"`. Defaults to `False`.
@@ -361,10 +506,15 @@ class CropContiguousLikeAF3(CropTransformBase):
     ]
 
     def __init__(
-        self, crop_size: int, keep_uncropped_atom_array: bool = False, max_atoms_in_crop: int | None = None, **kwargs
+        self,
+        crop_size: int | None = None,
+        crop_size_range: tuple[int, int] | tuple[float, float] | None = None,
+        max_crop_size: int | None = None,
+        keep_uncropped_atom_array: bool = False,
+        max_atoms_in_crop: int | None = None,
+        **kwargs,
     ):
-        super().__init__(**kwargs)
-        self.crop_size = crop_size
+        super().__init__(crop_size=crop_size, crop_size_range=crop_size_range, max_crop_size=max_crop_size, **kwargs)
         self.keep_uncropped_atom_array = keep_uncropped_atom_array
         self.max_atoms_in_crop = max_atoms_in_crop
         self._validate()
@@ -377,7 +527,10 @@ class CropContiguousLikeAF3(CropTransformBase):
     def forward(self, data: dict) -> dict:
         atom_array = data["atom_array"]
 
-        requires_crop = get_token_count(atom_array) > self.crop_size
+        n_tokens = get_token_count(atom_array)
+        crop_size = self._resolve_crop_size(reference_length=n_tokens)
+
+        requires_crop = n_tokens > crop_size
         if requires_crop:
             # Extract chain data
             chain_iids = np.unique(atom_array.chain_iid)
@@ -386,7 +539,7 @@ class CropContiguousLikeAF3(CropTransformBase):
             ]
 
             # Sample crop as in AF2 multimer
-            keep_token_dict = crop_contiguous_af2_multimer(chain_iids, chain_n_tokens, self.crop_size)
+            keep_token_dict = crop_contiguous_af2_multimer(chain_iids, chain_n_tokens, crop_size)
 
             # Turn crop information into atom-level mask
             is_token_start_idxs = get_token_starts(atom_array)
@@ -401,7 +554,6 @@ class CropContiguousLikeAF3(CropTransformBase):
             is_token_in_crop = np.ones(get_token_count(atom_array), dtype=bool)
 
         crop_info = {
-            "type": self.__class__.__name__,
             "requires_crop": requires_crop,
             "crop_token_idxs": np.where(is_token_in_crop)[0],
             "crop_atom_idxs": np.where(is_atom_in_crop)[0],
@@ -413,10 +565,16 @@ class CropContiguousLikeAF3(CropTransformBase):
             max_atoms=self.max_atoms_in_crop,
         )
 
-        # Update data
-        data["crop_info"] = crop_info
+        data["crop_info"] = {
+            "type": self.__class__.__name__,
+            "crop_size": crop_size,
+            "crop_size_range": self.crop_size_range,
+            "max_atoms_in_crop": self.max_atoms_in_crop,
+        } | crop_info
+
         if self.keep_uncropped_atom_array:
             data["crop_info"]["atom_array"] = atom_array
+
         data["atom_array"] = atom_array[crop_info["crop_atom_idxs"]]
 
         return data
@@ -429,7 +587,8 @@ def crop_spatial_like_af3(
     jitter_scale: float = 1e-3,
     crop_center_cutoff_distance: float = 15.0,
     force_crop: bool = False,
-    raise_if_missing_query: bool = True,
+    raise_if_missing_crop_center: bool = True,
+    raise_if_missing_query: bool | None = None,
 ) -> dict:
     """Crop spatial tokens around a given `crop_center` by keeping the `crop_size` nearest neighbors (with jitter).
 
@@ -443,9 +602,10 @@ def crop_spatial_like_af3(
             consider for crop center. Defaults to 15.0 Angstroms.
         - force_crop (bool, optional): Whether to force crop even if the atom array is already small enough.
             Defaults to False.
-        - raise_if_missing_query (bool): Whether to raise an Exception if no crop centers are found, e.g. if the
+        - raise_if_missing_crop_center (bool): Whether to raise an Exception if no crop centers are found, e.g. if the
             query pn_unit(s) are not present due to a previous filtering step. Defaults to `True`. If `False`, a random
             pn_unit will be selected for the crop center.
+        - raise_if_missing_query (bool | None): Deprecated. Use ``raise_if_missing_crop_center`` instead.
 
     Returns:
         dict: A dictionary containing crop information, including:
@@ -463,22 +623,33 @@ def crop_spatial_like_af3(
         - AF3 https://static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-07487-w/MediaObjects/41586_2024_7487_MOESM1_ESM.pdf
         - AF2 Multimer https://www.biorxiv.org/content/10.1101/2021.10.04.463034v2.full.pdf
     """
+    if raise_if_missing_query is not None:
+        warnings.warn(
+            "raise_if_missing_query is deprecated, use raise_if_missing_crop_center instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        raise_if_missing_crop_center = raise_if_missing_query
+
     token_segments = get_token_starts(atom_array, add_exclusive_stop=True)
     n_tokens = len(token_segments) - 1
     requires_crop = n_tokens > crop_size
 
-    # ... get possible crop centers
-    can_be_crop_center = get_spatial_crop_center(
-        atom_array, query_pn_unit_iids, crop_center_cutoff_distance, raise_if_missing_query=raise_if_missing_query
-    )
-
-    # ... sample crop center atom
-    crop_center_atom_id = np.random.choice(atom_array[can_be_crop_center].atom_id)
-    crop_center_atom_idx = atom_id_to_atom_idx(atom_array, crop_center_atom_id)
-    crop_center_token_idx = atom_id_to_token_idx(atom_array, crop_center_atom_id)
-
     # ... sample crop
     if force_crop or requires_crop:
+        # ... get possible crop centers
+        can_be_crop_center = get_spatial_crop_center(
+            atom_array,
+            query_pn_unit_iids,
+            crop_center_cutoff_distance,
+            raise_if_missing_crop_center=raise_if_missing_crop_center,
+        )
+
+        # ... sample crop center atom
+        crop_center_atom_id = np.random.choice(atom_array[can_be_crop_center].atom_id)
+        crop_center_atom_idx = atom_id_to_atom_idx(atom_array, crop_center_atom_id)
+        crop_center_token_idx = atom_id_to_token_idx(atom_array, crop_center_atom_id)
+
         token_coords = get_af3_token_center_coords(atom_array)
         is_token_in_crop = get_spatial_crop_mask(
             token_coords, crop_center_token_idx, crop_size=crop_size, jitter_scale=jitter_scale
@@ -487,6 +658,9 @@ def crop_spatial_like_af3(
         is_atom_in_crop = spread_token_wise(atom_array, is_token_in_crop, token_starts=token_segments)
     else:
         # ... no need to crop since the atom array is already small enough
+        crop_center_atom_id = np.nan
+        crop_center_atom_idx = np.nan
+        crop_center_token_idx = np.nan
         is_atom_in_crop = np.ones(len(atom_array), dtype=bool)
         is_token_in_crop = np.ones(n_tokens, dtype=bool)
 
@@ -536,8 +710,9 @@ def resize_crop_info_if_too_many_atoms(
     # Calculate distances to center token
     # ... get token center coordinates
     token_coords = get_af3_token_center_coords(crop_atom_array)  # [n_token, 3]
-    if "crop_center_atom_idx" in crop_info:
-        crop_center_coords = atom_array.coord[crop_info["crop_center_atom_idx"]]
+    crop_center_atom_idx = crop_info.get("crop_center_atom_idx")
+    if crop_center_atom_idx is not None and np.isfinite(crop_center_atom_idx):
+        crop_center_coords = atom_array.coord[int(crop_center_atom_idx)]
     else:
         # ... use center of mass of tokens in crop as center coordinate
         crop_center_coords = np.mean(token_coords, axis=0)
@@ -589,7 +764,15 @@ class CropSpatialLikeAF3(CropTransformBase):
         - AF2 Multimer https://www.biorxiv.org/content/10.1101/2021.10.04.463034v2.full.pdf
 
     Attributes:
-        crop_size (int): The maximum number of tokens to crop. Must be greater than 0.
+        crop_size (int | None): The maximum number of tokens to crop. Either this or
+            `crop_size_range` must be set (not both).
+        crop_size_range (tuple[int, int] | tuple[float, float] | None): If set, the crop size is
+            resampled uniformly from this inclusive ``(min, max)`` range on every call, instead of
+            using a fixed `crop_size` (which must then be `None`). Either a pair of absolute token
+            counts, or a pair of fractions of the total number of tokens (requires `max_crop_size`).
+            Defaults to `None`.
+        max_crop_size (int | None): Upper bound on the sampled crop size. Required when
+            `crop_size_range` is fraction-based. Defaults to `None`.
         jitter_scale (float): The scale of the jitter to apply to the crop center. This is to break
             ties between atoms with the same spatial distance. Defaults to 1e-3.
         crop_center_cutoff_distance (float): The cutoff distance to consider for selecting crop
@@ -609,19 +792,30 @@ class CropSpatialLikeAF3(CropTransformBase):
 
     def __init__(
         self,
-        crop_size: int,
+        crop_size: int | None = None,
+        crop_size_range: tuple[int, int] | tuple[float, float] | None = None,
+        max_crop_size: int | None = None,
         jitter_scale: float = 1e-3,
         crop_center_cutoff_distance: float = 15.0,
         keep_uncropped_atom_array: bool = False,
         force_crop: bool = False,
         max_atoms_in_crop: int | None = None,
-        raise_if_missing_query: bool = True,
+        raise_if_missing_crop_center: bool = True,
+        raise_if_missing_query: bool | None = None,
         **kwargs,
     ):
         """Initialize the CropSpatialLikeAF3 transform.
 
         Args:
-            crop_size: The maximum number of tokens to crop. Must be greater than 0.
+            crop_size: The maximum number of tokens to crop. Either this or `crop_size_range` must
+                be set (not both).
+            crop_size_range: If set, the crop size is resampled uniformly from this inclusive
+                ``(min, max)`` range on every call, instead of using a fixed `crop_size` (which must
+                then be `None`). Either a pair of absolute token counts, or a pair of fractions of
+                the total number of tokens (requires `max_crop_size`, to bound the crop size on
+                large structures). Defaults to `None`.
+            max_crop_size: Upper bound on the sampled crop size. Required when `crop_size_range` is
+                fraction-based. Defaults to `None`.
             jitter_scale: The scale of the jitter to apply to the crop center.
                 This is to break ties between atoms with the same spatial distance. Defaults to 1e-3.
             crop_center_cutoff_distance: The cutoff distance to consider for
@@ -633,18 +827,25 @@ class CropSpatialLikeAF3(CropTransformBase):
                 Defaults to `False`.
             max_atoms_in_crop (int, optional): Maximum number of atoms allowed in a crop. If None, no resizing is performed.
                 Defaults to None.
-            raise_if_missing_query (bool): Whether to raise an Exception if no crop centers are found, e.g. if the
+            raise_if_missing_crop_center (bool): Whether to raise an Exception if no crop centers are found, e.g. if the
                 query pn_unit(s) are not present due to a previous filtering step. Defaults to `True`. If `False`, a random
                 pn_unit will be selected for the crop center.
+            raise_if_missing_query (bool | None): Deprecated. Use ``raise_if_missing_crop_center`` instead.
         """
-        super().__init__(**kwargs)
-        self.crop_size = crop_size
+        if raise_if_missing_query is not None:
+            warnings.warn(
+                "raise_if_missing_query is deprecated, use raise_if_missing_crop_center instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            raise_if_missing_crop_center = raise_if_missing_query
+        super().__init__(crop_size=crop_size, crop_size_range=crop_size_range, max_crop_size=max_crop_size, **kwargs)
         self.jitter_scale = jitter_scale
         self.crop_center_cutoff_distance = crop_center_cutoff_distance
         self.keep_uncropped_atom_array = keep_uncropped_atom_array
         self.force_crop = force_crop
         self.max_atoms_in_crop = max_atoms_in_crop
-        self.raise_if_missing_query = raise_if_missing_query
+        self.raise_if_missing_crop_center = raise_if_missing_crop_center
         self._validate()
 
     def check_input(self, data: dict) -> None:
@@ -661,14 +862,17 @@ class CropSpatialLikeAF3(CropTransformBase):
             query_pn_units = np.unique(atom_array.pn_unit_iid)
             logger.info(f"No query PN unit(s) provided for spatial crop. Randomly selecting from {query_pn_units}.")
 
+        reference_length = get_token_count(atom_array) if exists(self.crop_size_range) else None
+        crop_size = self._resolve_crop_size(reference_length=reference_length)
+
         crop_info = crop_spatial_like_af3(
             atom_array=atom_array,
             query_pn_unit_iids=query_pn_units,
-            crop_size=self.crop_size,
+            crop_size=crop_size,
             jitter_scale=self.jitter_scale,
             crop_center_cutoff_distance=self.crop_center_cutoff_distance,
             force_crop=self.force_crop,
-            raise_if_missing_query=self.raise_if_missing_query,
+            raise_if_missing_crop_center=self.raise_if_missing_crop_center,
         )
         crop_info = resize_crop_info_if_too_many_atoms(
             crop_info=crop_info,
@@ -676,7 +880,13 @@ class CropSpatialLikeAF3(CropTransformBase):
             max_atoms=self.max_atoms_in_crop,
         )
 
-        data["crop_info"] = {"type": self.__class__.__name__} | crop_info
+        data["crop_info"] = {
+            "type": self.__class__.__name__,
+            "crop_size": crop_size,
+            "crop_size_range": self.crop_size_range,
+            "crop_center_cutoff_distance": self.crop_center_cutoff_distance,
+            "max_atoms_in_crop": self.max_atoms_in_crop,
+        } | crop_info
 
         if self.keep_uncropped_atom_array:
             data["crop_info"]["atom_array"] = atom_array

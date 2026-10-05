@@ -1,7 +1,5 @@
 """MSA filtering command using HHfilter."""
 
-from __future__ import annotations
-
 import logging
 from glob import glob
 from pathlib import Path

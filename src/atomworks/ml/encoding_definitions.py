@@ -3,7 +3,7 @@
 import copy
 from collections.abc import Sequence
 from dataclasses import dataclass
-from functools import cached_property, lru_cache
+from functools import cached_property
 from itertools import cycle
 from logging import getLogger
 
@@ -23,6 +23,7 @@ from atomworks.constants import (
     STANDARD_RNA,
     UNKNOWN_AA,
     UNKNOWN_DNA,
+    UNKNOWN_ELEMENT,
     UNKNOWN_RNA,
 )
 from atomworks.io.utils.ccd import get_chem_comp_type
@@ -108,55 +109,6 @@ class TokenEncoding:
             assert unknown_token in self.token_atoms, f"Unknown token {unknown_token} not defined in `token_atoms`."
             assert chemcomp_type in CHEM_COMP_TYPES, f"Unknown chemcomp type {chemcomp_type}."
 
-        # Set function to resolve unknown tokens.
-        # NOTE: This is set here to use caching.
-        @lru_cache(maxsize=10000)
-        def resolve_unknown_token_name(token_name: str | int, token_is_atom: bool) -> str:
-            assert isinstance(
-                token_name, str | int | np.integer
-            ), f"Expected `token_name` to be a string or int, but got {type(token_name)}: token_name={token_name}, token_is_atom={token_is_atom}."
-
-            # Case 1: Token is known & valid
-            if token_name in self.token_atoms:
-                # ... escape
-                return token_name
-
-            # Case 2: Token is unknown atom
-            if token_is_atom:
-                # ... for unknown atoms
-                if UNKNOWN_ELEMENT_TOKEN not in self.token_atoms:
-                    # ... ensure that the `UNKNOWN_ELEMENT_TOKEN` is in the encoding
-                    raise KeyError(
-                        f"Encountered unknown atom token `{token_name}` which is not in the encoding, "
-                        f"but the `UNKNOWN_ELEMENT_TOKEN` (`{UNKNOWN_ELEMENT_TOKEN}`) is also not in the encoding."
-                    )
-                return UNKNOWN_ELEMENT_TOKEN
-
-            # Case 3: Token is unknown residue
-            if exists(self.chemcomp_type_to_unknown):
-                # ... try to resolve which unknown residue token to use based on the chemical component type
-                chem_type = get_chem_comp_type(token_name)
-                if chem_type not in self.chemcomp_type_to_unknown:
-                    raise KeyError(
-                        f"Could not resolve unknown residue token name: `{token_name}`, "
-                        f"chemcomp_type: `{chem_type}` not in `encoding.chemcomp_type_to_unknown`."
-                        "You will either have to:\n"
-                        "(1) filter out this token before encoding,\n"
-                        "(2) use an encoding that contains a `chemcomp_type_to_unknown` mapping "
-                        "for this chemcomp type,\n"
-                        "(3) use an encoding that contains this token, or\n"
-                        "(4) atomize this token (provided your specified encoding contains atom-level "
-                        "tokens)."
-                    )
-                return self.chemcomp_type_to_unknown[chem_type]
-            else:
-                raise KeyError(
-                    f"Encountered unknown residue token name: `{token_name}` which is not in the encoding, "
-                    f"and no `chemcomp_type_to_unknown` mapping is defined."
-                )
-
-        self._resolve_unknown_token_name = resolve_unknown_token_name
-
     @cached_property
     def tokens(self) -> np.ndarray:
         dtypes = {type(token) for token in self.token_atoms}
@@ -206,12 +158,13 @@ class TokenEncoding:
         elements = np.full((self.n_tokens, self.n_atoms_per_token), "", dtype="<U3")
         for idx, (_token, atom_names) in enumerate(self.token_atoms.items()):
             # ... case 1: atom names - try to infer elements from atom names
-            inferred_elements = struc.infer_elements(atom_names)
+            inferred_elements = struc.infer_elements(np.where(atom_names == UNKNOWN_ELEMENT, "", atom_names))
             if np.all(inferred_elements == ""):
                 # ... case 2: atomic numbers - try to infer elements from atomic numbers
                 inferred_elements = np.array(
                     [atomic_number_to_pdb_element_name.get(elt, elt) for elt in atom_names], dtype="<U3"
                 )
+            inferred_elements[atom_names == UNKNOWN_ELEMENT] = UNKNOWN_ELEMENT
             # set elements
             elements[idx] = inferred_elements
 
@@ -234,7 +187,48 @@ class TokenEncoding:
         return token_and_atom_to_idx
 
     def resolve_unknown_token_name(self, token_name: str, token_is_atom: bool) -> str:
-        return self._resolve_unknown_token_name(token_name, token_is_atom)
+        assert isinstance(
+            token_name, str | int | np.integer
+        ), f"Expected `token_name` to be a string or int, but got {type(token_name)}: token_name={token_name}, token_is_atom={token_is_atom}."
+
+        # Case 1: Token is known & valid
+        if token_name in self.token_atoms:
+            # ... escape
+            return token_name
+
+        # Case 2: Token is unknown atom
+        if token_is_atom:
+            # ... for unknown atoms
+            if UNKNOWN_ELEMENT_TOKEN not in self.token_atoms:
+                # ... ensure that the `UNKNOWN_ELEMENT_TOKEN` is in the encoding
+                raise KeyError(
+                    f"Encountered unknown atom token `{token_name}` which is not in the encoding, "
+                    f"but the `UNKNOWN_ELEMENT_TOKEN` (`{UNKNOWN_ELEMENT_TOKEN}`) is also not in the encoding."
+                )
+            return UNKNOWN_ELEMENT_TOKEN
+
+        # Case 3: Token is unknown residue
+        if exists(self.chemcomp_type_to_unknown):
+            # ... try to resolve which unknown residue token to use based on the chemical component type
+            chem_type = get_chem_comp_type(token_name)
+            if chem_type not in self.chemcomp_type_to_unknown:
+                raise KeyError(
+                    f"Could not resolve unknown residue token name: `{token_name}`, "
+                    f"chemcomp_type: `{chem_type}` not in `encoding.chemcomp_type_to_unknown`."
+                    "You will either have to:\n"
+                    "(1) filter out this token before encoding,\n"
+                    "(2) use an encoding that contains a `chemcomp_type_to_unknown` mapping "
+                    "for this chemcomp type,\n"
+                    "(3) use an encoding that contains this token, or\n"
+                    "(4) atomize this token (provided your specified encoding contains atom-level "
+                    "tokens)."
+                )
+            return self.chemcomp_type_to_unknown[chem_type]
+        else:
+            raise KeyError(
+                f"Encountered unknown residue token name: `{token_name}` which is not in the encoding, "
+                f"and no `chemcomp_type_to_unknown` mapping is defined."
+            )
 
     def to_str(self) -> str:
         """Convenience function for printing the encoding."""
@@ -296,7 +290,7 @@ AF2_ATOM14_ENCODING = TokenEncoding(
 """AF2's atom14 encoding.
 
 Reference:
-    `AlphaFold residue_constants.py <https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/common/residue_constants.py#L505>`_
+    `AlphaFold residue_constants.py <https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/common/residue_constants.py#L505>`__
 """
 
 AF2_ATOM37_ENCODING = TokenEncoding(
@@ -334,7 +328,7 @@ AF2_ATOM37_WITH_ATOMIZATION = TokenEncoding(
 """AF2's atom37 encoding with atomization support.
 
 Reference:
-    `AlphaFold residue_constants.py <https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/common/residue_constants.py#L492-L544>`_
+    `AlphaFold residue_constants.py <https://github.com/google-deepmind/alphafold/blob/f251de6613cb478207c732bf9627b1e853c99c2f/alphafold/common/residue_constants.py#L492-L544>`__
 """
 
 # fmt: off
@@ -411,25 +405,28 @@ UNIFIED_ATOM37_ENCODING = TokenEncoding(
 
         # RNA nucleotides (classes 22-25): A, C, G, U
         #       0     1      2      3      4      5      6      7      8      9      10     11     12     13     14     15     16     17     18     19     20     21     22     23     24     25     26     27     28     29     30     31     32     33     34     35     36
-        'A':  ['P',   "C1'",  "C2'", "O2'",  "C3'", "O3'", "C4'", "O4'", "C5'", "O5'", 'OP1', 'OP2', 'N9',  'C8',  'N7',  'C5',  'C4',  'N3',  'C2',  'N1',  'C6',  'N6',  '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    ''],
-        'C':  ['P',   "C1'",  "C2'", "O2'",  "C3'", "O3'", "C4'", "O4'", "C5'", "O5'", 'OP1', 'OP2', '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    'N1',  'C2',  'O2',  'N3',  'C4',  'C5',  'C6',  'N4',  '',    '',    '',    '',    ''],
-        'G':  ['P',   "C1'",  "C2'", "O2'",  "C3'", "O3'", "C4'", "O4'", "C5'", "O5'", 'OP1', 'OP2', 'N9',  'C8',  'N7',  'C5',  'C4',  'N3',  'C2',  'N1',  'C6',  '',    'N2',  'O6',  '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    ''],
-        'U':  ['P',   "C1'",  "C2'", "O2'",  "C3'", "O3'", "C4'", "O4'", "C5'", "O5'", 'OP1', 'OP2', '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    'N1',  'C2',  'O2',  'N3',  'C4',  'C5',  'C6',  '',    'O4',  '',    '',    '',    ''],
+        'A':  ['P',   "C1'",  "C2'", "O2'",  "C3'", "O3'", "C4'", "O4'", "C5'", "O5'", 'OP1', 'OP2', 'N9',  'C8',  'N7',  'C5',  'C4',  'N3',  'C2',  'N1',  'C6',  'N6',  '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    'OP3'],
+        'C':  ['P',   "C1'",  "C2'", "O2'",  "C3'", "O3'", "C4'", "O4'", "C5'", "O5'", 'OP1', 'OP2', '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    'N1',  'C2',  'O2',  'N3',  'C4',  'C5',  'C6',  'N4',  '',    '',    '',    '',    'OP3'],
+        'G':  ['P',   "C1'",  "C2'", "O2'",  "C3'", "O3'", "C4'", "O4'", "C5'", "O5'", 'OP1', 'OP2', 'N9',  'C8',  'N7',  'C5',  'C4',  'N3',  'C2',  'N1',  'C6',  '',    'N2',  'O6',  '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    'OP3'],
+        'U':  ['P',   "C1'",  "C2'", "O2'",  "C3'", "O3'", "C4'", "O4'", "C5'", "O5'", 'OP1', 'OP2', '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    'N1',  'C2',  'O2',  'N3',  'C4',  'C5',  'C6',  '',    'O4',  '',    '',    '',    'OP3'],
 
         # Unknown RNA (class 26)
         'N':  ['P',   "C1'",  "C2'", "O2'",  "C3'", "O3'", "C4'", "O4'", "C5'", "O5'", 'OP1', 'OP2', '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    ''],
 
         # DNA nucleotides (classes 27-30): DA, DC, DG, DT
-        'DA': ['P',   "C1'",  "C2'", '',     "C3'", "O3'", "C4'", "O4'", "C5'", "O5'", 'OP1', 'OP2', 'N9',  'C8',  'N7',  'C5',  'C4',  'N3',  'C2',  'N1',  'C6',  'N6',  '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    ''],
-        'DC': ['P',   "C1'",  "C2'", '',     "C3'", "O3'", "C4'", "O4'", "C5'", "O5'", 'OP1', 'OP2', '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    'N1',  'C2',  'O2',  'N3',  'C4',  'C5',  'C6',  'N4',  '',    '',    '',    '',    ''],
-        'DG': ['P',   "C1'",  "C2'", '',     "C3'", "O3'", "C4'", "O4'", "C5'", "O5'", 'OP1', 'OP2', 'N9',  'C8',  'N7',  'C5',  'C4',  'N3',  'C2',  'N1',  'C6',  '',    'N2',  'O6',  '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    ''],
-        'DT': ['P',   "C1'",  "C2'", '',     "C3'", "O3'", "C4'", "O4'", "C5'", "O5'", 'OP1', 'OP2', '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    'N1',  'C2',  'O2',  'N3',  'C4',  'C5',  'C6',  '',    'O4',  'C7',  '',    '',    ''],
+        'DA': ['P',   "C1'",  "C2'", '',     "C3'", "O3'", "C4'", "O4'", "C5'", "O5'", 'OP1', 'OP2', 'N9',  'C8',  'N7',  'C5',  'C4',  'N3',  'C2',  'N1',  'C6',  'N6',  '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    'OP3'],
+        'DC': ['P',   "C1'",  "C2'", '',     "C3'", "O3'", "C4'", "O4'", "C5'", "O5'", 'OP1', 'OP2', '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    'N1',  'C2',  'O2',  'N3',  'C4',  'C5',  'C6',  'N4',  '',    '',    '',    '',    'OP3'],
+        'DG': ['P',   "C1'",  "C2'", '',     "C3'", "O3'", "C4'", "O4'", "C5'", "O5'", 'OP1', 'OP2', 'N9',  'C8',  'N7',  'C5',  'C4',  'N3',  'C2',  'N1',  'C6',  '',    'N2',  'O6',  '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    'OP3'],
+        'DT': ['P',   "C1'",  "C2'", '',     "C3'", "O3'", "C4'", "O4'", "C5'", "O5'", 'OP1', 'OP2', '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    'N1',  'C2',  'O2',  'N3',  'C4',  'C5',  'C6',  '',    'O4',  'C7',  '',    '',    'OP3'],
 
         # Unknown DNA (class 31)
         'DN': ['P',   "C1'",  "C2'", '',     "C3'", "O3'", "C4'", "O4'", "C5'", "O5'", 'OP1', 'OP2', '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    '',    ''],
 
         # Atomised token (class 32) - placeholder for atomised small molecules, always put atom in the second position
         '<A>': ['   ', 'X', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   '],
+
+        # Gap token (class 33) - represents alignment gaps in MSAs
+        '<G>': ['   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   ', '   '],
     },
     chemcomp_type_to_unknown=(
         {chem_type: "UNK" for chem_type in AA_LIKE_CHEM_TYPES}
@@ -440,15 +437,17 @@ UNIFIED_ATOM37_ENCODING = TokenEncoding(
 """Unified atom37 encoding for all token types in ConditionalResidueTypeSeqFeat.
 
 Provides a comprehensive 37-slot encoding that encompasses:
+
 - Class 0: MASK token (special masking token)
 - Classes 1-20: Standard amino acids (ALA, ARG, ASN, ASP, CYS, GLN, GLU, GLY, HIS, ILE,
-                LEU, LYS, MET, PHE, PRO, SER, THR, TRP, TYR, VAL)
+  LEU, LYS, MET, PHE, PRO, SER, THR, TRP, TYR, VAL)
 - Class 21: UNK (unknown amino acid)
 - Classes 22-25: RNA nucleotides (A, C, G, U)
 - Class 26: N (unknown RNA)
 - Classes 27-30: DNA nucleotides (DA, DC, DG, DT)
 - Class 31: DN (unknown DNA)
 - Class 32: ATOMIZED (atomized small molecule token)
+- Class 33: GAP (alignment gap in MSAs)
 
 This encoding is compatible with the conditional residue type feature used in protein
 foundation models, enabling unified handling of proteins, RNA, DNA, and small molecules
@@ -456,10 +455,14 @@ in a single representation space.
 
 Usage:
     UNIFIED_ATOM37_ENCODING serves as the single source of truth for:
+
     - Atom37 layout operations (coordinate processing):
+
         * atom_array_to_encoding() / atom_array_from_encoding()
         * Converting between AtomArray and atom37 coordinate tensors
+
     - Sequence encoding operations (residue type indices):
+
         * Use UNIFIED_ATOM37_ENCODING.token_to_idx to encode residue names
         * Use UNIFIED_ATOM37_ENCODING.idx_to_token to decode indices
 """
@@ -770,14 +773,16 @@ RF2AA_ATOM36_ENCODING = TokenEncoding(
     ),
 )
 """RF2AA all atom encoding for proteins, nucleic acids and various other elements
-    - Encodes heavy atoms and hydrogens (max 36 in total)
-    - Includes 3 unknown tokens: `UNK` for proteins, `DN` for dna, `N` for RNA
-    - Covers:
-        - 20 amino acids (+ unknown, + mask),
-        - 4  DNA bases (+ unknown),
-        - 4  RNA bases (+ unknown),
-        - 1  outdated histindine token `HIS_D`
-        - 45 atom tokens (+ unknown)
+
+- Encodes heavy atoms and hydrogens (max 36 in total)
+- Includes 3 unknown tokens: `UNK` for proteins, `DN` for dna, `N` for RNA
+- Covers:
+
+    - 20 amino acids (+ unknown, + mask),
+    - 4  DNA bases (+ unknown),
+    - 4  RNA bases (+ unknown),
+    - 1  outdated histindine token `HIS_D`
+    - 45 atom tokens (+ unknown)
 """
 # fmt: on
 

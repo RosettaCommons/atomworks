@@ -2,8 +2,6 @@
 Tests for chain type assignment and annotation.
 """
 
-from __future__ import annotations
-
 from typing import Any
 
 import numpy as np
@@ -11,7 +9,7 @@ import pytest
 
 from atomworks.enums import ChainType
 from atomworks.io.parser import parse
-from tests.io.conftest import CHAIN_TYPE_TEST_CASES, get_pdb_path
+from tests.io.conftest import CHAIN_TYPE_TEST_CASES, TEST_DATA_IO, get_pdb_path
 
 # General Enum tests
 
@@ -71,3 +69,23 @@ def test_chain_types(test_case: dict[str, Any]):
             assert (
                 got_is_polymer == expected_is_polymer
             ), f"Mismatch for {pn_unit_id=}: {got_is_polymer=}, {expected_is_polymer=}"
+
+
+def test_pdb_with_same_chain_poly_non_poly():
+    result = parse(
+        filename=TEST_DATA_IO / "1qfe.pdb",
+        hydrogen_policy="remove",
+    )
+    # Check if processing runs through
+    assert result is not None
+
+    # Check that we don't have any chains with polymeric and non-polymeric residues
+    atom_array = result["assemblies"]["1"][0]
+    polymer_chain_ids = np.unique(atom_array.chain_id[atom_array.is_polymer])
+    non_polymer_chain_ids = np.unique(atom_array.chain_id[~atom_array.is_polymer])
+    assert len(set(polymer_chain_ids).intersection(non_polymer_chain_ids)) == 0
+
+    # Assert that all residues have coordinates
+    if not np.all(np.isfinite(atom_array.coord)):
+        culprits = atom_array[(~np.isfinite(atom_array.coord)).any(axis=1)]
+        raise RuntimeError(f"Some residues are missing coordinates: \n{culprits}")

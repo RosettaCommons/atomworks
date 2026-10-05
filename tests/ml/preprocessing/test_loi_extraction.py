@@ -1,16 +1,14 @@
 """Pytest for LOI - SOI (subject of investigation) extraction"""
 
-from __future__ import annotations
-
 from typing import Any
 
 import numpy as np
-import pandas as pd
 import pytest
 
+from atomworks.ml.preprocessing.preprocess import _load_structure, preprocess
 from atomworks.ml.utils.testing import get_pdb_mirror_path
 from tests.conftest import skip_if_no_internet
-from tests.ml.preprocessing.conftest import DATA_PREPROCESSOR
+from tests.ml.preprocessing.conftest import TEST_CONFIG
 
 LOI_EXTRACTION_TEST_CASES = [
     {
@@ -51,19 +49,18 @@ def test_loi_extraction(test_case: dict[str, Any]):
     path = get_pdb_mirror_path(pdb_id)
 
     # Check that the LOI is extracted correctly from the CIF file
-    parsed = DATA_PREPROCESSOR._load_structure_with_atomworks(path)
+    parsed = _load_structure(path, TEST_CONFIG)
     loi_set = set(parsed["ligand_info"]["ligand_of_interest"])
     assert loi_set == test_case["loi"]
 
     # Check that the LOI examples give the correct molecule
-    rows = DATA_PREPROCESSOR.get_rows(path)
-    df = pd.DataFrame(rows)
+    _, pn_units, _ = preprocess(path, TEST_CONFIG)
 
     loi_seen = {k: 0 for k in loi_set}
-    for _, row in df.iterrows():
-        if row.q_pn_unit_is_loi:
-            assembly_id = row.assembly_id
-            chain_ids = row.q_pn_unit_id.split(",")
+    for pn_unit in pn_units:
+        if pn_unit.is_loi:
+            assembly_id = pn_unit.assembly_id
+            chain_ids = pn_unit.pn_unit_id.split(",")
             structure = parsed["assemblies"][assembly_id][0]
             res_names = np.unique(
                 structure[(np.isin(structure.chain_id, chain_ids)) & (structure.occupancy > 0)].res_name
@@ -71,12 +68,12 @@ def test_loi_extraction(test_case: dict[str, Any]):
             if test_case.get("has_covalently_bonded_loi", False):
                 assert any(
                     res in loi_set for res in res_names
-                ), f"No LOI molecule found for {row.q_pn_unit_iid} in {res_names}. LOIs: {loi_set}"
+                ), f"No LOI molecule found for {pn_unit.pn_unit_iid} in {res_names}. LOIs: {loi_set}"
                 for res in res_names:
                     if res in loi_set:
                         loi_seen[res] += 1
             else:
-                assert len(res_names) == 1, f"Multiple LOI molecules found for {row.q_pn_unit_iid}: {res_names}"
+                assert len(res_names) == 1, f"Multiple LOI molecules found for {pn_unit.pn_unit_iid}: {res_names}"
                 assert res_names[0] in loi_set, f"LOI molecule {res_names[0]} not found in {loi_set}"
                 loi_seen[res_names[0]] += 1
 

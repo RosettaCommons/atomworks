@@ -1,157 +1,204 @@
-"""
-Script to read in parquet files and clean the data needed for the
-"How to Build a Model Using AtomWorks" tutorial. This script is meant to be run
-from the command line and takes the path to the parquet files. The PDB_MIRROR_PATH
-environment variable needs to be set to the location of your PDB mirror. 
-It saves the cleaned data and the train/val/test splits as parquet files for 
-future use in the tutorial.
+"""Prepare protein-ligand interface metadata for the model-building tutorial.
 
-Example usage:
-    python data_cleaning_script.py /path/to/parquet/files 
-
-Last edited: July 9, 2026
+Example:
+    python data_cleaning_script.py \
+        data/pdb_metadata/shared/interfaces_df.parquet \
+        --pdb-mirror /path/to/pdb_mirror \
+        --output-dir splits
 """
 
+import argparse
 import os
-import sys
+from pathlib import Path
 
-import numpy as np 
+import numpy as np
 import pandas as pd
+import pyarrow.parquet as pq
+
+from atomworks.enums import ChainType
+
+REQUIRED_INTERFACE_COLUMNS = {
+    "pdb_id",
+    "assembly_id",
+    "altloc_seed",
+    "pn_unit_1_iid",
+    "pn_unit_2_iid",
+    "pn_unit_1_type",
+    "pn_unit_2_type",
+    "pn_unit_1_is_polymer",
+    "pn_unit_2_is_polymer",
+    "involves_loi",
+    "is_inter_molecule",
+    "involves_metal",
+    "involves_covalent_modification",
+    "example_id",
+    "path",
+}
+PN_UNIT_COLUMNS = {
+    "pdb_id",
+    "assembly_id",
+    "altloc_seed",
+    "q_pn_unit_iid",
+    "q_pn_unit_num_resolved_residues",
+    "cluster",
+}
+# This tutorial excludes cyclic pseudo-peptides from the broader protein grouping.
+PROTEIN_CHAIN_TYPES = {int(ChainType.POLYPEPTIDE_D), int(ChainType.POLYPEPTIDE_L)}
+MAX_RESOLVED_RESIDUES = 200
 
 
-def read_in_parquet_file(path_to_parquets: str | os.PathLike, parquet_file: str) -> pd.DataFrame:
-    """
-    Create a pandas DataFrame from a parquet file.
-    :param path_to_parquets: Directory containing the parquet files.
-    :param parquet_file: Name of the parquet file (without the .parquet extension).
-    :return: A pandas DataFrame with the parquet contents.
-    """
-    file_path = os.path.join(path_to_parquets, (parquet_file + ".parquet"))
+def parse_args() -> argparse.Namespace:
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("metadata", type=Path, help="Path to the interface metadata Parquet file.")
+    parser.add_argument(
+        "--pn-units", type=Path, help="PN-unit metadata Parquet file; inferred from the interface filename by default."
+    )
+    parser.add_argument(
+        "--pdb-mirror",
+        type=Path,
+        default=os.environ.get("PDB_MIRROR_PATH"),
+        help="PDB mirror root. Defaults to PDB_MIRROR_PATH.",
+    )
+    parser.add_argument("--output-dir", type=Path, default=Path("splits"), help="Directory for output Parquet files.")
+    parser.add_argument("--seed", type=int, default=42, help="Random seed used to shuffle protein clusters.")
+    args = parser.parse_args()
+    if args.pdb_mirror is None:
+        parser.error("set PDB_MIRROR_PATH or pass --pdb-mirror")
+    if args.pn_units is None:
+        if "interfaces" not in args.metadata.name:
+            parser.error("pass --pn-units when the interface filename does not contain interfaces")
+        args.pn_units = args.metadata.with_name(args.metadata.name.replace("interfaces", "pn_units", 1))
+    return args
 
-    if not os.path.exists(file_path):
-        raise FileNotFoundError(f"{file_path} not found")
 
-    return pd.read_parquet(file_path)
+def load_metadata(interfaces_path: Path, pn_units_path: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Load the interfaces and PN-unit tables, checking the interfaces schema first."""
+    missing = REQUIRED_INTERFACE_COLUMNS.difference(pq.read_schema(interfaces_path).names)
+    assert not missing, f"{interfaces_path} is missing required columns: {sorted(missing)}"
 
-
-def assign_split(cluster):
-    """Assign a protein cluster to a split, using the cluster sets defined below."""
-    if cluster in train_clusters:
-        return "train"
-    if cluster in val_clusters:
-        return "val"
-    if cluster in test_clusters:
-        return "test"
-    return "unassigned"  # Should already be filtered out; useful as a debug flag.
+    interfaces = pd.read_parquet(interfaces_path)
+    pn_units = pd.read_parquet(pn_units_path)
+    return interfaces, pn_units
 
 
-# ── Parse command-line arguments ─────────────────────────────────────────────
-if len(sys.argv) > 1:
-    path_to_parquets = sys.argv[1]
-else:
-    print("To use this script, please provide the path to the parquet files.")
-    sys.exit(1)
+def merge_pn_unit_info(interfaces: pd.DataFrame, pn_units: pd.DataFrame) -> pd.DataFrame:
+    """Merge resolved-residue counts and cluster labels in for each side of the interface."""
+    pn_columns = pn_units[
+        ["pdb_id", "assembly_id", "altloc_seed", "q_pn_unit_iid", "q_pn_unit_num_resolved_residues", "cluster"]
+    ]
 
-# ── Read the parquet files ───────────────────────────────────────────────────
-interfaces = read_in_parquet_file(path_to_parquets, "interfaces")
-pn_units = read_in_parquet_file(path_to_parquets, "pn_units")
+    side_1 = pn_columns.rename(
+        columns={
+            "q_pn_unit_iid": "pn_unit_1_iid",
+            "q_pn_unit_num_resolved_residues": "pn_unit_1_num_resolved_residues",
+            "cluster": "pn_unit_1_cluster",
+        }
+    )
+    side_2 = pn_columns.rename(
+        columns={
+            "q_pn_unit_iid": "pn_unit_2_iid",
+            "q_pn_unit_num_resolved_residues": "pn_unit_2_num_resolved_residues",
+            "cluster": "pn_unit_2_cluster",
+        }
+    )
 
-# ── Merge PN-unit metadata onto each interface (once per side) ───────────────
-# pn_unit_iid is only unique within a (pdb_id, assembly_id) scope, so merge on
-# all three keys, twice (once for each PN unit in the interface).
-u1_cols = pn_units[["pdb_id", "assembly_id", "pn_unit_iid", "is_polymer", "num_resolved_residues"]].copy()
-u2_cols = pn_units[["pdb_id", "assembly_id", "pn_unit_iid", "is_polymer", "num_resolved_residues"]].copy()
+    df = interfaces.merge(side_1, on=["pdb_id", "assembly_id", "altloc_seed", "pn_unit_1_iid"], how="left")
+    df = df.merge(side_2, on=["pdb_id", "assembly_id", "altloc_seed", "pn_unit_2_iid"], how="left")
+    return df
 
-u1_cols = u1_cols.rename(columns={
-    "pn_unit_iid": "pn_unit_1_iid",
-    "is_polymer": "u1_is_polymer",
-    "num_resolved_residues": "u1_num_resolved_residues",
-})
-u2_cols = u2_cols.rename(columns={
-    "pn_unit_iid": "pn_unit_2_iid",
-    "is_polymer": "u2_is_polymer",
-    "num_resolved_residues": "u2_num_resolved_residues",
-})
 
-df = interfaces.merge(u1_cols, on=["pdb_id", "assembly_id", "pn_unit_1_iid"], how="inner")
-df = df.merge(u2_cols, on=["pdb_id", "assembly_id", "pn_unit_2_iid"], how="inner")
+def clean_data(df: pd.DataFrame) -> pd.DataFrame:
+    """Keep small, noncovalent protein-ligand interfaces and drop duplicates."""
+    df = df[df["involves_loi"].eq(True)]
+    df = df[df["is_inter_molecule"].eq(True)]
+    df = df[df["involves_metal"].ne(True)]
+    df = df[df["involves_covalent_modification"].ne(True)]
 
-# ── Filter to drug-like protein-ligand interfaces ────────────────────────────
-df = df[df["involves_loi"]]
-df = df[df["is_inter_molecule"]]
-df = df[~df["involves_metal"]]
-df = df[~df["involves_covalent_modification"]]
-df = df[df["u1_is_polymer"] != df["u2_is_polymer"]]
-df = df[(df["u1_num_resolved_residues"] + df["u2_num_resolved_residues"]) < 200]
+    exactly_one_polymer = df["pn_unit_1_is_polymer"] ^ df["pn_unit_2_is_polymer"]
+    df = df[exactly_one_polymer]
 
-# Remove duplicate interface rows.
-df = df.drop_duplicates(subset=["pdb_id", "assembly_id", "pn_unit_1_iid", "pn_unit_2_iid"])
+    protein_side_type = np.where(df["pn_unit_1_is_polymer"], df["pn_unit_1_type"], df["pn_unit_2_type"])
+    df = df[pd.Series(protein_side_type, index=df.index).isin(PROTEIN_CHAIN_TYPES)]
 
-# ── Add a unique example identifier ──────────────────────────────────────────
-df["example_id"] = (
-    df["pdb_id"] + "_" +
-    df["assembly_id"].astype(str) + "_" +
-    df["pn_unit_1_iid"] + "_" +
-    df["pn_unit_2_iid"]
-)
-assert df["example_id"].nunique() == len(df), "example_id is not unique!"
+    residue_columns = ["pn_unit_1_num_resolved_residues", "pn_unit_2_num_resolved_residues"]
+    df = df.dropna(subset=residue_columns)
+    df = df[df[residue_columns].sum(axis="columns") < MAX_RESOLVED_RESIDUES]
 
-# ── Add the path to each structure in the PDB mirror ─────────────────────────
-PDB_MIRROR_PATH = os.environ.get("PDB_MIRROR_PATH", "/PATH/TO/pdb_mirror")
-df["path"] = df["pdb_id"].str.lower().map(
-    lambda x: f"{PDB_MIRROR_PATH}/{x[1:3]}/{x}.cif.gz"
-)
+    df = df.drop_duplicates(subset=["example_id"])
+    assert df["example_id"].is_unique
+    return df
 
-df.to_parquet("cleaned_data.parquet")
 
-# ── Split into train/val/test by protein cluster ─────────────────────────────
-protein_clusters = pn_units[["pdb_id", "assembly_id", "pn_unit_iid", "protein_cluster_30"]].copy()
+def resolve_structure_paths(df: pd.DataFrame, pdb_mirror: Path) -> pd.DataFrame:
+    """Overwrite `path` with each structure's location in the local PDB mirror."""
+    pdb_mirror = pdb_mirror.expanduser().resolve()
 
-df = df.merge(
-    protein_clusters.rename(columns={
-        "pn_unit_iid": "pn_unit_1_iid",
-        "protein_cluster_30": "u1_cluster",
-    }),
-    on=["pdb_id", "assembly_id", "pn_unit_1_iid"],
-    how="left",
-)
-df = df.merge(
-    protein_clusters.rename(columns={
-        "pn_unit_iid": "pn_unit_2_iid",
-        "protein_cluster_30": "u2_cluster",
-    }),
-    on=["pdb_id", "assembly_id", "pn_unit_2_iid"],
-    how="left",
-)
+    def resolve_path(pdb_id: str) -> str:
+        pdb_id = pdb_id.lower()
+        return str(pdb_mirror / pdb_id[1:3] / f"{pdb_id}.cif.gz")
 
-# The polymer side carries the cluster; the ligand side is null. Take whichever
-# side is the polymer.
-df["protein_cluster"] = np.where(df["u1_is_polymer"], df["u1_cluster"], df["u2_cluster"])
+    df = df.copy()
+    df["path"] = df["pdb_id"].map(resolve_path)
+    return df
 
-# Drop interfaces with no assigned cluster (RNA/DNA, short peptides, low quality).
-df = df[df["protein_cluster"].notna()].reset_index(drop=True)
 
-# Shuffle the unique clusters (seeded for reproducibility) and split 80/10/10.
-unique_clusters = df["protein_cluster"].unique()
-rng = np.random.default_rng(seed=42)
-rng.shuffle(unique_clusters)
+def assign_cluster_splits(df: pd.DataFrame, *, seed: int) -> pd.DataFrame:
+    """Add a `protein_cluster` column and assign each cluster to one 80/10/10 split."""
+    df = df.copy()
+    df["protein_cluster"] = np.where(df["pn_unit_1_is_polymer"], df["pn_unit_1_cluster"], df["pn_unit_2_cluster"])
+    df = df[df["protein_cluster"].notna()].reset_index(drop=True)
 
-n = len(unique_clusters)
-n_train = int(0.8 * n)
-n_val = int(0.1 * n)
-# test gets the remainder to avoid off-by-one gaps
+    unique_clusters = df["protein_cluster"].drop_duplicates().to_numpy(copy=True)
+    rng = np.random.default_rng(seed=seed)
+    rng.shuffle(unique_clusters)
 
-train_clusters = set(unique_clusters[:n_train])
-val_clusters = set(unique_clusters[n_train:n_train + n_val])
-test_clusters = set(unique_clusters[n_train + n_val:])
+    n = len(unique_clusters)
+    n_train = int(0.8 * n)
+    n_validation = int(0.1 * n)
+    # test gets the remainder to avoid off-by-one gaps
 
-df["split"] = df["protein_cluster"].map(assign_split)
+    train_clusters = set(unique_clusters[:n_train])
+    validation_clusters = set(unique_clusters[n_train : n_train + n_validation])
+    test_clusters = set(unique_clusters[n_train + n_validation :])
 
-df_train = df[df["split"] == "train"].reset_index(drop=True)
-df_val = df[df["split"] == "val"].reset_index(drop=True)
-df_test = df[df["split"] == "test"].reset_index(drop=True)
+    def assign_split(cluster: object) -> str:
+        if cluster in train_clusters:
+            return "train"
+        if cluster in validation_clusters:
+            return "validation"
+        if cluster in test_clusters:
+            return "test"
+        return "unassigned"  # rows where cluster was null
 
-os.makedirs("splits", exist_ok=True)
-df_train.to_parquet("splits/train.parquet", index=False)
-df_val.to_parquet("splits/val.parquet", index=False)
-df_test.to_parquet("splits/test.parquet", index=False)
+    df["split"] = df["protein_cluster"].map(assign_split)
+    assert df.groupby("protein_cluster")["split"].nunique().eq(1).all()
+    return df
+
+
+def write_splits(df: pd.DataFrame, output_dir: Path) -> None:
+    """Write cleaned metadata and individual split files."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    df.to_parquet(output_dir / "all.parquet", index=False)
+    for split in ("train", "validation", "test"):
+        df[df["split"] == split].reset_index(drop=True).to_parquet(output_dir / f"{split}.parquet", index=False)
+
+
+def main() -> None:
+    """Run the metadata preparation workflow."""
+    args = parse_args()
+    interfaces, pn_units = load_metadata(args.metadata, args.pn_units)
+    df = merge_pn_unit_info(interfaces, pn_units)
+    df = clean_data(df)
+    df = resolve_structure_paths(df, args.pdb_mirror)
+    df = assign_cluster_splits(df, seed=args.seed)
+    write_splits(df, args.output_dir)
+
+    counts = df["split"].value_counts()
+    print(f"Wrote {len(df):,} examples to {args.output_dir}")
+    for split in ("train", "validation", "test"):
+        print(f"  {split}: {counts.get(split, 0):,}")
+
+
+if __name__ == "__main__":
+    main()

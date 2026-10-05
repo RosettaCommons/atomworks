@@ -46,7 +46,7 @@ pdb_path = get_pdb_path_or_buffer(example_pdb_id)
 # - ``remove_waters``: Whether to remove water molecules (True by default)
 # - ``remove_ccds``: CCD codes to filter out (Default is a list of common crystallization aids, e.g., GOL, SO4, etc.)
 # - ``add_missing_atoms``: Whether to add missing (e.g., unresolved) heavy atoms (True by default)
-# - ``hydrogen_policy``: How to handle hydrogens (e.g., "keep", "remove", or "infer"). Default is "keep".
+# - ``hydrogen_policy``: How to handle hydrogens ("keep" or "remove"). Default is "keep".
 # ... and many more!
 
 # ``parse`` returns a dictionary with several data fields; see the API docs for full details.
@@ -82,7 +82,7 @@ atom_array = parse_output["assemblies"]["1"][0]
 print("Available annotations:")
 annotations = atom_array.get_annotation_categories()
 for i, annotation in enumerate(annotations):
-    print(f"  {i + 1:2d}. {annotation}")
+    print(f"  {i+1:2d}. {annotation}")
 
 
 # %%

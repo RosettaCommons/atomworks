@@ -9,11 +9,13 @@ from collections import Counter, defaultdict
 import biotite.structure as struc
 import networkx as nx
 import numpy as np
-import pandas as pd
 from biotite.structure import AtomArray, AtomArrayStack
 
-from atomworks.common import listmap, not_isin, sum_string_arrays
-from atomworks.constants import ELEMENT_NAME_TO_ATOMIC_NUMBER, HYDROGEN_LIKE_SYMBOLS, WATER_LIKE_CCDS
+from atomworks.common import exists, not_isin, sum_string_arrays
+from atomworks.constants import (
+    WATER_LIKE_CCDS,
+)
+from atomworks.io.utils.atom_array import remove_hydrogens  # noqa: F401
 from atomworks.io.utils.atom_array_plus import stack_any
 from atomworks.io.utils.bonds import (
     generate_inter_level_bond_hash,
@@ -21,15 +23,10 @@ from atomworks.io.utils.bonds import (
     get_connected_nodes,
     hash_graph,
 )
-from atomworks.io.utils.ccd import atom_array_from_ccd_code
+from atomworks.io.utils.chain_info import update_sequences_from_res_names
 from atomworks.io.utils.selection import annot_start_stop_idxs
 
 logger = logging.getLogger("atomworks.io")
-
-try:
-    import hydride
-except ImportError:
-    logger.warning("Hydride library not found, hydrogens cannot be inferred. Pip install hydride to enable.")
 
 
 def subset_atom_array(atom_array: AtomArray | AtomArrayStack, keep: np.ndarray) -> AtomArray | AtomArrayStack:
@@ -85,31 +82,25 @@ def remove_ccd_components(
     return subset_atom_array(atom_array, not_isin(atom_array.res_name, ccd_codes_to_remove))
 
 
-def remove_hydrogens(atom_array: AtomArray | AtomArrayStack) -> AtomArray | AtomArrayStack:
-    """Removes hydrogens from the AtomArray or AtomArrayStack."""
-    keep = not_isin(atom_array.element, HYDROGEN_LIKE_SYMBOLS)
-    return subset_atom_array(atom_array, keep)
-
-
 def remove_waters(atom_array: AtomArray | AtomArrayStack) -> AtomArray | AtomArrayStack:
     """Removes waters from the AtomArray or AtomArrayStack."""
     return remove_ccd_components(atom_array, WATER_LIKE_CCDS)
 
 
-def ensure_atom_array_stack(atom_array_or_stack: AtomArray | AtomArrayStack) -> AtomArrayStack:
-    """Ensures that the input is an AtomArrayStack. If it is an AtomArray, it is converted to a stack."""
-    if isinstance(atom_array_or_stack, AtomArray):
+def ensure_atom_array_stack(atom_array_or_stack: AtomArray | AtomArrayStack | list[AtomArray]) -> AtomArrayStack:
+    """Ensures that the input is an AtomArrayStack. If it is an AtomArray or list, it is converted to a stack."""
+    if isinstance(atom_array_or_stack, list):
+        return stack_any(atom_array_or_stack)
+    elif isinstance(atom_array_or_stack, AtomArray):
         return stack_any([atom_array_or_stack])
     elif isinstance(atom_array_or_stack, AtomArrayStack):
         return atom_array_or_stack
     else:
-        raise TypeError(f"Expected AtomArray or AtomArrayStack, got {type(atom_array_or_stack)}")
+        raise TypeError(f"Expected AtomArray, AtomArrayStack, or list[AtomArray], got {type(atom_array_or_stack)}")
 
 
 def resolve_arginine_naming_ambiguity(atom_array: AtomArray, raise_on_error: bool = True) -> AtomArray:
-    """
-    Arginine naming ambiguities are fixed (ensuring NH1 is always closer to CD than NH2)
-    """
+    """Arginine naming ambiguities are fixed (ensuring NH1 is always closer to CD than NH2)"""
     # TODO: Generalize to AtomArrayStack
     arg_mask = atom_array.res_name == "ARG"
     arg_nh1_mask = (atom_array.atom_name == "NH1") & arg_mask
@@ -146,68 +137,73 @@ def resolve_arginine_naming_ambiguity(atom_array: AtomArray, raise_on_error: boo
     return atom_array
 
 
-def mse_to_met(atom_array: AtomArray) -> AtomArray:
-    """Convert MSE residues (selenomethionine) to MET (methionine)."""
+def mse_to_met(
+    atom_array: AtomArray | AtomArrayStack,
+    *,
+    chain_info: dict[str, dict] | None = None,
+) -> AtomArray | AtomArrayStack:
+    """Convert MSE residues (selenomethionine) to MET (methionine).
+
+    Within crystal structures, selenomethionine (MSE) are often used to solve the phase problem.
+
+    Args:
+      atom_array: Atom array or stack to modify.
+      chain_info: Optional chain information dictionary to update. If provided,
+        will update ``res_name``, ``processed_entity_canonical_sequence``, and
+        ``processed_entity_non_canonical_sequence`` fields for chains containing MSE.
+
+    Returns:
+      The modified atom array (same object, modified in-place).
+      Modifies the chain_info dictionary in-place if provided.
+    """
+    # Unify handling by converting to stack
+    is_single_model = isinstance(atom_array, AtomArray)
+    atom_array = ensure_atom_array_stack(atom_array)
+
     mse_mask = atom_array.res_name == "MSE"
     if np.any(mse_mask):
+        # Create a mask for the selenium atom within MSE, which we will convert to sulfur (SD)
         se_mask = (atom_array.atom_name == "SE") & mse_mask
         logger.debug(f"Converting {np.sum(se_mask)} MSE residues to MET.")
 
-        # Update residue name, hetero flag, and element
+        # Update residue name, hetero flag, and element (broadcasts across all models)
         atom_array.res_name[mse_mask] = "MET"
         atom_array.hetero[mse_mask] = False
         atom_array.atom_name[se_mask] = "SD"
+        atom_array.element[se_mask] = "S"
 
-        # ... handle cases for integer or string representations of element
-        _elt_prev = atom_array.element[se_mask][0]
-        if _elt_prev == "SE":
-            atom_array.element[se_mask] = "S"
-        elif _elt_prev == ELEMENT_NAME_TO_ATOMIC_NUMBER["SE"]:
-            atom_array.element[se_mask] = ELEMENT_NAME_TO_ATOMIC_NUMBER["S"]
-        elif _elt_prev == str(ELEMENT_NAME_TO_ATOMIC_NUMBER["SE"]):
-            atom_array.element[se_mask] = str(ELEMENT_NAME_TO_ATOMIC_NUMBER["S"])
+        # Reorder atoms to canonical MET ordering (all models at once)
+        mse_indices = np.where(mse_mask)[0]
+        mse_atoms = atom_array[0][mse_mask]  # Get MSE atoms from first model
+        mse_order = struc.info.standardize_order(mse_atoms)
 
-        # Reorder atoms for canonical MET ordering
-        atom_array_mse = atom_array[mse_mask]
-        atom_array_mse = atom_array_mse[struc.info.standardize_order(atom_array_mse)]
-        atom_array[mse_mask] = atom_array_mse
+        # Build full reordering index: identity for non-MSE, reordered for MSE
+        full_index = np.arange(atom_array.array_length())
+        full_index[mse_indices] = mse_indices[mse_order]
 
-    return atom_array
+        # Reorder entire stack at once
+        atom_array = atom_array[:, full_index]
 
+    # Update chain_info if provided
+    if exists(chain_info):
+        for chain_data in chain_info.values():
+            if "res_name" not in chain_data:
+                continue
 
-def keep_last_residue(atom_array: AtomArray | AtomArrayStack) -> AtomArray | AtomArrayStack:
-    """
-    Removes duplicate residues in the atom array, keeping only the last occurrence.
+            # Ensure res_name is a list and check for MSE as an element (not substring)
+            res_names = chain_data.get("res_name", [])
+            has_mse = isinstance(res_names, list) and "MSE" in res_names
+            if not has_mse:
+                continue
 
-    Args:
-        atom_array (AtomArray): The atom array containing the chain information.
+            # Convert MSE to MET in three-letter sequence
+            chain_data["res_name"] = ["MET" if res_name == "MSE" else res_name for res_name in chain_data["res_name"]]
 
-    Returns:
-        AtomArray: The atom array with duplicate residues removed.
-    """
-    atom_df = pd.DataFrame(
-        {
-            "chain_id": atom_array.chain_id,
-            "res_id": atom_array.res_id,
-            "res_name": atom_array.res_name,
-        }
-    )
+            # Recompute one-letter sequences after conversion
+            update_sequences_from_res_names(chain_data)
 
-    # Get the mask of duplicates based on the combination of chain_id, res_id, and res_name
-    collapsed_df = atom_df.drop_duplicates(subset=["chain_id", "res_id", "res_name"])
-
-    # Get duplicates based on res_id, keeping the last
-    duplicate_mask = collapsed_df.duplicated(subset=["chain_id", "res_id"], keep="last")
-    duplicates_df = collapsed_df[duplicate_mask]
-
-    # Perform a left merge to find rows in atom_df that are also in duplicates_df
-    merged_df = atom_df.merge(duplicates_df, on=["chain_id", "res_id", "res_name"], how="left", indicator=True)
-
-    # Create a mask where True indicates the row is not in duplicates_df
-    keep = merged_df["_merge"] == "left_only"
-
-    # Remove rows from atom_array with the deletion mask
-    return subset_atom_array(atom_array, keep)
+    # Return same type as input
+    return atom_array[0] if is_single_model else atom_array
 
 
 def maybe_fix_non_polymer_at_symmetry_center(
@@ -323,28 +319,37 @@ def add_polymer_annotation(atom_array: AtomArray | AtomArrayStack, chain_info_di
         AtomArray: The updated atom array with the polymer annotation added.
     """
     chain_ids = atom_array.get_annotation("chain_id")
-    is_polymer = np.array([chain_info_dict[chain_id]["is_polymer"] for chain_id in chain_ids])
+    is_polymer = np.array([chain_info_dict[chain_id]["is_polymer"] for chain_id in chain_ids], dtype=bool)
     atom_array.set_annotation("is_polymer", is_polymer)
     return atom_array
 
 
-def update_nonpoly_seq_ids(atom_array: AtomArray, chain_info_dict: dict) -> AtomArray:
-    """
-    Updates the sequence IDs of non-polymeric chains in the atom array to the author sequence IDs.
+def update_nonpoly_seq_ids(atom_array: AtomArray | AtomArrayStack, chain_info_dict: dict) -> AtomArray | AtomArrayStack:
+    """Updates the sequence IDs of non-polymeric chains in the atom array to the author sequence IDs.
 
     Args:
-        atom_array (AtomArray): The atom array containing the chain information.
-        chain_info_dict (dict): Dictionary containing the sequence details of each chain.
+        atom_array (AtomArray | AtomArrayStack): The atom array containing the chain information.
 
     Returns:
-        AtomArray: The updated atom array with the sequence IDs updated for non-polymeric chains.
-    """
-    # For non-polymeric chains, we use the author sequence ids
-    author_seq_ids = atom_array.get_annotation("auth_seq_id")
-    chain_ids = atom_array.get_annotation("chain_id")
+        AtomArray | AtomArrayStack: The updated atom array with the sequence IDs updated for non-polymeric chains.
 
-    # Create mask based on the is_polymer column
-    non_polymer_mask = ~np.array([chain_info_dict[chain_id]["is_polymer"] for chain_id in chain_ids])
+    TODO: Delete this function when we update regression tests so we remove reliance on `auth_seq_id` altogether
+    """
+    chain_ids = atom_array.get_annotation("chain_id")
+    author_seq_ids = atom_array.get_annotation("auth_seq_id")
+    non_polymer_mask = ~np.array([chain_info_dict[chain_id]["is_polymer"] for chain_id in chain_ids], dtype=bool)
+
+    # ... update the chain_info dictionary
+    for chain_id in np.unique(atom_array.chain_id[non_polymer_mask]):
+        original_res_ids = chain_info_dict[chain_id]["res_id"]
+        chain_mask = atom_array.chain_id == chain_id
+        new_res_ids = []
+        for res_id in original_res_ids:
+            res_id_mask = atom_array.res_id == res_id
+            new_res_ids.append(
+                author_seq_ids[res_id_mask & chain_mask][0]
+            )  # Assuming all atoms in the residue have the same author seq id
+        chain_info_dict[chain_id]["res_id"] = new_res_ids
 
     # Update the atom_array_label with the (1-indexed) author sequence ids
     atom_array.res_id[non_polymer_mask] = author_seq_ids[non_polymer_mask]
@@ -390,174 +395,48 @@ def replace_negative_res_ids_with_auth_seq_id(atom_array: AtomArray) -> AtomArra
     return atom_array
 
 
-def add_charge_from_ccd_codes(atom_array: AtomArray | AtomArrayStack) -> AtomArray | AtomArrayStack:
-    """
-    Adds charge annotations to an atom array based on the Chemical Component Dictionary (CCD) codes.
-
-    Retrieves charge information from the CCD for each residue and assigns it to matching atoms.
-    If a residue or atom is not found in the CCD, a charge of 0 is assigned. If a charge annotation
-    is already present, it is overwritten.
-
-    Args:
-        atom_array: The atom array to which charge annotations will be added.
-            Can be either an AtomArray or AtomArrayStack.
-
-    Returns:
-        The input atom array with added charge annotations.
-
-
-    WARNING: This function will assume that each residue in the atom array is exactly as in the CCD.
-       Therefore the charges will be incorrect if it is in a different protonation state, or has been
-       ionized or else in the original structure. Use this function with caution!
-
-    NOTE: If you want to add charges to canonical amino acids based on the pH, take a look at the
-        'hydride.estimate_amino_acid_charges' function instead.
-
-    Example:
-        >>> atom_array = load_any("6lyz.cif", model=1)
-        >>> atom_array_with_charges = add_charge_from_ccd_codes(atom_array)
-    """
-    # Warn if a charge annotation is already present
-    if "charge" in atom_array.get_annotation_categories():
-        logger.info("Charge annotation already present in atom array. It will be overwritten.")
-
-    # Build up a lookup table (res_name, atom_name) -> charge for each res_name that appears in the atom_array
-    unique_res_names = np.unique(atom_array.res_name)
-    charge_lookup_table: dict[tuple[str, str], float] = {}
-
-    for res_name in unique_res_names:
-        try:
-            ccd_array = atom_array_from_ccd_code(res_name)
-            # Use dictionary comprehension to build lookup entries for this residue
-            charge_lookup_table.update(
-                {
-                    (res_name, atom_name): charge
-                    for atom_name, charge in zip(ccd_array.atom_name, ccd_array.charge, strict=False)
-                }
-            )
-        except ValueError:
-            logger.info(f"CCD charge look-up failed for {res_name}. Assuming charge is 0 for all atoms.")
-            continue
-
-    # Create the charge annotations for the atom array
-    res_names = atom_array.res_name
-    atom_names = atom_array.atom_name
-    charges = np.array(
-        [charge_lookup_table.get((res, atom), 0) for res, atom in zip(res_names, atom_names, strict=False)]
+def add_charge_from_ccd_codes(*args, **kwargs) -> AtomArray:
+    """Removed. Use :py:func:`atomworks.io.utils.ccd.add_annotations_from_ccd` instead."""
+    raise DeprecationWarning(
+        "add_charge_from_ccd_codes() has been deprecated!"
+        "Use `add_annotations_from_ccd(atom_array, annotations=['charge'])` from "
+        "`atomworks.io.utils.ccd` for an equivalent CCD-based charge lookup. "
+        "If you want bond-aware charge inference (not just a CCD lookup), consider "
+        "`prepare_atom_array(..., add_missing_atoms=True)` instead."
     )
 
-    # Set the charges annotation
-    atom_array.set_annotation("charge", charges)
 
-    return atom_array
-
-
-def add_hydrogen_atom_positions(
+def add_pn_unit_id_annotation(
     atom_array: AtomArray | AtomArrayStack,
-    residue_level_annots_to_copy_to_hydrogens: list[str] = [],
+    overwrite: bool = True,
+    exclude_bond_types: set[struc.BondType] | None = None,
 ) -> AtomArray | AtomArrayStack:
-    """Add hydrogens using biotite supported hydride library.
+    """Adds the polymer/non-polymer unit ID (pn_unit_id) annotation to the AtomArray.
 
-    Removes any existing hydrogens first, then adds new hydrogens using the hydride library.
-
-    Args:
-        atom_array: The atom array to which hydrogens will be added.
-        residue_level_annots_to_copy_to_hydrogens (list[str]): A list of residue-level annotations that will be copied
-            over to the newly-added hydrogens for each residue.
-
-    Returns:
-        The updated atom array with hydrogens added, preserving the input type.
-    """
-    # Remove existing hydrogens
-    atom_array = remove_hydrogens(atom_array)
-
-    # Determine which fields to copy from the original array to the new hydrogens
-    fields_to_copy_from_residue_if_present = ["auth_seq_id", "label_entity_id"]
-    fields_to_copy_from_residue_if_present.extend(residue_level_annots_to_copy_to_hydrogens)
-    fields_to_copy_from_residue_if_present = list(
-        set(fields_to_copy_from_residue_if_present).intersection(set(atom_array.get_annotation_categories()))
-    )
-
-    # Ensure charge annotation exists
-    if "charge" not in atom_array.get_annotation_categories():
-        atom_array = add_charge_from_ccd_codes(atom_array)
-
-    # Helper function to copy annotations from one array to another
-    def _copy_missing_annotations_residue_wise(
-        from_array: AtomArray, to_array: AtomArray, fields_to_copy: list[str]
-    ) -> AtomArray:
-        """Copy specified annotations residue-wise from one AtomArray to another. Updates annotations in-place."""
-        residue_starts = struc.get_residue_starts(from_array)
-        residue_starts_atom_array = from_array[residue_starts]
-        annot = {item: getattr(residue_starts_atom_array, item) for item in fields_to_copy_from_residue_if_present}
-        for field in fields_to_copy:
-            updated_field = struc.spread_residue_wise(to_array, annot[field])
-            to_array.set_annotation(field, updated_field)
-        return to_array
-
-    def _add_hydrogens_nan_tolerant(atom_array: AtomArray) -> AtomArray:
-        """Adds hydrogens to the input AtomArray, safely handling the case in which some atoms have NaN coordinates"""
-        original_nan_coords_mask = np.any(np.isnan(atom_array.coord), axis=1)
-        if np.any(original_nan_coords_mask):
-            # Temporarily set NaN coordinates to zero so that hydride doesn't error
-            atom_array.coord[original_nan_coords_mask] = np.zeros((np.sum(original_nan_coords_mask), 3))
-
-            # Add hydrogens using hydride
-            result_atom_array, original_atoms_mask = hydride.add_hydrogen(atom_array)
-
-            # Reset the coordinates of atoms that originally had at least one NaN coordinate to be fully NaN
-            originally_nan_inds = np.arange(result_atom_array.array_length())[original_atoms_mask][
-                original_nan_coords_mask
-            ]
-            result_atom_array.coord[originally_nan_inds, :] = np.nan
-
-            # For any newly-added hydrogens bonded to heavy atoms with NaN coordinates, set their coordinates to NaN as well
-            result_nan_coords_mask = np.any(np.isnan(result_atom_array.coord), axis=1)
-            heavy_atom_nan_idces = np.where(result_nan_coords_mask & ~(result_atom_array.element == "H"))[0]
-            for idx in heavy_atom_nan_idces:
-                bonded_atoms = result_atom_array.bonds.get_bonds(idx)[0]
-                bonded_h_atoms = bonded_atoms[result_atom_array[bonded_atoms].element == "H"]
-                new_bonded_h_atoms = bonded_h_atoms[~original_atoms_mask[bonded_h_atoms]]
-                result_atom_array.coord[new_bonded_h_atoms, :] = np.nan
-        else:
-            result_atom_array, original_atoms_mask = hydride.add_hydrogen(atom_array)
-
-        return result_atom_array
-
-    if isinstance(atom_array, AtomArrayStack):
-        updated_arrays = []
-        for old_arr in atom_array:
-            arr = _add_hydrogens_nan_tolerant(old_arr)
-            arr = _copy_missing_annotations_residue_wise(old_arr, arr, fields_to_copy_from_residue_if_present)
-            updated_arrays.append(arr)
-
-        ret_array = struc.stack(updated_arrays)
-
-    elif isinstance(atom_array, AtomArray):
-        arr = _add_hydrogens_nan_tolerant(atom_array)
-        ret_array = _copy_missing_annotations_residue_wise(atom_array, arr, fields_to_copy_from_residue_if_present)
-
-    return ret_array
-
-
-def add_pn_unit_id_annotation(atom_array: AtomArray | AtomArrayStack) -> AtomArray | AtomArrayStack:
-    """
-    Adds the polymer/non-polymer unit ID (pn_unit_id) annotation to the AtomArray.
     Two covalently bonded ligands are considered one PN unit, but a ligand bonded to a protein is considered two PN units.
     See the README glossary for more details on how we define `chains`, `pn_units`, and `molecules` within this codebase.
 
     Args:
-        atom_array (AtomArray): The AtomArray to process.
+        atom_array: The AtomArray to process.
+        overwrite: If ``True``, recompute and replace annotation if it exists.
+            If ``False``, skip if annotation already exists. Defaults to ``True``.
+        exclude_bond_types: Bond types to exclude when determining connectivity.
 
     Returns:
-        atom_array (AtomArray): The AtomArray including the `pn_unit_id` annotation.
+        The AtomArray including the ``pn_unit_id`` annotation.
     """
+    # Check if annotation exists and skip if not overwriting
+    if not overwrite and "pn_unit_id" in atom_array.get_annotation_categories():
+        return atom_array
+
     # ...initialize the pn_unit_id to chain_id (we will later update for multi-chain non-polymer PN units)
     pn_unit_id_annotation = atom_array.chain_id.astype(object)
 
     # ...make the NetworkX graph for non-polymer chains
     non_polymer_atom_array = atom_array[~atom_array.is_polymer]
-    connected_chains = get_connected_nodes(*get_coarse_graph_as_nodes_and_edges(non_polymer_atom_array, "chain_id"))
+    connected_chains = get_connected_nodes(
+        *get_coarse_graph_as_nodes_and_edges(non_polymer_atom_array, "chain_id", exclude_bond_types=exclude_bond_types)
+    )
 
     for connected_chain in connected_chains:
         # ...set the same the pn_unit_id for each chain in the connected chain
@@ -570,12 +449,26 @@ def add_pn_unit_id_annotation(atom_array: AtomArray | AtomArrayStack) -> AtomArr
     return atom_array
 
 
-def add_pn_unit_iid_annotation(atom_array: AtomArray | AtomArrayStack) -> AtomArray | AtomArrayStack:
+def add_pn_unit_iid_annotation(
+    atom_array: AtomArray | AtomArrayStack, overwrite: bool = True
+) -> AtomArray | AtomArrayStack:
     """Adds the polymer/non-polymer unit instance ID (pn_unit_iid) annotation to the AtomArray or AtomArrayStack.
 
     Optimized to avoid expensive subarray operations by using vectorized operations and boolean masks.
     For symmetric assemblies with many identical chains, this provides significant speedup.
+
+    Args:
+        atom_array: The AtomArray or AtomArrayStack to annotate.
+        overwrite: If ``True``, recompute and replace annotation if it exists.
+            If ``False``, skip if annotation already exists. Defaults to ``True``.
+
+    Returns:
+        The AtomArray or AtomArrayStack with pn_unit_iid annotation added.
     """
+    # Check if annotation exists and skip if not overwriting
+    if not overwrite and "pn_unit_iid" in atom_array.get_annotation_categories():
+        return atom_array
+
     # ...create an array that concatenates the pn_unit_id and transformation_id
     _temp_pn_unit_iid = sum_string_arrays(atom_array.pn_unit_id, "_", atom_array.transformation_id)
     _final_pn_unit_iid = np.full(atom_array.array_length(), fill_value="", dtype=object)
@@ -612,13 +505,34 @@ def add_pn_unit_iid_annotation(atom_array: AtomArray | AtomArrayStack) -> AtomAr
     return atom_array
 
 
-def add_molecule_id_annotation(atom_array: AtomArray | AtomArrayStack) -> AtomArray | AtomArrayStack:
-    """Adds the molecule ID (molecule_id) annotation to the AtomArray."""
-    # ...initialize the pn_unit_id to chain_id (we will later update for multi-chain non-polymer PN units)
-    atom_array.add_annotation("molecule_id", dtype=np.int16)
+def add_molecule_id_annotation(
+    atom_array: AtomArray | AtomArrayStack,
+    overwrite: bool = True,
+    exclude_bond_types: set[struc.BondType] | None = None,
+) -> AtomArray | AtomArrayStack:
+    """Adds the molecule ID (molecule_id) annotation to the AtomArray.
+
+    Args:
+        atom_array: The AtomArray to process.
+        overwrite: If ``True``, recompute and replace annotation if it exists.
+            If ``False``, skip if annotation already exists. Defaults to ``True``.
+        exclude_bond_types: Bond types to exclude when determining connectivity.
+
+    Returns:
+        The AtomArray including the ``molecule_id`` annotation.
+    """
+    # Check if annotation exists and skip if not overwriting
+    if not overwrite and "molecule_id" in atom_array.get_annotation_categories():
+        return atom_array
+
+    # Initialize annotation (will overwrite if exists)
+    if "molecule_id" not in atom_array.get_annotation_categories():
+        atom_array.add_annotation("molecule_id", dtype=np.int16)
 
     # ...make the NetworkX graph for all pn_units
-    connected_pn_units = get_connected_nodes(*get_coarse_graph_as_nodes_and_edges(atom_array, "pn_unit_id"))
+    connected_pn_units = get_connected_nodes(
+        *get_coarse_graph_as_nodes_and_edges(atom_array, "pn_unit_id", exclude_bond_types=exclude_bond_types)
+    )
 
     # ...iterate through connected pn_units
     for idx, connected_pn_unit in enumerate(connected_pn_units):
@@ -630,8 +544,21 @@ def add_molecule_id_annotation(atom_array: AtomArray | AtomArrayStack) -> AtomAr
     return atom_array
 
 
-def add_molecule_iid_annotation(atom_array_stack: AtomArrayStack) -> AtomArrayStack:
-    """Adds the molecule instance ID (molecule_iid) annotation to the AtomArrayStack"""
+def add_molecule_iid_annotation(atom_array_stack: AtomArrayStack, overwrite: bool = True) -> AtomArrayStack:
+    """Adds the molecule instance ID (molecule_iid) annotation to the AtomArrayStack.
+
+    Args:
+        atom_array_stack: The AtomArrayStack to annotate.
+        overwrite: If ``True``, recompute and replace annotation if it exists.
+            If ``False``, skip if annotation already exists. Defaults to ``True``.
+
+    Returns:
+        The AtomArrayStack with molecule_iid annotation added.
+    """
+    # Check if annotation exists and skip if not overwriting
+    if not overwrite and "molecule_iid" in atom_array_stack.get_annotation_categories():
+        return atom_array_stack
+
     # ...concatenate molecule_id and transformation_id to create a unique molecule instance ID
     molecule_iids_str = np.char.add(
         atom_array_stack.molecule_id.astype(str), atom_array_stack.transformation_id.astype(str)
@@ -652,9 +579,10 @@ def annotate_entities(
     lower_level_id: str | list[str],
     lower_level_entity: str,
     add_inter_level_bond_hash: bool = True,
-) -> tuple[AtomArray, dict]:
-    """
-    Annotates entities in an AtomArray at a given `id` level, based on the connectivity and annotations at the lower level.
+    overwrite: bool = True,
+    exclude_bond_types: set[struc.BondType] | None = None,
+) -> tuple[AtomArray, dict[int, list[str]]]:
+    """Annotates entities in an AtomArray at a given `id` level, based on the connectivity and annotations at the lower level.
 
     The intended use is, for example:
         - For the `molecule` level, `molecule_entities` are generated for each `molecule_id` based on the connectivty
@@ -665,20 +593,20 @@ def annotate_entities(
             level.
 
     Args:
-        - atom_array (AtomArray): The AtomArray to process.
-        - level (str): The level at which to annotate entities (e.g., "chain", "pn_unit", "entity")
-        - lower_level_id (str | list[str]): A list of annotations to consider for determining segment boundaries at a lower level.
+        atom_array: The AtomArray to process.
+        level: The level at which to annotate entities (e.g., "chain", "pn_unit", "entity").
+        lower_level_id: A list of annotations to consider for determining segment boundaries at a lower level.
             E.g. "pn_unit_id", "chain_id" or "res_id".
-        - lower_level_entity (str): The annotation to use for identifying entities at the lower level.
+        lower_level_entity: The annotation to use for identifying entities at the lower level.
             E.g. "pn_unit_entity", "chain_entity" or "res_name".
-        - add_inter_level_bond_hash (bool): Whether to add a hash of the inter-level bonds to the entity hash.
+        add_inter_level_bond_hash: Whether to add a hash of the inter-level bonds to the entity hash.
             For some cases, this may be necessary to distinguish entities (e.g., when determining molecule-level
             entities). In others (e.g., for polymers), this may be overkill.
+        overwrite: If ``True``, recompute and replace annotation if it exists.
+            If ``False``, skip if annotation already exists. Defaults to ``True``.
 
     Returns:
-        - Tuple[AtomArray, dict]: A tuple containing:
-            - atom_array (AtomArray): The updated AtomArray with the entity annotation.
-            - entities_info (dict): A dictionary mapping entity IDs to lists of instance IDs.
+        Tuple of (annotated atom_array, entity_dict).
 
     Example:
         >>> atom_array = AtomArray(...)
@@ -690,13 +618,20 @@ def annotate_entities(
         >>> print(entities_info)
         {0: [0, 1], 1: [2, 3], 2: [4, 5]}
     """
+    entity_annotation_name = f"{level}_entity"
+
+    # Check if annotation exists and skip if not overwriting
+    if not overwrite and entity_annotation_name in atom_array.get_annotation_categories():
+        # Return empty dict since we didn't compute anything
+        return atom_array, {}
+
     _next_available_entity_id = 0
     _hash_to_entity_id = {}
 
     ids_at_level = np.unique(atom_array.get_annotation(level + "_id"))
 
     # ... initialize annotations to fill
-    entities_annotation = np.zeros(len(atom_array), dtype=int)
+    entities_annotation = np.zeros(len(atom_array), dtype=np.int16)
     entities_info = defaultdict(list)
 
     for instance_id in np.unique(ids_at_level):
@@ -704,18 +639,15 @@ def annotate_entities(
         instance = atom_array[is_instance]
 
         # ... get connectivity and node annotations for the coarse graph at the lower level
-        _, edges = get_coarse_graph_as_nodes_and_edges(instance, lower_level_id)
+        _, edges = get_coarse_graph_as_nodes_and_edges(instance, lower_level_id, exclude_bond_types=exclude_bond_types)
         instance_graph = nx.Graph()
         instance_graph.add_edges_from(edges)
 
-        # ... set node attributes to lower level entities
-        lower_level_iter = struc.segments.segment_iter(
-            instance, annot_start_stop_idxs(instance, lower_level_id, add_exclusive_stop=True)
-        )
-        node_attrs = {
-            idx: lower_level_instance.get_annotation(lower_level_entity)[0]
-            for idx, lower_level_instance in enumerate(lower_level_iter)
-        }
+        # ... set node attributes to lower level entities (vectorized)
+        # Direct annotation indexing instead of creating AtomArray objects via segment_iter()
+        segment_boundaries = annot_start_stop_idxs(instance, lower_level_id, add_exclusive_stop=True)
+        entity_annotation = instance.get_annotation(lower_level_entity)
+        node_attrs = {idx: entity_annotation[start] for idx, start in enumerate(segment_boundaries[:-1])}
         nx.set_node_attributes(instance_graph, node_attrs, "node")
 
         # ... create the graph hash
@@ -727,6 +659,7 @@ def annotate_entities(
                 atom_array=instance,
                 lower_level_id=lower_level_id[0] if isinstance(lower_level_id, list) else lower_level_id,
                 lower_level_entity=lower_level_entity,
+                exclude_bond_types=exclude_bond_types,
             )
 
         # ... check if the graph has been seen before
@@ -746,8 +679,21 @@ def annotate_entities(
     return atom_array, dict(entities_info)
 
 
-def add_chain_iid_annotation(atom_array_stack: AtomArrayStack) -> AtomArrayStack:
-    """Adds the chain instance ID (chain_iid) annotation to the AtomArrayStack"""
+def add_chain_iid_annotation(atom_array_stack: AtomArrayStack, overwrite: bool = True) -> AtomArrayStack:
+    """Adds the chain instance ID (chain_iid) annotation to the AtomArrayStack.
+
+    Args:
+        atom_array_stack: The AtomArrayStack to annotate.
+        overwrite: If ``True``, recompute and replace annotation if it exists.
+            If ``False``, skip if annotation already exists. Defaults to ``True``.
+
+    Returns:
+        The AtomArrayStack with chain_iid annotation added.
+    """
+    # Check if annotation exists and skip if not overwriting
+    if not overwrite and "chain_iid" in atom_array_stack.get_annotation_categories():
+        return atom_array_stack
+
     # ...concatenate chain_id and transformation_id to create a unique chain instance ID
     chain_iid = sum_string_arrays(
         atom_array_stack.chain_id,
@@ -761,49 +707,125 @@ def add_chain_iid_annotation(atom_array_stack: AtomArrayStack) -> AtomArrayStack
 def add_iid_annotations_to_assemblies(
     assemblies_dict: dict[str | int, AtomArray | AtomArrayStack],
 ) -> dict[str | int, AtomArray | AtomArrayStack]:
-    """Adds chain, PN unit, and molecule IIDs to assembly AtomArrayStacks."""
+    """Adds chain, PN unit, and molecule IIDs to assembly AtomArrayStacks.
+
+    This is a convenience wrapper around :py:func:`add_iid_annotations` that operates on
+    a dictionary of assemblies.
+    """
     for assembly_id, assembly in assemblies_dict.items():
-        if "transformation_id" not in assembly.get_annotation_categories():
-            raise ValueError(
-                f"Assembly '{assembly_id}' missing transformation_id annotation (required for instance IDs)"
-            )
-
-        # Add instance ID annotations
-        assembly = add_chain_iid_annotation(assembly)
-
-        if "pn_unit_id" in assembly.get_annotation_categories():
-            assembly = add_pn_unit_iid_annotation(assembly)
-
-        if "molecule_id" in assembly.get_annotation_categories():
-            assembly = add_molecule_iid_annotation(assembly)
-
-        assemblies_dict[assembly_id] = assembly
-
+        assemblies_dict[assembly_id] = add_iid_annotations(assembly, overwrite=True)
     return assemblies_dict
 
 
-def add_id_and_entity_annotations(atom_array: AtomArray) -> AtomArray:
-    """Adds all 6 ('chain', 'pn_unit', 'molecule') x ('id', 'entity') annotations to the AtomArray."""
-    # ...annotate PN units (requires bonds)
-    atom_array = add_pn_unit_id_annotation(atom_array)
+def add_iid_annotations(
+    atom_array_or_stack: AtomArray | AtomArrayStack,
+    overwrite: bool = True,
+) -> AtomArray | AtomArrayStack:
+    """Add instance ID annotations (chain_iid, pn_unit_iid, molecule_iid).
 
-    # ...annotate molecules (requires bonds)
-    atom_array = add_molecule_id_annotation(atom_array)
+    Requires transformation_id annotation to exist in the atom array/stack.
+    Analogous to :py:func:`add_id_and_entity_annotations` but for instance IDs.
+
+    Instance IDs are created by concatenating base IDs with transformation_id:
+
+    - chain_iid = chain_id + "_" + transformation_id
+    - pn_unit_iid = pn_unit_id + "_" + transformation_id
+    - molecule_iid = molecule_id + "_" + transformation_id
+
+    Args:
+        atom_array_or_stack: AtomArray or AtomArrayStack with transformation_id annotation.
+        overwrite: If ``True``, recompute and replace annotations if they exist.
+            If ``False``, skip individual annotations that already exist. Defaults to ``True``.
+
+    Returns:
+        Same type as input with iid annotations added.
+
+    Raises:
+        ValueError: If transformation_id annotation is not present.
+    """
+    # Check for transformation_id
+    if "transformation_id" not in atom_array_or_stack.get_annotation_categories():
+        raise ValueError(
+            "transformation_id annotation required for instance IDs. "
+            "Instance IDs are created by concatenating base IDs with transformation_id."
+        )
+
+    # Pass overwrite to each helper function (matches add_id_and_entity_annotations pattern)
+    atom_array_or_stack = add_chain_iid_annotation(atom_array_or_stack, overwrite=overwrite)
+
+    if "pn_unit_id" in atom_array_or_stack.get_annotation_categories():
+        atom_array_or_stack = add_pn_unit_iid_annotation(atom_array_or_stack, overwrite=overwrite)
+
+    if "molecule_id" in atom_array_or_stack.get_annotation_categories():
+        atom_array_or_stack = add_molecule_iid_annotation(atom_array_or_stack, overwrite=overwrite)
+
+    return atom_array_or_stack
+
+
+def add_id_and_entity_annotations(
+    atom_array: AtomArray | AtomArrayStack,
+    overwrite: bool = True,
+    exclude_bond_types: set[struc.BondType] | None = frozenset({struc.BondType.COORDINATION}),
+) -> AtomArray | AtomArrayStack:
+    """Adds all 6 ('chain', 'pn_unit', 'molecule') x ('id', 'entity') annotations to the AtomArray.
+
+    Args:
+        atom_array: The AtomArray or AtomArrayStack to annotate.
+        overwrite: If ``True``, recompute and replace annotations if they exist.
+            If ``False``, skip individual annotations that already exist. Defaults to ``True``.
+        exclude_bond_types: Bond types to exclude when determining pn_unit / molecule
+            connectivity and entity hashing. Defaults to ``{COORDINATION}`` so that
+            coordination (dative) bonds do not merge metals into their ligand's
+            molecule/entity — a metal coordinated to a ligand is its own molecule.
+            Pass an empty set to count all bonds.
+
+    Returns:
+        The AtomArray or AtomArrayStack with added annotations.
+    """
+    # For stacks, compute on model[0] and copy annotations back
+    is_stack = isinstance(atom_array, AtomArrayStack)
+    if is_stack:
+        model = atom_array[0]
+    else:
+        model = atom_array
+
+    # Pass overwrite to each sub-function
+    model = add_pn_unit_id_annotation(model, overwrite=overwrite, exclude_bond_types=exclude_bond_types)
+    model = add_molecule_id_annotation(model, overwrite=overwrite, exclude_bond_types=exclude_bond_types)
 
     levels = ["chain", "pn_unit", "molecule"]
     lower_level_ids = ["res_id", "chain_id", "pn_unit_id"]
     lower_level_entities = ["res_name", "chain_entity", "pn_unit_entity"]
+    inter_level_bond_hashes = [False, True, True]
 
-    for level, lower_level_id, lower_level_entity in zip(levels, lower_level_ids, lower_level_entities, strict=False):
-        # ...annotate entities at appropriate level
-        atom_array, _ = annotate_entities(
-            atom_array=atom_array,
+    for level, lower_level_id, lower_level_entity, inter_level_bond_hash in zip(
+        levels, lower_level_ids, lower_level_entities, inter_level_bond_hashes, strict=False
+    ):
+        model, _ = annotate_entities(
+            atom_array=model,
             level=level,
             lower_level_id=lower_level_id,
             lower_level_entity=lower_level_entity,
+            add_inter_level_bond_hash=inter_level_bond_hash,
+            overwrite=overwrite,
+            exclude_bond_types=exclude_bond_types,
         )
 
-    return atom_array
+    # Copy computed annotations back to the stack
+    if is_stack:
+        _ID_ENTITY_ANNOTATIONS = [  # noqa: N806
+            "pn_unit_id",
+            "molecule_id",
+            "chain_entity",
+            "pn_unit_entity",
+            "molecule_entity",
+        ]
+        for annot_name in _ID_ENTITY_ANNOTATIONS:
+            if annot_name in model.get_annotation_categories():
+                atom_array.set_annotation(annot_name, model.get_annotation(annot_name))
+        return atom_array
+
+    return model
 
 
 def add_chain_type_annotation(
@@ -827,13 +849,4 @@ def add_chain_type_annotation(
         atom_array.chain_type[atom_array.chain_id == chain_id] = chain_type.value
 
     # Return the modified atom array
-    return atom_array
-
-
-def add_atomic_number_annotation(atom_array: AtomArray | AtomArrayStack) -> AtomArray | AtomArrayStack:
-    """Adds the atomic number (atomic_number) annotation to the AtomArray."""
-    atom_array.set_annotation(
-        "atomic_number",
-        np.array(listmap(ELEMENT_NAME_TO_ATOMIC_NUMBER.get, np.char.upper(atom_array.element)), dtype=np.int8),
-    )
     return atom_array

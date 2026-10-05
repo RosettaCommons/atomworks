@@ -8,6 +8,8 @@ from rdkit import Chem, RDLogger
 from rdkit.Chem import AllChem, Mol, rdDistGeom
 
 from atomworks.common import default
+from atomworks.constants import METAL_ELEMENTS
+from atomworks.enums import ChiralType
 from atomworks.io.tools.rdkit import (
     add_hydrogens,
     atom_array_from_rdkit,
@@ -80,6 +82,7 @@ def generate_conformers(
         optimize: Whether to optimize the generated conformers using UFF.
             Default is True.
         **uff_optimize_kwargs: Additional keyword arguments for UFF optimization:
+
             - maxIters: Maximum number of iterations (default 200).
             - vdwThresh: Used to exclude long-range van der Waals interactions
               (default 10.0).
@@ -202,95 +205,142 @@ def optimize_conformers(
 
     Returns:
         Mol: The optimized RDKit molecule.
+
+    Note:
+        If UFF optimization fails (e.g., for molecules containing transition metals
+        without UFF parameters), the unoptimized conformers are returned with a warning.
     """
-    success = AllChem.UFFOptimizeMoleculeConfs(
-        mol,
-        numThreads=numThreads,
-        maxIters=maxIters,
-        vdwThresh=vdwThresh,
-        ignoreInterfragInteractions=ignoreInterfragInteractions,
-    )
-    if not success:
-        logger.warning("Conformer optimization did not converge.")
+    try:
+        success = AllChem.UFFOptimizeMoleculeConfs(
+            mol,
+            numThreads=numThreads,
+            maxIters=maxIters,
+            vdwThresh=vdwThresh,
+            ignoreInterfragInteractions=ignoreInterfragInteractions,
+        )
+        if not success:
+            logger.warning("Conformer optimization did not converge.")
+    except RuntimeError as e:
+        logger.warning(
+            f"UFF optimization failed (possibly due to missing force field parameters for transition metals): {e}. "
+            "Returning unoptimized conformers."
+        )
     return mol
 
 
-def get_chiral_centers(mol: Mol) -> list[int]:
-    """Identify and return the tetrahedral chiral centers in an RDKit molecule.
+# We sometimes want to exclude centers with sulphur and oxygen (e.g., when in phosphates or sulphates) as they may interconvert
+_TETRAHEDRAL_EXCLUDE_ELEMENTS = {15, 16}
+_PLANARITY_THRESHOLD = 0.05
 
-    Finds all tetrahedral chiral centers in the given molecule
-    and returns their information, including the chiral center atom index and
-    the indices of the atoms bonded to it.
 
-    Args:
-        mol (rdkit.Chem.Mol): The RDKit molecule to analyze.
+def _is_false_positive_tetrahedral(atom: Chem.Atom, mol: Mol) -> bool:
+    """Detect false-positive tetrahedral assignments.
+
+    Excludes:
+    - P/S bonded to 2+ oxygens (phosphate/sulfate).
+    - Ring atoms bonded to a metal (η-coordinated aromatics).
+    - Near-planar centers (normalized triple product < threshold).
+    """
+    # Get the neighbors of the atom along with their indices
+    neighbors = [(b.GetOtherAtom(atom), b.GetOtherAtomIdx(atom.GetIdx())) for b in atom.GetBonds()]
+
+    if (
+        atom.GetAtomicNum() in _TETRAHEDRAL_EXCLUDE_ELEMENTS
+        and sum(1 for a, _ in neighbors if a.GetAtomicNum() == 8) >= 2
+    ):
+        # Case: P/S bonded to 2+ oxygens (e.g., in a phosphate or sulphate) often interconvert between stereoisomers
+        return True
+
+    if atom.GetIsAromatic() and any(a.GetSymbol().upper() in METAL_ELEMENTS for a, _ in neighbors):
+        # Case: Aromatic ring atoms bonded to a metal (η-coordinated aromatics, e.g. ferrocene Cp) can be
+        # misassigned as tetrahedral
+        return True
+
+    if len(neighbors) >= 3 and mol.GetNumConformers() > 0:
+        conf = mol.GetConformer()
+        center = np.array(conf.GetAtomPosition(atom.GetIdx()))
+        vecs = [np.array(conf.GetAtomPosition(neighbors[i][1])) - center for i in range(3)]
+        tp = abs(np.dot(vecs[0], np.cross(vecs[1], vecs[2])))
+        norm_tp = tp / max(np.linalg.norm(vecs[0]) * np.linalg.norm(vecs[1]) * np.linalg.norm(vecs[2]), 1e-8)
+        if norm_tp < _PLANARITY_THRESHOLD:
+            # Case:  Near-planar centers (normalized triple product < threshold) can be misassigned as tetrahedral due to noise
+            return True
+
+    return False
+
+
+def get_stereochemistry(mol: Mol, *, tetrahedral_only: bool = False) -> dict[str, list[dict]]:
+    """Assign 3D stereochemistry and read atom centers and double bonds together.
+
+    Uses input coordinates when present, otherwise retains supplied stereo tags.
+    Center records have ``chiral_center_idx``, ``bonded_explicit_atom_idxs``, ``chiral_type``, and
+    ``chiral_center_atom_name``. ``tetrahedral_only`` filters only atom centers.
 
     Returns:
-        - list[dict]: A list of dictionaries, where each dictionary contains:
-            - "chiral_center_idx" (int): The index of the chiral center atom.
-            - "bonded_explicit_atom_idxs" (list[int]): A list of indices of the atoms
-              bonded to the chiral center.
-            - "chirality" (str): The chirality of the center ('R' or 'S').
-
-    Note:
-        This function will generate a 3D conformation if one is not present, as
-        chirality assignment requires 3D coordinates in RDKit to break the conditional
-        tie between multiple possible chirality centers.
+      ``chiral_centers`` and ``double_bonds`` lists. Each bond record has ``stereo``
+      (RDKit BondStereo), ``atom_idxs`` ordered as (left, right, left substituent,
+      right substituent), and corresponding ``atom_names`` (None if unavailable).
+      Only assigned stereogenic double bonds are reported; indices refer to ``mol``.
     """
-    # Infer 3D coordinates if not present
     if mol.GetNumConformers() == 0:
         generate_conformers(mol, n_conformers=1)
 
-    # Assign chiral tags based on the 3D structure
     Chem.AssignAtomChiralTagsFromStructure(mol)
+    Chem.AssignStereochemistryFrom3D(mol)
 
-    # Identify chiral centers
-    chiral_centers = Chem.FindMolChiralCenters(mol, includeUnassigned=True)
+    results: list[dict] = []
+    for atom in mol.GetAtoms():
+        ct = ChiralType(int(atom.GetChiralTag()))
+        if not ct.is_stereogenic():
+            continue
 
-    def _should_exclude_chiral_center(atom: Chem.Atom) -> bool:
-        """Exclude edge cases for chiral centers."""
-        # EDGE CASE: The chiral center is a Phosphorous (P, 15) or Sulfur (S, 16) atom bonded to 2 Oxygens (O, 8)
-        # For an example of where this case occurs, see the CCD ligand `NAP` (e.g., in `5OCM`)
-        if atom.GetAtomicNum() == 15 or atom.GetAtomicNum() == 16:
-            # ... get the atomic numbers of the bonded atoms
-            atomic_nums_of_bonded_atoms = [bond.GetOtherAtom(atom).GetAtomicNum() for bond in atom.GetBonds()]
-            # ... check if there are 2 Oxygens (O, 8) bonded to the chiral center
-            if atomic_nums_of_bonded_atoms.count(8) >= 2:
-                return True
+        if tetrahedral_only and not ct.is_tetrahedral():
+            continue
 
-        return False
+        if ct.is_tetrahedral() and _is_false_positive_tetrahedral(atom, mol):
+            continue
 
-    # Filter chiral centers with tetrahedral geometry
-    tetrahedral_chiral_centers = []
-    for center in chiral_centers:
-        idx, chirality = center
-        atom = mol.GetAtomWithIdx(idx)
-        if (
-            atom.GetChiralTag() == Chem.rdchem.ChiralType.CHI_TETRAHEDRAL_CW
-            or atom.GetChiralTag() == Chem.rdchem.ChiralType.CHI_TETRAHEDRAL_CCW
+        idx = atom.GetIdx()
+        results.append(
+            {
+                "chiral_center_idx": idx,
+                "bonded_explicit_atom_idxs": [b.GetOtherAtomIdx(idx) for b in atom.GetBonds()],
+                "chiral_type": ct,
+                "chiral_center_atom_name": atom.GetProp("atom_name") if atom.HasProp("atom_name") else None,
+            }
+        )
+
+    double_bonds = []
+    for bond in mol.GetBonds():
+        if bond.GetBondType() != Chem.BondType.DOUBLE or bond.GetStereo() not in (
+            Chem.BondStereo.STEREOE,
+            Chem.BondStereo.STEREOZ,
+            Chem.BondStereo.STEREOCIS,
+            Chem.BondStereo.STEREOTRANS,
         ):
-            chiral_center_atom_name = atom.GetProp("atom_name") if atom.HasProp("atom_name") else None
-            if not _should_exclude_chiral_center(atom):
-                tetrahedral_chiral_centers.append(
-                    {
-                        "chiral_center_idx": idx,
-                        "bonded_explicit_atom_idxs": [bond.GetOtherAtomIdx(idx) for bond in atom.GetBonds()],
-                        "chirality": chirality,
-                        # For debugging - currently unused by the pipeline
-                        "chiral_center_atom_name": chiral_center_atom_name,
-                        "bonded_explicit_atom_names": [
-                            mol.GetAtomWithIdx(bond.GetOtherAtomIdx(idx)).GetProp("atom_name")
-                            for bond in atom.GetBonds()
-                            if chiral_center_atom_name
-                        ]
-                        if chiral_center_atom_name
-                        else None,
-                    }
-                )
+            continue
+        indices = (bond.GetBeginAtomIdx(), bond.GetEndAtomIdx(), *bond.GetStereoAtoms())
+        double_bonds.append(
+            {
+                "atom_idxs": indices,
+                "atom_names": tuple(
+                    mol.GetAtomWithIdx(i).GetProp("atom_name") if mol.GetAtomWithIdx(i).HasProp("atom_name") else None
+                    for i in indices
+                ),
+                "stereo": bond.GetStereo(),
+            }
+        )
+    return {"chiral_centers": results, "double_bonds": double_bonds}
 
-    # Remove chiral centers that are R or S bonded to 2 O
 
-    return tetrahedral_chiral_centers
+def get_chiral_centers(mol: Mol, *, tetrahedral_only: bool = False) -> list[dict]:
+    """Return the atom-center records from :py:func:`get_stereochemistry`.
+
+    Supports tetrahedral, square planar, trigonal bipyramidal, and octahedral
+    centers, excluding false-positive tetrahedral assignments. Uses input
+    coordinates or supplied stereo tags. ``tetrahedral_only`` limits centers.
+    """
+    return get_stereochemistry(mol, tetrahedral_only=tetrahedral_only)["chiral_centers"]
 
 
 def find_automorphisms_with_rdkit(
@@ -413,6 +463,7 @@ def sample_rdkit_conformer_for_atom_array(
 
     Note:
         This function preserves the original atom order and properties of the input AtomArray.
+        If conformer generation fails, coordinates are set to NaN to avoid leaking ground truth.
     """
     seed = seed or _get_random_seed()
     atom_array = atom_array.copy()
@@ -430,7 +481,7 @@ def sample_rdkit_conformer_for_atom_array(
     except (TimeoutError, RuntimeError):
         set_coord_if_available = False
         logger.warning(
-            f"Failed to generate {n_conformers} conformers for {atom_array.res_name[0]}. Falling back to zeros."
+            f"Failed to generate {n_conformers} conformers for {atom_array.res_name[0]}. " "Coordinates will be NaN."
         )
 
     new_atom_array = atom_array_from_rdkit(
@@ -677,18 +728,17 @@ class GenerateRDKitConformers(Transform):
         return data
 
 
-def get_rdkit_chiral_centers(rdkit_mols: dict[str, Mol]) -> dict:
+def get_rdkit_chiral_centers(rdkit_mols: dict[str, Mol], *, tetrahedral_only: bool = True) -> dict:
     """Computes the chiral centers for a dictionary of RDKit molecules.
 
     See the `GetRDKitChiralCenters` transform for more details.
     """
     chiral_centers = {}
 
-    # Get chiral centers for all rdkit mols
     for resname, rdmol in rdkit_mols.items():
         try:
             # Get the chiral centers (returned are the indices of the chiral center atoms within the `obmol` object)
-            chiral_centers[resname] = get_chiral_centers(rdmol)
+            chiral_centers[resname] = get_chiral_centers(rdmol, tetrahedral_only=tetrahedral_only)
 
         except Exception as e:
             logger.warning(f"Failed to find chiral centers for molecule {resname}: {e}")
@@ -697,36 +747,21 @@ def get_rdkit_chiral_centers(rdkit_mols: dict[str, Mol]) -> dict:
 
 
 class GetRDKitChiralCenters(Transform):
-    """Identify chiral centers in the RDKit molecules stored in the data["rdkit"] dictionary.
+    """Identify chiral centers in the RDKit molecules stored in ``data["rdkit"]``.
 
-    Returns a dictionary mapping each residue name to a list of chiral centers, e.g:
-
-    .. code-block:: python
-
-        data["chiral_centers"] = {
-            ...
-            "ILE": [
-                {'chiral_center_idx': 1, 'bonded_explicit_atom_idxs': [0, 2, 4], 'chirality': 'S'},
-                {'chiral_center_idx': 4, 'bonded_explicit_atom_idxs': [1, 5, 6], 'chirality': 'S'}
-            ],
-            ...
-        }
-
-    Each chiral center is a dict with a center atom index, 3 or 4 bonded atom indices, and the
-    RDKit-determined chirality.
-
-    Uses RDKit molecules first computed in GetAF3ReferenceMoleculeFeatures.
-
-    Args:
-        data: A dictionary containing the input data, including RDKit molecules
-            under the "rdkit" key.
-
-    Returns:
-        The updated data dictionary with chiral_centers containing chiral
-            centers for each molecule.
+    Populates ``data["chiral_centers"]`` — a dict mapping residue name to
+    a list of center dicts (see :func:`get_chiral_centers`).
     """
 
     requires_previous_transforms: ClassVar[list[str | Transform]] = ["GetAF3ReferenceMoleculeFeatures"]
+
+    def __init__(self, tetrahedral_only: bool = True) -> None:
+        """Initialize the transform.
+
+        Args:
+          tetrahedral_only: If ``True``, restrict output to tetrahedral stereocenters.
+        """
+        self.tetrahedral_only = tetrahedral_only
 
     def check_input(self, data: dict[str, Any]) -> None:
         check_contains_keys(data, ["rdkit"])
@@ -734,6 +769,6 @@ class GetRDKitChiralCenters(Transform):
         check_nonzero_length(data, "rdkit")
 
     def forward(self, data: dict[str, Any]) -> dict[str, Any]:
-        data["chiral_centers"] = get_rdkit_chiral_centers(data["rdkit"])
+        data["chiral_centers"] = get_rdkit_chiral_centers(data["rdkit"], tetrahedral_only=self.tetrahedral_only)
 
         return data

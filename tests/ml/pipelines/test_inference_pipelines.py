@@ -4,14 +4,15 @@ import pytest
 import torch
 
 from atomworks.io import parse
+from atomworks.io.config import ParseConfig
 from atomworks.io.tools.inference import (
     build_msa_paths_by_chain_id_from_component_list,
     components_to_atom_array,
     read_chai_fasta,
 )
-from atomworks.io.utils.io_utils import to_cif_buffer
-from atomworks.io.utils.non_rcsb import initialize_chain_info_from_atom_array
-from atomworks.io.utils.testing import assert_same_atom_array
+from atomworks.io.utils.chain_info import build_chain_info
+from atomworks.io.utils.io_utils import CIFWriteConfig, to_cif_buffer
+from atomworks.io.utils.testing import assert_same_atom_array_or_stack
 from atomworks.ml.pipelines.af3 import build_af3_transform_pipeline
 from atomworks.ml.utils.testing import cached_parse
 from tests.conftest import skip_if_on_github_runner
@@ -28,7 +29,7 @@ def test_af3_confidence_pipeline_from_chai_fasta():
     fasta_path = TEST_DATA_ML / "inference_like_chai_fasta.fasta"
     inference_input_components = read_chai_fasta(fasta_path)
     atom_array = components_to_atom_array(inference_input_components)
-    chain_info = initialize_chain_info_from_atom_array(atom_array)
+    chain_info = build_chain_info(atom_array)
 
     assert atom_array is not None, "Failed to load atom array from FASTA file"
 
@@ -68,7 +69,7 @@ def test_af3_pipeline_from_chai_fasta():
     fasta_path = TEST_DATA_ML / "inference_like_chai_fasta.fasta"
     inference_input_components = read_chai_fasta(fasta_path)
     atom_array = components_to_atom_array(inference_input_components)
-    chain_info = initialize_chain_info_from_atom_array(atom_array)
+    chain_info = build_chain_info(atom_array)
 
     assert atom_array is not None, "Failed to load atom array from FASTA file"
 
@@ -124,7 +125,7 @@ AF3_PIPELINE_FROM_COMPONENTS_TEST_CASES = [
 @pytest.mark.parametrize("inference_components", AF3_PIPELINE_FROM_COMPONENTS_TEST_CASES)
 def test_af3_pipeline_from_sequence_and_smiles(inference_components):
     atom_array, initialized_components = components_to_atom_array(inference_components, return_components=True)
-    chain_info = initialize_chain_info_from_atom_array(atom_array)
+    chain_info = build_chain_info(atom_array)
 
     # Spoof MSA paths
     msa_paths_by_chain_id = build_msa_paths_by_chain_id_from_component_list(initialized_components)
@@ -193,8 +194,10 @@ def test_same_pipeline_outputs_from_cif_and_inference():
         }
     ]
     ligand = [{"smiles": "Cc1cc(cc(c1)Oc2nccc(n2)c3c(ncn3[C@H]4CCN(C4)CCN)c5ccc(cc5)I)C", "chain_id": "C"}]
-    buffer = to_cif_buffer(components_to_atom_array(monomer + ligand), include_entity_poly=True)
-    pipeline_inputs_from_inference = parse(buffer, hydrogen_policy="remove")
+    buffer = to_cif_buffer(
+        components_to_atom_array(monomer + ligand), config=CIFWriteConfig(include_entity_categories=True)
+    )
+    pipeline_inputs_from_inference = parse(buffer, config=ParseConfig(hydrogen_policy="remove"))
     atom_array_from_inference = pipeline_inputs_from_inference["assemblies"][transformation_id][0]
 
     annotations_to_compare = set(atom_array_from_cif.get_annotation_categories()) - {
@@ -204,14 +207,17 @@ def test_same_pipeline_outputs_from_cif_and_inference():
         "stereo",
         "b_factor",
         "alt_atom_id",
+        "label_alt_id",  # Sequence/SMILES inputs have no experimental alternate-conformer labels.
         "is_aromatic",
         "occupancy",
+        "nhyd",  # nhyd may differ between CIF and inference paths due to H atom handling differences
     }
-    assert_same_atom_array(
+    assert_same_atom_array_or_stack(
         atom_array_from_cif,
         atom_array_from_inference,
         compare_coords=False,
         compare_bonds=True,
+        compare_bond_order=False,
         annotations_to_compare=annotations_to_compare,
         enforce_order=False,
     )

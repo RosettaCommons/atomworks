@@ -210,6 +210,23 @@ class ChainType(IntEnum):
         """
         return ChainTypeInfo.ENUM_TO_STRING[self]
 
+    def to_mmcif_string(self) -> str:
+        """Convert to mmCIF-format string with correct casing (e.g. ``polypeptide(L)``)."""
+        return ChainTypeInfo.ENUM_TO_MMCIF_STRING[self]
+
+    def to_entity_type(self) -> str:
+        """Return the mmCIF ``entity.type`` string for this chain type.
+
+        This differs from :py:meth:`to_mmcif_string`, which returns the
+        ``entity_poly.type`` string (e.g. ``"polypeptide(L)"``). This method
+        returns the coarser ``entity.type`` field: ``"polymer"`` for all polymer
+        types, or the specific non-polymer string (``"branched"``,
+        ``"macrolide"``, ``"non-polymer"``, ``"water"``) otherwise.
+        """
+        if self in ChainTypeInfo.POLYMERS:
+            return "polymer"
+        return ChainTypeInfo.ENUM_TO_MMCIF_STRING[self]
+
     @staticmethod
     def as_enum(value: Union[str, int, "ChainType"]) -> "ChainType":
         """Convert a string, int, or ChainType to a ChainType enum.
@@ -266,33 +283,37 @@ class ChainTypeInfo:
 
     NUCLEIC_ACIDS: Final[tuple[ChainType, ...]] = (ChainType.DNA, ChainType.RNA, ChainType.DNA_RNA_HYBRID)
 
-    STRING_TO_ENUM: Final[MappingProxyType[str, ChainType]] = MappingProxyType(
-        keymap(
-            str.upper,
-            {
-                # Polymers
-                "CYCLIC-PSEUDO-PEPTIDE": ChainType.CYCLIC_PSEUDO_PEPTIDE,
-                "OTHER": ChainType.OTHER_POLYMER,  # WARNING! Paradoxically, "other" is a polymer type.
-                "PEPTIDE NUCLEIC ACID": ChainType.PEPTIDE_NUCLEIC_ACID,
-                "POLYDEOXYRIBONUCLEOTIDE": ChainType.DNA,
-                "POLYDEOXYRIBONUCLEOTIDE/POLYRIBONUCLEOTIDE HYBRID": ChainType.DNA_RNA_HYBRID,
-                "POLYPEPTIDE(D)": ChainType.POLYPEPTIDE_D,
-                "POLYPEPTIDE(L)": ChainType.POLYPEPTIDE_L,
-                "POLYRIBONUCLEOTIDE": ChainType.RNA,
-                # Non-polymers
-                "BRANCHED": ChainType.BRANCHED,
-                "MACROLIDE": ChainType.MACROLIDE,
-                "NON-POLYMER": ChainType.NON_POLYMER,
-                "WATER": ChainType.WATER,
-            },
-        )
-    )
+    _MMCIF_STRINGS: Final[dict[str, ChainType]] = {
+        # Polymers
+        "cyclic-pseudo-peptide": ChainType.CYCLIC_PSEUDO_PEPTIDE,
+        "other": ChainType.OTHER_POLYMER,  # WARNING! Paradoxically, "other" is a polymer type.
+        "peptide nucleic acid": ChainType.PEPTIDE_NUCLEIC_ACID,
+        "polydeoxyribonucleotide": ChainType.DNA,
+        "polydeoxyribonucleotide/polyribonucleotide hybrid": ChainType.DNA_RNA_HYBRID,
+        "polypeptide(D)": ChainType.POLYPEPTIDE_D,
+        "polypeptide(L)": ChainType.POLYPEPTIDE_L,
+        "polyribonucleotide": ChainType.RNA,
+        # Non-polymers
+        "branched": ChainType.BRANCHED,
+        "macrolide": ChainType.MACROLIDE,
+        "non-polymer": ChainType.NON_POLYMER,
+        "water": ChainType.WATER,
+    }
+
+    # Uppercase keys for case-insensitive lookup (existing behavior preserved)
+    STRING_TO_ENUM: Final[MappingProxyType[str, ChainType]] = MappingProxyType(keymap(str.upper, _MMCIF_STRINGS))
     """Mapping from chain_type strings to ChainType enums."""
 
+    # Reverse mappings
     ENUM_TO_STRING: Final[MappingProxyType[ChainType, str]] = MappingProxyType(
         {v: k for k, v in STRING_TO_ENUM.items()}
     )
-    """Mapping from ChainType enums to chain_type strings."""
+    """Mapping from ChainType enums to UPPERCASE chain_type strings."""
+
+    ENUM_TO_MMCIF_STRING: Final[MappingProxyType[ChainType, str]] = MappingProxyType(
+        {v: k for k, v in _MMCIF_STRINGS.items()}
+    )
+    """Mapping from ChainType enums to mmCIF-cased chain_type strings."""
 
     VALID_CHEM_COMP_TYPES: Final[MappingProxyType[ChainType, set[str]]] = MappingProxyType(
         {
@@ -331,6 +352,60 @@ class ChainTypeInfo:
         }
     )
     """Mapping of chain types to the atoms that they link when part of a polymer."""
+
+
+class ChiralType(IntEnum):
+    """Coordination geometry of a stereogenic center.
+
+    Values match RDKit's ``Chem.rdchem.ChiralType`` int values, so
+    conversion from an RDKit atom is ``ChiralType(atom.GetChiralTag())``.
+    """
+
+    NOT_CHIRAL = 0  # CHI_UNSPECIFIED
+    TETRAHEDRAL_CW = 1  # CHI_TETRAHEDRAL_CW
+    TETRAHEDRAL_CCW = 2  # CHI_TETRAHEDRAL_CCW
+    OTHER = 3  # CHI_OTHER
+    TETRAHEDRAL = 4  # CHI_TETRAHEDRAL (generic)
+    ALLENE = 5  # CHI_ALLENE
+    SQUARE_PLANAR = 6  # CHI_SQUAREPLANAR
+    TRIGONAL_BIPYRAMIDAL = 7  # CHI_TRIGONALBIPYRAMIDAL
+    OCTAHEDRAL = 8  # CHI_OCTAHEDRAL
+
+    def to_geometry(self) -> str:
+        """Return the geometry name (e.g. ``"tetrahedral"``)."""
+        return _CHIRAL_TYPE_TO_GEOMETRY.get(self, "")
+
+    def is_tetrahedral(self) -> bool:
+        """Check if this is a tetrahedral chiral center."""
+        return self in (
+            ChiralType.TETRAHEDRAL_CW,
+            ChiralType.TETRAHEDRAL_CCW,
+            ChiralType.TETRAHEDRAL,
+        )
+
+    def is_stereogenic(self) -> bool:
+        """Check if this represents a real stereogenic center with defined geometry."""
+        # ALLENE (axial chirality) is intentionally excluded: RDKit's
+        # ``AssignStereochemistryFrom3D`` does not assign it from 3D coordinates,
+        # and downstream featurizers do not model axial chirality. OTHER and
+        # generic TETRAHEDRAL are "unspecified" tags and likewise excluded.
+        return self in (
+            ChiralType.TETRAHEDRAL_CW,
+            ChiralType.TETRAHEDRAL_CCW,
+            ChiralType.SQUARE_PLANAR,
+            ChiralType.TRIGONAL_BIPYRAMIDAL,
+            ChiralType.OCTAHEDRAL,
+        )
+
+
+_CHIRAL_TYPE_TO_GEOMETRY = {
+    ChiralType.TETRAHEDRAL_CW: "tetrahedral",
+    ChiralType.TETRAHEDRAL_CCW: "tetrahedral",
+    ChiralType.TETRAHEDRAL: "tetrahedral",
+    ChiralType.SQUARE_PLANAR: "square_planar",
+    ChiralType.TRIGONAL_BIPYRAMIDAL: "trigonal_bipyramidal",
+    ChiralType.OCTAHEDRAL: "octahedral",
+}
 
 
 class GroundTruthConformerPolicy(IntEnum):

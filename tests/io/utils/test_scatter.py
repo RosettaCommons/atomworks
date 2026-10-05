@@ -7,6 +7,7 @@ from atomworks.io.utils.scatter import (
     apply_group_wise,
     get_groups,
     get_segments,
+    safe_scatter,
     spread_group_wise,
 )
 
@@ -162,6 +163,16 @@ def test_apply_and_spread_segment_wise_sum_and_mean():
     assert np.allclose(
         result_mean_groups, expected_mean
     ), f"Failed mean test. Expected {expected_mean}, got {result_mean_groups}"
+
+
+def test_safe_scatter():
+    """Scatter source values onto target by index; ``mapping < 0`` drops, string target widens, input unmutated."""
+    target = np.array(["a", "b", "c"], dtype="<U3")
+    out = safe_scatter(np.array(["LONGLABEL", "Z"]), np.array([2, -1]), target)
+    assert out.tolist() == ["a", "b", "LONGLABEL"]
+    assert target.tolist() == ["a", "b", "c"]
+    with pytest.raises(ValueError, match="same length"):
+        safe_scatter(np.array([1, 2]), np.array([0]), np.zeros(3))
 
 
 if __name__ == "__main__":

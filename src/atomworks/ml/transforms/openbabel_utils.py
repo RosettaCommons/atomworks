@@ -10,6 +10,8 @@ References:
     `Biotite documentation <https://www.biotite-python.org/>`_
 """
 
+from __future__ import annotations
+
 import logging
 from collections import Counter
 from typing import Any, ClassVar
@@ -17,7 +19,6 @@ from typing import Any, ClassVar
 import biotite.structure as struc
 import numpy as np
 from biotite.structure import AtomArray
-from openbabel import openbabel, pybel
 
 from atomworks.constants import ATOMIC_NUMBER_TO_ELEMENT, ELEMENT_NAME_TO_ATOMIC_NUMBER, UNKNOWN_LIGAND
 from atomworks.ml.transforms._checks import (
@@ -28,6 +29,25 @@ from atomworks.ml.transforms._checks import (
     check_nonzero_length,
 )
 from atomworks.ml.transforms.base import Transform
+
+try:
+    from openbabel import openbabel, pybel
+
+    _HAS_OPENBABEL = True
+except ImportError:
+    openbabel = None
+    pybel = None
+    _HAS_OPENBABEL = False
+
+
+def _require_openbabel() -> None:
+    """Raise ImportError with install instructions if openbabel is missing."""
+    if not _HAS_OPENBABEL:
+        raise ImportError(
+            "OpenBabel is required for this function but is not installed. "
+            "Install it with: pip install atomworks[openbabel]"
+        )
+
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +61,8 @@ _BIOTITE_BOND_TYPE_TO_OPENBABEL = {
     struc.bonds.BondType.AROMATIC_SINGLE: (1, True),
     struc.bonds.BondType.AROMATIC_DOUBLE: (2, True),
     struc.bonds.BondType.AROMATIC_TRIPLE: (3, True),
+    # OpenBabel has no dative/coordination bond type; treat as a single bond (cf. RDKit's DATIVE).
+    struc.bonds.BondType.COORDINATION: (1, False),
 }
 """
 Mapping from biotite bond type to openbabel bond order and aromaticity.
@@ -137,7 +159,7 @@ def atom_array_to_openbabel(
             print(f"Number of atoms: {obmol.NumAtoms()}")
             # Number of atoms: 5
             # Print atom information
-            print("\nAtom information:")
+            print("\\nAtom information:")
             for atom in openbabel.OBMolAtomIter(obmol):
                 print(
                     f"Atomic number: {atom.GetAtomicNum()}, Coordinates: ({atom.GetX():.1f}, {atom.GetY():.1f}, {atom.GetZ():.1f})"
@@ -150,6 +172,7 @@ def atom_array_to_openbabel(
             # Atomic number: 7, Coordinates: (0.0, 1.5, 0.0)
             # Atomic number: 1, Coordinates: (0.0, 0.0, 1.5)
     """
+    _require_openbabel()
     # Initialize empty OpenBabel molecule
     obmol = openbabel.OBMol()
 
@@ -235,6 +258,7 @@ def atom_array_from_openbabel(obmol: openbabel.OBMol) -> AtomArray:
         >>> print(atom_array)
         AtomArray([Atom(element='6', coord=array([0.0, 0.0, 0.0]), ...)])
     """
+    _require_openbabel()
     # Set atoms
     atoms = []
     element_counter = Counter()
@@ -254,8 +278,7 @@ def atom_array_from_openbabel(obmol: openbabel.OBMol) -> AtomArray:
                 charge=obatom.GetFormalCharge(),  # formal charge
                 hyb=obatom.GetHyb(),  # hybridization state
                 is_metal=obatom.IsMetal(),  # whether the atom is a metal
-                nhyd=obatom.GetTotalDegree()
-                - obatom.GetHvyDegree(),  # number of bonded hydrogens (implicit or explicit)
+                nhyd=obatom.GetImplicitHCount(),  # implicit hydrogens only (explicit H are in the bond list)
                 total_deg=obatom.GetTotalDegree(),  # total bond count including multiplicities
                 hvydeg=obatom.GetHvyDegree(),  # bond count of heavy atoms only, including multiplicities
                 n_implicit_hyd=obatom.GetImplicitHCount(),  # number of implicit hydrogens
@@ -266,7 +289,6 @@ def atom_array_from_openbabel(obmol: openbabel.OBMol) -> AtomArray:
 
     # Set bonds
     bonds = []
-    _explicit_hydrogen_counts = np.zeros(len(atoms), dtype=np.int8)
     for obbond in openbabel.OBMolBondIter(obmol):
         obatom_begin = obbond.GetBeginAtom()
         obatom_end = obbond.GetEndAtom()
@@ -275,18 +297,9 @@ def atom_array_from_openbabel(obmol: openbabel.OBMol) -> AtomArray:
         order = obbond.GetBondOrder()
         is_aromatic = obbond.IsAromatic()
 
-        # ... count explicit hydrogens
-        if obatom_begin.GetAtomicNum() == 1:
-            _explicit_hydrogen_counts[end_atom_idx] += order
-        if obatom_end.GetAtomicNum() == 1:
-            _explicit_hydrogen_counts[start_atom_idx] += order
-
         bonds.append((start_atom_idx, end_atom_idx, _OPENBABEL_BOND_TYPE_TO_BIOTITE[(order, is_aromatic)]))
     # ... transform bonds into a biotite BondList
     atom_array.bonds = struc.BondList(len(atoms), np.array(bonds))
-
-    # Set the `nhyd` annotation for the case of explicit hydrogens
-    atom_array.set_annotation("n_explicit_hyd", _explicit_hydrogen_counts)
 
     # Set extra annotations
     annotations = obmol._annotations if hasattr(obmol, "_annotations") else {}
@@ -345,6 +358,7 @@ def get_chiral_centers(obmol: openbabel.OBMol) -> list[int]:
             - "bonded_explicit_atom_idxs" (list[int]): A list of indices of the atoms bonded to the chiral center,
               excluding implicit hydrogens.
     """
+    _require_openbabel()
     stereo_facade = openbabel.OBStereoFacade(obmol)
 
     # iterate over all tetrahedral stereo centers and record the plane pairs that define the tetrahedral side
@@ -383,6 +397,7 @@ def smiles_to_openbabel(smiles: str) -> openbabel.OBMol:
     Note:
         This function uses the Pybel module to read the SMILES string and convert it to an OBMol object.
     """
+    _require_openbabel()
     mol = pybel.readstring("smi", smiles)
     return mol.OBMol
 
@@ -439,6 +454,7 @@ def find_automorphisms(obmol: openbabel.OBMol, max_automorphs: int = 1000, max_m
               [6 1]
               [7 2]]]
     """
+    _require_openbabel()
     n_atoms = obmol.NumAtoms()
     assert (
         n_atoms == obmol.NumHvyAtoms()
@@ -520,6 +536,7 @@ class AddOpenBabelMoleculesForAtomizedMolecules(Transform):
         check_atom_array_annotation(data, ["atomize", "atom_id"])
 
     def forward(self, data: dict[str, Any]) -> dict[str, Any]:
+        _require_openbabel()
         atom_array: AtomArray = data["atom_array"]
 
         # Subset to atomized molecules
@@ -609,6 +626,7 @@ class GetChiralCentersFromOpenBabel(Transform):
         check_atom_array_annotation(data, ["atomize", "atom_id"])
 
     def forward(self, data: dict[str, Any]) -> dict[str, Any]:
+        _require_openbabel()
         # Iterate over the molecules (covalently bonded components in the atom_array)
         data["chiral_centers"] = []
         for obmol in data["openbabel"].values():

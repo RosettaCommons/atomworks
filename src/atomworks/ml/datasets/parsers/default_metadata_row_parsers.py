@@ -1,6 +1,7 @@
 """MetadataRowParser implementations for chain- and interface-based datasets."""
 
 import re
+import warnings
 from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
@@ -84,9 +85,10 @@ def find_existing_file_path(
 
 
 class PNUnitsDFParser(MetadataRowParser):
-    # TODO: Deprecate in favor of GenericDFParser
-
     """Parser for pn_units DataFrame rows.
+
+    .. deprecated:: 2.1.1
+        Use :class:`GenericDFParser`.
 
     In addition to standard fields (example_id, path), this parser also includes:
         - The query pn_unit instance ID, which is used to center the crop.
@@ -108,6 +110,7 @@ class PNUnitsDFParser(MetadataRowParser):
             path_template: Template string for path construction (perfect for Hydra configs). Can be a single template or a list/tuple of templates corresponding to the base_dir(s) and file_extension(s).
                 Example: "{base_dir}/{pdb_id[1:3]}/{pdb_id}{file_extension}" (default)
         """
+        warnings.warn("PNUnitsDFParser is deprecated; use GenericDFParser", DeprecationWarning, stacklevel=2)
         self.base_dirs = [Path(bd) for bd in as_list(base_dir)]
         self.file_extensions = as_list(file_extension)
         self.path_templates = as_list(path_template)
@@ -136,9 +139,10 @@ class PNUnitsDFParser(MetadataRowParser):
 
 
 class InterfacesDFParser(MetadataRowParser):
-    # TODO: Deprecate in favor of GenericDFParser
-
     """Parser for interfaces DataFrame rows.
+
+    .. deprecated:: 2.1.1
+        Use :class:`GenericDFParser`.
 
     In addition to standard fields (example_id, path), this parser also includes:
         - The two query pn_unit instance IDs, as a list, which are used to sample the interface during cropping.
@@ -160,6 +164,7 @@ class InterfacesDFParser(MetadataRowParser):
             path_template: Template string for path construction (perfect for Hydra configs). Can be a single template or a list/tuple of templates corresponding to the base_dir(s) and file_extension(s).
                 Example: "{base_dir}/{pdb_id[1:3]}/{pdb_id}{file_extension}" (default)
         """
+        warnings.warn("InterfacesDFParser is deprecated; use GenericDFParser", DeprecationWarning, stacklevel=2)
         self.base_dirs = [Path(bd) for bd in as_list(base_dir)]
         self.file_extensions = as_list(file_extension)
         self.path_templates = as_list(path_template)
@@ -226,6 +231,7 @@ class GenericDFParser(MetadataRowParser):
                 - Any additional key-value pairs specified by the ``attrs`` parameter
                 - All unused dataframe columns (i.e., those not used for example_id, path, query_pn_unit_iids, or assembly_id)
                 - Dataset-level attributes (if present), found in the ``attrs`` attribute of the Dataframe (or Series)
+
                 For example, the "extra_info" key could contain information about which chain(s) to score during validation, metadata for specific metrics, etc.
 
     Note:

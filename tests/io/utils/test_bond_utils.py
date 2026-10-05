@@ -1,31 +1,95 @@
-import biotite.structure as struc
+import io
+from pathlib import Path
+
 import numpy as np
 import pytest
+from biotite.structure import AtomArray, BondList, BondType
+from biotite.structure.io.pdb import PDBFile
+from biotite.structure.io.pdbx import CIFFile, set_structure
 
+from atomworks.io.config import ParseConfig
 from atomworks.io.parser import parse
-from atomworks.io.template import get_empty_ccd_template
+from atomworks.io.template import get_empty_ccd_template, infer_bonds_from_residue_names
+from atomworks.io.utils.atom_array import get_bond_degree_per_atom
 from atomworks.io.utils.bonds import (
-    _get_bond_degree_per_atom,
     correct_formal_charges_for_specified_atoms,
-    get_inferred_polymer_bonds,
     hash_atom_array,
 )
-from atomworks.io.utils.ccd import get_chem_comp_leaving_atom_names
-from tests.io.conftest import get_pdb_path
+from atomworks.io.utils.io_utils import read_any
+from atomworks.io.utils.link_chemistry import get_chem_comp_leaving_atom_groups, infer_link_order, resolve_leaving_atoms
+from tests.io.conftest import TEST_DATA_IO, get_pdb_path
+
+TEST_DATA_DIR = Path(__file__).parent
 
 LEAVING_GROUP_TEST_CASES = {
-    "ALA": {"N": ("H2",), "C": ("OXT", "HXT"), "OXT": ("HXT",)},
-    "TYR": {"N": ("H2",), "C": ("OXT", "HXT"), "OXT": ("HXT",)},
+    "ALA": {"N": (("H2",),), "C": (("OXT", "HXT"),), "OXT": (("HXT",),)},
+    "TYR": {"N": (("H2",),), "C": (("OXT", "HXT"),), "OXT": (("HXT",),)},
 }
+
+
+def _atom_index(atoms, chain_id, res_id, res_name, atom_name):
+    return np.flatnonzero(
+        (atoms.chain_id == chain_id)
+        & (atoms.res_id == res_id)
+        & (atoms.res_name == res_name)
+        & (atoms.atom_name == atom_name)
+    ).item()
+
+
+def test_struct_conn_uses_canonical_labels_not_author_insertions():
+    """5A7X's three ASN 88B glycosylation bonds resolve by canonical label identity."""
+    atoms = parse(
+        TEST_DATA_IO / "5a7x.cif.zst",
+        config=ParseConfig.from_preset("minimal", model=1, build_assembly=None),
+    )["asym_unit"][0]
+    bond_pairs = {frozenset(bond[:2]) for bond in atoms.bonds.as_array()}
+
+    for protein_chain, glycan_chain in (("N", "IB"), ("P", "JB"), ("R", "KB")):
+        nd2 = _atom_index(atoms, protein_chain, 88, "ASN", "ND2")
+        c1 = _atom_index(atoms, glycan_chain, 1000, "NAG", "C1")
+        assert frozenset((nd2, c1)) in bond_pairs
+
+
+def test_struct_conn_keeps_explicit_long_glycosylation(caplog):
+    """2ODP's authored 2.211 A N-glycosylation survives the ordinary 1.7 A filter."""
+    atoms = parse(
+        TEST_DATA_IO / "2odp.cif.zst",
+        config=ParseConfig.from_preset("minimal", model=1, build_assembly=None),
+    )["asym_unit"][0]
+    bond_pairs = {frozenset(bond[:2]) for bond in atoms.bonds.as_array()}
+
+    nd2 = _atom_index(atoms, "A", 408, "ASN", "ND2")
+    c1 = _atom_index(atoms, "B", 1, "NAG", "C1")
+    assert frozenset((nd2, c1)) in bond_pairs
+    assert "pdbx_dist_value 2.211 A exceeds 1.7 A threshold (keeping through 2.4 A)" in caplog.text
+
+
+def test_struct_conn_filters_long_competing_altloc_bond(caplog):
+    """1RCQ filters the competing altloc bond and infers the kept PLP-DLY double bond."""
+    atoms = parse(
+        TEST_DATA_IO / "1rcq.cif.zst",
+        config=ParseConfig.from_preset("minimal", model=1, build_assembly=None, altloc="B"),
+    )["asym_unit"][0]
+    bond_pairs = {frozenset(bond[:2]) for bond in atoms.bonds.as_array()}
+
+    lys = _atom_index(atoms, "A", 33, "LYS", "NZ")
+    plp = _atom_index(atoms, "B", 358, "PLP", "C4A")
+    dly = _atom_index(atoms, "C", 359, "DLY", "NZ")
+    assert frozenset((plp, dly)) in bond_pairs
+    assert frozenset((plp, lys)) not in bond_pairs
+    neighbors, orders = atoms.bonds.get_bonds(plp)
+    assert orders[neighbors == dly].item() == 2
+    assert "pdbx_dist_value 1.784 A exceeds 1.7 A threshold" in caplog.text
 
 
 @pytest.mark.parametrize("ccd_code, expected_leaving_groups", LEAVING_GROUP_TEST_CASES.items())
 def test_leaving_group_computation(ccd_code, expected_leaving_groups):
-    assert get_chem_comp_leaving_atom_names(ccd_code) == expected_leaving_groups
+    assert get_chem_comp_leaving_atom_groups(ccd_code) == expected_leaving_groups
 
 
-def test_fix_formal_charge_of_deprotonated_alanine():
-    ala = get_empty_ccd_template("ALA", res_id=1, remove_hydrogens=False)
+@pytest.mark.parametrize("hydrogen_policy", ["keep", "remove"])
+def test_fix_formal_charge_of_deprotonated_alanine(hydrogen_policy):
+    ala = get_empty_ccd_template("ALA", res_id=1, hydrogen_policy="keep")
     assert np.array_equal(ala.charge, np.zeros(len(ala)))
 
     ala_oxt_deprotonated = ala[ala.atom_name != "HXT"]
@@ -36,42 +100,44 @@ def test_fix_formal_charge_of_deprotonated_alanine():
         == -1
     )
 
+    # Acetate's CCD O(-) can form a neutral ester without displacing H or changing internal bond orders.
+    atoms = get_empty_ccd_template("ACT", res_id=1, chain_id="A", hydrogen_policy=hydrogen_policy)
+    atoms += get_empty_ccd_template("ALA", res_id=2, chain_id="B", hydrogen_policy=hydrogen_policy)
+    atoms.coord[:] = 0
+    oxygen = _atom_index(atoms, "A", 1, "ACT", "OXT")
+    carbon = _atom_index(atoms, "B", 2, "ALA", "CB")
+    assert atoms.charge[oxygen] == -1
+    atoms.bonds.add_bond(oxygen, carbon, infer_link_order(atoms, oxygen, carbon))
+    atoms = infer_bonds_from_residue_names(atoms)
+    oxygen = _atom_index(atoms, "A", 1, "ACT", "OXT")
+    assert atoms.charge[oxygen] == 0
+    assert atoms.bonds.get_bonds(oxygen)[1].tolist() == [BondType.SINGLE, BondType.SINGLE]
 
-def test_infer_polymer_bonds():
-    residues = []
-    n_intra_bonds = []
-    for i, ccd_code in enumerate(["ALA", "TYR", "GLY", "SER"]):
-        residue = get_empty_ccd_template(ccd_code, res_id=i + 1, chain_id="A", remove_hydrogens=False)
-        residues.append(residue)
-        n_intra_bonds.append(len(residue.bonds.as_array()))
-    atom_array = struc.concatenate(residues)
 
-    assert np.array_equal(atom_array.charge, np.zeros(len(atom_array)))
-    assert len(atom_array[atom_array.atom_name == "OXT"]) == 4
-    assert sum(n_intra_bonds) == len(atom_array.bonds.as_array())
+@pytest.mark.parametrize(
+    ("pdb_id", "endpoint1", "endpoint2", "expected_valence"),
+    [
+        ("1e1y", ("A", 14, "SER", "OG"), ("C", 997, "PO3", "P"), 5),
+        ("8r2z", ("A", 47, "SER", "OG"), ("B", 301, "XR9", "B2"), 4),
+    ],
+)
+def test_parse_valid_charged_hypervalent_link(pdb_id, endpoint1, endpoint2, expected_valence):
+    """Charged P(V) and tetrahedral borate links retain their authored bond, charge, and valence."""
+    atoms = parse(
+        get_pdb_path(pdb_id),
+        config=ParseConfig.from_preset("rcsb", model=1, build_assembly=None),
+    )["asym_unit"][0]
+    atom1 = _atom_index(atoms, *endpoint1)
+    atom2 = _atom_index(atoms, *endpoint2)
+    neighbors, bond_types = atoms.bonds.get_bonds(atom1)
 
-    # ... make polymer bonds
-    polymer_bonds, leaving_atom_idxs = get_inferred_polymer_bonds(atom_array)
-    assert len(polymer_bonds) == 3
-    assert all(atom_array[leaving_atom_idxs].is_leaving_atom)
-
-    # ... add those bonds to the atom array and remove the leaving atoms
-    atom_array.bonds = atom_array.bonds.merge(struc.BondList(len(atom_array), polymer_bonds))
-    is_leaving = np.zeros(len(atom_array), dtype=bool)
-    is_leaving[leaving_atom_idxs] = True
-    atom_array = atom_array[~is_leaving]
-
-    assert len(atom_array[atom_array.atom_name == "OXT"]) == 1
-    assert len(atom_array[atom_array.atom_name == "HXT"]) == 1
-    assert len(atom_array[atom_array.atom_name == "H2"]) == 1
-
-    # ... fix formal charges
-    atom_array = correct_formal_charges_for_specified_atoms(atom_array, np.ones(len(atom_array), dtype=bool))
-    assert np.array_equal(atom_array.charge, np.zeros(len(atom_array)))
+    assert bond_types[neighbors == atom2].item() == BondType.SINGLE
+    assert atoms.charge[atom2] == -1
+    assert get_bond_degree_per_atom(atoms)[atom2] == expected_valence
 
 
 def test_hash_atom_array():
-    arr1 = get_empty_ccd_template("ALA", res_id=1, chain_id="A", remove_hydrogens=False)
+    arr1 = get_empty_ccd_template("ALA", res_id=1, chain_id="A", hydrogen_policy="keep")
     arr2 = arr1.copy()
     assert hash_atom_array(arr1, annotations=None) == hash_atom_array(arr2, annotations=None)
     assert hash_atom_array(arr1, annotations=["atom_name"]) == hash_atom_array(arr2, annotations=["atom_name"])
@@ -124,34 +190,225 @@ def test_hash_atom_array():
 
 
 @pytest.mark.parametrize("pdb_id", ["1TQH"])
-def test_correct_bond_types_for_nucleophilic_additions(pdb_id: str):
-    # Example with a nucleophilic addition to a carbonyl carbon that the PDB incorrectly shows as a double bond
+def test_resolve_leaving_atoms_handles_nucleophilic_additions(pdb_id: str):
+    """Verify that resolve_leaving_atoms handles nucleophilic additions (bond order decrement for carbons).
+
+    1TQH chain D has a 4PA-701 residue where SER-94 OG attacks the carbonyl carbon CAI.
+    The C=O bond to OAD must be decremented to C-O so that the carbon doesn't exceed degree 4.
+    """
     path = get_pdb_path(pdb_id)
 
+    # Parse without leaving atom resolution — carbon should be over-saturated
     result = parse(
         filename=path,
         build_assembly="all",
         hydrogen_policy="remove",
-        fix_bond_types=False,
+        add_missing_atoms=False,
     )
-
-    atom_array = result["assemblies"]["1"][0]  # First bioassembly, first model
+    atom_array = result["assemblies"]["1"][0]
     carbon_mask = atom_array.element == "C"
-    degrees = _get_bond_degree_per_atom(atom_array)
+    degrees = get_bond_degree_per_atom(atom_array)
     assert not np.all(degrees[carbon_mask] <= 4), "Example does not show a nucleophilic addition!"
 
-    # Try again, with bond type correction
+    # Parse with defaults — resolve_leaving_atoms should fix the bond order
     result = parse(
         filename=path,
         build_assembly="all",
         hydrogen_policy="remove",
-        fix_bond_types=True,
     )
-    atom_array = result["assemblies"]["1"][0]  # First bioassembly, first model
+    atom_array = result["assemblies"]["1"][0]
     carbon_mask = atom_array.element == "C"
-    degrees = _get_bond_degree_per_atom(atom_array)
-    assert np.all(degrees[carbon_mask] <= 4), "Example does not show a nucleophilic addition!"
+    degrees = get_bond_degree_per_atom(atom_array)
+    assert np.all(degrees[carbon_mask] <= 4), "Carbon degree > 4 after resolve_leaving_atoms!"
+
+    # Verify that the heteroatom partner (OAD) gets charge=-1 after bond-type + charge correction.
+    # OAD is an oxygen on 4PA-701 whose C=O bond was downgraded to C-O, making it an alkoxide (charge=-1).
+    oad_mask = (atom_array.atom_name == "OAD") & (atom_array.res_name == "4PA")
+    assert oad_mask.any(), "OAD atom not found in 4PA residue"
+    assert np.all(
+        atom_array.charge[oad_mask] == -1
+    ), f"OAD should have charge=-1 after C=O->C-O correction, got {atom_array.charge[oad_mask]}"
+
+
+def _count_bonded_hydrogens(atom_array: AtomArray, atom_idx: int) -> int:
+    """Count hydrogens bonded to the atom at ``atom_idx``."""
+    bonds = atom_array.bonds.as_array()
+    return sum(
+        1
+        for b in bonds
+        if (b[0] == atom_idx and atom_array.element[b[1]] == "H")
+        or (b[1] == atom_idx and atom_array.element[b[0]] == "H")
+    )
+
+
+def test_resolve_leaving_atoms_respects_double_bond_order():
+    """Verify that a double inter-residue bond removes 2 H, not 1.
+
+    Uses a Schiff base theozyme where LYS NZ=CX (double bond via pdbx_value_order).
+    CCD gives NZ 3 H (HZ1-3); the double bond should displace exactly 2, leaving 1 H.
+    """
+    # The CCD template for a free lysine carries 3 hydrogens on NZ
+    lys_template = get_empty_ccd_template("LYS", res_id=1, hydrogen_policy="keep")
+    nz_idx_template = int((lys_template.atom_name == "NZ").nonzero()[0][0])
+    h_before = _count_bonded_hydrogens(lys_template, nz_idx_template)
+    assert h_before == 3, f"CCD template should give NZ 3 H, got {h_before}"
+
+    # Parsing resolves leaving atoms, which should displace exactly 2 of them for the double bond
+    path = str(TEST_DATA_DIR / "schiff_base_double_bond.cif")
+    result = parse(filename=path, build_assembly=None, hydrogen_policy="keep")
+    aa = result["asym_unit"][0]
+
+    nz_idx = int((aa.atom_name == "NZ").nonzero()[0][0])
+    h_after = _count_bonded_hydrogens(aa, nz_idx)
+    assert h_after == 1, f"Double bond should leave 1 H on NZ (removed 2 of 3), got {h_after}"
+
+
+@pytest.mark.parametrize("hydrogen_policy", ["keep", "remove"])
+def test_coordination_preserves_leaving_atoms_and_valence(hydrogen_policy):
+    """Metal coordination preserves the donor's hydrogens, valence count, and charge."""
+    atoms = get_empty_ccd_template("ALA", res_id=1, hydrogen_policy=hydrogen_policy)
+    atoms += get_empty_ccd_template("MN", res_id=2, hydrogen_policy=hydrogen_policy)
+    degree = get_bond_degree_per_atom(atoms)
+    (oxygen,) = np.flatnonzero(atoms.atom_name == "OXT")
+    atoms.bonds.add_bond(int(oxygen), len(atoms) - 1, BondType.COORDINATION)
+    before = atoms.copy()
+
+    resolved, impacted = resolve_leaving_atoms(atoms)
+    resolved = correct_formal_charges_for_specified_atoms(resolved, impacted)
+
+    assert not impacted.any()
+    np.testing.assert_array_equal(resolved.atom_name, before.atom_name)
+    np.testing.assert_array_equal(resolved.bonds.as_array(), before.bonds.as_array())
+    np.testing.assert_array_equal(resolved.charge, before.charge)
+    np.testing.assert_array_equal(get_bond_degree_per_atom(resolved), degree)
+    if hydrogen_policy == "remove":
+        np.testing.assert_array_equal(resolved.nhyd, before.nhyd)
+
+
+@pytest.mark.parametrize("altloc", ["B", "C"])
+@pytest.mark.parametrize("add_missing_atoms", [False, True])
+def test_rebuilding_preserves_reaction_state_links(altloc, add_missing_atoms):
+    """6DP5's B state has OP3-Mg; only C has the U O3'-P link. Rebuilding must not mix them."""
+    atoms = parse(
+        get_pdb_path("6dp5"),
+        config=ParseConfig(
+            hydrogen_policy="remove",
+            add_bond_types_from_struct_conn=("covale", "metalc"),
+            altloc=altloc,
+            add_missing_atoms=add_missing_atoms,
+            build_assembly=None,
+        ),
+    )["asym_unit"][0]
+    oxygen = _atom_index(atoms, "B", 4, "U", "O3'")
+    phosphorus = _atom_index(atoms, "C", 1, "C", "P")
+    assert (phosphorus in atoms.bonds.get_bonds(oxygen)[0]) == (altloc == "C")
+    op3 = (atoms.chain_id == "C") & (atoms.res_id == 1) & (atoms.atom_name == "OP3")
+    assert op3.any() == (altloc == "B")
+    if altloc == "B":
+        partners, types = atoms.bonds.get_bonds(int(np.flatnonzero(op3)[0]))
+        assert np.any((atoms.element[partners] == "MG") & (types == BondType.COORDINATION))
+
+
+@pytest.mark.parametrize(
+    "residues,names,elements,expected_order",
+    [
+        (("LYS", "FMT"), ("NZ", "C"), ("N", "C"), BondType.ANY),
+        (("DLY", "PLP"), ("NZ", "C4A"), ("N", "C"), BondType.ANY),
+        (("CYS", "ZN"), ("SG", "ZN"), ("S", "ZN"), BondType.COORDINATION),
+        (("VAL", "VAL"), ("C", "HXT"), ("C", "H"), BondType.ANY),
+        (("VAL", "VAL"), ("C", "Q1"), ("C", "D"), BondType.ANY),
+        (("VAL", "VAL", "VAL"), ("C", "HXT", "C"), ("C", "H", "C"), BondType.ANY),
+        (("UNK", "UNK"), ("H1", "H2"), ("H", "H"), BondType.ANY),
+        (("UNK", "UNK", "UNK"), ("H1", "H2", "H3"), ("H", "H", "H"), BondType.ANY),
+        (("UNK", "UNK"), ("X1", "X2"), ("C", "C"), BondType.ANY),
+    ],
+)
+def test_minimal_pdb_preserves_conect_connectivity_and_unknown_orders(residues, names, elements, expected_order):
+    """Preserve CONECT links without chemistry inference; metals retain coordination typing."""
+    atoms = AtomArray(len(elements))
+    atoms.chain_id = ["A", "B", "C"][: len(atoms)]
+    atoms.res_id[:] = 1
+    atoms.res_name = residues
+    atoms.atom_name = names
+    atoms.element = elements
+    atoms.hetero[:] = True
+    atoms.coord = np.arange(len(atoms), dtype=np.float32)[:, None] * [1.5, 0, 0]
+    atoms.bonds = BondList(len(atoms), np.array([[i, i + 1, BondType.SINGLE] for i in range(len(atoms) - 1)]))
+    file = PDBFile()
+    file.set_structure(atoms)
+    buffer = io.StringIO()
+    file.write(buffer)
+    assert "CONECT" in buffer.getvalue()
+    buffer.seek(0)
+    config = ParseConfig.from_preset("minimal", file_type="pdb", model=1, build_assembly=None)
+    parsed = parse(buffer, config=config)["asym_unit"][0]
+    # Even unusual hydrogen connectivity is preserved rather than validated or repaired.
+    expected_bonds = [[i, i + 1, expected_order] for i in range(len(atoms) - 1)]
+    np.testing.assert_array_equal(parsed.bonds.as_array(), expected_bonds)
+    np.testing.assert_array_equal(parsed.coord, atoms.coord)
+
+
+@pytest.mark.parametrize("custom_partner", [0, 1])
+@pytest.mark.parametrize("order", [None, "?", ".", "sing", "doub", "arom"])
+def test_minimal_parse_preserves_links_without_ccd_templates(custom_partner, order):
+    """Custom components without definitions retain reported connectivity and explicit orders."""
+    atoms = AtomArray(2)
+    atoms.chain_id = ["A", "B"]
+    atoms.res_id[:] = 1
+    atoms.res_name = ["TYR", "TYR"]
+    atoms.res_name[custom_partner] = "CUSTOM"
+    atoms.atom_name = ["OH", "OH"]
+    atoms.element = ["O", "O"]
+    atoms.hetero[:] = True
+    atoms.coord = np.array([[0, 0, 0], [1.5, 0, 0]], dtype=np.float32)
+    atoms.bonds = BondList(2, np.array([[0, 1, BondType.SINGLE]]))
+    cif = CIFFile()
+    set_structure(cif, atoms)
+    for category in ("chem_comp_atom", "chem_comp_bond"):
+        if category in cif.block:
+            del cif.block[category]
+    if order is None:
+        del cif.block["struct_conn"]["pdbx_value_order"]
+    else:
+        cif.block["struct_conn"]["pdbx_value_order"] = [order]
+    buffer = io.StringIO()
+    cif.write(buffer)
+    buffer.seek(0)
+    config = ParseConfig.from_preset("minimal", model=1, build_assembly=None)
+    if order == "arom":
+        with pytest.raises(ValueError, match="Unsupported struct_conn bond order"):
+            parse(buffer, config=config)
+        return
+    parsed = parse(buffer, config=config)["asym_unit"][0]
+    expected_order = {"sing": BondType.SINGLE, "doub": BondType.DOUBLE}.get(order, BondType.ANY)
+    np.testing.assert_array_equal(parsed.bonds.as_array(), [[0, 1, expected_order]])
+    np.testing.assert_array_equal(parsed.coord, atoms.coord)
+    with pytest.raises(ValueError, match="missing CCD template"):
+        infer_link_order(parsed, 0, 1)
+
+
+@pytest.mark.parametrize("missing_order", ["?", ".", None, "arom"])
+def test_struct_conn_infers_missing_orders_and_rejects_unsupported_orders(missing_order):
+    """1DPN's "?" DA O3'-TAF P link is single: O3' gives up one H, though TAF P loses a P=O."""
+    cif = read_any(get_pdb_path("1dpn"))
+    if missing_order is None:
+        del cif.block["struct_conn"]["pdbx_value_order"]
+    else:
+        cif.block["struct_conn"]["pdbx_value_order"] = [missing_order] * cif.block["struct_conn"].row_count
+    buffer = io.StringIO()
+    cif.write(buffer)
+    buffer.seek(0)
+    if missing_order == "arom":
+        # An unsupported explicit order must not silently become a single bond.
+        with pytest.raises(ValueError, match="Unsupported struct_conn bond order"):
+            parse(buffer, config=ParseConfig.from_preset("minimal", model=1))
+        return
+    atoms = parse(buffer, config=ParseConfig.from_preset("minimal", model=1))["asym_unit"][0]
+
+    partners, types = atoms.bonds.get_bonds(_atom_index(atoms, "A", 6, "DA", "O3'"))
+
+    assert types[partners == _atom_index(atoms, "A", 7, "TAF", "P")].tolist() == [BondType.SINGLE]
 
 
 if __name__ == "__main__":
-    test_correct_bond_types_for_nucleophilic_additions("1j8z")
+    test_resolve_leaving_atoms_handles_nucleophilic_additions("1j8z")

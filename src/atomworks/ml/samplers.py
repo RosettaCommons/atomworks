@@ -6,6 +6,7 @@ from operator import add
 
 import numpy as np
 import pandas as pd
+import pyarrow as pa
 import torch
 from toolz import accumulate
 from torch.utils.data import Dataset, DistributedSampler, Sampler, WeightedRandomSampler
@@ -13,7 +14,7 @@ from torch.utils.data import Dataset, DistributedSampler, Sampler, WeightedRando
 logger = logging.getLogger(__name__)
 
 
-def calculate_af3_example_weights(df: pd.DataFrame, alphas: dict[str, float], beta: float) -> pd.Series:
+def _calculate_af3_example_weights(df: pd.DataFrame, alphas: dict[str, float], beta: float) -> pd.Series:
     """Determines the weight of each example in the DataFrame using a methodology inspired by AF-3.
 
     In AF-3, the weight of a given example is a function of:
@@ -33,7 +34,7 @@ def calculate_af3_example_weights(df: pd.DataFrame, alphas: dict[str, float], be
 
     We make the following modifications to the original AF-3 formula:
         - We introduce n_peptide and a_peptide to better control the sampling over peptides (which were being over-sampled). We define peptides
-        as proteins with fewer than PEPTIDE_MAX_RESIDUES residues (see `atomworks.ml.preprocessing.constants`).
+        as proteins with fewer than PEPTIDE_MAX_RESIDUES residues (see `atomworks.constants`).
         - We introduce an incremental a_loi weight to control the sampling of ligands of interests (LOI), also described as Subject of Investigation.
 
     Thus, our full formula is:
@@ -47,12 +48,6 @@ def calculate_af3_example_weights(df: pd.DataFrame, alphas: dict[str, float], be
     Returns:
         pd.Series: A Series containing the calculated weights for each row in the DataFrame
     """
-    required_columns = ["n_prot", "n_nuc", "n_ligand", "cluster_size"]
-    assert all(col in df.columns for col in required_columns), (
-        "Missing required columns in the (loaded) DataFrame. "
-        f"Please ensure the DataFrame contains the following columns: {required_columns}"
-        "Also ensure that the columns to include are specified in the Hydra configuration file."
-    )
     # Extract relevant columns with default handling
     n_prot = df["n_prot"]
     n_nuc = df["n_nuc"]
@@ -60,14 +55,6 @@ def calculate_af3_example_weights(df: pd.DataFrame, alphas: dict[str, float], be
     n_peptide = df["n_peptide"]
     cluster_size = df["cluster_size"]
 
-    # For interfaces, the column "involves_loi" indicates whether the interface involves a ligand of interest
-    # For pn_units, the column "q_pn_unit_is_loi" indicates whether the query PN Unit is a ligand of interest
-    # (1 = True, 0 = False)
-    assert "involves_loi" in df.columns or "q_pn_unit_is_loi" in df.columns, (
-        "Missing column for 'involves_loi' or 'q_pn_unit_is_loi'. "
-        "Please check the columns in the DataFrame: {df.columns}, "
-        "and the columns to include specified in the Hydra configuration file."
-    )
     is_loi = (df["involves_loi"] if "involves_loi" in df.columns else df["q_pn_unit_is_loi"]).astype(int)
 
     # Assert that all cluster sizes are greater than 0
@@ -105,75 +92,152 @@ def calculate_af3_example_weights(df: pd.DataFrame, alphas: dict[str, float], be
     return weights
 
 
-def get_cluster_sizes(df: pd.DataFrame, cluster_column: str = "cluster") -> dict[str, int]:
-    """Generate a mapping between cluster alphanumeric IDs and the number of PN units/interfaces in each cluster.
+def _col_to_series(table: pa.Table | pd.DataFrame, column: str) -> pd.Series:
+    """Extract a single column from a pandas DataFrame or PyArrow Table as a pandas Series.
+
+    Only the requested column is materialised, keeping memory usage low when the
+    backing table is a PyArrow Table held in columnar format.
+    """
+    col = table[column]
+    return col.to_pandas() if hasattr(col, "to_pandas") else col
+
+
+def _get_effective_cluster_sizes(
+    dataset_df: pa.Table | pd.DataFrame,
+    cluster_column: str,
+    altloc_weights: pd.Series | None = None,
+) -> pd.Series:
+    """Return a per-row Series of effective cluster sizes.
+
+    Without altloc weights, effective size is simply the row count per cluster.
+    With altloc weights, effective size is the sum of altloc weights per cluster,
+    which equals the number of unique examples (e.g. pdb_ids / assembly id / pn_unit)
+    since each unique example's altloc weights sum to exactly 1.0.
 
     Args:
-        df (pd.DataFrame): DataFrame containing the PN unit or interface data
-        cluster_column (str): Name of the column containing the cluster alphanumeric IDs
+        dataset_df: DataFrame or PyArrow Table containing the data.
+        cluster_column: Column identifying sequence clusters.
+        altloc_weights: If provided, summed per cluster to get effective size.
+            Defaults to ``None`` (use raw row counts).
 
     Returns:
-        dict: A dictionary where the keys are unique cluster IDs and the values are the counts of occurrences.
+        Per-row Series of effective cluster sizes.
     """
-    # Use the value_counts method to count occurrences of each unique value in the cluster column
-    cluster_counts = df[cluster_column].value_counts()
+    cluster_col = _col_to_series(dataset_df, cluster_column)
+    if altloc_weights is None:
+        cluster_to_size = cluster_col.value_counts().to_dict()
+    else:
+        tmp = pd.DataFrame({"cluster": cluster_col, "altloc_weight": altloc_weights})
+        cluster_to_size = tmp.groupby("cluster")["altloc_weight"].sum().to_dict()
+    return cluster_col.map(cluster_to_size)
 
-    # Convert the Series to a dictionary and return
-    return cluster_counts.to_dict()
+
+def _get_altloc_weights(
+    dataset_df: pa.Table | pd.DataFrame,
+    altloc_seed_column: str,
+    pdb_id_column: str,
+) -> pd.Series:
+    """Return a per-row Series of ``1 / num_altlocs`` for altloc-aware sampling.
+
+    ``num_altlocs`` is the number of unique values in ``altloc_seed_column`` per
+    ``pdb_id``.  ``NaN`` counts as one unique value (structures with no altlocs
+    have a single row with ``altloc_seed=None``, so ``num_altlocs=1``).
+    """
+    pdb_id_col = _col_to_series(dataset_df, pdb_id_column)
+    altloc_col = _col_to_series(dataset_df, altloc_seed_column)
+    tmp = pd.DataFrame({pdb_id_column: pdb_id_col, altloc_seed_column: altloc_col})
+    pdb_id_to_num_altlocs = tmp.groupby(pdb_id_column)[altloc_seed_column].nunique(dropna=False).to_dict()
+    return 1.0 / pdb_id_col.map(pdb_id_to_num_altlocs)
 
 
 def calculate_weights_for_pdb_dataset_df(
-    dataset_df: pd.DataFrame, alphas: dict[str, float], beta: float, cluster_column: str = "cluster"
+    dataset_df: pa.Table | pd.DataFrame,
+    alphas: dict[str, float],
+    beta: float,
+    cluster_column: str = "cluster",
+    altloc_seed_column: str | None = None,
+    pdb_id_column: str = "pdb_id",
 ) -> torch.Tensor:
-    """Calculate weights for each row in the DataFrame based on the cluster size and the AF-3 weighting methodology.
+    """Calculate weights based on the AF-3 methodology, optionally adjusted for altlocs.
+
+    Base weight per row: ``(beta / cluster_size) * (a_prot * n_prot + ...)``.
+    If ``altloc_seed_column`` is provided, weights are additionally multiplied by
+    ``1 / num_altlocs`` so that each altloc variant of a structure is sampled uniformly.
 
     Args:
-        dataset_df (pd.DataFrame): DataFrame containing the PN unit or interface data
-        alphas (dict[str, float]): Dictionary containing alpha values for the weighting calculation (common across interfaces and chains/pn_units)
-        beta (float): Beta value for the weighting calculation (distinct for interfaces and chains/pn_units)
+        dataset_df: DataFrame or PyArrow Table containing the PN unit or interface data.
+        alphas: Alpha hyperparameters for the AF-3 weighting formula.
+        beta: Beta hyperparameter (distinct for interfaces vs. chains).
+        cluster_column: Column identifying sequence clusters. Defaults to ``"cluster"``.
+        altloc_seed_column: If provided, weights are divided by the number of unique
+            altloc seeds per ``pdb_id``. Defaults to ``None`` (no altloc adjustment).
+        pdb_id_column: Column identifying structures, used only when
+            ``altloc_seed_column`` is set. Defaults to ``"pdb_id"``.
 
     Returns:
-        torch.Tensor: A tensor containing the calculated weights for each row in the DataFrame
+        Tensor of per-row weights with shape ``(len(dataset_df),)``.
     """
-    # Generate the cluster sizes...
-    cluster_id_to_size_map = get_cluster_sizes(dataset_df, cluster_column=cluster_column)
+    col_names = dataset_df.schema.names if isinstance(dataset_df, pa.Table) else list(dataset_df.columns)
 
-    # ...map the cluster sizes to the DataFrame
-    dataset_df["cluster_size"] = dataset_df[cluster_column].map(cluster_id_to_size_map)
+    required_columns = [cluster_column, "n_prot", "n_nuc", "n_ligand", "n_peptide"]
+    assert all(col in col_names for col in required_columns), (
+        "Missing required columns in the (loaded) table. "
+        f"Please ensure the table contains the following columns: {required_columns}. "
+        "Also ensure that the columns to include are specified in the Hydra configuration file."
+    )
+    assert "involves_loi" in col_names or "q_pn_unit_is_loi" in col_names, (
+        "Missing column for 'involves_loi' or 'q_pn_unit_is_loi'. "
+        f"Please check the columns in the table: {col_names}, "
+        "and the columns to include specified in the Hydra configuration file."
+    )
 
-    # ... assert no NaN cluster sizes
-    assert not dataset_df["cluster_size"].isnull().any(), "Cluster sizes must not be NaN"
+    loi_col = "involves_loi" if "involves_loi" in col_names else "q_pn_unit_is_loi"
+    needed_cols = [cluster_column, "n_prot", "n_nuc", "n_ligand", "n_peptide", loi_col]
+    df = pd.DataFrame({col: _col_to_series(dataset_df, col) for col in needed_cols})
 
-    # ...calculate weights using vectorized operations
-    weights = calculate_af3_example_weights(dataset_df, alphas, beta).values
+    altloc_weights = (
+        _get_altloc_weights(dataset_df, altloc_seed_column, pdb_id_column) if altloc_seed_column is not None else None
+    )
+    df["cluster_size"] = _get_effective_cluster_sizes(dataset_df, cluster_column, altloc_weights)
+    assert not df["cluster_size"].isnull().any(), "Cluster sizes must not be NaN"
 
-    # ...and return the weights as a tensor
+    weights = _calculate_af3_example_weights(df, alphas, beta).values
+    if altloc_weights is not None:
+        weights = weights * altloc_weights.values
     return torch.tensor(weights)
 
 
 def calculate_weights_by_inverse_cluster_size(
-    dataset_df: pd.DataFrame, cluster_column: str = "cluster"
+    dataset_df: pa.Table | pd.DataFrame,
+    cluster_column: str = "cluster",
+    altloc_seed_column: str | None = None,
+    pdb_id_column: str = "pdb_id",
 ) -> torch.Tensor:
-    """Calculate weights for each row in the DataFrame as the inverse of its cluster size.
+    """Calculate weights as the inverse of cluster size, optionally adjusted for altlocs.
+
+    Base weight per row: ``1 / cluster_size``.
+    If ``altloc_seed_column`` is provided, weights are additionally multiplied by
+    ``1 / num_altlocs`` for uniform three-level sampling: cluster → example → altloc.
 
     Args:
-        dataset_df (pd.DataFrame): DataFrame containing the PN unit or interface data
-        cluster_column (str): Column name in `dataset_df` corresponding to the cluster info. Default is "cluster".
+        dataset_df: DataFrame or PyArrow Table containing the PN unit or interface data.
+        cluster_column: Column identifying sequence clusters. Defaults to ``"cluster"``.
+        altloc_seed_column: If provided, weights are divided by the number of unique
+            altloc seeds per ``pdb_id``. Defaults to ``None`` (no altloc adjustment).
+        pdb_id_column: Column identifying structures, used only when
+            ``altloc_seed_column`` is set. Defaults to ``"pdb_id"``.
 
     Returns:
-        torch.Tensor: A tensor containing the calculated weights for each row in the DataFrame
+        Tensor of per-row weights with shape ``(len(dataset_df),)``.
     """
-    # Generate the cluster sizes...
-    cluster_id_to_size_map = get_cluster_sizes(dataset_df, cluster_column=cluster_column)
-
-    # ... map the cluster sizes to the DataFrame
-    dataset_df["cluster_size"] = dataset_df[cluster_column].map(cluster_id_to_size_map)
-
-    # ... calculate weights as the inverse of the cluster size
-    weights = 1 / dataset_df["cluster_size"].values
-
-    # ... and return the weights as a tensor
-    return torch.tensor(weights)
+    altloc_weights = (
+        _get_altloc_weights(dataset_df, altloc_seed_column, pdb_id_column) if altloc_seed_column is not None else None
+    )
+    effective_cluster_sizes = _get_effective_cluster_sizes(dataset_df, cluster_column, altloc_weights)
+    weights = 1.0 / effective_cluster_sizes
+    if altloc_weights is not None:
+        weights = weights * altloc_weights
+    return torch.tensor(weights.values, dtype=torch.float64)
 
 
 def set_sampler_epoch(sampler: Sampler, epoch: int, add_random_offset: bool = False) -> None:
@@ -196,13 +260,13 @@ def set_sampler_epoch(sampler: Sampler, epoch: int, add_random_offset: bool = Fa
 
 
 class DistributedMixedSampler(Sampler):
-    """Custom DistributedSampler implementation that samples from an arbitrary list of samplers with specified probabilities.
+    r"""Custom DistributedSampler implementation that samples from an arbitrary list of samplers with specified probabilities.
 
     Child samplers can be any type of non-distributed sampler, including a MixedSampler.
     After gathering all indices, shards the samples across nodes, ensuring each node receives a unique slice of the dataset.
 
     Example:
-        Imagine we have the following sampling tree:
+        Imagine we have the following sampling tree::
 
                 DistributedMixedSampler
                            |

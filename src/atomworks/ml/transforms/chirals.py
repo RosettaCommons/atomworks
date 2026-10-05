@@ -158,8 +158,10 @@ def get_rf2aa_chiral_features(
     """Extracts chiral centers and featurize them for RF2AA.
 
     NOTE: Each row of output features contains the indices of the plane pairs and the signed ideal
-        dihedral angle for each chiral center. For example, the entry:
+        dihedral angle for each chiral center. For example, the entry::
+
             [c, i, j, k, angle]
+
         means that the atom at index c is a chiral center with atoms at indices (i, j, k) bonded
         to it. The signed dihedral angle angle is the signed angle between the planes (cij) and
         (ijk). The sign of the angle determines the chirality of the chiral center.
@@ -200,6 +202,10 @@ def get_rf2aa_chiral_features(
     for chiral_center_info in chiral_centers:
         chiral_center: int = chiral_center_info["chiral_center_idx"]
         bonded_atoms: list[int] = chiral_center_info["bonded_explicit_atom_idxs"]
+
+        # skip non-tetrahedral (>4 neighbor) centers
+        if len(bonded_atoms) not in (3, 4):
+            continue
 
         # get the keys for uniquely identifying all pairs of planes that can be formed between
         #   a side of the tetrahedron and a plane that contains two atoms of the tetrahedral side and the chiral center
@@ -361,15 +367,20 @@ def add_af3_chiral_features(
     for res_start, res_end in zip(_res_starts, _res_ends, strict=False):
         res_name = atom_array.res_name[res_start]
 
-        chirals = chiral_centers[res_name]
+        chirals = chiral_centers.get(res_name, [])
         if len(chirals) == 0:
             continue
 
         # get rdkit->atomarray mapping
+        rdmol = rdkit_mols.get(res_name)
+        if rdmol is None:
+            logger.warning(f"No RDKit molecule found for residue {res_name}, skipping chiral features")
+            continue
+
         conformer = atom_array_from_rdkit(
-            rdkit_mols[res_name],
+            rdmol,
             conformer_id=0,
-            remove_hydrogens=True,
+            remove_hydrogens=False,
         )
         _ref_to_conf_map = _get_reference_conformer_to_residue_mapping(
             atom_names=atom_array.atom_name[res_start:res_end], conformer=conformer

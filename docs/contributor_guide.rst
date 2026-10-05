@@ -11,10 +11,10 @@ As you code
 -------------
 
 1. **Reduce cognitive overhead:**
-   
+
    a. Pick meaningful, descriptive variable names.
-   
-   b. Write docstrings (leverage AI!) and comments. To be used in the API documentation the docstring should 
+
+   b. Write docstrings (leverage AI!) and comments. To be used in the API documentation the docstring should
       follow the Google style guide: `Google Python Style Guide <https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings>`_.
 
    c. Follow the `Python Zen <https://peps.python.org/pep-0020/>`_ – explicit is better than implicit, etc.
@@ -24,20 +24,20 @@ As you code
 As you commit
 ---------------
 
-1. Keep commits as "one logical unit". This means that each commit should be a set of related changes  
+1. Keep commits as "one logical unit". This means that each commit should be a set of related changes
    that accomplish one task, fix one bug, or implement one feature. Using an editor like `VS Code <https://code.visualstudio.com/docs/sourcecontrol/overview>`_
-   or using `GitHub Desktop <https://docs.github.com/en/desktop>`_ can help you stage related changes together.  
+   or using `GitHub Desktop <https://docs.github.com/en/desktop>`_ can help you stage related changes together.
 
-2. Adhere to `semantic commit conventions <https://www.conventionalcommits.org/en/v1.0.0/>`_.  
+2. Adhere to `semantic commit conventions <https://www.conventionalcommits.org/en/v1.0.0/>`_.
 
-3. Format & lint your code (``make format``).  
+3. Format & lint your code (``make format``).
 
-4. Submit a draft PR so people know you are working on this & can provide advice/feedback early on.  
+4. Submit a draft PR so people know you are working on this & can provide advice/feedback early on.
 
 As you finalize a PR
 ---------------------
 
-1. To make a PR merge your branch to **staging**. The maintainers will regularly merge staging into production.
+1. Target **release/atomworks-3-0** for the AtomWorks 3.0 release.
 2. Keep overall PR under <400 LOC (lines of code) (Rule of thumb: 500 LOC takes about 1h to review).
 3. Read and fill out the `PR checklist <https://github.com/RosettaCommons/atomworks/blob/production/.github/pull_request_template.md>`_.
 
@@ -58,7 +58,7 @@ Aside from having AtomWorks and its dependencies installed, to build the documen
    uv pip install -r docs/docs_requirements.txt
 
 To build the documentation, navigate to the ``docs`` directory and run:
-   
+
    .. code-block:: bash
 
       make html
@@ -82,13 +82,46 @@ PR Hygiene
 When contributing to this repository, please follow these steps:
 
 1. Clone the repository
-2. Create the development environment (see the *Local Conda Environment* section in the Installation Guide).
-3. Create a new branch for your changes. 
+2. Create the development environment (see the :doc:`installation` guide).
+3. Create a new branch for your changes.
    - Use the following convention to name your branch: ``<category>/<description>``. Categories: ``feat``, ``fix``, ``hotfix``, ``refactor``, ``docs``, ``perf``.
    - Example: ``feat/support-rdkit-small-molecule``
-4. Make and commit your changes on your new branch. 
+4. Make and commit your changes on your new branch.
    - Run autoformatting tools (``make format``) before committing.
    - Use commit messages like ``<type>: <description>``. Types: ``feat``, ``fix``, ``refactor``, ``docs``, ``chore``, ``wip``.
    - Example: ``git commit -m "docs: add contributing guidelines"``
-5. Open a pull request to ``staging`` and describe your changes.
+5. Open a pull request to ``release/atomworks-3-0`` and describe your changes.
 6. Wait for review and merge your changes.
+
+
+Publishing a release
+--------------------
+
+Releases use the explicit version in ``pyproject.toml`` and a matching Git tag.
+Branch pushes and PR merges do not publish packages.
+
+One-time repository setup:
+
+- Configure the PyPI ``atomworks`` Trusted Publisher: owner ``RosettaCommons``,
+  repository ``atomworks``, workflow ``release_and_docs.yaml``, environment ``pypi``.
+- Protect the ``pypi`` environment with reviewer approval and allow version tags.
+- Keep GitHub Pages Source as **Deploy from a branch**, using ``gh-pages`` and
+  ``/ (root)``. The workflow preserves versioned pages on that branch.
+
+For 3.0.0, merge the reviewed PRs, wait for CI on the final release commit, and
+confirm that ``project.version`` is ``3.0.0`` and the tag/PyPI version are unused.
+From a checkout whose ``origin`` is the public repository:
+
+.. code-block:: bash
+
+   git fetch origin
+   git tag -a v3.0.0 origin/release/atomworks-3-0 -m "AtomWorks 3.0.0"
+   git push origin refs/tags/v3.0.0
+
+The tag runs package checks, installed-wheel checks, scientific CPU tests
+on GitHub-hosted runners and the docs build. After they pass, approve ``pypi`` to publish the checked
+archives; subsequent jobs create the GitHub Release and deploy documentation.
+Verify a fresh ``pip install atomworks==3.0.0``, ``aw --help`` and the versioned docs.
+
+Prereleases follow the same process without replacing stable ``latest`` docs.
+Never move a published tag or reuse a published package version.

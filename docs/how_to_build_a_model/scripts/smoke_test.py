@@ -1,70 +1,70 @@
-"""
-Applies a loader and transform pipeline to each example and runs a smoke test.
-Created in part 2 of the How to Build a Model with AtomWorks tutorial series.
+"""Load one Part 1 example through the Part 2 transform pipeline."""
 
-Transforms applied:
-- RemoveHydrogens
-- RemoveUnresolvedAtoms
-- CropToPocket
-- FeaturizeForDocking
-"""
+import argparse
+from pathlib import Path
 
+import numpy as np
 import pandas as pd
-from atomworks.ml.datasets import PandasDataset
-from atomworks.ml.datasets.loaders import create_loader_with_query_pn_units
-from atomworks.ml.transforms.filters import RemoveHydrogens, RemoveUnresolvedAtoms
-from atomworks.ml.transforms.base import Compose
-
-# NOTE: import assumes you run this script from the directory containing transforms.py. 
-
 from transforms import CropToPocket, FeaturizeForDocking
 
-# Load in the training data as a pandas DataFrame
-df_train = pd.read_parquet("splits/train.parquet")
+from atomworks.ml.datasets import PandasDataset
+from atomworks.ml.datasets.loaders import create_structure_loader
+from atomworks.ml.transforms.base import Compose
+from atomworks.ml.transforms.filters import RemoveHydrogens, RemoveUnresolvedAtoms
 
-# Define the transform pipeline
-transforms_pipeline = Compose([
-    RemoveHydrogens(),
-    RemoveUnresolvedAtoms(),
-    CropToPocket(radius=10.0),
-    FeaturizeForDocking(),
-])
 
-# Build the AtomWorks PandasDataset
-dataset = PandasDataset(
-    data=df_train,
-    name="docking_train",
-    id_column="example_id",
-    loader=create_loader_with_query_pn_units(
-        pn_unit_iid_colnames=["pn_unit_1_iid", "pn_unit_2_iid"]),
-    transform=transforms_pipeline,
-)
+def build_dataset(split_path: Path) -> PandasDataset:
+    """Build the tutorial dataset from a Part 1 Parquet split."""
+    pipeline = Compose(
+        [
+            RemoveHydrogens(),
+            RemoveUnresolvedAtoms(),
+            CropToPocket(radius=10.0),
+            FeaturizeForDocking(),
+        ]
+    )
+    return PandasDataset(
+        data=pd.read_parquet(split_path),
+        name="docking_train",
+        id_column="example_id",
+        loader=create_structure_loader(
+            altloc_seed_colname="altloc_seed",
+            column_mapping={
+                "query_pn_unit_iids": ["pn_unit_1_iid", "pn_unit_2_iid"],
+                "query_is_polymer": ["pn_unit_1_is_polymer", "pn_unit_2_is_polymer"],
+            },
+        ),
+        transform=pipeline,
+    )
 
-################################
-# Print statements for testing #
-################################
-print(f"Dataset size: {len(dataset)}")
 
-example = dataset[0]
+def main() -> None:
+    """Print shapes and check the basic feature contract for one example."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("split", type=Path, nargs="?", default=Path("splits/train.parquet"))
+    parser.add_argument("--index", type=int, default=0, help="Row to load from the split.")
+    args = parser.parse_args()
 
-print("\nLoaded one sample successfully.")
-print("Sample keys:", list(example.keys()))
-print("atomic_numbers:", example["atomic_numbers"].shape, example["atomic_numbers"].dtype)
-print("input_coords:", example["input_coords"].shape, example["input_coords"].dtype)
-print("target_coords:", example["target_coords"].shape, example["target_coords"].dtype)
-print("edge_index:", example["edge_index"].shape, example["edge_index"].dtype)
-print("is_ligand:", example["is_ligand"].shape, example["is_ligand"].dtype)
+    dataset = build_dataset(args.split)
+    example = dataset[args.index]
+    atom_count = len(example["atomic_numbers"])
+    assert example["target_coords"].shape == (atom_count, 3)
+    assert example["input_coords"].shape == (atom_count, 3)
+    assert example["is_ligand"].shape == (atom_count,)
+    assert example["edge_index"].shape[0] == 2
+    assert not example["edge_index"].size or example["edge_index"].max() < atom_count
+    assert np.all(example["input_coords"][example["is_ligand"]] == 0)
+    assert np.array_equal(
+        example["input_coords"][~example["is_ligand"]],
+        example["target_coords"][~example["is_ligand"]],
+    )
+    assert example["is_ligand"].any() and (~example["is_ligand"]).any()
 
-assert example["atomic_numbers"].ndim == 1
-assert example["target_coords"].ndim == 2
-assert example["target_coords"].shape[1] == 3
-assert example["input_coords"].shape == example["target_coords"].shape
-assert example["edge_index"].ndim == 2
-assert example["edge_index"].shape[0] == 2
-assert example["edge_index"].max() < example["atomic_numbers"].shape[0]
-assert (example["input_coords"][example["is_ligand"]] == 0).all(), \
-    "Ligand coordinates should be zeroed"
-assert (example["input_coords"][~example["is_ligand"]] != 0).any(), \
-    "Pocket coordinates should not all be zero"
+    print(f"Loaded {example['example_id']} from {len(dataset)} examples")
+    for name in ("atomic_numbers", "input_coords", "target_coords", "edge_index", "is_ligand"):
+        value = example[name]
+        print(f"{name}: shape={value.shape}, dtype={value.dtype}")
 
-print("\nFeaturizeForDocking smoke test passed.")
+
+if __name__ == "__main__":
+    main()

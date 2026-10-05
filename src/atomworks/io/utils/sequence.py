@@ -7,13 +7,20 @@ __all__ = [
 
 import functools
 import logging
+from collections import Counter
+from collections.abc import Sequence
 
 import numpy as np
 import toolz
 
 from atomworks.constants import (
+    AA_LIKE_CHEM_TYPES,
+    DNA_LIKE_CHEM_TYPES,
     GAP,
     GAP_ONE_LETTER,
+    POLYPEPTIDE_D_CHEM_TYPES,
+    POLYPEPTIDE_L_CHEM_TYPES,
+    RNA_LIKE_CHEM_TYPES,
     STANDARD_AA,
     STANDARD_DNA,
     STANDARD_NA,
@@ -28,6 +35,7 @@ from atomworks.enums import ChainType
 from atomworks.io.utils.ccd import (
     aa_chem_comps,
     chem_comp_to_one_letter,
+    get_chem_comp_type,
     na_chem_comps,
 )
 
@@ -87,6 +95,7 @@ def dna_chem_comp_1to3() -> dict[str, str]:
     return {val: key for key, val in na_chem_comp_3to1().items() if key in STANDARD_DNA}
 
 
+@functools.cache
 def get_1_from_3_letter_code(
     res_name: str,
     chain_type: ChainType,
@@ -122,6 +131,7 @@ def get_1_from_3_letter_code(
         return "X"
 
 
+@functools.cache
 def get_3_from_1_letter_code(
     letter: str,
     chain_type: ChainType,
@@ -192,3 +202,120 @@ def is_standard_aa_not_glycine(ccd_code_array: np.ndarray) -> np.ndarray:
 
 def is_protein_unknown(ccd_code_array: np.ndarray) -> np.ndarray:
     return np.asarray(ccd_code_array) == UNKNOWN_AA
+
+
+def infer_chain_type_from_three_letter(ccd_code_seq: Sequence[str]) -> ChainType:
+    """Infer chain type from three-letter CCD code arrays.
+
+    Used for parsed structure data where residues are represented as CCD codes.
+    Assigns chain type based on the residue chem types of the provided CCD codes.
+
+    Args:
+      ccd_code_seq: List of three-letter CCD codes (e.g., ``["ALA", "CYS", "ASP"]``).
+
+    Returns:
+      Inferred chain type enum value.
+
+    Examples:
+      >>> infer_chain_type_from_three_letter(["ALA", "CYS", "ASP"])
+      <ChainType.POLYPEPTIDE_L: ...>
+      >>> infer_chain_type_from_three_letter(["DA", "DT", "DG", "DC"])
+      <ChainType.DNA: ...>
+
+    See Also:
+      :py:func:`~atomworks.io.tools.fasta.infer_chain_type_from_one_letter` -
+      For sequence notation (one-letter format).
+    """
+    chain_type_counts = dict.fromkeys(
+        [
+            "aa_like",
+            ChainType.POLYPEPTIDE_D,
+            ChainType.POLYPEPTIDE_L,
+            ChainType.DNA,
+            ChainType.RNA,
+            ChainType.NON_POLYMER,
+        ],
+        0,
+    )
+
+    # Classify each distinct component once, preserving its contribution to chain composition.
+    for res_name, count in Counter(ccd_code_seq).items():
+        chem_comp = get_chem_comp_type(res_name, mode="warn")
+
+        # Increment the count for the appropriate chain type category
+        # (All amino acid-like chem types are considered "aa_like")
+        if chem_comp in AA_LIKE_CHEM_TYPES:
+            chain_type_counts["aa_like"] += count
+            # (We further differentiate between L- and D-polypeptides)
+            if chem_comp in POLYPEPTIDE_D_CHEM_TYPES:
+                chain_type_counts[ChainType.POLYPEPTIDE_D] += count
+            elif chem_comp in POLYPEPTIDE_L_CHEM_TYPES:
+                chain_type_counts[ChainType.POLYPEPTIDE_L] += count
+
+        # (We differentiate between RNA and DNA)
+        elif chem_comp in RNA_LIKE_CHEM_TYPES:
+            chain_type_counts[ChainType.RNA] += count
+        elif chem_comp in DNA_LIKE_CHEM_TYPES:
+            chain_type_counts[ChainType.DNA] += count
+
+        # (All other chem types are considered non-polymer)
+        else:
+            chain_type_counts[ChainType.NON_POLYMER] += count
+
+    # WARNING: The following logic is heuristic, and may fail in cases of multiple residues types within a chain.
+
+    # If we have both RNA and DNA, set the chain type to RNA/DNA hybrid
+    if chain_type_counts[ChainType.RNA] > 0 and chain_type_counts[ChainType.DNA] > 0:
+        chain_type = ChainType.DNA_RNA_HYBRID
+
+    #  If we have proteins, set to either L- or D-polypeptide, depending on the counts
+    elif chain_type_counts[ChainType.POLYPEPTIDE_L] > 0 or chain_type_counts[ChainType.POLYPEPTIDE_D] > 0:
+        # ... if we have equal or more L-polypeptides than D-polypeptides in the chain, set to L-polypeptide
+        if chain_type_counts[ChainType.POLYPEPTIDE_L] >= chain_type_counts[ChainType.POLYPEPTIDE_D]:
+            chain_type = ChainType.POLYPEPTIDE_L
+
+        # ... if we have more D-polypeptides than L-polypeptides, set to D-polypeptide
+        elif chain_type_counts[ChainType.POLYPEPTIDE_L] < chain_type_counts[ChainType.POLYPEPTIDE_D]:
+            chain_type = ChainType.POLYPEPTIDE_D
+
+    # If we only have "aa_like", default to "polypeptide(L)"
+    elif (
+        chain_type_counts["aa_like"] > 0
+        and chain_type_counts[ChainType.POLYPEPTIDE_L] == 0
+        and chain_type_counts[ChainType.POLYPEPTIDE_D] == 0
+    ):
+        chain_type = ChainType.POLYPEPTIDE_L
+
+    # ... if we have RNA, set to polyribonucleotide
+    elif chain_type_counts[ChainType.RNA] > 0:
+        chain_type = ChainType.RNA
+    # ... if we have DNA, set to polydeoxyribonucleotide
+    elif chain_type_counts[ChainType.DNA] > 0:
+        chain_type = ChainType.DNA
+    # Otherwise, set to non-polymer (if we have non-polymer residues)
+    elif chain_type_counts[ChainType.NON_POLYMER] > 0:
+        chain_type = ChainType.NON_POLYMER
+    else:
+        raise ValueError(f"Could not infer chain type from residue names: {ccd_code_seq}")
+
+    return chain_type
+
+
+def convert_to_one_letter_sequences(
+    res_names: list[str],
+    chain_type: ChainType,
+) -> tuple[str, str]:
+    """Convert 3-letter residue codes to 1-letter (non_canonical, canonical) sequences.
+
+    Args:
+      res_names: List of 3-letter residue codes.
+      chain_type: Chain type (e.g., protein, RNA, DNA).
+
+    Returns:
+      Tuple of (non_canonical_sequence, canonical_sequence) where:
+        - non_canonical keeps modified residues as-is (e.g., MSE → X)
+        - canonical maps to closest standard residue (e.g., MSE → M)
+    """
+    non_canonical = "".join(get_1_from_3_letter_code(rn, chain_type, use_closest_canonical=False) for rn in res_names)
+    canonical = "".join(get_1_from_3_letter_code(rn, chain_type, use_closest_canonical=True) for rn in res_names)
+    return non_canonical, canonical

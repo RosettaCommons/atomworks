@@ -78,19 +78,31 @@ def cumcount(a: np.ndarray) -> np.ndarray:
     return (np.arange(n) - dfill(b))[i]
 
 
-def hash_sequence(sequence: str) -> str:
+def hash_sequence(sequence: str, length: int | None = 11) -> str:
+    """SHA-256 hex digest of ``sequence``, truncated to ``length`` chars (``None`` = full 64-char digest).
+
+    The default 11 is the legacy hashed-file-directory key; the packed MSA store passes a longer prefix
+    (``MSA_KEY_LEN``, collision-safe at scale). Same hash everywhere — only the truncation differs.
     """
-    Generate a SHA-256 hash for the given sequence and return a compressed string format of the hash.
+    digest = hashlib.sha256(sequence.encode()).hexdigest()
+    return digest if length is None else digest[:length]
+
+
+def get_complex_id(sequences: list[str]) -> str:
+    """Compute a stable, order-independent, fixed-length identifier for a multi-chain
+    complex.
+
+    Hashes each sequence with `hash_sequence`, sorts and joins the unique hashes,
+    then re-hashes the joined string. Repeated chains don't change the id, e.g. an
+    H2L2 antibody gets the same id as its HL pair.
 
     Args:
-        sequence (str): The sequence to be hashed.
+        sequences: The protein sequences in the complex; repeats are ignored.
 
     Returns:
-        str: The compressed hash string format.
+        The complex_id string.
     """
-    sha256_hash = hashlib.sha256(sequence.encode()).hexdigest()
-    compressed_name = sha256_hash[:11]  # Using first 11 characters for simplicity
-    return compressed_name
+    return hash_sequence("-".join(sorted({hash_sequence(seq) for seq in sequences})))
 
 
 @lru_cache(maxsize=1)
