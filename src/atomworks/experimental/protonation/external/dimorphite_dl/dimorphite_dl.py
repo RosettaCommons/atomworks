@@ -44,6 +44,9 @@ from rdkit.Chem import AllChem
 
 _SOURCE_INDEX = "_atomworks_protonation_source_index"
 
+_REMOVE_HS_PARAMS = Chem.RemoveHsParameters()
+_REMOVE_HS_PARAMS.removeNontetrahedralNeighbors = True
+
 #: An aromatic nitrogen of formal charge -1.
 _AROMATIC_NITRANION = Chem.MolFromSmarts("[n-]")
 
@@ -256,7 +259,7 @@ class ProtSubstructFuncs:
             nitrogen_charge = charge + int("*" not in prot_site_name)
             for mol in mols:
                 try:
-                    mol_copy = Chem.RemoveHs(mol) if remove_hs else Chem.Mol(mol)
+                    mol_copy = Chem.RemoveHs(mol, _REMOVE_HS_PARAMS) if remove_hs else Chem.Mol(mol)
                 except Exception:
                     continue
                 atom = mol_copy.GetAtomWithIdx(idx)
@@ -309,7 +312,7 @@ def protonate_mol_variants(
     if prepared is None:
         return []
     try:
-        prepared = Chem.RemoveHs(prepared)
+        prepared = Chem.RemoveHs(prepared, _REMOVE_HS_PARAMS)
     except Exception:
         return []
 
@@ -349,7 +352,7 @@ def protonate_mol_variants(
         if len(properly_formed_mols) == 1:
             new_mols = properly_formed_mols
     else:
-        mol_used_to_idx_sites = Chem.RemoveHs(mol_used_to_idx_sites)
+        mol_used_to_idx_sites = Chem.RemoveHs(mol_used_to_idx_sites, _REMOVE_HS_PARAMS)
         new_mols = [mol_used_to_idx_sites]
         properly_formed_mols.append(mol_used_to_idx_sites)
 
