@@ -11,10 +11,10 @@ As you code
 -------------
 
 1. **Reduce cognitive overhead:**
-   
+
    a. Pick meaningful, descriptive variable names.
-   
-   b. Write docstrings (leverage AI!) and comments. To be used in the API documentation the docstring should 
+
+   b. Write docstrings (leverage AI!) and comments. To be used in the API documentation the docstring should
       follow the Google style guide: `Google Python Style Guide <https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings>`_.
 
    c. Follow the `Python Zen <https://peps.python.org/pep-0020/>`_ – explicit is better than implicit, etc.
@@ -24,15 +24,15 @@ As you code
 As you commit
 ---------------
 
-1. Keep commits as "one logical unit". This means that each commit should be a set of related changes  
+1. Keep commits as "one logical unit". This means that each commit should be a set of related changes
    that accomplish one task, fix one bug, or implement one feature. Using an editor like `VS Code <https://code.visualstudio.com/docs/sourcecontrol/overview>`_
-   or using `GitHub Desktop <https://docs.github.com/en/desktop>`_ can help you stage related changes together.  
+   or using `GitHub Desktop <https://docs.github.com/en/desktop>`_ can help you stage related changes together.
 
-2. Adhere to `semantic commit conventions <https://www.conventionalcommits.org/en/v1.0.0/>`_.  
+2. Adhere to `semantic commit conventions <https://www.conventionalcommits.org/en/v1.0.0/>`_.
 
-3. Format & lint your code (``make format``).  
+3. Format & lint your code (``make format``).
 
-4. Submit a draft PR so people know you are working on this & can provide advice/feedback early on.  
+4. Submit a draft PR so people know you are working on this & can provide advice/feedback early on.
 
 As you finalize a PR
 ---------------------
@@ -58,7 +58,7 @@ Aside from having AtomWorks and its dependencies installed, to build the documen
    uv pip install -r docs/docs_requirements.txt
 
 To build the documentation, navigate to the ``docs`` directory and run:
-   
+
    .. code-block:: bash
 
       make html
@@ -83,10 +83,10 @@ When contributing to this repository, please follow these steps:
 
 1. Clone the repository
 2. Create the development environment (see the :doc:`installation` guide).
-3. Create a new branch for your changes. 
+3. Create a new branch for your changes.
    - Use the following convention to name your branch: ``<category>/<description>``. Categories: ``feat``, ``fix``, ``hotfix``, ``refactor``, ``docs``, ``perf``.
    - Example: ``feat/support-rdkit-small-molecule``
-4. Make and commit your changes on your new branch. 
+4. Make and commit your changes on your new branch.
    - Run autoformatting tools (``make format``) before committing.
    - Use commit messages like ``<type>: <description>``. Types: ``feat``, ``fix``, ``refactor``, ``docs``, ``chore``, ``wip``.
    - Example: ``git commit -m "docs: add contributing guidelines"``

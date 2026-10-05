@@ -107,9 +107,6 @@ masks after atom counts or ordering change. Unresolved atoms and metals marked
 `skip_hydrogen_placement` are not completed; unsupported geometry raises an error.
 A placement result is not evidence of downstream force-field parameter coverage.
 
-The legacy `atomworks.io.utils.protonation.ensure_hydrogens` API is removed in 3.0.
-Use the experimental API above; dev’s protonation implementation is authoritative.
-
 See the [executed offline example](../auto_examples/plot_protonation) and the
 [current API](https://github.com/RosettaCommons/atomworks/tree/release/atomworks-3-0/src/atomworks/experimental/protonation).
 
