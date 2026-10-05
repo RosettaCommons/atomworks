@@ -85,16 +85,16 @@ Compare successful outputs and rejected inputs: matching atom counts alone do no
 
 ### Explicit protonation
 
-3.0 provides pH-aware protonation via RDKit/Dimorphite-DL. It is a separate chemical operation and will not numerically reproduce the old Hydride path:
+3.0 provides experimental pH-aware protonation via RDKit/Dimorphite-DL. It is a separate chemical operation and will not numerically reproduce the old Hydride path:
 
 ```python
-from atomworks.io.utils.protonation import ensure_hydrogens
+from atomworks.experimental.protonation import add_hydrogens
 
 # atoms is one prepared AtomArray with bonds and charge annotations.
-protonated = ensure_hydrogens(atoms.copy(), ph=7.4)
+protonated = add_hydrogens(atoms.copy(), ph=7.4)
 ```
 
-It strips existing hydrogen-like atoms before rebuilding, needs bonds/charges, rejects AtomArrayStack, can change charges, and changes atom count/order by inserting hydrogens by residue. Recompute external masks/features afterwards. Free hydrogen atoms/ions are not preserved by this workflow. [Implementation and contract](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/utils/protonation.py#L546).
+Use a single AtomArray with bonds and charges. `assign_hydrogens()` determines charges and hydrogen counts; `place_hydrogens()` builds those hydrogens, and `add_hydrogens()` runs both. This can change charges, atom count and ordering, so recompute external masks/features afterwards. The old `atomworks.io.utils.protonation.ensure_hydrogens` API is removed in 3.0; use the experimental API above rather than importing its former vendored dependencies.
 
 ## Alternate conformers
 
