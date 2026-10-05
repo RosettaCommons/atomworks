@@ -7,8 +7,8 @@
 
 <div align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/RosettaCommons/atomworks/release/atomworks-3-0/docs/_static/atomworks_logo_dark.svg">
-    <img src="https://raw.githubusercontent.com/RosettaCommons/atomworks/release/atomworks-3-0/docs/_static/atomworks_logo_color.svg" width="450" alt="AtomWorks logo">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/RosettaCommons/atomworks/production/docs/_static/atomworks_logo_dark.svg">
+    <img src="https://raw.githubusercontent.com/RosettaCommons/atomworks/production/docs/_static/atomworks_logo_color.svg" width="450" alt="AtomWorks logo">
   </picture>
 </div>
 
