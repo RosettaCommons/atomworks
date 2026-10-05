@@ -1,5 +1,7 @@
 """Tests for custom CCD registry functionality."""
 
+import logging
+
 import biotite.structure.io.pdbx as pdbx
 import numpy as np
 import pytest
@@ -35,6 +37,20 @@ def test_registry_basic_operations(cleanup_registry):
     # get_atom_names_for_residue) now resolve the custom entry.
     assert np.all(atom_array_from_ccd_code("ALA").charge == 99)
     assert np.all(_get_base_ccd_template("ALA", "", hydrogen_policy="keep").charge == 99)
+
+
+def test_registry_standard_override_difference_logs_at_debug(cleanup_registry, caplog):
+    """A differing override remains diagnosable without warning during ordinary parsing."""
+    custom_ala = atom_array_from_ccd_code("ALA")
+    custom_ala = custom_ala[custom_ala.atom_name != "OXT"]
+    message = "Custom CCD entry 'ALA' overrides standard CCD definition"
+
+    with caplog.at_level(logging.DEBUG, logger="atomworks.io.utils.ccd"):
+        register_custom_ccd_entry("ALA", custom_ala)
+
+    records = [record for record in caplog.records if message in record.getMessage()]
+    assert len(records) == 1
+    assert records[0].levelno == logging.DEBUG
 
 
 def test_registry_rdkit_fallback_with_problematic_cif(cleanup_registry):

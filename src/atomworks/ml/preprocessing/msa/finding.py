@@ -9,7 +9,8 @@ from tqdm import tqdm
 
 from atomworks.constants import _load_env_var
 from atomworks.enums import MSAFileExtension
-from atomworks.ml.utils.misc import hash_sequence
+from atomworks.io.utils.io_utils import apply_sharding_pattern, build_sharding_pattern
+from atomworks.ml.utils.misc import get_complex_id, hash_sequence
 
 logger = logging.getLogger(__name__)
 
@@ -303,5 +304,224 @@ def find_msas(
 
     found_count = len(sequence_to_msa_path)
     logger.info(f"Found {found_count} existing MSAs, {len(missing_sequences)} sequences need generation")
+
+    return missing_sequences, sequence_to_msa_path
+
+
+def _normalize_template_alignment_dirs(template_dirs: list[dict] | list[PathLike] | None) -> list[dict]:
+    """Normalize template-alignment directories to the same dict shape MSA dirs use.
+
+    Unlike `_normalize_msa_dirs`, PathLike entries aren't auto-detected: template
+    alignment files (``.m8`` hit tables) aren't a `MSAFileExtension` value, so a
+    plain PathLike entry is assumed to match
+    :py:func:`~atomworks.ml.preprocessing.msa.organizing.organize_template_alignments`'s
+    defaults (``.m8``, sharded 2 chars deep).
+
+    Args:
+        template_dirs: Template alignment directories in one of three formats:
+            - list[PathLike]: Simple format, auto-detects metadata for each directory
+            - list[dict]: Pre-computed format with 'dir', 'extension', 'directory_depth' keys
+
+    Returns:
+        List of dicts with 'dir', 'extension', 'directory_depth' keys.
+    """
+    if not template_dirs:
+        return []
+
+    if isinstance(template_dirs[0], dict):
+        if not all(isinstance(d, dict) for d in template_dirs):
+            raise TypeError("template_dirs must be homogeneous: all elements must be dicts or all PathLike, not mixed")
+        return template_dirs
+
+    return [{"dir": str(d), "extension": ".m8", "directory_depth": 1} for d in template_dirs]
+
+
+def find_template_alignments(
+    sequences: list[str],
+    template_dirs: list[dict] | list[PathLike] | None = None,
+) -> tuple[list[str], dict[str, Path]]:
+    """Find existing raw template-alignment (``pdb70.m8``) files for sequences.
+
+    Mirrors :py:func:`find_msas`'s shape and hash/shard convention: template
+    alignments are looked up by the same sequence hash as MSAs, just under a
+    different directory/extension. To download the hit structures, see
+    :py:mod:`~atomworks.ml.preprocessing.msa.template_structures`.
+
+    Args:
+        sequences: Protein sequences to find template alignments for.
+        template_dirs: Directories to search. Accepts:
+            - None: No directories (all sequences reported missing).
+            - list[PathLike]: Auto-assumes ``.m8`` / directory_depth=2 (matching
+              `organize_template_alignments`'s defaults).
+            - list[dict]: Pre-computed format with 'dir', 'extension',
+              'directory_depth' keys.
+
+    Returns:
+        Tuple of (missing_sequences, sequence_to_template_alignment_path), same
+        shape as :py:func:`find_msas`.
+    """
+    logger.info(f"Finding template alignments for {len(sequences)} sequences")
+
+    normalized_dirs = _normalize_template_alignment_dirs(template_dirs)
+    if not normalized_dirs:
+        logger.warning("No template alignment directories found")
+        return sequences.copy(), {}
+
+    missing_sequences = []
+    sequence_to_template_alignment_path = {}
+
+    for sequence in sequences:
+        sequence_hash = hash_sequence(sequence)
+        found_path = None
+
+        for dir_info in normalized_dirs:
+            path = _build_msa_file_path(
+                sequence_hash, dir_info["dir"], dir_info["directory_depth"], dir_info["extension"]
+            )
+            if path.exists():
+                found_path = path
+                logger.debug(f"Found existing template alignment for sequence hash {sequence_hash}: {path}")
+                break
+
+        if found_path:
+            sequence_to_template_alignment_path[sequence] = found_path
+        else:
+            missing_sequences.append(sequence)
+
+    found_count = len(sequence_to_template_alignment_path)
+    logger.info(f"Found {found_count} existing template alignments, {len(missing_sequences)} sequences need generation")
+
+    return missing_sequences, sequence_to_template_alignment_path
+
+
+def _normalize_paired_msa_dirs(msa_dirs: list[dict] | list[PathLike] | None) -> list[dict]:
+    """Normalize paired-MSA directories to list of dicts with metadata.
+
+    Paired MSAs sit one level deeper, under a per-``complex_id`` directory, so
+    :py:func:`_normalize_msa_dirs`'s depth auto-detection over-counts by one. Plain
+    paths instead assume the writer's default depth of 1 and are searched for every
+    :py:class:`~atomworks.enums.MSAFileExtension`. Dicts (e.g. with an explicit
+    ``directory_depth`` for other layouts) pass through unchanged.
+    """
+    if not msa_dirs or isinstance(msa_dirs[0], dict):
+        return _normalize_msa_dirs(msa_dirs)
+
+    return [{"dir": str(d), "extension": ext.value, "directory_depth": 1} for d in msa_dirs for ext in MSAFileExtension]
+
+
+def _build_paired_msa_file_path(
+    complex_id: str, sequence_hash: str, msa_dir: str, extension: str, complex_directory_depth: int = 1
+) -> Path:
+    """Build the paired-MSA file path for a sequence hash within a given complex.
+
+    complex_id is sharded the same way an unpaired sequence hash is (default: one
+    2-char directory level) -- a large fine-tuning run can have many complexes, so
+    this avoids one huge flat directory of complex_ids. Chain files *within* a
+    complex's own directory stay flat (a complex has few chains). See
+    :py:func:`~atomworks.ml.preprocessing.msa.colabfold_server.make_msas_colabfold_server`
+    for the matching writer -- both use the same `build_sharding_pattern`/
+    `apply_sharding_pattern` helpers for the complex_id shard, so a
+    `complex_directory_depth` here always corresponds to the writer's
+    `sharding_pattern` at the same depth (unlike unpaired lookups' `directory_depth`
+    vs. `organize_msas`'s `sharding_pattern`, which use different units -- see
+    test_organizing.py).
+
+    Args:
+        complex_id: Identifier for the complex, from `get_complex_id`.
+        sequence_hash: Hash of the chain's protein sequence.
+        msa_dir: Base directory containing one (possibly sharded) subdirectory per complex_id.
+        extension: File extension (e.g., ".a3m.gz").
+        complex_directory_depth: Shard depth for complex_id (0 = flat, 1 = "ab/" style,
+            matching `make_msas_colabfold_server`'s default `sharding_pattern="/0:2/"`).
+
+    Returns:
+        Path to the paired MSA file.
+    """
+    complex_shard_pattern = build_sharding_pattern(depth=complex_directory_depth, chars_per_dir=2)
+    sharded_complex_path = apply_sharding_pattern(complex_id, complex_shard_pattern)
+    return Path(msa_dir) / sharded_complex_path / f"{sequence_hash}{extension}"
+
+
+def get_paired_msa_path(
+    complex_id: str,
+    sequence: str,
+    msa_dirs: list[dict] | list[PathLike] | None = None,
+) -> Path | None:
+    """Retrieve the path to a chain's paired MSA file within a given complex.
+
+    Companion to ``get_msa_path`` (in ``atomworks.ml.transforms.msa._msa_loading_utils``)
+    for paired MSAs, which need two keys -- which complex, and which chain within it --
+    rather than a sequence hash alone.
+
+    Args:
+        complex_id: Identifier for the complex, from `get_complex_id`.
+        sequence: The chain's protein sequence, within that complex.
+        msa_dirs: Directories to search, each containing one (possibly sharded)
+            subdirectory per complex_id. Plain paths assume the writer's default layout
+            (see :py:func:`_normalize_paired_msa_dirs`); dicts use the same format as
+            :py:func:`find_msas`, where `directory_depth` shards complex_id (default 1,
+            matching `make_msas_colabfold_server`'s default), not the chain hash --
+            chain files within a complex directory are always flat.
+
+    Returns:
+        The MSA file path if found, else None.
+    """
+    normalized_dirs = _normalize_paired_msa_dirs(msa_dirs)
+    sequence_hash = hash_sequence(sequence)
+
+    for dir_info in normalized_dirs:
+        complex_depth = dir_info.get("directory_depth", 1)
+        path = _build_paired_msa_file_path(
+            complex_id, sequence_hash, dir_info["dir"], dir_info["extension"], complex_depth
+        )
+        if path.exists():
+            logger.debug(f"Found existing paired MSA for complex {complex_id}, sequence hash {sequence_hash}: {path}")
+            return path
+
+    return None
+
+
+def find_paired_msas(
+    sequences: list[str],
+    msa_dirs: list[dict] | list[PathLike] | None = None,
+) -> tuple[list[str], dict[str, Path]]:
+    """Find the paired MSA files for one complex's full unique sequence set.
+
+    Mirrors :py:func:`find_msas`'s shape, but for a paired/complex query:
+    `sequences` is treated as the complete set of unique chains in ONE complex --
+    the same unit `organize_paired_msas`/`make_msas_colabfold_server` operate on --
+    and complex_id is derived from them automatically via `get_complex_id`, not
+    something the caller computes or passes separately.
+
+    Args:
+        sequences: The full unique-sequence set of one complex.
+        msa_dirs: Directories to search, each containing paired MSA output (e.g.
+            `make_msas_colabfold_server`'s ``<output_dir>/paired``). Accepts the
+            same formats as :py:func:`find_msas`.
+
+    Returns:
+        Tuple of (missing_sequences, sequence_to_msa_path), same shape as
+        :py:func:`find_msas`.
+    """
+    logger.info(f"Finding paired MSAs for {len(sequences)} sequences (one complex)")
+
+    normalized_dirs = _normalize_paired_msa_dirs(msa_dirs)
+    if not normalized_dirs:
+        logger.warning("No MSA directories found")
+        return sequences.copy(), {}
+
+    complex_id = get_complex_id(sequences)
+
+    missing_sequences = []
+    sequence_to_msa_path = {}
+    for sequence in sequences:
+        found_path = get_paired_msa_path(complex_id, sequence, normalized_dirs)
+        if found_path:
+            sequence_to_msa_path[sequence] = found_path
+        else:
+            missing_sequences.append(sequence)
+
+    found_count = len(sequence_to_msa_path)
+    logger.info(f"Found {found_count} existing paired MSAs, {len(missing_sequences)} sequences need generation")
 
     return missing_sequences, sequence_to_msa_path

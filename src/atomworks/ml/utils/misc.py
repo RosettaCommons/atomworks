@@ -88,6 +88,23 @@ def hash_sequence(sequence: str, length: int | None = 11) -> str:
     return digest if length is None else digest[:length]
 
 
+def get_complex_id(sequences: list[str]) -> str:
+    """Compute a stable, order-independent, fixed-length identifier for a multi-chain
+    complex.
+
+    Hashes each sequence with `hash_sequence`, sorts and joins the unique hashes,
+    then re-hashes the joined string. Repeated chains don't change the id, e.g. an
+    H2L2 antibody gets the same id as its HL pair.
+
+    Args:
+        sequences: The protein sequences in the complex; repeats are ignored.
+
+    Returns:
+        The complex_id string.
+    """
+    return hash_sequence("-".join(sorted({hash_sequence(seq) for seq in sequences})))
+
+
 @lru_cache(maxsize=1)
 def _get_taxonomy_id_lookup_df(
     # TODO: Initialize the taxonomy_id_csv_path from Hydra

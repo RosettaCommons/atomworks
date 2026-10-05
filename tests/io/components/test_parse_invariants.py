@@ -20,6 +20,7 @@ TEST_CASES = [
     "1xvk",  # Final boss of PDB parsing: non-canonical macrocycle with disulfide bond and multiple occupancy; cannot infer standard inter-residue bonds
     "1qfe",  # A170 NZ incorrectly assigned charge +2 unless we remove a hydrogen as a leaving atom (there should be no protonated amides in the final structure; Lysine NZ becomes part of an amide bond to small molecule DHS)
     "1tqh",  # Serine hydrolase intermediate requires converting C=O to C-O(-) to satisfy valence requirements
+    "1dpn",  # A single P-O link replaces a double-bond leaving group and restores an equivalent terminal P=O
     "6h9v",  # Includes isopeptide bond with IAS NCAA where naively building N-CA-C backbone would create too many bonds
     "1rcq",  # Enzyme active site where PLP exists in two partially occupied states, one with a covalent bond to a lysine and one without
     # Additional charge edge cases
@@ -53,14 +54,6 @@ ERROR_TEST_CASES = [
     ("8cuy", ValueError, "missing CCD template"),
     # 4v4s authors both O3'-P and O3'-OP2 links from A36 to YYG37; reject the three-bond oxygen.
     ("4v4s", ValueError, r"Unresolved link valence at C/36/A/O3'.*bond-order sum=3"),
-    # 1N4E: thymine C=C addition needs explicit product bond orders, not a five-valent C(+).
-    ("1n4e", ValueError, "Cannot infer link order.*DT.*provide explicit product connectivity"),
-    # 8QIA: a Cys-flavin link does not specify C=N reduction or proton transfer.
-    ("8qia", ValueError, "Cannot infer link order.*FMN.*provide explicit product connectivity"),
-    # 6N0A: the Lys-Asn link does not specify substitution vs. addition at the amide carbonyl.
-    ("6n0a", ValueError, "Ambiguous link chemistry at ASN/CG.*amide carbonyl retains nitrogen"),
-    # 1DPN: a single incoming link does not specify which terminal P-O bond to promote.
-    ("1dpn", ValueError, "Unsupported bond-order rearrangement at TAF/P"),
 ]
 
 

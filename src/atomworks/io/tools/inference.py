@@ -242,6 +242,7 @@ class CIFOrPDBFileComponent(ChemicalComponent):
         )
 
         self.atom_array = parse_ccd_cif(read_any(self.path))
+        self.preserve_atom_mask = np.zeros(len(self.atom_array), dtype=bool)
         self.atom_array.set_annotation("is_polymer", np.full(len(self.atom_array), False))
         self.chain_ids = np.unique(self.atom_array.chain_id)
 
@@ -291,6 +292,7 @@ class CIFOrPDBFileComponent(ChemicalComponent):
             )
 
         structure_file_atom_array = atom_array_stack[0]
+        self.preserve_atom_mask = np.isfinite(structure_file_atom_array.coord).all(axis=-1)
         self.chain_ids = np.unique(structure_file_atom_array.chain_id)
         self.atom_array = structure_file_atom_array
 
@@ -426,6 +428,7 @@ def build_chain_atom_array(
             atom_array,
             sanitize=True,
             ccd_mirror_path=ccd_mirror_path,
+            preserve_atom_mask=np.zeros(len(atom_array), dtype=bool),
         )
 
     return atom_array
@@ -565,11 +568,12 @@ def sdf_to_annotated_atom_array(
     is_polymer: bool = False,
     res_name: str = UNKNOWN_LIGAND,
     backend: Literal["openbabel", "rdkit"] = "rdkit",
+    remove_hydrogens: bool = True,
 ) -> AtomArray:
     if backend == "rdkit":
         from atomworks.io.tools.rdkit import atom_array_from_rdkit, sdf_to_rdkit
 
-        mol = sdf_to_rdkit(path)
+        mol = sdf_to_rdkit(path, remove_hydrogens=remove_hydrogens)
         array = atom_array_from_rdkit(mol)
     elif backend == "openbabel":
         raise NotImplementedError("Openbabel backend not yet implemented.")
@@ -801,6 +805,7 @@ def components_to_atom_array(
     chain_id_generator = create_chain_id_generator(chain_ids)
 
     atom_arrays = []
+    preserve_atom_masks = []
     ligand_hash_to_id = KeyToIntMapper()  # ... to keep track of identical ligands
     for component in components:
         # CIFOrPDBFileComponents already have parsed AtomArrays
@@ -813,6 +818,7 @@ def components_to_atom_array(
                     f"The next available chain ID was assigned, assuming that this is a single-chain structure: {atom_array.chain_id[0]}"
                 )
             atom_arrays.append(component.atom_array)
+            preserve_atom_masks.append(component.preserve_atom_mask)
             continue
 
         component.chain_id = component.chain_id or next(chain_id_generator)
@@ -839,6 +845,7 @@ def components_to_atom_array(
             atom_arrays.append(ligand_array)
         else:
             raise ValueError(f"Unknown chemical component type: {type(component)}")
+        preserve_atom_masks.append(np.zeros(len(atom_arrays[-1]), dtype=bool))
 
     # add required per-array annotations before concatenation so biotite does not fill
     # missing annotations with defaults when arrays have heterogeneous annotation sets
@@ -861,6 +868,7 @@ def components_to_atom_array(
     atom_array = infer_bonds_from_residue_names(
         atom_array,
         sanitize=True,
+        preserve_atom_mask=np.concatenate(preserve_atom_masks),
     )
 
     # ... remove hydrogens

@@ -13,7 +13,6 @@ from atomworks.ml.preprocessing.msa.generating import (
     MSAGenerationConfig,
     make_msas_from_csv,
 )
-from atomworks.ml.preprocessing.msa.server import DEFAULT_MSA_SERVER_URL, MSAServerConfig
 
 from .common import enable_logging
 
@@ -71,10 +70,10 @@ def generate(
         "-n",
         help="(MMseqs2) Number of search iterations",
     ),
-    max_final_sequences: int | None = typer.Option(
-        None,
+    max_final_sequences: int = typer.Option(
+        10_000,
         "--max-final-sequences",
-        help="Local HHfilter limit (default: 10000 for local backends; disabled for the server)",
+        help="Maximum number of sequences in final MSAs",
     ),
     use_env: bool = typer.Option(
         True,
@@ -112,12 +111,7 @@ def generate(
         "mmseqs2",
         "--backend",
         "-b",
-        help="MSA backend: 'mmseqs2' (default), 'hhblits', or 'mmseqs2_server'",
-    ),
-    server_url: str = typer.Option(DEFAULT_MSA_SERVER_URL, "--server-url", help="Remote MMseqs2 server URL"),
-    server_job_timeout: float = typer.Option(1800.0, "--server-job-timeout", help="Remote batch deadline in seconds"),
-    server_api_key_header: str | None = typer.Option(
-        None, "--server-api-key-header", help="Header for MSA_SERVER_API_KEY"
+        help="MSA generation backend: 'mmseqs2' (default) or 'hhblits' (CPU-only)",
     ),
     hhblits_mem: int = typer.Option(
         64,
@@ -141,7 +135,7 @@ def generate(
 
     # Auto-detect GPU if not specified
     if gpu is None:
-        gpu = backend == "mmseqs2" and torch.cuda.is_available()
+        gpu = torch.cuda.is_available()
 
     # Parse MSA directories if provided
     msa_dirs = None
@@ -168,20 +162,11 @@ def generate(
         gpu=gpu,
         use_env=use_env,
         threads=threads,
-        max_final_sequences=max_final_sequences if max_final_sequences is not None else 10000,
-        server_max_final_sequences=max_final_sequences,
+        max_final_sequences=max_final_sequences,
         check_existing=check_existing,
         existing_msa_dirs=msa_dirs,
         search_config=search_config,
         backend=backend,
-        server_config=MSAServerConfig(
-            host_url=server_url,
-            job_timeout=server_job_timeout,
-            use_env=use_env,
-            api_key_header=server_api_key_header,
-        )
-        if backend == "mmseqs2_server"
-        else None,
         hhblits_search_config=hhblits_search_config,
     )
 
@@ -191,19 +176,14 @@ def generate(
     typer.echo(f"  Sequence Column: {sequence_column or 'auto-detect'}")
     typer.echo(f"  Output Directory: {output_dir}")
     typer.echo(f"  Backend: {config.backend}")
-    typer.echo(
-        f"  Max Final Sequences: {config.server_max_final_sequences if backend == 'mmseqs2_server' else config.max_final_sequences}"
-    )
+    typer.echo(f"  Max Final Sequences: {config.max_final_sequences}")
     typer.echo(f"  Output Extension: {config.output_extension}")
     typer.echo(f"  Sharding Pattern: {config.sharding_pattern}")
     typer.echo(f"  Check Existing: {config.check_existing}")
     if config.check_existing:
         dirs_display = config.existing_msa_dirs if config.existing_msa_dirs else "PROTEIN_MSA_DIRS env var"
         typer.echo(f"  MSA Directories: {dirs_display}")
-    if config.backend == "mmseqs2_server":
-        typer.echo(f"  Server: {config.server_config.host_url}")
-        typer.echo(f"  Batch Deadline: {config.server_config.job_timeout} s")
-    elif config.backend == "hhblits":
+    if config.backend == "hhblits":
         typer.echo(f"  Threads: {config.threads}")
         typer.echo(f"  HHblits Memory: {hhblits_search_config.mem} GB")
     else:

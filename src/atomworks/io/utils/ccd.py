@@ -1233,7 +1233,7 @@ def register_custom_ccd_entry(code: str, atom_array: struc.AtomArray) -> None:
         except Exception:
             differs = True
         if differs:
-            logger.warning(
+            logger.debug(
                 f"Custom CCD entry '{code}' overrides standard CCD definition. "
                 "Lookups will use custom entry instead of standard CCD."
             )

@@ -12,6 +12,7 @@ from atomworks.io.tools.rdkit import (
     ccd_code_to_rdkit,
     fix_charge_based_on_valence,
     get_morgan_fingerprint_from_rdkit_mol,
+    sdf_to_rdkit,
     smiles_to_rdkit,
 )
 from atomworks.io.utils.ccd import atom_array_from_ccd_code
@@ -37,6 +38,116 @@ TEST_SMILES = [
     "c1cc(c[n+](c1)[C@H]2[C@@H]([C@@H]([C@H](O2)CO[P@@](=O)([O-])O[P@@](=O)(O)OC[C@@H]3[C@H]([C@H]([C@@H](O3)n4cnc5c4ncnc5N)O)O)O)O)C(=O)N",  # NAD
 ]
 TEST_ATOM_ARRAYS = [struc.info.residue("ALA"), struc.info.residue("NAD")]
+
+
+@pytest.mark.parametrize("conformer_id", [None, 17, 41])
+def test_rdkit_conversion_selects_conformer_ids_without_mutating_source(conformer_id):
+    """Select native conformer IDs, or the first conformer, without sharing coordinates."""
+    mol = Chem.MolFromSmiles("CCO")
+    positions = np.arange(9, dtype=float).reshape(3, 3)
+    for native_id in (17, 41):
+        conformer = Chem.Conformer(3)
+        conformer.SetId(native_id)
+        conformer.SetPositions(positions + native_id)
+        mol.AddConformer(conformer, assignId=False)
+    source_smiles = Chem.MolToSmiles(mol)
+
+    result = atom_array_from_rdkit(mol, conformer_id=conformer_id)
+
+    expected_id = 17 if conformer_id is None else conformer_id
+    np.testing.assert_array_equal(result.coord, positions + expected_id)
+    assert result.element.tolist() == ["C", "C", "O"]
+    np.testing.assert_array_equal(result.bonds.as_array(), [[0, 1, 1], [1, 2, 1]])
+    result.coord[0] = 99
+    assert Chem.MolToSmiles(mol) == source_smiles
+    assert [conformer.GetId() for conformer in mol.GetConformers()] == [17, 41]
+    for conformer in mol.GetConformers():
+        np.testing.assert_array_equal(conformer.GetPositions(), positions + conformer.GetId())
+
+
+def test_rdkit_conversion_looks_up_ids_only_when_coordinates_are_requested():
+    """Missing IDs fail native lookup, but disabled or unavailable coordinates remain NaN."""
+    mol = Chem.MolFromSmiles("CCO")
+    conformer = Chem.Conformer(3)
+    conformer.SetId(17)
+    mol.AddConformer(conformer, assignId=False)
+
+    with pytest.raises(ValueError, match="Bad Conformer Id"):
+        atom_array_from_rdkit(mol, conformer_id=0)
+    without_coords = atom_array_from_rdkit(mol, conformer_id=99, set_coord_if_available=False)
+    assert np.isnan(without_coords.coord).all()
+    assert mol.GetConformer(17).GetId() == 17
+    no_conformers = atom_array_from_rdkit(Chem.MolFromSmiles("CCO"), conformer_id=99)
+    assert np.isnan(no_conformers.coord).all()
+
+
+@pytest.mark.parametrize("metadata", ["absent", "unmatched", "partial", "matched"])
+@pytest.mark.parametrize("remove_hydrogens", [False, True])
+@pytest.mark.parametrize("remove_inferred_atoms", [False, True])
+def test_rdkit_output_filters_are_independent_of_annotation_matches(metadata, remove_hydrogens, remove_inferred_atoms):
+    """Filter authored and inferred atoms independently of carried annotation matches."""
+    mol = Chem.AddHs(Chem.MolFromSmiles("CO"))
+    coordinates = np.arange(18, dtype=float).reshape(6, 3)
+    conformer = Chem.Conformer(6)
+    conformer.SetPositions(coordinates)
+    mol.AddConformer(conformer)
+    authored_ids = np.array([-1, 20, 30, -1, -1, -1])
+    for index in (1, 2):
+        mol.GetAtomWithIdx(index).SetIntProp("rdkit_atom_id", int(authored_ids[index]))
+    annotations = {}
+    if metadata != "absent":
+        annotations = {
+            "rdkit_atom_id": np.array({"unmatched": [98, 99], "partial": [20, 99], "matched": [20, 30]}[metadata]),
+            "custom_tag": np.array([7, 8], dtype=np.uint8),
+        }
+        mol._annotations = {name: values.copy() for name, values in annotations.items()}
+    original = mol.ToBinary(Chem.PropertyPickleOptions.AllProps)
+
+    result = atom_array_from_rdkit(mol, remove_hydrogens=remove_hydrogens, remove_inferred_atoms=remove_inferred_atoms)
+
+    keep = np.ones(6, dtype=bool)
+    if remove_hydrogens:
+        keep &= np.array([6, 8, 1, 1, 1, 1]) != 1
+    if remove_inferred_atoms:
+        keep &= authored_ids != -1
+    np.testing.assert_array_equal(result.coord, coordinates[keep])
+    np.testing.assert_array_equal(result.element, np.array(["C", "O", "H", "H", "H", "H"])[keep])
+    np.testing.assert_array_equal(result.rdkit_atom_id, authored_ids[keep])
+    bonds = np.array([[0, 1, 1], [0, 2, 1], [0, 3, 1], [0, 4, 1], [1, 5, 1]])
+    bonds = bonds[keep[bonds[:, :2]].all(axis=1)]
+    new_indices = np.cumsum(keep) - 1
+    bonds[:, :2] = new_indices[bonds[:, :2]]
+    np.testing.assert_array_equal(result.bonds.as_array(), bonds)
+    if remove_hydrogens:
+        np.testing.assert_array_equal(result.nhyd, np.array([3, 1, 0, 0, 0, 0])[keep])
+    else:
+        assert "nhyd" not in result.get_annotation_categories()
+    if metadata in ("absent", "unmatched"):
+        assert "custom_tag" not in result.get_annotation_categories()
+    else:
+        tags = np.array([255, 7, 8 if metadata == "matched" else 255, 255, 255, 255], dtype=np.uint8)
+        np.testing.assert_array_equal(result.custom_tag, tags[keep])
+        assert result.custom_tag.dtype == np.uint8
+        result.custom_tag[:] = 0
+    result.coord[:] = 99
+    assert mol.ToBinary(Chem.PropertyPickleOptions.AllProps) == original
+    assert hasattr(mol, "_annotations") == (metadata != "absent")
+    if annotations:
+        assert set(mol._annotations) == set(annotations)
+        for name, values in annotations.items():
+            np.testing.assert_array_equal(mol._annotations[name], values)
+
+
+def test_rdkit_inferred_atom_filter_can_remove_all_unmatched_atoms():
+    """Unmatched carried metadata does not retain atoms lacking authored identities."""
+    mol = Chem.AddHs(Chem.MolFromSmiles("CO"))
+    mol._annotations = {"rdkit_atom_id": np.array([99]), "custom_tag": np.array([7])}
+
+    result = atom_array_from_rdkit(mol, remove_inferred_atoms=True)
+
+    assert len(result) == 0
+    assert result.bonds.get_bond_count() == 0
+    assert "custom_tag" not in result.get_annotation_categories()
 
 
 @pytest.mark.parametrize("smiles", TEST_SMILES)
@@ -97,6 +208,22 @@ def test_atom_array_rdkit_interconversion(test_atom_array):
     assert np.allclose(new_atom_array.coord, test_atom_array.coord)
     mol._annotations["atom_name"][0] = ""
     assert test_atom_array.atom_name[0] != ""
+
+
+@pytest.mark.parametrize("set_coord", [None, False, True])
+@pytest.mark.parametrize("missing", [False, True])
+def test_rdkit_coordinates_respect_explicit_choice(set_coord, missing):
+    """Infer coordinate inclusion only when the caller leaves it unspecified."""
+    atoms = struc.info.residue("ALA")
+    if missing:
+        atoms.coord[0] = np.nan
+
+    mol = atom_array_to_rdkit(atoms, set_coord=set_coord)
+
+    expected = not missing if set_coord is None else set_coord
+    assert mol.GetNumConformers() == int(expected)
+    if expected:
+        np.testing.assert_allclose(mol.GetConformer().GetPositions(), atoms.coord, equal_nan=True)
 
 
 def test_fixing_molecules():
@@ -341,6 +468,16 @@ def test_nhyd_with_explicit_hydrogens():
     nhyd_explicit = nhyd_by_name("keep")
 
     assert nhyd_implicit == nhyd_explicit
+
+
+def test_an_sdf_can_keep_the_hydrogens_it_states():
+    """RDKit drops the 32 hydrogens the CCD's HEM ideal SDF writes out, unless asked not to."""
+    dropped = sdf_to_rdkit(TEST_DATA_IO / "HEM_ideal.sdf")
+    kept = sdf_to_rdkit(TEST_DATA_IO / "HEM_ideal.sdf", remove_hydrogens=False)
+
+    assert dropped.GetNumAtoms() == 43
+    assert kept.GetNumAtoms() == 75
+    assert sum(atom.GetAtomicNum() == 1 for atom in kept.GetAtoms()) == 32
 
 
 if __name__ == "__main__":
