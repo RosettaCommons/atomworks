@@ -231,7 +231,6 @@ class GenericDFParser(MetadataRowParser):
                 - Any additional key-value pairs specified by the ``attrs`` parameter
                 - All unused dataframe columns (i.e., those not used for example_id, path, query_pn_unit_iids, or assembly_id)
                 - Dataset-level attributes (if present), found in the ``attrs`` attribute of the Dataframe (or Series)
-
                 For example, the "extra_info" key could contain information about which chain(s) to score during validation, metadata for specific metrics, etc.
 
     Note:

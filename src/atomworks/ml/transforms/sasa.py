@@ -115,7 +115,6 @@ def calculate_atomwise_sasa(
         atom_array: The input AtomArray containing the atomic coordinates.
         probe_radius: Van-der-Waals radius of the probe in Angstrom. Defaults to 1.4 (water).
         atom_radii: Atom radii to use. Options:
-
             - "auto": ProtOr where available, element-based fallback for ligands/metals/
               non-standard residues. Best accuracy for mixed protein-ligand structures. Default.
             - "element": Element-based VdW radii (Mantina 2009). Works for all atom types

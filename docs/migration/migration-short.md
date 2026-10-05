@@ -1,6 +1,6 @@
-# AtomWorks 2.2 and earlier → 3.0: short migration guide
+# AtomWorks 2.x → 3.0: short migration guide
 
-This guide covers the main I/O changes when moving from AtomWorks 2.2 and earlier to 3.0: parser configuration, charges and bonds, alternate conformers, and CIF writing. See the [detailed guide](migration-long.md) for examples and compatibility details.
+This guide covers the main I/O changes when moving from AtomWorks 2.x to 3.0: parser configuration, charges and bonds, alternate conformers, and CIF writing. See the [detailed guide](migration-long.md) for examples and compatibility details.
 
 ## 1. Put parser options in `ParseConfig`
 
@@ -22,7 +22,7 @@ Surviving bare keyword options and `filename=` remain accepted with deprecation 
 
 ## 2. Check changed charges and covalent chemistry
 
-Covalent linkage processing corrects leaving atoms, bond orders, hydrogen counts and formal charges, including incorrectly charged amide nitrogens. Link validation also checks whether connections fit the selected conformer and supported chemistry; ambiguous or unsupported products can now raise an error and require explicit chemical definitions. A model trained on 2.2 and earlier features can be sensitive to these changed inputs. Keep its old preprocessing environment available, compare features on representative covalent complexes, and evaluate the checkpoint before switching production inference. There is no parser switch that reproduces all historical chemistry. See the [detailed chemistry guidance](migration-long.md#covalent-links-reaction-states-and-unsupported-chemistry) for affected cases and how to handle them.
+Covalent linkage processing corrects leaving atoms, bond orders, hydrogen counts and formal charges, including incorrectly charged amide nitrogens. Link validation also checks whether connections fit the selected conformer and supported chemistry; ambiguous or unsupported products can now raise an error and require explicit chemical definitions. A model trained on 2.x features can be sensitive to these changed inputs. Keep its old preprocessing environment available, compare features on representative covalent complexes, and evaluate the checkpoint before switching production inference. There is no parser switch that reproduces all historical chemistry. See the [detailed chemistry guidance](migration-long.md#covalent-links-reaction-states-and-unsupported-chemistry) for affected cases and how to handle them.
 
 ## 3. Choose alternate conformers deliberately
 

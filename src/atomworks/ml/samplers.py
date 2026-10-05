@@ -260,13 +260,13 @@ def set_sampler_epoch(sampler: Sampler, epoch: int, add_random_offset: bool = Fa
 
 
 class DistributedMixedSampler(Sampler):
-    r"""Custom DistributedSampler implementation that samples from an arbitrary list of samplers with specified probabilities.
+    """Custom DistributedSampler implementation that samples from an arbitrary list of samplers with specified probabilities.
 
     Child samplers can be any type of non-distributed sampler, including a MixedSampler.
     After gathering all indices, shards the samples across nodes, ensuring each node receives a unique slice of the dataset.
 
     Example:
-        Imagine we have the following sampling tree::
+        Imagine we have the following sampling tree:
 
                 DistributedMixedSampler
                            |

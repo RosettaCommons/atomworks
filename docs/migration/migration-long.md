@@ -1,10 +1,10 @@
-# AtomWorks 2.2 and earlier → 3.0: detailed migration guide
+# AtomWorks 2.x → 3.0: detailed migration guide
 
 Start with the I/O changes below: parser configuration, chemical corrections, alternate conformers, CIF round trips and parser caches. The [short guide](migration-short.md) covers the essential steps; additional ML migration notes follow the I/O sections.
 
 ## Parser calls and defaults
 
-For 2.2 and earlier:
+For 2.x:
 
 ```python
 from atomworks.io import parse
@@ -26,7 +26,7 @@ result = parse("structure.cif", config=config)
 
 `ParseConfig` and `PrepareConfig` are frozen dataclasses. Derive a changed configuration with `config.replace(...)`; serialize it with `to_dict()`. Prefer an explicit constructor when migrating old dictionaries: `from_dict()` deliberately drops unknown keys, which can silently discard obsolete chemistry flags or misspellings. Bare surviving options still work with deprecation warnings; obsolete names passed directly to `parse()` produce `TypeError`. [Configuration](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/config.py), [parser](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/parser.py).
 
-| 2.2 and earlier usage or assumption | 3.0 action |
+| 2.x usage or assumption | 3.0 action |
 |---|---|
 | `filename=path` | Use positional `source` or `source=path`; alias is deprecated. |
 | `STANDARD_PARSER_ARGS` | Use `ParseConfig.from_preset("rcsb")`; dictionary remains deprecated. |
@@ -43,7 +43,7 @@ Important defaults remain intentional: all models (`model=None`), all assemblies
 
 ## Chemical corrections and existing checkpoints
 
-With missing-atom completion enabled, the pipeline resolves leaving atoms and overvalence, corrects relevant inter-residue formal charges/bond orders, and neutralizes charged amide nitrogens. Hydrogen counts are used in these corrections. With completion disabled, this sanitization is disabled too; selecting that mode solely to suppress changed charges also changes completeness and is not a reproduction of 2.2 and earlier. [Pipeline](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/_pipeline.py), [link chemistry](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/utils/link_chemistry.py).
+With missing-atom completion enabled, the pipeline resolves leaving atoms and overvalence, corrects relevant inter-residue formal charges/bond orders, and neutralizes charged amide nitrogens. Hydrogen counts are used in these corrections. With completion disabled, this sanitization is disabled too; selecting that mode solely to suppress changed charges also changes completeness and is not a reproduction of 2.x. [Pipeline](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/_pipeline.py), [link chemistry](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/utils/link_chemistry.py).
 
 The release tests identify concrete cases worth including in a downstream migration set:
 
@@ -58,7 +58,7 @@ The release tests identify concrete cases worth including in a downstream migrat
 
 These are documented regression/round-trip cases, not a claim that every structure in a production corpus is chemically validated. [Case list](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/tests/io/utils/test_io.py#L417).
 
-For an existing model, preserve the old locked environment and a small set of its exact features. Compare by atom identity including assembly instance, not array offset alone. Review atom counts, charge/implicit-hydrogen annotations, bond topology and orders, masks and atomization. Evaluate the checkpoint on both feature sets and relevant scientific metrics. If necessary, retain the old versioned preprocessing path for that checkpoint until retraining/fine-tuning or an explicitly validated adapter is available. Avoid silently mixing newly generated features with old cached training data.
+For an existing model, preserve the old locked environment and a small set of its exact features. Compare by atom identity including assembly instance, not array offset alone. Review atom counts, charge/implicit-hydrogen annotations, bond topology and orders, masks and atomization. Evaluate the checkpoint on both feature sets and relevant scientific metrics. If necessary, retain the versioned 2.x preprocessing path for that checkpoint until retraining/fine-tuning or an explicitly validated adapter is available. Avoid silently mixing newly generated features with old cached training data.
 
 ### Covalent links, reaction states and unsupported chemistry
 

@@ -24,4 +24,3 @@ Quick Install:
    custom_ccd
    transforms
    utils
-   Build a model <../how_to_build_a_model/index>

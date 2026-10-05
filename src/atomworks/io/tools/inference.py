@@ -737,12 +737,10 @@ def components_to_atom_array(
         return_components (bool): If True, return the components list as well as the AtomArray. Useful for e.g., mapping
             components to generated chain IDs or inferred chain types.
 
-    Note:
-        If manually specifying bonds, we recommend visualizing the bond graph with `matplotlib`
-        to ensure that the bonds are correctly specified.
-        The res_id numbering follows the RCSB convention (1-indexed).
-        Custom CCD entries can be registered using :py:func:`~atomworks.io.utils.ccd.register_custom_ccd_entry`
-        to override standard CCD definitions before calling this function.
+    NOTE: If manually specifying bonds, we recommend visualizing the bond graph with `matplotlib` to ensure that the bonds are correctly
+    NOTE: The res_id numbering follows the RCSB convention (1-indexed)
+    NOTE: Custom CCD entries can be registered using :py:func:`~atomworks.io.utils.ccd.register_custom_ccd_entry`
+          to override standard CCD definitions before calling this function.
 
     Returns:
         AtomArray: The assembled AtomArray, used for visualization or inference.

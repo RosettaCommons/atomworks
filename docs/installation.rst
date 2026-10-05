@@ -1,43 +1,82 @@
 Installation
 ============
 
-Use Python 3.11 or newer.
+AtomWorks can be installed in several ways, depending on your workflow and environment. Below are the recommended methods:
+
+0. Prerequisites
+-----------------
+
+Before installing AtomWorks, ensure you have the following prerequisites:
+
+* Python 3.11 or higher
+* Pip installs ``python-dotenv`` automatically; Node.js is not required.
+
+1. Installing via pip (recommended)
+-----------------------------------
+This is the easiest way to get started with AtomWorks.
 
 .. code-block:: bash
 
-   python -m pip install atomworks       # Structure IO without PyTorch
-   python -m pip install "atomworks[ml]" # IO and ML pipelines
+   pip install atomworks # base installation version without torch (for only atomworks.io)
+   pip install "atomworks[ml]" # with torch and ML dependencies (for atomworks.io plus atomworks.ml)
+   pip install "atomworks[dev]" # with development dependencies
+   pip install "atomworks[ml,dev]" # with all dependencies"
 
-Extras can be combined. Use ``openbabel`` for Open Babel, ``ase`` for ASE databases,
-``s3`` for S3, ``catcif`` for CIF archives, ``posebusters`` for structure validation,
-``dev`` for development tools, and ``docs`` for documentation builds.
-
-The upcoming 3.0 release is available from the existing release branch:
+You can also install AtomWorks with `Open Babel <https://openbabel.org/>`_, an alternative to RDKit:
 
 .. code-block:: bash
 
-   python -m pip install "atomworks[ml] @ git+https://github.com/RosettaCommons/atomworks.git@release/atomworks-3-0"
+   pip install "atomworks[openbabel]"
 
-Development
------------
+or for all possible dependencies: 
+
+.. code-block:: bash
+
+   pip install "atomworks[ml,openbabel,dev]"
+
+Open Babel is not automatically installed with AtomWorks due to its larger size and additional dependencies, only install it if you plan to use it.
+
+2. Development Installation
+---------------------------
+For development:
 
 .. code-block:: bash
 
    git clone --branch release/atomworks-3-0 https://github.com/RosettaCommons/atomworks.git
    cd atomworks
-   python -m venv .venv
-   source .venv/bin/activate
-   python -m pip install -e ".[ml,dev,openbabel]"
-   python .github/ci/setup_test_data.py
-   pytest tests -m "not benchmark and not slow and not requires_digs"
+   make install  # or pip install -e ".[dev]"
 
-The setup script downloads the same checksum-verified public fixtures used by CI,
-including pinned wwPDB revisions for stored-result tests. Tests use Biotite's
-built-in CCD by default; see :doc:`mirrors` for optional full PDB/CCD mirrors.
-Missing required fixtures are errors. Tests needing an unavailable GPU or external
-tool are marked accordingly.
+To install in a fresh environment:
 
-For a complete CPU run, install the ``ase`` extra as well and omit ``not slow``.
-Use ``-n 2`` for parallel testing, or ``-n 1`` for memory-intensive tests.
+.. code-block:: bash
 
-See :doc:`contributor_guide` for documentation builds and release instructions.
+   git clone --branch release/atomworks-3-0 https://github.com/RosettaCommons/atomworks.git
+   cd atomworks
+   make env
+
+
+3. Running the Test Suite
+-------------------------
+
+Public CI runs on GitHub-hosted machines using a versioned bundle containing the
+shared fixtures and the PDB subset. To use the same inputs locally:
+
+.. code-block:: bash
+
+   mkdir -p tests/data
+   curl --fail --location --retry 3 https://github.com/RosettaCommons/atomworks/releases/download/test-data-3.0.0/atomworks-test-data-3.0.0.tar.gz | tar -xz -C tests/data
+   pip install -e ".[ml,dev,ase,openbabel]"
+   pytest tests -n 2 --dist=worksteal -m "not benchmark and not slow and not requires_digs and not requires_pymol_remote and not requires_x3dna"
+
+The bundle includes its public-source provenance. Tests use Biotite's bundled CCD;
+a full PDB/CCD mirror is not required. Infrastructure-dependent tests remain excluded.
+Run the slow tests separately with one worker when needed to limit memory use.
+
+4. Setting Up Full PDB/CCD Mirrors
+----------------------------------
+
+For production use or training on the full PDB, you'll want complete mirrors rather than the test subset. See :doc:`mirrors` for detailed instructions on:
+
+* Setting up a full PDB mirror (~100 GB)
+* Setting up a CCD mirror (~2 GB)
+* Configuring environment variables for production use

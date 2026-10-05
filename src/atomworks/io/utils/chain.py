@@ -7,7 +7,7 @@ def create_chain_id_generator(unavailable_chain_ids: Sequence[str] = []) -> Iter
     """
     Generate the next available chain ID that is not in the unavailable_chain_ids list.
     The chain IDs are generated in lexicographical order,
-    i.e. A, B, C, ..., Z, AA, AB, ..., ZZ, AAA, etc.
+        i.e. A, B, C, ..., Z, AA, AB, ..., ZZ, AAA, etc.
 
     The first available chain ID will be returned, i.e. gaps in the unavailable_chain_ids
     list will be filled.

@@ -136,9 +136,15 @@ Diffusion Transforms
 Feature Aggregation Transforms
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-See :doc:`transforms/feature_aggregation`.
+.. automodule:: atomworks.ml.transforms.feature_aggregation
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 MSA Transforms
 ~~~~~~~~~~~~~~
 
-See :doc:`transforms/msa`.
+.. automodule:: atomworks.ml.transforms.msa
+   :members:
+   :undoc-members:
+   :show-inheritance: 

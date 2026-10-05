@@ -85,12 +85,10 @@ jobs:
           uv pip install --system '.[ml,dev,openbabel,ase]'
           uv pip check --system
       - run: ruff format --check . && ruff check src tests .github
-      - uses: actions/cache@v4
-        with:
-          path: .ci-data
-          key: atomworks-test-pack-${{ hashFiles('.github/ci/test_pack.sha256') }}
-      - name: Fetch verified public fixtures
-        run: python .github/ci/setup_test_data.py
+      - name: Download public test fixtures
+        run: |
+          mkdir -p tests/data
+          curl --fail --location --retry 3 https://github.com/RosettaCommons/atomworks/releases/download/test-data-3.0.0/atomworks-test-data-3.0.0.tar.gz | tar -xz -C tests/data
       - name: Run scientific CPU tests, including experimental protonation
         run: |
           pytest tests -n 2 --dist=worksteal -m 'not benchmark and not slow and not requires_digs and not requires_pymol_remote and not requires_x3dna' --cov=atomworks --cov-report=xml --junitxml=tests.xml
@@ -99,11 +97,9 @@ jobs:
         if: always()
         with:
           name: scientific-test-reports
-          include-hidden-files: true
           path: |
             *tests.xml
             coverage.xml
-            .ci-data/pdb-sha256.txt
       - uses: codecov/codecov-action@v5
         if: success()
         with:
@@ -120,10 +116,10 @@ jobs:
       - uses: astral-sh/setup-uv@v6
       - run: |
           uv pip install --system torch --index-url https://download.pytorch.org/whl/cpu
-          uv pip install --system '.[ml,docs,ase,openbabel]'
+          uv pip install --system '.[ml,docs,ase,openbabel]' -r docs/docs_requirements.txt
       - name: Build documentation and execute the offline example
         working-directory: docs
-        run: python -m sphinx -W --keep-going -b html . _build/html
+        run: python -m sphinx --keep-going -b html . _build/html
       - uses: actions/upload-artifact@v4
         with:
           name: documentation

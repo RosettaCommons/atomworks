@@ -12,7 +12,7 @@ Keep this file concise enough to scan, but update it when commands, layout, or i
 - Do not create or switch branches, stage, commit, amend, rebase, stash, or push unless the user explicitly asks. When authorized, stage only intended paths and inspect the staged diff before committing.
 - Do not work directly on a shared integration branch such as `dev`, `staging`, `main`, or `production`. Use the branch and PR target requested by the user.
 - Use focused commits that form one logical unit. Conventional prefixes used here include `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, and `style`.
-- PRs normally target the branch from which the work was based. The internal repository commonly uses `dev`; public 3.0 release PRs target `release/atomworks-3-0`. Verify the intended remote and base rather than guessing.
+- PRs normally target the branch from which the work was based. The internal repository commonly uses `dev`; the public contributor workflow in `docs/contributor_guide.rst` targets `staging`. Verify the intended remote and base rather than guessing.
 - Before a PR, review every changed line, verify the target and changed-file list, remove debug artifacts and temporary files, and report exactly which checks ran.
 
 For PRs explicitly targeting `staging`, preserve the repository's promotion boundary. The PR diff must not include:
@@ -131,8 +131,8 @@ make test
 # Full suite in parallel
 make parallel_test
 
-# Common local selection without slow tests
-PDB_MIRROR_PATH=tests/data/pdb pytest tests -m "not slow"
+# Common local selection without very-slow tests
+PDB_MIRROR_PATH=tests/data/pdb pytest tests -m "not very_slow"
 
 # Parser performance benchmarks
 pytest tests/io/speed --benchmark-time-unit=s --benchmark-warmup=False --benchmark-min-rounds=3
@@ -151,13 +151,13 @@ Testing principles:
 
 ### Test data and regression policy
 
-Download the public CI fixtures when necessary:
+Download the public parser test pack when necessary:
 
 ```bash
-python .github/ci/setup_test_data.py
+atomworks setup tests
 ```
 
-Stored-result inputs use checksum-pinned wwPDB revisions. A `FileNotFoundError` indicates missing test data; do not skip the test or loosen its assertions.
+The downloaded pack does not necessarily contain every PDB ID referenced by the entire suite. Prefer configured readable PDB/CCD mirrors when available. A `FileNotFoundError` below the selected mirror indicates missing test data; it is not permission to skip the test or loosen its assertions.
 
 Regression baselines define intended scientific behavior. Never make a regression test pass by filtering mismatches, lowering overlap or numeric thresholds, excluding annotations, widening tolerances without scientific justification, or adding special-case skips. Determine whether the implementation, expectation, or environment is wrong. Regenerate stored baselines only with explicit user intent and explain the behavioral reason.
 
@@ -192,8 +192,8 @@ Public APIs need concise Google-style docstrings:
 Build the documentation with:
 
 ```bash
-uv pip install -e ".[ml,docs,ase,openbabel]"
-python -m sphinx -W --keep-going -b html docs docs/_build/html
+uv pip install -r docs/docs_requirements.txt
+make -C docs html
 ```
 
 Treat Sphinx warnings, broken references, and failed autodoc imports as problems to investigate. When building both AtomWorks and a vendoring project's docs, separate environments may be needed if their documentation requirements select incompatible dependency versions.

@@ -82,7 +82,6 @@ def generate_conformers(
         optimize: Whether to optimize the generated conformers using UFF.
             Default is True.
         **uff_optimize_kwargs: Additional keyword arguments for UFF optimization:
-
             - maxIters: Maximum number of iterations (default 200).
             - vdwThresh: Used to exclude long-range van der Waals interactions
               (default 10.0).
