@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Atom Selection Syntax &#8212; atomworks 3.0.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinxcontrib_typer.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+
+    <script src="../../_static/documentation_options.js?v=acc74ff5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'io/utils/selection_syntax';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.22.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Query &amp; Selection" href="query.html" />
+    <link rel="prev" title="Non-RCSB Utilities" href="non_rcsb.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="3.0.0" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.0 documentation - Home"/>
+    <img src="../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../cookbook.html">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../migration/index.html">
+    Migrating to AtomWorks 3.0
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../cookbook.html">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../migration/index.html">
+    Migrating to AtomWorks 3.0
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">API Modules</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../core.html">Core Modules</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../core/common.html">Common Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../core/constants.html">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../core/enums.html">Enumerations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../io.html">IO</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../parser.html">parser</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../tools.html">Tools</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tools/fasta.html">FASTA Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tools/inference.html">Inference Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tools/rdkit.html">RDKit Tools</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../transforms.html">Transforms</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../transforms/atom_array.html">Atom Array Transforms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../transforms/categories.html">Category Transforms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="../utils.html">Utilities</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="assembly.html">Assembly Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bonds.html">Bond Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ccd.html">CCD Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="chain.html">Chain Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="io_utils.html">I/O Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="non_rcsb.html">Non-RCSB Utilities</a></li>
+<li class="toctree-l3 current active"><a aria-current="page" class="current reference internal" href="#">Atom Selection Syntax</a></li>
+<li class="toctree-l3"><a class="reference internal" href="query.html">Query &amp; Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="selection.html">Segment &amp; Annotation Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sequence.html">Sequence Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html">Testing Utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="visualize.html">Visualization Utilities</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../ml.html">ML</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/encoding_definitions.html">Encoding Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/samplers.html">Samplers</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../ml/datasets.html">Datasets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../ml/datasets/datasets.html">Dataset Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ml/datasets/parsers.html">Dataset Parsers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/pipelines.html">Pipelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/transforms.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/transforms/diffusion.html">Diffusion Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/transforms/dna.html">DNA Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/transforms/feature_aggregation.html">Feature Aggregation Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/msa_server.html">Remote MSA generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/transforms/msa.html">MSA Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/utils.html">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ml/preprocessing.html">Preprocessing</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../api_reference.html" class="nav-link">API</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../../io.html" class="nav-link">IO</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../utils.html" class="nav-link">Utilities</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Atom Selection Syntax</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="atom-selection-syntax">
+<h1>Atom Selection Syntax<a class="headerlink" href="#atom-selection-syntax" title="Link to this heading">#</a></h1>
+<p>atomworks provides two complementary string languages for selecting atoms, both living in
+<a class="reference internal" href="query.html#module-atomworks.io.utils.query" title="atomworks.io.utils.query"><code class="xref py py-mod docutils literal notranslate"><span class="pre">atomworks.io.utils.query</span></code></a> and both usable directly on any <code class="docutils literal notranslate"><span class="pre">AtomArray</span></code> /
+<code class="docutils literal notranslate"><span class="pre">AtomArrayStack</span></code> via the monkey-patched <code class="docutils literal notranslate"><span class="pre">.query()</span></code>, <code class="docutils literal notranslate"><span class="pre">.mask()</span></code> and <code class="docutils literal notranslate"><span class="pre">.idxs()</span></code> methods:</p>
+<ul class="simple">
+<li><p><strong>The query language</strong> — pandas-like boolean expressions over annotations and coordinates,
+e.g. <code class="docutils literal notranslate"><span class="pre">&quot;(chain_id</span> <span class="pre">==</span> <span class="pre">'A')</span> <span class="pre">&amp;</span> <span class="pre">(res_id</span> <span class="pre">&lt;</span> <span class="pre">50)&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;res_name</span> <span class="pre">in</span> <span class="pre">['ALA','GLY']&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;z</span> <span class="pre">&gt;</span> <span class="pre">0&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;has_bonds()&quot;</span></code>. Powerful and composable.</p></li>
+<li><p><strong>The path-selection DSL</strong> — a terse, path-like shorthand over five ordered fields,
+e.g. <code class="docutils literal notranslate"><span class="pre">&quot;A/ALA/1/CA&quot;</span></code>. Compact for the common “chain / residue / atom” case.</p></li>
+</ul>
+<p>The two are bridged by the <code class="docutils literal notranslate"><span class="pre">sel('...')</span></code> function, so a path selection can appear <strong>inside</strong> a
+query expression and combine with any predicate — see <a class="reference internal" href="#sel-in-query"><span class="std std-ref">Combining path selection with the query language</span></a> below.</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#the-path-grammar" id="id1">The path grammar</a></p></li>
+<li><p><a class="reference internal" href="#interactive-gallery" id="id2">Interactive gallery</a></p></li>
+<li><p><a class="reference internal" href="#combining-path-selection-with-the-query-language" id="id3">Combining path selection with the query language</a></p></li>
+<li><p><a class="reference internal" href="#programmatic-api" id="id4">Programmatic API</a></p></li>
+</ul>
+</nav>
+<section id="the-path-grammar">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">The path grammar</a><a class="headerlink" href="#the-path-grammar" title="Link to this heading">#</a></h2>
+<p>A path selection has five <code class="docutils literal notranslate"><span class="pre">/</span></code>-separated fields, always in this order (trailing fields may be
+omitted and default to <code class="docutils literal notranslate"><span class="pre">*</span></code>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CHAIN_ID</span> <span class="o">/</span> <span class="n">RES_NAME</span> <span class="o">/</span> <span class="n">RES_ID</span> <span class="o">/</span> <span class="n">ATOM_NAME</span> <span class="o">/</span> <span class="n">TRANSFORMATION_ID</span>
+</pre></div>
+</div>
+<p>Each field is one of:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 20.0%" />
+<col style="width: 58.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Form</p></th>
+<th class="head"><p>Example</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>scalar</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">A</span></code>, <code class="docutils literal notranslate"><span class="pre">ALA</span></code>, <code class="docutils literal notranslate"><span class="pre">CA</span></code></p></td>
+<td><p>Exactly that value.</p></td>
+</tr>
+<tr class="row-odd"><td><p>wildcard</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">*</span></code></p></td>
+<td><p>Any value (also the default for omitted trailing fields).</p></td>
+</tr>
+<tr class="row-even"><td><p>list <code class="docutils literal notranslate"><span class="pre">[...]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[A,B]</span></code>, <code class="docutils literal notranslate"><span class="pre">[CA,CB]</span></code></p></td>
+<td><p>Any of the listed values (a within-field OR).</p></td>
+</tr>
+<tr class="row-odd"><td><p>range (<code class="docutils literal notranslate"><span class="pre">res_id</span></code> only)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[5-10]</span></code>, <code class="docutils literal notranslate"><span class="pre">[1-5,</span> <span class="pre">9]</span></code></p></td>
+<td><p>Inclusive integer range(s); must be inside brackets.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Multiple whole selections separated by top-level commas (or given as a <code class="docutils literal notranslate"><span class="pre">list[str]</span></code>) are
+<strong>unioned</strong>. Commas <em>inside</em> <code class="docutils literal notranslate"><span class="pre">[...]</span></code> belong to the list, not the union:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">"A/*/[5-10], B/*/[3-8]"</span>      <span class="c1"># residues 5-10 of chain A OR residues 3-8 of chain B</span>
+</pre></div>
+</div>
+<p>Lists across fields expand as a Cartesian product, then union. For example
+<code class="docutils literal notranslate"><span class="pre">&quot;[A,B]/ALA/1/[CA,CB]&quot;</span></code> is the union of the four selections
+<code class="docutils literal notranslate"><span class="pre">A/ALA/1/CA</span></code>, <code class="docutils literal notranslate"><span class="pre">A/ALA/1/CB</span></code>, <code class="docutils literal notranslate"><span class="pre">B/ALA/1/CA</span></code>, <code class="docutils literal notranslate"><span class="pre">B/ALA/1/CB</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Ranges must be bracketed.</strong> <code class="docutils literal notranslate"><span class="pre">A/*/[5-10]</span></code> is a range; a bare <code class="docutils literal notranslate"><span class="pre">A/*/5-10</span></code> is an error.
+This keeps a single, uniform multi-value mechanism (everything multi-valued lives in <code class="docutils literal notranslate"><span class="pre">[...]</span></code>)
+and lets awkward ids be listed explicitly, e.g. negative residue ids <code class="docutils literal notranslate"><span class="pre">A/*/[-5,</span> <span class="pre">-3,</span> <span class="pre">0]</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">[...]</span></code> lists are multi-valued and therefore only valid through the multi-selection entry
+points — <a class="reference internal" href="query.html#atomworks.io.utils.query.AtomSelectionStack.from_query" title="atomworks.io.utils.query.AtomSelectionStack.from_query"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_query()</span></code></a> and the query
+<code class="docutils literal notranslate"><span class="pre">sel('...')</span></code> function. The single-valued <a class="reference internal" href="query.html#atomworks.io.utils.query.AtomSelection.from_selection_str" title="atomworks.io.utils.query.AtomSelection.from_selection_str"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_selection_str()</span></code></a>
+rejects brackets.</p>
+</div>
+</section>
+<section id="interactive-gallery">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Interactive gallery</a><a class="headerlink" href="#interactive-gallery" title="Link to this heading">#</a></h2>
+<p>Pick a selection syntax with the buttons below to see what it matches on <strong>1YCR</strong> — the MDM2
+domain (chain A) bound to the p53 transactivation peptide (chain B). The viewer highlights exactly
+the atoms that <code class="docutils literal notranslate"><span class="pre">atom_array.mask(&lt;string&gt;)</span></code> returns (the mask is baked into the model as atom
+serials), so what you see is what the selection selects — including the coordinate-predicate option
+that a viewer’s own selection language could not express. <strong>Drag to rotate, scroll to zoom, and
+click any highlighted atom to label it.</strong></p>
+<!-- Generated by docs/io/utils/_render_selection_examples/gen_interactive.py -->
+<script src="https://cdn.jsdelivr.net/npm/3dmol@2.4.2/build/3Dmol-min.js"></script>
+<style>
+  .sel-widget { border: 1px solid var(--pst-color-border, #ccc); border-radius: 8px; overflow: hidden;
+                margin: 1rem 0; }
+  .sel-controls { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.7rem;
+                  background: var(--pst-color-surface, #f4f4f4); }
+  .sel-controls button { border: 1px solid var(--pst-color-border, #bbb); border-radius: 999px;
+    background: var(--pst-color-on-surface, #fff); color: inherit; padding: 0.25rem 0.8rem;
+    font-size: 0.85em; cursor: pointer; }
+  .sel-controls button.active { background: #e8850c; border-color: #e8850c; color: #fff; }
+  .sel-desc { padding: 0.7rem 0.9rem; border-top: 1px solid var(--pst-color-border, #eee); }
+  .sel-desc code { font-weight: 600; }
+  .sel-desc-text { font-size: 0.9em; opacity: 0.85; margin-top: 0.25rem; }
+  .sel-viewer { position: relative; width: 100%; height: 420px; }
+  .sel-hint { font-size: 0.78em; opacity: 0.6; padding: 0.3rem 0.9rem; }
+</style>
+<div class="sel-widget">
+  <div class="sel-controls" id="sel-controls"></div>
+  <div class="sel-desc"><code id="sel-expr"></code><div class="sel-desc-text" id="sel-text"></div></div>
+  <div class="sel-viewer" id="sel-viewer"></div>
+  <div class="sel-hint">pick a syntax above · drag to rotate · scroll to zoom · click a highlighted atom to label it</div>
+</div>
+<script>
+(function() {
+  var PDB = "ATOM      1  N   GLU A   9      10.801 -12.147  -5.180  1.00  0.00           N  \nATOM      2  CA  GLU A   9      11.124 -13.382  -4.414  1.00  0.00           C  \nATOM      3  C   GLU A   9      11.769 -12.878  -3.130  1.00  0.00           C  \nATOM      4  O   GLU A   9      11.175 -12.047  -2.441  1.00  0.00           O  \nATOM      5  CB  GLU A   9      12.075 -14.259  -5.228  1.00  0.00           C  \nATOM      6  CG  GLU A   9      11.564 -14.543  -6.638  1.00  0.00           C  \nATOM      7  CD  GLU A   9      12.414 -15.556  -7.397  1.00  0.00           C  \nATOM      8  OE1 GLU A   9      12.439 -16.745  -6.995  1.00  0.00           O  \nATOM      9  OE2 GLU A   9      13.043 -15.163  -8.409  1.00  0.00           O  \nATOM     10  N   THR A  10      12.965 -13.355  -2.800  1.00  0.00           N  \nATOM     11  CA  THR A  10      13.656 -12.864  -1.611  1.00  0.00           C  \nATOM     12  C   THR A  10      14.518 -11.718  -2.102  1.00  0.00           C  \nATOM     13  O   THR A  10      15.519 -11.956  -2.778  1.00  0.00           O  \nATOM     14  CB  THR A  10      14.598 -13.915  -1.009  1.00  0.00           C  \nATOM     15  OG1 THR A  10      15.478 -14.396  -2.032  1.00  0.00           O  \nATOM     16  CG2 THR A  10      13.804 -15.068  -0.397  1.00  0.00           C  \nATOM     17  N   LEU A  11      14.081 -10.486  -1.869  1.00  0.00           N  \nATOM     18  CA  LEU A  11      14.863  -9.337  -2.294  1.00  0.00           C  \nATOM     19  C   LEU A  11      15.877  -8.978  -1.213  1.00  0.00           C  \nATOM     20  O   LEU A  11      15.495  -8.696  -0.082  1.00  0.00           O  \nATOM     21  CB  LEU A  11      13.960  -8.146  -2.616  1.00  0.00           C  \nATOM     22  CG  LEU A  11      13.336  -8.100  -4.010  1.00  0.00           C  \nATOM     23  CD1 LEU A  11      13.942  -6.978  -4.794  1.00  0.00           C  \nATOM     24  CD2 LEU A  11      13.546  -9.397  -4.744  1.00  0.00           C  \nATOM     25  N   VAL A  12      17.162  -9.063  -1.553  1.00  0.00           N  \nATOM     26  CA  VAL A  12      18.243  -8.753  -0.623  1.00  0.00           C  \nATOM     27  C   VAL A  12      19.056  -7.585  -1.146  1.00  0.00           C  \nATOM     28  O   VAL A  12      18.977  -7.247  -2.329  1.00  0.00           O  \nATOM     29  CB  VAL A  12      19.188  -9.980  -0.384  1.00  0.00           C  \nATOM     30  CG1 VAL A  12      18.428 -11.110   0.261  1.00  0.00           C  \nATOM     31  CG2 VAL A  12      19.819 -10.441  -1.688  1.00  0.00           C  \nATOM     32  N   ARG A  13      19.785  -6.941  -0.241  1.00  0.00           N  \nATOM     33  CA  ARG A  13      20.650  -5.812  -0.577  1.00  0.00           C  \nATOM     34  C   ARG A  13      22.031  -6.257  -0.132  1.00  0.00           C  \nATOM     35  O   ARG A  13      22.238  -6.530   1.050  1.00  0.00           O  \nATOM     36  CB  ARG A  13      20.239  -4.577   0.213  1.00  0.00           C  \nATOM     37  CG  ARG A  13      20.885  -3.295  -0.264  1.00  0.00           C  \nATOM     38  CD  ARG A  13      20.354  -2.071   0.489  1.00  0.00           C  \nATOM     39  NE  ARG A  13      18.892  -1.904   0.445  1.00  0.00           N  \nATOM     40  CZ  ARG A  13      18.168  -1.674  -0.657  1.00  0.00           C  \nATOM     41  NH1 ARG A  13      18.743  -1.578  -1.853  1.00  0.00           N  \nATOM     42  NH2 ARG A  13      16.853  -1.509  -0.560  1.00  0.00           N  \nATOM     43  N   PRO A  14      22.976  -6.407  -1.075  1.00  0.00           N  \nATOM     44  CA  PRO A  14      24.328  -6.842  -0.726  1.00  0.00           C  \nATOM     45  C   PRO A  14      25.179  -5.801   0.008  1.00  0.00           C  \nATOM     46  O   PRO A  14      25.136  -4.598  -0.297  1.00  0.00           O  \nATOM     47  CB  PRO A  14      24.915  -7.215  -2.086  1.00  0.00           C  \nATOM     48  CG  PRO A  14      24.291  -6.227  -2.989  1.00  0.00           C  \nATOM     49  CD  PRO A  14      22.853  -6.222  -2.532  1.00  0.00           C  \nATOM     50  N   LYS A  15      25.928  -6.279   0.997  1.00  0.00           N  \nATOM     51  CA  LYS A  15      26.812  -5.440   1.782  1.00  0.00           C  \nATOM     52  C   LYS A  15      27.962  -4.950   0.897  1.00  0.00           C  \nATOM     53  O   LYS A  15      28.271  -5.569  -0.123  1.00  0.00           O  \nATOM     54  CB  LYS A  15      27.298  -6.203   3.022  1.00  0.00           C  \nATOM     55  CG  LYS A  15      26.247  -6.219   4.140  1.00  0.00           C  \nATOM     56  CD  LYS A  15      26.650  -7.040   5.370  1.00  0.00           C  \nATOM     57  CE  LYS A  15      25.543  -6.988   6.439  1.00  0.00           C  \nATOM     58  NZ  LYS A  15      25.561  -8.096   7.463  1.00  0.00           N  \nATOM     59  N   PRO A  16      28.632  -3.852   1.294  1.00  0.00           N  \nATOM     60  CA  PRO A  16      29.752  -3.210   0.585  1.00  0.00           C  \nATOM     61  C   PRO A  16      30.758  -4.109  -0.155  1.00  0.00           C  \nATOM     62  O   PRO A  16      30.962  -3.960  -1.368  1.00  0.00           O  \nATOM     63  CB  PRO A  16      30.415  -2.397   1.693  1.00  0.00           C  \nATOM     64  CG  PRO A  16      29.249  -1.972   2.513  1.00  0.00           C  \nATOM     65  CD  PRO A  16      28.486  -3.257   2.637  1.00  0.00           C  \nATOM     66  N   LEU A  17      31.405  -5.018   0.569  1.00  0.00           N  \nATOM     67  CA  LEU A  17      32.370  -5.908  -0.059  1.00  0.00           C  \nATOM     68  C   LEU A  17      31.709  -6.751  -1.160  1.00  0.00           C  \nATOM     69  O   LEU A  17      32.216  -6.834  -2.292  1.00  0.00           O  \nATOM     70  CB  LEU A  17      33.014  -6.811   1.000  1.00  0.00           C  \nATOM     71  CG  LEU A  17      34.513  -6.663   1.322  1.00  0.00           C  \nATOM     72  CD1 LEU A  17      34.816  -5.269   1.837  1.00  0.00           C  \nATOM     73  CD2 LEU A  17      34.923  -7.714   2.356  1.00  0.00           C  \nATOM     74  N   LEU A  18      30.544  -7.316  -0.838  1.00  0.00           N  \nATOM     75  CA  LEU A  18      29.801  -8.160  -1.765  1.00  0.00           C  \nATOM     76  C   LEU A  18      29.264  -7.399  -2.961  1.00  0.00           C  \nATOM     77  O   LEU A  18      29.189  -7.933  -4.068  1.00  0.00           O  \nATOM     78  CB  LEU A  18      28.655  -8.872  -1.044  1.00  0.00           C  \nATOM     79  CG  LEU A  18      27.797  -9.797  -1.918  1.00  0.00           C  \nATOM     80  CD1 LEU A  18      28.677 -10.890  -2.495  1.00  0.00           C  \nATOM     81  CD2 LEU A  18      26.620 -10.369  -1.110  1.00  0.00           C  \nATOM     82  N   LEU A  19      28.892  -6.149  -2.747  1.00  0.00           N  \nATOM     83  CA  LEU A  19      28.366  -5.336  -3.833  1.00  0.00           C  \nATOM     84  C   LEU A  19      29.470  -5.044  -4.855  1.00  0.00           C  \nATOM     85  O   LEU A  19      29.231  -5.039  -6.069  1.00  0.00           O  \nATOM     86  CB  LEU A  19      27.784  -4.054  -3.268  1.00  0.00           C  \nATOM     87  CG  LEU A  19      26.684  -3.377  -4.074  1.00  0.00           C  \nATOM     88  CD1 LEU A  19      27.195  -2.000  -4.438  1.00  0.00           C  \nATOM     89  CD2 LEU A  19      26.257  -4.189  -5.304  1.00  0.00           C  \nATOM     90  N   LYS A  20      30.678  -4.830  -4.340  1.00  0.00           N  \nATOM     91  CA  LYS A  20      31.883  -4.570  -5.132  1.00  0.00           C  \nATOM     92  C   LYS A  20      32.209  -5.825  -5.981  1.00  0.00           C  \nATOM     93  O   LYS A  20      32.513  -5.730  -7.173  1.00  0.00           O  \nATOM     94  CB  LYS A  20      33.029  -4.269  -4.166  1.00  0.00           C  \nATOM     95  CG  LYS A  20      34.359  -4.005  -4.810  1.00  0.00           C  \nATOM     96  CD  LYS A  20      35.454  -4.022  -3.755  1.00  0.00           C  \nATOM     97  CE  LYS A  20      35.130  -3.090  -2.589  1.00  0.00           C  \nATOM     98  NZ  LYS A  20      36.283  -2.868  -1.655  1.00  0.00           N  \nATOM     99  N   LEU A  21      32.162  -6.990  -5.339  1.00  0.00           N  \nATOM    100  CA  LEU A  21      32.387  -8.279  -5.983  1.00  0.00           C  \nATOM    101  C   LEU A  21      31.378  -8.413  -7.125  1.00  0.00           C  \nATOM    102  O   LEU A  21      31.711  -8.866  -8.216  1.00  0.00           O  \nATOM    103  CB  LEU A  21      32.113  -9.371  -4.943  1.00  0.00           C  \nATOM    104  CG  LEU A  21      32.290 -10.884  -5.107  1.00  0.00           C  \nATOM    105  CD1 LEU A  21      31.802 -11.369  -6.456  1.00  0.00           C  \nATOM    106  CD2 LEU A  21      33.737 -11.232  -4.901  1.00  0.00           C  \nATOM    107  N   LEU A  22      30.130  -8.030  -6.846  1.00  0.00           N  \nATOM    108  CA  LEU A  22      29.030  -8.111  -7.813  1.00  0.00           C  \nATOM    109  C   LEU A  22      29.248  -7.215  -9.012  1.00  0.00           C  \nATOM    110  O   LEU A  22      29.178  -7.680 -10.151  1.00  0.00           O  \nATOM    111  CB  LEU A  22      27.696  -7.777  -7.134  1.00  0.00           C  \nATOM    112  CG  LEU A  22      26.681  -8.896  -6.865  1.00  0.00           C  \nATOM    113  CD1 LEU A  22      27.327 -10.238  -6.748  1.00  0.00           C  \nATOM    114  CD2 LEU A  22      25.941  -8.569  -5.596  1.00  0.00           C  \nATOM    115  N   LYS A  23      29.521  -5.934  -8.756  1.00  0.00           N  \nATOM    116  CA  LYS A  23      29.764  -4.979  -9.833  1.00  0.00           C  \nATOM    117  C   LYS A  23      30.869  -5.531 -10.710  1.00  0.00           C  \nATOM    118  O   LYS A  23      30.754  -5.535 -11.939  1.00  0.00           O  \nATOM    119  CB  LYS A  23      30.171  -3.603  -9.293  1.00  0.00           C  \nATOM    120  CG  LYS A  23      29.133  -2.935  -8.392  1.00  0.00           C  \nATOM    121  CD  LYS A  23      27.729  -3.178  -8.919  1.00  0.00           C  \nATOM    122  CE  LYS A  23      26.630  -2.584  -8.055  1.00  0.00           C  \nATOM    123  NZ  LYS A  23      26.391  -1.133  -8.324  1.00  0.00           N  \nATOM    124  N   SER A  24      31.889  -6.096 -10.069  1.00  0.00           N  \nATOM    125  CA  SER A  24      33.022  -6.663 -10.783  1.00  0.00           C  \nATOM    126  C   SER A  24      32.586  -7.569 -11.941  1.00  0.00           C  \nATOM    127  O   SER A  24      33.299  -7.675 -12.944  1.00  0.00           O  \nATOM    128  CB  SER A  24      33.939  -7.422  -9.816  1.00  0.00           C  \nATOM    129  OG  SER A  24      33.633  -8.802  -9.782  1.00  0.00           O  \nATOM    130  N   VAL A  25      31.416  -8.202 -11.824  1.00  0.00           N  \nATOM    131  CA  VAL A  25      30.957  -9.077 -12.896  1.00  0.00           C  \nATOM    132  C   VAL A  25      29.807  -8.535 -13.711  1.00  0.00           C  \nATOM    133  O   VAL A  25      29.119  -9.299 -14.378  1.00  0.00           O  \nATOM    134  CB  VAL A  25      30.651 -10.512 -12.411  1.00  0.00           C  \nATOM    135  CG1 VAL A  25      31.934 -11.220 -12.068  1.00  0.00           C  \nATOM    136  CG2 VAL A  25      29.764 -10.488 -11.204  1.00  0.00           C  \nATOM    137  N   GLY A  26      29.618  -7.220 -13.684  1.00  0.00           N  \nATOM    138  CA  GLY A  26      28.554  -6.605 -14.461  1.00  0.00           C  \nATOM    139  C   GLY A  26      27.242  -6.280 -13.771  1.00  0.00           C  \nATOM    140  O   GLY A  26      26.435  -5.515 -14.299  1.00  0.00           O  \nATOM    141  N   ALA A  27      27.006  -6.857 -12.599  1.00  0.00           N  \nATOM    142  CA  ALA A  27      25.767  -6.605 -11.863  1.00  0.00           C  \nATOM    143  C   ALA A  27      25.743  -5.173 -11.340  1.00  0.00           C  \nATOM    144  O   ALA A  27      26.183  -4.912 -10.224  1.00  0.00           O  \nATOM    145  CB  ALA A  27      25.629  -7.590 -10.709  1.00  0.00           C  \nATOM    146  N   GLN A  28      25.196  -4.258 -12.134  1.00  0.00           N  \nATOM    147  CA  GLN A  28      25.131  -2.841 -11.765  1.00  0.00           C  \nATOM    148  C   GLN A  28      23.950  -2.382 -10.881  1.00  0.00           C  \nATOM    149  O   GLN A  28      23.270  -1.417 -11.218  1.00  0.00           O  \nATOM    150  CB  GLN A  28      25.100  -1.997 -13.038  1.00  0.00           C  \nATOM    151  CG  GLN A  28      26.061  -2.371 -14.123  1.00  0.00           C  \nATOM    152  CD  GLN A  28      25.898  -1.446 -15.308  1.00  0.00           C  \nATOM    153  OE1 GLN A  28      24.827  -1.385 -15.918  1.00  0.00           O  \nATOM    154  NE2 GLN A  28      26.945  -0.680 -15.616  1.00  0.00           N  \nATOM    155  N   LYS A  29      23.712  -3.000  -9.735  1.00  0.00           N  \nATOM    156  CA  LYS A  29      22.587  -2.545  -8.939  1.00  0.00           C  \nATOM    157  C   LYS A  29      22.679  -2.802  -7.445  1.00  0.00           C  \nATOM    158  O   LYS A  29      23.568  -3.507  -6.978  1.00  0.00           O  \nATOM    159  CB  LYS A  29      21.277  -3.065  -9.526  1.00  0.00           C  \nATOM    160  CG  LYS A  29      21.215  -4.557  -9.704  1.00  0.00           C  \nATOM    161  CD  LYS A  29      19.840  -4.968 -10.170  1.00  0.00           C  \nATOM    162  CE  LYS A  29      19.581  -6.418  -9.848  1.00  0.00           C  \nATOM    163  NZ  LYS A  29      18.155  -6.740 -10.064  1.00  0.00           N  \nATOM    164  N   ASP A  30      21.731  -2.247  -6.703  1.00  0.00           N  \nATOM    165  CA  ASP A  30      21.717  -2.334  -5.253  1.00  0.00           C  \nATOM    166  C   ASP A  30      20.770  -3.333  -4.628  1.00  0.00           C  \nATOM    167  O   ASP A  30      20.897  -3.623  -3.454  1.00  0.00           O  \nATOM    168  CB  ASP A  30      21.387  -0.944  -4.706  1.00  0.00           C  \nATOM    169  CG  ASP A  30      21.760  -0.766  -3.242  1.00  0.00           C  \nATOM    170  OD1 ASP A  30      22.354  -1.691  -2.634  1.00  0.00           O  \nATOM    171  OD2 ASP A  30      21.475   0.336  -2.709  1.00  0.00           O  \nATOM    172  N   THR A  31      19.798  -3.829  -5.379  1.00  0.00           N  \nATOM    173  CA  THR A  31      18.826  -4.769  -4.826  1.00  0.00           C  \nATOM    174  C   THR A  31      18.751  -5.986  -5.729  1.00  0.00           C  \nATOM    175  O   THR A  31      18.709  -5.842  -6.947  1.00  0.00           O  \nATOM    176  CB  THR A  31      17.438  -4.093  -4.678  1.00  0.00           C  \nATOM    177  OG1 THR A  31      17.606  -2.806  -4.059  1.00  0.00           O  \nATOM    178  CG2 THR A  31      16.533  -4.918  -3.789  1.00  0.00           C  \nATOM    179  N   TYR A  32      18.757  -7.181  -5.139  1.00  0.00           N  \nATOM    180  CA  TYR A  32      18.751  -8.419  -5.918  1.00  0.00           C  \nATOM    181  C   TYR A  32      17.912  -9.518  -5.303  1.00  0.00           C  \nATOM    182  O   TYR A  32      17.644  -9.512  -4.108  1.00  0.00           O  \nATOM    183  CB  TYR A  32      20.180  -9.004  -5.990  1.00  0.00           C  \nATOM    184  CG  TYR A  32      21.250  -8.109  -6.562  1.00  0.00           C  \nATOM    185  CD1 TYR A  32      21.808  -7.089  -5.796  1.00  0.00           C  \nATOM    186  CD2 TYR A  32      21.694  -8.265  -7.875  1.00  0.00           C  \nATOM    187  CE1 TYR A  32      22.770  -6.248  -6.323  1.00  0.00           C  \nATOM    188  CE2 TYR A  32      22.656  -7.427  -8.400  1.00  0.00           C  \nATOM    189  CZ  TYR A  32      23.181  -6.424  -7.614  1.00  0.00           C  \nATOM    190  OH  TYR A  32      24.118  -5.576  -8.118  1.00  0.00           O  \nATOM    191  N   THR A  33      17.521 -10.484  -6.117  1.00  0.00           N  \nATOM    192  CA  THR A  33      16.819 -11.630  -5.577  1.00  0.00           C  \nATOM    193  C   THR A  33      17.970 -12.568  -5.189  1.00  0.00           C  \nATOM    194  O   THR A  33      19.105 -12.333  -5.602  1.00  0.00           O  \nATOM    195  CB  THR A  33      15.898 -12.290  -6.628  1.00  0.00           C  \nATOM    196  OG1 THR A  33      16.624 -12.552  -7.835  1.00  0.00           O  \nATOM    197  CG2 THR A  33      14.738 -11.367  -6.951  1.00  0.00           C  \nATOM    198  N   MET A  34      17.724 -13.577  -4.359  1.00  0.00           N  \nATOM    199  CA  MET A  34      18.794 -14.502  -3.998  1.00  0.00           C  \nATOM    200  C   MET A  34      19.413 -15.149  -5.246  1.00  0.00           C  \nATOM    201  O   MET A  34      20.624 -15.353  -5.303  1.00  0.00           O  \nATOM    202  CB  MET A  34      18.290 -15.585  -3.043  1.00  0.00           C  \nATOM    203  CG  MET A  34      18.786 -15.430  -1.616  1.00  0.00           C  \nATOM    204  SD  MET A  34      20.561 -15.673  -1.478  1.00  0.00           S  \nATOM    205  CE  MET A  34      20.698 -17.337  -2.115  1.00  0.00           C  \nATOM    206  N   LYS A  35      18.595 -15.443  -6.254  1.00  0.00           N  \nATOM    207  CA  LYS A  35      19.082 -16.054  -7.492  1.00  0.00           C  \nATOM    208  C   LYS A  35      20.123 -15.240  -8.275  1.00  0.00           C  \nATOM    209  O   LYS A  35      21.077 -15.814  -8.783  1.00  0.00           O  \nATOM    210  CB  LYS A  35      17.911 -16.421  -8.405  1.00  0.00           C  \nATOM    211  CG  LYS A  35      17.019 -17.491  -7.844  1.00  0.00           C  \nATOM    212  CD  LYS A  35      15.826 -17.759  -8.757  1.00  0.00           C  \nATOM    213  CE  LYS A  35      14.860 -18.758  -8.123  1.00  0.00           C  \nATOM    214  NZ  LYS A  35      13.726 -19.097  -9.045  1.00  0.00           N  \nATOM    215  N   GLU A  36      19.929 -13.927  -8.396  1.00  0.00           N  \nATOM    216  CA  GLU A  36      20.876 -13.065  -9.111  1.00  0.00           C  \nATOM    217  C   GLU A  36      22.214 -13.071  -8.387  1.00  0.00           C  \nATOM    218  O   GLU A  36      23.271 -13.141  -9.011  1.00  0.00           O  \nATOM    219  CB  GLU A  36      20.379 -11.623  -9.192  1.00  0.00           C  \nATOM    220  CG  GLU A  36      19.197 -11.420 -10.100  1.00  0.00           C  \nATOM    221  CD  GLU A  36      18.761  -9.957 -10.221  1.00  0.00           C  \nATOM    222  OE1 GLU A  36      18.401  -9.331  -9.195  1.00  0.00           O  \nATOM    223  OE2 GLU A  36      18.773  -9.430 -11.359  1.00  0.00           O  \nATOM    224  N   VAL A  37      22.162 -12.984  -7.063  1.00  0.00           N  \nATOM    225  CA  VAL A  37      23.367 -12.993  -6.256  1.00  0.00           C  \nATOM    226  C   VAL A  37      24.177 -14.251  -6.596  1.00  0.00           C  \nATOM    227  O   VAL A  37      25.280 -14.165  -7.121  1.00  0.00           O  \nATOM    228  CB  VAL A  37      23.022 -12.909  -4.732  1.00  0.00           C  \nATOM    229  CG1 VAL A  37      24.221 -13.377  -3.855  1.00  0.00           C  \nATOM    230  CG2 VAL A  37      22.617 -11.464  -4.356  1.00  0.00           C  \nATOM    231  N   LEU A  38      23.569 -15.414  -6.415  1.00  0.00           N  \nATOM    232  CA  LEU A  38      24.244 -16.672  -6.687  1.00  0.00           C  \nATOM    233  C   LEU A  38      24.751 -16.780  -8.105  1.00  0.00           C  \nATOM    234  O   LEU A  38      25.816 -17.334  -8.323  1.00  0.00           O  \nATOM    235  CB  LEU A  38      23.318 -17.850  -6.420  1.00  0.00           C  \nATOM    236  CG  LEU A  38      22.858 -18.137  -4.996  1.00  0.00           C  \nATOM    237  CD1 LEU A  38      21.786 -19.217  -5.048  1.00  0.00           C  \nATOM    238  CD2 LEU A  38      24.023 -18.574  -4.154  1.00  0.00           C  \nATOM    239  N   PHE A  39      23.983 -16.277  -9.065  1.00  0.00           N  \nATOM    240  CA  PHE A  39      24.341 -16.344 -10.489  1.00  0.00           C  \nATOM    241  C   PHE A  39      25.636 -15.630 -10.765  1.00  0.00           C  \nATOM    242  O   PHE A  39      26.546 -16.223 -11.342  1.00  0.00           O  \nATOM    243  CB  PHE A  39      23.223 -15.735 -11.350  1.00  0.00           C  \nATOM    244  CG  PHE A  39      23.615 -15.454 -12.776  1.00  0.00           C  \nATOM    245  CD1 PHE A  39      23.765 -16.477 -13.688  1.00  0.00           C  \nATOM    246  CD2 PHE A  39      23.835 -14.171 -13.197  1.00  0.00           C  \nATOM    247  CE1 PHE A  39      24.135 -16.221 -14.999  1.00  0.00           C  \nATOM    248  CE2 PHE A  39      24.200 -13.901 -14.497  1.00  0.00           C  \nATOM    249  CZ  PHE A  39      24.351 -14.915 -15.392  1.00  0.00           C  \nATOM    250  N   TYR A  40      25.697 -14.353 -10.376  1.00  0.00           N  \nATOM    251  CA  TYR A  40      26.886 -13.515 -10.570  1.00  0.00           C  \nATOM    252  C   TYR A  40      28.058 -14.009  -9.713  1.00  0.00           C  \nATOM    253  O   TYR A  40      29.203 -14.065 -10.171  1.00  0.00           O  \nATOM    254  CB  TYR A  40      26.588 -12.060 -10.211  1.00  0.00           C  \nATOM    255  CG  TYR A  40      25.665 -11.344 -11.164  1.00  0.00           C  \nATOM    256  CD1 TYR A  40      26.036 -11.122 -12.493  1.00  0.00           C  \nATOM    257  CD2 TYR A  40      24.418 -10.890 -10.739  1.00  0.00           C  \nATOM    258  CE1 TYR A  40      25.187 -10.464 -13.377  1.00  0.00           C  \nATOM    259  CE2 TYR A  40      23.566 -10.237 -11.602  1.00  0.00           C  \nATOM    260  CZ  TYR A  40      23.948 -10.022 -12.923  1.00  0.00           C  \nATOM    261  OH  TYR A  40      23.089  -9.339 -13.769  1.00  0.00           O  \nATOM    262  N   LEU A  41      27.760 -14.367  -8.468  1.00  0.00           N  \nATOM    263  CA  LEU A  41      28.758 -14.877  -7.542  1.00  0.00           C  \nATOM    264  C   LEU A  41      29.396 -16.144  -8.132  1.00  0.00           C  \nATOM    265  O   LEU A  41      30.583 -16.399  -7.952  1.00  0.00           O  \nATOM    266  CB  LEU A  41      28.097 -15.141  -6.188  1.00  0.00           C  \nATOM    267  CG  LEU A  41      28.991 -15.465  -4.993  1.00  0.00           C  \nATOM    268  CD1 LEU A  41      30.098 -14.433  -4.883  1.00  0.00           C  \nATOM    269  CD2 LEU A  41      28.163 -15.504  -3.729  1.00  0.00           C  \nATOM    270  N   GLY A  42      28.606 -16.903  -8.877  1.00  0.00           N  \nATOM    271  CA  GLY A  42      29.093 -18.105  -9.525  1.00  0.00           C  \nATOM    272  C   GLY A  42      29.881 -17.738 -10.769  1.00  0.00           C  \nATOM    273  O   GLY A  42      30.833 -18.418 -11.126  1.00  0.00           O  \nATOM    274  N   GLN A  43      29.489 -16.659 -11.427  1.00  0.00           N  \nATOM    275  CA  GLN A  43      30.166 -16.170 -12.622  1.00  0.00           C  \nATOM    276  C   GLN A  43      31.564 -15.657 -12.285  1.00  0.00           C  \nATOM    277  O   GLN A  43      32.486 -15.736 -13.091  1.00  0.00           O  \nATOM    278  CB  GLN A  43      29.368 -15.021 -13.216  1.00  0.00           C  \nATOM    279  CG  GLN A  43      28.089 -15.453 -13.826  1.00  0.00           C  \nATOM    280  CD  GLN A  43      28.336 -16.409 -14.942  1.00  0.00           C  \nATOM    281  OE1 GLN A  43      28.794 -16.018 -16.008  1.00  0.00           O  \nATOM    282  NE2 GLN A  43      28.071 -17.677 -14.700  1.00  0.00           N  \nATOM    283  N   TYR A  44      31.688 -15.061 -11.114  1.00  0.00           N  \nATOM    284  CA  TYR A  44      32.947 -14.515 -10.639  1.00  0.00           C  \nATOM    285  C   TYR A  44      33.933 -15.681 -10.434  1.00  0.00           C  \nATOM    286  O   TYR A  44      35.049 -15.679 -10.946  1.00  0.00           O  \nATOM    287  CB  TYR A  44      32.660 -13.784  -9.333  1.00  0.00           C  \nATOM    288  CG  TYR A  44      33.858 -13.295  -8.591  1.00  0.00           C  \nATOM    289  CD1 TYR A  44      34.378 -12.026  -8.831  1.00  0.00           C  \nATOM    290  CD2 TYR A  44      34.444 -14.077  -7.591  1.00  0.00           C  \nATOM    291  CE1 TYR A  44      35.444 -11.550  -8.088  1.00  0.00           C  \nATOM    292  CE2 TYR A  44      35.505 -13.607  -6.848  1.00  0.00           C  \nATOM    293  CZ  TYR A  44      35.996 -12.344  -7.101  1.00  0.00           C  \nATOM    294  OH  TYR A  44      37.017 -11.854  -6.336  1.00  0.00           O  \nATOM    295  N   ILE A  45      33.478 -16.702  -9.727  1.00  0.00           N  \nATOM    296  CA  ILE A  45      34.274 -17.877  -9.450  1.00  0.00           C  \nATOM    297  C   ILE A  45      34.684 -18.570 -10.724  1.00  0.00           C  \nATOM    298  O   ILE A  45      35.862 -18.831 -10.943  1.00  0.00           O  \nATOM    299  CB  ILE A  45      33.497 -18.858  -8.544  1.00  0.00           C  \nATOM    300  CG1 ILE A  45      33.109 -18.151  -7.243  1.00  0.00           C  \nATOM    301  CG2 ILE A  45      34.337 -20.069  -8.235  1.00  0.00           C  \nATOM    302  CD1 ILE A  45      32.359 -19.041  -6.269  1.00  0.00           C  \nATOM    303  N   MET A  46      33.721 -18.882 -11.572  1.00  0.00           N  \nATOM    304  CA  MET A  46      34.048 -19.563 -12.815  1.00  0.00           C  \nATOM    305  C   MET A  46      35.038 -18.750 -13.618  1.00  0.00           C  \nATOM    306  O   MET A  46      36.084 -19.245 -14.022  1.00  0.00           O  \nATOM    307  CB  MET A  46      32.801 -19.801 -13.656  1.00  0.00           C  \nATOM    308  CG  MET A  46      32.041 -21.059 -13.299  1.00  0.00           C  \nATOM    309  SD  MET A  46      30.444 -21.159 -14.164  1.00  0.00           S  \nATOM    310  CE  MET A  46      29.206 -21.058 -12.752  1.00  0.00           C  \nATOM    311  N   THR A  47      34.719 -17.482 -13.804  1.00  0.00           N  \nATOM    312  CA  THR A  47      35.548 -16.577 -14.580  1.00  0.00           C  \nATOM    313  C   THR A  47      37.002 -16.428 -14.136  1.00  0.00           C  \nATOM    314  O   THR A  47      37.910 -16.429 -14.972  1.00  0.00           O  \nATOM    315  CB  THR A  47      34.862 -15.234 -14.662  1.00  0.00           C  \nATOM    316  OG1 THR A  47      33.709 -15.368 -15.505  1.00  0.00           O  \nATOM    317  CG2 THR A  47      35.789 -14.178 -15.199  1.00  0.00           C  \nATOM    318  N   LYS A  48      37.218 -16.302 -12.829  1.00  0.00           N  \nATOM    319  CA  LYS A  48      38.555 -16.168 -12.265  1.00  0.00           C  \nATOM    320  C   LYS A  48      39.105 -17.538 -11.869  1.00  0.00           C  \nATOM    321  O   LYS A  48      39.920 -17.652 -10.968  1.00  0.00           O  \nATOM    322  CB  LYS A  48      38.495 -15.265 -11.039  1.00  0.00           C  \nATOM    323  CG  LYS A  48      38.056 -13.868 -11.370  1.00  0.00           C  \nATOM    324  CD  LYS A  48      38.081 -12.988 -10.149  1.00  0.00           C  \nATOM    325  CE  LYS A  48      39.487 -12.826  -9.614  1.00  0.00           C  \nATOM    326  NZ  LYS A  48      39.479 -11.939  -8.409  1.00  0.00           N  \nATOM    327  N   ARG A  49      38.631 -18.575 -12.545  1.00  0.00           N  \nATOM    328  CA  ARG A  49      38.997 -19.964 -12.295  1.00  0.00           C  \nATOM    329  C   ARG A  49      39.410 -20.287 -10.874  1.00  0.00           C  \nATOM    330  O   ARG A  49      40.351 -21.044 -10.665  1.00  0.00           O  \nATOM    331  CB  ARG A  49      40.070 -20.431 -13.261  1.00  0.00           C  \nATOM    332  CG  ARG A  49      39.838 -20.028 -14.703  1.00  0.00           C  \nATOM    333  CD  ARG A  49      40.309 -21.126 -15.650  1.00  0.00           C  \nATOM    334  NE  ARG A  49      41.729 -21.456 -15.510  1.00  0.00           N  \nATOM    335  CZ  ARG A  49      42.190 -22.697 -15.392  1.00  0.00           C  \nATOM    336  NH1 ARG A  49      41.349 -23.723 -15.395  1.00  0.00           N  \nATOM    337  NH2 ARG A  49      43.493 -22.920 -15.289  1.00  0.00           N  \nATOM    338  N   LEU A  50      38.652 -19.796  -9.898  1.00  0.00           N  \nATOM    339  CA  LEU A  50      38.983 -20.045  -8.498  1.00  0.00           C  \nATOM    340  C   LEU A  50      38.692 -21.446  -7.968  1.00  0.00           C  \nATOM    341  O   LEU A  50      38.925 -21.724  -6.780  1.00  0.00           O  \nATOM    342  CB  LEU A  50      38.297 -19.034  -7.589  1.00  0.00           C  \nATOM    343  CG  LEU A  50      38.524 -17.554  -7.819  1.00  0.00           C  \nATOM    344  CD1 LEU A  50      37.780 -16.767  -6.748  1.00  0.00           C  \nATOM    345  CD2 LEU A  50      40.002 -17.272  -7.753  1.00  0.00           C  \nATOM    346  N   TYR A  51      38.179 -22.331  -8.806  1.00  0.00           N  \nATOM    347  CA  TYR A  51      37.861 -23.681  -8.338  1.00  0.00           C  \nATOM    348  C   TYR A  51      39.016 -24.624  -8.635  1.00  0.00           C  \nATOM    349  O   TYR A  51      39.865 -24.328  -9.477  1.00  0.00           O  \nATOM    350  CB  TYR A  51      36.567 -24.197  -8.995  1.00  0.00           C  \nATOM    351  CG  TYR A  51      36.529 -23.987 -10.501  1.00  0.00           C  \nATOM    352  CD1 TYR A  51      37.095 -24.922 -11.377  1.00  0.00           C  \nATOM    353  CD2 TYR A  51      35.967 -22.837 -11.052  1.00  0.00           C  \nATOM    354  CE1 TYR A  51      37.102 -24.717 -12.744  1.00  0.00           C  \nATOM    355  CE2 TYR A  51      35.975 -22.623 -12.422  1.00  0.00           C  \nATOM    356  CZ  TYR A  51      36.544 -23.567 -13.259  1.00  0.00           C  \nATOM    357  OH  TYR A  51      36.557 -23.357 -14.625  1.00  0.00           O  \nATOM    358  N   ASP A  52      39.070 -25.746  -7.926  1.00  0.00           N  \nATOM    359  CA  ASP A  52      40.119 -26.715  -8.163  1.00  0.00           C  \nATOM    360  C   ASP A  52      39.798 -27.404  -9.468  1.00  0.00           C  \nATOM    361  O   ASP A  52      38.656 -27.763  -9.727  1.00  0.00           O  \nATOM    362  CB  ASP A  52      40.187 -27.747  -7.054  1.00  0.00           C  \nATOM    363  CG  ASP A  52      41.407 -28.627  -7.173  1.00  0.00           C  \nATOM    364  OD1 ASP A  52      42.476 -28.209  -6.693  1.00  0.00           O  \nATOM    365  OD2 ASP A  52      41.311 -29.715  -7.763  1.00  0.00           O  \nATOM    366  N   GLU A  53      40.820 -27.662 -10.259  1.00  0.00           N  \nATOM    367  CA  GLU A  53      40.616 -28.281 -11.551  1.00  0.00           C  \nATOM    368  C   GLU A  53      40.161 -29.725 -11.510  1.00  0.00           C  \nATOM    369  O   GLU A  53      39.405 -30.182 -12.373  1.00  0.00           O  \nATOM    370  CB  GLU A  53      41.887 -28.180 -12.355  1.00  0.00           C  \nATOM    371  CG  GLU A  53      41.645 -28.315 -13.830  1.00  0.00           C  \nATOM    372  CD  GLU A  53      41.219 -27.024 -14.466  1.00  0.00           C  \nATOM    373  OE1 GLU A  53      41.178 -25.975 -13.769  1.00  0.00           O  \nATOM    374  OE2 GLU A  53      40.941 -27.076 -15.679  1.00  0.00           O  \nATOM    375  N   LYS A  54      40.657 -30.461 -10.529  1.00  0.00           N  \nATOM    376  CA  LYS A  54      40.297 -31.861 -10.402  1.00  0.00           C  \nATOM    377  C   LYS A  54      39.040 -32.074  -9.557  1.00  0.00           C  \nATOM    378  O   LYS A  54      38.120 -32.769  -9.971  1.00  0.00           O  \nATOM    379  CB  LYS A  54      41.490 -32.678  -9.875  1.00  0.00           C  \nATOM    380  CG  LYS A  54      42.609 -32.959 -10.934  1.00  0.00           C  \nATOM    381  CD  LYS A  54      43.362 -31.687 -11.431  1.00  0.00           C  \nATOM    382  CE  LYS A  54      44.171 -30.995 -10.309  1.00  0.00           C  \nATOM    383  NZ  LYS A  54      44.770 -29.677 -10.699  1.00  0.00           N  \nATOM    384  N   GLN A  55      39.005 -31.485  -8.371  1.00  0.00           N  \nATOM    385  CA  GLN A  55      37.857 -31.604  -7.484  1.00  0.00           C  \nATOM    386  C   GLN A  55      37.161 -30.259  -7.563  1.00  0.00           C  \nATOM    387  O   GLN A  55      37.289 -29.436  -6.666  1.00  0.00           O  \nATOM    388  CB  GLN A  55      38.352 -31.883  -6.068  1.00  0.00           C  \nATOM    389  CG  GLN A  55      38.983 -33.246  -5.920  1.00  0.00           C  \nATOM    390  CD  GLN A  55      37.950 -34.357  -5.964  1.00  0.00           C  \nATOM    391  OE1 GLN A  55      37.068 -34.430  -5.110  1.00  0.00           O  \nATOM    392  NE2 GLN A  55      38.040 -35.215  -6.968  1.00  0.00           N  \nATOM    393  N   GLN A  56      36.399 -30.056  -8.633  1.00  0.00           N  \nATOM    394  CA  GLN A  56      35.719 -28.784  -8.896  1.00  0.00           C  \nATOM    395  C   GLN A  56      34.859 -28.192  -7.812  1.00  0.00           C  \nATOM    396  O   GLN A  56      34.446 -27.045  -7.919  1.00  0.00           O  \nATOM    397  CB  GLN A  56      34.930 -28.851 -10.190  1.00  0.00           C  \nATOM    398  CG  GLN A  56      35.723 -29.443 -11.328  1.00  0.00           C  \nATOM    399  CD  GLN A  56      35.798 -28.544 -12.540  1.00  0.00           C  \nATOM    400  OE1 GLN A  56      34.920 -27.711 -12.792  1.00  0.00           O  \nATOM    401  NE2 GLN A  56      36.844 -28.726 -13.323  1.00  0.00           N  \nATOM    402  N   HIS A  57      34.592 -28.958  -6.763  1.00  0.00           N  \nATOM    403  CA  HIS A  57      33.791 -28.456  -5.652  1.00  0.00           C  \nATOM    404  C   HIS A  57      34.620 -27.629  -4.661  1.00  0.00           C  \nATOM    405  O   HIS A  57      34.056 -27.010  -3.742  1.00  0.00           O  \nATOM    406  CB  HIS A  57      33.074 -29.604  -4.931  1.00  0.00           C  \nATOM    407  CG  HIS A  57      33.991 -30.572  -4.261  1.00  0.00           C  \nATOM    408  ND1 HIS A  57      34.318 -30.488  -2.924  1.00  0.00           N  \nATOM    409  CD2 HIS A  57      34.639 -31.664  -4.736  1.00  0.00           C  \nATOM    410  CE1 HIS A  57      35.124 -31.485  -2.604  1.00  0.00           C  \nATOM    411  NE2 HIS A  57      35.335 -32.212  -3.686  1.00  0.00           N  \nATOM    412  N   ILE A  58      35.950 -27.646  -4.831  1.00  0.00           N  \nATOM    413  CA  ILE A  58      36.865 -26.894  -3.970  1.00  0.00           C  \nATOM    414  C   ILE A  58      37.119 -25.524  -4.577  1.00  0.00           C  \nATOM    415  O   ILE A  58      37.492 -25.418  -5.727  1.00  0.00           O  \nATOM    416  CB  ILE A  58      38.243 -27.630  -3.779  1.00  0.00           C  \nATOM    417  CG1 ILE A  58      38.039 -29.024  -3.161  1.00  0.00           C  \nATOM    418  CG2 ILE A  58      39.174 -26.832  -2.801  1.00  0.00           C  \nATOM    419  CD1 ILE A  58      37.636 -28.963  -1.719  1.00  0.00           C  \nATOM    420  N   VAL A  59      36.889 -24.475  -3.812  1.00  0.00           N  \nATOM    421  CA  VAL A  59      37.130 -23.129  -4.293  1.00  0.00           C  \nATOM    422  C   VAL A  59      38.140 -22.513  -3.333  1.00  0.00           C  \nATOM    423  O   VAL A  59      38.054 -22.707  -2.115  1.00  0.00           O  \nATOM    424  CB  VAL A  59      35.840 -22.317  -4.362  1.00  0.00           C  \nATOM    425  CG1 VAL A  59      36.107 -20.894  -4.774  1.00  0.00           C  \nATOM    426  CG2 VAL A  59      34.913 -22.964  -5.355  1.00  0.00           C  \nATOM    427  N   TYR A  60      39.133 -21.847  -3.916  1.00  0.00           N  \nATOM    428  CA  TYR A  60      40.251 -21.237  -3.201  1.00  0.00           C  \nATOM    429  C   TYR A  60      40.091 -19.749  -3.237  1.00  0.00           C  \nATOM    430  O   TYR A  60      40.024 -19.179  -4.315  1.00  0.00           O  \nATOM    431  CB  TYR A  60      41.537 -21.582  -3.943  1.00  0.00           C  \nATOM    432  CG  TYR A  60      41.844 -23.073  -4.072  1.00  0.00           C  \nATOM    433  CD1 TYR A  60      42.331 -23.796  -2.995  1.00  0.00           C  \nATOM    434  CD2 TYR A  60      41.733 -23.719  -5.294  1.00  0.00           C  \nATOM    435  CE1 TYR A  60      42.714 -25.101  -3.136  1.00  0.00           C  \nATOM    436  CE2 TYR A  60      42.105 -25.032  -5.437  1.00  0.00           C  \nATOM    437  CZ  TYR A  60      42.600 -25.715  -4.354  1.00  0.00           C  \nATOM    438  OH  TYR A  60      43.024 -27.023  -4.493  1.00  0.00           O  \nATOM    439  N   CYS A  61      40.135 -19.090  -2.089  1.00  0.00           N  \nATOM    440  CA  CYS A  61      39.927 -17.653  -2.094  1.00  0.00           C  \nATOM    441  C   CYS A  61      40.798 -16.855  -1.166  1.00  0.00           C  \nATOM    442  O   CYS A  61      40.527 -15.676  -0.938  1.00  0.00           O  \nATOM    443  CB  CYS A  61      38.449 -17.351  -1.822  1.00  0.00           C  \nATOM    444  SG  CYS A  61      37.662 -18.378  -0.536  1.00  0.00           S  \nATOM    445  N   SER A  62      41.895 -17.469  -0.730  1.00  0.00           N  \nATOM    446  CA  SER A  62      42.874 -16.862   0.185  1.00  0.00           C  \nATOM    447  C   SER A  62      43.454 -15.587  -0.381  1.00  0.00           C  \nATOM    448  O   SER A  62      43.584 -14.563   0.294  1.00  0.00           O  \nATOM    449  CB  SER A  62      44.009 -17.847   0.444  1.00  0.00           C  \nATOM    450  OG  SER A  62      44.316 -18.547  -0.754  1.00  0.00           O  \nATOM    451  N   ASN A  63      43.779 -15.664  -1.653  1.00  0.00           N  \nATOM    452  CA  ASN A  63      44.366 -14.559  -2.394  1.00  0.00           C  \nATOM    453  C   ASN A  63      43.268 -13.694  -2.983  1.00  0.00           C  \nATOM    454  O   ASN A  63      43.551 -12.851  -3.836  1.00  0.00           O  \nATOM    455  CB  ASN A  63      45.102 -15.171  -3.579  1.00  0.00           C  \nATOM    456  CG  ASN A  63      44.178 -16.081  -4.420  1.00  0.00           C  \nATOM    457  OD1 ASN A  63      43.807 -17.195  -3.989  1.00  0.00           O  \nATOM    458  ND2 ASN A  63      43.749 -15.579  -5.581  1.00  0.00           N  \nATOM    459  N   ASP A  64      42.035 -13.869  -2.512  1.00  0.00           N  \nATOM    460  CA  ASP A  64      40.908 -13.190  -3.130  1.00  0.00           C  \nATOM    461  C   ASP A  64      39.959 -12.435  -2.231  1.00  0.00           C  \nATOM    462  O   ASP A  64      39.762 -12.820  -1.095  1.00  0.00           O  \nATOM    463  CB  ASP A  64      40.117 -14.258  -3.882  1.00  0.00           C  \nATOM    464  CG  ASP A  64      39.365 -13.714  -5.050  1.00  0.00           C  \nATOM    465  OD1 ASP A  64      40.031 -13.307  -6.019  1.00  0.00           O  \nATOM    466  OD2 ASP A  64      38.113 -13.724  -5.006  1.00  0.00           O  \nATOM    467  N   LEU A  65      39.310 -11.414  -2.804  1.00  0.00           N  \nATOM    468  CA  LEU A  65      38.294 -10.583  -2.133  1.00  0.00           C  \nATOM    469  C   LEU A  65      37.167 -11.478  -1.609  1.00  0.00           C  \nATOM    470  O   LEU A  65      36.514 -11.165  -0.620  1.00  0.00           O  \nATOM    471  CB  LEU A  65      37.703  -9.566  -3.128  1.00  0.00           C  \nATOM    472  CG  LEU A  65      36.292  -8.950  -2.964  1.00  0.00           C  \nATOM    473  CD1 LEU A  65      36.205  -7.965  -1.782  1.00  0.00           C  \nATOM    474  CD2 LEU A  65      35.909  -8.232  -4.262  1.00  0.00           C  \nATOM    475  N   LEU A  66      36.928 -12.576  -2.314  1.00  0.00           N  \nATOM    476  CA  LEU A  66      35.923 -13.537  -1.940  1.00  0.00           C  \nATOM    477  C   LEU A  66      36.295 -14.064  -0.568  1.00  0.00           C  \nATOM    478  O   LEU A  66      35.435 -14.279   0.266  1.00  0.00           O  \nATOM    479  CB  LEU A  66      35.927 -14.665  -2.956  1.00  0.00           C  \nATOM    480  CG  LEU A  66      34.818 -15.699  -2.920  1.00  0.00           C  \nATOM    481  CD1 LEU A  66      33.477 -14.974  -2.843  1.00  0.00           C  \nATOM    482  CD2 LEU A  66      34.923 -16.545  -4.168  1.00  0.00           C  \nATOM    483  N   GLY A  67      37.587 -14.250  -0.331  1.00  0.00           N  \nATOM    484  CA  GLY A  67      38.059 -14.747   0.954  1.00  0.00           C  \nATOM    485  C   GLY A  67      37.901 -13.695   2.031  1.00  0.00           C  \nATOM    486  O   GLY A  67      37.665 -14.045   3.183  1.00  0.00           O  \nATOM    487  N   ASP A  68      38.074 -12.416   1.681  1.00  0.00           N  \nATOM    488  CA  ASP A  68      37.917 -11.315   2.639  1.00  0.00           C  \nATOM    489  C   ASP A  68      36.469 -11.369   3.053  1.00  0.00           C  \nATOM    490  O   ASP A  68      36.142 -11.324   4.234  1.00  0.00           O  \nATOM    491  CB  ASP A  68      38.150  -9.953   1.978  1.00  0.00           C  \nATOM    492  CG  ASP A  68      39.600  -9.712   1.592  1.00  0.00           C  \nATOM    493  OD1 ASP A  68      40.356 -10.688   1.379  1.00  0.00           O  \nATOM    494  OD2 ASP A  68      39.984  -8.528   1.482  1.00  0.00           O  \nATOM    495  N   LEU A  69      35.621 -11.493   2.035  1.00  0.00           N  \nATOM    496  CA  LEU A  69      34.172 -11.582   2.136  1.00  0.00           C  \nATOM    497  C   LEU A  69      33.722 -12.742   3.012  1.00  0.00           C  \nATOM    498  O   LEU A  69      33.153 -12.529   4.074  1.00  0.00           O  \nATOM    499  CB  LEU A  69      33.599 -11.783   0.736  1.00  0.00           C  \nATOM    500  CG  LEU A  69      32.135 -11.469   0.508  1.00  0.00           C  \nATOM    501  CD1 LEU A  69      32.041  -9.998   0.291  1.00  0.00           C  \nATOM    502  CD2 LEU A  69      31.618 -12.202  -0.714  1.00  0.00           C  \nATOM    503  N   PHE A  70      33.970 -13.968   2.563  1.00  0.00           N  \nATOM    504  CA  PHE A  70      33.565 -15.157   3.314  1.00  0.00           C  \nATOM    505  C   PHE A  70      34.372 -15.379   4.573  1.00  0.00           C  \nATOM    506  O   PHE A  70      33.963 -16.148   5.432  1.00  0.00           O  \nATOM    507  CB  PHE A  70      33.643 -16.418   2.440  1.00  0.00           C  \nATOM    508  CG  PHE A  70      32.600 -16.475   1.346  1.00  0.00           C  \nATOM    509  CD1 PHE A  70      31.609 -15.496   1.245  1.00  0.00           C  \nATOM    510  CD2 PHE A  70      32.587 -17.519   0.439  1.00  0.00           C  \nATOM    511  CE1 PHE A  70      30.628 -15.561   0.261  1.00  0.00           C  \nATOM    512  CE2 PHE A  70      31.605 -17.596  -0.552  1.00  0.00           C  \nATOM    513  CZ  PHE A  70      30.627 -16.614  -0.638  1.00  0.00           C  \nATOM    514  N   GLY A  71      35.528 -14.727   4.660  1.00  0.00           N  \nATOM    515  CA  GLY A  71      36.406 -14.864   5.809  1.00  0.00           C  \nATOM    516  C   GLY A  71      37.016 -16.250   5.963  1.00  0.00           C  \nATOM    517  O   GLY A  71      37.169 -16.739   7.091  1.00  0.00           O  \nATOM    518  N   VAL A  72      37.337 -16.909   4.848  1.00  0.00           N  \nATOM    519  CA  VAL A  72      37.939 -18.256   4.889  1.00  0.00           C  \nATOM    520  C   VAL A  72      38.922 -18.424   3.734  1.00  0.00           C  \nATOM    521  O   VAL A  72      38.795 -17.764   2.700  1.00  0.00           O  \nATOM    522  CB  VAL A  72      36.879 -19.420   4.797  1.00  0.00           C  \nATOM    523  CG1 VAL A  72      36.041 -19.490   6.046  1.00  0.00           C  \nATOM    524  CG2 VAL A  72      36.008 -19.285   3.534  1.00  0.00           C  \nATOM    525  N   PRO A  73      39.936 -19.292   3.910  1.00  0.00           N  \nATOM    526  CA  PRO A  73      40.940 -19.547   2.873  1.00  0.00           C  \nATOM    527  C   PRO A  73      40.341 -20.305   1.690  1.00  0.00           C  \nATOM    528  O   PRO A  73      40.595 -19.957   0.536  1.00  0.00           O  \nATOM    529  CB  PRO A  73      41.987 -20.374   3.615  1.00  0.00           C  \nATOM    530  CG  PRO A  73      41.193 -21.108   4.634  1.00  0.00           C  \nATOM    531  CD  PRO A  73      40.272 -20.026   5.142  1.00  0.00           C  \nATOM    532  N   SER A  74      39.537 -21.327   1.968  1.00  0.00           N  \nATOM    533  CA  SER A  74      38.893 -22.107   0.918  1.00  0.00           C  \nATOM    534  C   SER A  74      37.525 -22.660   1.386  1.00  0.00           C  \nATOM    535  O   SER A  74      37.172 -22.532   2.562  1.00  0.00           O  \nATOM    536  CB  SER A  74      39.825 -23.238   0.476  1.00  0.00           C  \nATOM    537  OG  SER A  74      40.003 -24.201   1.499  1.00  0.00           O  \nATOM    538  N   PHE A  75      36.747 -23.242   0.471  1.00  0.00           N  \nATOM    539  CA  PHE A  75      35.443 -23.810   0.832  1.00  0.00           C  \nATOM    540  C   PHE A  75      34.952 -24.861  -0.174  1.00  0.00           C  \nATOM    541  O   PHE A  75      35.483 -24.952  -1.278  1.00  0.00           O  \nATOM    542  CB  PHE A  75      34.398 -22.696   1.069  1.00  0.00           C  \nATOM    543  CG  PHE A  75      34.044 -21.860  -0.158  1.00  0.00           C  \nATOM    544  CD1 PHE A  75      33.094 -22.293  -1.067  1.00  0.00           C  \nATOM    545  CD2 PHE A  75      34.579 -20.596  -0.338  1.00  0.00           C  \nATOM    546  CE1 PHE A  75      32.671 -21.477  -2.129  1.00  0.00           C  \nATOM    547  CE2 PHE A  75      34.164 -19.782  -1.392  1.00  0.00           C  \nATOM    548  CZ  PHE A  75      33.209 -20.230  -2.280  1.00  0.00           C  \nATOM    549  N   SER A  76      34.014 -25.714   0.241  1.00  0.00           N  \nATOM    550  CA  SER A  76      33.450 -26.746  -0.627  1.00  0.00           C  \nATOM    551  C   SER A  76      32.038 -26.359  -0.998  1.00  0.00           C  \nATOM    552  O   SER A  76      31.181 -26.253  -0.122  1.00  0.00           O  \nATOM    553  CB  SER A  76      33.399 -28.074   0.099  1.00  0.00           C  \nATOM    554  OG  SER A  76      32.677 -29.051  -0.652  1.00  0.00           O  \nATOM    555  N   VAL A  77      31.773 -26.173  -2.288  1.00  0.00           N  \nATOM    556  CA  VAL A  77      30.426 -25.784  -2.700  1.00  0.00           C  \nATOM    557  C   VAL A  77      29.429 -26.853  -2.295  1.00  0.00           C  \nATOM    558  O   VAL A  77      28.225 -26.606  -2.273  1.00  0.00           O  \nATOM    559  CB  VAL A  77      30.275 -25.513  -4.223  1.00  0.00           C  \nATOM    560  CG1 VAL A  77      31.333 -24.544  -4.718  1.00  0.00           C  \nATOM    561  CG2 VAL A  77      30.274 -26.792  -4.990  1.00  0.00           C  \nATOM    562  N   LYS A  78      29.934 -28.030  -1.951  1.00  0.00           N  \nATOM    563  CA  LYS A  78      29.078 -29.107  -1.549  1.00  0.00           C  \nATOM    564  C   LYS A  78      28.532 -28.949  -0.138  1.00  0.00           C  \nATOM    565  O   LYS A  78      27.718 -29.751   0.296  1.00  0.00           O  \nATOM    566  CB  LYS A  78      29.817 -30.419  -1.646  1.00  0.00           C  \nATOM    567  CG  LYS A  78      30.080 -30.892  -3.033  1.00  0.00           C  \nATOM    568  CD  LYS A  78      30.722 -32.253  -2.946  1.00  0.00           C  \nATOM    569  CE  LYS A  78      30.952 -32.844  -4.316  1.00  0.00           C  \nATOM    570  NZ  LYS A  78      31.566 -34.209  -4.222  1.00  0.00           N  \nATOM    571  N   GLU A  79      28.985 -27.954   0.609  1.00  0.00           N  \nATOM    572  CA  GLU A  79      28.477 -27.767   1.956  1.00  0.00           C  \nATOM    573  C   GLU A  79      27.485 -26.624   1.876  1.00  0.00           C  \nATOM    574  O   GLU A  79      27.821 -25.478   2.202  1.00  0.00           O  \nATOM    575  CB  GLU A  79      29.601 -27.367   2.890  1.00  0.00           C  \nATOM    576  CG  GLU A  79      30.820 -28.239   2.853  1.00  0.00           C  \nATOM    577  CD  GLU A  79      31.989 -27.593   3.595  1.00  0.00           C  \nATOM    578  OE1 GLU A  79      32.296 -26.392   3.349  1.00  0.00           O  \nATOM    579  OE2 GLU A  79      32.599 -28.297   4.429  1.00  0.00           O  \nATOM    580  N   HIS A  80      26.252 -26.947   1.488  1.00  0.00           N  \nATOM    581  CA  HIS A  80      25.184 -25.952   1.309  1.00  0.00           C  \nATOM    582  C   HIS A  80      24.900 -25.057   2.510  1.00  0.00           C  \nATOM    583  O   HIS A  80      24.782 -23.842   2.369  1.00  0.00           O  \nATOM    584  CB  HIS A  80      23.890 -26.617   0.839  1.00  0.00           C  \nATOM    585  CG  HIS A  80      24.017 -27.365  -0.457  1.00  0.00           C  \nATOM    586  ND1 HIS A  80      24.923 -27.019  -1.434  1.00  0.00           N  \nATOM    587  CD2 HIS A  80      23.371 -28.460  -0.919  1.00  0.00           C  \nATOM    588  CE1 HIS A  80      24.839 -27.875  -2.440  1.00  0.00           C  \nATOM    589  NE2 HIS A  80      23.904 -28.759  -2.151  1.00  0.00           N  \nATOM    590  N   ARG A  81      24.798 -25.638   3.694  1.00  0.00           N  \nATOM    591  CA  ARG A  81      24.525 -24.832   4.873  1.00  0.00           C  \nATOM    592  C   ARG A  81      25.645 -23.820   5.118  1.00  0.00           C  \nATOM    593  O   ARG A  81      25.395 -22.678   5.494  1.00  0.00           O  \nATOM    594  CB  ARG A  81      24.314 -25.730   6.093  1.00  0.00           C  \nATOM    595  CG  ARG A  81      23.811 -24.994   7.323  1.00  0.00           C  \nATOM    596  CD  ARG A  81      23.642 -25.948   8.472  1.00  0.00           C  \nATOM    597  NE  ARG A  81      22.697 -27.032   8.216  1.00  0.00           N  \nATOM    598  CZ  ARG A  81      21.422 -27.040   8.630  1.00  0.00           C  \nATOM    599  NH1 ARG A  81      20.921 -26.012   9.312  1.00  0.00           N  \nATOM    600  NH2 ARG A  81      20.666 -28.118   8.441  1.00  0.00           N  \nATOM    601  N   LYS A  82      26.883 -24.219   4.861  1.00  0.00           N  \nATOM    602  CA  LYS A  82      27.998 -23.312   5.072  1.00  0.00           C  \nATOM    603  C   LYS A  82      27.983 -22.184   4.079  1.00  0.00           C  \nATOM    604  O   LYS A  82      28.003 -21.023   4.478  1.00  0.00           O  \nATOM    605  CB  LYS A  82      29.324 -24.039   4.974  1.00  0.00           C  \nATOM    606  CG  LYS A  82      29.808 -24.623   6.264  1.00  0.00           C  \nATOM    607  CD  LYS A  82      31.240 -25.071   6.082  1.00  0.00           C  \nATOM    608  CE  LYS A  82      32.090 -23.947   5.472  1.00  0.00           C  \nATOM    609  NZ  LYS A  82      32.296 -22.815   6.427  1.00  0.00           N  \nATOM    610  N   ILE A  83      27.949 -22.524   2.788  1.00  0.00           N  \nATOM    611  CA  ILE A  83      27.938 -21.523   1.717  1.00  0.00           C  \nATOM    612  C   ILE A  83      26.802 -20.529   1.923  1.00  0.00           C  \nATOM    613  O   ILE A  83      27.014 -19.307   1.926  1.00  0.00           O  \nATOM    614  CB  ILE A  83      27.728 -22.153   0.328  1.00  0.00           C  \nATOM    615  CG1 ILE A  83      28.645 -23.348   0.118  1.00  0.00           C  \nATOM    616  CG2 ILE A  83      28.032 -21.138  -0.728  1.00  0.00           C  \nATOM    617  CD1 ILE A  83      30.108 -22.999   0.168  1.00  0.00           C  \nATOM    618  N   TYR A  84      25.598 -21.070   2.126  1.00  0.00           N  \nATOM    619  CA  TYR A  84      24.403 -20.267   2.326  1.00  0.00           C  \nATOM    620  C   TYR A  84      24.547 -19.345   3.510  1.00  0.00           C  \nATOM    621  O   TYR A  84      24.117 -18.185   3.454  1.00  0.00           O  \nATOM    622  CB  TYR A  84      23.190 -21.153   2.496  1.00  0.00           C  \nATOM    623  CG  TYR A  84      21.898 -20.417   2.284  1.00  0.00           C  \nATOM    624  CD1 TYR A  84      21.482 -20.044   1.004  1.00  0.00           C  \nATOM    625  CD2 TYR A  84      21.095 -20.079   3.366  1.00  0.00           C  \nATOM    626  CE1 TYR A  84      20.306 -19.348   0.814  1.00  0.00           C  \nATOM    627  CE2 TYR A  84      19.917 -19.384   3.192  1.00  0.00           C  \nATOM    628  CZ  TYR A  84      19.526 -19.019   1.921  1.00  0.00           C  \nATOM    629  OH  TYR A  84      18.367 -18.281   1.803  1.00  0.00           O  \nATOM    630  N   THR A  85      25.186 -19.830   4.566  1.00  0.00           N  \nATOM    631  CA  THR A  85      25.388 -18.998   5.738  1.00  0.00           C  \nATOM    632  C   THR A  85      26.369 -17.858   5.493  1.00  0.00           C  \nATOM    633  O   THR A  85      26.133 -16.706   5.874  1.00  0.00           O  \nATOM    634  CB  THR A  85      25.880 -19.837   6.946  1.00  0.00           C  \nATOM    635  OG1 THR A  85      24.880 -20.809   7.296  1.00  0.00           O  \nATOM    636  CG2 THR A  85      26.154 -18.938   8.162  1.00  0.00           C  \nATOM    637  N   MET A  86      27.494 -18.180   4.873  1.00  0.00           N  \nATOM    638  CA  MET A  86      28.506 -17.169   4.622  1.00  0.00           C  \nATOM    639  C   MET A  86      27.932 -16.089   3.752  1.00  0.00           C  \nATOM    640  O   MET A  86      28.082 -14.910   4.059  1.00  0.00           O  \nATOM    641  CB  MET A  86      29.748 -17.787   3.990  1.00  0.00           C  \nATOM    642  CG  MET A  86      30.469 -18.757   4.907  1.00  0.00           C  \nATOM    643  SD  MET A  86      32.005 -19.317   4.198  1.00  0.00           S  \nATOM    644  CE  MET A  86      31.533 -20.724   3.326  1.00  0.00           C  \nATOM    645  N   ILE A  87      27.232 -16.506   2.697  1.00  0.00           N  \nATOM    646  CA  ILE A  87      26.593 -15.577   1.774  1.00  0.00           C  \nATOM    647  C   ILE A  87      25.575 -14.690   2.508  1.00  0.00           C  \nATOM    648  O   ILE A  87      25.527 -13.486   2.277  1.00  0.00           O  \nATOM    649  CB  ILE A  87      25.883 -16.321   0.634  1.00  0.00           C  \nATOM    650  CG1 ILE A  87      26.896 -17.111  -0.193  1.00  0.00           C  \nATOM    651  CG2 ILE A  87      25.152 -15.335  -0.267  1.00  0.00           C  \nATOM    652  CD1 ILE A  87      26.266 -17.985  -1.286  1.00  0.00           C  \nATOM    653  N   TYR A  88      24.791 -15.269   3.417  1.00  0.00           N  \nATOM    654  CA  TYR A  88      23.812 -14.487   4.168  1.00  0.00           C  \nATOM    655  C   TYR A  88      24.384 -13.445   5.095  1.00  0.00           C  \nATOM    656  O   TYR A  88      23.786 -12.399   5.278  1.00  0.00           O  \nATOM    657  CB  TYR A  88      22.841 -15.375   4.922  1.00  0.00           C  \nATOM    658  CG  TYR A  88      21.502 -15.350   4.254  1.00  0.00           C  \nATOM    659  CD1 TYR A  88      21.219 -16.222   3.208  1.00  0.00           C  \nATOM    660  CD2 TYR A  88      20.546 -14.381   4.591  1.00  0.00           C  \nATOM    661  CE1 TYR A  88      20.031 -16.134   2.505  1.00  0.00           C  \nATOM    662  CE2 TYR A  88      19.338 -14.286   3.885  1.00  0.00           C  \nATOM    663  CZ  TYR A  88      19.091 -15.175   2.840  1.00  0.00           C  \nATOM    664  OH  TYR A  88      17.904 -15.133   2.138  1.00  0.00           O  \nATOM    665  N   ARG A  89      25.558 -13.712   5.652  1.00  0.00           N  \nATOM    666  CA  ARG A  89      26.227 -12.764   6.549  1.00  0.00           C  \nATOM    667  C   ARG A  89      26.539 -11.468   5.814  1.00  0.00           C  \nATOM    668  O   ARG A  89      26.762 -10.429   6.439  1.00  0.00           O  \nATOM    669  CB  ARG A  89      27.538 -13.365   7.096  1.00  0.00           C  \nATOM    670  CG  ARG A  89      27.350 -14.668   7.876  1.00  0.00           C  \nATOM    671  CD  ARG A  89      28.516 -14.975   8.808  1.00  0.00           C  \nATOM    672  NE  ARG A  89      29.578 -15.760   8.174  1.00  0.00           N  \nATOM    673  CZ  ARG A  89      30.684 -15.253   7.623  1.00  0.00           C  \nATOM    674  NH1 ARG A  89      30.904 -13.938   7.603  1.00  0.00           N  \nATOM    675  NH2 ARG A  89      31.589 -16.072   7.106  1.00  0.00           N  \nATOM    676  N   ASN A  90      26.546 -11.532   4.487  1.00  0.00           N  \nATOM    677  CA  ASN A  90      26.864 -10.377   3.657  1.00  0.00           C  \nATOM    678  C   ASN A  90      25.679  -9.699   3.022  1.00  0.00           C  \nATOM    679  O   ASN A  90      25.842  -8.848   2.149  1.00  0.00           O  \nATOM    680  CB  ASN A  90      27.853 -10.770   2.563  1.00  0.00           C  \nATOM    681  CG  ASN A  90      29.258 -10.946   3.091  1.00  0.00           C  \nATOM    682  OD1 ASN A  90      29.664 -12.058   3.420  1.00  0.00           O  \nATOM    683  ND2 ASN A  90      30.002  -9.839   3.207  1.00  0.00           N  \nATOM    684  N   LEU A  91      24.487 -10.065   3.465  1.00  0.00           N  \nATOM    685  CA  LEU A  91      23.276  -9.482   2.929  1.00  0.00           C  \nATOM    686  C   LEU A  91      22.467  -8.866   4.044  1.00  0.00           C  \nATOM    687  O   LEU A  91      22.684  -9.133   5.225  1.00  0.00           O  \nATOM    688  CB  LEU A  91      22.390 -10.558   2.300  1.00  0.00           C  \nATOM    689  CG  LEU A  91      22.846 -11.433   1.151  1.00  0.00           C  \nATOM    690  CD1 LEU A  91      21.897 -12.599   1.086  1.00  0.00           C  \nATOM    691  CD2 LEU A  91      22.903 -10.680  -0.153  1.00  0.00           C  \nATOM    692  N   VAL A  92      21.459  -8.118   3.631  1.00  0.00           N  \nATOM    693  CA  VAL A  92      20.518  -7.502   4.535  1.00  0.00           C  \nATOM    694  C   VAL A  92      19.180  -7.624   3.820  1.00  0.00           C  \nATOM    695  O   VAL A  92      19.119  -7.559   2.589  1.00  0.00           O  \nATOM    696  CB  VAL A  92      20.914  -6.048   4.869  1.00  0.00           C  \nATOM    697  CG1 VAL A  92      21.650  -5.412   3.709  1.00  0.00           C  \nATOM    698  CG2 VAL A  92      19.690  -5.236   5.243  1.00  0.00           C  \nATOM    699  N   VAL A  93      18.143  -7.864   4.619  1.00  0.00           N  \nATOM    700  CA  VAL A  93      16.736  -8.058   4.213  1.00  0.00           C  \nATOM    701  C   VAL A  93      16.520  -9.550   3.941  1.00  0.00           C  \nATOM    702  O   VAL A  93      17.481 -10.242   3.539  1.00  0.00           O  \nATOM    703  CB  VAL A  93      16.277  -7.204   2.975  1.00  0.00           C  \nATOM    704  CG1 VAL A  93      14.762  -7.298   2.791  1.00  0.00           C  \nATOM    705  CG2 VAL A  93      16.649  -5.745   3.141  1.00  0.00           C  \nATOM    706  N   GLU B   3      32.075 -34.286 -11.853  1.00  0.00           N  \nATOM    707  CA  GLU B   3      31.206 -33.198 -11.326  1.00  0.00           C  \nATOM    708  C   GLU B   3      31.909 -31.865 -11.563  1.00  0.00           C  \nATOM    709  O   GLU B   3      32.999 -31.632 -11.049  1.00  0.00           O  \nATOM    710  CB  GLU B   3      30.912 -33.429  -9.824  1.00  0.00           C  \nATOM    711  CG  GLU B   3      32.078 -34.013  -8.980  1.00  0.00           C  \nATOM    712  CD  GLU B   3      32.839 -32.976  -8.139  1.00  0.00           C  \nATOM    713  OE1 GLU B   3      32.302 -32.543  -7.098  1.00  0.00           O  \nATOM    714  OE2 GLU B   3      33.988 -32.618  -8.498  1.00  0.00           O  \nATOM    715  N   THR B   4      31.324 -31.015 -12.390  1.00  0.00           N  \nATOM    716  CA  THR B   4      31.948 -29.737 -12.658  1.00  0.00           C  \nATOM    717  C   THR B   4      31.419 -28.661 -11.707  1.00  0.00           C  \nATOM    718  O   THR B   4      30.376 -28.848 -11.062  1.00  0.00           O  \nATOM    719  CB  THR B   4      31.733 -29.316 -14.107  1.00  0.00           C  \nATOM    720  OG1 THR B   4      30.372 -28.917 -14.291  1.00  0.00           O  \nATOM    721  CG2 THR B   4      32.040 -30.485 -15.032  1.00  0.00           C  \nATOM    722  N   PHE B   5      32.143 -27.542 -11.625  1.00  0.00           N  \nATOM    723  CA  PHE B   5      31.769 -26.453 -10.742  1.00  0.00           C  \nATOM    724  C   PHE B   5      30.344 -26.019 -10.974  1.00  0.00           C  \nATOM    725  O   PHE B   5      29.549 -25.992 -10.043  1.00  0.00           O  \nATOM    726  CB  PHE B   5      32.674 -25.245 -10.916  1.00  0.00           C  \nATOM    727  CG  PHE B   5      32.265 -24.076 -10.062  1.00  0.00           C  \nATOM    728  CD1 PHE B   5      32.438 -24.116  -8.685  1.00  0.00           C  \nATOM    729  CD2 PHE B   5      31.667 -22.955 -10.628  1.00  0.00           C  \nATOM    730  CE1 PHE B   5      32.021 -23.055  -7.889  1.00  0.00           C  \nATOM    731  CE2 PHE B   5      31.246 -21.888  -9.839  1.00  0.00           C  \nATOM    732  CZ  PHE B   5      31.421 -21.935  -8.468  1.00  0.00           C  \nATOM    733  N   SER B   6      30.030 -25.693 -12.225  1.00  0.00           N  \nATOM    734  CA  SER B   6      28.703 -25.237 -12.606  1.00  0.00           C  \nATOM    735  C   SER B   6      27.575 -26.173 -12.205  1.00  0.00           C  \nATOM    736  O   SER B   6      26.509 -25.712 -11.822  1.00  0.00           O  \nATOM    737  CB  SER B   6      28.652 -24.947 -14.093  1.00  0.00           C  \nATOM    738  OG  SER B   6      28.286 -23.593 -14.268  1.00  0.00           O  \nATOM    739  N   ASP B   7      27.809 -27.478 -12.284  1.00  0.00           N  \nATOM    740  CA  ASP B   7      26.814 -28.452 -11.882  1.00  0.00           C  \nATOM    741  C   ASP B   7      26.639 -28.352 -10.378  1.00  0.00           C  \nATOM    742  O   ASP B   7      25.519 -28.300  -9.873  1.00  0.00           O  \nATOM    743  CB  ASP B   7      27.281 -29.875 -12.205  1.00  0.00           C  \nATOM    744  CG  ASP B   7      27.479 -30.112 -13.692  1.00  0.00           C  \nATOM    745  OD1 ASP B   7      26.877 -29.358 -14.503  1.00  0.00           O  \nATOM    746  OD2 ASP B   7      28.238 -31.057 -14.042  1.00  0.00           O  \nATOM    747  N   LEU B   8      27.761 -28.324  -9.665  1.00  0.00           N  \nATOM    748  CA  LEU B   8      27.753 -28.274  -8.217  1.00  0.00           C  \nATOM    749  C   LEU B   8      27.124 -27.006  -7.657  1.00  0.00           C  \nATOM    750  O   LEU B   8      26.320 -27.064  -6.716  1.00  0.00           O  \nATOM    751  CB  LEU B   8      29.180 -28.412  -7.685  1.00  0.00           C  \nATOM    752  CG  LEU B   8      29.872 -29.738  -7.354  1.00  0.00           C  \nATOM    753  CD1 LEU B   8      29.042 -30.916  -7.782  1.00  0.00           C  \nATOM    754  CD2 LEU B   8      31.236 -29.774  -8.020  1.00  0.00           C  \nATOM    755  N   TRP B   9      27.477 -25.871  -8.251  1.00  0.00           N  \nATOM    756  CA  TRP B   9      27.021 -24.553  -7.803  1.00  0.00           C  \nATOM    757  C   TRP B   9      25.532 -24.284  -8.011  1.00  0.00           C  \nATOM    758  O   TRP B   9      24.919 -23.498  -7.297  1.00  0.00           O  \nATOM    759  CB  TRP B   9      27.892 -23.448  -8.451  1.00  0.00           C  \nATOM    760  CG  TRP B   9      27.585 -22.055  -8.009  1.00  0.00           C  \nATOM    761  CD1 TRP B   9      26.730 -21.178  -8.613  1.00  0.00           C  \nATOM    762  CD2 TRP B   9      28.090 -21.382  -6.842  1.00  0.00           C  \nATOM    763  NE1 TRP B   9      26.659 -20.002  -7.892  1.00  0.00           N  \nATOM    764  CE2 TRP B   9      27.478 -20.101  -6.799  1.00  0.00           C  \nATOM    765  CE3 TRP B   9      28.990 -21.731  -5.830  1.00  0.00           C  \nATOM    766  CZ2 TRP B   9      27.738 -19.177  -5.784  1.00  0.00           C  \nATOM    767  CZ3 TRP B   9      29.251 -20.809  -4.825  1.00  0.00           C  \nATOM    768  CH2 TRP B   9      28.623 -19.548  -4.812  1.00  0.00           C  \nATOM    769  N   LYS B  10      24.939 -24.930  -8.991  1.00  0.00           N  \nATOM    770  CA  LYS B  10      23.530 -24.716  -9.231  1.00  0.00           C  \nATOM    771  C   LYS B  10      22.646 -25.442  -8.219  1.00  0.00           C  \nATOM    772  O   LYS B  10      21.451 -25.171  -8.134  1.00  0.00           O  \nATOM    773  CB  LYS B  10      23.180 -25.083 -10.671  1.00  0.00           C  \nATOM    774  CG  LYS B  10      23.805 -24.114 -11.676  1.00  0.00           C  \nATOM    775  CD  LYS B  10      23.803 -24.649 -13.100  1.00  0.00           C  \nATOM    776  CE  LYS B  10      24.657 -23.764 -13.999  1.00  0.00           C  \nATOM    777  NZ  LYS B  10      24.754 -24.351 -15.355  1.00  0.00           N  \nATOM    778  N   LEU B  11      23.240 -26.308  -7.408  1.00  0.00           N  \nATOM    779  CA  LEU B  11      22.485 -27.035  -6.394  1.00  0.00           C  \nATOM    780  C   LEU B  11      22.403 -26.295  -5.067  1.00  0.00           C  \nATOM    781  O   LEU B  11      22.155 -26.900  -4.030  1.00  0.00           O  \nATOM    782  CB  LEU B  11      23.113 -28.401  -6.153  1.00  0.00           C  \nATOM    783  CG  LEU B  11      23.201 -29.321  -7.366  1.00  0.00           C  \nATOM    784  CD1 LEU B  11      23.891 -30.600  -6.922  1.00  0.00           C  \nATOM    785  CD2 LEU B  11      21.808 -29.605  -7.945  1.00  0.00           C  \nATOM    786  N   LEU B  12      22.657 -24.998  -5.083  1.00  0.00           N  \nATOM    787  CA  LEU B  12      22.616 -24.202  -3.862  1.00  0.00           C  \nATOM    788  C   LEU B  12      21.235 -23.583  -3.733  1.00  0.00           C  \nATOM    789  O   LEU B  12      20.630 -23.223  -4.753  1.00  0.00           O  \nATOM    790  CB  LEU B  12      23.652 -23.069  -3.918  1.00  0.00           C  \nATOM    791  CG  LEU B  12      25.131 -23.345  -4.163  1.00  0.00           C  \nATOM    792  CD1 LEU B  12      25.825 -22.010  -4.268  1.00  0.00           C  \nATOM    793  CD2 LEU B  12      25.723 -24.177  -3.038  1.00  0.00           C  \nATOM    794  N   PRO B  13      20.753 -23.387  -2.477  1.00  0.00           N  \nATOM    795  CA  PRO B  13      19.442 -22.801  -2.172  1.00  0.00           C  \nATOM    796  C   PRO B  13      19.329 -21.458  -2.877  1.00  0.00           C  \nATOM    797  O   PRO B  13      20.105 -20.538  -2.608  1.00  0.00           O  \nATOM    798  CB  PRO B  13      19.491 -22.646  -0.660  1.00  0.00           C  \nATOM    799  CG  PRO B  13      20.369 -23.774  -0.245  1.00  0.00           C  \nATOM    800  CD  PRO B  13      21.480 -23.661  -1.226  1.00  0.00           C  \nATOM    801  N   GLU B  14      18.368 -21.373  -3.794  1.00  0.00           N  \nATOM    802  CA  GLU B  14      18.139 -20.187  -4.619  1.00  0.00           C  \nATOM    803  C   GLU B  14      17.306 -19.049  -4.048  1.00  0.00           C  \nATOM    804  O   GLU B  14      17.039 -18.062  -4.733  1.00  0.00           O  \nATOM    805  CB  GLU B  14      17.603 -20.610  -5.988  1.00  0.00           C  \nATOM    806  CG  GLU B  14      16.553 -21.693  -5.923  1.00  0.00           C  \nATOM    807  CD  GLU B  14      16.395 -22.434  -7.228  1.00  0.00           C  \nATOM    808  OE1 GLU B  14      17.341 -22.426  -8.054  1.00  0.00           O  \nATOM    809  OE2 GLU B  14      15.315 -23.043  -7.418  1.00  0.00           O  \nATOM    810  N   ASN B  15      16.925 -19.172  -2.791  1.00  0.00           N  \nATOM    811  CA  ASN B  15      16.147 -18.147  -2.112  1.00  0.00           C  \nATOM    812  C   ASN B  15      16.548 -18.261  -0.669  1.00  0.00           C  \nATOM    813  O   ASN B  15      17.159 -19.284  -0.370  1.00  0.00           O  \nATOM    814  CB  ASN B  15      14.634 -18.393  -2.256  1.00  0.00           C  \nATOM    815  CG  ASN B  15      14.044 -17.784  -3.540  1.00  0.00           C  \nATOM    816  OD1 ASN B  15      14.536 -16.773  -4.071  1.00  0.00           O  \nATOM    817  ND2 ASN B  15      12.963 -18.387  -4.023  1.00  0.00           N  \nATOM    818  OXT ASN B  15      16.296 -17.351   0.139  1.00  0.00           O  \n";
+  var PRESETS = [{"label": "Whole chain", "expr": "sel('B')", "desc": "A bare chain id selects every atom of that chain - here the p53 peptide (chain B).", "style": "stick", "idxs": [705, 706, 707, 708, 709, 710, 711, 712, 713, 714, 715, 716, 717, 718, 719, 720, 721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767, 768, 769, 770, 771, 772, 773, 774, 775, 776, 777, 778, 779, 780, 781, 782, 783, 784, 785, 786, 787, 788, 789, 790, 791, 792, 793, 794, 795, 796, 797, 798, 799, 800, 801, 802, 803, 804, 805, 806, 807, 808, 809, 810, 811, 812, 813, 814, 815, 816, 817]}, {"label": "One residue", "expr": "sel('B/TRP')", "desc": "chain / residue-name: a single tryptophan, small enough to see every atom.", "style": "stick", "idxs": [754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767]}, {"label": "Residue-type list", "expr": "sel('B/[PHE,TRP,LEU]')", "desc": "[ ... ] is a within-field list - any of these residue names (the p53 anchor residues).", "style": "stick", "idxs": [721, 722, 723, 724, 725, 726, 727, 728, 729, 730, 731, 746, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767, 777, 778, 779, 780, 781, 782, 783, 784, 785, 786, 787, 788, 789, 790, 791, 792]}, {"label": "Residue range", "expr": "sel('A/*/[25-35]')", "desc": "[lo-hi] is an inclusive residue-id range. Ranges must be bracketed.", "style": "stick", "idxs": [129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213]}, {"label": "Atom-name list", "expr": "sel('A/*/*/[N,CA,C,O]')", "desc": "[ ... ] on the atom field selects just these atoms - the protein backbone.", "style": "stick", "idxs": [0, 1, 2, 3, 9, 10, 11, 12, 16, 17, 18, 19, 24, 25, 26, 27, 31, 32, 33, 34, 42, 43, 44, 45, 49, 50, 51, 52, 58, 59, 60, 61, 65, 66, 67, 68, 73, 74, 75, 76, 81, 82, 83, 84, 89, 90, 91, 92, 98, 99, 100, 101, 106, 107, 108, 109, 114, 115, 116, 117, 123, 124, 125, 126, 129, 130, 131, 132, 136, 137, 138, 139, 140, 141, 142, 143, 145, 146, 147, 148, 154, 155, 156, 157, 163, 164, 165, 166, 171, 172, 173, 174, 178, 179, 180, 181, 190, 191, 192, 193, 197, 198, 199, 200, 205, 206, 207, 208, 214, 215, 216, 217, 223, 224, 225, 226, 230, 231, 232, 233, 238, 239, 240, 241, 249, 250, 251, 252, 261, 262, 263, 264, 269, 270, 271, 272, 273, 274, 275, 276, 282, 283, 284, 285, 294, 295, 296, 297, 302, 303, 304, 305, 310, 311, 312, 313, 317, 318, 319, 320, 326, 327, 328, 329, 337, 338, 339, 340, 345, 346, 347, 348, 357, 358, 359, 360, 365, 366, 367, 368, 374, 375, 376, 377, 383, 384, 385, 386, 392, 393, 394, 395, 401, 402, 403, 404, 411, 412, 413, 414, 419, 420, 421, 422, 426, 427, 428, 429, 438, 439, 440, 441, 444, 445, 446, 447, 450, 451, 452, 453, 458, 459, 460, 461, 466, 467, 468, 469, 474, 475, 476, 477, 482, 483, 484, 485, 486, 487, 488, 489, 494, 495, 496, 497, 502, 503, 504, 505, 513, 514, 515, 516, 517, 518, 519, 520, 524, 525, 526, 527, 531, 532, 533, 534, 537, 538, 539, 540, 548, 549, 550, 551, 554, 555, 556, 557, 561, 562, 563, 564, 570, 571, 572, 573, 579, 580, 581, 582, 589, 590, 591, 592, 600, 601, 602, 603, 609, 610, 611, 612, 617, 618, 619, 620, 629, 630, 631, 632, 636, 637, 638, 639, 644, 645, 646, 647, 652, 653, 654, 655, 664, 665, 666, 667, 675, 676, 677, 678, 683, 684, 685, 686, 691, 692, 693, 694, 698, 699, 700, 701]}, {"label": "List and predicate", "expr": "sel('[A,B]/*/*/CA') & (z > -4.15)", "desc": "sel(...) composes inside a query: Ca of both chains, intersected with a coordinate cutoff.", "style": "sphere", "idxs": [10, 17, 25, 32, 43, 50, 59, 66, 74, 82, 198, 412, 427, 439, 445, 451, 459, 467, 475, 483, 487, 495, 503, 514, 518, 525, 532, 538, 549, 555, 562, 571, 580, 590, 601, 610, 618, 630, 637, 645, 653, 665, 676, 684, 692, 699, 786, 794, 810]}];
+  var viewer = $3Dmol.createViewer(document.getElementById("sel-viewer"), {backgroundColor: "white"});
+  var model = viewer.addModel(PDB, "pdb");
+  var atoms = model.selectedAtoms({});
+
+  var controls = document.getElementById("sel-controls");
+  var buttons = PRESETS.map(function(ex, i) {
+    var b = document.createElement("button");
+    b.textContent = ex.label;
+    b.onclick = function() { apply(i); };
+    controls.appendChild(b);
+    return b;
+  });
+
+  function apply(i) {
+    var ex = PRESETS[i];
+    var serials = ex.idxs.map(function(k) { return atoms[k].serial; });
+    var sel = {serial: serials};
+    viewer.removeAllLabels();
+    viewer.setStyle({}, {cartoon: {color: "lightgrey", opacity: 0.55}});
+    if (ex.style === "sphere") {
+      viewer.addStyle(sel, {sphere: {scale: 0.30, color: "orange"}});
+    } else {
+      viewer.addStyle(sel, {stick: {radius: 0.18, colorscheme: "orangeCarbon"},
+                             sphere: {scale: 0.18, colorscheme: "orangeCarbon"}});
+      viewer.addStyle(sel, {cartoon: {color: "orange"}});
+    }
+    viewer.setClickable(sel, true, function(atom) {
+      viewer.addLabel(atom.chain + " . " + atom.resn + atom.resi + " . " + atom.atom,
+        {position: atom, backgroundColor: "0x1b1b1b", backgroundOpacity: 0.85,
+          fontColor: "white", fontSize: 11});
+      viewer.render();
+    });
+    document.getElementById("sel-expr").textContent = ex.expr;
+    document.getElementById("sel-text").textContent = ex.desc;
+    buttons.forEach(function(b, j) { b.className = j === i ? "active" : ""; });
+    viewer.zoomTo(sel, 400);
+    viewer.render();
+  }
+  apply(0);
+})();
+</script>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The viewers load <a class="reference external" href="https://github.com/3dmol/3Dmol.js">3Dmol.js</a> from a CDN, so an internet connection is
+needed to see them; without JavaScript the page still renders the surrounding text.</p>
+</div>
+</section>
+<section id="combining-path-selection-with-the-query-language">
+<span id="sel-in-query"></span><h2><a class="toc-backref" href="#id3" role="doc-backlink">Combining path selection with the query language</a><a class="headerlink" href="#combining-path-selection-with-the-query-language" title="Link to this heading">#</a></h2>
+<p>Inside a query expression, <code class="docutils literal notranslate"><span class="pre">sel('&lt;path&gt;')</span></code> evaluates a path selection to a boolean mask, so it
+composes with every query operator (<code class="docutils literal notranslate"><span class="pre">&amp;</span></code>, <code class="docutils literal notranslate"><span class="pre">|</span></code>, <code class="docutils literal notranslate"><span class="pre">~</span></code>, comparisons, <code class="docutils literal notranslate"><span class="pre">in</span></code>, <code class="docutils literal notranslate"><span class="pre">has_bonds()</span></code> …):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Cα atoms of chain A that are also above a plane</span>
+<span class="n">atom_array</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"sel('A/*/*/CA') &amp; (z &gt; 0)"</span><span class="p">)</span>
+
+<span class="c1"># the p53 anchor residues, excluding anything with NaN coordinates</span>
+<span class="n">atom_array</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="s2">"sel('B/[PHE,TRP,LEU]') &amp; ~has_nan_coord()"</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">sel</span></code>’s argument must be a <strong>quoted string literal</strong>: the query is ordinary Python-expression
+syntax parsed by <code class="docutils literal notranslate"><span class="pre">ast</span></code>, so an unquoted <code class="docutils literal notranslate"><span class="pre">A/*/*/CA</span></code> would parse as arithmetic over undefined
+names. Only one nesting level ever arises — the outer query string and the inner <code class="docutils literal notranslate"><span class="pre">sel</span></code> argument
+— so <code class="docutils literal notranslate"><span class="pre">&quot;...&quot;</span></code> outside and <code class="docutils literal notranslate"><span class="pre">'...'</span></code> inside is enough (standard Python quote alternation; <code class="docutils literal notranslate"><span class="pre">ast</span></code>
+handles it). For a pure path selection with no predicate, skip the query layer and call
+<a class="reference internal" href="query.html#atomworks.io.utils.query.AtomSelectionStack.from_query" title="atomworks.io.utils.query.AtomSelectionStack.from_query"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_query()</span></code></a> directly — no nested quotes.</p>
+</div>
+<p>The query side is not limited to the five path fields — it exposes <strong>every annotation on the
+array</strong> as a variable. <code class="docutils literal notranslate"><span class="pre">ensure_annotations</span></code> (from <code class="docutils literal notranslate"><span class="pre">atomworks.io.utils.annotator</span></code>) computes a
+large registry of derived annotations on demand, so rich selections become one-liners that still
+compose with <code class="docutils literal notranslate"><span class="pre">sel('...')</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.annotator</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_annotations</span>
+
+<span class="c1"># protein backbone atoms</span>
+<span class="n">ensure_annotations</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="s2">"is_protein_backbone"</span><span class="p">)</span>
+<span class="n">atom_array</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"is_protein_backbone"</span><span class="p">)</span>
+
+<span class="c1"># non-canonical amino acids: protein atoms that are not a standard (or unknown) residue</span>
+<span class="n">ensure_annotations</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="s2">"is_protein"</span><span class="p">,</span> <span class="s2">"is_standard_or_unknown_aa"</span><span class="p">)</span>
+<span class="n">atom_array</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">"is_protein &amp; ~is_standard_or_unknown_aa"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Any boolean or scalar annotation works — e.g. <code class="docutils literal notranslate"><span class="pre">is_ligand</span></code>, <code class="docutils literal notranslate"><span class="pre">is_metal</span></code>, <code class="docutils literal notranslate"><span class="pre">is_nucleic_acid</span></code>,
+<code class="docutils literal notranslate"><span class="pre">is_protein_sidechain</span></code>, <code class="docutils literal notranslate"><span class="pre">atomic_number</span></code>, <code class="docutils literal notranslate"><span class="pre">chem_comp_type</span></code>, or a custom annotation you set
+yourself.</p>
+<p>Unlike a standalone selection, <code class="docutils literal notranslate"><span class="pre">sel('...')</span></code> is <strong>non-raising</strong>: if it matches nothing it
+contributes an all-<code class="docutils literal notranslate"><span class="pre">False</span></code> mask instead of raising, so it degrades gracefully inside a larger
+boolean expression.</p>
+</section>
+<section id="programmatic-api">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Programmatic API</a><a class="headerlink" href="#programmatic-api" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.query</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomSelection</span><span class="p">,</span> <span class="n">AtomSelectionStack</span>
+
+<span class="c1"># Single, one-valued selection</span>
+<span class="n">AtomSelection</span><span class="o">.</span><span class="n">from_selection_str</span><span class="p">(</span><span class="s2">"A/ALA/1/CA"</span><span class="p">)</span><span class="o">.</span><span class="n">get_mask</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+
+<span class="c1"># Multi-valued selection (lists, ranges, unions) -&gt; a union of selections</span>
+<span class="n">AtomSelectionStack</span><span class="o">.</span><span class="n">from_query</span><span class="p">(</span><span class="s2">"[A,B]/*/[25-35]/CA"</span><span class="p">)</span><span class="o">.</span><span class="n">get_mask</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="query.html"><span class="doc">Query &amp; Selection</span></a> for the full API reference.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="non_rcsb.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Non-RCSB Utilities</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="query.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Query &amp; Selection</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-path-grammar">The path grammar</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interactive-gallery">Interactive gallery</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#combining-path-selection-with-the-query-language">Combining path selection with the query language</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#programmatic-api">Programmatic API</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/io/utils/selection_syntax.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.22.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>atomworks.ml.transforms.openbabel_utils &#8212; atomworks 3.0.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinxcontrib_typer.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+
+    <script src="../../../../_static/documentation_options.js?v=acc74ff5"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/transforms/openbabel_utils';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.22.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="3.0.0" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.0 documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../cookbook.html">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../migration/index.html">
+    Migrating to AtomWorks 3.0
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../cookbook.html">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../migration/index.html">
+    Migrating to AtomWorks 3.0
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">atomworks.ml.transforms.openbabel_utils</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for atomworks.ml.transforms.openbabel_utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""</span>
+<span class="sd">This module provides utility functions for working with OpenBabel and Biotite structures.</span>
+
+<span class="sd">The functions in this module facilitate the conversion between OpenBabel and Biotite</span>
+<span class="sd">representations of molecular structures, including atoms, bonds, and annotations. This</span>
+<span class="sd">allows using OpenBabel for identifying e.g. stereochemistry, automorphisms, etc.</span>
+
+<span class="sd">References:</span>
+<span class="sd">    `OpenBabel documentation &lt;https://open-babel.readthedocs.io/&gt;`_</span>
+<span class="sd">    `Biotite documentation &lt;https://www.biotite-python.org/&gt;`_</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">struc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">ATOMIC_NUMBER_TO_ELEMENT</span><span class="p">,</span> <span class="n">ELEMENT_NAME_TO_ATOMIC_NUMBER</span><span class="p">,</span> <span class="n">UNKNOWN_LIGAND</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms._checks</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">check_atom_array_annotation</span><span class="p">,</span>
+    <span class="n">check_contains_keys</span><span class="p">,</span>
+    <span class="n">check_does_not_contain_keys</span><span class="p">,</span>
+    <span class="n">check_is_instance</span><span class="p">,</span>
+    <span class="n">check_nonzero_length</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">openbabel</span><span class="w"> </span><span class="kn">import</span> <span class="n">openbabel</span><span class="p">,</span> <span class="n">pybel</span>
+
+    <span class="n">_HAS_OPENBABEL</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">openbabel</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">pybel</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_HAS_OPENBABEL</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_require_openbabel</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Raise ImportError with install instructions if openbabel is missing."""</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_HAS_OPENBABEL</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">"OpenBabel is required for this function but is not installed. "</span>
+            <span class="s2">"Install it with: pip install atomworks[openbabel]"</span>
+        <span class="p">)</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">_BIOTITE_BOND_TYPE_TO_OPENBABEL</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># biotite bond type: (order, is_aromatic)</span>
+    <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">ANY</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">TRIPLE</span><span class="p">:</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">QUADRUPLE</span><span class="p">:</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">AROMATIC_SINGLE</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+    <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">AROMATIC_DOUBLE</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+    <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">AROMATIC_TRIPLE</span><span class="p">:</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
+    <span class="c1"># OpenBabel has no dative/coordination bond type; treat as a single bond (cf. RDKit's DATIVE).</span>
+    <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">COORDINATION</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+<span class="p">}</span>
+<span class="sd">"""</span>
+<span class="sd">Mapping from biotite bond type to openbabel bond order and aromaticity.</span>
+<span class="sd">Unspecified bonds are interpreted as single bonds.</span>
+
+<span class="sd">The mapping takes the form `biotite_bond_type -&gt; (order, is_aromatic)`.</span>
+<span class="sd">"""</span>
+
+<span class="n">_OPENBABEL_BOND_TYPE_TO_BIOTITE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># (order, is_aromatic): biotite bond type</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">SINGLE</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">TRIPLE</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">QUADRUPLE</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">AROMATIC_SINGLE</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">AROMATIC_DOUBLE</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">AROMATIC_TRIPLE</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="sd">"""</span>
+<span class="sd">Mapping from openbabel bond order and aromaticity to biotite bond type.</span>
+
+<span class="sd">The mapping takes the form `(order, is_aromatic) -&gt; biotite_bond_type`.</span>
+<span class="sd">"""</span>
+
+<span class="n">_BIOTITE_DEFAULT_ANNOTATIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"chain_id"</span><span class="p">,</span> <span class="s2">"res_id"</span><span class="p">,</span> <span class="s2">"res_name"</span><span class="p">,</span> <span class="s2">"atom_name"</span><span class="p">]</span>
+
+
+<span class="n">_OBABEL_IMPLICIT_HYDROGEN_REF</span> <span class="o">=</span> <span class="mi">4294967294</span>
+<span class="sd">"""</span>
+<span class="sd">Openbabel's special atom ID that is used for implicit hydrogens</span>
+<span class="sd">or lone pairs.</span>
+
+<span class="sd">Reference:</span>
+<span class="sd">    `OpenBabel Stereochemistry Documentation &lt;https://open-babel.readthedocs.io/en/latest/Stereochemistry/stereo.html#accessing-stereochemistry-information&gt;`_</span>
+<span class="sd">"""</span>
+
+
+<div class="viewcode-block" id="atom_array_to_openbabel">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.openbabel_utils.atom_array_to_openbabel">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">atom_array_to_openbabel</span><span class="p">(</span>
+    <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span>
+    <span class="n">set_coords</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">infer_aromaticity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">infer_hydrogens</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">annotations_to_keep</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">_BIOTITE_DEFAULT_ANNOTATIONS</span><span class="p">,</span>
+    <span class="n">ph_for_inferred_hydrogens</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">7.4</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">openbabel</span><span class="o">.</span><span class="n">OBMol</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Convert a Biotite AtomArray to an OpenBabel OBMol with the option of keeping custom AtomArray annotations.</span>
+
+<span class="sd">    For easier interfacing with the OBMol object, you can wrap it into a pybel.Molecule object.</span>
+
+<span class="sd">    - https://open-babel.readthedocs.io/en/latest/UseTheLibrary/Python_PybelAPI.html</span>
+<span class="sd">    - https://github.com/openbabel/documentation/blob/master/pybel.py</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        atom_array: The Biotite AtomArray to convert.</span>
+<span class="sd">        set_coords: If True, set the atomic coordinates from the AtomArray in the OBMol. Defaults to True.</span>
+<span class="sd">        infer_aromaticity: If True, infer aromaticity in the OBMol or take the aromaticity annotations from the AtomArray. Defaults to False.</span>
+<span class="sd">        infer_hydrogens: If True, infer hydrogens in the OBMol or take the hydrogens annotations from the AtomArray. Defaults to False.</span>
+<span class="sd">        annotations_to_keep: List of annotation categories to keep from the AtomArray. Defaults to _BIOTITE_DEFAULT_ANNOTATIONS.</span>
+<span class="sd">        ph_for_inferred_hydrogens: The pH value to use for inferred hydrogens. Defaults to pH 7.4 which is the openbabel default.</span>
+<span class="sd">            The pH value is exposed here explicitly, but we recommend using the default value and only changing it if you have a good reason, as this will</span>
+<span class="sd">            likely make it out of sync with other parts of the codebase which use the default pH value.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The converted OpenBabel OBMol. The custom annotations are stored in the _annotations attribute.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            from biotite.structure import AtomArray, BondType</span>
+<span class="sd">            import numpy as np</span>
+<span class="sd">            from atomworks.ml.transforms.openbabel_utils import atom_array_to_openbabel</span>
+
+<span class="sd">            # Create AtomArray</span>
+<span class="sd">            atom_array = AtomArray(5)</span>
+<span class="sd">            atom_array.element = np.array(["C", "C", "O", "N", "H"])</span>
+<span class="sd">            atom_array.coord = np.array(</span>
+<span class="sd">                [</span>
+<span class="sd">                    [0.0, 0.0, 0.0],</span>
+<span class="sd">                    [1.5, 0.0, 0.0],</span>
+<span class="sd">                    [1.5, 1.5, 0.0],</span>
+<span class="sd">                    [0.0, 1.5, 0.0],</span>
+<span class="sd">                    [0.0, 0.0, 1.5],</span>
+<span class="sd">                ]</span>
+<span class="sd">            )</span>
+<span class="sd">            # Add bonds</span>
+<span class="sd">            atom_array.bonds = struc.BondList(len(atom_array))</span>
+<span class="sd">            atom_array.bonds.add_bond(0, 1, BondType.SINGLE)</span>
+<span class="sd">            atom_array.bonds.add_bond(1, 2, BondType.DOUBLE)</span>
+<span class="sd">            atom_array.bonds.add_bond(1, 3, BondType.SINGLE)</span>
+<span class="sd">            atom_array.bonds.add_bond(0, 4, BondType.SINGLE)</span>
+<span class="sd">            # Convert to OpenBabel molecule</span>
+<span class="sd">            obmol = atom_array_to_openbabel(atom_array)</span>
+<span class="sd">            # Print number of atoms</span>
+<span class="sd">            print(f"Number of atoms: {obmol.NumAtoms()}")</span>
+<span class="sd">            # Number of atoms: 5</span>
+<span class="sd">            # Print atom information</span>
+<span class="sd">            print("\\nAtom information:")</span>
+<span class="sd">            for atom in openbabel.OBMolAtomIter(obmol):</span>
+<span class="sd">                print(</span>
+<span class="sd">                    f"Atomic number: {atom.GetAtomicNum()}, Coordinates: ({atom.GetX():.1f}, {atom.GetY():.1f}, {atom.GetZ():.1f})"</span>
+<span class="sd">                )</span>
+
+<span class="sd">            # Atom information:</span>
+<span class="sd">            # Atomic number: 6, Coordinates: (0.0, 0.0, 0.0)</span>
+<span class="sd">            # Atomic number: 6, Coordinates: (1.5, 0.0, 0.0)</span>
+<span class="sd">            # Atomic number: 8, Coordinates: (1.5, 1.5, 0.0)</span>
+<span class="sd">            # Atomic number: 7, Coordinates: (0.0, 1.5, 0.0)</span>
+<span class="sd">            # Atomic number: 1, Coordinates: (0.0, 0.0, 1.5)</span>
+<span class="sd">    """</span>
+    <span class="n">_require_openbabel</span><span class="p">()</span>
+    <span class="c1"># Initialize empty OpenBabel molecule</span>
+    <span class="n">obmol</span> <span class="o">=</span> <span class="n">openbabel</span><span class="o">.</span><span class="n">OBMol</span><span class="p">()</span>
+
+    <span class="c1"># Set atoms</span>
+    <span class="c1"># ... keep track of openbabel internally assigned atom_ids to differentiate</span>
+    <span class="c1">#     atoms that were originally in the atom array from atoms that might be</span>
+    <span class="c1">#     added implicitly later, for example implicit hydrogens</span>
+    <span class="n">obmol_atom_ids</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">_has_explicit_hydrogen</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="p">:</span>
+        <span class="n">obatom</span> <span class="o">=</span> <span class="n">obmol</span><span class="o">.</span><span class="n">NewAtom</span><span class="p">()</span>
+        <span class="n">obatom</span><span class="o">.</span><span class="n">SetAtomicNum</span><span class="p">(</span><span class="n">ELEMENT_NAME_TO_ATOMIC_NUMBER</span><span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">element</span><span class="o">.</span><span class="n">upper</span><span class="p">()])</span>
+        <span class="k">if</span> <span class="n">obatom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">_has_explicit_hydrogen</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">set_coords</span><span class="p">:</span>
+            <span class="c1"># ... set coordinates</span>
+            <span class="n">obatom</span><span class="o">.</span><span class="n">SetVector</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+
+        <span class="n">obmol_atom_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obatom</span><span class="o">.</span><span class="n">GetId</span><span class="p">())</span>
+
+    <span class="c1"># Attach custom atom-level annotations from the atom array</span>
+    <span class="n">obmol</span><span class="o">.</span><span class="n">_annotations</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"openbabel_atom_id"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obmol_atom_ids</span><span class="p">)}</span>
+    <span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">annotations_to_keep</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">():</span>
+            <span class="n">obmol</span><span class="o">.</span><span class="n">_annotations</span><span class="p">[</span><span class="n">annotation</span><span class="p">]</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">_annot</span><span class="p">[</span><span class="n">annotation</span><span class="p">]</span>
+
+    <span class="c1"># Set bonds</span>
+    <span class="k">for</span> <span class="n">start_atom_idx</span><span class="p">,</span> <span class="n">end_atom_idx</span><span class="p">,</span> <span class="n">bond_type</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">as_array</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">bond_type</span> <span class="o">==</span> <span class="n">struc</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">BondType</span><span class="o">.</span><span class="n">ANY</span><span class="p">:</span>
+            <span class="c1"># ... warn if underspecified bonds are encountered</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Encountered BondType.ANY. Interpreting as single bond."</span><span class="p">)</span>
+
+        <span class="n">obatom_begin</span> <span class="o">=</span> <span class="n">obmol</span><span class="o">.</span><span class="n">GetAtom</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">start_atom_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># openbabel uses 1-based indexing</span>
+        <span class="n">obatom_end</span> <span class="o">=</span> <span class="n">obmol</span><span class="o">.</span><span class="n">GetAtom</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">end_atom_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">order</span><span class="p">,</span> <span class="n">is_aromatic</span> <span class="o">=</span> <span class="n">_BIOTITE_BOND_TYPE_TO_OPENBABEL</span><span class="p">[</span><span class="n">bond_type</span><span class="p">]</span>
+
+        <span class="n">obbond</span> <span class="o">=</span> <span class="n">openbabel</span><span class="o">.</span><span class="n">OBBond</span><span class="p">()</span>
+        <span class="n">obbond</span><span class="o">.</span><span class="n">SetBegin</span><span class="p">(</span><span class="n">obatom_begin</span><span class="p">)</span>
+        <span class="n">obbond</span><span class="o">.</span><span class="n">SetEnd</span><span class="p">(</span><span class="n">obatom_end</span><span class="p">)</span>
+        <span class="n">obbond</span><span class="o">.</span><span class="n">SetBondOrder</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_aromatic</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">infer_aromaticity</span><span class="p">:</span>
+            <span class="n">obbond</span><span class="o">.</span><span class="n">SetAromatic</span><span class="p">()</span>
+            <span class="n">obatom_begin</span><span class="o">.</span><span class="n">SetAromatic</span><span class="p">()</span>
+            <span class="n">obatom_end</span><span class="o">.</span><span class="n">SetAromatic</span><span class="p">()</span>
+        <span class="n">obmol</span><span class="o">.</span><span class="n">AddBond</span><span class="p">(</span><span class="n">obbond</span><span class="p">)</span>
+
+    <span class="c1"># ... set aromatic perception</span>
+    <span class="c1">#  (if `SetAromaticPerceived()` is True, the aromatic annotations that are given are used)</span>
+    <span class="c1">#  (if `SetAromaticPerceived()` is False, the aromatic annotation will try to infer when IsAromatic() is called</span>
+    <span class="n">obmol</span><span class="o">.</span><span class="n">SetAromaticPerceived</span><span class="p">(</span><span class="ow">not</span> <span class="n">infer_aromaticity</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">infer_hydrogens</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">_has_explicit_hydrogen</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">"Found explicit hydrogens. Correcting for PH will remove these in favor of implicit hydrogens!"</span>
+            <span class="p">)</span>
+        <span class="c1"># this will remove explicit hydrogens and add implicit hydrogens inferred based on the valence model</span>
+        <span class="c1">#  of openbabel</span>
+        <span class="n">obmol</span><span class="o">.</span><span class="n">CorrectForPH</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ph_for_inferred_hydrogens</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">obmol</span></div>
+
+
+
+<div class="viewcode-block" id="atom_array_from_openbabel">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.openbabel_utils.atom_array_from_openbabel">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">atom_array_from_openbabel</span><span class="p">(</span><span class="n">obmol</span><span class="p">:</span> <span class="n">openbabel</span><span class="o">.</span><span class="n">OBMol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Convert an OpenBabel OBMol object to a Biotite AtomArray object.</span>
+
+<span class="sd">    This function takes an OpenBabel OBMol object and converts it into a Biotite AtomArray object,</span>
+<span class="sd">    matching and preserving the (optional) atom-level annotations in `obmol._annotations` and bond information.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obmol (openbabel.OBMol): The OpenBabel OBMol object to be converted.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        AtomArray: A Biotite AtomArray object containing the atoms and bonds from the input OBMol object.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the input OBMol object is invalid or cannot be processed.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; obmol = pybel.readstring("smi", "CCO").OBMol</span>
+<span class="sd">        &gt;&gt;&gt; atom_array = atom_array_from_openbabel(obmol)</span>
+<span class="sd">        &gt;&gt;&gt; print(atom_array)</span>
+<span class="sd">        AtomArray([Atom(element='6', coord=array([0.0, 0.0, 0.0]), ...)])</span>
+<span class="sd">    """</span>
+    <span class="n">_require_openbabel</span><span class="p">()</span>
+    <span class="c1"># Set atoms</span>
+    <span class="n">atoms</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">element_counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">obatom</span> <span class="ow">in</span> <span class="n">openbabel</span><span class="o">.</span><span class="n">OBMolAtomIter</span><span class="p">(</span><span class="n">obmol</span><span class="p">):</span>
+        <span class="n">element_occurence</span> <span class="o">=</span> <span class="n">element_counter</span><span class="p">[</span><span class="n">obatom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()]</span>
+        <span class="n">element_counter</span><span class="p">[</span><span class="n">obatom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">struc</span><span class="o">.</span><span class="n">Atom</span><span class="p">(</span>
+                <span class="n">element</span><span class="o">=</span><span class="n">ATOMIC_NUMBER_TO_ELEMENT</span><span class="p">[</span><span class="n">obatom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()],</span>
+                <span class="n">atomic_number</span><span class="o">=</span><span class="n">obatom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">(),</span>
+                <span class="n">coord</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">obatom</span><span class="o">.</span><span class="n">GetX</span><span class="p">(),</span> <span class="n">obatom</span><span class="o">.</span><span class="n">GetY</span><span class="p">(),</span> <span class="n">obatom</span><span class="o">.</span><span class="n">GetZ</span><span class="p">()])</span>
+                <span class="k">if</span> <span class="n">obatom</span><span class="o">.</span><span class="n">GetVector</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">),</span>
+                <span class="n">res_name</span><span class="o">=</span><span class="n">UNKNOWN_LIGAND</span><span class="p">,</span>  <span class="c1"># default to UNL (unknown ligand) residue, unless overridden by custom annotation later</span>
+                <span class="n">hetero</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># default to hetero atom, unless overridden by custom annotation later</span>
+                <span class="n">atom_name</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">ATOMIC_NUMBER_TO_ELEMENT</span><span class="p">[</span><span class="n">obatom</span><span class="o">.</span><span class="n">GetAtomicNum</span><span class="p">()]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}{</span><span class="n">element_occurence</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                <span class="n">charge</span><span class="o">=</span><span class="n">obatom</span><span class="o">.</span><span class="n">GetFormalCharge</span><span class="p">(),</span>  <span class="c1"># formal charge</span>
+                <span class="n">hyb</span><span class="o">=</span><span class="n">obatom</span><span class="o">.</span><span class="n">GetHyb</span><span class="p">(),</span>  <span class="c1"># hybridization state</span>
+                <span class="n">is_metal</span><span class="o">=</span><span class="n">obatom</span><span class="o">.</span><span class="n">IsMetal</span><span class="p">(),</span>  <span class="c1"># whether the atom is a metal</span>
+                <span class="n">nhyd</span><span class="o">=</span><span class="n">obatom</span><span class="o">.</span><span class="n">GetImplicitHCount</span><span class="p">(),</span>  <span class="c1"># implicit hydrogens only (explicit H are in the bond list)</span>
+                <span class="n">total_deg</span><span class="o">=</span><span class="n">obatom</span><span class="o">.</span><span class="n">GetTotalDegree</span><span class="p">(),</span>  <span class="c1"># total bond count including multiplicities</span>
+                <span class="n">hvydeg</span><span class="o">=</span><span class="n">obatom</span><span class="o">.</span><span class="n">GetHvyDegree</span><span class="p">(),</span>  <span class="c1"># bond count of heavy atoms only, including multiplicities</span>
+                <span class="n">n_implicit_hyd</span><span class="o">=</span><span class="n">obatom</span><span class="o">.</span><span class="n">GetImplicitHCount</span><span class="p">(),</span>  <span class="c1"># number of implicit hydrogens</span>
+                <span class="n">openbabel_atom_id</span><span class="o">=</span><span class="n">obatom</span><span class="o">.</span><span class="n">GetId</span><span class="p">(),</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="n">atom_array</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+
+    <span class="c1"># Set bonds</span>
+    <span class="n">bonds</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">obbond</span> <span class="ow">in</span> <span class="n">openbabel</span><span class="o">.</span><span class="n">OBMolBondIter</span><span class="p">(</span><span class="n">obmol</span><span class="p">):</span>
+        <span class="n">obatom_begin</span> <span class="o">=</span> <span class="n">obbond</span><span class="o">.</span><span class="n">GetBeginAtom</span><span class="p">()</span>
+        <span class="n">obatom_end</span> <span class="o">=</span> <span class="n">obbond</span><span class="o">.</span><span class="n">GetEndAtom</span><span class="p">()</span>
+        <span class="n">start_atom_idx</span> <span class="o">=</span> <span class="n">obatom_begin</span><span class="o">.</span><span class="n">GetIndex</span><span class="p">()</span>
+        <span class="n">end_atom_idx</span> <span class="o">=</span> <span class="n">obatom_end</span><span class="o">.</span><span class="n">GetIndex</span><span class="p">()</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="n">obbond</span><span class="o">.</span><span class="n">GetBondOrder</span><span class="p">()</span>
+        <span class="n">is_aromatic</span> <span class="o">=</span> <span class="n">obbond</span><span class="o">.</span><span class="n">IsAromatic</span><span class="p">()</span>
+
+        <span class="n">bonds</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">start_atom_idx</span><span class="p">,</span> <span class="n">end_atom_idx</span><span class="p">,</span> <span class="n">_OPENBABEL_BOND_TYPE_TO_BIOTITE</span><span class="p">[(</span><span class="n">order</span><span class="p">,</span> <span class="n">is_aromatic</span><span class="p">)]))</span>
+    <span class="c1"># ... transform bonds into a biotite BondList</span>
+    <span class="n">atom_array</span><span class="o">.</span><span class="n">bonds</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">BondList</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bonds</span><span class="p">))</span>
+
+    <span class="c1"># Set extra annotations</span>
+    <span class="n">annotations</span> <span class="o">=</span> <span class="n">obmol</span><span class="o">.</span><span class="n">_annotations</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obmol</span><span class="p">,</span> <span class="s2">"_annotations"</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">annotations</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Create mapping of array idx &lt;&gt; annotation idx via the openbabel atom id:</span>
+        <span class="n">_openbabel_id_to_annotation_idx</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">openbabel_atom_id</span><span class="p">:</span> <span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">openbabel_atom_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">annotations</span><span class="p">[</span><span class="s2">"openbabel_atom_id"</span><span class="p">])</span>
+        <span class="p">}</span>
+
+        <span class="n">array_idx_to_annotation_idx</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">openbabel_atom_id</span> <span class="ow">in</span> <span class="n">_openbabel_id_to_annotation_idx</span><span class="p">:</span>
+                <span class="n">array_idx_to_annotation_idx</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">idx</span><span class="p">,</span> <span class="n">_openbabel_id_to_annotation_idx</span><span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">openbabel_atom_id</span><span class="p">]))</span>
+        <span class="n">array_idx_to_annotation_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">array_idx_to_annotation_idx</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">annotations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"coord"</span><span class="p">,</span> <span class="s2">"charge"</span><span class="p">,</span> <span class="s2">"hyb"</span><span class="p">,</span> <span class="s2">"is_metal"</span><span class="p">,</span> <span class="s2">"nhyd"</span><span class="p">,</span> <span class="s2">"hvydeg"</span><span class="p">]:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found built-in annotation: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> as custom annotation. Skipping."</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">unsignedinteger</span><span class="p">):</span>
+                    <span class="c1"># Use max value for unsigned integers since they can't hold -1</span>
+                    <span class="n">default</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">max</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">default</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">):</span>
+                <span class="n">default</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">):</span>
+                <span class="n">default</span> <span class="o">=</span> <span class="s2">""</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported annotation dtype: </span><span class="si">{</span><span class="n">val</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">. Skipping."</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">),</span> <span class="n">default</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">val</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">vals</span><span class="p">[</span><span class="n">array_idx_to_annotation_idx</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">annotations</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">array_idx_to_annotation_idx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]</span>
+            <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">vals</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">atom_array</span></div>
+
+
+
+<div class="viewcode-block" id="get_chiral_centers">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.openbabel_utils.get_chiral_centers">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_chiral_centers</span><span class="p">(</span><span class="n">obmol</span><span class="p">:</span> <span class="n">openbabel</span><span class="o">.</span><span class="n">OBMol</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Identify and return the indices of chiral centers in an OpenBabel OBMol object.</span>
+
+<span class="sd">    This function iterates over all atoms in the given OBMol object and identifies those</span>
+<span class="sd">    that are tetrahedral stereo centers (chiral centers). For each chiral center, it records</span>
+<span class="sd">    the index of the chiral center atom and the indices of the atoms bonded to it, excluding</span>
+<span class="sd">    implicit hydrogens.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obmol (openbabel.OBMol): The OpenBabel OBMol object to analyze.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list[int]: A list of dictionaries, where each dictionary contains:</span>
+<span class="sd">            - "chiral_center_idx" (int): The index of the chiral center atom.</span>
+<span class="sd">            - "bonded_explicit_atom_idxs" (list[int]): A list of indices of the atoms bonded to the chiral center,</span>
+<span class="sd">              excluding implicit hydrogens.</span>
+<span class="sd">    """</span>
+    <span class="n">_require_openbabel</span><span class="p">()</span>
+    <span class="n">stereo_facade</span> <span class="o">=</span> <span class="n">openbabel</span><span class="o">.</span><span class="n">OBStereoFacade</span><span class="p">(</span><span class="n">obmol</span><span class="p">)</span>
+
+    <span class="c1"># iterate over all tetrahedral stereo centers and record the plane pairs that define the tetrahedral side</span>
+    <span class="n">chiral_centers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">atom_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">obmol</span><span class="o">.</span><span class="n">NumAtoms</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">stereo_facade</span><span class="o">.</span><span class="n">HasTetrahedralStereo</span><span class="p">(</span><span class="n">atom_idx</span><span class="p">):</span>
+            <span class="c1"># skip if the atom is not a tetrahedral stereo center</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># get chiral information</span>
+        <span class="n">stereo_data</span> <span class="o">=</span> <span class="n">stereo_facade</span><span class="o">.</span><span class="n">GetTetrahedralStereo</span><span class="p">(</span><span class="n">atom_idx</span><span class="p">)</span><span class="o">.</span><span class="n">GetConfig</span><span class="p">()</span>
+        <span class="c1"># get the chiral center</span>
+        <span class="n">chiral_center_idx</span> <span class="o">=</span> <span class="n">stereo_data</span><span class="o">.</span><span class="n">center</span>  <span class="c1"># (int)</span>
+        <span class="c1"># get the 4 bonded atoms to the chiral center</span>
+        <span class="n">bonded_atom_idx</span> <span class="o">=</span> <span class="p">[</span><span class="n">stereo_data</span><span class="o">.</span><span class="n">from_or_towards</span><span class="p">,</span> <span class="o">*</span><span class="n">stereo_data</span><span class="o">.</span><span class="n">refs</span><span class="p">]</span>  <span class="c1"># [4] (int)</span>
+        <span class="c1"># reduce the bonded atoms to those that are not implicit hydrogens (at most 1 implicit hydrogen is possible)</span>
+        <span class="n">bonded_explicit_atom_idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">bonded_atom_idx</span> <span class="k">if</span> <span class="n">atom</span> <span class="o">!=</span> <span class="n">_OBABEL_IMPLICIT_HYDROGEN_REF</span><span class="p">]</span>
+
+        <span class="n">chiral_centers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">"chiral_center_idx"</span><span class="p">:</span> <span class="n">chiral_center_idx</span><span class="p">,</span> <span class="s2">"bonded_explicit_atom_idxs"</span><span class="p">:</span> <span class="n">bonded_explicit_atom_idxs</span><span class="p">}</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">chiral_centers</span></div>
+
+
+
+<div class="viewcode-block" id="smiles_to_openbabel">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.openbabel_utils.smiles_to_openbabel">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">smiles_to_openbabel</span><span class="p">(</span><span class="n">smiles</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">openbabel</span><span class="o">.</span><span class="n">OBMol</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Convert a SMILES string to an OpenBabel OBMol object.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; smiles = "CCO"</span>
+<span class="sd">        &gt;&gt;&gt; obmol = smiles_to_openbabel(smiles)</span>
+<span class="sd">        &gt;&gt;&gt; print(obmol.NumAtoms())</span>
+<span class="sd">        3</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This function uses the Pybel module to read the SMILES string and convert it to an OBMol object.</span>
+<span class="sd">    """</span>
+    <span class="n">_require_openbabel</span><span class="p">()</span>
+    <span class="n">mol</span> <span class="o">=</span> <span class="n">pybel</span><span class="o">.</span><span class="n">readstring</span><span class="p">(</span><span class="s2">"smi"</span><span class="p">,</span> <span class="n">smiles</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mol</span><span class="o">.</span><span class="n">OBMol</span></div>
+
+
+
+<div class="viewcode-block" id="find_automorphisms">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.openbabel_utils.find_automorphisms">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_automorphisms</span><span class="p">(</span><span class="n">obmol</span><span class="p">:</span> <span class="n">openbabel</span><span class="o">.</span><span class="n">OBMol</span><span class="p">,</span> <span class="n">max_automorphs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">max_mem</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">300</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">20</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Find automorphisms of a given Open Babel molecule.</span>
+
+<span class="sd">    This function identifies the automorphisms (symmetry-related atom swaps) of the input molecule</span>
+<span class="sd">    and returns them as a numpy array. If the search for automorphisms fails, it returns a single</span>
+<span class="sd">    automorphism representing the identity (no swaps).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obmol (openbabel.OBMol): The Open Babel molecule for which to find automorphisms.</span>
+<span class="sd">        max_automorphs (int): The maximum number of automorphisms to return. These are deterministically</span>
+<span class="sd">            set to be the first `max_automorphs` automorphisms found by OpenBabel.</span>
+<span class="sd">            For model training it is recommended to deterministically select the automorphisms</span>
+<span class="sd">            to be used (as done in this transform) as a model might otherwise be nudged towards a specific</span>
+<span class="sd">            automorph in one training step, but that automorph then does not show up in the next training</span>
+<span class="sd">            step, leading to a moving target problem.</span>
+<span class="sd">        max_mem (int): The maximum memory to use for the automorphism search, in bytes.</span>
+<span class="sd">            Default is 300 MB, which is also the default value used by OpenBabel.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        automorphs (np.ndarray): A numpy array of shape [n_automorphs, n_atoms, 2], where each element</span>
+<span class="sd">            represents an automorphism as list of paired atom indices (from_idx, to_idx).</span>
+<span class="sd">            If the search fails (e.g. due to running out of memory), returns an array with</span>
+<span class="sd">            a single automorphism representing the identity (no swaps).</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        `OpenBabel Substructure API &lt;https://openbabel.org/api/3.0/group__substructure.shtml#ga16841a730cf92c8e51a804ad8d746307&gt;`_</span>
+<span class="sd">        `Automorphisms and Symmetry Blog &lt;https://baoilleach.blogspot.com/2010/11/automorphisms-isomorphisms-symmetry.html&gt;`_</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from openbabel import pybel</span>
+<span class="sd">        &gt;&gt;&gt; mol = pybel.readstring("smi", "c1c(O)cccc1(O)").OBMol</span>
+<span class="sd">        &gt;&gt;&gt; automorphisms = find_automorphisms(mol)</span>
+<span class="sd">        &gt;&gt;&gt; print(automorphisms)</span>
+<span class="sd">            [[[0 0]</span>
+<span class="sd">              [1 1]</span>
+<span class="sd">              [2 2]</span>
+<span class="sd">              [3 3]</span>
+<span class="sd">              [4 4]</span>
+<span class="sd">              [5 5]</span>
+<span class="sd">              [6 6]</span>
+<span class="sd">              [7 7]]</span>
+
+<span class="sd">             [[0 0]</span>
+<span class="sd">              [1 6]</span>
+<span class="sd">              [2 7]</span>
+<span class="sd">              [3 5]</span>
+<span class="sd">              [4 4]</span>
+<span class="sd">              [5 3]</span>
+<span class="sd">              [6 1]</span>
+<span class="sd">              [7 2]]]</span>
+<span class="sd">    """</span>
+    <span class="n">_require_openbabel</span><span class="p">()</span>
+    <span class="n">n_atoms</span> <span class="o">=</span> <span class="n">obmol</span><span class="o">.</span><span class="n">NumAtoms</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">n_atoms</span> <span class="o">==</span> <span class="n">obmol</span><span class="o">.</span><span class="n">NumHvyAtoms</span><span class="p">()</span>
+    <span class="p">),</span> <span class="sa">f</span><span class="s2">"Found </span><span class="si">{</span><span class="n">n_atoms</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">obmol</span><span class="o">.</span><span class="n">NumHvyAtoms</span><span class="p">()</span><span class="si">}</span><span class="s2"> explicit hydrogens. This function assumes that the input molecule has no explicit hydrogens. Please remove."</span>
+
+    <span class="c1"># ... initialize a vector container to store automorphs</span>
+    <span class="n">automorphs</span> <span class="o">=</span> <span class="n">openbabel</span><span class="o">.</span><span class="n">vvpairUIntUInt</span><span class="p">()</span>  <span class="c1"># vector&lt;vector&lt;pair&lt;unsigned int, unsigned int&gt;&gt;&gt;</span>
+
+    <span class="c1"># ... create mask to ignore certain atoms -- this could be used to ignore explicit hydrogens, however we choose not to</span>
+    <span class="c1">#  allow those in the first place since they mess up the indexing of the automorphs and are not of interest for modelling.</span>
+    <span class="c1">#  The only reason we keep the `is_included` vector is to allow for the dynamic dispatch function to the signature that</span>
+    <span class="c1">#  exposes the `max_mem` arugment, which is not available in the other signature (c.f. openbabel reference in docstring.)</span>
+    <span class="n">is_atom_included</span> <span class="o">=</span> <span class="n">openbabel</span><span class="o">.</span><span class="n">OBBitVec</span><span class="p">(</span><span class="n">n_atoms</span><span class="p">)</span>  <span class="c1"># vector&lt;bool&gt; , values are initialized to 0</span>
+    <span class="c1"># (! WARNING: is_atom_included.Negate() does not work properly to set all bits to 1 in openbabel, for example</span>
+    <span class="c1">#  `1I6` in the CCD does not work with that method.)</span>
+    <span class="n">is_atom_included</span><span class="o">.</span><span class="n">SetRangeOn</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_atoms</span><span class="p">)</span>  <span class="c1"># set all bits to 1</span>
+
+    <span class="c1"># ... populate the automorphs</span>
+    <span class="n">_successfully_searched_automorphs</span> <span class="o">=</span> <span class="n">openbabel</span><span class="o">.</span><span class="n">FindAutomorphisms</span><span class="p">(</span><span class="n">obmol</span><span class="p">,</span> <span class="n">automorphs</span><span class="p">,</span> <span class="n">is_atom_included</span><span class="p">,</span> <span class="n">max_mem</span><span class="p">)</span>
+
+    <span class="c1"># ... extract the automorphs as numpy array</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_successfully_searched_automorphs</span> <span class="ow">or</span> <span class="n">automorphs</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># ... return only a single automorphism (the identity) if the search failed (e.g. OOM)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Automorphism search failed. Returning identity automorphism."</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_atoms</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># [1, n_atoms, 2]</span>
+
+    <span class="c1"># ... or return all the found automorphisms if the search was successful</span>
+    <span class="n">automorphs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">automorphs</span><span class="p">)</span>  <span class="c1"># [n_automorphs, n_atoms, 2]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">automorphs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_automorphs</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">automorphs</span><span class="p">)</span><span class="si">}</span><span class="s2"> automorphisms, truncating to first </span><span class="si">{</span><span class="n">max_automorphs</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">automorphs</span><span class="p">[:</span><span class="n">max_automorphs</span><span class="p">]</span>  <span class="c1"># [n_automorphs, n_atoms, 2]</span>
+    <span class="k">return</span> <span class="n">automorphs</span>  <span class="c1"># [n_automorphs, n_atoms, 2]</span></div>
+
+
+
+<div class="viewcode-block" id="AddOpenBabelMoleculesForAtomizedMolecules">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.openbabel_utils.AddOpenBabelMoleculesForAtomizedMolecules">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AddOpenBabelMoleculesForAtomizedMolecules</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Add OpenBabel molecules for atomized molecules in the atom array.</span>
+
+<span class="sd">    This transform converts atomized molecules in the atom array to OpenBabel OBMol objects and stores them in the</span>
+<span class="sd">    `data` dictionary under the "openbabel" key. Each molecule is identified by the first global `atom_id` contained</span>
+<span class="sd">    in this molecule.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        This transform requires the `AtomizeByCCDName` transform to be applied previously.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (dict[str, Any]): A dictionary containing the input data, including the atom array.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict[str, Any]: The updated `data` dictionary with the added OpenBabel molecules under the</span>
+<span class="sd">            `"openbabel"` key.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; data = {</span>
+<span class="sd">        &gt;&gt;&gt;     "atom_array": AtomArray(...),  # Your atom array here</span>
+<span class="sd">        &gt;&gt;&gt; }</span>
+<span class="sd">        &gt;&gt;&gt; transform = AddOpenBabelMoleculesForAtomizedMolecules()</span>
+<span class="sd">        &gt;&gt;&gt; data = transform(data)</span>
+<span class="sd">        &gt;&gt;&gt; print(data["openbabel"])</span>
+<span class="sd">        {</span>
+<span class="sd">            0: &lt;openbabel.OBMol object at 0x...&gt;,</span>
+<span class="sd">            1: &lt;openbabel.OBMol object at 0x...&gt;,</span>
+<span class="sd">            ...</span>
+<span class="sd">        }</span>
+<span class="sd">    """</span>
+
+    <span class="n">requires_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"AtomizeByCCDName"</span><span class="p">]</span>
+    <span class="n">incompatible_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">"AddRF2AAChiralFeatures"</span><span class="p">,</span>
+        <span class="s2">"CropContiguousLikeAF3"</span><span class="p">,</span>
+        <span class="s2">"CropSpatialLikeAF3"</span><span class="p">,</span>
+    <span class="p">]</span>
+
+<div class="viewcode-block" id="AddOpenBabelMoleculesForAtomizedMolecules.check_input">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.openbabel_utils.AddOpenBabelMoleculesForAtomizedMolecules.check_input">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atom_array"</span><span class="p">])</span>
+        <span class="n">check_does_not_contain_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"openbabel"</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_nonzero_length</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">)</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atomize"</span><span class="p">,</span> <span class="s2">"atom_id"</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="AddOpenBabelMoleculesForAtomizedMolecules.forward">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.openbabel_utils.AddOpenBabelMoleculesForAtomizedMolecules.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="n">_require_openbabel</span><span class="p">()</span>
+        <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"atom_array"</span><span class="p">]</span>
+
+        <span class="c1"># Subset to atomized molecules</span>
+        <span class="c1">#  NOTE: This will subset the atom array to all parts of the array that will be</span>
+        <span class="c1">#   atomized and the bonds within these parts. Bonds to the non-atomized parts of the</span>
+        <span class="c1">#   atom array are removed when we subset in this way. Concretely, for covalent modifications</span>
+        <span class="c1">#   in proteins, the atomized residues would lose the N-C and C-N bonds to the rest of the polymer</span>
+        <span class="c1">#   at the N-termnal and C-terminal ends of the atomized residues for a protein.</span>
+        <span class="n">_atom_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atomize</span><span class="p">]</span>
+
+        <span class="c1"># Iterate over the molecules (covalently bonded components in the atom_array)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"openbabel"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">molecule</span> <span class="ow">in</span> <span class="n">struc</span><span class="o">.</span><span class="n">molecule_iter</span><span class="p">(</span><span class="n">_atom_array</span><span class="p">):</span>
+            <span class="c1"># Use the first global `atom_id` as a unique identifier for the molecule</span>
+            <span class="n">molecule_id</span> <span class="o">=</span> <span class="n">molecule</span><span class="o">.</span><span class="n">atom_id</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># Convert to openbabel</span>
+            <span class="n">obmol</span> <span class="o">=</span> <span class="n">atom_array_to_openbabel</span><span class="p">(</span>
+                <span class="n">molecule</span><span class="p">,</span>
+                <span class="n">infer_hydrogens</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">infer_aromaticity</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">annotations_to_keep</span><span class="o">=</span><span class="p">[</span><span class="s2">"chain_id"</span><span class="p">,</span> <span class="s2">"res_id"</span><span class="p">,</span> <span class="s2">"res_name"</span><span class="p">,</span> <span class="s2">"atom_name"</span><span class="p">,</span> <span class="s2">"atom_id"</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">"openbabel"</span><span class="p">][</span><span class="n">molecule_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">obmol</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="GetChiralCentersFromOpenBabel">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.openbabel_utils.GetChiralCentersFromOpenBabel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GetChiralCentersFromOpenBabel</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Identify chiral centers in the OpenBabel molecules stored in the data["openbabel"] dictionary.</span>
+
+<span class="sd">    These molecules typically correspond to the atomized molecules in the data["atom_array"] (c.f.</span>
+<span class="sd">    AddOpenBabelMoleculesForAtomizedMolecules).</span>
+
+<span class="sd">    Chiral centers are mapped to the global atom IDs in the atom array to enable tracking chiral</span>
+<span class="sd">    centers regardless of cropping or reshuffling operations that may modify the atom_array.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: A dictionary containing the input data, including the atom array and</span>
+<span class="sd">            OpenBabel molecules under the data["openbabel"] key.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The updated data dictionary with the identified chiral centers under the</span>
+<span class="sd">            "chiral_centers" key. The chiral centers are stored as a list of dictionaries, where each</span>
+<span class="sd">            dictionary contains the chiral center global atom ID and the atom IDs of the (3 to 4) atoms</span>
+<span class="sd">            bonded to it.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            data = {</span>
+<span class="sd">                "atom_array": atom_array,</span>
+<span class="sd">                "openbabel": {</span>
+<span class="sd">                    1: obmol1,</span>
+<span class="sd">                    2: obmol2,</span>
+<span class="sd">                },</span>
+<span class="sd">            }</span>
+
+<span class="sd">            transform = GetChiralCentersFromOpenBabel()</span>
+<span class="sd">            result = transform.forward(data)</span>
+
+<span class="sd">            print(result["chiral_centers"])</span>
+<span class="sd">            # Output might look like:</span>
+<span class="sd">            # [</span>
+<span class="sd">            #     {</span>
+<span class="sd">            #         "chiral_center_atom_id": 5,</span>
+<span class="sd">            #         "bonded_explicit_atom_ids": [1, 2, 3, 4]</span>
+<span class="sd">            #     },</span>
+<span class="sd">            #     {</span>
+<span class="sd">            #         "chiral_center_atom_id": 10,</span>
+<span class="sd">            #         "bonded_explicit_atom_ids": [6, 7, 8, 9]</span>
+<span class="sd">            #     }</span>
+<span class="sd">            # ]</span>
+<span class="sd">    """</span>
+
+    <span class="n">requires_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">"AddOpenBabelMoleculesForAtomizedMolecules"</span><span class="p">,</span>
+        <span class="s2">"AtomizeByCCDName"</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">incompatible_previous_transforms</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Transform</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"AddRF2AAChiralFeatures"</span><span class="p">]</span>
+
+<div class="viewcode-block" id="GetChiralCentersFromOpenBabel.check_input">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.openbabel_utils.GetChiralCentersFromOpenBabel.check_input">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">check_contains_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atom_array"</span><span class="p">,</span> <span class="s2">"openbabel"</span><span class="p">])</span>
+        <span class="n">check_does_not_contain_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"chiral_centers"</span><span class="p">])</span>
+        <span class="n">check_is_instance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">)</span>
+        <span class="n">check_nonzero_length</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"atom_array"</span><span class="p">)</span>
+        <span class="n">check_atom_array_annotation</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">"atomize"</span><span class="p">,</span> <span class="s2">"atom_id"</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="GetChiralCentersFromOpenBabel.forward">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.openbabel_utils.GetChiralCentersFromOpenBabel.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="n">_require_openbabel</span><span class="p">()</span>
+        <span class="c1"># Iterate over the molecules (covalently bonded components in the atom_array)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"chiral_centers"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">obmol</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">"openbabel"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="c1"># Get the chiral centers (returned are the indices of the chiral center atoms</span>
+            <span class="c1">#  within the `obmol` object)</span>
+            <span class="n">_obmol_chirals</span> <span class="o">=</span> <span class="n">get_chiral_centers</span><span class="p">(</span><span class="n">obmol</span><span class="p">)</span>
+
+            <span class="c1"># Map the chiral center indices within the `obmol` to the atom_id</span>
+            <span class="n">molecule</span> <span class="o">=</span> <span class="n">atom_array_from_openbabel</span><span class="p">(</span><span class="n">obmol</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">_chiral_center</span> <span class="ow">in</span> <span class="n">_obmol_chirals</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">"chiral_centers"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="c1"># We convert from the `obmol`-internal indices to the global `atom_id` for</span>
+                        <span class="c1">#  robustness to corretly map the chiral center indices in the global atom</span>
+                        <span class="c1">#  array later in case of arbitrary cropping or reshuffling operations</span>
+                        <span class="s2">"chiral_center_atom_id"</span><span class="p">:</span> <span class="n">molecule</span><span class="o">.</span><span class="n">atom_id</span><span class="p">[</span><span class="n">_chiral_center</span><span class="p">[</span><span class="s2">"chiral_center_idx"</span><span class="p">]],</span>
+                        <span class="s2">"bonded_explicit_atom_ids"</span><span class="p">:</span> <span class="n">molecule</span><span class="o">.</span><span class="n">atom_id</span><span class="p">[</span><span class="n">_chiral_center</span><span class="p">[</span><span class="s2">"bonded_explicit_atom_idxs"</span><span class="p">]],</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.22.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

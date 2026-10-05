@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>atomworks.ml.preprocessing.msa.finding &#8212; atomworks 3.0.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinxcontrib_typer.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../../_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+
+    <script src="../../../../../_static/documentation_options.js?v=acc74ff5"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/preprocessing/msa/finding';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.22.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../../../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="3.0.0" />
+  
+    
+    <script src="../../../../../_static/searchtools.js"></script>
+    <script src="../../../../../_static/language_data.js"></script>
+    <script src="../../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.0 documentation - Home"/>
+    <img src="../../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../cookbook.html">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../migration/index.html">
+    Migrating to AtomWorks 3.0
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../cookbook.html">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../migration/index.html">
+    Migrating to AtomWorks 3.0
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">atomworks.ml.preprocessing.msa.finding</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for atomworks.ml.preprocessing.msa.finding</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Find existing MSA files and their locations."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">PathLike</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">_load_env_var</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">MSAFileExtension</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.io_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">apply_sharding_pattern</span><span class="p">,</span> <span class="n">build_sharding_pattern</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.utils.misc</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_complex_id</span><span class="p">,</span> <span class="n">hash_sequence</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_msa_depth_and_ext_from_folder">
+<a class="viewcode-back" href="../../../../../ml/preprocessing.html#atomworks.ml.preprocessing.msa.finding.get_msa_depth_and_ext_from_folder">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_msa_depth_and_ext_from_folder</span><span class="p">(</span><span class="n">folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">MSAFileExtension</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Automatically detect the shard depth and file extension of an MSA folder.</span>
+
+<span class="sd">    Goes down subdirectories one level at a time until finding MSA files.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        folder: Top-level MSA directory to analyze.</span>
+<span class="sd">        max_depth: Maximum depth to search (default: 10).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple of (shard_depth, extension) where:</span>
+<span class="sd">        - shard_depth: Number of subdirectory levels (0 = files directly in folder)</span>
+<span class="sd">        - extension: MSAFileExtension enum value for the file extension found</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If no MSA files are found within max_depth levels.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        For structure like ``/msa/ab/cd/abcd123.a3m.gz``:</span>
+
+<span class="sd">        &gt;&gt;&gt; depth, ext = get_msa_depth_and_ext_from_folder(Path("/msa"))</span>
+<span class="sd">        &gt;&gt;&gt; # Returns: (2, MSAFileExtension.A3M_GZ)</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">folder</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Folder does not exist: </span><span class="si">{</span><span class="n">folder</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="c1"># All possible MSA extensions to check</span>
+    <span class="n">msa_extensions</span> <span class="o">=</span> <span class="p">[</span><span class="n">ext</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">MSAFileExtension</span><span class="p">]</span>
+
+    <span class="n">current_dir</span> <span class="o">=</span> <span class="n">folder</span>
+    <span class="n">depth</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="n">depth</span> <span class="o">&lt;=</span> <span class="n">max_depth</span><span class="p">:</span>
+        <span class="c1"># Separate file detection from subdirectory selection for efficiency:</span>
+        <span class="c1"># First check all files for MSA matches, then find first subdir if needed</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">subdirs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">current_dir</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+                <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">subdirs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+        <span class="c1"># Check files for MSA matches</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ext_str</span> <span class="ow">in</span> <span class="n">msa_extensions</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">ext_str</span><span class="p">):</span>
+                    <span class="n">matching_ext</span> <span class="o">=</span> <span class="n">MSAFileExtension</span><span class="p">(</span><span class="n">ext_str</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">depth</span><span class="p">,</span> <span class="n">matching_ext</span>
+
+        <span class="c1"># No MSA files found, descend into first subdirectory (sorted for determinism)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">subdirs</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="n">current_dir</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">subdirs</span><span class="p">)</span>  <span class="c1"># Deterministic: pick lexicographically first</span>
+        <span class="n">depth</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"No MSA files found in </span><span class="si">{</span><span class="n">folder</span><span class="si">}</span><span class="s2"> within </span><span class="si">{</span><span class="n">max_depth</span><span class="si">}</span><span class="s2"> levels. "</span>
+        <span class="sa">f</span><span class="s2">"Searched for extensions: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">msa_extensions</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_auto_detect_msa_dir_metadata</span><span class="p">(</span><span class="n">msa_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Auto-detect MSA directory metadata (depth and extension).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        msa_dir: Path to the MSA directory.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dict with 'dir', 'extension', 'directory_depth' keys, or None if</span>
+<span class="sd">        detection fails or directory doesn't exist.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">msa_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"MSA directory does not exist: </span><span class="si">{</span><span class="n">msa_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">depth</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">get_msa_depth_and_ext_from_folder</span><span class="p">(</span><span class="n">msa_dir</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">"dir"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">msa_dir</span><span class="p">),</span>
+            <span class="s2">"extension"</span><span class="p">:</span> <span class="n">ext</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="s2">"directory_depth"</span><span class="p">:</span> <span class="n">depth</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not auto-detect MSA format for </span><span class="si">{</span><span class="n">msa_dir</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="get_msa_dirs">
+<a class="viewcode-back" href="../../../../../ml/preprocessing.html#atomworks.ml.preprocessing.msa.finding.get_msa_dirs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_msa_dirs</span><span class="p">(</span>
+    <span class="n">env_var_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"PROTEIN_MSA_DIRS"</span><span class="p">,</span>
+    <span class="n">raise_if_not_set</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Get MSA directories with auto-detected metadata from an environment variable.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        env_var_name: Environment variable with comma-separated paths.</span>
+<span class="sd">        raise_if_not_set: Raise if env var is unset. Defaults to ``False``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of dicts with ``dir``, ``extension``, and ``directory_depth`` keys.</span>
+<span class="sd">    """</span>
+    <span class="n">msa_dirs_str</span> <span class="o">=</span> <span class="n">_load_env_var</span><span class="p">(</span><span class="n">env_var_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">msa_dirs_str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">raise_if_not_set</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">env_var_name</span><span class="si">}</span><span class="s2"> environment variable is not set or empty"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="c1"># Parse comma-separated paths</span>
+    <span class="n">msa_dirs</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">msa_dirs_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">msa_dir</span> <span class="ow">in</span> <span class="n">msa_dirs</span><span class="p">:</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">_auto_detect_msa_dir_metadata</span><span class="p">(</span><span class="n">msa_dir</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<span class="c1"># Backwards compatibility alias</span>
+<div class="viewcode-block" id="get_msa_dirs_from_env">
+<a class="viewcode-back" href="../../../../../ml/preprocessing.html#atomworks.ml.preprocessing.msa.finding.get_msa_dirs_from_env">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_msa_dirs_from_env</span><span class="p">(</span><span class="n">raise_if_not_set</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Deprecated: Use :py:func:`get_msa_dirs` instead."""</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+        <span class="s2">"get_msa_dirs_from_env is deprecated, use get_msa_dirs('PROTEIN_MSA_DIRS') instead"</span><span class="p">,</span>
+        <span class="ne">DeprecationWarning</span><span class="p">,</span>
+        <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">get_msa_dirs</span><span class="p">(</span><span class="s2">"PROTEIN_MSA_DIRS"</span><span class="p">,</span> <span class="n">raise_if_not_set</span><span class="o">=</span><span class="n">raise_if_not_set</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_msa_file_path</span><span class="p">(</span><span class="n">sequence_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msa_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">depth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Build the MSA file path for a sequence hash.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sequence_hash: Hash of the protein sequence.</span>
+<span class="sd">        msa_dir: Base MSA directory.</span>
+<span class="sd">        depth: Shard depth (0 = flat, 2 = "ab/cd/" style).</span>
+<span class="sd">        extension: File extension (e.g., ".a3m.gz").</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Path to the MSA file.</span>
+<span class="sd">    """</span>
+    <span class="c1"># Build shard path like "ab/cd/" for depth 2 with hash "abcd123..."</span>
+    <span class="n">shard_path</span> <span class="o">=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">sequence_hash</span><span class="p">[(</span><span class="n">i</span><span class="o">*</span><span class="mi">2</span><span class="p">):(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">/"</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">depth</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">msa_dir</span><span class="p">)</span> <span class="o">/</span> <span class="n">shard_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">sequence_hash</span><span class="si">}{</span><span class="n">extension</span><span class="si">}</span><span class="s2">"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_msa_dirs</span><span class="p">(</span><span class="n">msa_dirs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Normalize MSA directories to list of dicts with metadata.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        msa_dirs: MSA directories in one of three formats:</span>
+<span class="sd">            - None: Load from PROTEIN_MSA_DIRS env var</span>
+<span class="sd">            - list[PathLike]: Simple format, auto-detects metadata for each directory</span>
+<span class="sd">            - list[dict]: Pre-computed format with 'dir', 'extension', 'directory_depth' keys</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of dicts with 'dir', 'extension', 'directory_depth' keys.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        TypeError: If list contains mixed types (must be all dicts or all PathLike).</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">msa_dirs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_msa_dirs</span><span class="p">(</span><span class="n">raise_if_not_set</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">msa_dirs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="c1"># Check if already in dict format - validate all elements are dicts</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msa_dirs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">msa_dirs</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"msa_dirs must be homogeneous: all elements must be dicts or all PathLike, not mixed"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">msa_dirs</span>
+
+    <span class="c1"># Simple PathLike format - auto-detect metadata for each directory</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">msa_dir</span> <span class="ow">in</span> <span class="n">msa_dirs</span><span class="p">:</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">_auto_detect_msa_dir_metadata</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">msa_dir</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<div class="viewcode-block" id="sequence_has_msa">
+<a class="viewcode-back" href="../../../../../ml/preprocessing.html#atomworks.ml.preprocessing.msa.finding.sequence_has_msa">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sequence_has_msa</span><span class="p">(</span>
+    <span class="n">sequence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">msa_dirs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Check if a sequence has an existing MSA file in any directory.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sequence: Protein sequence to check.</span>
+<span class="sd">        msa_dirs: Directories to search. Accepts:</span>
+<span class="sd">            - None: Uses PROTEIN_MSA_DIRS env var</span>
+<span class="sd">            - list[PathLike]: Simple format, auto-detects metadata</span>
+<span class="sd">            - list[dict]: Pre-computed format with 'dir', 'extension', 'directory_depth' keys</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if MSA exists, False otherwise.</span>
+<span class="sd">    """</span>
+    <span class="n">normalized_dirs</span> <span class="o">=</span> <span class="n">_normalize_msa_dirs</span><span class="p">(</span><span class="n">msa_dirs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">normalized_dirs</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"No MSA directories found"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">sequence_hash</span> <span class="o">=</span> <span class="n">hash_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">dir_info</span> <span class="ow">in</span> <span class="n">normalized_dirs</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">_build_msa_file_path</span><span class="p">(</span>
+            <span class="n">sequence_hash</span><span class="p">,</span>
+            <span class="n">dir_info</span><span class="p">[</span><span class="s2">"dir"</span><span class="p">],</span>
+            <span class="n">dir_info</span><span class="p">[</span><span class="s2">"directory_depth"</span><span class="p">],</span>
+            <span class="n">dir_info</span><span class="p">[</span><span class="s2">"extension"</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found existing MSA for sequence hash </span><span class="si">{</span><span class="n">sequence_hash</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="find_msas">
+<a class="viewcode-back" href="../../../../../ml/preprocessing.html#atomworks.ml.preprocessing.msa.finding.find_msas">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_msas</span><span class="p">(</span>
+    <span class="n">sequences</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">msa_dirs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Find existing MSA files for sequences and return missing sequences with MSA path mapping.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sequences: Protein sequences to find MSAs for.</span>
+<span class="sd">        msa_dirs: Directories to search. Accepts:</span>
+<span class="sd">            - None: Uses PROTEIN_MSA_DIRS env var</span>
+<span class="sd">            - list[PathLike]: Simple format, auto-detects metadata</span>
+<span class="sd">            - list[dict]: Pre-computed format with 'dir', 'extension', 'directory_depth' keys</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple of (missing_sequences, sequence_to_msa_path) where:</span>
+<span class="sd">        - missing_sequences: List of sequences without existing MSA files</span>
+<span class="sd">        - sequence_to_msa_path: Dict mapping sequences to their MSA file paths</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        Find MSAs with default settings (uses PROTEIN_MSA_DIRS env var):</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">           sequences = ["MKKKEVE...", "MSYIWRQ..."]</span>
+<span class="sd">           missing, found_paths = find_msas(sequences)</span>
+
+<span class="sd">        Find MSAs with explicit directories:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">           dirs = get_msa_dirs("MY_MSA_DIRS")</span>
+<span class="sd">           missing, found_paths = find_msas(sequences, msa_dirs=dirs)</span>
+<span class="sd">    """</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Finding MSAs for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sequences</span><span class="p">)</span><span class="si">}</span><span class="s2"> sequences"</span><span class="p">)</span>
+
+    <span class="n">normalized_dirs</span> <span class="o">=</span> <span class="n">_normalize_msa_dirs</span><span class="p">(</span><span class="n">msa_dirs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">normalized_dirs</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"No MSA directories found"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sequences</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="p">{}</span>
+
+    <span class="c1"># Find MSAs for each sequence</span>
+    <span class="n">missing_sequences</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">sequence_to_msa_path</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">sequence</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">sequences</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"Finding existing MSAs"</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"seq"</span><span class="p">):</span>
+        <span class="n">sequence_hash</span> <span class="o">=</span> <span class="n">hash_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+        <span class="n">found_path</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Search for MSA file in all directories</span>
+        <span class="k">for</span> <span class="n">dir_info</span> <span class="ow">in</span> <span class="n">normalized_dirs</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">_build_msa_file_path</span><span class="p">(</span>
+                <span class="n">sequence_hash</span><span class="p">,</span>
+                <span class="n">dir_info</span><span class="p">[</span><span class="s2">"dir"</span><span class="p">],</span>
+                <span class="n">dir_info</span><span class="p">[</span><span class="s2">"directory_depth"</span><span class="p">],</span>
+                <span class="n">dir_info</span><span class="p">[</span><span class="s2">"extension"</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">found_path</span> <span class="o">=</span> <span class="n">path</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found existing MSA for sequence hash </span><span class="si">{</span><span class="n">sequence_hash</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">found_path</span><span class="p">:</span>
+            <span class="n">sequence_to_msa_path</span><span class="p">[</span><span class="n">sequence</span><span class="p">]</span> <span class="o">=</span> <span class="n">found_path</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">missing_sequences</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+
+    <span class="n">found_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sequence_to_msa_path</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found </span><span class="si">{</span><span class="n">found_count</span><span class="si">}</span><span class="s2"> existing MSAs, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">missing_sequences</span><span class="p">)</span><span class="si">}</span><span class="s2"> sequences need generation"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">missing_sequences</span><span class="p">,</span> <span class="n">sequence_to_msa_path</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_template_alignment_dirs</span><span class="p">(</span><span class="n">template_dirs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Normalize template-alignment directories to the same dict shape MSA dirs use.</span>
+
+<span class="sd">    Unlike `_normalize_msa_dirs`, PathLike entries aren't auto-detected: template</span>
+<span class="sd">    alignment files (``.m8`` hit tables) aren't a `MSAFileExtension` value, so a</span>
+<span class="sd">    plain PathLike entry is assumed to match</span>
+<span class="sd">    :py:func:`~atomworks.ml.preprocessing.msa.organizing.organize_template_alignments`'s</span>
+<span class="sd">    defaults (``.m8``, sharded 2 chars deep).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        template_dirs: Template alignment directories in one of three formats:</span>
+<span class="sd">            - list[PathLike]: Simple format, auto-detects metadata for each directory</span>
+<span class="sd">            - list[dict]: Pre-computed format with 'dir', 'extension', 'directory_depth' keys</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of dicts with 'dir', 'extension', 'directory_depth' keys.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">template_dirs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">template_dirs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">template_dirs</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"template_dirs must be homogeneous: all elements must be dicts or all PathLike, not mixed"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">template_dirs</span>
+
+    <span class="k">return</span> <span class="p">[{</span><span class="s2">"dir"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="s2">"extension"</span><span class="p">:</span> <span class="s2">".m8"</span><span class="p">,</span> <span class="s2">"directory_depth"</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">template_dirs</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="find_template_alignments">
+<a class="viewcode-back" href="../../../../../ml/preprocessing.html#atomworks.ml.preprocessing.msa.finding.find_template_alignments">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_template_alignments</span><span class="p">(</span>
+    <span class="n">sequences</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">template_dirs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Find existing raw template-alignment (``pdb70.m8``) files for sequences.</span>
+
+<span class="sd">    Mirrors :py:func:`find_msas`'s shape and hash/shard convention: template</span>
+<span class="sd">    alignments are looked up by the same sequence hash as MSAs, just under a</span>
+<span class="sd">    different directory/extension. To download the hit structures, see</span>
+<span class="sd">    :py:mod:`~atomworks.ml.preprocessing.msa.template_structures`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sequences: Protein sequences to find template alignments for.</span>
+<span class="sd">        template_dirs: Directories to search. Accepts:</span>
+
+<span class="sd">            - None: No directories (all sequences reported missing).</span>
+<span class="sd">            - list[PathLike]: Auto-assumes ``.m8`` / directory_depth=2 (matching</span>
+<span class="sd">              `organize_template_alignments`'s defaults).</span>
+<span class="sd">            - list[dict]: Pre-computed format with 'dir', 'extension',</span>
+<span class="sd">              'directory_depth' keys.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple of (missing_sequences, sequence_to_template_alignment_path), same</span>
+<span class="sd">        shape as :py:func:`find_msas`.</span>
+<span class="sd">    """</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Finding template alignments for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sequences</span><span class="p">)</span><span class="si">}</span><span class="s2"> sequences"</span><span class="p">)</span>
+
+    <span class="n">normalized_dirs</span> <span class="o">=</span> <span class="n">_normalize_template_alignment_dirs</span><span class="p">(</span><span class="n">template_dirs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">normalized_dirs</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"No template alignment directories found"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sequences</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="p">{}</span>
+
+    <span class="n">missing_sequences</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">sequence_to_template_alignment_path</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">sequence</span> <span class="ow">in</span> <span class="n">sequences</span><span class="p">:</span>
+        <span class="n">sequence_hash</span> <span class="o">=</span> <span class="n">hash_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+        <span class="n">found_path</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">dir_info</span> <span class="ow">in</span> <span class="n">normalized_dirs</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">_build_msa_file_path</span><span class="p">(</span>
+                <span class="n">sequence_hash</span><span class="p">,</span> <span class="n">dir_info</span><span class="p">[</span><span class="s2">"dir"</span><span class="p">],</span> <span class="n">dir_info</span><span class="p">[</span><span class="s2">"directory_depth"</span><span class="p">],</span> <span class="n">dir_info</span><span class="p">[</span><span class="s2">"extension"</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">found_path</span> <span class="o">=</span> <span class="n">path</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found existing template alignment for sequence hash </span><span class="si">{</span><span class="n">sequence_hash</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">found_path</span><span class="p">:</span>
+            <span class="n">sequence_to_template_alignment_path</span><span class="p">[</span><span class="n">sequence</span><span class="p">]</span> <span class="o">=</span> <span class="n">found_path</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">missing_sequences</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+
+    <span class="n">found_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sequence_to_template_alignment_path</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found </span><span class="si">{</span><span class="n">found_count</span><span class="si">}</span><span class="s2"> existing template alignments, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">missing_sequences</span><span class="p">)</span><span class="si">}</span><span class="s2"> sequences need generation"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">missing_sequences</span><span class="p">,</span> <span class="n">sequence_to_template_alignment_path</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_paired_msa_dirs</span><span class="p">(</span><span class="n">msa_dirs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Normalize paired-MSA directories to list of dicts with metadata.</span>
+
+<span class="sd">    Paired MSAs sit one level deeper, under a per-``complex_id`` directory, so</span>
+<span class="sd">    :py:func:`_normalize_msa_dirs`'s depth auto-detection over-counts by one. Plain</span>
+<span class="sd">    paths instead assume the writer's default depth of 1 and are searched for every</span>
+<span class="sd">    :py:class:`~atomworks.enums.MSAFileExtension`. Dicts (e.g. with an explicit</span>
+<span class="sd">    ``directory_depth`` for other layouts) pass through unchanged.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">msa_dirs</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">msa_dirs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_normalize_msa_dirs</span><span class="p">(</span><span class="n">msa_dirs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[{</span><span class="s2">"dir"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="s2">"extension"</span><span class="p">:</span> <span class="n">ext</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s2">"directory_depth"</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">msa_dirs</span> <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">MSAFileExtension</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_paired_msa_file_path</span><span class="p">(</span>
+    <span class="n">complex_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sequence_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">msa_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">complex_directory_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Build the paired-MSA file path for a sequence hash within a given complex.</span>
+
+<span class="sd">    complex_id is sharded the same way an unpaired sequence hash is (default: one</span>
+<span class="sd">    2-char directory level) -- a large fine-tuning run can have many complexes, so</span>
+<span class="sd">    this avoids one huge flat directory of complex_ids. Chain files *within* a</span>
+<span class="sd">    complex's own directory stay flat (a complex has few chains). See</span>
+<span class="sd">    :py:func:`~atomworks.ml.preprocessing.msa.colabfold_server.make_msas_colabfold_server`</span>
+<span class="sd">    for the matching writer -- both use the same `build_sharding_pattern`/</span>
+<span class="sd">    `apply_sharding_pattern` helpers for the complex_id shard, so a</span>
+<span class="sd">    `complex_directory_depth` here always corresponds to the writer's</span>
+<span class="sd">    `sharding_pattern` at the same depth (unlike unpaired lookups' `directory_depth`</span>
+<span class="sd">    vs. `organize_msas`'s `sharding_pattern`, which use different units -- see</span>
+<span class="sd">    test_organizing.py).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        complex_id: Identifier for the complex, from `get_complex_id`.</span>
+<span class="sd">        sequence_hash: Hash of the chain's protein sequence.</span>
+<span class="sd">        msa_dir: Base directory containing one (possibly sharded) subdirectory per complex_id.</span>
+<span class="sd">        extension: File extension (e.g., ".a3m.gz").</span>
+<span class="sd">        complex_directory_depth: Shard depth for complex_id (0 = flat, 1 = "ab/" style,</span>
+<span class="sd">            matching `make_msas_colabfold_server`'s default `sharding_pattern="/0:2/"`).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Path to the paired MSA file.</span>
+<span class="sd">    """</span>
+    <span class="n">complex_shard_pattern</span> <span class="o">=</span> <span class="n">build_sharding_pattern</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">complex_directory_depth</span><span class="p">,</span> <span class="n">chars_per_dir</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">sharded_complex_path</span> <span class="o">=</span> <span class="n">apply_sharding_pattern</span><span class="p">(</span><span class="n">complex_id</span><span class="p">,</span> <span class="n">complex_shard_pattern</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">msa_dir</span><span class="p">)</span> <span class="o">/</span> <span class="n">sharded_complex_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">sequence_hash</span><span class="si">}{</span><span class="n">extension</span><span class="si">}</span><span class="s2">"</span>
+
+
+<div class="viewcode-block" id="get_paired_msa_path">
+<a class="viewcode-back" href="../../../../../ml/preprocessing.html#atomworks.ml.preprocessing.msa.finding.get_paired_msa_path">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_paired_msa_path</span><span class="p">(</span>
+    <span class="n">complex_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">sequence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">msa_dirs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Retrieve the path to a chain's paired MSA file within a given complex.</span>
+
+<span class="sd">    Companion to ``get_msa_path`` (in ``atomworks.ml.transforms.msa._msa_loading_utils``)</span>
+<span class="sd">    for paired MSAs, which need two keys -- which complex, and which chain within it --</span>
+<span class="sd">    rather than a sequence hash alone.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        complex_id: Identifier for the complex, from `get_complex_id`.</span>
+<span class="sd">        sequence: The chain's protein sequence, within that complex.</span>
+<span class="sd">        msa_dirs: Directories to search, each containing one (possibly sharded)</span>
+<span class="sd">            subdirectory per complex_id. Plain paths assume the writer's default layout</span>
+<span class="sd">            (see :py:func:`_normalize_paired_msa_dirs`); dicts use the same format as</span>
+<span class="sd">            :py:func:`find_msas`, where `directory_depth` shards complex_id (default 1,</span>
+<span class="sd">            matching `make_msas_colabfold_server`'s default), not the chain hash --</span>
+<span class="sd">            chain files within a complex directory are always flat.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The MSA file path if found, else None.</span>
+<span class="sd">    """</span>
+    <span class="n">normalized_dirs</span> <span class="o">=</span> <span class="n">_normalize_paired_msa_dirs</span><span class="p">(</span><span class="n">msa_dirs</span><span class="p">)</span>
+    <span class="n">sequence_hash</span> <span class="o">=</span> <span class="n">hash_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">dir_info</span> <span class="ow">in</span> <span class="n">normalized_dirs</span><span class="p">:</span>
+        <span class="n">complex_depth</span> <span class="o">=</span> <span class="n">dir_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"directory_depth"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">_build_paired_msa_file_path</span><span class="p">(</span>
+            <span class="n">complex_id</span><span class="p">,</span> <span class="n">sequence_hash</span><span class="p">,</span> <span class="n">dir_info</span><span class="p">[</span><span class="s2">"dir"</span><span class="p">],</span> <span class="n">dir_info</span><span class="p">[</span><span class="s2">"extension"</span><span class="p">],</span> <span class="n">complex_depth</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found existing paired MSA for complex </span><span class="si">{</span><span class="n">complex_id</span><span class="si">}</span><span class="s2">, sequence hash </span><span class="si">{</span><span class="n">sequence_hash</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">path</span>
+
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="find_paired_msas">
+<a class="viewcode-back" href="../../../../../ml/preprocessing.html#atomworks.ml.preprocessing.msa.finding.find_paired_msas">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_paired_msas</span><span class="p">(</span>
+    <span class="n">sequences</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">msa_dirs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Find the paired MSA files for one complex's full unique sequence set.</span>
+
+<span class="sd">    Mirrors :py:func:`find_msas`'s shape, but for a paired/complex query:</span>
+<span class="sd">    `sequences` is treated as the complete set of unique chains in ONE complex --</span>
+<span class="sd">    the same unit `organize_paired_msas`/`make_msas_colabfold_server` operate on --</span>
+<span class="sd">    and complex_id is derived from them automatically via `get_complex_id`, not</span>
+<span class="sd">    something the caller computes or passes separately.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sequences: The full unique-sequence set of one complex.</span>
+<span class="sd">        msa_dirs: Directories to search, each containing paired MSA output (e.g.</span>
+<span class="sd">            `make_msas_colabfold_server`'s ``&lt;output_dir&gt;/paired``). Accepts the</span>
+<span class="sd">            same formats as :py:func:`find_msas`.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple of (missing_sequences, sequence_to_msa_path), same shape as</span>
+<span class="sd">        :py:func:`find_msas`.</span>
+<span class="sd">    """</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Finding paired MSAs for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sequences</span><span class="p">)</span><span class="si">}</span><span class="s2"> sequences (one complex)"</span><span class="p">)</span>
+
+    <span class="n">normalized_dirs</span> <span class="o">=</span> <span class="n">_normalize_paired_msa_dirs</span><span class="p">(</span><span class="n">msa_dirs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">normalized_dirs</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"No MSA directories found"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sequences</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="p">{}</span>
+
+    <span class="n">complex_id</span> <span class="o">=</span> <span class="n">get_complex_id</span><span class="p">(</span><span class="n">sequences</span><span class="p">)</span>
+
+    <span class="n">missing_sequences</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">sequence_to_msa_path</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">sequence</span> <span class="ow">in</span> <span class="n">sequences</span><span class="p">:</span>
+        <span class="n">found_path</span> <span class="o">=</span> <span class="n">get_paired_msa_path</span><span class="p">(</span><span class="n">complex_id</span><span class="p">,</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">normalized_dirs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">found_path</span><span class="p">:</span>
+            <span class="n">sequence_to_msa_path</span><span class="p">[</span><span class="n">sequence</span><span class="p">]</span> <span class="o">=</span> <span class="n">found_path</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">missing_sequences</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+
+    <span class="n">found_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sequence_to_msa_path</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found </span><span class="si">{</span><span class="n">found_count</span><span class="si">}</span><span class="s2"> existing paired MSAs, </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">missing_sequences</span><span class="p">)</span><span class="si">}</span><span class="s2"> sequences need generation"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">missing_sequences</span><span class="p">,</span> <span class="n">sequence_to_msa_path</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
+<script defer src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.22.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

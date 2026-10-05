@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>atomworks.ml.datasets.metadata &#8212; atomworks 3.0.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinxcontrib_typer.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+
+    <script src="../../../../_static/documentation_options.js?v=acc74ff5"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/datasets/metadata';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.22.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="3.0.0" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.0 documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../cookbook.html">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../migration/index.html">
+    Migrating to AtomWorks 3.0
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../cookbook.html">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../migration/index.html">
+    Migrating to AtomWorks 3.0
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">atomworks.ml.datasets.metadata</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for atomworks.ml.datasets.metadata</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Metadata index for filtering and ID-mapping in molecular datasets."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">PathLike</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">runtime_checkable</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyarrow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pa</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyarrow.compute</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyarrow.feather</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">feather</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">as_list</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">NA_VALUES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.utils.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_feather_once</span><span class="p">,</span> <span class="n">job_scoped_feather_path</span><span class="p">,</span> <span class="n">read_csv</span><span class="p">,</span> <span class="n">read_parquet_with_metadata</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"datasets"</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MetadataIndexProtocol">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.MetadataIndexProtocol">[docs]</a>
+<span class="nd">@runtime_checkable</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MetadataIndexProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Structural interface shared by all metadata index backends."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+<div class="viewcode-block" id="MetadataIndexProtocol.id_to_idx">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.MetadataIndexProtocol.id_to_idx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">id_to_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span> <span class="o">...</span></div>
+
+<div class="viewcode-block" id="MetadataIndexProtocol.idx_to_id">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.MetadataIndexProtocol.idx_to_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">idx_to_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span> <span class="o">...</span></div>
+
+<div class="viewcode-block" id="MetadataIndexProtocol.get_row">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.MetadataIndexProtocol.get_row">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span> <span class="o">...</span></div>
+
+<div class="viewcode-block" id="MetadataIndexProtocol.get_column_values">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.MetadataIndexProtocol.get_column_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_column_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span> <span class="o">...</span></div>
+
+<div class="viewcode-block" id="MetadataIndexProtocol.get_example_id">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.MetadataIndexProtocol.get_example_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_example_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span> <span class="o">...</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="MetadataIndex">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.MetadataIndex">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MetadataIndex</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Parquet/DataFrame metadata with filtering and ID lookup.</span>
+
+<span class="sd">    Single source of truth for example IDs across all dataset backends.</span>
+<span class="sd">    The ``id_column`` is set as the pandas index for O(1) ``.loc`` lookups.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">id_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"example_id"</span><span class="p">,</span>
+        <span class="n">filters</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">columns_to_load</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">load_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize MetadataIndex.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: Either a pandas DataFrame or path to a CSV/Parquet file.</span>
+<span class="sd">            name: Descriptive name for logging.</span>
+<span class="sd">            id_column: Column to use as the index for example ID lookups.</span>
+<span class="sd">            filters: Independent row-wise pandas predicates evaluated on the input data.</span>
+<span class="sd">            columns_to_load: Optional list of columns to load from file.</span>
+<span class="sd">            load_kwargs: Additional keyword arguments for pandas read functions.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">_load_from_path</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns_to_load</span><span class="p">,</span> <span class="o">**</span><span class="p">(</span><span class="n">load_kwargs</span> <span class="ow">or</span> <span class="p">{}))</span>
+
+        <span class="k">assert</span> <span class="n">id_column</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Column </span><span class="si">{</span><span class="n">id_column</span><span class="si">}</span><span class="s2"> not found. Available: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+
+        <span class="k">if</span> <span class="n">filters</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">_apply_filters</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">filters</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">id_column</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verify_integrity</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">example_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">index</span>
+
+<div class="viewcode-block" id="MetadataIndex.id_to_idx">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.MetadataIndex.id_to_idx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">id_to_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Convert example ID(s) to positional index(es)."""</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">example_id</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">example_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">eid</span><span class="p">)</span> <span class="k">for</span> <span class="n">eid</span> <span class="ow">in</span> <span class="n">example_id</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="MetadataIndex.idx_to_id">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.MetadataIndex.idx_to_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">idx_to_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Convert positional index(es) to example ID(s)."""</span>
+        <span class="n">_return_single</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">idx</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">()):</span>
+            <span class="n">_return_single</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="k">else</span> <span class="n">idx</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">return</span> <span class="n">ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">_return_single</span> <span class="k">else</span> <span class="n">ids</span></div>
+
+
+<div class="viewcode-block" id="MetadataIndex.get_row">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.MetadataIndex.get_row">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Get metadata row by positional index."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="MetadataIndex.get_column_values">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.MetadataIndex.get_column_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_column_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Get values of a column as numpy array."""</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">column</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="MetadataIndex.get_example_id">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.MetadataIndex.get_example_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_example_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Get example ID by positional index."""</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ArrowMetadataIndex">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.ArrowMetadataIndex">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ArrowMetadataIndex</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Memory-mapped Arrow metadata with the same interface as :class:`MetadataIndex`.</span>
+
+<span class="sd">    Converts the DataFrame to an uncompressed feather file on local storage and</span>
+<span class="sd">    reads it back as a memory-mapped :class:`pyarrow.Table`, keeping Python heap</span>
+<span class="sd">    usage minimal. ID lookups are O(N) — acceptable because they are not on the</span>
+<span class="sd">    DataLoader hot path.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">id_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"example_id"</span><span class="p">,</span>
+        <span class="n">filters</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">columns_to_load</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">load_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">local_drive_mount</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"/tmp"</span><span class="p">,</span>
+        <span class="n">job_id_env_var</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"SLURM_JOB_ID"</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize ArrowMetadataIndex.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: Either a pandas DataFrame or path to a CSV/Parquet file.</span>
+<span class="sd">            name: Descriptive name for logging.</span>
+<span class="sd">            id_column: Column to use as the ID column.</span>
+<span class="sd">            filters: Independent row-wise pandas predicates evaluated on the input data.</span>
+<span class="sd">            columns_to_load: Optional list of columns to load from file.</span>
+<span class="sd">            load_kwargs: Additional keyword arguments for pandas read functions.</span>
+<span class="sd">            local_drive_mount: Root directory for feather files.</span>
+<span class="sd">            job_id_env_var: Environment variable used to namespace feather files</span>
+<span class="sd">                per job (e.g. ``"SLURM_JOB_ID"``).</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_id_column</span> <span class="o">=</span> <span class="n">id_column</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feather_path</span> <span class="o">=</span> <span class="n">_build_feather_index</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">id_column</span><span class="o">=</span><span class="n">id_column</span><span class="p">,</span>
+            <span class="n">filters</span><span class="o">=</span><span class="n">filters</span><span class="p">,</span>
+            <span class="n">columns_to_load</span><span class="o">=</span><span class="n">columns_to_load</span><span class="p">,</span>
+            <span class="n">load_kwargs</span><span class="o">=</span><span class="n">load_kwargs</span><span class="p">,</span>
+            <span class="n">local_drive_mount</span><span class="o">=</span><span class="n">local_drive_mount</span><span class="p">,</span>
+            <span class="n">job_id_env_var</span><span class="o">=</span><span class="n">job_id_env_var</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="n">pa</span><span class="o">.</span><span class="n">Table</span> <span class="o">=</span> <span class="n">feather</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feather_path</span><span class="p">,</span> <span class="n">memory_map</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">id_column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">column_names</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Column </span><span class="si">{</span><span class="n">id_column</span><span class="si">}</span><span class="s2"> not found. Available: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">column_names</span><span class="si">}</span><span class="s2">"</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Pickle-friendly: store path instead of the full table."""</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">"feather_path"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">feather_path</span><span class="p">,</span>
+            <span class="s2">"_id_column"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id_column</span><span class="p">,</span>
+            <span class="s2">"name"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Restore from pickle by re-opening the feather file."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feather_path</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">"feather_path"</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_id_column</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">"_id_column"</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">feather</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feather_path</span><span class="p">,</span> <span class="n">memory_map</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">num_rows</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pc</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_column</span><span class="p">),</span> <span class="n">example_id</span><span class="p">)</span><span class="o">.</span><span class="n">as_py</span><span class="p">()</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span>
+
+<div class="viewcode-block" id="ArrowMetadataIndex.id_to_idx">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.ArrowMetadataIndex.id_to_idx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">id_to_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Convert example ID(s) to positional index(es). O(N) per call."""</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_column</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">example_id</span><span class="p">):</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">example_id</span><span class="p">)</span><span class="o">.</span><span class="n">as_py</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">example_id</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">idx</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">is_in</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">value_set</span><span class="o">=</span><span class="n">pa</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">example_id</span><span class="p">))</span>
+        <span class="n">matching_rows</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">matching_ids</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">matching_rows</span><span class="p">)</span><span class="o">.</span><span class="n">to_pylist</span><span class="p">()</span>
+        <span class="n">id_to_row</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">):</span> <span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">matching_ids</span><span class="p">,</span> <span class="n">matching_rows</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)}</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">id_to_row</span><span class="p">[</span><span class="n">eid</span><span class="p">]</span> <span class="k">for</span> <span class="n">eid</span> <span class="ow">in</span> <span class="n">example_id</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ArrowMetadataIndex.idx_to_id">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.ArrowMetadataIndex.idx_to_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">idx_to_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Convert positional index(es) to example ID(s)."""</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_column</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">idx</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">()):</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="k">else</span> <span class="n">idx</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">col</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">as_py</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">col</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">as_py</span><span class="p">())</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idx</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="ArrowMetadataIndex.get_row">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.ArrowMetadataIndex.get_row">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Get metadata row by positional index."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">slice</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ArrowMetadataIndex.get_column_values">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.ArrowMetadataIndex.get_column_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_column_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Get values of a column as numpy array."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">column</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">zero_copy_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ArrowMetadataIndex.get_example_id">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.ArrowMetadataIndex.get_example_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_example_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Get example ID by positional index."""</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_column</span><span class="p">)[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">as_py</span><span class="p">())</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SequentialMetadataIndex">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.SequentialMetadataIndex">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SequentialMetadataIndex</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Identity metadata mapping ``"0"`` … ``"n-1"`` to sequential indices.</span>
+
+<span class="sd">    Same interface as :class:`MetadataIndex` / :class:`ArrowMetadataIndex`</span>
+<span class="sd">    for datasets that don't need an external metadata file.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">n_entries</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">idx_column</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="n">n_entries</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_idx_column</span> <span class="o">=</span> <span class="n">idx_column</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="n">example_id</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="SequentialMetadataIndex.id_to_idx">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.SequentialMetadataIndex.id_to_idx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">id_to_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">example_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Convert string index(es) to int."""</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">example_id</span><span class="p">):</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">example_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">example_id</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">idx</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">id_to_idx</span><span class="p">(</span><span class="n">eid</span><span class="p">)</span> <span class="k">for</span> <span class="n">eid</span> <span class="ow">in</span> <span class="n">example_id</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="SequentialMetadataIndex.idx_to_id">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.SequentialMetadataIndex.idx_to_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">idx_to_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Convert int index(es) to string."""</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">idx</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">()):</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="k">else</span> <span class="n">idx</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idx</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="SequentialMetadataIndex.get_column_values">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.SequentialMetadataIndex.get_column_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_column_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return sequential indices for ``idx_column``."""</span>
+        <span class="k">if</span> <span class="n">column</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idx_column</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Column </span><span class="si">{</span><span class="n">column</span><span class="si">!r}</span><span class="s2"> not available without a metadata file"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SequentialMetadataIndex.get_row">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.SequentialMetadataIndex.get_row">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Not available — ``SequentialMetadataIndex`` has no row data."""</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s2">"SequentialMetadataIndex has no row data. "</span> <span class="s2">"Provide a metadata file to use get_row()."</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SequentialMetadataIndex.get_example_id">
+<a class="viewcode-back" href="../../../../ml/datasets/datasets.html#atomworks.ml.datasets.SequentialMetadataIndex.get_example_id">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_example_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_feather_index</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">id_column</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">filters</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">columns_to_load</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">load_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">local_drive_mount</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">job_id_env_var</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Build once (under a lock) and return the path to a memory-mappable feather index."""</span>
+    <span class="c1"># Key by name *and* content (filters, columns, source): one name can mean different rows.</span>
+    <span class="n">source_key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>  <span class="c1"># in-memory frame: name only</span>
+    <span class="n">feather_path</span> <span class="o">=</span> <span class="n">job_scoped_feather_path</span><span class="p">(</span>
+        <span class="n">name</span><span class="p">,</span>
+        <span class="n">local_drive_mount</span><span class="o">=</span><span class="n">local_drive_mount</span><span class="p">,</span>
+        <span class="n">job_id_env_var</span><span class="o">=</span><span class="n">job_id_env_var</span><span class="p">,</span>
+        <span class="n">content_key</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">source_key</span><span class="p">,</span>
+            <span class="n">id_column</span><span class="p">,</span>
+            <span class="n">filters</span><span class="p">,</span>
+            <span class="s2">"cumulative_masks"</span><span class="p">,</span>
+            <span class="n">columns_to_load</span><span class="p">,</span>
+            <span class="nb">sorted</span><span class="p">((</span><span class="n">load_kwargs</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">()),</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">pa</span><span class="o">.</span><span class="n">Table</span><span class="p">:</span>
+        <span class="c1"># Read the source only here (feather missing) — not once per rank.</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">_load_from_path</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns_to_load</span><span class="p">,</span> <span class="o">**</span><span class="p">(</span><span class="n">load_kwargs</span> <span class="ow">or</span> <span class="p">{}))</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">data</span>
+        <span class="k">assert</span> <span class="n">id_column</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Column </span><span class="si">{</span><span class="n">id_column</span><span class="si">}</span><span class="s2"> not found. Available: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">if</span> <span class="n">filters</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">_apply_filters</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">filters</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">torch.distributed</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dist</span>
+
+            <span class="n">rank</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()</span> <span class="k">if</span> <span class="n">dist</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="ow">and</span> <span class="n">dist</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">()</span> <span class="k">else</span> <span class="s2">"N/A"</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="n">rank</span> <span class="o">=</span> <span class="s2">"N/A"</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Rank </span><span class="si">{</span><span class="n">rank</span><span class="si">}</span><span class="s2">: Converting </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> to feather at </span><span class="si">{</span><span class="n">feather_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pa</span><span class="o">.</span><span class="n">Table</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">build_feather_once</span><span class="p">(</span><span class="n">feather_path</span><span class="p">,</span> <span class="n">build</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_from_path</span><span class="p">(</span>
+    <span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">columns_to_load</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">load_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Load DataFrame from a CSV or Parquet file (local path or ``s3://`` URL)."""</span>
+    <span class="n">suffix</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">))</span><span class="o">.</span><span class="n">suffix</span>
+    <span class="k">if</span> <span class="n">columns_to_load</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">columns_to_load</span> <span class="o">=</span> <span class="n">as_list</span><span class="p">(</span><span class="n">columns_to_load</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">suffix</span> <span class="o">==</span> <span class="s2">".csv"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="n">columns_to_load</span><span class="p">,</span> <span class="n">keep_default_na</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">na_values</span><span class="o">=</span><span class="n">NA_VALUES</span><span class="p">,</span> <span class="o">**</span><span class="n">load_kwargs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">suffix</span> <span class="o">==</span> <span class="s2">".parquet"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">read_parquet_with_metadata</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns_to_load</span><span class="p">,</span> <span class="o">**</span><span class="n">load_kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported file type: </span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_apply_filters</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">filters</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Combine independent row-wise masks with cumulative waterfall counts, then select rows once."""</span>
+    <span class="n">initial_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">filtered_count</span> <span class="o">=</span> <span class="n">initial_count</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">initial_count</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">filter_results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">:</span>
+        <span class="n">original_count</span> <span class="o">=</span> <span class="n">filtered_count</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_bool_dtype</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">dtype</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Dataset filters require a boolean row-wise predicate, got </span><span class="si">{</span><span class="n">query</span><span class="si">!r}</span><span class="s2">."</span><span class="p">)</span>
+        <span class="n">keep</span> <span class="o">&amp;=</span> <span class="n">mask</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span> <span class="n">na_value</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">filtered_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">keep</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="n">filtered_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Query '</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2">' on dataset </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> removed all rows."</span><span class="p">)</span>
+
+        <span class="n">rows_removed</span> <span class="o">=</span> <span class="n">original_count</span> <span class="o">-</span> <span class="n">filtered_count</span>
+        <span class="n">filter_results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">query</span><span class="p">,</span> <span class="n">rows_removed</span><span class="p">))</span>
+
+    <span class="n">_log_filter_summary</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">initial_count</span><span class="p">,</span> <span class="n">filtered_count</span><span class="p">,</span> <span class="n">filter_results</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_filter_summary</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">initial_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">final_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">filter_results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span>
+    <span class="n">max_width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">120</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Log a waterfall summary of all applied filters."""</span>
+    <span class="k">for</span> <span class="n">query</span><span class="p">,</span> <span class="n">removed</span> <span class="ow">in</span> <span class="n">filter_results</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">removed</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Query '</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2">' on dataset </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> did not remove any rows."</span><span class="p">)</span>
+
+    <span class="n">total_removed</span> <span class="o">=</span> <span class="n">initial_count</span> <span class="o">-</span> <span class="n">final_count</span>
+    <span class="n">total_pct</span> <span class="o">=</span> <span class="p">(</span><span class="n">total_removed</span> <span class="o">/</span> <span class="n">initial_count</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span> <span class="k">if</span> <span class="n">initial_count</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+    <span class="n">header</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">initial_count</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> </span><span class="se">\u2192</span><span class="s2"> </span><span class="si">{</span><span class="n">final_count</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> rows (</span><span class="si">{</span><span class="n">total_pct</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">% removed) "</span>
+
+    <span class="n">bar_width</span> <span class="o">=</span> <span class="mi">22</span>
+    <span class="c1"># inner_width = max_width - 2 (for border chars)</span>
+    <span class="n">inner_width</span> <span class="o">=</span> <span class="n">max_width</span> <span class="o">-</span> <span class="mi">2</span>
+    <span class="c1"># Format: "  &lt;query&gt; &lt;count&gt; &lt;pct&gt; &lt;bar&gt;  "</span>
+    <span class="c1">#          2 + query + 1 + 10 + 1 + 7 + 1 + bar + 2(padding) = inner_width</span>
+    <span class="n">max_query_width</span> <span class="o">=</span> <span class="n">inner_width</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">10</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">7</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">bar_width</span> <span class="o">-</span> <span class="mi">2</span>
+
+    <span class="n">filter_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">query</span><span class="p">,</span> <span class="n">removed</span> <span class="ow">in</span> <span class="n">filter_results</span><span class="p">:</span>
+        <span class="n">pct</span> <span class="o">=</span> <span class="p">(</span><span class="n">removed</span> <span class="o">/</span> <span class="n">initial_count</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span> <span class="k">if</span> <span class="n">initial_count</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="n">filled</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">pct</span> <span class="o">/</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">bar_width</span><span class="p">)</span>
+        <span class="n">bar</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\u2588</span><span class="s2">"</span> <span class="o">*</span> <span class="n">filled</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\u2591</span><span class="s2">"</span> <span class="o">*</span> <span class="p">(</span><span class="n">bar_width</span> <span class="o">-</span> <span class="n">filled</span><span class="p">)</span>
+        <span class="n">count_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"-</span><span class="si">{</span><span class="n">removed</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">"</span>
+        <span class="n">pct_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">pct</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%)"</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">query</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_query_width</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="p">[:</span> <span class="n">max_query_width</span> <span class="o">-</span> <span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"..."</span>
+        <span class="n">filter_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">query</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">max_query_width</span><span class="si">}</span><span class="s2">s</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">count_str</span><span class="si">:</span><span class="s2">&gt;10s</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">pct_str</span><span class="si">:</span><span class="s2">&gt;7s</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">bar</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="n">top</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\u250c</span><span class="si">{</span><span class="n">header</span><span class="si">:</span><span class="se">\u2500</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">inner_width</span><span class="si">}}</span><span class="se">\u2510</span><span class="s2">"</span>
+    <span class="n">bottom</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\u2514</span><span class="si">{</span><span class="s1">'</span><span class="se">\u2500</span><span class="s1">'</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">inner_width</span><span class="si">}</span><span class="se">\u2518</span><span class="s2">"</span>
+    <span class="n">empty</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\u2502</span><span class="si">{</span><span class="s1">' '</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">inner_width</span><span class="si">}</span><span class="se">\u2502</span><span class="s2">"</span>
+
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">top</span><span class="p">,</span> <span class="n">empty</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">fl</span> <span class="ow">in</span> <span class="n">filter_lines</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\u2502</span><span class="si">{</span><span class="n">fl</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">inner_width</span><span class="si">}}</span><span class="se">\u2502</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span><span class="n">empty</span><span class="p">,</span> <span class="n">bottom</span><span class="p">]</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">))</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.22.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

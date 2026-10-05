@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>AtomWorks 2.x → 3.0: detailed migration guide &#8212; atomworks 3.0.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxcontrib_typer.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+
+    <script src="../_static/documentation_options.js?v=acc74ff5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'migration/migration-long';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.22.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Glossary" href="../glossary.html" />
+    <link rel="prev" title="AtomWorks 2.x → 3.0: short migration guide" href="migration-short.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="3.0.0" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.0 documentation - Home"/>
+    <img src="../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../cookbook.html">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Migrating to AtomWorks 3.0
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../cookbook.html">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Migrating to AtomWorks 3.0
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="migration-short.html">AtomWorks 2.x → 3.0: short migration guide</a></li>
+<li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">AtomWorks 2.x → 3.0: detailed migration guide</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Migrating to AtomWorks 3.0</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">AtomWorks 2.x → 3.0: detailed migration guide</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="atomworks-2-x-3-0-detailed-migration-guide">
+<h1>AtomWorks 2.x → 3.0: detailed migration guide<a class="headerlink" href="#atomworks-2-x-3-0-detailed-migration-guide" title="Link to this heading">#</a></h1>
+<p>Start with the I/O changes below: parser configuration, chemical corrections, alternate conformers, CIF round trips and parser caches. The <a class="reference internal" href="migration-short.html"><span class="std std-doc">short guide</span></a> covers the essential steps; additional ML migration notes follow the I/O sections.</p>
+<section id="parser-calls-and-defaults">
+<h2>Parser calls and defaults<a class="headerlink" href="#parser-calls-and-defaults" title="Link to this heading">#</a></h2>
+<p>For 2.x:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">STANDARD_PARSER_ARGS</span>
+
+<span class="n">options</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">STANDARD_PARSER_ARGS</span><span class="p">,</span> <span class="s2">"hydrogen_policy"</span><span class="p">:</span> <span class="s2">"remove"</span><span class="p">}</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">"structure.cif"</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For 3.0:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParseConfig</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">ParseConfig</span><span class="o">.</span><span class="n">from_preset</span><span class="p">(</span><span class="s2">"rcsb"</span><span class="p">,</span> <span class="n">hydrogen_policy</span><span class="o">=</span><span class="s2">"remove"</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="s2">"structure.cif"</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ParseConfig</span></code> and <code class="docutils literal notranslate"><span class="pre">PrepareConfig</span></code> are frozen dataclasses. Derive a changed configuration with <code class="docutils literal notranslate"><span class="pre">config.replace(...)</span></code>; serialize it with <code class="docutils literal notranslate"><span class="pre">to_dict()</span></code>. Prefer an explicit constructor when migrating old dictionaries: <code class="docutils literal notranslate"><span class="pre">from_dict()</span></code> deliberately drops unknown keys, which can silently discard obsolete chemistry flags or misspellings. Bare surviving options still work with deprecation warnings; obsolete names passed directly to <code class="docutils literal notranslate"><span class="pre">parse()</span></code> produce <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>. <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/config.py">Configuration</a>, <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/parser.py">parser</a>.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>2.x usage or assumption</p></th>
+<th class="head"><p>3.0 action</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">filename=path</span></code></p></td>
+<td><p>Use positional <code class="docutils literal notranslate"><span class="pre">source</span></code> or <code class="docutils literal notranslate"><span class="pre">source=path</span></code>; alias is deprecated.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">STANDARD_PARSER_ARGS</span></code></p></td>
+<td><p>Use <code class="docutils literal notranslate"><span class="pre">ParseConfig.from_preset(&quot;rcsb&quot;)</span></code>; dictionary remains deprecated.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fix_formal_charges</span></code> / <code class="docutils literal notranslate"><span class="pre">fix_bond_types</span></code></p></td>
+<td><p>Remove; completing atoms includes integrated sanitization. There is no independent legacy-equivalence switch.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hydrogen_policy=&quot;infer&quot;</span></code></p></td>
+<td><p>Choose <code class="docutils literal notranslate"><span class="pre">&quot;keep&quot;</span></code>/<code class="docutils literal notranslate"><span class="pre">&quot;remove&quot;</span></code>; run explicit protonation separately when needed.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">parse_atom_array(atoms,</span> <span class="pre">**options)</span></code></p></td>
+<td><p>Use <code class="docutils literal notranslate"><span class="pre">parse_atom_array(atoms,</span> <span class="pre">config=PrepareConfig(...))</span></code> for a result dictionary.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Need only prepared atoms</p></td>
+<td><p>Use <code class="docutils literal notranslate"><span class="pre">prepare_atom_array(atoms,</span> <span class="pre">config=PrepareConfig(...))</span></code>; single-model output is squeezed to AtomArray.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">remove_ccds=None</span></code> as old default sentinel</p></td>
+<td><p>Omit the option for default crystallization-aid removal; use <code class="docutils literal notranslate"><span class="pre">remove_ccds=()</span></code> to keep them.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Assume all multi-model files produce one stack</p></td>
+<td><p>Same-topology models can stack; variable-topology CIFs can return a <strong>list of result dictionaries</strong>. Handle this explicitly.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The ordinary parser result retains <code class="docutils literal notranslate"><span class="pre">asym_unit</span></code>, <code class="docutils literal notranslate"><span class="pre">assemblies</span></code>, <code class="docutils literal notranslate"><span class="pre">chain_info</span></code>, <code class="docutils literal notranslate"><span class="pre">ligand_info</span></code>, <code class="docutils literal notranslate"><span class="pre">metadata</span></code>, and <code class="docutils literal notranslate"><span class="pre">extra_info</span></code>. Do not infer guaranteed rank from the result-key names; choose models deliberately and inspect AtomArray versus AtomArrayStack. Models use Biotite positional conventions (positive positions are one-based); do not mistake a position for an arbitrary deposited model ID. For multi-model inputs, establish the chosen model before calling code requiring a single AtomArray.</p>
+<p>Important defaults remain intentional: all models (<code class="docutils literal notranslate"><span class="pre">model=None</span></code>), all assemblies, missing-atom completion enabled, hydrogen policy <code class="docutils literal notranslate"><span class="pre">&quot;keep&quot;</span></code>, waters removed. Default <code class="docutils literal notranslate"><span class="pre">ParseConfig()</span></code> retains MSE; <code class="docutils literal notranslate"><span class="pre">&quot;rcsb&quot;</span></code> converts MSE to MET. <code class="docutils literal notranslate"><span class="pre">&quot;lightweight&quot;</span></code> disables missing-atom completion; <code class="docutils literal notranslate"><span class="pre">&quot;minimal&quot;</span></code> additionally keeps waters/excluded components and disables several annotations/corrections. These are distinct processing choices, not interchangeable performance settings. <code class="docutils literal notranslate"><span class="pre">long_bond_policy=&quot;warn&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">struct_conn_distance_policy=&quot;filter&quot;</span></code> can expose or remove problematic connections. Inspect changed bond sets for unusual inputs. <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/config.py">Presets and policies</a>.</p>
+</section>
+<section id="chemical-corrections-and-existing-checkpoints">
+<h2>Chemical corrections and existing checkpoints<a class="headerlink" href="#chemical-corrections-and-existing-checkpoints" title="Link to this heading">#</a></h2>
+<p>With missing-atom completion enabled, the pipeline resolves leaving atoms and overvalence, corrects relevant inter-residue formal charges/bond orders, and neutralizes charged amide nitrogens. Hydrogen counts are used in these corrections. With completion disabled, this sanitization is disabled too; selecting that mode solely to suppress changed charges also changes completeness and is not a reproduction of 2.x. <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/_pipeline.py">Pipeline</a>, <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/utils/link_chemistry.py">link chemistry</a>.</p>
+<p>The release tests identify concrete cases worth including in a downstream migration set:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Structures</p></th>
+<th class="head"><p>Behavior to compare</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">1ivo</span></code>, <code class="docutils literal notranslate"><span class="pre">4js1</span></code>, <code class="docutils literal notranslate"><span class="pre">1qfe</span></code></p></td>
+<td><p>Charges/hydrogen counts at covalent modifications and amide nitrogens.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">1a3g</span></code></p></td>
+<td><p>Schiff-base linkage bond order and carbon charge.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">1j8z</span></code>, <code class="docutils literal notranslate"><span class="pre">1a1e</span></code>, <code class="docutils literal notranslate"><span class="pre">1d9d</span></code></p></td>
+<td><p>Leaving hydrogen handling and resulting charges.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">1rcq</span></code></p></td>
+<td><p>Alternate conformers, <code class="docutils literal notranslate"><span class="pre">struct_conn</span></code>, and lysine charge.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">4ndz</span></code>, <code class="docutils literal notranslate"><span class="pre">6h9v</span></code></p></td>
+<td><p>Multi-residue ligand bonds and beta-peptide connectivity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">1twr</span></code>, <code class="docutils literal notranslate"><span class="pre">6q9t</span></code></p></td>
+<td><p>Authored component chemistry and unusual atom names.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>These are documented regression/round-trip cases, not a claim that every structure in a production corpus is chemically validated. <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/tests/io/utils/test_io.py#L417">Case list</a>.</p>
+<p>For an existing model, preserve the old locked environment and a small set of its exact features. Compare by atom identity including assembly instance, not array offset alone. Review atom counts, charge/implicit-hydrogen annotations, bond topology and orders, masks and atomization. Evaluate the checkpoint on both feature sets and relevant scientific metrics. If necessary, retain the versioned 2.x preprocessing path for that checkpoint until retraining/fine-tuning or an explicitly validated adapter is available. Avoid silently mixing newly generated features with old cached training data.</p>
+<section id="covalent-links-reaction-states-and-unsupported-chemistry">
+<h3>Covalent links, reaction states and unsupported chemistry<a class="headerlink" href="#covalent-links-reaction-states-and-unsupported-chemistry" title="Link to this heading">#</a></h3>
+<p>Link processing proposes connectivity, resolves the linked product, then validates its valence with RDKit. Recognized explicit <code class="docutils literal notranslate"><span class="pre">struct_conn</span></code> bond orders are retained; missing multiple-bond orders are constrained by both component templates. A candidate single bond is not rejected solely because an isolated CCD reactant is saturated: product formation may displace atoms or change internal bonds and charges. An unsupported explicit order raises instead of silently becoming a single bond. A double bond in one component’s leaving group does not by itself authorize a double bond to the other component.</p>
+<p>Sequence adjacency also does not authorize arbitrary backbone chemistry. Polymer linking preserves an existing attachment to the adjacent residue and allows side-chain crosslinks alongside backbone bonds; the resulting product must still pass chemistry validation. Metal coordination is excluded from covalent leaving-group removal and valence accounting; a coordination bond alone should not remove a donor’s hydrogens or change its charge.</p>
+<p>Selected alternate-location labels are retained through missing-atom rebuilding so that authored links remain associated with the selected reaction state. In <code class="docutils literal notranslate"><span class="pre">6dp5</span></code>, the B conformer retains an OP3–magnesium coordination contact, while C has the O3′–P covalent link; rebuilding must not combine these states. Distance filtering also recognizes authored glycosylation: links identified by a glycosylation role, or covalent links between carbohydrates, can be retained through 2.4 Å with a warning when above the usual threshold. This includes the 2.211 Å ASN–NAG link in <code class="docutils literal notranslate"><span class="pre">2odp</span></code>; it is not a general relaxation for every covalent link.</p>
+<p>Sanitization handles supported leaving-group substitution, addition across multiple bonds, hydrogen transfer, resonance changes and product charges while preserving observed atoms. Unsupported products still raise <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>; for example, <code class="docutils literal notranslate"><span class="pre">1vq7</span></code> requires an invalid phosphorus bond-order sum of seven. Supply the product’s component definitions and explicit connectivity/bond orders when required; do not treat disabling completion or ignoring the exception as a chemical repair. Custom components need consistent <code class="docutils literal notranslate"><span class="pre">chem_comp_atom</span></code> and <code class="docutils literal notranslate"><span class="pre">chem_comp_bond</span></code> definitions.</p>
+<p>Extend the migration set with cases that exercise these decisions:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Structures</p></th>
+<th class="head"><p>Behavior to compare</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">1rcq</span></code>, <code class="docutils literal notranslate"><span class="pre">1dpn</span></code></p></td>
+<td><p>Inferred link order and the resulting linked product’s bond orders and valence.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">3n95</span></code>, <code class="docutils literal notranslate"><span class="pre">4aah</span></code></p></td>
+<td><p>Sequence-defined terminal caps and coexistence of backbone bonds with side-chain crosslinks.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">6dp5</span></code></p></td>
+<td><p>Conformer-specific covalent versus coordination links after rebuilding.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">2odp</span></code></p></td>
+<td><p>Retention of an authored glycosylation link above the usual distance threshold.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">1n4e</span></code>, <code class="docutils literal notranslate"><span class="pre">8qia</span></code>, <code class="docutils literal notranslate"><span class="pre">6n0a</span></code></p></td>
+<td><p>Thymine photodimer formation, addition across C=N with hydrogen transfer, and substitution of an unresolved ASN nitrogen.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">6w13</span></code>, <code class="docutils literal notranslate"><span class="pre">1vq7</span></code></p></td>
+<td><p>Preservation of observed phosphate oxygen and rejection of an invalid phosphorus product.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Compare successful outputs and rejected inputs: matching atom counts alone do not establish matching bonds, charges, hydrogen counts or conformer annotations. <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/src/atomworks/io/utils/link_chemistry.py">Link validation and resolution</a>, <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/tests/io/utils/test_link_product_regressions.py">product regressions</a>, <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/src/atomworks/io/_pipeline.py">rebuilding pipeline</a>.</p>
+</section>
+<section id="explicit-protonation">
+<h3>Explicit protonation<a class="headerlink" href="#explicit-protonation" title="Link to this heading">#</a></h3>
+<p>Protonation is a separate chemical operation. The experimental API separates pH-dependent
+charge/hydrogen assignment from coordinate placement:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.experimental.protonation</span><span class="w"> </span><span class="kn">import</span> <span class="n">assign_hydrogens</span><span class="p">,</span> <span class="n">place_hydrogens</span>
+
+<span class="n">atoms</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">"asym_unit"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># One AtomArray, not an AtomArrayStack</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">assign_hydrogens</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">ph</span><span class="o">=</span><span class="mf">7.4</span><span class="p">)</span>
+<span class="n">protonated</span> <span class="o">=</span> <span class="n">place_hydrogens</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">add_hydrogens(atoms,</span> <span class="pre">ph=7.4)</span></code> combines these steps. Inputs need bonds with stated
+orders, formal <code class="docutils literal notranslate"><span class="pre">charge</span></code>, and <code class="docutils literal notranslate"><span class="pre">pn_unit_iid</span></code> or <code class="docutils literal notranslate"><span class="pre">pn_unit_id</span></code> annotations. Parse metal
+coordination with <code class="docutils literal notranslate"><span class="pre">&quot;metalc&quot;</span></code> in <code class="docutils literal notranslate"><span class="pre">add_bond_types_from_struct_conn</span></code> when relevant.
+Assignment may change charges and remove hydrogens inconsistent with the chosen
+state; <code class="docutils literal notranslate"><span class="pre">hydrogens=</span></code> explicitly declares counts and overrides pH assignment.
+Placement keeps heavy-atom coordinates and retained hydrogen coordinates, inserts
+new hydrogens by residue, and preserves <code class="docutils literal notranslate"><span class="pre">atom_id</span></code> identity. Recompute positional
+masks after atom counts or ordering change. Unresolved atoms and metals marked
+<code class="docutils literal notranslate"><span class="pre">skip_hydrogen_placement</span></code> are not completed; unsupported geometry raises an error.
+A placement result is not evidence of downstream force-field parameter coverage.</p>
+<p>See the <a class="reference internal" href="../auto_examples/plot_protonation.html"><span class="doc std std-doc">executed offline example</span></a> and the
+<a class="reference external" href="https://github.com/RosettaCommons/atomworks/tree/release/atomworks-3-0/src/atomworks/experimental/protonation">current API</a>.</p>
+</section>
+</section>
+<section id="alternate-conformers">
+<h2>Alternate conformers<a class="headerlink" href="#alternate-conformers" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config</span> <span class="o">=</span> <span class="n">ParseConfig</span><span class="o">.</span><span class="n">from_preset</span><span class="p">(</span>
+    <span class="s2">"rcsb"</span><span class="p">,</span>
+    <span class="n">altloc</span><span class="o">=</span><span class="s2">"random_clash_aware"</span><span class="p">,</span>
+    <span class="n">altloc_seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="s2">"structure.cif"</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">&quot;first&quot;</span></code> remains the default; <code class="docutils literal notranslate"><span class="pre">&quot;random_per_chain&quot;</span></code> selects a letter per chain; <code class="docutils literal notranslate"><span class="pre">&quot;random_clash_aware&quot;</span></code> chooses per-residue alternatives while considering nearby clashes and correlations. A specific letter is also accepted. Selection is not exhaustive conformer enumeration and is not occupancy-weighted ensemble sampling. The clash-aware algorithm can reject unresolved conflicts and can fall back to a modified residue’s parent component; this can affect atom identities. It uses the first model’s coordinates when selecting from a stack. PDB inputs reject altloc choices other than <code class="docutils literal notranslate"><span class="pre">&quot;first&quot;</span></code>. <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/config.py">Configuration</a>, <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/utils/altloc.py">selection algorithm</a>.</p>
+<p>Record the source, policy, seed, parser version and CCD inputs. Unseeded random parsing bypasses the parse cache. Retaining <code class="docutils literal notranslate"><span class="pre">&quot;first&quot;</span></code> makes an initial version comparison easier; switching to random selection should be evaluated separately. A fixed seed establishes reproducibility within the selected implementation, not an eternal cross-version conformer identity guarantee.</p>
+<p><strong>Candidate edge case to resolve before broad claims:</strong> <code class="docutils literal notranslate"><span class="pre">load_cif()</span></code> fallback paths for variable-topology models and some invalid requested-model reads do not forward the requested <code class="docutils literal notranslate"><span class="pre">altloc</span></code>/<code class="docutils literal notranslate"><span class="pre">altloc_seed</span></code>. Exercise these combinations explicitly before promising consistent random selection for all multi-model CIFs. <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/_loaders.py">Loader source</a>.</p>
+</section>
+<section id="cif-round-trips">
+<h2>CIF round trips<a class="headerlink" href="#cif-round-trips" title="Link to this heading">#</a></h2>
+<p>For an already prepared single AtomArray, retaining chemistry and registered annotations:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.io_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">to_cif_file</span>
+
+<span class="c1"># atoms is an already prepared AtomArray/AtomArrayPlus.</span>
+<span class="n">to_cif_file</span><span class="p">(</span>
+    <span class="n">atoms</span><span class="p">,</span>
+    <span class="s2">"prepared.cif"</span><span class="p">,</span>
+    <span class="n">include_entity_categories</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">include_chem_comp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">chain_disambiguation</span><span class="o">=</span><span class="s2">"transformation_id"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">restored</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span>
+    <span class="s2">"prepared.cif"</span><span class="p">,</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">ParseConfig</span><span class="p">(</span>
+        <span class="n">add_missing_atoms</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">fix_arginines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">remove_waters</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">remove_ccds</span><span class="o">=</span><span class="p">(),</span>
+        <span class="n">build_assembly</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">extra_fields</span><span class="o">=</span><span class="s2">"all"</span><span class="p">,</span>
+        <span class="n">return_atom_array_plus</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">load_standard_annotations</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Choose <code class="docutils literal notranslate"><span class="pre">chain_disambiguation=&quot;transformation_id&quot;</span></code> to preserve original chain IDs through AtomWorks; repeated chains require the transformation annotation. Choose <code class="docutils literal notranslate"><span class="pre">&quot;chain_iid&quot;</span></code> for more interoperable unique chain names, accepting renamed chains. <strong>Pass this explicitly</strong>: the actual default is <code class="docutils literal notranslate"><span class="pre">None</span></code> and ambiguous identities raise, despite a writer docstring claiming the default is <code class="docutils literal notranslate"><span class="pre">&quot;chain_iid&quot;</span></code>. The writer accepts multiple models as a list of AtomArrays with optional <code class="docutils literal notranslate"><span class="pre">model_ids</span></code>; do not assume every writer accepts a stack directly. <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/utils/io_utils.py">Writer</a>.</p>
+<p>The new implementation emits/reloads richer component and bond chemistry, including authored custom components and standard annotations. Tests cover asymmetric units with and without CCD access and assemblies under both disambiguation modes. Scope the phrase “complete round trip” carefully:</p>
+<ul class="simple">
+<li><p>Coordinates are rounded to three decimals by the writer.</p></li>
+<li><p>Atom order, annotation dtypes, some regenerated IDs and alternate-location labels are not guaranteed identical. Compare structural identity and values after alignment.</p></li>
+<li><p>Request additional ordinary annotations explicitly by name when writing; registered StandardAnnotations use their serializer. In this candidate, writer <code class="docutils literal notranslate"><span class="pre">extra_fields=&quot;all&quot;</span></code> can fail on parsed structures because <code class="docutils literal notranslate"><span class="pre">label_entity_id</span></code> conflicts with a reserved CIF column (reproduced on 6LYZ). The example uses writer defaults; it does not promise retention of every ordinary annotation. Arbitrary Python attributes are not a general persistence mechanism.</p></li>
+<li><p>StandardAnnotation loading requires AtomArrayPlus and forbids missing-atom completion and MSE conversion, which change indices. PDB files cannot carry this path.</p></li>
+<li><p>Serialization of two-body standard annotations has a 10,000-row limit. Large pairwise annotations may need another storage design.</p></li>
+<li><p>CIF custom chemistry is scoped to the parse; AtomArrayPlus can retain the custom CCD registry for later writing. Supply <code class="docutils literal notranslate"><span class="pre">ccd_entries</span></code> explicitly if working outside that path.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cif_ccd_on_mismatch=&quot;error_heavy&quot;</span></code> rejects heavy-atom name mismatches in authored component templates by default. Investigate malformed/custom templates; <code class="docutils literal notranslate"><span class="pre">&quot;ignore&quot;</span></code> intentionally skips CCD supplementation for mismatching heavy-atom names rather than repairing them.</p></li>
+</ul>
+<p><a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/tests/io/utils/test_io.py">Round-trip tests</a>, <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/utils/standard_annotations/serialization.py">annotation serialization</a>, <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/utils/ccd.py">custom CCD handling</a>.</p>
+</section>
+<section id="parser-caching">
+<h2>Parser caching<a class="headerlink" href="#parser-caching" title="Link to this heading">#</a></h2>
+<p>The parser now caches complete results as Zstandard-compressed pickles in a <code class="docutils literal notranslate"><span class="pre">parse-v2</span></code> namespace. Settings, package versions and source identity enter the key; random unseeded conformers and active external CCD overrides bypass caching. <strong>Paths are keyed by resolved path, not file-content hash.</strong> Replacing a file in place can reuse a stale result; keep source paths immutable or supply a changed immutable <code class="docutils literal notranslate"><span class="pre">cache_key</span></code>. An explicit key must change with source contents. Isolate old/new cache directories for a controlled migration. Benchmark cached and uncached performance separately. <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/parser.py">Cache code</a>.</p>
+</section>
+<section id="i-o-environment-and-validation">
+<h2>I/O environment and validation<a class="headerlink" href="#i-o-environment-and-validation" title="Link to this heading">#</a></h2>
+<p>Python ≥3.11 remains supported; the candidate pins Biotite exactly to 1.6.0 and checks it at import time (2.2.1 pins 1.4.0). PyArrow minimum rises to 23.0.1, core adds jaxtyping, and Hydride is no longer a core dependency. Optional S3 and catcif integrations have extras. Regenerate a locked environment instead of upgrading Biotite in isolation. <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/pyproject.toml">Dependency manifest</a>.</p>
+<p>Lock both environments, migrate parser calls and configuration, then compare a fixed set of structures covering covalent modifications, alternate conformers and assemblies. Review atom identities, charges, bond orders and hydrogen counts before adopting the new parser or regenerating cached outputs.</p>
+</section>
+<section id="additional-ml-migration-notes">
+<h2>Additional ML migration notes<a class="headerlink" href="#additional-ml-migration-notes" title="Link to this heading">#</a></h2>
+<p>The remaining sections apply when using AtomWorks for model features or datasets. They are not required for a standalone I/O migration. Install the <code class="docutils literal notranslate"><span class="pre">[ml]</span></code> extra for Torch workflows; it now includes numba.</p>
+<section id="model-encodings-and-conditions">
+<h3>Model encodings and conditions<a class="headerlink" href="#model-encodings-and-conditions" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">UNIFIED_ATOM37_ENCODING</span></code> retains 37 atom slots but adds terminal phosphate <code class="docutils literal notranslate"><span class="pre">OP3</span></code> in slot 36 for standard DNA/RNA and a new gap token <code class="docutils literal notranslate"><span class="pre">&lt;G&gt;</span></code> at class 33. The vocabulary therefore grows from 33 to 34 classes relative to 2.2.1. Check embedding/head sizes, saved class tables, labels, loss masks and atom-slot masks. A matching 37-wide coordinate tensor can still carry changed semantics. <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/ml/encoding_definitions.py">Definition</a>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">atom_array_to_encoded_resnames()</span></code> changes its default <code class="docutils literal notranslate"><span class="pre">atomize_token</span></code> from <code class="docutils literal notranslate"><span class="pre">&quot;&lt;A&gt;&quot;</span></code> to <code class="docutils literal notranslate"><span class="pre">None</span></code> (atomic-number tokens). It requires <code class="docutils literal notranslate"><span class="pre">atomize</span></code>; a one-atom residue is no longer automatically classified as atomized merely by length. For a checkpoint using generic atom tokens, explicitly supply <code class="docutils literal notranslate"><span class="pre">atomize_token=&quot;&lt;A&gt;&quot;</span></code>, and check the encoding contains that token. <code class="docutils literal notranslate"><span class="pre">EncodeAtomArray</span></code> also exposes <code class="docutils literal notranslate"><span class="pre">atomize_token</span></code>/<code class="docutils literal notranslate"><span class="pre">atomize_atom_name</span></code> for explicitly matching its encoding. Keep the checkpoint’s saved encoding definition when reproducing an old model rather than assuming the current global constant is compatible. <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/ml/transforms/encoding.py">Encoding functions</a>.</p>
+<p>Conditions now specialize the StandardAnnotation framework. Sequence and coordinate conditions contain target residue names and coordinates; derive masks through their API rather than treating the annotation itself as a boolean. To mark existing coordinates as ground truth, for example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.conditions</span><span class="w"> </span><span class="kn">import</span> <span class="n">C_CRD</span>
+
+<span class="c1"># selected is a boolean array of length len(atoms).</span>
+<span class="n">C_CRD</span><span class="o">.</span><span class="n">set_annotation_from_ground_truth</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">selected</span><span class="p">)</span>
+<span class="n">conditioned_mask</span> <span class="o">=</span> <span class="n">C_CRD</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For external target values, set explicit condition annotations with the condition API. Calling <code class="docutils literal notranslate"><span class="pre">set_annotation_from_ground_truth</span></code> intentionally replaces targets with values from the current structure. Legacy module aliases and some legacy CIF masks are supported, but this is a specific compatibility list (sequence, coordinate, index), not blanket support for arbitrary historical fields. Custom condition subclasses should follow the new definitions and StandardAnnotation contract. <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/ml/conditions/definitions.py">Condition definitions</a>, <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/ml/conditions/base.py">base API</a>.</p>
+</section>
+<section id="datasets-and-preprocessing">
+<h3>Datasets and preprocessing<a class="headerlink" href="#datasets-and-preprocessing" title="Link to this heading">#</a></h3>
+<p>For a previous loader created with <code class="docutils literal notranslate"><span class="pre">create_loader_with_query_pn_units(pn_unit_iid_colnames=[&quot;pn_unit_1_iid&quot;,</span> <span class="pre">&quot;pn_unit_2_iid&quot;])</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.datasets.loaders.cif</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_structure_loader</span>
+
+<span class="n">loader</span> <span class="o">=</span> <span class="n">create_structure_loader</span><span class="p">(</span>
+    <span class="n">parser_args</span><span class="o">=</span><span class="n">ParseConfig</span><span class="o">.</span><span class="n">from_preset</span><span class="p">(</span><span class="s2">"rcsb"</span><span class="p">,</span> <span class="n">hydrogen_policy</span><span class="o">=</span><span class="s2">"remove"</span><span class="p">),</span>
+    <span class="n">column_mapping</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">"query_pn_unit_iids"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"pn_unit_1_iid"</span><span class="p">,</span> <span class="s2">"pn_unit_2_iid"</span><span class="p">],</span>
+        <span class="s2">"query_is_polymer"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"pn_unit_1_is_polymer"</span><span class="p">,</span> <span class="s2">"pn_unit_2_is_polymer"</span><span class="p">],</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Provide these columns in the metadata table. A string mapping produces a scalar; a list produces an ordered list. Specialized factories remain deprecated wrappers. <code class="docutils literal notranslate"><span class="pre">storage=&quot;filesystem&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;bytes&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;blob&quot;</span></code> share the factory but have backend-specific arguments. Passing <code class="docutils literal notranslate"><span class="pre">altloc_seed_colname=&quot;altloc_seed&quot;</span></code> selects <code class="docutils literal notranslate"><span class="pre">random_clash_aware</span></code> for nonmissing CIF seeds, even if the supplied parser configuration had another altloc policy. Pass it only when the table is meant to define conformer sampling. <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/ml/datasets/loaders/cif.py">Loaders</a>.</p>
+<p>Preprocessing is reorganized around <code class="docutils literal notranslate"><span class="pre">PreprocessConfig</span></code> and assembly/PN-unit/interface records; the old <code class="docutils literal notranslate"><span class="pre">get_pn_unit_data_from_structure</span></code> module is removed. Treat new preprocessing tables as versioned datasets. Audit column names/types and row meaning against the release tutorial and your training pipeline rather than assuming old Parquet files are interchangeable. For multiple conformer rows, preserve seeds and consider the optional altloc weighting in <code class="docutils literal notranslate"><span class="pre">calculate_weights_for_pdb_dataset_df(...,</span> <span class="pre">altloc_seed_column=...)</span></code> so extra conformers do not accidentally overweight a structure. This option is explicit, not automatic. <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/ml/preprocessing/preprocess.py">Preprocessing</a>, <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/ml/samplers.py">samplers</a>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">PandasDataset</span></code> delegates to a metadata index and can use Arrow with <code class="docutils literal notranslate"><span class="pre">memory_map=True</span></code>. Its <code class="docutils literal notranslate"><span class="pre">.data</span></code> is then an Arrow Table, so pandas-only operations must be adapted. Dataset filters are independent row predicates evaluated on the input and combined; filters that calculate aggregate thresholds from the progressively filtered table may change meaning. Use a stable ID column rather than relying on the old optional <code class="docutils literal notranslate"><span class="pre">id_column=None</span></code> pattern. <a class="reference external" href="https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/ml/datasets/pandas_dataset.py">Dataset</a>.</p>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="migration-short.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">AtomWorks 2.x → 3.0: short migration guide</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../glossary.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Glossary</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parser-calls-and-defaults">Parser calls and defaults</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chemical-corrections-and-existing-checkpoints">Chemical corrections and existing checkpoints</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#covalent-links-reaction-states-and-unsupported-chemistry">Covalent links, reaction states and unsupported chemistry</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#explicit-protonation">Explicit protonation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#alternate-conformers">Alternate conformers</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cif-round-trips">CIF round trips</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parser-caching">Parser caching</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#i-o-environment-and-validation">I/O environment and validation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-ml-migration-notes">Additional ML migration notes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-encodings-and-conditions">Model encodings and conditions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datasets-and-preprocessing">Datasets and preprocessing</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/migration/migration-long.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.22.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

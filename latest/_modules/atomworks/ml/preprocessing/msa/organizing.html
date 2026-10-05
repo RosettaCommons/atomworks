@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>atomworks.ml.preprocessing.msa.organizing &#8212; atomworks 3.0.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinxcontrib_typer.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../../_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+
+    <script src="../../../../../_static/documentation_options.js?v=acc74ff5"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/preprocessing/msa/organizing';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.22.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../../../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="3.0.0" />
+  
+    
+    <script src="../../../../../_static/searchtools.js"></script>
+    <script src="../../../../../_static/language_data.js"></script>
+    <script src="../../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.0 documentation - Home"/>
+    <img src="../../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../cookbook.html">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../migration/index.html">
+    Migrating to AtomWorks 3.0
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../cookbook.html">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../migration/index.html">
+    Migrating to AtomWorks 3.0
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">atomworks.ml.preprocessing.msa.organizing</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for atomworks.ml.preprocessing.msa.organizing</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""MSA file organization for AtomWorks.</span>
+
+<span class="sd">Prepares arbitrary directory of MSA files into an AtomWorks-compatible structure.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">concurrent.futures</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">dataclasses</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProcessPoolExecutor</span><span class="p">,</span> <span class="n">ThreadPoolExecutor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">PathLike</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">MSAFileExtension</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.compression</span><span class="w"> </span><span class="kn">import</span> <span class="n">transfer_with_compression</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.io_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">apply_sharding_pattern</span><span class="p">,</span> <span class="n">find_files_by_extension</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.preprocessing.msa.finding</span><span class="w"> </span><span class="kn">import</span> <span class="n">sequence_has_msa</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.utils.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">open_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.utils.misc</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_complex_id</span><span class="p">,</span> <span class="n">hash_sequence</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="validate_msa_file_extension">
+<a class="viewcode-back" href="../../../../../ml/preprocessing.html#atomworks.ml.preprocessing.msa.organizing.validate_msa_file_extension">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_msa_file_extension</span><span class="p">(</span><span class="n">file_extension</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Validate that a file extension is supported for MSA processing.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file_extension: File extension to validate.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If file extension is not supported.</span>
+<span class="sd">    """</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">SUPPORTED_MSA_FILE_EXTENSIONS</span>
+
+    <span class="k">if</span> <span class="n">file_extension</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SUPPORTED_MSA_FILE_EXTENSIONS</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported file_extension: </span><span class="si">{</span><span class="n">file_extension</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="extract_first_sequence_from_msa">
+<a class="viewcode-back" href="../../../../../ml/preprocessing.html#atomworks.ml.preprocessing.msa.organizing.extract_first_sequence_from_msa">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_first_sequence_from_msa</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Extract the first sequence from an MSA file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file_path: Path to the MSA file. May be compressed (.gz).</span>
+<span class="sd">            A3M and FASTA formats supported.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        First sequence string (without header).</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If MSA file has no sequences or invalid format.</span>
+<span class="sd">        FileNotFoundError: If file does not exist.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">file_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"MSA file not found: </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">open_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">found_header</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"&gt;"</span><span class="p">):</span>
+                <span class="n">found_header</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">found_header</span> <span class="ow">and</span> <span class="n">line</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">line</span>
+
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No sequence found in MSA file: </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="MSAOrganizationConfig">
+<a class="viewcode-back" href="../../../../../ml/preprocessing.html#atomworks.ml.preprocessing.msa.organizing.MSAOrganizationConfig">[docs]</a>
+<span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MSAOrganizationConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Configuration for MSA file organization and processing.</span>
+
+<span class="sd">    Used by organize_msas to control how existing MSA files are organized in the output directory.</span>
+<span class="sd">    Controls input and output file extensions with automatic compression/decompression.</span>
+<span class="sd">    """</span>
+
+    <span class="n">input_extension</span><span class="p">:</span> <span class="n">MSAFileExtension</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MSAFileExtension</span><span class="o">.</span><span class="n">A3M_GZ</span>
+    <span class="n">output_extension</span><span class="p">:</span> <span class="n">MSAFileExtension</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MSAFileExtension</span><span class="o">.</span><span class="n">A3M_GZ</span>
+    <span class="n">sharding_pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">"/0:2/"</span>
+    <span class="n">copy_files</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">execution_model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"process"</span>  <span class="c1"># Options: "process", "thread", or "auto"</span>
+    <span class="n">check_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">existing_msa_dirs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Validate configuration parameters."""</span>
+        <span class="c1"># Validate and convert input extension</span>
+        <span class="n">validate_msa_file_extension</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_extension</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_extension</span> <span class="o">=</span> <span class="n">MSAFileExtension</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_extension</span><span class="p">)</span>
+
+        <span class="c1"># Validate and convert output extension</span>
+        <span class="n">validate_msa_file_extension</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_extension</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_extension</span> <span class="o">=</span> <span class="n">MSAFileExtension</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_extension</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="organize_msas">
+<a class="viewcode-back" href="../../../../../ml/preprocessing.html#atomworks.ml.preprocessing.msa.organizing.organize_msas">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">organize_msas</span><span class="p">(</span><span class="n">input_dir</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">MSAOrganizationConfig</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Organize an arbitrary directory of MSA files into AtomWorks-compatible structure.</span>
+
+<span class="sd">    After organization, files will be named by the SHA-256 hash of the first sequence, and can be loaded via the AtomWorks MSA loading and pairing Transforms.</span>
+
+<span class="sd">    For each MSA file found in the source directory, this function:</span>
+<span class="sd">    1. Computes the SHA-256 hash of the sequence, which will become the new filename (so we don't store duplicates)</span>
+<span class="sd">    2. Shards files into subdirectories based on hash and directory structure</span>
+<span class="sd">    3. Automatically handles compression/decompression based on input/output extensions</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_dir: Source directory containing MSA files, recursively searched.</span>
+<span class="sd">        output_dir: Destination directory for organized files. Must contain sufficient space.</span>
+<span class="sd">        config: MSA processing configuration. If None, uses defaults. See :py:class:`~MSAOrganizationConfig` for details.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If configuration is invalid.</span>
+<span class="sd">        FileNotFoundError: If no MSA files are found or directories don't exist.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        Organize MSA files with default configuration:</span>
+
+<span class="sd">        &gt;&gt;&gt; from atomworks.ml.preprocessing.msa.organization import organize_msas</span>
+<span class="sd">        &gt;&gt;&gt; organize_msas("./raw_msas", "./organized_msas")</span>
+
+<span class="sd">        Organize with custom configuration:</span>
+
+<span class="sd">        &gt;&gt;&gt; from atomworks.ml.preprocessing.msa.organization import organize_msas, MSAOrganizationConfig</span>
+<span class="sd">        &gt;&gt;&gt; from atomworks.enums import MSAFileExtension</span>
+<span class="sd">        &gt;&gt;&gt; config = MSAOrganizationConfig(</span>
+<span class="sd">        ...     input_extension=MSAFileExtension.A3M, output_extension=MSAFileExtension.A3M_GZ, sharding_pattern="/0:2/"</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt; organize_msas("./raw_msas", "./organized_msas", config=config)</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Use default configuration</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">MSAOrganizationConfig</span><span class="p">()</span>
+
+    <span class="n">input_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_dir</span><span class="p">)</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">input_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Source directory not found: </span><span class="si">{</span><span class="n">input_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="n">output_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Recursively searching for files with extension </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">input_extension</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">input_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">msa_files</span> <span class="o">=</span> <span class="n">find_files_by_extension</span><span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">input_extension</span><span class="p">))</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">msa_files</span><span class="p">)</span><span class="si">}</span><span class="s2"> files with extension </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">input_extension</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Organizing files to </span><span class="si">{</span><span class="n">output_dir</span><span class="si">}</span><span class="s2">..."</span><span class="p">)</span>
+
+    <span class="c1"># Configuration is complete, proceed with organization</span>
+
+    <span class="n">num_workers</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">num_workers</span> <span class="ow">or</span> <span class="nb">min</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="ow">or</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+    <span class="n">execution_model</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">execution_model</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="c1"># Validate execution model</span>
+    <span class="n">valid_models</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"process"</span><span class="p">,</span> <span class="s2">"thread"</span><span class="p">,</span> <span class="s2">"auto"</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">execution_model</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_models</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid execution_model '</span><span class="si">{</span><span class="n">execution_model</span><span class="si">}</span><span class="s2">'. Using 'auto' instead."</span><span class="p">)</span>
+        <span class="n">execution_model</span> <span class="o">=</span> <span class="s2">"auto"</span>
+
+    <span class="c1"># Auto-select best execution model</span>
+    <span class="k">if</span> <span class="n">execution_model</span> <span class="o">==</span> <span class="s2">"auto"</span><span class="p">:</span>
+        <span class="c1"># Compression/decompression is CPU-bound, use process</span>
+        <span class="c1"># If input and output extensions match (no compression/decompression needed), use thread</span>
+        <span class="n">is_compression_needed</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">input_extension</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">output_extension</span><span class="p">)</span>
+        <span class="n">execution_model</span> <span class="o">=</span> <span class="s2">"process"</span> <span class="k">if</span> <span class="n">is_compression_needed</span> <span class="k">else</span> <span class="s2">"thread"</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Processing with </span><span class="si">{</span><span class="n">num_workers</span><span class="si">}</span><span class="s2"> workers using </span><span class="si">{</span><span class="n">execution_model</span><span class="si">}</span><span class="s2"> parallelism"</span><span class="p">)</span>
+
+    <span class="c1"># Process files with progress bar</span>
+    <span class="n">organize_func</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">_organize_single_msa</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+
+    <span class="c1"># Choose appropriate executor based on task characteristics</span>
+    <span class="n">executor_class</span> <span class="o">=</span> <span class="n">ProcessPoolExecutor</span> <span class="k">if</span> <span class="n">execution_model</span> <span class="o">==</span> <span class="s2">"process"</span> <span class="k">else</span> <span class="n">ThreadPoolExecutor</span>
+
+    <span class="c1"># Use chunksize for process pool to reduce overhead</span>
+    <span class="n">chunksize</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">msa_files</span><span class="p">)</span> <span class="o">//</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_workers</span><span class="p">)))</span> <span class="k">if</span> <span class="n">execution_model</span> <span class="o">==</span> <span class="s2">"process"</span> <span class="k">else</span> <span class="mi">1</span>
+
+    <span class="k">with</span> <span class="n">executor_class</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">execution_model</span> <span class="o">==</span> <span class="s2">"process"</span><span class="p">:</span>
+            <span class="c1"># Process pool works better with imap for large datasets</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">organize_func</span><span class="p">,</span> <span class="n">msa_files</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="n">chunksize</span><span class="p">)</span>
+            <span class="c1"># Wrap with tqdm for progress tracking</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">msa_files</span><span class="p">),</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"Organizing MSA files"</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"file"</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Thread pool works better with as_completed for I/O bound tasks</span>
+            <span class="n">futures</span> <span class="o">=</span> <span class="p">[</span><span class="n">executor</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">organize_func</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">msa_files</span><span class="p">]</span>
+            <span class="c1"># Monitor progress with tqdm</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
+                <span class="n">concurrent</span><span class="o">.</span><span class="n">futures</span><span class="o">.</span><span class="n">as_completed</span><span class="p">(</span><span class="n">futures</span><span class="p">),</span>
+                <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">futures</span><span class="p">),</span>
+                <span class="n">desc</span><span class="o">=</span><span class="s2">"Organizing MSA files"</span><span class="p">,</span>
+                <span class="n">unit</span><span class="o">=</span><span class="s2">"file"</span><span class="p">,</span>
+            <span class="p">):</span>
+                <span class="k">pass</span>  <span class="c1"># Progress is tracked by tqdm</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"MSA file organization complete! Saved processed files to: </span><span class="si">{</span><span class="n">output_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="organize_paired_msas">
+<a class="viewcode-back" href="../../../../../ml/preprocessing.html#atomworks.ml.preprocessing.msa.organizing.organize_paired_msas">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">organize_paired_msas</span><span class="p">(</span><span class="n">input_dir</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">MSAOrganizationConfig</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Organize raw per-chain a3m files from ONE paired/complex query into AtomWorks'</span>
+<span class="sd">    standard paired-MSA layout.</span>
+
+<span class="sd">    Unlike `organize_msas` (which treats every file in `input_dir` as an independent,</span>
+<span class="sd">    unrelated alignment -- one per unique sequence), this treats *all* files found in</span>
+<span class="sd">    `input_dir` as belonging to the SAME complex: their first sequences, collectively,</span>
+<span class="sd">    determine the complex_id (see</span>
+<span class="sd">    :py:func:`~atomworks.ml.utils.misc.get_complex_id`) -- computed from file content,</span>
+<span class="sd">    the same way `organize_msas` derives each file's identity from content, not</span>
+<span class="sd">    passed in or tracked separately by the caller.</span>
+
+<span class="sd">    Output layout: ``&lt;output_dir&gt;/&lt;shard-of-complex_id&gt;/&lt;complex_id&gt;/&lt;chain_hash&gt;&lt;extension&gt;``</span>
+<span class="sd">    -- flat within the complex's own directory (a complex has few chains), but</span>
+<span class="sd">    complex_id itself is sharded the same way a sequence hash would be (a large</span>
+<span class="sd">    fine-tuning run can have many complexes). Discoverable via</span>
+<span class="sd">    :py:func:`~atomworks.ml.preprocessing.msa.finding.find_paired_msas` /</span>
+<span class="sd">    :py:func:`~atomworks.ml.preprocessing.msa.finding.get_paired_msa_path`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_dir: Directory containing one raw a3m file per chain in the complex</span>
+<span class="sd">            (recursively searched, same as `organize_msas`).</span>
+<span class="sd">        output_dir: Destination directory.</span>
+<span class="sd">        config: MSA processing configuration. `sharding_pattern` shards complex_id</span>
+<span class="sd">            (not the files within it, which are always flat). `check_existing` /</span>
+<span class="sd">            `existing_msa_dirs` / `num_workers` / `execution_model` are not used --</span>
+<span class="sd">            a complex has too few files to need parallelism, and existing-MSA</span>
+<span class="sd">            deduplication belongs at the sequence-submission level, before this is</span>
+<span class="sd">            ever called.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The complex_id this batch of files was organized under.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        FileNotFoundError: If no MSA files are found or `input_dir` doesn't exist.</span>
+<span class="sd">        FileExistsError: If the complex's directory already exists (complete, or partial</span>
+<span class="sd">            from an interrupted run -- delete it to regenerate).</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">MSAOrganizationConfig</span><span class="p">()</span>
+
+    <span class="n">input_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">input_dir</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">input_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Source directory not found: </span><span class="si">{</span><span class="n">input_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="n">msa_files</span> <span class="o">=</span> <span class="n">find_files_by_extension</span><span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">input_extension</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">msa_files</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No files with extension </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">input_extension</span><span class="si">}</span><span class="s2"> found in </span><span class="si">{</span><span class="n">input_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="n">chain_hash_by_file</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">sequences</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">file_path</span> <span class="ow">in</span> <span class="n">msa_files</span><span class="p">:</span>
+        <span class="n">sequence</span> <span class="o">=</span> <span class="n">extract_first_sequence_from_msa</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="n">sequences</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+        <span class="n">chain_hash_by_file</span><span class="p">[</span><span class="n">file_path</span><span class="p">]</span> <span class="o">=</span> <span class="n">hash_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+
+    <span class="n">complex_id</span> <span class="o">=</span> <span class="n">get_complex_id</span><span class="p">(</span><span class="n">sequences</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">sharding_pattern</span><span class="p">:</span>
+        <span class="n">complex_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span> <span class="o">/</span> <span class="n">apply_sharding_pattern</span><span class="p">(</span><span class="n">complex_id</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">sharding_pattern</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">complex_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span> <span class="o">/</span> <span class="n">complex_id</span>
+    <span class="c1"># Paired files are row-aligned across chains, so never add to an existing complex</span>
+    <span class="c1"># directory: a partial one left by an interrupted run would otherwise end up mixing</span>
+    <span class="c1"># chains from two separate searches.</span>
+    <span class="n">complex_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">chain_hash</span> <span class="ow">in</span> <span class="n">chain_hash_by_file</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">dest</span> <span class="o">=</span> <span class="n">complex_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">chain_hash</span><span class="si">}{</span><span class="n">config</span><span class="o">.</span><span class="n">output_extension</span><span class="si">}</span><span class="s2">"</span>
+        <span class="n">transfer_with_compression</span><span class="p">(</span><span class="n">input_file</span><span class="o">=</span><span class="n">file_path</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="n">dest</span><span class="p">,</span> <span class="n">move</span><span class="o">=</span><span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">copy_files</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Paired MSA organization complete! complex_id=</span><span class="si">{</span><span class="n">complex_id</span><span class="si">}</span><span class="s2">, saved to: </span><span class="si">{</span><span class="n">complex_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">complex_id</span></div>
+
+
+
+<div class="viewcode-block" id="organize_template_alignments">
+<a class="viewcode-back" href="../../../../../ml/preprocessing.html#atomworks.ml.preprocessing.msa.organizing.organize_template_alignments">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">organize_template_alignments</span><span class="p">(</span>
+    <span class="n">sequence_to_content</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="n">output_dir</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span>
+    <span class="n">sharding_pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">"/0:2/"</span><span class="p">,</span>
+    <span class="n">output_extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">".m8"</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Organize raw ColabFold template-alignment hit tables (``pdb70.m8`` rows) into</span>
+<span class="sd">    AtomWorks' standard hash-sharded layout.</span>
+
+<span class="sd">    Uses the same sequence-hash/sharding convention as `organize_msas`, so a</span>
+<span class="sd">    sequence's template alignment and its unpaired MSA land at the corresponding</span>
+<span class="sd">    shard. Unlike MSA files, template hit tables don't self-identify their query</span>
+<span class="sd">    sequence (no FASTA-style header), so the sequence must be supplied explicitly</span>
+<span class="sd">    rather than extracted from file content.</span>
+
+<span class="sd">    Discoverable via :py:func:`~atomworks.ml.preprocessing.msa.finding.find_template_alignments`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sequence_to_content: Maps each query sequence to its raw ``pdb70.m8`` hit</span>
+<span class="sd">            lines (tab-separated text, one hit per line). Sequences with falsy</span>
+<span class="sd">            content (no hits) are skipped -- no empty file is written.</span>
+<span class="sd">        output_dir: Destination directory for organized files.</span>
+<span class="sd">        sharding_pattern: Directory sharding pattern (e.g. "/0:2/"), matching</span>
+<span class="sd">            `organize_msas`'s convention.</span>
+<span class="sd">        output_extension: Output file extension.</span>
+<span class="sd">    """</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+    <span class="n">output_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">sequence</span><span class="p">,</span> <span class="n">content</span> <span class="ow">in</span> <span class="n">sequence_to_content</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">content</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">hashed_filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">hash_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">sharding_pattern</span><span class="p">:</span>
+            <span class="n">dest</span> <span class="o">=</span> <span class="n">output_path</span> <span class="o">/</span> <span class="n">apply_sharding_pattern</span><span class="p">(</span><span class="n">hashed_filename</span><span class="p">,</span> <span class="n">sharding_pattern</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="n">output_extension</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dest</span> <span class="o">=</span> <span class="n">output_path</span> <span class="o">/</span> <span class="n">hashed_filename</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="n">output_extension</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dest</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Output file already exists, skipping: </span><span class="si">{</span><span class="n">dest</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="n">dest</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">dest</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Template alignment organization complete! Saved to: </span><span class="si">{</span><span class="n">output_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_output_path</span><span class="p">(</span><span class="n">dest_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">hashed_filename</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">MSAOrganizationConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Build the output file path using sharding pattern.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dest_dir: Destination directory base path.</span>
+<span class="sd">        hashed_filename: SHA-256 hash of the sequence.</span>
+<span class="sd">        config: Organization configuration.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Path to the output file.</span>
+<span class="sd">    """</span>
+    <span class="c1"># Use the output_extension from config</span>
+    <span class="n">output_extension</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">output_extension</span>
+
+    <span class="c1"># Apply sharding pattern to organize files</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">sharding_pattern</span><span class="p">:</span>
+        <span class="n">sharded_path</span> <span class="o">=</span> <span class="n">apply_sharding_pattern</span><span class="p">(</span><span class="n">hashed_filename</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">sharding_pattern</span><span class="p">)</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="n">dest_dir</span> <span class="o">/</span> <span class="n">sharded_path</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="n">output_extension</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="n">dest_dir</span> <span class="o">/</span> <span class="n">hashed_filename</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="n">output_extension</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">output_path</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_organize_single_msa</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">MSAOrganizationConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Organize a single MSA file with automatic compression/decompression based on extensions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file_path: Path to the MSA file to process.</span>
+<span class="sd">        output_path: Destination directory for processed files.</span>
+<span class="sd">        config: MSA organization configuration.</span>
+<span class="sd">    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Hash the first sequence to get the filename</span>
+        <span class="n">sequence</span> <span class="o">=</span> <span class="n">extract_first_sequence_from_msa</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+        <span class="c1"># Check if MSA already exists if check_existing is enabled</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">check_existing</span> <span class="ow">and</span> <span class="n">sequence_has_msa</span><span class="p">(</span><span class="n">sequence</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">existing_msa_dirs</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"MSA already exists for sequence, skipping: </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">hashed_filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">hash_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">))</span>
+
+        <span class="c1"># Build the final output path</span>
+        <span class="n">final_output_path</span> <span class="o">=</span> <span class="n">_build_output_path</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">hashed_filename</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+
+        <span class="c1"># Skip if output file already exists</span>
+        <span class="k">if</span> <span class="n">final_output_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Output file already exists, skipping: </span><span class="si">{</span><span class="n">final_output_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Copy or move the file to the final location with automatic compression/decompression</span>
+        <span class="n">transfer_with_compression</span><span class="p">(</span>
+            <span class="n">input_file</span><span class="o">=</span><span class="n">file_path</span><span class="p">,</span>
+            <span class="n">output_file</span><span class="o">=</span><span class="n">final_output_path</span><span class="p">,</span>
+            <span class="n">move</span><span class="o">=</span><span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Failed to process </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">raise</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
+<script defer src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.22.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

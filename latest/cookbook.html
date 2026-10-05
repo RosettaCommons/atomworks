@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Cookbook &#8212; atomworks 3.0.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinxcontrib_typer.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+
+    <script src="_static/documentation_options.js?v=acc74ff5"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'cookbook';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.22.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="prev" title="Scripts" href="how_to_build_a_model/scripts/index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="3.0.0" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.0 documentation - Home"/>
+    <img src="_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="migration/index.html">
+    Migrating to AtomWorks 3.0
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#" aria-current="page">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="migration/index.html">
+    Migrating to AtomWorks 3.0
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Cookbook</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="cookbook">
+<h1>Cookbook<a class="headerlink" href="#cookbook" title="Link to this heading">#</a></h1>
+<p>The atomworks cookbook is intended to be a quick reference for various common tasks. Note the code snippets may not be complete as-written, and may require imports or other preparatory steps.</p>
+<p>As the AtomArray object comes from biotite, the <a class="reference external" href="https://www.biotite-python.org/latest/tutorial/structure/index.html">biotite documentation</a> and <a class="reference external" href="https://www.biotite-python.org/latest/apidoc/biotite.structure.html">api reference</a> contains additional resources for working with it.</p>
+<section id="input">
+<h2>Input<a class="headerlink" href="#input" title="Link to this heading">#</a></h2>
+<section id="standard-local-file-input">
+<h3>Standard Local File Input<a class="headerlink" href="#standard-local-file-input" title="Link to this heading">#</a></h3>
+<p>Accepts common structure input formats (mmCIF, PDB, mmjson and BCIF/BinaryCIF), both with filenames and file-like objects. CIF files can also be gzip- or Zstandard-compressed.</p>
+<p>See <a class="reference internal" href="tutorial/parser.html"><span class="doc">the Parser tutorial page</span></a> for details on parameters and output. You can also find the API docs for the <code class="docutils literal notranslate"><span class="pre">parse</span></code> function <a class="reference internal" href="io/parser.html#atomworks.io.parser.parse" title="atomworks.io.parser.parse"><code class="xref py py-func docutils literal notranslate"><span class="pre">here</span></code></a>. The example below shows how to set a few common options with <code class="docutils literal notranslate"><span class="pre">ParseConfig</span></code> (their defaults are shown):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">atomworks.io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">atomworks.io.config</span>
+
+<span class="n">result_dict</span> <span class="o">=</span> <span class="n">atomworks</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
+    <span class="n">filename</span><span class="p">,</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">atomworks</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">ParseConfig</span><span class="p">(</span><span class="n">add_missing_atoms</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">remove_waters</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">hydrogen_policy</span><span class="o">=</span><span class="s2">"keep"</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="c1"># Extract relevant AtomArray:</span>
+<span class="n">asym_unit</span> <span class="o">=</span> <span class="n">result_dict</span><span class="p">[</span><span class="s2">"asym_unit"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>       <span class="c1"># The full asymmetric unit</span>
+<span class="n">assembly</span> <span class="o">=</span> <span class="n">result_dict</span><span class="p">[</span><span class="s2">"assemblies"</span><span class="p">][</span><span class="s2">"1"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># The Biological Assembly/biounit (possibly comprising multiple asym_units)</span>
+</pre></div>
+</div>
+</section>
+<section id="load-from-clean-files">
+<h3>Load from Clean Files<a class="headerlink" href="#load-from-clean-files" title="Link to this heading">#</a></h3>
+<p>For previously processed structures (e.g. those which have already passed through
+an AtomWorks preparation pipeline), use the <code class="docutils literal notranslate"><span class="pre">minimal</span></code> parser preset. This keeps
+waters and loads the structure without adding missing atoms:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">atomworks.io</span>
+
+<span class="n">atom_array</span> <span class="o">=</span> <span class="n">atomworks</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="s2">"minimal"</span><span class="p">)[</span><span class="s2">"asym_unit"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="database-input">
+<h3>Database Input<a class="headerlink" href="#database-input" title="Link to this heading">#</a></h3>
+<p>The <a class="reference internal" href="io/parser.html#atomworks.io.parser.parse" title="atomworks.io.parser.parse"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse()</span></code></a> function can be used to download the given PDB id from the RCSB website:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">result_dict</span> <span class="o">=</span> <span class="n">atomworks</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span> <span class="n">atomworks</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">get_pdb_path_or_buffer</span><span class="p">(</span> <span class="n">PDBID</span> <span class="p">)</span> <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="ccd-sdf-smiles-input">
+<h3>CCD/SDF/SMILES Input<a class="headerlink" href="#ccd-sdf-smiles-input" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="io/tools/inference.html#atomworks.io.tools.inference.ccd_code_to_annotated_atom_array" title="atomworks.io.tools.inference.ccd_code_to_annotated_atom_array"><code class="xref py py-func docutils literal notranslate"><span class="pre">ccd_code_to_annotated_atom_array()</span></code></a>, <a class="reference internal" href="io/tools/inference.html#atomworks.io.tools.inference.sdf_to_annotated_atom_array" title="atomworks.io.tools.inference.sdf_to_annotated_atom_array"><code class="xref py py-func docutils literal notranslate"><span class="pre">sdf_to_annotated_atom_array()</span></code></a>, <a class="reference internal" href="io/tools/inference.html#atomworks.io.tools.inference.smiles_to_annotated_atom_array" title="atomworks.io.tools.inference.smiles_to_annotated_atom_array"><code class="xref py py-func docutils literal notranslate"><span class="pre">smiles_to_annotated_atom_array()</span></code></a> can be used to convert CCD codes, SDF files, or SMILES strings into annotated AtomArrays, respectively.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">atom_array</span> <span class="o">=</span> <span class="n">atomworks</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">inference</span><span class="o">.</span><span class="n">ccd_code_to_annotated_atom_array</span><span class="p">(</span> <span class="n">ccd_code</span><span class="p">,</span> <span class="n">chain_id</span> <span class="p">)</span>
+<span class="n">atom_array</span> <span class="o">=</span> <span class="n">atomworks</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">inference</span><span class="o">.</span><span class="n">sdf_to_annotated_atom_array</span><span class="p">(</span> <span class="n">sdf_filename</span><span class="p">,</span> <span class="n">chain_id</span> <span class="p">)</span>
+<span class="n">atom_array</span> <span class="o">=</span> <span class="n">atomworks</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">inference</span><span class="o">.</span><span class="n">smiles_to_annotated_atom_array</span><span class="p">(</span> <span class="n">smiles_string</span><span class="p">,</span> <span class="n">chain_id</span> <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="sequence-input">
+<h3>Sequence Input<a class="headerlink" href="#sequence-input" title="Link to this heading">#</a></h3>
+<p>The following is a simple procedure for how to create an annotated AtomArray from a sequence string:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">chain_type</span> <span class="o">=</span> <span class="n">atomworks</span><span class="o">.</span><span class="n">enums</span><span class="o">.</span><span class="n">ChainType</span><span class="o">.</span><span class="n">POLYPEPTIDE_L</span>
+
+<span class="c1"># If you have RF3-style sequence string with parenthesized CCD codes:</span>
+<span class="n">ccd_list</span> <span class="o">=</span> <span class="n">atomworks</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">fasta</span><span class="o">.</span><span class="n">one_letter_to_ccd_code</span><span class="p">(</span> <span class="n">atomworks</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">fasta</span><span class="o">.</span><span class="n">split_generalized_fasta_sequence</span><span class="p">(</span> <span class="n">sequence_string</span> <span class="p">),</span> <span class="n">chain_type</span><span class="o">=</span><span class="n">chain_type</span> <span class="p">)</span>
+
+<span class="c1"># ccd_list is just a list with one CCD code per entry.</span>
+
+<span class="n">atom_array</span> <span class="o">=</span> <span class="n">atomworks</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">inference</span><span class="o">.</span><span class="n">sequence_to_annotated_atom_array</span><span class="p">(</span> <span class="n">ccd_list</span><span class="p">,</span> <span class="n">chain_id</span><span class="p">,</span> <span class="n">chain_type</span><span class="o">=</span><span class="n">chain_type</span> <span class="p">)</span>
+<span class="c1"># Caution! The atom array will not contain coordinates.</span>
+</pre></div>
+</div>
+<p>API docs for these functions:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="core/enums.html#atomworks.enums.ChainType.POLYPEPTIDE_L" title="atomworks.enums.ChainType.POLYPEPTIDE_L"><code class="xref py py-attr docutils literal notranslate"><span class="pre">POLYPEPTIDE_L</span></code></a></p></li>
+<li><p><a class="reference internal" href="io/tools/fasta.html#atomworks.io.tools.fasta.one_letter_to_ccd_code" title="atomworks.io.tools.fasta.one_letter_to_ccd_code"><code class="xref py py-func docutils literal notranslate"><span class="pre">one_letter_to_ccd_code()</span></code></a></p></li>
+<li><p><a class="reference internal" href="io/tools/fasta.html#atomworks.io.tools.fasta.split_generalized_fasta_sequence" title="atomworks.io.tools.fasta.split_generalized_fasta_sequence"><code class="xref py py-func docutils literal notranslate"><span class="pre">split_generalized_fasta_sequence()</span></code></a></p></li>
+<li><p><a class="reference internal" href="io/tools/inference.html#atomworks.io.tools.inference.ccd_code_to_annotated_atom_array" title="atomworks.io.tools.inference.ccd_code_to_annotated_atom_array"><code class="xref py py-func docutils literal notranslate"><span class="pre">ccd_code_to_annotated_atom_array()</span></code></a></p></li>
+</ul>
+</section>
+</section>
+<section id="output">
+<h2>Output<a class="headerlink" href="#output" title="Link to this heading">#</a></h2>
+<section id="mmcif-output">
+<h3>mmCIF output<a class="headerlink" href="#mmcif-output" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="io/utils/io_utils.html#atomworks.io.utils.io_utils.to_cif_file" title="atomworks.io.utils.io_utils.to_cif_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">to_cif_file()</span></code></a> supports <cite>.cif</cite>, <cite>.cif.gz</cite> and <cite>.bcif</cite> outputs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">atomworks.io.utils.io_utils</span>
+
+<span class="n">atomworks</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">io_utils</span><span class="o">.</span><span class="n">to_cif_file</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">chain_disambiguation</span><span class="o">=</span><span class="s2">"chain_iid"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also write a CIF to an in-memory buffer and read it back into AtomWorks.
+The example below keeps track of the different copies of a chain in a biological
+assembly using <code class="docutils literal notranslate"><span class="pre">transformation_id</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">atomworks.io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">atomworks.io.utils.io_utils</span>
+
+<span class="n">buffer</span> <span class="o">=</span> <span class="n">atomworks</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">io_utils</span><span class="o">.</span><span class="n">to_cif_buffer</span><span class="p">(</span>
+    <span class="n">atom_array</span><span class="p">,</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">atomworks</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">io_utils</span><span class="o">.</span><span class="n">CIFWriteConfig</span><span class="p">(</span>
+        <span class="n">include_entity_categories</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">chain_disambiguation</span><span class="o">=</span><span class="s2">"transformation_id"</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="n">restored</span> <span class="o">=</span> <span class="n">atomworks</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="s2">"minimal"</span><span class="p">)[</span><span class="s2">"asym_unit"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>If you plan to open the CIF in another program, use <code class="docutils literal notranslate"><span class="pre">chain_disambiguation=&quot;chain_iid&quot;</span></code>
+to give each chain copy a unique name. The <code class="docutils literal notranslate"><span class="pre">transformation_id</span></code> option keeps the
+original chain names and records the copies in a form AtomWorks can read.
+To save additional annotations, check the writer options and whether the program
+reading the file supports them. Parsing the file again can still change some
+annotations, even with the <code class="docutils literal notranslate"><span class="pre">minimal</span></code> preset.</p>
+</section>
+<section id="legacy-pdb-output">
+<h3>Legacy PDB output<a class="headerlink" href="#legacy-pdb-output" title="Link to this heading">#</a></h3>
+<p>While the use of <a class="reference internal" href="io/utils/io_utils.html#atomworks.io.utils.io_utils.to_pdb_string" title="atomworks.io.utils.io_utils.to_pdb_string"><code class="xref py py-func docutils literal notranslate"><span class="pre">to_pdb_string()</span></code></a> is possible for creating legacy PDB files, use of mmCIF instead is recommended:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">atomworks.io.utils.io_utils</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span>
+
+<span class="n">resolved</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span><span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)]</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">atomworks</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">io_utils</span><span class="o">.</span><span class="n">to_pdb_string</span><span class="p">(</span><span class="n">resolved</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>This example leaves out atoms with missing coordinates, which PDB cannot store.
+Use mmCIF if your chain, residue, or atom identifiers exceed the limits of the PDB format.</p>
+</section>
+<section id="sdf-smiles-output">
+<h3>SDF/SMILES output<a class="headerlink" href="#sdf-smiles-output" title="Link to this heading">#</a></h3>
+<p>This procedure may not work reliably for multi-residue AtomArrays (or too-small fractions of a single residue):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdmol</span> <span class="o">=</span> <span class="n">atomworks</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">rdkit</span><span class="o">.</span><span class="n">atom_array_to_rdkit</span><span class="p">(</span> <span class="n">atom_array</span> <span class="p">)</span>
+
+<span class="n">smiles</span> <span class="o">=</span> <span class="n">rdkit</span><span class="o">.</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span> <span class="n">rdmol</span> <span class="p">)</span>
+
+<span class="k">with</span> <span class="n">rdkit</span><span class="o">.</span><span class="n">Chem</span><span class="o">.</span><span class="n">SDWriter</span><span class="p">(</span> <span class="n">sdf_filename</span> <span class="p">)</span> <span class="k">as</span> <span class="n">w</span><span class="p">:</span>
+    <span class="n">w</span><span class="o">.</span><span class="n">write</span><span class="p">(</span> <span class="n">rdmol</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>API docs for these functions:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="io/tools/rdkit.html#atomworks.io.tools.rdkit.atom_array_to_rdkit" title="atomworks.io.tools.rdkit.atom_array_to_rdkit"><code class="xref py py-func docutils literal notranslate"><span class="pre">atom_array_to_rdkit()</span></code></a></p></li>
+<li><p><a class="reference external" href="https://www.rdkit.org/docs/source/rdkit.Chem.rdmolfiles.html#rdkit.Chem.rdmolfiles.MolToSmiles">MolToSmiles</a></p></li>
+<li><p><a class="reference external" href="https://www.rdkit.org/docs/source/rdkit.Chem.rdmolfiles.html#rdkit.Chem.rdmolfiles.SDWriter">SDWriter</a></p></li>
+</ul>
+</section>
+<section id="fasta-output">
+<h3>FASTA output<a class="headerlink" href="#fasta-output" title="Link to this heading">#</a></h3>
+<p><a class="reference external" href="https://www.biotite-python.org/latest/apidoc/biotite.structure.to_sequence.html#biotite.structure.to_sequence">biotite.structure.to_sequence</a> will raise an error if the atom_array contains non-polymeric residues:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">biotite</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">to_sequence</span><span class="p">(</span> <span class="n">atom_array</span> <span class="p">)</span>
+
+<span class="n">seq_list</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># The second entry in the returned tuple is chain_start_indices</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="structure-manipulation">
+<h2>Structure Manipulation<a class="headerlink" href="#structure-manipulation" title="Link to this heading">#</a></h2>
+<section id="combining-atomarrays">
+<h3>Combining AtomArrays<a class="headerlink" href="#combining-atomarrays" title="Link to this heading">#</a></h3>
+<p>For example, to combine a receptor with a ligand:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">combined_atom_array</span> <span class="o">=</span> <span class="n">atom_array_1</span> <span class="o">+</span> <span class="n">atom_array_2</span>
+</pre></div>
+</div>
+</section>
+<section id="subsetting-atomarray">
+<h3>Subsetting AtomArray<a class="headerlink" href="#subsetting-atomarray" title="Link to this heading">#</a></h3>
+<p>AtomArray can be subsetted by indexing with a Boolean array, resulting in another AtomArray:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">present</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">occupancy</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">]</span>
+<span class="n">calpha</span>  <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">"CA"</span> <span class="p">]</span>
+<span class="n">chainA</span>  <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">==</span> <span class="s2">"A"</span> <span class="p">]</span>
+<span class="n">gly</span>     <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span> <span class="o">==</span> <span class="s2">"GLY"</span> <span class="p">]</span>
+<span class="n">polymer</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">is_polymer</span> <span class="p">]</span>
+<span class="n">not_bb</span>  <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span> <span class="o">~</span><span class="n">biotite</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">filter_peptide_backbone</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span> <span class="p">]</span>
+<span class="n">res_B34</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span> <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_id</span> <span class="o">==</span> <span class="s2">"B"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">res_id</span> <span class="o">==</span> <span class="mi">34</span><span class="p">)</span> <span class="p">]</span> <span class="c1"># Parenthesis are needed.</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="io/transforms/atom_array.html#module-atomworks.io.transforms.atom_array" title="atomworks.io.transforms.atom_array"><code class="xref py py-mod docutils literal notranslate"><span class="pre">atom_array</span></code></a> contains a number of helpful utility functions (primarily used in structure loading):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">no_waters</span> <span class="o">=</span> <span class="n">atomworks</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">atom_array</span><span class="o">.</span><span class="n">remove_waters</span><span class="p">(</span> <span class="n">atom_array</span> <span class="p">)</span>
+<span class="n">no_ccd</span>    <span class="o">=</span> <span class="n">atomworks</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">atom_array</span><span class="o">.</span><span class="n">remove_ccd_components</span><span class="p">(</span> <span class="n">atom_array</span><span class="p">,</span> <span class="n">ccd_code_list</span> <span class="p">)</span>
+<span class="n">no_hydro</span>  <span class="o">=</span> <span class="n">atomworks</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">atom_array</span><span class="o">.</span><span class="n">remove_hydrogens</span><span class="p">(</span> <span class="n">atom_array</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">biotite.structure</span></code> module contains a number of <a class="reference external" href="https://www.biotite-python.org/latest/apidoc/biotite.structure.html#filters">filter</a> functions to help subset the AtomArray:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sugars</span> <span class="o">=</span> <span class="n">atom_array</span><span class="p">[</span> <span class="n">biotite</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">filter_carbohydrates</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span> <span class="p">]</span>
+</pre></div>
+</div>
+<p>Each selection uses annotations on the AtomArray, such as <code class="docutils literal notranslate"><span class="pre">occupancy</span></code> or
+<code class="docutils literal notranslate"><span class="pre">is_polymer</span></code>. If your assembly contains several copies of the same chain,
+select by <code class="docutils literal notranslate"><span class="pre">chain_iid</span></code> or <code class="docutils literal notranslate"><span class="pre">pn_unit_iid</span></code> to choose just one copy before selecting
+its residues. The backbone filter in the example applies to proteins.</p>
+</section>
+<section id="changing-annotations">
+<h3>Changing annotations<a class="headerlink" href="#changing-annotations" title="Link to this heading">#</a></h3>
+<p>Note this naive manipulation doesn’t update the <code class="docutils literal notranslate"><span class="pre">_id/_iid/pn_unit/molecule/etc.</span></code> identity correspondences:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_id</span><span class="p">[</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">is_polymer</span> <span class="p">]</span> <span class="o">=</span> <span class="s2">"A"</span>
+<span class="n">atom_array</span><span class="o">.</span><span class="n">res_id</span><span class="p">[</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">res_id</span> <span class="o">==</span> <span class="mi">1004</span> <span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="coordinate-manipulation">
+<h2>Coordinate Manipulation<a class="headerlink" href="#coordinate-manipulation" title="Link to this heading">#</a></h2>
+<section id="simple-translation-rotation">
+<h3>Simple Translation/Rotation<a class="headerlink" href="#simple-translation-rotation" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">translated</span> <span class="o">=</span> <span class="n">biotite</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span> <span class="n">atom_array</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)</span> <span class="p">)</span> <span class="c1"># Displacement can be any array-shaped</span>
+<span class="n">rotated</span>    <span class="o">=</span> <span class="n">biotite</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">rotate_about_axis</span><span class="p">(</span> <span class="n">atom_array</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">center</span> <span class="p">)</span> <span class="c1"># Center can be omitted to rotate around origin</span>
+</pre></div>
+</div>
+<p>API docs for these functions:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.biotite-python.org/latest/apidoc/biotite.structure.html#biotite.structure.translate">biotite.structure.translate</a></p></li>
+<li><p><a class="reference external" href="https://www.biotite-python.org/latest/apidoc/biotite.structure.rotate_about_axis.html">biotite.structure.rotate_about_axis</a></p></li>
+</ul>
+</section>
+<section id="alignment">
+<h3>Alignment<a class="headerlink" href="#alignment" title="Link to this heading">#</a></h3>
+<p>If the AtomArrays have identical atom layouts:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">superimposed</span><span class="p">,</span> <span class="n">transformation</span> <span class="o">=</span> <span class="n">biotite</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">superimpose</span><span class="p">(</span> <span class="n">fixed</span><span class="p">,</span> <span class="n">mobile</span> <span class="p">)</span>
+
+<span class="n">superimposed2</span> <span class="o">=</span> <span class="n">transformation</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span> <span class="n">mobile2</span> <span class="p">)</span> <span class="c1"># Apply same transformation to different AtomArray</span>
+</pre></div>
+</div>
+<p>If the structures aren’t identical, the following uses sequence alignments to find pairings:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">superimposed</span><span class="p">,</span> <span class="n">transformation</span><span class="p">,</span> <span class="n">fixed_indices</span><span class="p">,</span> <span class="n">mobile_indices</span> <span class="o">=</span> <span class="n">biotite</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">superimpose_homologs</span><span class="p">(</span> <span class="n">fixed</span><span class="p">,</span> <span class="n">mobile</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>If there’s low sequence similarity, the following uses structural similarity to find pairings:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">superimposed</span><span class="p">,</span> <span class="n">transformation</span><span class="p">,</span> <span class="n">fixed_indices</span><span class="p">,</span> <span class="n">mobile_indices</span> <span class="o">=</span> <span class="n">biotite</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">superimpose_structural_homologs</span><span class="p">(</span> <span class="n">fixed</span><span class="p">,</span> <span class="n">mobile</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>API docs for these functions:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.biotite-python.org/latest/apidoc/biotite.structure.superimpose.html#biotite.structure.superimpose">biotite.structure.superimpose</a></p></li>
+<li><p><a class="reference external" href="https://www.biotite-python.org/latest/apidoc/biotite.structure.superimpose_homologs.html#biotite.structure.superimpose_homologs">biotite.structure.superimpose_homologs</a></p></li>
+<li><p><a class="reference external" href="https://www.biotite-python.org/latest/apidoc/biotite.structure.superimpose_structural_homologs.html#biotite.structure.superimpose_structural_homologs">biotite.structure.superimpose_structural_homologs</a></p></li>
+</ul>
+</section>
+</section>
+<section id="calculations">
+<h2>Calculations<a class="headerlink" href="#calculations" title="Link to this heading">#</a></h2>
+<section id="distances-angles">
+<h3>Distances/Angles<a class="headerlink" href="#distances-angles" title="Link to this heading">#</a></h3>
+<p>Geometry calculations take AtomArrays all of N entries (or one entry to be broadcasted), resulting in a numpy array of N distances:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">distances</span> <span class="o">=</span> <span class="n">biotite</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span> <span class="n">atom_array_1</span><span class="p">,</span> <span class="n">atom_array_2</span> <span class="p">)</span> <span class="c1"># In Angstroms</span>
+<span class="n">angles</span>    <span class="o">=</span> <span class="n">biotite</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span> <span class="n">atom_array_1</span><span class="p">,</span> <span class="n">atom_array_2</span><span class="p">,</span> <span class="n">atom_array_3</span> <span class="p">)</span> <span class="c1"># In radians</span>
+<span class="n">dihedrals</span> <span class="o">=</span> <span class="n">biotite</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">dihedral</span><span class="p">(</span> <span class="n">atom_array_1</span><span class="p">,</span> <span class="n">atom_array_2</span><span class="p">,</span> <span class="n">atom_array_3</span><span class="p">,</span> <span class="n">atom_array_4</span> <span class="p">)</span> <span class="c1"># In radians</span>
+</pre></div>
+</div>
+<p>There’s convenience functions for standard protein dihedrals:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bb_dihedral</span> <span class="o">=</span> <span class="n">biotite</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">dihedral_backbone</span><span class="p">(</span> <span class="n">atom_array</span> <span class="p">)</span> <span class="c1"># tuple of (phi, psi, omega) array</span>
+</pre></div>
+</div>
+<p>API docs for these functions:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.biotite-python.org/latest/apidoc/biotite.structure.distance.html#biotite.structure.distance">biotite.structure.distance</a></p></li>
+<li><p><a class="reference external" href="https://www.biotite-python.org/latest/apidoc/biotite.structure.angle.html#biotite.structure.angle">biotite.structure.angle</a></p></li>
+<li><p><a class="reference external" href="https://www.biotite-python.org/latest/apidoc/biotite.structure.dihedral.html#biotite.structure.dihedral">biotite.structure.dihedral</a></p></li>
+<li><p><a class="reference external" href="https://www.biotite-python.org/latest/apidoc/biotite.structure.dihedral_backbone.html#biotite.structure.dihedral_backbone">biotite.structure.dihedral_backbone</a></p></li>
+</ul>
+</section>
+<section id="structural-comparison">
+<h3>Structural Comparison<a class="headerlink" href="#structural-comparison" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rmsd</span> <span class="o">=</span> <span class="n">biotite</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">rmsd</span><span class="p">(</span> <span class="n">reference</span><span class="p">,</span> <span class="n">subject</span> <span class="p">)</span> <span class="c1"># RMSD without superposition</span>
+<span class="n">lddt</span> <span class="o">=</span> <span class="n">biotite</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">lddt</span><span class="p">(</span> <span class="n">reference</span><span class="p">,</span> <span class="n">subject</span> <span class="p">)</span>
+<span class="c1"># fixed_indices &amp; mobile_indices can come from superimpose_structural_homologs()</span>
+<span class="n">tm_score</span> <span class="o">=</span> <span class="n">biotite</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">tm_score</span><span class="p">(</span> <span class="n">reference</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">fixed_indices</span><span class="p">,</span> <span class="n">mobile_indices</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>API docs for these functions:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.biotite-python.org/latest/apidoc/biotite.structure.rmsd.html#biotite.structure.rmsd">biotite.structure.rmsd</a></p></li>
+<li><p><a class="reference external" href="https://www.biotite-python.org/latest/apidoc/biotite.structure.lddt.html#biotite.structure.lddt">biotite.structure.lddt</a></p></li>
+<li><p><a class="reference external" href="https://www.biotite-python.org/latest/apidoc/biotite.structure.tm_score.html#biotite.structure.tm_score">biotite.structure.tm_score</a></p></li>
+</ul>
+</section>
+</section>
+<section id="visualization">
+<h2>Visualization<a class="headerlink" href="#visualization" title="Link to this heading">#</a></h2>
+<section id="viewer">
+<h3>Viewer<a class="headerlink" href="#viewer" title="Link to this heading">#</a></h3>
+<p>Interactive viewer (<a class="reference internal" href="io/utils/visualize.html#atomworks.io.utils.visualize.view" title="atomworks.io.utils.visualize.view"><code class="xref py py-func docutils literal notranslate"><span class="pre">view()</span></code></a>) (for Notebooks):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">atomworks</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">visualize</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="other">
+<h2>Other<a class="headerlink" href="#other" title="Link to this heading">#</a></h2>
+<p>If there are other common tasks you think are worth including here, please <a class="reference external" href="https://github.com/RosettaCommons/atomworks/issues">open an issue</a> on Github.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="how_to_build_a_model/scripts/index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Scripts</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="installation.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Installation</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#input">Input</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#standard-local-file-input">Standard Local File Input</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#load-from-clean-files">Load from Clean Files</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#database-input">Database Input</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ccd-sdf-smiles-input">CCD/SDF/SMILES Input</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sequence-input">Sequence Input</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#output">Output</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mmcif-output">mmCIF output</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#legacy-pdb-output">Legacy PDB output</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sdf-smiles-output">SDF/SMILES output</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fasta-output">FASTA output</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#structure-manipulation">Structure Manipulation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#combining-atomarrays">Combining AtomArrays</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#subsetting-atomarray">Subsetting AtomArray</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changing-annotations">Changing annotations</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#coordinate-manipulation">Coordinate Manipulation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-translation-rotation">Simple Translation/Rotation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#alignment">Alignment</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calculations">Calculations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distances-angles">Distances/Angles</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#structural-comparison">Structural Comparison</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization">Visualization</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#viewer">Viewer</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#other">Other</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="_sources/cookbook.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.22.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

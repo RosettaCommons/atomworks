@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>atomworks.ml.preprocessing.msa.generating &#8212; atomworks 3.0.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=64cc4de3f052d77215f0" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinxcontrib_typer.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../../_static/scripts/fontawesome.js?digest=64cc4de3f052d77215f0"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0" />
+
+    <script src="../../../../../_static/documentation_options.js?v=acc74ff5"></script>
+    <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/ml/preprocessing/msa/generating';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.22.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://rosettacommons.github.io/atomworks/_static/switcher.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../../../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="3.0.0" />
+  
+    
+    <script src="../../../../../_static/searchtools.js"></script>
+    <script src="../../../../../_static/language_data.js"></script>
+    <script src="../../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.0 documentation - Home"/>
+    <img src="../../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.0 documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../cookbook.html">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../migration/index.html">
+    Migrating to AtomWorks 3.0
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../cookbook.html">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../migration/index.html">
+    Migrating to AtomWorks 3.0
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">atomworks.ml.preprocessing.msa.generating</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for atomworks.ml.preprocessing.msa.generating</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Generate MSAs from protein sequences using MMseqs2 or HHblits.</span>
+
+<span class="sd">Supports both GPU-accelerated MMseqs2 and CPU-based HHblits backends. MSA files are</span>
+<span class="sd">automatically organized with proper hashing, sharding, and compression.</span>
+
+<span class="sd">Example:</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">       from atomworks.ml.preprocessing.msa.generating import make_msas_from_csv, MSAGenerationConfig</span>
+
+<span class="sd">       config = MSAGenerationConfig(backend="hhblits", threads=8, max_final_sequences=5000)</span>
+<span class="sd">       make_msas_from_csv("sequences.csv", "output_msas/", sequence_column="seq", config=config)</span>
+
+<span class="sd">References:</span>
+<span class="sd">    * Mirdita, M. et al. (2022). ColabFold: making protein folding accessible to all. *Nature Methods*, 19, 679-682.</span>
+<span class="sd">    * `ColabFold MMseqs2 Search Script`_ - Original implementation and documentation.</span>
+
+<span class="sd">    .. _ColabFold MMseqs2 Search Script: https://github.com/sokrypton/ColabFold/blob/main/colabfold/mmseqs/search.py</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">dataclasses</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">PathLike</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">_load_env_var</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">MSAFileExtension</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.executables.hhblits</span><span class="w"> </span><span class="kn">import</span> <span class="n">HHblits</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.executables.mmseqs2</span><span class="w"> </span><span class="kn">import</span> <span class="n">MODULE_OUTPUT_POS</span><span class="p">,</span> <span class="n">MMseqs2</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.preprocessing.msa.filtering</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">HHFilterConfig</span><span class="p">,</span>
+    <span class="n">MSAFilterConfig</span><span class="p">,</span>
+    <span class="n">count_sequences_in_msa</span><span class="p">,</span>
+    <span class="n">filter_msas</span><span class="p">,</span>
+    <span class="n">run_hhfilter</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.preprocessing.msa.finding</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_msas</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.preprocessing.msa.organizing</span><span class="w"> </span><span class="kn">import</span> <span class="n">MSAOrganizationConfig</span><span class="p">,</span> <span class="n">organize_msas</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.utils.misc</span><span class="w"> </span><span class="kn">import</span> <span class="n">hash_sequence</span>
+
+<span class="n">LOCAL_DB_PATH_GPU</span> <span class="o">=</span> <span class="n">_load_env_var</span><span class="p">(</span><span class="s2">"COLABFOLD_LOCAL_DB_PATH_GPU"</span><span class="p">)</span>
+<span class="n">LOCAL_DB_PATH_CPU</span> <span class="o">=</span> <span class="n">_load_env_var</span><span class="p">(</span><span class="s2">"COLABFOLD_LOCAL_DB_PATH_CPU"</span><span class="p">)</span>
+<span class="n">NET_DB_PATH_GPU</span> <span class="o">=</span> <span class="n">_load_env_var</span><span class="p">(</span><span class="s2">"COLABFOLD_NET_DB_PATH_GPU"</span><span class="p">)</span>
+<span class="n">NET_DB_PATH_CPU</span> <span class="o">=</span> <span class="n">_load_env_var</span><span class="p">(</span><span class="s2">"COLABFOLD_NET_DB_PATH_CPU"</span><span class="p">)</span>
+
+<span class="n">COLABFOLD_DB_NAME</span> <span class="o">=</span> <span class="s2">"colabfold_envdb_202108_db"</span>
+<span class="n">UNIREF30_DB_NAME</span> <span class="o">=</span> <span class="s2">"uniref30_2302_db"</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+    <span class="s2">"Initialized ColabFold MSA generation module</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="sa">f</span><span class="s2">"Local CPU DB Path: </span><span class="si">{</span><span class="n">LOCAL_DB_PATH_CPU</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="sa">f</span><span class="s2">"Local GPU DB Path: </span><span class="si">{</span><span class="n">LOCAL_DB_PATH_GPU</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="sa">f</span><span class="s2">"Net CPU DB Path: </span><span class="si">{</span><span class="n">NET_DB_PATH_CPU</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="sa">f</span><span class="s2">"Net GPU DB Path: </span><span class="si">{</span><span class="n">NET_DB_PATH_GPU</span><span class="si">}</span><span class="s2">"</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="create_fasta_with_hashed_headers">
+<a class="viewcode-back" href="../../../../../ml/preprocessing.html#atomworks.ml.preprocessing.msa.generating.create_fasta_with_hashed_headers">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_fasta_with_hashed_headers</span><span class="p">(</span><span class="n">sequences</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">output_file</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Create a FASTA file from sequence strings with SHA-256 hashed headers.</span>
+
+<span class="sd">    Note: For wrapped sequences with deduplication, see</span>
+<span class="sd">    :py:func:`~atomworks.ml.preprocessing.utils.fasta.create_fasta_file_from_df`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sequences: List of protein sequence strings.</span>
+<span class="sd">        output_file: Path to the output FASTA file.</span>
+<span class="sd">    """</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">sequence_string</span> <span class="ow">in</span> <span class="n">sequences</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="n">hash_sequence</span><span class="p">(</span><span class="n">sequence_string</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"&gt;</span><span class="si">{</span><span class="n">header</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">sequence_string</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="MMseqs2SearchConfig">
+<a class="viewcode-back" href="../../../../../ml/preprocessing.html#atomworks.ml.preprocessing.msa.generating.MMseqs2SearchConfig">[docs]</a>
+<span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MMseqs2SearchConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Configuration for MMseqs2 search parameters.</span>
+
+<span class="sd">    Default values match those used in the working ColabFold script (reference below).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filter: Whether to filter the MSA.</span>
+<span class="sd">        num_iterations: Number of MMseqs2 search iterations.</span>
+<span class="sd">        max_seqs: Maximum number of cluster centers in the MSA.</span>
+<span class="sd">        search_eval: Search e-value threshold.</span>
+<span class="sd">        expand_eval: E-value threshold for expandaln.</span>
+<span class="sd">        expand_max_seq_id: Maximum sequence identity for expandaln.</span>
+<span class="sd">        align_eval: E-value threshold for align.</span>
+<span class="sd">        diff: Keep at least this many sequences in each MSA block.</span>
+<span class="sd">        qsc: Reduce diversity using minimum score threshold.</span>
+<span class="sd">        filter_qsc: Filter diversity using minimum score threshold.</span>
+<span class="sd">        filter_max_seq_id: Maximum sequence identity for filtering.</span>
+<span class="sd">        filter_min_enable: Minimum number of sequences to keep in each MSA block.</span>
+<span class="sd">        filter_qid: Sequence identity thresholds for filtering.</span>
+<span class="sd">        max_accept: Maximum accepted alignments before stopping.</span>
+<span class="sd">        prefilter_mode: Prefiltering algorithm (0: k-mer, 1: ungapped, 2: exhaustive).</span>
+<span class="sd">        s: MMseqs2 sensitivity. Lower = faster but sparser MSAs.</span>
+<span class="sd">        db_load_mode: Database preload mode (0: auto, 1: fread, 2: mmap, 3: mmap+touch).</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        * `ColabFold MMseqs2 Search Script`_ - Original implementation and documentation.</span>
+
+<span class="sd">        .. _ColabFold MMseqs2 Search Script: https://github.com/sokrypton/ColabFold/blob/main/colabfold/mmseqs/search.py</span>
+<span class="sd">    """</span>
+
+    <span class="nb">filter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">num_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">max_seqs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10_000</span>
+    <span class="n">search_eval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">expand_eval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">inf</span>
+    <span class="n">expand_max_seq_id</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.95</span>
+    <span class="n">align_eval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span>
+    <span class="n">diff</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3000</span>
+    <span class="n">qsc</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">20.0</span>
+    <span class="n">filter_qsc</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">filter_max_seq_id</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.95</span>
+    <span class="n">filter_min_enable</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span>
+    <span class="n">filter_qid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0.0,0.2,0.4,0.6,0.8,1.0"</span>
+    <span class="n">max_accept</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000_000</span>
+    <span class="n">prefilter_mode</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">8.0</span>  <span class="c1"># Set to None to use k-score instead</span>
+    <span class="n">db_load_mode</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+
+
+<div class="viewcode-block" id="HHblitsSearchConfig">
+<a class="viewcode-back" href="../../../../../ml/preprocessing.html#atomworks.ml.preprocessing.msa.generating.HHblitsSearchConfig">[docs]</a>
+<span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HHblitsSearchConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Configuration for HHblits iterative search parameters.</span>
+
+<span class="sd">    Default values match the original HHblits MSA generation pipeline. Database paths</span>
+<span class="sd">    are loaded from ``HHBLITS_UNIREF30_DB_PATH`` and ``HHBLITS_BFD_DB_PATH`` env vars if not provided.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        mact: MAC realignment threshold for HHblits.</span>
+<span class="sd">        maxfilt: Maximum hits allowed through prefilter.</span>
+<span class="sd">        neffmax: Maximum Neff (effective sequence count) value.</span>
+<span class="sd">        use_bfd: Whether to fall back to BFD when UniRef30 yields insufficient sequences.</span>
+<span class="sd">    """</span>
+
+    <span class="n">uniref30_db_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">bfd_db_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">e_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="mf">1e-10</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">])</span>
+    <span class="n">bfd_e_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span>
+    <span class="n">min_seqs_high_cov</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2000</span>
+    <span class="n">min_seqs_low_cov</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4000</span>
+    <span class="n">high_cov</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">75.0</span>
+    <span class="n">low_cov</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">50.0</span>
+    <span class="n">identity</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">90.0</span>
+    <span class="n">max_filter_seqs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100_000</span>
+    <span class="n">n_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">mem</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">64</span>
+    <span class="n">use_bfd</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">mact</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.35</span>
+    <span class="n">maxfilt</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+    <span class="n">neffmax</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span>
+    <span class="n">cov</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">25</span>
+    <span class="n">maxseq</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000_000</span>
+    <span class="n">realign_max</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100_000_000</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">uniref30_db_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">uniref30_db_path</span> <span class="o">=</span> <span class="n">_load_env_var</span><span class="p">(</span><span class="s2">"HHBLITS_UNIREF30_DB_PATH"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bfd_db_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bfd_db_path</span> <span class="o">=</span> <span class="n">_load_env_var</span><span class="p">(</span><span class="s2">"HHBLITS_BFD_DB_PATH"</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">uniref30_db_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"uniref30_db_path is required for HHblits. "</span>
+                <span class="s2">"Set HHBLITS_UNIREF30_DB_PATH environment variable or provide uniref30_db_path parameter."</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_bfd</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">bfd_db_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"bfd_db_path is required when use_bfd=True. "</span>
+                <span class="s2">"Set HHBLITS_BFD_DB_PATH environment variable, provide bfd_db_path parameter, or set use_bfd=False."</span>
+            <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="MSAGenerationConfig">
+<a class="viewcode-back" href="../../../../../ml/preprocessing.html#atomworks.ml.preprocessing.msa.generating.MSAGenerationConfig">[docs]</a>
+<span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MSAGenerationConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Configuration for MSA generation.</span>
+
+<span class="sd">    This dataclass encapsulates all user-facing configuration options for MSA generation,</span>
+<span class="sd">    supporting both MMseqs2 and HHblits backends.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sharding_pattern: Directory sharding pattern for file organization.</span>
+<span class="sd">        output_extension: File extension and compression for output files.</span>
+<span class="sd">        use_env: Whether to include environmental (metagenomic) database (MMseqs2 only).</span>
+<span class="sd">        gpu: Whether to use GPU acceleration (MMseqs2 only).</span>
+<span class="sd">        gpu_server: Whether to use GPU server (requires gpu=True, MMseqs2 only).</span>
+<span class="sd">        threads: Number of CPU threads for search operations (used by both MMseqs2 and HHblits).</span>
+<span class="sd">        use_local_temp_dir: Whether to use local temporary directory for intermediate files (MMseqs2 only).</span>
+<span class="sd">        max_final_sequences: Maximum number of sequences in the final MSA after HHFilter.</span>
+<span class="sd">        check_existing: Whether to check for existing MSAs before generation.</span>
+<span class="sd">        existing_msa_dirs: Directories to check for existing MSAs. If None, uses PROTEIN_MSA_DIRS env var.</span>
+<span class="sd">        search_config: Advanced MMseqs2 search configuration (MMseqs2 only).</span>
+<span class="sd">        backend: MSA generation backend, either ``"mmseqs2"`` or ``"hhblits"``.</span>
+<span class="sd">        hhblits_search_config: HHblits search configuration (HHblits only). If None when using HHblits</span>
+<span class="sd">            backend, a default config is constructed at generation time.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        * Mirdita, M. et al. (2022). ColabFold: making protein folding accessible to all. *Nature Methods*, 19, 679-682.</span>
+<span class="sd">    """</span>
+
+    <span class="n">sharding_pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"/0:2/"</span>
+    <span class="n">output_extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MSAFileExtension</span><span class="o">.</span><span class="n">A3M_GZ</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">use_env</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">gpu</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">gpu_server</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">threads</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">use_local_temp_dir</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">max_final_sequences</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span>
+    <span class="n">check_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">existing_msa_dirs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">search_config</span><span class="p">:</span> <span class="n">MMseqs2SearchConfig</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">MMseqs2SearchConfig</span><span class="p">())</span>
+    <span class="n">backend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"mmseqs2"</span>
+    <span class="n">hhblits_search_config</span><span class="p">:</span> <span class="n">HHblitsSearchConfig</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"mmseqs2"</span><span class="p">,</span> <span class="s2">"hhblits"</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid backend: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="si">!r}</span><span class="s2">. Must be 'mmseqs2' or 'hhblits'."</span><span class="p">)</span>
+
+        <span class="c1"># If we're using GPU, also use the GPU server by default</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpu</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpu_server</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"GPU is enabled, setting gpu_server to True"</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gpu_server</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_database_path</span><span class="p">(</span><span class="n">gpu</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Determine which database path to use, falling back from local to network paths.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        gpu: Whether to use GPU databases.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Path to the database directory.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If no database paths are configured.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">gpu</span><span class="p">:</span>
+        <span class="c1"># For GPU, try local GPU path first, then network path</span>
+        <span class="k">if</span> <span class="n">LOCAL_DB_PATH_GPU</span> <span class="ow">and</span> <span class="n">Path</span><span class="p">(</span><span class="n">LOCAL_DB_PATH_GPU</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Using local GPU database path: </span><span class="si">{</span><span class="n">LOCAL_DB_PATH_GPU</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">LOCAL_DB_PATH_GPU</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">NET_DB_PATH_GPU</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Local GPU database path not found, using network path: </span><span class="si">{</span><span class="n">NET_DB_PATH_GPU</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">NET_DB_PATH_GPU</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"No GPU database paths configured. Please set COLABFOLD_LOCAL_DB_PATH_GPU "</span>
+                <span class="s2">"or COLABFOLD_NET_DB_PATH_GPU environment variables."</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># For CPU, try local CPU path first, then network path</span>
+        <span class="k">if</span> <span class="n">LOCAL_DB_PATH_CPU</span> <span class="ow">and</span> <span class="n">Path</span><span class="p">(</span><span class="n">LOCAL_DB_PATH_CPU</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Using local CPU database path: </span><span class="si">{</span><span class="n">LOCAL_DB_PATH_CPU</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">LOCAL_DB_PATH_CPU</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">NET_DB_PATH_CPU</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Local CPU database path not found, using network path: </span><span class="si">{</span><span class="n">NET_DB_PATH_CPU</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">NET_DB_PATH_CPU</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"No CPU database paths configured. Please set COLABFOLD_LOCAL_DB_PATH_CPU "</span>
+                <span class="s2">"or COLABFOLD_NET_DB_PATH_CPU environment variables."</span>
+            <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_isolated_db_path</span><span class="p">(</span><span class="n">original_db_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Create an isolated database path with symlinks to avoid GPU server socket conflicts.</span>
+
+<span class="sd">    When multiple jobs run concurrently on the same node using gpu_server mode, they share</span>
+<span class="sd">    the same /dev/shm socket file because MMseqs2 generates the socket ID from the database</span>
+<span class="sd">    path. By creating symlinks in a unique temp directory, each job gets a unique socket ID.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        original_db_path: Path to the original database directory.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple of (isolated_db_path, temp_dir) where:</span>
+<span class="sd">        - isolated_db_path: Path to the symlinked database directory</span>
+<span class="sd">        - temp_dir: Path to the temp directory (caller should clean up)</span>
+<span class="sd">    """</span>
+    <span class="c1"># Create a unique temp directory for this job</span>
+    <span class="n">unique_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">temp_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">())</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"mmseqs_isolated_</span><span class="si">{</span><span class="n">unique_id</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">temp_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Create symlinks to all files in the original database directory</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">original_db_path</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+        <span class="n">link_path</span> <span class="o">=</span> <span class="n">temp_dir</span> <span class="o">/</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">link_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">link_path</span><span class="o">.</span><span class="n">symlink_to</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Created isolated database path: </span><span class="si">{</span><span class="n">temp_dir</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">original_db_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">temp_dir</span><span class="p">,</span> <span class="n">temp_dir</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_mmseqs_db_from_fasta</span><span class="p">(</span><span class="n">fasta_file</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Create a MMseqs2 database from a FASTA file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fasta_file: Path to the FASTA file.</span>
+<span class="sd">        output_dir: Path to the output directory.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Path to the output database.</span>
+<span class="sd">    """</span>
+    <span class="n">mmseqs2</span> <span class="o">=</span> <span class="n">MMseqs2</span><span class="o">.</span><span class="n">get_or_initialize</span><span class="p">()</span>
+    <span class="n">output_db</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"qdb"</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">mmseqs2</span><span class="o">.</span><span class="n">get_bin_path</span><span class="p">()),</span>
+            <span class="s2">"createdb"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">fasta_file</span><span class="p">),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">output_db</span><span class="p">),</span>
+            <span class="s2">"--shuffle"</span><span class="p">,</span>
+            <span class="s2">"0"</span><span class="p">,</span>
+            <span class="s2">"--dbtype"</span><span class="p">,</span>
+            <span class="s2">"1"</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">output_db</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_start_gpu_server</span><span class="p">(</span>
+    <span class="n">db_name</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">max_seqs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">db_load_mode</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">prefilter_mode</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">wait_time</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Start the GPU server using the initialized MMseqs2 executable.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        db_name: Path to the database name.</span>
+<span class="sd">        max_seqs: Maximum number of sequences.</span>
+<span class="sd">        db_load_mode: Database loading mode.</span>
+<span class="sd">        prefilter_mode: Prefilter mode to use.</span>
+<span class="sd">        wait_time: Time to wait for server startup in seconds.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Process object for the GPU server.</span>
+<span class="sd">    """</span>
+    <span class="n">mmseqs2</span> <span class="o">=</span> <span class="n">MMseqs2</span><span class="o">.</span><span class="n">get_or_initialize</span><span class="p">()</span>
+    <span class="n">mmseqs_bin</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mmseqs2</span><span class="o">.</span><span class="n">get_bin_path</span><span class="p">())</span>
+
+    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">mmseqs_bin</span><span class="p">,</span>
+        <span class="s2">"gpuserver"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">db_name</span><span class="p">),</span>
+        <span class="s2">"--max-seqs"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">max_seqs</span><span class="p">),</span>
+        <span class="s2">"--db-load-mode"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">db_load_mode</span><span class="p">),</span>
+        <span class="s2">"--prefilter-mode"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">prefilter_mode</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="n">gpu_server_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">universal_newlines</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span>
+        <span class="n">wait_time</span>
+    <span class="p">)</span>  <span class="c1"># TODO They recently updated MMseqs2 to automatically wait for the server to start. Once they release a new version and we update our local installation, this can be removed</span>
+
+    <span class="k">return</span> <span class="n">gpu_server_process</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_run_mmseqs</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Run an MMseqs2 command using the initialized executable.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        params: List of parameters to pass to the MMseqs2 command.</span>
+<span class="sd">    """</span>
+    <span class="n">mmseqs2</span> <span class="o">=</span> <span class="n">MMseqs2</span><span class="o">.</span><span class="n">get_or_initialize</span><span class="p">()</span>
+    <span class="n">mmseqs_bin</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mmseqs2</span><span class="o">.</span><span class="n">get_bin_path</span><span class="p">())</span>
+
+    <span class="n">module</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">MODULE_OUTPUT_POS</span><span class="p">:</span>
+        <span class="n">output_pos</span> <span class="o">=</span> <span class="n">MODULE_OUTPUT_POS</span><span class="p">[</span><span class="n">module</span><span class="p">]</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">output_pos</span><span class="p">])</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">".dbtype"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">output_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Skipping </span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2"> because </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2"> already exists"</span><span class="p">)</span>
+            <span class="k">return</span>
+
+    <span class="n">params_log</span> <span class="o">=</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">params</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Running </span><span class="si">{</span><span class="n">mmseqs_bin</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">params_log</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="n">mmseqs_bin</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="p">])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_run_mmseqs_search_and_filter</span><span class="p">(</span>
+    <span class="n">base</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">dbbase</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">db_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">db_suffix1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">db_suffix2</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">db_load_mode</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">threads</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">search_param</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">expand_param</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">filter_param</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">align_eval</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">max_accept</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">qsc</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">align_alt_ali</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">qid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">filter_diff</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">inner_filter_max_seq_id</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">inner_filter_min_enable</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">profile_input</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"qdb"</span><span class="p">,</span>
+    <span class="n">tmp_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"tmp"</span><span class="p">,</span>
+    <span class="n">start_gpu_server</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">gpu_server_max_seqs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10_000</span><span class="p">,</span>
+    <span class="n">gpu_server_db_load_mode</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Execute core ColabFold MSA generation pipeline.</span>
+
+<span class="sd">    Helper function to run MMseqs2 search, expand alignment and filter results. This is the basic pipeline used in ColabFold to generate</span>
+<span class="sd">    high quality MSAs using MMseqs2.</span>
+
+<span class="sd">    First we search against the target database and create alignments of the results. Then we expand these alignments using an alignment</span>
+<span class="sd">    of the target database. We can then realign the expanded alignments which ultimately results in a higher quality alignments. The</span>
+<span class="sd">    resulting alignments are then filtered and converted to an MSA format.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        base: Directory for the results (and intermediate files).</span>
+<span class="sd">        dbbase: Path to the database and indices you downloaded and created with setup_databases.sh.</span>
+<span class="sd">        db_name: Name of the database to search against.</span>
+<span class="sd">        db_suffix1: Suffix for the database to search against.</span>
+<span class="sd">        db_suffix2: Suffix for the database to search against.</span>
+<span class="sd">        output_name: Name of the output file.</span>
+<span class="sd">        db_load_mode: Database preload mode 0: auto, 1: fread, 2: mmap, 3: mmap+touch.</span>
+<span class="sd">        threads: Number of threads to use.</span>
+<span class="sd">        search_param: Extra parameters for the search.</span>
+<span class="sd">        expand_param: Extra parameters for the expandaln.</span>
+<span class="sd">        filter_param: Extra parameters for the filterresult.</span>
+<span class="sd">        align_eval: E-val threshold for align.</span>
+<span class="sd">        max_accept: Maximum accepted alignments before alignment calculation for a query is stopped.</span>
+<span class="sd">        qsc: filterresult - reduce diversity of output MSAs using min score thresh.</span>
+<span class="sd">        align_alt_ali: Number of alternative alignments to keep.</span>
+<span class="sd">        qid: filterresult - Reduce diversity of output MSAs using min.seq. idendity with query sequences.</span>
+<span class="sd">        filter_diff: filterresult - Keep at least this many seqs in each MSA block.</span>
+<span class="sd">        inner_filter_max_seq_id: Inner filterresult - Maximum sequence identity for filtering.</span>
+<span class="sd">        inner_filter_min_enable: Inner filterresult - Minimum number of sequences to keep in each MSA block.</span>
+<span class="sd">        profile_input: Profile input (usually qdb).</span>
+<span class="sd">        tmp_dir: Temporary directory.</span>
+<span class="sd">        start_gpu_server: Whether to start (and stop) an MMseqs2 GPU server around the search.</span>
+<span class="sd">        gpu_server_max_seqs: ``--max-seqs`` for the GPU server (must match the search's max_seqs).</span>
+<span class="sd">        gpu_server_db_load_mode: ``--db-load-mode`` for the GPU server (must match the search's db_load_mode).</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        * `ColabFold Paper`_ - MSA generation methodology</span>
+
+<span class="sd">        .. _ColabFold Paper: https://www.nature.com/articles/s41592-022-01488-1</span>
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="n">start_gpu_server</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Setting up GPU server..."</span><span class="p">)</span>
+        <span class="n">gpu_server_process</span> <span class="o">=</span> <span class="n">_start_gpu_server</span><span class="p">(</span>
+            <span class="n">dbbase</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">db_name</span><span class="p">),</span>
+            <span class="n">max_seqs</span><span class="o">=</span><span class="n">gpu_server_max_seqs</span><span class="p">,</span>
+            <span class="n">db_load_mode</span><span class="o">=</span><span class="n">gpu_server_db_load_mode</span><span class="p">,</span>
+            <span class="n">prefilter_mode</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># GPU only supports ungapped prefilter</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"GPU server setup complete"</span><span class="p">)</span>
+
+    <span class="n">_run_mmseqs</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="s2">"search"</span><span class="p">,</span>
+            <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">profile_input</span><span class="p">),</span>
+            <span class="n">dbbase</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">db_name</span><span class="p">),</span>
+            <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"res"</span><span class="p">),</span>
+            <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">),</span>
+            <span class="s2">"--threads"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">threads</span><span class="p">),</span>
+            <span class="o">*</span><span class="n">search_param</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">start_gpu_server</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Stopping GPU server..."</span><span class="p">)</span>
+        <span class="n">gpu_server_process</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>  <span class="c1"># Send SIGTERM</span>
+        <span class="n">gpu_server_process</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"GPU server stopped"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">profile_input</span> <span class="o">==</span> <span class="s2">"qdb"</span><span class="p">:</span>
+        <span class="c1"># Move and symlink databases (only needed for first uniref search)</span>
+        <span class="n">_run_mmseqs</span><span class="p">([</span><span class="s2">"mvdb"</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">tmp_dir</span><span class="si">}</span><span class="s2">/latest/profile_1"</span><span class="p">),</span> <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"prof_res"</span><span class="p">)])</span>
+        <span class="n">_run_mmseqs</span><span class="p">([</span><span class="s2">"lndb"</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"qdb_h"</span><span class="p">),</span> <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"prof_res_h"</span><span class="p">)])</span>
+        <span class="n">align_profile</span> <span class="o">=</span> <span class="s2">"prof_res"</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">align_profile</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">tmp_dir</span><span class="si">}</span><span class="s2">/latest/profile_1"</span>
+
+    <span class="c1"># Expand the alignment from search against an alignment of the target database to improve alignment quality</span>
+    <span class="n">_run_mmseqs</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="s2">"expandaln"</span><span class="p">,</span>
+            <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">profile_input</span><span class="p">),</span>
+            <span class="n">dbbase</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">db_name</span><span class="si">}{</span><span class="n">db_suffix1</span><span class="si">}</span><span class="s2">"</span><span class="p">),</span>
+            <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"res"</span><span class="p">),</span>
+            <span class="n">dbbase</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">db_name</span><span class="si">}{</span><span class="n">db_suffix2</span><span class="si">}</span><span class="s2">"</span><span class="p">),</span>
+            <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"res_exp"</span><span class="p">),</span>
+            <span class="s2">"--db-load-mode"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">db_load_mode</span><span class="p">),</span>
+            <span class="s2">"--threads"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">threads</span><span class="p">),</span>
+            <span class="o">*</span><span class="n">expand_param</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Realign using the expanded alignment to improve alignment quality</span>
+    <span class="n">_run_mmseqs</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="s2">"align"</span><span class="p">,</span>
+            <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">align_profile</span><span class="p">),</span>
+            <span class="n">dbbase</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">db_name</span><span class="si">}{</span><span class="n">db_suffix1</span><span class="si">}</span><span class="s2">"</span><span class="p">),</span>
+            <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"res_exp"</span><span class="p">),</span>
+            <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"res_exp_realign"</span><span class="p">),</span>
+            <span class="s2">"--db-load-mode"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">db_load_mode</span><span class="p">),</span>
+            <span class="s2">"-e"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">align_eval</span><span class="p">),</span>
+            <span class="s2">"--max-accept"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">max_accept</span><span class="p">),</span>
+            <span class="s2">"--threads"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">threads</span><span class="p">),</span>
+            <span class="s2">"--alt-ali"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">align_alt_ali</span><span class="p">),</span>
+            <span class="s2">"-a"</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Filter the alignment to remove low quality alignments</span>
+    <span class="n">_run_mmseqs</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="s2">"filterresult"</span><span class="p">,</span>
+            <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"qdb"</span><span class="p">),</span>
+            <span class="n">dbbase</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">db_name</span><span class="si">}{</span><span class="n">db_suffix1</span><span class="si">}</span><span class="s2">"</span><span class="p">),</span>
+            <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"res_exp_realign"</span><span class="p">),</span>
+            <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"res_exp_realign_filter"</span><span class="p">),</span>
+            <span class="s2">"--db-load-mode"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">db_load_mode</span><span class="p">),</span>
+            <span class="s2">"--qid"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">qid</span><span class="p">)),</span>
+            <span class="s2">"--qsc"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">qsc</span><span class="p">),</span>
+            <span class="s2">"--diff"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">filter_diff</span><span class="p">),</span>
+            <span class="s2">"--threads"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">threads</span><span class="p">),</span>
+            <span class="s2">"--max-seq-id"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">inner_filter_max_seq_id</span><span class="p">),</span>
+            <span class="s2">"--filter-min-enable"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">inner_filter_min_enable</span><span class="p">),</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Convert the filtered alignment to a multiple sequence alignment</span>
+    <span class="n">_run_mmseqs</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="s2">"result2msa"</span><span class="p">,</span>
+            <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"qdb"</span><span class="p">),</span>
+            <span class="n">dbbase</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">db_name</span><span class="si">}{</span><span class="n">db_suffix1</span><span class="si">}</span><span class="s2">"</span><span class="p">),</span>
+            <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"res_exp_realign_filter"</span><span class="p">),</span>
+            <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">output_name</span><span class="p">),</span>
+            <span class="s2">"--msa-format-mode"</span><span class="p">,</span>
+            <span class="s2">"6"</span><span class="p">,</span>
+            <span class="s2">"--db-load-mode"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">db_load_mode</span><span class="p">),</span>
+            <span class="s2">"--threads"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">threads</span><span class="p">),</span>
+            <span class="o">*</span><span class="n">filter_param</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Cleanup intermediate files</span>
+    <span class="n">_run_mmseqs</span><span class="p">([</span><span class="s2">"rmdb"</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"res_exp_realign_filter"</span><span class="p">)])</span>
+    <span class="n">_run_mmseqs</span><span class="p">([</span><span class="s2">"rmdb"</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"res_exp_realign"</span><span class="p">)])</span>
+    <span class="n">_run_mmseqs</span><span class="p">([</span><span class="s2">"rmdb"</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"res_exp"</span><span class="p">)])</span>
+    <span class="n">_run_mmseqs</span><span class="p">([</span><span class="s2">"rmdb"</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"res"</span><span class="p">)])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_mmseqs_search_monomer</span><span class="p">(</span>
+    <span class="n">dbbase</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">base</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">uniref_db</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">metagenomic_db</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">use_env</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="nb">filter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">search_eval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">expand_eval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+    <span class="n">expand_max_seq_id</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">,</span>
+    <span class="n">align_eval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span>
+    <span class="n">diff</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3000</span><span class="p">,</span>
+    <span class="n">qsc</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">20.0</span><span class="p">,</span>
+    <span class="n">filter_qsc</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">filter_max_seq_id</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">,</span>
+    <span class="n">filter_min_enable</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+    <span class="n">filter_qid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"0.0,0.2,0.4,0.6,0.8,1.0"</span><span class="p">,</span>
+    <span class="n">max_accept</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1_000_000</span><span class="p">,</span>
+    <span class="n">num_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">max_seqs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10_000</span><span class="p">,</span>
+    <span class="n">prefilter_mode</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>  <span class="c1"># Set to None to use k-score instead</span>
+    <span class="n">db_load_mode</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">threads</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
+    <span class="n">gpu</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">gpu_server</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Run MMseqs2 search with ColabFold database set.</span>
+
+<span class="sd">    Searches each database (UniRef, metagenomic) sequentially, merges alignments, and converts to MSA format.</span>
+<span class="sd">    Results are always unpacked into individual .a3m files named by input sequence index.</span>
+
+<span class="sd">    Runs search (see _run_mmseqs_search_and_filter) on each database (uniref, metagenomic) in turn.</span>
+<span class="sd">    Alignments from these searches are then merged and converted to an MSA format. The results</span>
+<span class="sd">    are formatted in individual .a3m files with names corresponding to the input sequence index (0.a3m, 1.a3m, etc.)</span>
+
+<span class="sd">    NOTE: Unless specified otherwise, all parameters' default values are from the ColabFold script.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dbbase: Path to the database and indices you downloaded and created with setup_databases.sh.</span>
+<span class="sd">        base: Directory for the results (and intermediate files).</span>
+<span class="sd">        uniref_db: UniRef database.</span>
+<span class="sd">        metagenomic_db: Environmental database (usually ColabFold metagenomics database).</span>
+<span class="sd">        use_env: Whether to use the environmental database.</span>
+<span class="sd">        filter: Whether to filter the MSA.</span>
+<span class="sd">        search_eval: Search e-value threshold.</span>
+<span class="sd">        expand_eval: E-val threshold for 'expandaln'.</span>
+<span class="sd">        expand_max_seq_id: Maximum sequence identity for 'expandaln'.</span>
+<span class="sd">        align_eval: E-val threshold for 'align'.</span>
+<span class="sd">        diff: filterresult - Keep at least this many seqs in each MSA block.</span>
+<span class="sd">        qsc: filterresult - reduce diversity of output MSAs using min score thresh.</span>
+<span class="sd">        filter_qsc: filterresult - reduce diversity of output MSAs using min score thresh.</span>
+<span class="sd">        filter_max_seq_id: filterresult - Maximum sequence identity for filtering.</span>
+<span class="sd">        filter_min_enable: filterresult - Minimum number of sequences to keep in each MSA block.</span>
+<span class="sd">        filter_qid: filterresult - Reduce diversity of output MSAs using min.seq. idendity with query sequences.</span>
+<span class="sd">        max_accept: align - Maximum accepted alignments before alignment calculation for a query is stopped.</span>
+<span class="sd">        num_iterations: Number of iterations for the search.</span>
+<span class="sd">        max_seqs: Maximum number of sequences to search.</span>
+<span class="sd">        prefilter_mode: Prefiltering algorithm to use: 0: k-mer (high-mem), 1: ungapped (high-cpu), 2: exhaustive (no prefilter, very slow).</span>
+<span class="sd">        s: MMseqs2 sensitivity. Lowering this will result in a much faster search but possibly sparser MSAs. By default, the k-mer threshold is directly set to the same one of the server, which corresponds to a sensitivity of ~8.</span>
+<span class="sd">        db_load_mode: Database preload mode 0: auto, 1: fread, 2: mmap, 3: mmap+touch.</span>
+<span class="sd">        threads: Number of threads to use.</span>
+<span class="sd">        gpu: Whether to use GPU (1) or not (0).</span>
+<span class="sd">        gpu_server: Whether to use GPU server (1) or not (0).</span>
+
+<span class="sd">    References:</span>
+<span class="sd">        * `ColabFold MMseqs2 Search Script`_</span>
+
+<span class="sd">        .. _ColabFold MMseqs2 Search Script: https://github.com/sokrypton/ColabFold/blob/main/colabfold/mmseqs/search.py</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="nb">filter</span><span class="p">:</span>
+        <span class="c1"># ColabFold filter-mode overrides: these three values are hardcoded by the upstream</span>
+        <span class="c1"># pipeline when filter=True and intentionally discard user-supplied values.</span>
+        <span class="c1"># See https://github.com/sokrypton/ColabFold/blob/main/colabfold/mmseqs/search.py</span>
+        <span class="n">align_eval</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="n">qsc</span> <span class="o">=</span> <span class="mf">0.8</span>
+        <span class="n">max_accept</span> <span class="o">=</span> <span class="mi">100_000</span>
+
+    <span class="c1"># check db types and make sure they exist</span>
+    <span class="n">used_dbs</span> <span class="o">=</span> <span class="p">[</span><span class="n">uniref_db</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">use_env</span><span class="p">:</span>
+        <span class="n">used_dbs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metagenomic_db</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">db</span> <span class="ow">in</span> <span class="n">used_dbs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dbbase</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">db</span><span class="si">}</span><span class="s2">.dbtype"</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Database </span><span class="si">{</span><span class="n">dbbase</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">db</span><span class="p">)</span><span class="si">}</span><span class="s2"> does not exist"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="n">dbbase</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">db</span><span class="si">}</span><span class="s2">.idx"</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">dbbase</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">db</span><span class="si">}</span><span class="s2">.idx.index"</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span>
+        <span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"MMSEQS_IGNORE_INDEX"</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Search does not use index"</span><span class="p">)</span>
+            <span class="n">db_load_mode</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">db_suffix1</span> <span class="o">=</span> <span class="s2">"_seq"</span>
+            <span class="n">db_suffix2</span> <span class="o">=</span> <span class="s2">"_aln"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">db_suffix1</span> <span class="o">=</span> <span class="s2">".idx"</span>
+            <span class="n">db_suffix2</span> <span class="o">=</span> <span class="s2">".idx"</span>
+
+    <span class="c1"># prep additional params for search, filter, and expand</span>
+    <span class="n">search_param</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">"--num-iterations"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">num_iterations</span><span class="p">),</span>
+        <span class="s2">"--db-load-mode"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">db_load_mode</span><span class="p">),</span>
+        <span class="s2">"-a"</span><span class="p">,</span>
+        <span class="s2">"-e"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">search_eval</span><span class="p">),</span>
+        <span class="s2">"--max-seqs"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">max_seqs</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="k">if</span> <span class="n">gpu</span><span class="p">:</span>
+        <span class="n">search_param</span> <span class="o">+=</span> <span class="p">[</span>
+            <span class="s2">"--gpu"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">gpu</span><span class="p">),</span>
+            <span class="s2">"--prefilter-mode"</span><span class="p">,</span>
+            <span class="s2">"1"</span><span class="p">,</span>
+        <span class="p">]</span>  <span class="c1"># gpu version only supports ungapped prefilter currently</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">search_param</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"--prefilter-mode"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">prefilter_mode</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># sensitivy can only be set for non-gpu version, gpu version runs at max sensitivity</span>
+            <span class="n">search_param</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"-s"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">s</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">search_param</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"--k-score"</span><span class="p">,</span> <span class="s2">"'seq:96,prof:80'"</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">gpu_server</span><span class="p">:</span>
+        <span class="n">search_param</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"--gpu-server"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">gpu_server</span><span class="p">)]</span>
+
+    <span class="n">filter_param</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">"--filter-msa"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">filter</span><span class="p">)),</span>
+        <span class="s2">"--filter-min-enable"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">filter_min_enable</span><span class="p">),</span>
+        <span class="s2">"--diff"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">diff</span><span class="p">),</span>
+        <span class="s2">"--qid"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">filter_qid</span><span class="p">),</span>
+        <span class="s2">"--qsc"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">filter_qsc</span><span class="p">),</span>
+        <span class="s2">"--max-seq-id"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">filter_max_seq_id</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="c1"># UniRef expandaln: full params (matches ColabFold)</span>
+    <span class="n">uniref_expand_param</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">"--expansion-mode"</span><span class="p">,</span>
+        <span class="s2">"0"</span><span class="p">,</span>
+        <span class="s2">"-e"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">expand_eval</span><span class="p">),</span>
+        <span class="s2">"--expand-filter-clusters"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">filter</span><span class="p">)),</span>
+        <span class="s2">"--max-seq-id"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">expand_max_seq_id</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="c1"># Metagenomic expandaln: reduced params (matches ColabFold, preserves metagenomic diversity)</span>
+    <span class="n">metagenomic_expand_param</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">"--expansion-mode"</span><span class="p">,</span>
+        <span class="s2">"0"</span><span class="p">,</span>
+        <span class="s2">"-e"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">expand_eval</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="c1"># search and filter uniref</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"uniref.a3m"</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">".a3m.dbtype"</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">_run_mmseqs_search_and_filter</span><span class="p">(</span>
+            <span class="n">base</span><span class="p">,</span>
+            <span class="n">dbbase</span><span class="p">,</span>
+            <span class="n">uniref_db</span><span class="p">,</span>
+            <span class="n">db_suffix1</span><span class="p">,</span>
+            <span class="n">db_suffix2</span><span class="p">,</span>
+            <span class="s2">"uniref.a3m"</span><span class="p">,</span>
+            <span class="n">db_load_mode</span><span class="p">,</span>
+            <span class="n">threads</span><span class="p">,</span>
+            <span class="n">search_param</span><span class="p">,</span>
+            <span class="n">uniref_expand_param</span><span class="p">,</span>
+            <span class="n">filter_param</span><span class="p">,</span>
+            <span class="n">align_eval</span><span class="p">,</span>
+            <span class="n">max_accept</span><span class="p">,</span>
+            <span class="n">qsc</span><span class="p">,</span>
+            <span class="n">start_gpu_server</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">gpu_server</span><span class="p">),</span>
+            <span class="n">gpu_server_max_seqs</span><span class="o">=</span><span class="n">max_seqs</span><span class="p">,</span>
+            <span class="n">gpu_server_db_load_mode</span><span class="o">=</span><span class="n">db_load_mode</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Skipping </span><span class="si">{</span><span class="n">uniref_db</span><span class="si">}</span><span class="s2"> search because uniref.a3m already exists"</span><span class="p">)</span>
+
+    <span class="c1"># search and filter metagenomic</span>
+    <span class="k">if</span> <span class="n">use_env</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"bfd.mgnify30.metaeuk30.smag30.a3m"</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">".a3m.dbtype"</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">_run_mmseqs_search_and_filter</span><span class="p">(</span>
+            <span class="n">base</span><span class="p">,</span>
+            <span class="n">dbbase</span><span class="p">,</span>
+            <span class="n">metagenomic_db</span><span class="p">,</span>
+            <span class="n">db_suffix1</span><span class="p">,</span>
+            <span class="n">db_suffix2</span><span class="p">,</span>
+            <span class="s2">"bfd.mgnify30.metaeuk30.smag30.a3m"</span><span class="p">,</span>
+            <span class="n">db_load_mode</span><span class="p">,</span>
+            <span class="n">threads</span><span class="p">,</span>
+            <span class="n">search_param</span><span class="p">,</span>
+            <span class="n">metagenomic_expand_param</span><span class="p">,</span>
+            <span class="n">filter_param</span><span class="p">,</span>
+            <span class="n">align_eval</span><span class="p">,</span>
+            <span class="n">max_accept</span><span class="p">,</span>
+            <span class="n">qsc</span><span class="p">,</span>
+            <span class="n">profile_input</span><span class="o">=</span><span class="s2">"prof_res"</span><span class="p">,</span>
+            <span class="n">tmp_dir</span><span class="o">=</span><span class="s2">"tmp3"</span><span class="p">,</span>
+            <span class="n">start_gpu_server</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">gpu_server</span><span class="p">),</span>
+            <span class="n">gpu_server_max_seqs</span><span class="o">=</span><span class="n">max_seqs</span><span class="p">,</span>
+            <span class="n">gpu_server_db_load_mode</span><span class="o">=</span><span class="n">db_load_mode</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">use_env</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Skipping </span><span class="si">{</span><span class="n">metagenomic_db</span><span class="si">}</span><span class="s2"> search because bfd.mgnify30.metaeuk30.smag30.a3m already exists"</span><span class="p">)</span>
+
+    <span class="c1"># merge alignments</span>
+    <span class="k">if</span> <span class="n">use_env</span><span class="p">:</span>
+        <span class="n">_run_mmseqs</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="s2">"mergedbs"</span><span class="p">,</span>
+                <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"qdb"</span><span class="p">),</span>
+                <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"final.a3m"</span><span class="p">),</span>
+                <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"uniref.a3m"</span><span class="p">),</span>
+                <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"bfd.mgnify30.metaeuk30.smag30.a3m"</span><span class="p">),</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">_run_mmseqs</span><span class="p">([</span><span class="s2">"rmdb"</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"bfd.mgnify30.metaeuk30.smag30.a3m"</span><span class="p">)])</span>
+        <span class="n">_run_mmseqs</span><span class="p">([</span><span class="s2">"rmdb"</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"uniref.a3m"</span><span class="p">)])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_run_mmseqs</span><span class="p">([</span><span class="s2">"mvdb"</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"uniref.a3m"</span><span class="p">),</span> <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"final.a3m"</span><span class="p">)])</span>
+        <span class="n">_run_mmseqs</span><span class="p">([</span><span class="s2">"rmdb"</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"uniref.a3m"</span><span class="p">)])</span>
+
+    <span class="c1"># unpack alignments into individual .a3m files</span>
+    <span class="n">_run_mmseqs</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="s2">"unpackdb"</span><span class="p">,</span>
+            <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"final.a3m"</span><span class="p">),</span>
+            <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"."</span><span class="p">),</span>
+            <span class="s2">"--unpack-name-mode"</span><span class="p">,</span>
+            <span class="s2">"0"</span><span class="p">,</span>
+            <span class="s2">"--unpack-suffix"</span><span class="p">,</span>
+            <span class="s2">".a3m"</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">_run_mmseqs</span><span class="p">([</span><span class="s2">"rmdb"</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"final.a3m"</span><span class="p">)])</span>
+
+    <span class="c1"># cleanup</span>
+    <span class="n">_run_mmseqs</span><span class="p">([</span><span class="s2">"rmdb"</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"prof_res"</span><span class="p">)])</span>
+    <span class="n">_run_mmseqs</span><span class="p">([</span><span class="s2">"rmdb"</span><span class="p">,</span> <span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"prof_res_h"</span><span class="p">)])</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"tmp"</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">use_env</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">"tmp3"</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_run_hhblits_search</span><span class="p">(</span>
+    <span class="n">input_file</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span>
+    <span class="n">output_file</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span>
+    <span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">HHblitsSearchConfig</span><span class="p">,</span>
+    <span class="n">e_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">cpu</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Run a single HHblits search against a database.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_file: Path to the input FASTA or A3M file.</span>
+<span class="sd">        output_file: Path to the output A3M file.</span>
+<span class="sd">        db_path: Path to the HH-suite formatted database.</span>
+<span class="sd">        config: HHblits search configuration.</span>
+<span class="sd">        e_value: E-value threshold for inclusion.</span>
+<span class="sd">        cpu: Number of CPU threads for HHblits (``-cpu``).</span>
+<span class="sd">    """</span>
+    <span class="n">hhblits</span> <span class="o">=</span> <span class="n">HHblits</span><span class="o">.</span><span class="n">get_or_initialize</span><span class="p">()</span>
+    <span class="n">hhblits</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span>
+        <span class="s2">"-i"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">),</span>
+        <span class="s2">"-oa3m"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">output_file</span><span class="p">),</span>
+        <span class="s2">"-o"</span><span class="p">,</span>
+        <span class="s2">"/dev/null"</span><span class="p">,</span>
+        <span class="s2">"-mact"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">mact</span><span class="p">),</span>
+        <span class="s2">"-maxfilt"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">maxfilt</span><span class="p">),</span>
+        <span class="s2">"-neffmax"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">neffmax</span><span class="p">),</span>
+        <span class="s2">"-cov"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">cov</span><span class="p">),</span>
+        <span class="s2">"-cpu"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">cpu</span><span class="p">),</span>
+        <span class="s2">"-nodiff"</span><span class="p">,</span>
+        <span class="s2">"-realign_max"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">realign_max</span><span class="p">),</span>
+        <span class="s2">"-maxseq"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">maxseq</span><span class="p">),</span>
+        <span class="s2">"-maxmem"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">mem</span><span class="p">),</span>
+        <span class="s2">"-n"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">n_iterations</span><span class="p">),</span>
+        <span class="s2">"-d"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">db_path</span><span class="p">),</span>
+        <span class="s2">"-e"</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">e_value</span><span class="p">),</span>
+        <span class="s2">"-v"</span><span class="p">,</span>
+        <span class="s2">"0"</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_hhblits_iterative_search_single</span><span class="p">(</span>
+    <span class="n">sequence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">seq_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">HHblitsSearchConfig</span><span class="p">,</span>
+    <span class="n">cpu</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Run iterative HHblits search for a single sequence.</span>
+
+<span class="sd">    Searches UniRef30 with increasing e-value thresholds, filtering at each step.</span>
+<span class="sd">    Falls back to BFD if insufficient sequences are found.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sequence: Protein sequence string.</span>
+<span class="sd">        seq_hash: SHA-256 hash of the sequence.</span>
+<span class="sd">        output_dir: Directory for the final output A3M file.</span>
+<span class="sd">        config: HHblits search configuration.</span>
+<span class="sd">        cpu: Number of CPU threads for HHblits (``-cpu``).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Path to the final A3M file, or None if no results were produced.</span>
+<span class="sd">    """</span>
+    <span class="n">out_a3m</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">seq_hash</span><span class="si">}</span><span class="s2">.a3m"</span>
+
+    <span class="k">if</span> <span class="n">out_a3m</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Skipping </span><span class="si">{</span><span class="n">seq_hash</span><span class="si">}</span><span class="s2">: output already exists at </span><span class="si">{</span><span class="n">out_a3m</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out_a3m</span>
+
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmp_dir</span><span class="p">:</span>
+        <span class="n">tmp_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">)</span>
+
+        <span class="c1"># Write single-sequence FASTA</span>
+        <span class="n">fasta_file</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">seq_hash</span><span class="si">}</span><span class="s2">.fasta"</span>
+        <span class="n">fasta_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"&gt;</span><span class="si">{</span><span class="n">seq_hash</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">sequence</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="n">prev_a3m</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">fasta_file</span>
+        <span class="n">result_a3m</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Iterative UniRef30 searches with increasing e-values</span>
+        <span class="k">for</span> <span class="n">e_value</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">e_values</span><span class="p">:</span>
+            <span class="n">uniref_out</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"uniref30.</span><span class="si">{</span><span class="n">e_value</span><span class="si">}</span><span class="s2">.a3m"</span>
+            <span class="n">_run_hhblits_search</span><span class="p">(</span><span class="n">prev_a3m</span><span class="p">,</span> <span class="n">uniref_out</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">uniref30_db_path</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">e_value</span><span class="p">,</span> <span class="n">cpu</span><span class="o">=</span><span class="n">cpu</span><span class="p">)</span>
+
+            <span class="c1"># Filter at high coverage</span>
+            <span class="n">high_cov_file</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"uniref30.</span><span class="si">{</span><span class="n">e_value</span><span class="si">}</span><span class="s2">.id</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">identity</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">cov</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">high_cov</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">.a3m"</span>
+            <span class="n">run_hhfilter</span><span class="p">(</span>
+                <span class="n">uniref_out</span><span class="p">,</span> <span class="n">high_cov_file</span><span class="p">,</span> <span class="n">maxseq</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">max_filter_seqs</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">identity</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">high_cov</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Filter at low coverage</span>
+            <span class="n">low_cov_file</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"uniref30.</span><span class="si">{</span><span class="n">e_value</span><span class="si">}</span><span class="s2">.id</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">identity</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">cov</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">low_cov</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">.a3m"</span>
+            <span class="n">run_hhfilter</span><span class="p">(</span>
+                <span class="n">uniref_out</span><span class="p">,</span> <span class="n">low_cov_file</span><span class="p">,</span> <span class="n">maxseq</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">max_filter_seqs</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">identity</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">low_cov</span>
+            <span class="p">)</span>
+
+            <span class="n">n_high</span> <span class="o">=</span> <span class="n">count_sequences_in_msa</span><span class="p">(</span><span class="n">high_cov_file</span><span class="p">)</span>
+            <span class="n">n_low</span> <span class="o">=</span> <span class="n">count_sequences_in_msa</span><span class="p">(</span><span class="n">low_cov_file</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"[</span><span class="si">{</span><span class="n">seq_hash</span><span class="si">}</span><span class="s2">] UniRef30 e=</span><span class="si">{</span><span class="n">e_value</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">n_high</span><span class="si">}</span><span class="s2"> seqs at </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">high_cov</span><span class="si">}</span><span class="s2">% cov, "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">n_low</span><span class="si">}</span><span class="s2"> seqs at </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">low_cov</span><span class="si">}</span><span class="s2">% cov"</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Use low-coverage file as input for next iteration</span>
+            <span class="n">prev_a3m</span> <span class="o">=</span> <span class="n">low_cov_file</span>
+
+            <span class="k">if</span> <span class="n">n_high</span> <span class="o">&gt;</span> <span class="n">config</span><span class="o">.</span><span class="n">min_seqs_high_cov</span><span class="p">:</span>
+                <span class="n">result_a3m</span> <span class="o">=</span> <span class="n">high_cov_file</span>
+                <span class="k">break</span>
+            <span class="k">elif</span> <span class="n">n_low</span> <span class="o">&gt;</span> <span class="n">config</span><span class="o">.</span><span class="n">min_seqs_low_cov</span><span class="p">:</span>
+                <span class="n">result_a3m</span> <span class="o">=</span> <span class="n">low_cov_file</span>
+                <span class="k">break</span>
+
+        <span class="c1"># Fall back to BFD if needed</span>
+        <span class="k">if</span> <span class="n">result_a3m</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">config</span><span class="o">.</span><span class="n">use_bfd</span> <span class="ow">and</span> <span class="n">config</span><span class="o">.</span><span class="n">bfd_db_path</span><span class="p">:</span>
+            <span class="n">e_value</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">bfd_e_value</span>
+            <span class="n">bfd_out</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"bfd.</span><span class="si">{</span><span class="n">e_value</span><span class="si">}</span><span class="s2">.a3m"</span>
+            <span class="n">_run_hhblits_search</span><span class="p">(</span><span class="n">prev_a3m</span><span class="p">,</span> <span class="n">bfd_out</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">bfd_db_path</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">e_value</span><span class="p">,</span> <span class="n">cpu</span><span class="o">=</span><span class="n">cpu</span><span class="p">)</span>
+
+            <span class="n">bfd_high_cov</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"bfd.</span><span class="si">{</span><span class="n">e_value</span><span class="si">}</span><span class="s2">.id</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">identity</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">cov</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">high_cov</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">.a3m"</span>
+            <span class="n">run_hhfilter</span><span class="p">(</span><span class="n">bfd_out</span><span class="p">,</span> <span class="n">bfd_high_cov</span><span class="p">,</span> <span class="n">maxseq</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">max_filter_seqs</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">identity</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">high_cov</span><span class="p">)</span>
+
+            <span class="n">bfd_low_cov</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"bfd.</span><span class="si">{</span><span class="n">e_value</span><span class="si">}</span><span class="s2">.id</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">identity</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">cov</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">low_cov</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">.a3m"</span>
+            <span class="n">run_hhfilter</span><span class="p">(</span><span class="n">bfd_out</span><span class="p">,</span> <span class="n">bfd_low_cov</span><span class="p">,</span> <span class="n">maxseq</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">max_filter_seqs</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">identity</span><span class="p">,</span> <span class="n">cov</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">low_cov</span><span class="p">)</span>
+
+            <span class="n">n_high</span> <span class="o">=</span> <span class="n">count_sequences_in_msa</span><span class="p">(</span><span class="n">bfd_high_cov</span><span class="p">)</span>
+            <span class="n">n_low</span> <span class="o">=</span> <span class="n">count_sequences_in_msa</span><span class="p">(</span><span class="n">bfd_low_cov</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"[</span><span class="si">{</span><span class="n">seq_hash</span><span class="si">}</span><span class="s2">] BFD e=</span><span class="si">{</span><span class="n">e_value</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">n_high</span><span class="si">}</span><span class="s2"> seqs at </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">high_cov</span><span class="si">}</span><span class="s2">% cov, "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">n_low</span><span class="si">}</span><span class="s2"> seqs at </span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">low_cov</span><span class="si">}</span><span class="s2">% cov"</span>
+            <span class="p">)</span>
+
+            <span class="n">prev_a3m</span> <span class="o">=</span> <span class="n">bfd_low_cov</span>
+
+            <span class="k">if</span> <span class="n">n_high</span> <span class="o">&gt;</span> <span class="n">config</span><span class="o">.</span><span class="n">min_seqs_high_cov</span><span class="p">:</span>
+                <span class="n">result_a3m</span> <span class="o">=</span> <span class="n">bfd_high_cov</span>
+            <span class="k">elif</span> <span class="n">n_low</span> <span class="o">&gt;</span> <span class="n">config</span><span class="o">.</span><span class="n">min_seqs_low_cov</span><span class="p">:</span>
+                <span class="n">result_a3m</span> <span class="o">=</span> <span class="n">bfd_low_cov</span>
+
+        <span class="c1"># If still no result, use the last processed file (if it's not just the input FASTA)</span>
+        <span class="k">if</span> <span class="n">result_a3m</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">Path</span><span class="p">(</span><span class="n">prev_a3m</span><span class="p">)</span> <span class="o">!=</span> <span class="n">fasta_file</span> <span class="ow">and</span> <span class="n">Path</span><span class="p">(</span><span class="n">prev_a3m</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[</span><span class="si">{</span><span class="n">seq_hash</span><span class="si">}</span><span class="s2">] Insufficient sequences after all searches; using last processed file"</span><span class="p">)</span>
+            <span class="n">result_a3m</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">prev_a3m</span><span class="p">)</span>
+
+        <span class="c1"># Copy result to output directory</span>
+        <span class="k">if</span> <span class="n">result_a3m</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">result_a3m</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">output_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">result_a3m</span><span class="p">,</span> <span class="n">out_a3m</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">out_a3m</span>
+
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="make_msas_hhblits">
+<a class="viewcode-back" href="../../../../../ml/preprocessing.html#atomworks.ml.preprocessing.msa.generating.make_msas_hhblits">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_msas_hhblits</span><span class="p">(</span>
+    <span class="n">sequences</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">output_dir</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span>
+    <span class="n">max_final_sequences</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10_000</span><span class="p">,</span>
+    <span class="n">sharding_pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"/0:2/"</span><span class="p">,</span>
+    <span class="n">output_extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MSAFileExtension</span><span class="o">.</span><span class="n">A3M_GZ</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+    <span class="n">search_config</span><span class="p">:</span> <span class="n">HHblitsSearchConfig</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">cpu</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Generate MSAs from protein sequences using HHblits (CPU-only, HH-suite).</span>
+
+<span class="sd">    Runs iterative HHblits searches per sequence against UniRef30 (and optionally BFD),</span>
+<span class="sd">    then organizes and filters the results following the same post-processing as MMseqs2.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sequences: A single protein sequence string or list of protein sequences.</span>
+<span class="sd">        output_dir: Path to the output directory where MSA files will be saved.</span>
+<span class="sd">        max_final_sequences: Maximum number of sequences in final MSAs after filtering.</span>
+<span class="sd">        sharding_pattern: Directory sharding pattern (e.g., "/0:2/").</span>
+<span class="sd">        output_extension: Output file extension (.a3m, .a3m.gz, .a3m.zst, .afa, .afa.gz, .afa.zst).</span>
+<span class="sd">        search_config: HHblits search configuration. If None, uses defaults.</span>
+<span class="sd">        cpu: Number of CPU threads for HHblits (``-cpu``).</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sequences</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">sequences</span> <span class="o">=</span> <span class="p">[</span><span class="n">sequences</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">search_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">search_config</span> <span class="o">=</span> <span class="n">HHblitsSearchConfig</span><span class="p">()</span>
+
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+    <span class="n">output_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Initialize HHblits executable</span>
+    <span class="n">HHblits</span><span class="o">.</span><span class="n">get_or_initialize</span><span class="p">()</span>
+
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">sequence</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">sequences</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"HHblits MSA generation"</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"seq"</span><span class="p">):</span>
+        <span class="n">seq_hash</span> <span class="o">=</span> <span class="n">hash_sequence</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+        <span class="n">_hhblits_iterative_search_single</span><span class="p">(</span><span class="n">sequence</span><span class="p">,</span> <span class="n">seq_hash</span><span class="p">,</span> <span class="n">output_path</span><span class="p">,</span> <span class="n">search_config</span><span class="p">,</span> <span class="n">cpu</span><span class="o">=</span><span class="n">cpu</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Completed </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sequences</span><span class="p">)</span><span class="si">}</span><span class="s2"> sequences in </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">s with HHblits"</span><span class="p">)</span>
+
+    <span class="c1"># Organize MSAs using existing organization functionality</span>
+    <span class="n">org_config</span> <span class="o">=</span> <span class="n">MSAOrganizationConfig</span><span class="p">(</span>
+        <span class="n">input_extension</span><span class="o">=</span><span class="n">MSAFileExtension</span><span class="o">.</span><span class="n">A3M</span><span class="p">,</span>
+        <span class="n">output_extension</span><span class="o">=</span><span class="n">output_extension</span><span class="p">,</span>
+        <span class="n">sharding_pattern</span><span class="o">=</span><span class="n">sharding_pattern</span><span class="p">,</span>
+        <span class="n">copy_files</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Organizing MSA files..."</span><span class="p">)</span>
+    <span class="n">organize_msas</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">org_config</span><span class="p">)</span>
+
+    <span class="c1"># Filter MSA files to reduce sequence count and redundancy</span>
+    <span class="k">if</span> <span class="n">max_final_sequences</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">filter_config</span> <span class="o">=</span> <span class="n">MSAFilterConfig</span><span class="p">(</span>
+            <span class="n">input_extension</span><span class="o">=</span><span class="n">output_extension</span><span class="p">,</span>
+            <span class="n">output_extension</span><span class="o">=</span><span class="n">output_extension</span><span class="p">,</span>
+            <span class="n">hhfilter</span><span class="o">=</span><span class="n">HHFilterConfig</span><span class="p">(</span><span class="n">max_sequences</span><span class="o">=</span><span class="n">max_final_sequences</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Filtering MSA files to max </span><span class="si">{</span><span class="n">max_final_sequences</span><span class="si">}</span><span class="s2"> sequences..."</span><span class="p">)</span>
+        <span class="n">filter_msas</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">filter_config</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="make_msas_mmseqs">
+<a class="viewcode-back" href="../../../../../ml/preprocessing.html#atomworks.ml.preprocessing.msa.generating.make_msas_mmseqs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_msas_mmseqs</span><span class="p">(</span>
+    <span class="n">sequences</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">output_dir</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span>
+    <span class="n">gpu</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">gpu_server</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">use_local_temp_dir</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">max_final_sequences</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10_000</span><span class="p">,</span>
+    <span class="n">sharding_pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"/0:2/"</span><span class="p">,</span>
+    <span class="n">output_extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">MSAFileExtension</span><span class="o">.</span><span class="n">A3M_GZ</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+    <span class="n">search_config</span><span class="p">:</span> <span class="n">MMseqs2SearchConfig</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">threads</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Generate MSAs directly from protein sequences.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sequences: A single protein sequence string or list of protein sequences.</span>
+<span class="sd">        output_dir: Path to the output directory where MSA files will be saved.</span>
+<span class="sd">        gpu: Whether to use GPU acceleration.</span>
+<span class="sd">        gpu_server: Whether to use GPU server (requires gpu=True).</span>
+<span class="sd">        use_local_temp_dir: Whether to use local temporary directory for intermediate files.</span>
+<span class="sd">        max_final_sequences: Maximum number of sequences in final MSAs after filtering.</span>
+<span class="sd">        sharding_pattern: Directory sharding pattern (e.g., "/0:2/").</span>
+<span class="sd">        output_extension: Output file extension (.a3m, .a3m.gz, .a3m.zst, .afa, .afa.gz, .afa.zst).</span>
+<span class="sd">        search_config: Advanced MMseqs2 search configuration (includes ``num_iterations`` and ``max_seqs``).</span>
+<span class="sd">        threads: Number of CPU threads for MMseqs2 search.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">           make_msas_mmseqs(</span>
+<span class="sd">               ["MSYIWRQLGSPTVAITLSVSTVIYVTVICPIVFIHLFGDHL...", "MKKKEVEKDDLIENASRVASCISIFLIIASTTMYIFIGLKI..."], "output_msas/"</span>
+<span class="sd">           )</span>
+<span class="sd">    """</span>
+    <span class="c1"># Ensure sequences is a list for unified processing</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sequences</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">sequences</span> <span class="o">=</span> <span class="p">[</span><span class="n">sequences</span><span class="p">]</span>
+
+    <span class="c1"># Handle search config creation</span>
+    <span class="k">if</span> <span class="n">search_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">search_config</span> <span class="o">=</span> <span class="n">MMseqs2SearchConfig</span><span class="p">()</span>
+
+    <span class="c1"># Create output directory if it doesn't exist</span>
+    <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Use tempfile to make temporary directory that should automatically be on local drive</span>
+    <span class="k">if</span> <span class="n">use_local_temp_dir</span><span class="p">:</span>
+        <span class="n">intermediate_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">intermediate_dir</span> <span class="o">=</span> <span class="n">output_dir</span>
+
+    <span class="c1"># Initialize MMseqs2 executable and create FASTA file from sequences</span>
+    <span class="n">MMseqs2</span><span class="o">.</span><span class="n">get_or_initialize</span><span class="p">()</span>
+    <span class="n">fasta_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">intermediate_dir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">"input_sequences.fasta"</span>
+    <span class="n">create_fasta_with_hashed_headers</span><span class="p">(</span><span class="n">sequences</span><span class="p">,</span> <span class="n">fasta_file</span><span class="p">)</span>
+    <span class="n">_make_mmseqs_db_from_fasta</span><span class="p">(</span><span class="n">fasta_file</span><span class="p">,</span> <span class="n">intermediate_dir</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">gpu_server</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">gpu</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"gpu_server is True but gpu is False"</span><span class="p">)</span>
+
+    <span class="c1"># Get the database path, creating isolated symlinks if using GPU server</span>
+    <span class="c1"># to avoid socket conflicts between concurrent jobs on the same node</span>
+    <span class="n">original_db_path</span> <span class="o">=</span> <span class="n">_get_database_path</span><span class="p">(</span><span class="n">gpu</span><span class="o">=</span><span class="n">gpu</span><span class="p">)</span>
+    <span class="n">isolated_db_dir</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">gpu_server</span><span class="p">:</span>
+        <span class="n">dbbase</span><span class="p">,</span> <span class="n">isolated_db_dir</span> <span class="o">=</span> <span class="n">_create_isolated_db_path</span><span class="p">(</span><span class="n">original_db_path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dbbase</span> <span class="o">=</span> <span class="n">original_db_path</span>
+
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_mmseqs_search_monomer</span><span class="p">(</span>
+            <span class="n">dbbase</span><span class="o">=</span><span class="n">dbbase</span><span class="p">,</span>
+            <span class="n">base</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">intermediate_dir</span><span class="p">),</span>
+            <span class="n">uniref_db</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">UNIREF30_DB_NAME</span><span class="p">),</span>
+            <span class="n">metagenomic_db</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">COLABFOLD_DB_NAME</span><span class="p">),</span>
+            <span class="n">gpu</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">gpu</span><span class="p">),</span>
+            <span class="n">gpu_server</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">gpu_server</span><span class="p">),</span>
+            <span class="n">num_iterations</span><span class="o">=</span><span class="n">search_config</span><span class="o">.</span><span class="n">num_iterations</span><span class="p">,</span>
+            <span class="n">max_seqs</span><span class="o">=</span><span class="n">search_config</span><span class="o">.</span><span class="n">max_seqs</span><span class="p">,</span>
+            <span class="n">s</span><span class="o">=</span><span class="n">search_config</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+            <span class="nb">filter</span><span class="o">=</span><span class="n">search_config</span><span class="o">.</span><span class="n">filter</span><span class="p">,</span>
+            <span class="n">search_eval</span><span class="o">=</span><span class="n">search_config</span><span class="o">.</span><span class="n">search_eval</span><span class="p">,</span>
+            <span class="n">expand_eval</span><span class="o">=</span><span class="n">search_config</span><span class="o">.</span><span class="n">expand_eval</span><span class="p">,</span>
+            <span class="n">expand_max_seq_id</span><span class="o">=</span><span class="n">search_config</span><span class="o">.</span><span class="n">expand_max_seq_id</span><span class="p">,</span>
+            <span class="n">align_eval</span><span class="o">=</span><span class="n">search_config</span><span class="o">.</span><span class="n">align_eval</span><span class="p">,</span>
+            <span class="n">diff</span><span class="o">=</span><span class="n">search_config</span><span class="o">.</span><span class="n">diff</span><span class="p">,</span>
+            <span class="n">qsc</span><span class="o">=</span><span class="n">search_config</span><span class="o">.</span><span class="n">qsc</span><span class="p">,</span>
+            <span class="n">filter_qsc</span><span class="o">=</span><span class="n">search_config</span><span class="o">.</span><span class="n">filter_qsc</span><span class="p">,</span>
+            <span class="n">filter_max_seq_id</span><span class="o">=</span><span class="n">search_config</span><span class="o">.</span><span class="n">filter_max_seq_id</span><span class="p">,</span>
+            <span class="n">filter_min_enable</span><span class="o">=</span><span class="n">search_config</span><span class="o">.</span><span class="n">filter_min_enable</span><span class="p">,</span>
+            <span class="n">filter_qid</span><span class="o">=</span><span class="n">search_config</span><span class="o">.</span><span class="n">filter_qid</span><span class="p">,</span>
+            <span class="n">max_accept</span><span class="o">=</span><span class="n">search_config</span><span class="o">.</span><span class="n">max_accept</span><span class="p">,</span>
+            <span class="n">prefilter_mode</span><span class="o">=</span><span class="n">search_config</span><span class="o">.</span><span class="n">prefilter_mode</span><span class="p">,</span>
+            <span class="n">db_load_mode</span><span class="o">=</span><span class="n">search_config</span><span class="o">.</span><span class="n">db_load_mode</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="c1"># Clean up isolated database symlinks</span>
+        <span class="k">if</span> <span class="n">isolated_db_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">isolated_db_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">isolated_db_dir</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cleaned up isolated database path: </span><span class="si">{</span><span class="n">isolated_db_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"Completed </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sequences</span><span class="p">)</span><span class="si">}</span><span class="s2"> sequences in </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time</span><span class="si">}</span><span class="s2"> seconds with MMSeqs2 search and alignment"</span>
+    <span class="p">)</span>
+
+    <span class="c1"># cleanup by removing any file or directory that isn't .a3m or .m8</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="n">intermediate_dir</span><span class="p">)</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">".a3m"</span><span class="p">,</span> <span class="s2">".m8"</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+                <span class="n">file</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">file</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">use_local_temp_dir</span><span class="p">:</span>
+        <span class="c1"># copy over everything from intermediate_dir to output_dir</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="n">intermediate_dir</span><span class="p">)</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span> <span class="o">/</span> <span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="c1"># remove the intermediate_dir</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">intermediate_dir</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"MSA files saved to: </span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="c1"># Organize MSAs using existing organization functionality</span>
+    <span class="n">org_config</span> <span class="o">=</span> <span class="n">MSAOrganizationConfig</span><span class="p">(</span>
+        <span class="n">input_extension</span><span class="o">=</span><span class="n">MSAFileExtension</span><span class="o">.</span><span class="n">A3M</span><span class="p">,</span>
+        <span class="n">output_extension</span><span class="o">=</span><span class="n">output_extension</span><span class="p">,</span>
+        <span class="n">sharding_pattern</span><span class="o">=</span><span class="n">sharding_pattern</span><span class="p">,</span>
+        <span class="n">copy_files</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># Move files instead of copying</span>
+    <span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Organizing MSA files..."</span><span class="p">)</span>
+    <span class="n">organize_msas</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">org_config</span><span class="p">)</span>
+
+    <span class="c1"># Filter MSA files to reduce sequence count and redundancy</span>
+    <span class="n">filter_config</span> <span class="o">=</span> <span class="n">MSAFilterConfig</span><span class="p">(</span>
+        <span class="n">input_extension</span><span class="o">=</span><span class="n">output_extension</span><span class="p">,</span>
+        <span class="n">output_extension</span><span class="o">=</span><span class="n">output_extension</span><span class="p">,</span>
+        <span class="n">hhfilter</span><span class="o">=</span><span class="n">HHFilterConfig</span><span class="p">(</span>
+            <span class="n">max_sequences</span><span class="o">=</span><span class="n">max_final_sequences</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">max_final_sequences</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Filtering MSA files to max </span><span class="si">{</span><span class="n">max_final_sequences</span><span class="si">}</span><span class="s2"> sequences..."</span><span class="p">)</span>
+        <span class="n">filter_msas</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">filter_config</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="make_msas_from_csv">
+<a class="viewcode-back" href="../../../../../ml/preprocessing.html#atomworks.ml.preprocessing.msa.generating.make_msas_from_csv">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_msas_from_csv</span><span class="p">(</span>
+    <span class="n">csv_file</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span>
+    <span class="n">sequence_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">MSAGenerationConfig</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Generate MSAs from sequences in a CSV file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        csv_file: Path to CSV file containing protein sequences.</span>
+<span class="sd">        output_dir: Directory where organized MSA files will be saved.</span>
+<span class="sd">        sequence_column: Name of column containing sequences. If None, CSV must have exactly one column.</span>
+<span class="sd">        config: MSA generation configuration. If None, uses default config.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        Generate MSAs from single-column CSV:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">           make_msas_from_csv("sequences.csv", "output_msas/")</span>
+
+<span class="sd">        Generate MSAs from multi-column CSV:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">           make_msas_from_csv("data.csv", "output_msas/", sequence_column="sequence")</span>
+<span class="sd">    """</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_file</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">sequence_column</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"CSV has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="si">}</span><span class="s2"> columns. Either provide exactly 1 column or specify sequence_column parameter"</span>
+            <span class="p">)</span>
+        <span class="n">sequence_column</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">sequences</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">sequence_column</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sequences</span><span class="p">)</span><span class="si">}</span><span class="s2"> unique sequences from </span><span class="si">{</span><span class="n">csv_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="c1"># Handle config creation</span>
+    <span class="k">if</span> <span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">MSAGenerationConfig</span><span class="p">()</span>
+
+    <span class="c1"># Filter existing sequences if requested</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">check_existing</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Finding existing MSAs among </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sequences</span><span class="p">)</span><span class="si">}</span><span class="s2"> sequences..."</span><span class="p">)</span>
+        <span class="n">missing_sequences</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">find_msas</span><span class="p">(</span>
+            <span class="n">sequences</span><span class="p">,</span>
+            <span class="n">msa_dirs</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">existing_msa_dirs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">sequences</span> <span class="o">=</span> <span class="n">missing_sequences</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">sequences</span><span class="p">)</span><span class="si">}</span><span class="s2"> sequences needing MSA generation"</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sequences</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"All sequences already have MSAs, skipping generation"</span><span class="p">)</span>
+            <span class="k">return</span>
+
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">backend</span> <span class="o">==</span> <span class="s2">"hhblits"</span><span class="p">:</span>
+        <span class="n">hhblits_config</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">hhblits_search_config</span> <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">hhblits_search_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">HHblitsSearchConfig</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">make_msas_hhblits</span><span class="p">(</span>
+            <span class="n">sequences</span><span class="o">=</span><span class="n">sequences</span><span class="p">,</span>
+            <span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span>
+            <span class="n">max_final_sequences</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">max_final_sequences</span><span class="p">,</span>
+            <span class="n">sharding_pattern</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">sharding_pattern</span><span class="p">,</span>
+            <span class="n">output_extension</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">output_extension</span><span class="p">,</span>
+            <span class="n">search_config</span><span class="o">=</span><span class="n">hhblits_config</span><span class="p">,</span>
+            <span class="n">cpu</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">threads</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">make_msas_mmseqs</span><span class="p">(</span>
+            <span class="n">sequences</span><span class="o">=</span><span class="n">sequences</span><span class="p">,</span>
+            <span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span>
+            <span class="n">gpu</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">gpu</span><span class="p">,</span>
+            <span class="n">gpu_server</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">gpu_server</span><span class="p">,</span>
+            <span class="n">use_local_temp_dir</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">use_local_temp_dir</span><span class="p">,</span>
+            <span class="n">max_final_sequences</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">max_final_sequences</span><span class="p">,</span>
+            <span class="n">sharding_pattern</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">sharding_pattern</span><span class="p">,</span>
+            <span class="n">output_extension</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">output_extension</span><span class="p">,</span>
+            <span class="n">search_config</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">search_config</span><span class="p">,</span>
+            <span class="n">threads</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">threads</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../_static/scripts/bootstrap.js?digest=64cc4de3f052d77215f0"></script>
+<script defer src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=64cc4de3f052d77215f0"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.22.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
