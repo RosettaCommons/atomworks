@@ -20,7 +20,7 @@ This is the easiest way to get started with AtomWorks.
    pip install atomworks # base installation version without torch (for only atomworks.io)
    pip install "atomworks[ml]" # with torch and ML dependencies (for atomworks.io plus atomworks.ml)
    pip install "atomworks[dev]" # with development dependencies
-   pip install "atomworks[ml,dev]" # with all dependencies"
+   pip install "atomworks[ml,dev]" # ML and development tools
 
 You can also install AtomWorks with `Open Babel <https://openbabel.org/>`_, an alternative to RDKit:
 
@@ -28,7 +28,7 @@ You can also install AtomWorks with `Open Babel <https://openbabel.org/>`_, an a
 
    pip install "atomworks[openbabel]"
 
-or for all possible dependencies: 
+Combine extras as needed:
 
 .. code-block:: bash
 
@@ -38,21 +38,15 @@ Open Babel is not automatically installed with AtomWorks due to its larger size 
 
 2. Development Installation
 ---------------------------
-For development:
+For development, use a virtual environment:
 
 .. code-block:: bash
 
    git clone --branch release/atomworks-3-0 https://github.com/RosettaCommons/atomworks.git
    cd atomworks
+   python -m venv .venv
+   source .venv/bin/activate
    make install  # or pip install -e ".[dev]"
-
-To install in a fresh environment:
-
-.. code-block:: bash
-
-   git clone --branch release/atomworks-3-0 https://github.com/RosettaCommons/atomworks.git
-   cd atomworks
-   make env
 
 
 3. Running the Test Suite
