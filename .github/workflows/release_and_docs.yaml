@@ -1,167 +1,197 @@
-name: Release and Deploy Versioned Docs
+name: CI and release
 
 on:
   push:
-    branches:
-      - production
+    branches: [dev, main, production, release/atomworks-3-0]
+    tags: ['v*']
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  release_and_docs:
-    runs-on: [self-hosted]
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      prerelease: ${{ steps.version.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install build twine packaging
+      - run: python -m unittest discover -s .github/tests -v
+      - name: Verify release version
+        id: version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: python .github/release.py verify
+      - run: python -m build
+      - run: python .github/release.py artifacts
+      - run: python -m twine check --strict dist/*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: distributions
+          path: dist/*
+          if-no-files-found: error
+
+  wheel:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: distributions
+          path: dist/
+      - name: Install core wheel and exercise it outside the checkout
+        run: |
+          python -m venv "$RUNNER_TEMP/core"
+          "$RUNNER_TEMP/core/bin/python" -m pip install dist/*.whl
+          cp docs/examples/plot_protonation.py "$RUNNER_TEMP/smoke.py"
+          cd "$RUNNER_TEMP"
+          core/bin/python -m pip check
+          core/bin/python -c "import importlib.util; assert importlib.util.find_spec('torch') is None"
+          core/bin/python smoke.py
+          core/bin/aw --help
+          core/bin/aw msa --help
+          if core/bin/aw msa >msa.log 2>&1; then exit 1; fi
+          grep -F "pip install 'atomworks[ml]'" msa.log
+
+  science:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      PYTHONPATH: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v6
+      - run: |
+          uv pip install --system torch --index-url https://download.pytorch.org/whl/cpu
+          uv pip install --system '.[ml,dev,openbabel,ase]'
+          uv pip check --system
+          for command in generate filter find organize; do
+            aw msa "$command" --help
+          done
+      - run: ruff format --check . && ruff check src tests .github
+      - name: Download public test fixtures
+        run: |
+          mkdir -p tests/data
+          curl --fail --location --retry 3 https://github.com/RosettaCommons/atomworks/releases/download/test-data-3.0.0/atomworks-test-data-3.0.0.tar.gz | tar -xz -C tests/data
+      - name: Run scientific CPU tests, including experimental protonation
+        run: |
+          pytest tests -n 2 --dist=worksteal -m 'not benchmark and not slow and not requires_digs and not requires_pymol_remote and not requires_x3dna' --cov=atomworks --cov-report=xml --junitxml=tests.xml
+          pytest tests -n 1 -m 'slow and not benchmark and not requires_digs and not requires_pymol_remote and not requires_x3dna' --cov=atomworks --cov-append --cov-report=xml --junitxml=slow-tests.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: scientific-test-reports
+          path: |
+            *tests.xml
+            coverage.xml
+      - uses: codecov/codecov-action@v5
+        if: success()
+        with:
+          files: coverage.xml
+          fail_ci_if_error: false
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v6
+      - run: |
+          uv pip install --system torch --index-url https://download.pytorch.org/whl/cpu
+          uv pip install --system '.[ml,docs,ase,openbabel]' -r docs/docs_requirements.txt
+      - name: Build documentation and execute the offline example
+        working-directory: docs
+        run: make html
+      - uses: actions/upload-artifact@v4
+        with:
+          name: documentation
+          path: docs/_build/html
+          if-no-files-found: error
+
+  publish:
+    needs: [build, wheel, science, docs]
+    if: github.repository == 'RosettaCommons/atomworks' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/atomworks
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: distributions
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # release/v1
+
+  release:
+    needs: [build, publish]
+    runs-on: ubuntu-latest
     permissions:
       contents: write
-      packages: write
-      issues: write
-      pull-requests: write
-      id-token: write
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
         with:
-          fetch-depth: 0
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+          name: distributions
+          path: dist/
+      - uses: softprops/action-gh-release@v2
         with:
-          node-version: '20'
+          files: dist/*
+          generate_release_notes: true
+          make_latest: legacy
+          prerelease: ${{ needs.build.outputs.prerelease == 'true' }}
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+  deploy-docs:
+    needs: [docs, publish]
+    runs-on: ubuntu-latest
+    concurrency:
+      group: atomworks-versioned-docs
+      cancel-in-progress: false
+      queue: max
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-
-      - name: Create isolated Python environment
-        run: |
-          python -m venv "$RUNNER_TEMP/docs-venv"
-          echo "$RUNNER_TEMP/docs-venv/bin" >> "$GITHUB_PATH"
-
-      - name: Install Python build dependencies
-        run: |
-          pip install build twine
-
-      - name: Build Python package
-        run: python -m build
-
-      - name: Install Node dependencies
-        run: >
-          npm install --no-save
-          semantic-release
-          @semantic-release/commit-analyzer
-          @semantic-release/release-notes-generator
-          semantic-release-pypi
-          @semantic-release/git
-          @semantic-release/github
-
-      - name: Run semantic-release
-        id: release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN_PROD }}
-          PYPI_REPO_URL: https://upload.pypi.org/legacy/
-        run: |
-          npx semantic-release
-          # Only publish docs when semantic-release tagged this exact commit.
-          # Using the newest historical tag here would overwrite immutable
-          # version docs after a non-release production push.
-          VERSION=$(git describe --tags --exact-match --match "v*" HEAD 2>/dev/null || echo "no-version")
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Released version: $VERSION"
-
-      - name: Build documentation
-        run: |
-          pip install -e ".[ml,dev]"
-          cd docs/
-          pip install -r docs_requirements.txt
-          make html
-
-      - name: Checkout gh-pages
-        uses: actions/checkout@v4
+          python-version: '3.12'
+      - run: python -m pip install packaging
+      - uses: actions/download-artifact@v4
+        with:
+          name: documentation
+          path: docs/_build/html
+      - uses: actions/checkout@v4
         with:
           ref: gh-pages
           path: gh-pages
-          fetch-depth: 0
-
-      - name: Deploy versioned docs
-        run: |
-          VERSION="${{ steps.release.outputs.version }}"
-          
-          # Only deploy if we have a valid version
-          if [[ "$VERSION" != "no-version" ]]; then
-            echo "Deploying documentation for version: $VERSION"
-            
-            # Create version directory and copy docs
-            mkdir -p "gh-pages/$VERSION"
-            rsync -av --delete docs/_build/html/ "gh-pages/$VERSION/"
-            
-            # Also create/update 'latest' to point to this version
-            mkdir -p gh-pages/latest
-            rsync -av --delete docs/_build/html/ gh-pages/latest/
-            
-            # Build switcher.json for all versions
-            cd gh-pages
-            versions=()
-            
-            # Collect all version directories
-            for d in */; do
-              d=${d%/}  # Remove trailing slash
-              if [[ "$d" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || [[ "$d" == "latest" ]]; then
-                versions+=("$d")
-              fi
-            done
-            
-            # Sort versions (latest first, then reverse semver order)
-            IFS=$'\n' sorted_versions=($(printf '%s\n' "${versions[@]}" | sort -V -r))
-            
-            # Create switcher.json content
-            switcher_content="["
-            first=true
-            
-            for v in "${sorted_versions[@]}"; do
-              if [[ "$first" == "true" ]]; then
-                first=false
-              else
-                switcher_content="$switcher_content,"
-              fi
-              
-              if [[ "$v" == "latest" ]]; then
-                entry="{\"version\": \"latest\", \"url\": \"https://rosettacommons.github.io/atomworks/latest/index.html\", \"name\": \"latest\"}"
-              else
-                disp="${v#v}"
-                # Mark the newest stable version as preferred
-                if [[ "$v" == "$VERSION" ]]; then
-                  preferred="true"
-                else
-                  preferred="false"
-                fi
-                entry="{\"version\": \"$disp\", \"url\": \"https://rosettacommons.github.io/atomworks/$v/index.html\", \"name\": \"v$disp\", \"preferred\": $preferred}"
-              fi
-              
-              switcher_content="$switcher_content$entry"
-            done
-            
-            switcher_content="$switcher_content]"
-            
-            # Write switcher.json to all version directories
-            for v in "${sorted_versions[@]}"; do
-              mkdir -p "$v/_static"
-              echo "$switcher_content" > "$v/_static/switcher.json"
-              echo "Created switcher.json for $v"
-            done
-            
-            echo "Switcher content: $switcher_content"
-          else
-            echo "No version tag found, skipping documentation deployment"
-          fi
-
-      - name: Deploy to GitHub Pages
-        if: steps.release.outputs.version != 'no-version'
+      - run: python .github/release.py docs
+      - name: Publish versioned documentation
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: gh-pages
-          keep_files: true  # Keep existing versions
-          force_orphan: false  # Don't force orphan, preserve history
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'

@@ -577,11 +577,12 @@ def get_ccd_component_from_mirror(
     Args:
         ccd_code: The three-letter code of the chemical component.
         ccd_mirror_path: Path to the root of the CCD mirror directory.
-        **parse_ccd_cif_kwargs: Additional keyword arguments passed to parse_ccd_cif():
-            coords: Type of coordinates to use ("model", "ideal_pdbx", "ideal_rdkit", or None).
+        **parse_ccd_cif_kwargs: Additional keyword arguments passed to ``parse_ccd_cif``.
+
+            * ``coords``: Type of coordinates to use ("model", "ideal_pdbx", "ideal_rdkit", or None).
                 Defaults to "ideal_pdbx".
-            add_properties: Whether to include RDKit-computed properties. Defaults to True.
-            add_mapping: Whether to include external resource mappings, such as e.g. the ChEMBL ID.
+            * ``add_properties``: Whether to include RDKit-computed properties. Defaults to True.
+            * ``add_mapping``: Whether to include external resource mappings, such as e.g. the ChEMBL ID.
                 Defaults to False.
 
     Returns:
@@ -883,12 +884,12 @@ def _get_polymerization_atoms_cached(res_name: str, chain_type: ChainType | None
 def get_polymerization_atoms(res_name: str, chain_type: ChainType | None = None) -> tuple[str | None, str | None]:
     """Return candidate ``(leaving_atom, entering_atom)`` sites for a polymer bond.
 
-    Looks up the canonical atoms for the chemical component type via :pyfunc:`get_chem_comp_type`
+    Looks up the canonical atoms for the chemical component type via :py:func:`get_chem_comp_type`
     against ``CHEM_TYPE_POLYMERIZATION_ATOMS`` (falling back to
     ``ChainTypeInfo.ATOMS_AT_POLYMER_BOND``), and returns them when the component actually carries
     those atom names. A component that does not carry them falls back to
     ``CCD_POLYMERIZATION_ATOM_OVERRIDES``, and then to
-    :pyfunc:`_derive_polymerization_atoms_from_template`. Each side is resolved independently and
+    :py:func:`_derive_polymerization_atoms_from_template`. Each side is resolved independently and
     may be ``None``. For caps, ``chain_type`` supplies candidate sites (``NH2`` gives ``(None, "N")``),
     but does not establish that a bond exists.
     """

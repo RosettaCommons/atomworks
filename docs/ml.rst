@@ -11,7 +11,7 @@ Core Modules
    ml/samplers
 
 Data Processing Modules
-----------------------
+-----------------------
 
 .. toctree::
    :maxdepth: 2

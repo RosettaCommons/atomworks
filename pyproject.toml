@@ -1,6 +1,6 @@
 [project]
 name = "atomworks"
-version = "2.1.1"
+version = "3.0.0"
 description = "A research-oriented data toolkit for training biomolecular deep-learning foundation models"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -139,12 +139,14 @@ aw = "atomworks_cli.__main__:main"
 
 # Build settings ----------------------------------------------------------------------
 [build-system]
-requires = ["hatchling", "hatch-vcs"]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.hatch.build]
-sources = ["src"]
+[tool.hatch.build.targets.wheel]
 packages = ["src/atomworks", "src/atomworks_cli"]
+
+[tool.hatch.build.targets.sdist]
+include = ["/src", "/README.md", "/LICENSE.md", "/pyproject.toml"]
 
 [tool.hatch.metadata]
 allow-direct-references = true

@@ -4,14 +4,14 @@
 
 - [Introduction](#introduction)
 - [Prerequisites](#prerequisites)
-- [Download current metadata and structures](#download-current-metadata-and-structures)
-- [Inspect the metadata tables](#inspect-the-metadata-tables)
+- [Download current metadata and structures](aw_build_model_p1_setup)
+- [Inspect the metadata tables](aw_build_model_p1_inspect)
 - [Merge the datasets](#merge-the-datasets)
 - [Clean the data](#clean-the-data)
-- [Resolve structure paths](#resolve-structure-paths)
+- [Resolve structure paths](#adding-new-columns)
 - [Split by protein cluster](#split-by-protein-cluster)
 - [Save the results](#save-the-results)
-- [Check the outputs](#check-the-outputs)
+- [Check the outputs](aw_build_model_p1_check)
 - [What Next?](#what-next)
 - [Glossary](#glossary)
 
@@ -44,14 +44,11 @@ Before starting this tutorial it is assumed that you have:
 ```{note}
 If you do not have over 100GB of space on your computing system, you can use a subset of the PDB instead of the full PDB mirror. See [Data Mirrors](../mirrors.rst) for how to only download specific PDB IDs. Make sure you have the `PDB_MIRROR_PATH` environment variable set to wherever you put it before moving on.
 ```
-````
 
 (aw_build_model_p1_setup)=
 ## Setup
 
 AtomWorks provides a few Parquet files that contain metadata about the structures included in the [PDB](https://www.rcsb.org/). We will use these as our starting point.
-
-AtomWorks provides a few parquet files that already contain metadata about the various structures included in the PDB. We will use these as our starting point.
 
 Download the parquet files with the AtomWorks CLI:
 ```bash
@@ -59,6 +56,7 @@ atomworks setup metadata data/pdb_metadata
 ```
 This creates the `data/pdb_metadata` directory (if it doesn't already exist) and populates it with several parquet files, including `shared/interfaces_df.parquet` and `shared/pn_units_df.parquet`. We will only use those two files in this tutorial.
 
+(aw_build_model_p1_inspect)=
 ## Inspect the metadata tables
 
 Let's first take a look at the information contained in the parquet files. Parquet files are not human parsable, but we can use [Pandas](https://pandas.pydata.org/) to inspect them.
@@ -91,7 +89,7 @@ Let's take a closer look at a few of the columns in the interfaces parquet:
 - `involves_covalent_modification`: Boolean for if the interface involves a covalent modification (e.g. glycosylation).
 - `num_contacts`: Number of contacts between the two PN units that create the interface.
 - `example_id`: A label that already uniquely identifies the interface.
-- `path`: Path to the structure file AtomWorks used to produce this row (we'll replace this with a path into your own PDB mirror in [Resolve structure paths](#resolve-structure-paths)).
+- `path`: Path to the structure file AtomWorks used to produce this row (we'll replace this with a path into your own PDB mirror in [Resolve structure paths](#adding-new-columns)).
 
 Let's also look at a few columns of interest from the PN units parquet file:
 - `q_pn_unit_iid`: Label for the specific PN unit in the structure that the row corresponds to.
@@ -332,7 +330,7 @@ assert df.groupby("protein_cluster")["split"].nunique().eq(1).all()
 ```
 ````
 
-#### Save the results
+## Save the results
 
 Now we can save each split as its own parquet file for future use, alongside one file containing everything:
 ````{dropdown} Click to see the code.
@@ -345,7 +343,6 @@ for split in ("train", "validation", "test"):
     df[df["split"] == split].reset_index(drop=True).to_parquet(f"splits/{split}.parquet", index=False)
 ```
 ````
-````
 
 Run the complete script with the path to the interface metadata you downloaded earlier:
 ```bash
@@ -356,7 +353,8 @@ python docs/how_to_build_a_model/scripts/data_cleaning_script.py \
 ```
 The script prints the number of examples assigned to each split.
 
-#### Check the outputs
+(aw_build_model_p1_check)=
+## Check the outputs
 
 ````{dropdown} Click to see the code.
 ```python

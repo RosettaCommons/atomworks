@@ -170,7 +170,7 @@ cif_block = parse_output_with_cif.get("cif_block", None)
 
 ########################################################################
 # Related Examples
-# ---------------
+# ----------------
 #
 # - :doc:`annotate_and_save_structures` - Learn how to add custom annotations to structures and save them for later use
 # - :doc:`pocket_conditioning_transform` - Create custom transforms for ligand pocket identification and ML feature generation

@@ -1,19 +1,13 @@
 ## 📋 PR Checklist
 
 - [ ] This PR is tagged as a [draft](https://github.blog/news-insights/product-news/introducing-draft-pull-requests/) if it is still under development and not ready for review. 
-    > This avoids auto-triggering the slower tests in the CI and needlessly wasting resources.
+    > Drafts still run CI.
 
 - [ ] I have ensured that all my commits follow [angular commit message conventions](https://www.conventionalcommits.org/en/v1.0.0-beta.4/).
     > Format: `<type>[optional scope]: <subject>`  
     > Example: `fix(af3): add missing crop transform to the af3 pipeline`
     >
-    > This affects semantic versioning as follows:
-    > - `fix`: patch version increment (0.0.1 → 0.0.2)
-    > - `feat`: minor version increment (0.0.1 → 0.1.0) 
-    > - `BREAKING CHANGE`: major version increment (0.0.1 → 1.0.0)
-    > - All other types do not affect versioning
-    >
-    > The format ensures readable changelogs through auto-generation from commit messages.
+    > Releases use the explicit version in `pyproject.toml` and a matching `v<version>` tag.
 
 - [ ] I have run `make format` on the codebase before submitting the PR (this autoformats the code and lints it).
 

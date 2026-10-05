@@ -6,7 +6,6 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 import os
-import re
 import sys
 
 sys.path.insert(0, os.path.abspath("../src"))
@@ -17,24 +16,8 @@ project = "atomworks"
 copyright = "2025, bakerlab"
 author = "bakerlab"
 
-# Get the raw version from atomworks
-raw_version = atomworks.__version__
-print(f"Raw version from atomworks: {raw_version}")
-
-# Extract clean version for documentation
-# Handle formats like: v2.29.0, v2.29.0+dev26.ad450d1, v2.29.0-dirty, v2.29.0+dev26.ad450d1-dirty
-version_match = re.match(r"^v?(\d+\.\d+\.\d+)", str(raw_version))
-if version_match:
-    version = version_match.group(1)
-else:
-    # Fallback if regex doesn't match
-    version = str(raw_version).lstrip("v").split("+")[0].split("-")[0]
-
-print(f"Clean version for docs: {version}")
-
-# For version switcher, we want to match against the exact version format in switcher.json
-# This should match what your GitHub workflow generates
-switcher_version = version  # Use clean version for matching
+release = os.environ.get("ATOMWORKS_DOCS_VERSION", str(atomworks.__version__).removeprefix("v"))
+version = release
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -49,9 +32,11 @@ extensions = [
 ]
 
 myst_heading_anchors = 3
+html_favicon = "_static/favicon-32x32.png"
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "examples/GALLERY_HEADER.rst", "ml/preprocessing.rst"]
+napoleon_use_ivar = True
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
@@ -75,24 +60,14 @@ html_theme_options = {
     },
     "navbar_start": ["navbar-logo", "version-switcher"],
     "switcher": {
-        "json_url": "https://rosettacommons.github.io/atomworks/latest/_static/switcher.json",
-        "version_match": switcher_version,
+        "json_url": "https://rosettacommons.github.io/atomworks/_static/switcher.json",
+        "version_match": release,
     },
-    "favicons": [
-        {
-            "rel": "icon",
-            "sizes": "16x16",
-            "href": "favicon-16x16.png",
-        },
-        {
-            "rel": "icon",
-            "sizes": "32x32",
-            "href": "favicon-32x32.png",
-        },
-    ],
 }
 
 sphinx_gallery_conf = {
+    "filename_pattern": r"/plot_",
+    "abort_on_example_error": True,
     "examples_dirs": "examples",  # path to your example scripts
     "gallery_dirs": "auto_examples",  # where to put the generated gallery
     "image_scrapers": ("matplotlib",),

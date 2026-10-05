@@ -9,7 +9,7 @@ AtomWorks can be installed in several ways, depending on your workflow and envir
 Before installing AtomWorks, ensure you have the following prerequisites:
 
 * Python 3.11 or higher
-* `dotenv <https://www.npmjs.com/package/dotenv>`_
+* Pip installs ``python-dotenv`` automatically; Node.js is not required.
 
 1. Installing via pip (recommended)
 -----------------------------------
@@ -20,7 +20,7 @@ This is the easiest way to get started with AtomWorks.
    pip install atomworks # base installation version without torch (for only atomworks.io)
    pip install "atomworks[ml]" # with torch and ML dependencies (for atomworks.io plus atomworks.ml)
    pip install "atomworks[dev]" # with development dependencies
-   pip install "atomworks[ml,dev]" # with all dependencies"
+   pip install "atomworks[ml,dev]" # ML and development tools
 
 You can also install AtomWorks with `Open Babel <https://openbabel.org/>`_, an alternative to RDKit:
 
@@ -28,7 +28,7 @@ You can also install AtomWorks with `Open Babel <https://openbabel.org/>`_, an a
 
    pip install "atomworks[openbabel]"
 
-or for all possible dependencies: 
+Combine extras as needed:
 
 .. code-block:: bash
 
@@ -38,75 +38,33 @@ Open Babel is not automatically installed with AtomWorks due to its larger size 
 
 2. Development Installation
 ---------------------------
-For development:
+For development, use a virtual environment:
 
 .. code-block:: bash
 
-   git clone https://github.com/RosettaCommons/atomworks.git
+   git clone --branch release/atomworks-3-0 https://github.com/RosettaCommons/atomworks.git
    cd atomworks
+   python -m venv .venv
+   source .venv/bin/activate
    make install  # or pip install -e ".[dev]"
-
-To install in a fresh environment:
-
-.. code-block:: bash
-
-   git clone https://github.com/RosettaCommons/atomworks.git
-   cd atomworks
-   make env
 
 
 3. Running the Test Suite
 -------------------------
 
-To run the AtomWorks test suite, you need to download the test data and configure environment variables.
-
-**Step 1: Download test data and the CCD mirror**
-
-From the repository root, run:
+Public CI runs on GitHub-hosted machines using a versioned bundle containing the
+shared fixtures and the PDB subset. To use the same inputs locally:
 
 .. code-block:: bash
 
-   atomworks setup tests
-   atomworks ccd sync tests/data/ccd
+   mkdir -p tests/data
+   curl --fail --location --retry 3 https://github.com/RosettaCommons/atomworks/releases/download/test-data-3.0.0/atomworks-test-data-3.0.0.tar.gz | tar -xz -C tests/data
+   pip install -e ".[ml,dev,ase,openbabel]"
+   pytest tests -n 2 --dist=worksteal -m "not benchmark and not slow and not requires_digs and not requires_pymol_remote and not requires_x3dna"
 
-The first command extracts the test pack into ``tests/data/`` and downloads missing
-PDB structures listed in the pack into ``tests/data/pdb/``. Shared MSA, template,
-and metadata fixtures are provided under ``tests/data/shared/``.
-
-The second command separately downloads a full CCD mirror into ``tests/data/ccd/``.
-This mirror is not supplied by the test pack. Both commands use explicit default
-or destination paths, so configure the environment after the downloads finish.
-
-**Step 2: Create a .env file**
-
-Create a ``.env`` file in the repository root with the paths to the test data:
-
-.. code-block:: bash
-
-   # For running tests with the test pack:
-   PDB_MIRROR_PATH=tests/data/pdb
-   CCD_MIRROR_PATH=tests/data/ccd
-
-You can copy ``.env.sample`` as a starting point:
-
-.. code-block:: bash
-
-   cp .env.sample .env
-   # Then edit .env to set the paths above
-
-**Step 3: Run the tests**
-
-.. code-block:: bash
-
-   # Run all tests (excluding very slow ones)
-   pytest tests -m "not very_slow"
-
-   # Run tests in parallel for faster execution
-   pytest tests -m "not very_slow" -n auto
-
-   # Run a specific test file
-   pytest tests/io/components/test_parser.py
-
+The bundle includes its public-source provenance. Tests use Biotite's bundled CCD;
+a full PDB/CCD mirror is not required. Infrastructure-dependent tests remain excluded.
+Run the slow tests separately with one worker when needed to limit memory use.
 
 4. Setting Up Full PDB/CCD Mirrors
 ----------------------------------

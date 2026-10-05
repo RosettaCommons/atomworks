@@ -149,7 +149,7 @@ class ChEMBLNormalizer:
     alone.
 
     Reference:
-        `ChEMBL Structure Pipeline <https://github.com/chembl/ChEMBL_Structure_Pipeline/blob/master/chembl_structure_pipeline/standardizer.py#L33C1-L73C15>`_
+        `ChEMBL Structure Pipeline <https://github.com/chembl/ChEMBL_Structure_Pipeline/blob/master/chembl_structure_pipeline/standardizer.py#L33C1-L73C15>`__
     """
 
     def __init__(self):
@@ -335,7 +335,7 @@ def fix_mol(
 
     References:
         `RDKit Molecular Sanitization <https://www.rdkit.org/docs/RDKit_Book.html#molecular-sanitization>`_
-        `ChEMBL Structure Pipeline <https://github.com/chembl/ChEMBL_Structure_Pipeline/blob/master/chembl_structure_pipeline/standardizer.py>`_
+        `ChEMBL Structure Pipeline <https://github.com/chembl/ChEMBL_Structure_Pipeline/blob/master/chembl_structure_pipeline/standardizer.py>`__
         `datamol mol.py <https://github.com/datamol-io/datamol/blob/0312388b956e2b4eeb72d791167cfdb873c7beab/datamol/mol.py>`_
 
     """
