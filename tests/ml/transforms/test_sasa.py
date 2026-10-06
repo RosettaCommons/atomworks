@@ -11,6 +11,7 @@ from atomworks.ml.transforms.sasa import (
     _get_element_radii,
     _get_protor_element_fallback_radii,
     calculate_atomwise_rasa,
+    calculate_atomwise_sasa,
 )
 from atomworks.ml.utils.testing import cached_parse
 
@@ -186,3 +187,20 @@ def test_element_radii_ligand_atoms():
     assert not np.isnan(rasa).any(), "All atoms should have valid RASA"
     assert np.all(rasa >= 0)
     assert np.all(rasa <= 1)
+
+
+@pytest.mark.parametrize("calculate", [calculate_atomwise_sasa, calculate_atomwise_rasa])
+def test_scoring_mask_preserves_occlusion(calculate):
+    atoms = AtomArray(3)
+    atoms.element[:] = "C"
+    atoms.coord[:] = [[0, 0, 0], [3, 0, 0], [np.nan, 0, 0]]
+    score = np.array([True, False, False])
+    full = calculate(atoms, atom_radii="element")
+    masked = calculate(atoms, atom_radii="element", sasa_mask=score)
+    isolated = calculate(atoms, atom_radii="element", occlusion_mask=score)
+    assert 0 < masked[0] < isolated[0]
+    np.testing.assert_allclose(masked[0], full[0])
+    assert np.isnan(masked[~score]).all()
+    assert np.isnan(full[2])
+    with pytest.raises(ValueError, match="subset"):
+        calculate(atoms, occlusion_mask=score, sasa_mask=np.array([False, True, False]))
