@@ -347,3 +347,16 @@ def test_hydrogen_placement_preserves_pair_annotations_across_residue_reordering
     np.testing.assert_array_equal(annotation.values, [1.7])
     assert annotation.n_atoms == len(placed)
     np.testing.assert_array_equal(atoms.get_annotation("restraint", n_body=2).pairs, [[0, 2]])
+
+
+def test_hydrogen_placement_preserves_standard_annotation_aliases():
+    from atomworks.io.utils.atom_array_plus import as_atom_array_plus
+    from tests.experimental.protonation.test_assign import molecule_from_smiles
+
+    atoms = as_atom_array_plus(molecule_from_smiles("C"))
+    atoms.set_annotation("S_ATM", np.ones(len(atoms), dtype=bool))
+
+    placed = place_hydrogens(assign_hydrogens(atoms))
+
+    assert "S_ATM" in placed.get_annotation_categories()
+    np.testing.assert_array_equal(placed.S_ATM[placed.element != "H"], atoms.S_ATM)

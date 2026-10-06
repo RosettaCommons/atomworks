@@ -818,8 +818,14 @@ def place_hydrogens(atom_array: AtomArray) -> AtomArray:
     protonated.coord = np.concatenate([coord, h_coord[built]])[order]
     ensure_annotations(protonated, *recompute)
     for annot in recompute:
-        values = protonated.get_annotation(annot)
+        standard = next((a for a in STANDARD_ANNOTATIONS if annot in (a.name, a.full_name, *a.aliases)), None)
+        if standard is None:
+            values = protonated.get_annotation(annot)
+        else:
+            values = np.asarray(standard.annotation(protonated, default="raise")).copy()
         values[from_state] = atom_array.get_annotation(annot)[order[from_state]]
+        if standard is not None:
+            standard.set_annotation(protonated, values)
         protonated.set_annotation(annot, values)
     return protonated
 
