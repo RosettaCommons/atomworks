@@ -5,6 +5,7 @@ import os
 import pyarrow as pa
 import pyarrow.feather as feather
 
+from atomworks.ml.utils.huggingface import read_hf_bytes
 from atomworks.ml.utils.io import (
     _decompress,
     build_feather_once,
@@ -17,8 +18,8 @@ from atomworks.ml.utils.io import (
 class BlobStore:
     """Read one compressed record by ``(shard, offset, length)`` from a local directory or a remote store.
 
-    A remote ``shard`` (an object-store URL) is fetched with a ranged ``GET`` via ``endpoint_url``; only
-    config is stored, so the store is picklable across DataLoader workers.
+    Remote records use ranged GETs; ``endpoint_url`` applies only to S3. HF paths
+    require an immutable revision. Only config is stored, so the store is picklable across workers.
     """
 
     def __init__(self, data_dir: str, *, endpoint_url: str | None = None):
@@ -28,8 +29,12 @@ class BlobStore:
     def get_bytes(self, shard: str, offset: int, length: int) -> bytes:
         """Fetch and decompress the record at ``[offset, offset+length)`` of ``shard``."""
         url = f"{self.data_dir}/{shard}"
-        if "://" in url:
+        if url.startswith("hf://"):
+            raw = read_hf_bytes(url, offset=offset, length=length)
+        elif url.startswith("s3://"):
             raw = read_s3_bytes(url, offset=offset, length=length, endpoint_url=self.endpoint_url)
+        elif "://" in url:
+            raise ValueError("Blob stores support local paths, s3:// and revision-pinned hf://datasets/ URLs")
         else:
             with open(url, "rb") as f:
                 f.seek(offset)

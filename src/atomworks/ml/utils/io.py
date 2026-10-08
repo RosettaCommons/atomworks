@@ -24,6 +24,7 @@ from filelock import FileLock
 
 from atomworks.common import string_to_md5_hash
 from atomworks.io.utils.io_utils import apply_sharding_pattern, build_sharding_pattern
+from atomworks.ml.utils.huggingface import download_hf_metadata
 from atomworks.ml.utils.misc import logger
 
 try:
@@ -300,8 +301,9 @@ def to_parquet_with_metadata(df: pd.DataFrame, filepath: PathLike, **kwargs: Any
 
 
 def _readable_source(filepath: PathLike) -> Any:
-    """A pandas/pyarrow-readable source for ``filepath``: the local path, or an in-memory buffer for an
-    ``s3://`` URL (downloaded once via boto3, since the bare readers don't accept ``s3://``)."""
+    """Resolve a local path, cached HF metadata file, or downloaded S3 buffer for pandas/pyarrow."""
+    if str(filepath).startswith("hf://"):
+        return download_hf_metadata(str(filepath))
     return io.BytesIO(read_s3_bytes(str(filepath))) if str(filepath).startswith("s3://") else filepath
 
 
