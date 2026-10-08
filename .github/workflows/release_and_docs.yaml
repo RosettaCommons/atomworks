@@ -2,7 +2,7 @@ name: CI and release
 
 on:
   push:
-    branches: [dev, main, production, release/atomworks-3-0]
+    branches: [production]
     tags: ['v*']
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
@@ -189,6 +189,8 @@ jobs:
           ref: gh-pages
           path: gh-pages
       - run: python .github/release.py docs
+      - name: Repair archived version switchers
+        run: python .github/repair_docs_switcher.py gh-pages https://rosettacommons.github.io/atomworks
       - name: Publish versioned documentation
         uses: peaceiris/actions-gh-pages@v4
         with:

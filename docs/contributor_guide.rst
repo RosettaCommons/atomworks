@@ -37,7 +37,7 @@ As you commit
 As you finalize a PR
 ---------------------
 
-1. Target **release/atomworks-3-0** for the AtomWorks 3.0 release.
+1. Target **production** for public AtomWorks changes.
 2. Keep overall PR under <400 LOC (lines of code) (Rule of thumb: 500 LOC takes about 1h to review).
 3. Read and fill out the `PR checklist <https://github.com/RosettaCommons/atomworks/blob/production/.github/pull_request_template.md>`_.
 
@@ -90,7 +90,7 @@ When contributing to this repository, please follow these steps:
    - Run autoformatting tools (``make format``) before committing.
    - Use commit messages like ``<type>: <description>``. Types: ``feat``, ``fix``, ``refactor``, ``docs``, ``chore``, ``wip``.
    - Example: ``git commit -m "docs: add contributing guidelines"``
-5. Open a pull request to ``release/atomworks-3-0`` and describe your changes.
+5. Open a pull request to ``production`` and describe your changes.
 6. Wait for review and merge your changes.
 
 
@@ -108,20 +108,20 @@ One-time repository setup:
 - Keep GitHub Pages Source as **Deploy from a branch**, using ``gh-pages`` and
   ``/ (root)``. The workflow preserves versioned pages on that branch.
 
-For 3.0.0, merge the reviewed PRs, wait for CI on the final release commit, and
-confirm that ``project.version`` is ``3.0.0`` and the tag/PyPI version are unused.
+For each release, merge the reviewed PRs, wait for CI on the final production commit,
+and confirm that ``project.version`` matches an unused tag and PyPI version.
 From a checkout whose ``origin`` is the public repository:
 
 .. code-block:: bash
 
    git fetch origin
-   git tag -a v3.0.0 origin/release/atomworks-3-0 -m "AtomWorks 3.0.0"
-   git push origin refs/tags/v3.0.0
+   git tag -a v3.0.1 origin/production -m "AtomWorks 3.0.1"
+   git push origin refs/tags/v3.0.1
 
 The tag runs package checks, installed-wheel checks, scientific CPU tests
 on GitHub-hosted runners and the docs build. After they pass, approve ``pypi`` to publish the checked
 archives; subsequent jobs create the GitHub Release and deploy documentation.
-Verify a fresh ``pip install atomworks==3.0.0``, ``aw --help`` and the versioned docs.
+Verify a fresh ``pip install atomworks==3.0.1``, ``aw --help`` and the versioned docs.
 
 Prereleases follow the same process without replacing stable ``latest`` docs.
 Never move a published tag or reuse a published package version.

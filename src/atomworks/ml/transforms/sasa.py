@@ -1,4 +1,3 @@
-import logging
 from typing import Any, Literal
 
 import biotite.structure as struc
@@ -12,8 +11,6 @@ from atomworks.ml.transforms._checks import (
     check_is_instance,
 )
 from atomworks.ml.transforms.base import Transform
-
-logger = logging.getLogger("atomworks.ml")
 
 # User-extension dict for VdW radii of elements not known to biotite.
 # Checked before biotite's vdw_radius_single in _get_element_radii and
@@ -104,11 +101,12 @@ def calculate_atomwise_sasa(
     probe_radius: float = 1.4,
     atom_radii: str | np.ndarray = "auto",
     point_number: int = 100,
-    atom_filter: np.ndarray | None = None,
+    occlusion_mask: np.ndarray | None = None,
+    sasa_mask: np.ndarray | None = None,
 ) -> np.ndarray:
     """
     Calculate the SASA for each atom in `atom_array`, excluding those
-    with NaN coordinates. The output will have the same length as the
+    with nonfinite coordinates. The output will have the same length as the
     input AtomArray, with NaN values for excluded (invalid) atoms.
 
     Args:
@@ -125,20 +123,30 @@ def calculate_atomwise_sasa(
               receive NaN SASA (biotite default). Use "auto" for mixed structures.
             - np.ndarray: Custom radii array matching atom_array length.
         point_number: Number of points in the Shrake-Rupley algorithm. Defaults to 100.
-        atom_filter: Boolean mask for atoms to include. Defaults to None (all atoms).
+        occlusion_mask: Boolean mask of atoms that can occlude solvent. Defaults to all atoms.
+            Atoms without finite coordinates are excluded from calculation.
+        sasa_mask: Boolean mask of atoms to score. Must be a subset of occlusion_mask
+            (equality is allowed). Defaults to occlusion_mask. Unscored atoms return NaN.
     """
-    has_resolved_coordinates = ~np.isnan(atom_array.coord).any(axis=-1)
-    if atom_filter is None:
-        atom_filter = has_resolved_coordinates
-    else:
-        atom_filter = atom_filter & has_resolved_coordinates
+    n_atoms = len(atom_array)
+    if occlusion_mask is None:
+        occlusion_mask = np.ones(n_atoms, dtype=bool)
+    if sasa_mask is None:
+        sasa_mask = occlusion_mask
+    for name, mask in (("occlusion_mask", occlusion_mask), ("sasa_mask", sasa_mask)):
+        if not isinstance(mask, np.ndarray) or mask.shape != (n_atoms,) or mask.dtype != bool:
+            raise ValueError(f"{name} must be a boolean array of shape ({n_atoms},).")
+    if np.any(sasa_mask & ~occlusion_mask):
+        raise ValueError("sasa_mask must be a subset of occlusion_mask.")
 
-    valid_atom_array = atom_array[atom_filter]
+    occlusion_mask = occlusion_mask & np.isfinite(atom_array.coord).all(axis=-1)
+    full_sasa = np.full(n_atoms, np.nan, dtype=float)
+    if not (sasa_mask & occlusion_mask).any():
+        return full_sasa
+    valid_atom_array = atom_array[occlusion_mask]
+    valid_sasa_mask = sasa_mask[occlusion_mask]
 
-    if len(valid_atom_array) == 0:
-        return np.full(atom_array.array_length(), np.nan, dtype=float)
-
-    if atom_radii in ("element", "auto"):
+    if isinstance(atom_radii, str) and atom_radii in ("element", "auto"):
         if atom_radii == "auto":
             radii = _get_protor_element_fallback_radii(valid_atom_array)
         else:
@@ -148,17 +156,20 @@ def calculate_atomwise_sasa(
             probe_radius=probe_radius,
             vdw_radii=radii,
             point_number=point_number,
+            atom_filter=valid_sasa_mask,
             ignore_ions=False,
         )
     else:
-        vdw_radii_arg = atom_radii[atom_filter] if isinstance(atom_radii, np.ndarray) else atom_radii
+        vdw_radii_arg = atom_radii[occlusion_mask] if isinstance(atom_radii, np.ndarray) else atom_radii
         valid_sasa = struc.sasa(
-            valid_atom_array, probe_radius=probe_radius, vdw_radii=vdw_radii_arg, point_number=point_number
+            valid_atom_array,
+            probe_radius=probe_radius,
+            vdw_radii=vdw_radii_arg,
+            point_number=point_number,
+            atom_filter=valid_sasa_mask,
         )
 
-    full_sasa = np.full(atom_array.array_length(), np.nan, dtype=float)
-    full_sasa[atom_filter] = valid_sasa
-
+    full_sasa[occlusion_mask] = valid_sasa
     return full_sasa
 
 
@@ -167,7 +178,8 @@ def calculate_atomwise_rasa(
     probe_radius: float = 1.4,
     atom_radii: str | np.ndarray = "auto",
     point_number: int = 100,
-    atom_filter: np.ndarray | None = None,
+    occlusion_mask: np.ndarray | None = None,
+    sasa_mask: np.ndarray | None = None,
 ) -> np.ndarray:
     """
     Calculate the Relative Solvent-Accessible Surface Area (RASA) for each atom.
@@ -182,33 +194,33 @@ def calculate_atomwise_rasa(
             element fallback for the rest. "element" works for all atom types.
             "ProtOr" only works for standard protein residues (Tsai 1999).
         point_number: Number of Shrake-Rupley sample points. Defaults to 100.
-        atom_filter: Boolean mask for atoms to include. Defaults to None.
+        occlusion_mask: Boolean mask of atoms that can occlude solvent. Defaults to all atoms.
+        sasa_mask: Boolean mask of atoms to score; must be a subset of occlusion_mask
+            (equality is allowed). Defaults to occlusion_mask. Unscored or unresolved
+            atoms return NaN. Invalid masks and calculation errors raise.
     """
-    try:
-        sasa = calculate_atomwise_sasa(
-            atom_array,
-            atom_filter=atom_filter,
-            probe_radius=probe_radius,
-            atom_radii=atom_radii,
-            point_number=point_number,
-        )
-    except Exception as e:
-        logger.error(f"Error calculating SASA: {e}. Defaulting to NaN.")
-        return np.full(atom_array.array_length(), np.nan, dtype=float)
-
-    try:
+    sasa = calculate_atomwise_sasa(
+        atom_array,
+        occlusion_mask=occlusion_mask,
+        sasa_mask=sasa_mask,
+        probe_radius=probe_radius,
+        atom_radii=atom_radii,
+        point_number=point_number,
+    )
+    has_sasa = np.isfinite(sasa)
+    rasa = np.full(len(atom_array), np.nan, dtype=float)
+    if not has_sasa.any():
+        return rasa
+    if isinstance(atom_radii, str):
         if atom_radii == "element":
-            vdw_radii_arr = _get_element_radii(atom_array)
-        elif atom_radii in ("ProtOr", "auto"):
-            vdw_radii_arr = _get_protor_element_fallback_radii(atom_array)
+            vdw_radii_arr = _get_element_radii(atom_array[has_sasa])
         else:
-            vdw_radii_arr = atom_radii
-    except (ValueError, KeyError) as e:
-        logger.error(f"Error getting VdW radii for RASA normalization: {e}. Defaulting to NaN.")
-        return np.full(atom_array.array_length(), np.nan, dtype=float)
+            vdw_radii_arr = _get_protor_element_fallback_radii(atom_array[has_sasa])
+    else:
+        vdw_radii_arr = atom_radii[has_sasa]
 
     max_value = 4 * np.pi * (vdw_radii_arr + probe_radius) ** 2
-    rasa = sasa / max_value
+    rasa[has_sasa] = sasa[has_sasa] / max_value
     return rasa
 
 
