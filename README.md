@@ -1,5 +1,5 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![CI](https://github.com/RosettaCommons/atomworks/actions/workflows/release_and_docs.yaml/badge.svg?branch=release%2Fatomworks-3-0)](https://github.com/RosettaCommons/atomworks/actions/workflows/release_and_docs.yaml)
+[![CI](https://github.com/RosettaCommons/atomworks/actions/workflows/release_and_docs.yaml/badge.svg?branch=production)](https://github.com/RosettaCommons/atomworks/actions/workflows/release_and_docs.yaml)
 [![PyPI version](https://img.shields.io/pypi/v/atomworks.svg)](https://pypi.org/project/atomworks/)
 [![Python versions](https://img.shields.io/pypi/pyversions/atomworks.svg)](https://pypi.org/project/atomworks/)
 [![Documentation Status](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://rosettacommons.github.io/atomworks/latest/)
@@ -14,11 +14,11 @@
 
 **atomworks** is an open-source platform that maximizes research velocity for biomolecular modeling tasks. Much like how [Torchvision](https://docs.pytorch.org/vision/stable/index.html) enables rapid prototyping within the vision domain, and [Torchaudio](https://docs.pytorch.org/audio/main/) within the audio domain, AtomWorks aims to accelerate development and experimentation within biomolecular modeling.
 
-Upgrading to 3.0? See the [migration guide](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/docs/migration/migration-short.md).
+Upgrading to 3.0? See the [migration guide](https://github.com/RosettaCommons/atomworks/blob/production/docs/migration/migration-short.md).
 
 If you're looking for the models themselves (e.g., RF3, RFD3, MPNN) that integrate with AtomWorks rather than the underlying framework, check out [Foundry](https://github.com/RosettaCommons/foundry)
 
-> **💡 Note:** Start with the [AtomWorks examples](https://rosettacommons.github.io/atomworks/latest/auto_examples/index.html) or the [model-building tutorial](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/docs/how_to_build_a_model/index.rst).
+> **💡 Note:** Start with the [AtomWorks examples](https://rosettacommons.github.io/atomworks/latest/auto_examples/index.html) or the [model-building tutorial](https://github.com/RosettaCommons/atomworks/blob/production/docs/how_to_build_a_model/index.rst).
 
 AtomWorks is composed of two symbiotic libraries:
 
@@ -91,12 +91,6 @@ If you are using [uv](https://docs.astral.sh/uv/reference/policies/versioning/) 
 
 ```shell
 uv pip install "atomworks[ml,openbabel,dev]"
-```
-
-To install the AtomWorks 3.0 release branch before it is published on PyPI:
-
-```shell
-pip install "atomworks[ml] @ git+https://github.com/RosettaCommons/atomworks.git@release/atomworks-3-0"
 ```
 
 For more advanced setup options (including how to run workflows via apptainers) see the [full documentation](https://rosettacommons.github.io/atomworks/latest/index.html).

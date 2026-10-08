@@ -42,7 +42,7 @@ For development, use a virtual environment:
 
 .. code-block:: bash
 
-   git clone --branch release/atomworks-3-0 https://github.com/RosettaCommons/atomworks.git
+   git clone --branch production https://github.com/RosettaCommons/atomworks.git
    cd atomworks
    python -m venv .venv
    source .venv/bin/activate
