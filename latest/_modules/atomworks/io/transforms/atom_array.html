@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>atomworks.io.transforms.atom_array &#8212; atomworks 3.0.1 documentation</title>
+    <title>atomworks.io.transforms.atom_array &#8212; atomworks 3.0.2 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../../_static/documentation_options.js?v=08bfcbec"></script>
+    <script src="../../../../_static/documentation_options.js?v=3f474186"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -51,7 +51,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = "https://rosettacommons.github.io/atomworks/latest/_static/switcher.json";
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.2';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
         </script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="3.0.1" />
+  <meta name="docsearch:version" content="3.0.2" />
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -134,8 +134,8 @@
       
     
     
-    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.1 documentation - Home"/>
-    <img src="../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.1 documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.2 documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.2 documentation - Home"/>
   
   
 </a></div>
@@ -551,7 +551,6 @@
     <span class="n">hash_graph</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.chain_info</span><span class="w"> </span><span class="kn">import</span> <span class="n">update_sequences_from_res_names</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">annot_start_stop_idxs</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"atomworks.io"</span><span class="p">)</span>
 
@@ -1223,11 +1222,12 @@
         <span class="n">instance_graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
         <span class="n">instance_graph</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
 
-        <span class="c1"># ... set node attributes to lower level entities (vectorized)</span>
-        <span class="c1"># Direct annotation indexing instead of creating AtomArray objects via segment_iter()</span>
-        <span class="n">segment_boundaries</span> <span class="o">=</span> <span class="n">annot_start_stop_idxs</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">lower_level_id</span><span class="p">,</span> <span class="n">add_exclusive_stop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Match the sorted unique annotation keys used to index the coarse graph nodes.</span>
+        <span class="n">annotations</span> <span class="o">=</span> <span class="p">[</span><span class="n">lower_level_id</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lower_level_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">lower_level_id</span>
+        <span class="n">node_keys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rec</span><span class="o">.</span><span class="n">fromarrays</span><span class="p">([</span><span class="n">instance</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="n">annot</span><span class="p">)</span> <span class="k">for</span> <span class="n">annot</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">])</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">first_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">node_keys</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">entity_annotation</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="n">lower_level_entity</span><span class="p">)</span>
-        <span class="n">node_attrs</span> <span class="o">=</span> <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="n">entity_annotation</span><span class="p">[</span><span class="n">start</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">start</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">segment_boundaries</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])}</span>
+        <span class="n">node_attrs</span> <span class="o">=</span> <span class="p">{</span><span class="n">idx</span><span class="p">:</span> <span class="n">entity_annotation</span><span class="p">[</span><span class="n">first</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">first</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">first_indices</span><span class="p">)}</span>
         <span class="n">nx</span><span class="o">.</span><span class="n">set_node_attributes</span><span class="p">(</span><span class="n">instance_graph</span><span class="p">,</span> <span class="n">node_attrs</span><span class="p">,</span> <span class="s2">"node"</span><span class="p">)</span>
 
         <span class="c1"># ... create the graph hash</span>

@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>atomworks.ml.transforms.sasa &#8212; atomworks 3.0.1 documentation</title>
+    <title>atomworks.ml.transforms.sasa &#8212; atomworks 3.0.2 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../../_static/documentation_options.js?v=08bfcbec"></script>
+    <script src="../../../../_static/documentation_options.js?v=3f474186"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -51,7 +51,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = "https://rosettacommons.github.io/atomworks/latest/_static/switcher.json";
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.2';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
         </script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="3.0.1" />
+  <meta name="docsearch:version" content="3.0.2" />
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -134,8 +134,8 @@
       
     
     
-    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.1 documentation - Home"/>
-    <img src="../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.1 documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.2 documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.2 documentation - Home"/>
   
   
 </a></div>
@@ -539,11 +539,53 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
 
-<span class="c1"># User-extension dict for VdW radii of elements not known to biotite.</span>
-<span class="c1"># Checked before biotite's vdw_radius_single in _get_element_radii and</span>
-<span class="c1"># _get_protor_element_fallback_radii. Populate at runtime to override or</span>
-<span class="c1"># extend biotite's built-in Mantina 2009 table for exotic elements.</span>
-<span class="n">_ELEMENT_VDW_RADII</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="c1"># Alvarez (2013), Table 1: radii in angstroms for elements absent from Biotite 1.6.0.</span>
+<span class="c1"># https://doi.org/10.1039/C3DT50599E; entries also serve as user overrides.</span>
+<span class="n">_ELEMENT_VDW_RADII</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"SC"</span><span class="p">:</span> <span class="mf">2.58</span><span class="p">,</span>
+    <span class="s2">"TI"</span><span class="p">:</span> <span class="mf">2.46</span><span class="p">,</span>
+    <span class="s2">"V"</span><span class="p">:</span> <span class="mf">2.42</span><span class="p">,</span>
+    <span class="s2">"CR"</span><span class="p">:</span> <span class="mf">2.45</span><span class="p">,</span>
+    <span class="s2">"Y"</span><span class="p">:</span> <span class="mf">2.75</span><span class="p">,</span>
+    <span class="s2">"ZR"</span><span class="p">:</span> <span class="mf">2.52</span><span class="p">,</span>
+    <span class="s2">"NB"</span><span class="p">:</span> <span class="mf">2.56</span><span class="p">,</span>
+    <span class="s2">"TC"</span><span class="p">:</span> <span class="mf">2.44</span><span class="p">,</span>
+    <span class="s2">"RH"</span><span class="p">:</span> <span class="mf">2.44</span><span class="p">,</span>
+    <span class="s2">"PD"</span><span class="p">:</span> <span class="mf">2.15</span><span class="p">,</span>
+    <span class="s2">"AG"</span><span class="p">:</span> <span class="mf">2.53</span><span class="p">,</span>
+    <span class="s2">"CD"</span><span class="p">:</span> <span class="mf">2.49</span><span class="p">,</span>
+    <span class="s2">"LA"</span><span class="p">:</span> <span class="mf">2.98</span><span class="p">,</span>
+    <span class="s2">"CE"</span><span class="p">:</span> <span class="mf">2.88</span><span class="p">,</span>
+    <span class="s2">"PR"</span><span class="p">:</span> <span class="mf">2.92</span><span class="p">,</span>
+    <span class="s2">"ND"</span><span class="p">:</span> <span class="mf">2.95</span><span class="p">,</span>
+    <span class="s2">"SM"</span><span class="p">:</span> <span class="mf">2.90</span><span class="p">,</span>
+    <span class="s2">"EU"</span><span class="p">:</span> <span class="mf">2.87</span><span class="p">,</span>
+    <span class="s2">"GD"</span><span class="p">:</span> <span class="mf">2.83</span><span class="p">,</span>
+    <span class="s2">"TB"</span><span class="p">:</span> <span class="mf">2.79</span><span class="p">,</span>
+    <span class="s2">"DY"</span><span class="p">:</span> <span class="mf">2.87</span><span class="p">,</span>
+    <span class="s2">"HO"</span><span class="p">:</span> <span class="mf">2.81</span><span class="p">,</span>
+    <span class="s2">"ER"</span><span class="p">:</span> <span class="mf">2.83</span><span class="p">,</span>
+    <span class="s2">"TM"</span><span class="p">:</span> <span class="mf">2.79</span><span class="p">,</span>
+    <span class="s2">"YB"</span><span class="p">:</span> <span class="mf">2.80</span><span class="p">,</span>
+    <span class="s2">"LU"</span><span class="p">:</span> <span class="mf">2.74</span><span class="p">,</span>
+    <span class="s2">"HF"</span><span class="p">:</span> <span class="mf">2.63</span><span class="p">,</span>
+    <span class="s2">"TA"</span><span class="p">:</span> <span class="mf">2.53</span><span class="p">,</span>
+    <span class="s2">"RE"</span><span class="p">:</span> <span class="mf">2.49</span><span class="p">,</span>
+    <span class="s2">"OS"</span><span class="p">:</span> <span class="mf">2.48</span><span class="p">,</span>
+    <span class="s2">"IR"</span><span class="p">:</span> <span class="mf">2.41</span><span class="p">,</span>
+    <span class="s2">"HG"</span><span class="p">:</span> <span class="mf">2.45</span><span class="p">,</span>
+    <span class="s2">"AC"</span><span class="p">:</span> <span class="mf">2.80</span><span class="p">,</span>
+    <span class="s2">"TH"</span><span class="p">:</span> <span class="mf">2.93</span><span class="p">,</span>
+    <span class="s2">"PA"</span><span class="p">:</span> <span class="mf">2.88</span><span class="p">,</span>
+    <span class="s2">"U"</span><span class="p">:</span> <span class="mf">2.71</span><span class="p">,</span>
+    <span class="s2">"NP"</span><span class="p">:</span> <span class="mf">2.82</span><span class="p">,</span>
+    <span class="s2">"PU"</span><span class="p">:</span> <span class="mf">2.81</span><span class="p">,</span>
+    <span class="s2">"AM"</span><span class="p">:</span> <span class="mf">2.83</span><span class="p">,</span>
+    <span class="s2">"CM"</span><span class="p">:</span> <span class="mf">3.05</span><span class="p">,</span>
+    <span class="s2">"BK"</span><span class="p">:</span> <span class="mf">3.40</span><span class="p">,</span>
+    <span class="s2">"CF"</span><span class="p">:</span> <span class="mf">3.05</span><span class="p">,</span>
+    <span class="s2">"ES"</span><span class="p">:</span> <span class="mf">2.70</span><span class="p">,</span>
+<span class="p">}</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_element_radius</span><span class="p">(</span><span class="n">elem</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
@@ -552,10 +594,10 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_element_radii</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Get VdW radii for all atoms based on element type (Mantina 2009).</span>
+<span class="w">    </span><span class="sd">"""Get element-based VdW radii from Biotite with Alvarez (2013) supplements.</span>
 
-<span class="sd">    Checks ``_ELEMENT_VDW_RADII`` first (for user overrides), then falls back</span>
-<span class="sd">    to biotite's ``vdw_radius_single`` which covers the full periodic table.</span>
+<span class="sd">    Checks ``_ELEMENT_VDW_RADII`` first (Alvarez supplements and user overrides),</span>
+<span class="sd">    then falls back to biotite's ``vdw_radius_single``.</span>
 <span class="sd">    Raises ValueError only if neither source has a radius.</span>
 
 <span class="sd">    Vectorized: resolves each unique element once, then broadcasts.</span>

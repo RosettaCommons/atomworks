@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>atomworks.ml.utils.token &#8212; atomworks 3.0.1 documentation</title>
+    <title>atomworks.ml.utils.token &#8212; atomworks 3.0.2 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../../_static/documentation_options.js?v=08bfcbec"></script>
+    <script src="../../../../_static/documentation_options.js?v=3f474186"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -51,7 +51,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = "https://rosettacommons.github.io/atomworks/latest/_static/switcher.json";
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.2';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
         </script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="3.0.1" />
+  <meta name="docsearch:version" content="3.0.2" />
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -134,8 +134,8 @@
       
     
     
-    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.1 documentation - Home"/>
-    <img src="../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.1 documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.2 documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.2 documentation - Home"/>
   
   
 </a></div>
@@ -909,6 +909,9 @@
 <span class="sd">        - C1' for standard nucleotides</span>
 <span class="sd">        - For other cases take the first and only atom as they are tokenized per-atom.</span>
 
+<span class="sd">    An optional boolean ``is_token_center`` annotation overrides residue centers.</span>
+<span class="sd">    Atomized atoms remain their own centers; non-atomized tokens require exactly one marked atom.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        atom_array (AtomArray): The atom array to get the center atoms of.</span>
 <span class="sd">        enforce_one_per_token (bool, optional): If True, raises an error if the number of center atoms</span>
@@ -924,6 +927,16 @@
     <span class="k">assert</span> <span class="p">(</span>
         <span class="s2">"atomize"</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span>
     <span class="p">),</span> <span class="s2">"Atomize annotation is missing. Run AtomizeByCCDName Transform first!"</span>
+
+    <span class="k">if</span> <span class="s2">"is_token_center"</span> <span class="ow">in</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">is_token_center</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="nb">bool</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"is_token_center must be a boolean annotation"</span><span class="p">)</span>
+        <span class="n">is_center_atom</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">atomize</span> <span class="o">|</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">is_token_center</span>
+        <span class="k">if</span> <span class="n">enforce_one_per_token</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">):</span>
+            <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">reduceat</span><span class="p">(</span><span class="n">is_center_atom</span><span class="p">,</span> <span class="n">get_token_starts</span><span class="p">(</span><span class="n">atom_array</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">counts</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"is_token_center must designate exactly one center atom per token"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">is_center_atom</span>
 
     <span class="n">is_center_atom</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">atom_array</span><span class="o">.</span><span class="n">atomize</span>  <span class="c1"># the atom itself for un-atomized tokens</span>

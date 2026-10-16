@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Transforms &#8212; atomworks 3.0.1 documentation</title>
+    <title>Transforms &#8212; atomworks 3.0.2 documentation</title>
   
   
   
@@ -43,7 +43,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../_static/documentation_options.js?v=08bfcbec"></script>
+    <script src="../_static/documentation_options.js?v=3f474186"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -52,7 +52,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = "https://rosettacommons.github.io/atomworks/latest/_static/switcher.json";
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.2';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
         </script>
@@ -65,7 +65,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="3.0.1" />
+  <meta name="docsearch:version" content="3.0.2" />
   
     
     <script src="../_static/searchtools.js"></script>
@@ -137,8 +137,8 @@
       
     
     
-    <img src="../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.1 documentation - Home"/>
-    <img src="../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.1 documentation - Home"/>
+    <img src="../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.2 documentation - Home"/>
+    <img src="../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.2 documentation - Home"/>
   
   
 </a></div>
@@ -3375,23 +3375,12 @@ If no stereocenters are found, returns an empty tensor of shape [0, 5].</p>
 <p id="module-atomworks.ml.transforms.covalent_modifications">Transforms to handle covalent modifications</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="atomworks.ml.transforms.covalent_modifications.AnnotateCovalentModifications">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.ml.transforms.covalent_modifications.</span></span><span class="sig-name descname"><span class="pre">AnnotateCovalentModifications</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_reassign_modified_residue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomize_backbone_modifications</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/atomworks/ml/transforms/covalent_modifications.html#AnnotateCovalentModifications"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.transforms.covalent_modifications.AnnotateCovalentModifications" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.ml.transforms.covalent_modifications.</span></span><span class="sig-name descname"><span class="pre">AnnotateCovalentModifications</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reassign_modified_residue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomize_modified_residue</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/atomworks/ml/transforms/covalent_modifications.html#AnnotateCovalentModifications"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.transforms.covalent_modifications.AnnotateCovalentModifications" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#atomworks.ml.transforms.base.Transform" title="atomworks.ml.transforms.base.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
 <p>Handles covalent modifications within the AtomArray.</p>
-<p>Covalent modifications, e.g., glycosylation, are handled by the following algorithm:</p>
-<dl class="simple">
-<dt>for polymer residues with atoms covalently bound to a NON-POLYMER:</dt><dd><dl class="simple">
-<dt>for ALL atoms in the polymer residue:</dt><dd><p>set the pn_unit_iid and pn_unit_id identifying annotations to that of the NON-POLYMER polymer/non-polymer unit
-set atomize = true (thus, this transform must be run before the Atomize transform)
-set is_covalent_modification = true (for the entire pn_unit)</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p>Side-chain-modified residues are atomized with probability <code class="docutils literal notranslate"><span class="pre">p_reassign_modified_residue</span></code>,
-sampled independently per residue. Backbone modifications (cyclizations, crosslinks, caps) are atomized when
-<code class="docutils literal notranslate"><span class="pre">atomize_backbone_modifications</span></code>. The non-polymer is flagged and atomized either way, so
-<code class="docutils literal notranslate"><span class="pre">is_covalent_modification</span></code> is always annotated.</p>
+<p>Independently controls PN-unit reassignment and atomization of polymer residues
+bonded to non-polymers. Modifier atomization is left to downstream transforms.
+The modifier’s PN unit is always annotated as a covalent modification.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="atomworks.ml.transforms.covalent_modifications.AnnotateCovalentModifications.check_input">
 <span class="sig-name descname"><span class="pre">check_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/atomworks/ml/transforms/covalent_modifications.html#AnnotateCovalentModifications.check_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.transforms.covalent_modifications.AnnotateCovalentModifications.check_input" title="Link to this definition">#</a></dt>
@@ -4701,7 +4690,7 @@ Such a filter is useful, for example, when during pre-processing we have identif
 <dt class="sig sig-object py" id="atomworks.ml.transforms.filters.RemoveNucleicAcidTerminalOxygen">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.ml.transforms.filters.</span></span><span class="sig-name descname"><span class="pre">RemoveNucleicAcidTerminalOxygen</span></span><a class="reference internal" href="../_modules/atomworks/ml/transforms/filters.html#RemoveNucleicAcidTerminalOxygen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.transforms.filters.RemoveNucleicAcidTerminalOxygen" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#atomworks.ml.transforms.base.Transform" title="atomworks.ml.transforms.base.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
-<p>Remove terminal oxygen atoms (<cite>OP3</cite>) in nucleic acids from the atom array.</p>
+<p>Remove non-atomized OP3 from multi-residue nucleic-acid chains, preserving free nucleotides.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="atomworks.ml.transforms.filters.RemoveNucleicAcidTerminalOxygen.check_input">
 <span class="sig-name descname"><span class="pre">check_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/atomworks/ml/transforms/filters.html#RemoveNucleicAcidTerminalOxygen.check_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.transforms.filters.RemoveNucleicAcidTerminalOxygen.check_input" title="Link to this definition">#</a></dt>
@@ -4784,7 +4773,7 @@ Note that upstream, we must ensure that the chosen query PN units are not polyme
 <dt class="sig sig-object py" id="atomworks.ml.transforms.filters.RemoveTerminalOxygen">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">atomworks.ml.transforms.filters.</span></span><span class="sig-name descname"><span class="pre">RemoveTerminalOxygen</span></span><a class="reference internal" href="../_modules/atomworks/ml/transforms/filters.html#RemoveTerminalOxygen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.transforms.filters.RemoveTerminalOxygen" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#atomworks.ml.transforms.base.Transform" title="atomworks.ml.transforms.base.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
-<p>Remove terminal oxygen atoms (<cite>OXT</cite>) from the atom array.</p>
+<p>Remove non-atomized OXT from multi-residue protein chains, preserving free amino acids.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="atomworks.ml.transforms.filters.RemoveTerminalOxygen.check_input">
 <span class="sig-name descname"><span class="pre">check_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/atomworks/ml/transforms/filters.html#RemoveTerminalOxygen.check_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.transforms.filters.RemoveTerminalOxygen.check_input" title="Link to this definition">#</a></dt>
@@ -5004,6 +4993,12 @@ At training time, these unresolved PN units provide minimal value and can lead t
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="atomworks.ml.transforms.filters.polymer_terminal_oxygen_mask">
+<span class="sig-prename descclassname"><span class="pre">atomworks.ml.transforms.filters.</span></span><span class="sig-name descname"><span class="pre">polymer_terminal_oxygen_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/atomworks/ml/transforms/filters.html#polymer_terminal_oxygen_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.transforms.filters.polymer_terminal_oxygen_mask" title="Link to this definition">#</a></dt>
+<dd><p>Select non-atomized OXT/OP3 in protein/nucleic-acid chains containing multiple residues.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="atomworks.ml.transforms.filters.random_remove_pn_units_by_annotation_query">
 <span class="sig-prename descclassname"><span class="pre">atomworks.ml.transforms.filters.</span></span><span class="sig-name descname"><span class="pre">random_remove_pn_units_by_annotation_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_probability</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span></span></span><a class="reference internal" href="../_modules/atomworks/ml/transforms/filters.html#random_remove_pn_units_by_annotation_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.transforms.filters.random_remove_pn_units_by_annotation_query" title="Link to this definition">#</a></dt>
 <dd><p>Randomly remove pn_units from atom_array based on a query string with configurable probability.</p>
@@ -5029,7 +5024,7 @@ At training time, these unresolved PN units provide minimal value and can lead t
 <dl class="py function">
 <dt class="sig sig-object py" id="atomworks.ml.transforms.filters.remove_nucleic_acid_terminal_oxygen">
 <span class="sig-prename descclassname"><span class="pre">atomworks.ml.transforms.filters.</span></span><span class="sig-name descname"><span class="pre">remove_nucleic_acid_terminal_oxygen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></span><a class="reference internal" href="../_modules/atomworks/ml/transforms/filters.html#remove_nucleic_acid_terminal_oxygen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.transforms.filters.remove_nucleic_acid_terminal_oxygen" title="Link to this definition">#</a></dt>
-<dd><p>Remove terminal oxygen atoms (<cite>OP3</cite>) in nucleic acids from the atom array.</p>
+<dd><p>Remove non-atomized OP3 from multi-residue nucleic-acid chains, preserving free nucleotides.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -5040,8 +5035,7 @@ At training time, these unresolved PN units provide minimal value and can lead t
 <dl class="py function">
 <dt class="sig sig-object py" id="atomworks.ml.transforms.filters.remove_protein_terminal_oxygen">
 <span class="sig-prename descclassname"><span class="pre">atomworks.ml.transforms.filters.</span></span><span class="sig-name descname"><span class="pre">remove_protein_terminal_oxygen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom_array</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AtomArray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AtomArrayStack</span></span></span><a class="reference internal" href="../_modules/atomworks/ml/transforms/filters.html#remove_protein_terminal_oxygen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#atomworks.ml.transforms.filters.remove_protein_terminal_oxygen" title="Link to this definition">#</a></dt>
-<dd><p>Remove terminal oxygen atoms (<cite>OXT</cite>) from protein chains.</p>
-<p>Terminal oxygen atoms are only removed from protein residues that are not atomized.</p>
+<dd><p>Remove non-atomized OXT from multi-residue protein chains, preserving free amino acids.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -7969,6 +7963,7 @@ successful forward and backward pass through RF2AA.</p>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.transforms.filters.filter_to_specified_pn_units"><code class="docutils literal notranslate"><span class="pre">filter_to_specified_pn_units()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.transforms.filters.polymer_terminal_oxygen_mask"><code class="docutils literal notranslate"><span class="pre">polymer_terminal_oxygen_mask()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.transforms.filters.random_remove_pn_units_by_annotation_query"><code class="docutils literal notranslate"><span class="pre">random_remove_pn_units_by_annotation_query()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.transforms.filters.remove_hydrogens"><code class="docutils literal notranslate"><span class="pre">remove_hydrogens()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#atomworks.ml.transforms.filters.remove_nucleic_acid_terminal_oxygen"><code class="docutils literal notranslate"><span class="pre">remove_nucleic_acid_terminal_oxygen()</span></code></a></li>

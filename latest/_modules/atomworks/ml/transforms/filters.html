@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>atomworks.ml.transforms.filters &#8212; atomworks 3.0.1 documentation</title>
+    <title>atomworks.ml.transforms.filters &#8212; atomworks 3.0.2 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../../_static/documentation_options.js?v=08bfcbec"></script>
+    <script src="../../../../_static/documentation_options.js?v=3f474186"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -51,7 +51,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = "https://rosettacommons.github.io/atomworks/latest/_static/switcher.json";
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.2';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
         </script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="3.0.1" />
+  <meta name="docsearch:version" content="3.0.2" />
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -134,8 +134,8 @@
       
     
     
-    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.1 documentation - Home"/>
-    <img src="../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.1 documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.2 documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.2 documentation - Home"/>
   
   
 </a></div>
@@ -540,7 +540,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChainType</span><span class="p">,</span> <span class="n">ChainTypeInfo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.link_chemistry</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_chem_comp_leaving_atom_groups</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.query</span><span class="w"> </span><span class="kn">import</span> <span class="n">QueryExpression</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_annotation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_annotation</span><span class="p">,</span> <span class="n">get_residue_starts</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.sequence</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_1_from_3_letter_code</span><span class="p">,</span> <span class="n">get_3_from_1_letter_code</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.preprocessing.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">TRAINING_SUPPORTED_CHAIN_TYPES</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.ml.transforms._checks</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -1193,17 +1193,26 @@
 
 
 
+<div class="viewcode-block" id="polymer_terminal_oxygen_mask">
+<a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.polymer_terminal_oxygen_mask">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">polymer_terminal_oxygen_mask</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Select non-atomized OXT/OP3 in protein/nucleic-acid chains containing multiple residues."""</span>
+    <span class="n">chain</span> <span class="o">=</span> <span class="n">get_annotation</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="s2">"chain_iid"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_id</span><span class="p">)</span>
+    <span class="n">chains</span><span class="p">,</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">chain</span><span class="p">[</span><span class="n">get_residue_starts</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)],</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">multiple_residues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">chain</span><span class="p">,</span> <span class="n">chains</span><span class="p">[</span><span class="n">counts</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">is_atomized</span> <span class="o">=</span> <span class="n">get_annotation</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="s2">"atomize"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">))</span>
+    <span class="n">terminal</span> <span class="o">=</span> <span class="p">((</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">"OXT"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_type</span><span class="p">,</span> <span class="n">ChainTypeInfo</span><span class="o">.</span><span class="n">PROTEINS</span><span class="p">))</span> <span class="o">|</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">"OP3"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_type</span><span class="p">,</span> <span class="n">ChainTypeInfo</span><span class="o">.</span><span class="n">NUCLEIC_ACIDS</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">terminal</span> <span class="o">&amp;</span> <span class="n">multiple_residues</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">is_atomized</span></div>
+
+
+
 <div class="viewcode-block" id="remove_protein_terminal_oxygen">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.remove_protein_terminal_oxygen">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">remove_protein_terminal_oxygen</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Remove terminal oxygen atoms (`OXT`) from protein chains.</span>
-
-<span class="sd">    Terminal oxygen atoms are only removed from protein residues that are not atomized.</span>
-<span class="sd">    """</span>
-    <span class="n">is_atomized</span> <span class="o">=</span> <span class="n">get_annotation</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="s2">"atomize"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">))</span>
-    <span class="n">is_terminal</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">"OXT"</span>
-    <span class="n">is_protein</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_type</span><span class="p">,</span> <span class="n">ChainTypeInfo</span><span class="o">.</span><span class="n">PROTEINS</span><span class="p">)</span>
-    <span class="n">remove</span> <span class="o">=</span> <span class="n">is_terminal</span> <span class="o">&amp;</span> <span class="n">is_protein</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">is_atomized</span>
+<span class="w">    </span><span class="sd">"""Remove non-atomized OXT from multi-residue protein chains, preserving free amino acids."""</span>
+    <span class="n">remove</span> <span class="o">=</span> <span class="n">polymer_terminal_oxygen_mask</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">"OXT"</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">atom_array</span><span class="p">[</span><span class="o">~</span><span class="n">remove</span><span class="p">]</span>
@@ -1215,7 +1224,7 @@
 <div class="viewcode-block" id="RemoveTerminalOxygen">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveTerminalOxygen">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RemoveTerminalOxygen</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Remove terminal oxygen atoms (`OXT`) from the atom array."""</span>
+<span class="w">    </span><span class="sd">"""Remove non-atomized OXT from multi-residue protein chains, preserving free amino acids."""</span>
 
     <span class="c1"># TODO: Rename to RemoveProteinTerminalOxygen</span>
 
@@ -1237,15 +1246,8 @@
 <div class="viewcode-block" id="remove_nucleic_acid_terminal_oxygen">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.remove_nucleic_acid_terminal_oxygen">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">remove_nucleic_acid_terminal_oxygen</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Remove terminal oxygen atoms (`OP3`) in nucleic acids from the atom array."""</span>
-    <span class="c1"># Built mask non-atomized terminal oxygen atoms on nucleic acids</span>
-    <span class="n">is_atomized</span> <span class="o">=</span> <span class="n">get_annotation</span><span class="p">(</span>
-        <span class="n">atom_array</span><span class="p">,</span> <span class="s2">"atomize"</span><span class="p">,</span> <span class="n">n_body</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">array_length</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
-    <span class="p">)</span>
-    <span class="n">is_terminal</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">"OP3"</span>
-    <span class="n">is_nucleic_acid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">chain_type</span><span class="p">,</span> <span class="n">ChainTypeInfo</span><span class="o">.</span><span class="n">NUCLEIC_ACIDS</span><span class="p">)</span>
-
-    <span class="n">remove</span> <span class="o">=</span> <span class="n">is_terminal</span> <span class="o">&amp;</span> <span class="n">is_nucleic_acid</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">is_atomized</span>
+<span class="w">    </span><span class="sd">"""Remove non-atomized OP3 from multi-residue nucleic-acid chains, preserving free nucleotides."""</span>
+    <span class="n">remove</span> <span class="o">=</span> <span class="n">polymer_terminal_oxygen_mask</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">"OP3"</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">AtomArray</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">atom_array</span><span class="p">[</span><span class="o">~</span><span class="n">remove</span><span class="p">]</span>
@@ -1257,9 +1259,7 @@
 <div class="viewcode-block" id="RemoveNucleicAcidTerminalOxygen">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveNucleicAcidTerminalOxygen">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RemoveNucleicAcidTerminalOxygen</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Remove terminal oxygen atoms (`OP3`) in nucleic acids from the atom array.</span>
-<span class="sd">    """</span>
+<span class="w">    </span><span class="sd">"""Remove non-atomized OP3 from multi-residue nucleic-acid chains, preserving free nucleotides."""</span>
 
 <div class="viewcode-block" id="RemoveNucleicAcidTerminalOxygen.check_input">
 <a class="viewcode-back" href="../../../../ml/transforms.html#atomworks.ml.transforms.filters.RemoveNucleicAcidTerminalOxygen.check_input">[docs]</a>

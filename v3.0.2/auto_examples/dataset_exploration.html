@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Dataset Exploration and Management in AtomWorks &#8212; atomworks 3.0.2 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxcontrib_typer.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../_static/documentation_options.js?v=3f474186"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/dataset_exploration';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = "https://rosettacommons.github.io/atomworks/latest/_static/switcher.json";
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.2';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Annotating and Saving Protein Structures" href="annotate_and_save_structures.html" />
+    <link rel="prev" title="Loading and Visualizing Protein Structures" href="load_and_visualize_structures.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="3.0.2" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.2 documentation - Home"/>
+    <img src="../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.2 documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../cookbook.html">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../huggingface.html">
+    Hugging Face dataset repositories
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/RosettaCommons/atomworks" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../cookbook.html">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../huggingface.html">
+    Hugging Face dataset repositories
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/RosettaCommons/atomworks" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="plot_protonation.html">Parse, protonate and round-trip a molecule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basics.html">Structure Manipulation Basics</a></li>
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="load_and_visualize_structures.html">Loading and Visualizing Protein Structures</a></li>
+
+<li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Dataset Exploration and Management in AtomWorks</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="annotate_and_save_structures.html">Annotating and Saving Protein Structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pocket_conditioning_transform.html">Creating Custom Transforms: Ligand Pocket Conditioning</a></li>
+
+
+
+
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Examples</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Dataset Exploration and Management in AtomWorks</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-dataset-exploration-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="dataset-exploration-and-management-in-atomworks">
+<span id="sphx-glr-auto-examples-dataset-exploration-py"></span><h1>Dataset Exploration and Management in AtomWorks<a class="headerlink" href="#dataset-exploration-and-management-in-atomworks" title="Link to this heading">#</a></h1>
+<p>This example demonstrates how to work with datasets in AtomWorks, from simple file-based datasets to complex tabular datasets with custom loaders and transform pipelines.</p>
+<p><strong>Prerequisites</strong>: Familiarity with <a class="reference internal" href="load_and_visualize_structures.html"><span class="doc">Loading and Visualizing Protein Structures</span></a> for basic structure loading and <a class="reference internal" href="pocket_conditioning_transform.html"><span class="doc">Creating Custom Transforms: Ligand Pocket Conditioning</span></a> for understanding transform pipelines.</p>
+<figure class="align-default" id="id1">
+<a class="reference internal image-reference" href="../_images/dataset_exploration_01.png"><img alt="Cropped structure visualization" src="../_images/dataset_exploration_01.png" style="width: 400px;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Visualization of a cropped structure after applying transform pipelines to a dataset.</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="overview">
+<h1>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h1>
+<p><cite>Transform</cite> pipelines can be used with any data loader and any dataset. They are simply functions that take as input an <cite>AtomArray</cite> (which is often the output of <cite>AtomWorks.io</cite>) and output <cite>PyTorch</cite> tensors ready for ingestion by a model.</p>
+<p>However, most users will not want to build datasets from scratch. For convenience, we provide pre-built datasets and dataloaders that play well with <cite>Transform</cite> pipelines as well, roughly adhering to <a class="reference external" href="https://docs.pytorch.org/vision/stable/datasets.html">Torchvision</a> conventions.</p>
+<p>We demonstrate below a couple of different ways to connect a <cite>Transform</cite> pipeline with arbitrary datasets and connect them with trivial <cite>Transform</cite> pipelines.</p>
+</section>
+<section id="datasets-in-atomworks">
+<h1>Datasets in AtomWorks<a class="headerlink" href="#datasets-in-atomworks" title="Link to this heading">#</a></h1>
+<section id="using-a-folder-of-cif-pdb-files-as-a-dataset">
+<h2>Using a Folder of CIF/PDB Files as a Dataset<a class="headerlink" href="#using-a-folder-of-cif-pdb-files-as-a-dataset" title="Link to this heading">#</a></h2>
+<p>The simplest way to use AtomWorks with a Dataset is to create a <cite>Dataset</cite> and <cite>Sampler</cite> pointed to a directory of structural files (e.g., PDB, CIF).</p>
+<p><strong>NOTE</strong>: All AtomWorks Datasets require a <cite>name</cite> attribute to support many of the logging/debugging features that are supplied out-of-the-box.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks</span><span class="nn">.</span><span class="nn">ml</span><span class="nn">.</span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileDataset</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># To setup the test pack, if not already, run `atomworks setup tests`</span><span class="w">
+</span><span class="n">dataset</span> <span class="o">=</span> <a class="sphx-glr-backref-module-atomworks-ml-datasets-FileDataset sphx-glr-backref-type-py-method reference internal" href="../ml/datasets/datasets.html#atomworks.ml.datasets.FileDataset.from_directory" title="atomworks.ml.datasets.FileDataset.from_directory"><span class="n">FileDataset</span><span class="o">.</span><span class="n">from_directory</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">../../tests/data/ml/af2_distillation/cif</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">example_directory_dataset</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<p>Let’s explore the dataset a tiny bit.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="c1"># Count the number of examples in the dataset</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Dataset has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="si">}</span><span class="s2"> examples.</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Print the raw data of the first 5 examples</span><span class="w">
+</span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">example</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="p">:</span><span class="w">
+</span>    <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span><span class="o">=</span> <span class="mi">5</span><span class="p">:</span><span class="w">
+</span>        <span class="k">break</span><span class="w">
+</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Example </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">example</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+</section>
+<section id="understanding-dataset-requirements">
+<h2>Understanding Dataset Requirements<a class="headerlink" href="#understanding-dataset-requirements" title="Link to this heading">#</a></h2>
+<p>At a high level, to train models with AtomWorks, we typically need a Dataset that:</p>
+<ol class="arabic simple">
+<li><p>Takes as input an item index and returns the corresponding example information; typically includes:
+a. Path to a structural file saved on disk (<cite>/path/to/dataset/my_dataset_0.cif</cite>)
+b. Additional item-specific metadata (e.g., class labels)</p></li>
+<li><p>Pre-loads structural information from the returned example into an <cite>AtomArray</cite> and assembles inputs for the Transform pipeline</p></li>
+<li><p>Feed the input dictionary through a Transform pipeline and returns the result</p></li>
+</ol>
+<p>So far, the <cite>FileDataset</cite> we initialized only accomplishes (1) from above - returning the raw data.</p>
+<p>To accomplish (2), we can additionally pass a loading function at dataset initialization that takes the raw example data as input and returns a pre-processed ready for a Transform pipeline.</p>
+<p>In most cases, this will involve using <cite>parse</cite> or <cite>load_any</cite> from <cite>AtomWorks.io</cite> to build an <cite>AtomArray</cite>, which is the common language of our <cite>Transform</cite> library.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="w">
+</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks</span><span class="nn">.</span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse</span><span class="w">
+</span><span class="w">
+</span><span class="w">
+</span><span class="k">def</span><span class="w"> </span><span class="nf">simple_loading_fn</span><span class="p">(</span><span class="n">raw_data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-</span><span class="o">&gt;</span> <span class="nb">dict</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple loading function that parses structural data and returns an AtomArray.&quot;&quot;&quot;</span><span class="w">
+</span>    <span class="n">parse_output</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">raw_data</span><span class="p">)</span><span class="w">
+</span>    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;</span><span class="s2">atom_array</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">parse_output</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">assemblies</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">1</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">}</span><span class="w">
+</span><span class="w">
+</span><span class="w">
+</span><span class="n">dataset_with_loading_fn</span> <span class="o">=</span> <a class="sphx-glr-backref-module-atomworks-ml-datasets-FileDataset sphx-glr-backref-type-py-method reference internal" href="../ml/datasets/datasets.html#atomworks.ml.datasets.FileDataset.from_directory" title="atomworks.ml.datasets.FileDataset.from_directory"><span class="n">FileDataset</span><span class="o">.</span><span class="n">from_directory</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">../../tests/data/pdb</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">example_pdb_dataset</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">loader</span><span class="o">=</span><span class="n">simple_loading_fn</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="n">output</span> <span class="o">=</span> <span class="n">dataset_with_loading_fn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Output AtomArray has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="s1">'</span><span class="s1">atom_array</span><span class="s1">'</span><span class="p">]</span><span class="p">)</span><span class="si">}</span><span class="s2"> atoms!</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+</section>
+<section id="adding-transform-pipelines">
+<h2>Adding Transform Pipelines<a class="headerlink" href="#adding-transform-pipelines" title="Link to this heading">#</a></h2>
+<p>Next up is adding in a pipeline. Let’s create a simple one with a dramatic crop.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks</span><span class="nn">.</span><span class="nn">constants</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-atomworks-constants sphx-glr-backref-type-py-data reference internal" href="../core/constants.html#atomworks.constants.STANDARD_AA" title="atomworks.constants.STANDARD_AA"><span class="n">STANDARD_AA</span></a><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks</span><span class="nn">.</span><span class="nn">ml</span><span class="nn">.</span><span class="nn">transforms</span><span class="nn">.</span><span class="nn">atom_array</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-atomworks-ml-transforms-atom_array sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../ml/transforms.html#atomworks.ml.transforms.atom_array.AddGlobalAtomIdAnnotation" title="atomworks.ml.transforms.atom_array.AddGlobalAtomIdAnnotation"><span class="n">AddGlobalAtomIdAnnotation</span></a><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks</span><span class="nn">.</span><span class="nn">ml</span><span class="nn">.</span><span class="nn">transforms</span><span class="nn">.</span><span class="nn">atomize</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-atomworks-ml-transforms-atomize sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../ml/transforms.html#atomworks.ml.transforms.atomize.AtomizeByCCDName" title="atomworks.ml.transforms.atomize.AtomizeByCCDName"><span class="n">AtomizeByCCDName</span></a><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks</span><span class="nn">.</span><span class="nn">ml</span><span class="nn">.</span><span class="nn">transforms</span><span class="nn">.</span><span class="nn">base</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-atomworks-ml-transforms-base sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../ml/transforms.html#atomworks.ml.transforms.base.Compose" title="atomworks.ml.transforms.base.Compose"><span class="n">Compose</span></a><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks</span><span class="nn">.</span><span class="nn">ml</span><span class="nn">.</span><span class="nn">transforms</span><span class="nn">.</span><span class="nn">crop</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-atomworks-ml-transforms-crop sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../ml/transforms.html#atomworks.ml.transforms.crop.CropSpatialLikeAF3" title="atomworks.ml.transforms.crop.CropSpatialLikeAF3"><span class="n">CropSpatialLikeAF3</span></a><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">pipe</span> <span class="o">=</span> <a class="sphx-glr-backref-module-atomworks-ml-transforms-base sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../ml/transforms.html#atomworks.ml.transforms.base.Compose" title="atomworks.ml.transforms.base.Compose"><span class="n">Compose</span></a><span class="p">(</span><span class="w">
+</span>    <span class="p">[</span><span class="w">
+</span>        <span class="c1"># (We need to add these transforms before we can crop)</span><span class="w">
+</span>        <a class="sphx-glr-backref-module-atomworks-ml-transforms-atom_array sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../ml/transforms.html#atomworks.ml.transforms.atom_array.AddGlobalAtomIdAnnotation" title="atomworks.ml.transforms.atom_array.AddGlobalAtomIdAnnotation"><span class="n">AddGlobalAtomIdAnnotation</span></a><span class="p">(</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span>        <a class="sphx-glr-backref-module-atomworks-ml-transforms-atomize sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../ml/transforms.html#atomworks.ml.transforms.atomize.AtomizeByCCDName" title="atomworks.ml.transforms.atomize.AtomizeByCCDName"><span class="n">AtomizeByCCDName</span></a><span class="p">(</span><span class="n">atomize_by_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">res_names_to_ignore</span><span class="o">=</span><a class="sphx-glr-backref-module-atomworks-constants sphx-glr-backref-type-py-data reference internal" href="../core/constants.html#atomworks.constants.STANDARD_AA" title="atomworks.constants.STANDARD_AA"><span class="n">STANDARD_AA</span></a><span class="p">)</span><span class="p">,</span><span class="w">
+</span>        <span class="c1"># Crop to 20 tokens (which in this case is number amino acids/nucleic acid bases + number of small molecule atoms)</span><span class="w">
+</span>        <a class="sphx-glr-backref-module-atomworks-ml-transforms-crop sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../ml/transforms.html#atomworks.ml.transforms.crop.CropSpatialLikeAF3" title="atomworks.ml.transforms.crop.CropSpatialLikeAF3"><span class="n">CropSpatialLikeAF3</span></a><span class="p">(</span><span class="n">crop_size</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="p">]</span><span class="p">,</span><span class="w">
+</span>    <span class="n">track_rng_state</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<p>Just like with the loading function, we can also pass a composed <cite>Transform</cite> pipeline to our datasets.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">dataset_with_loading_fn_and_transforms</span> <span class="o">=</span> <a class="sphx-glr-backref-module-atomworks-ml-datasets-FileDataset sphx-glr-backref-type-py-method reference internal" href="../ml/datasets/datasets.html#atomworks.ml.datasets.FileDataset.from_directory" title="atomworks.ml.datasets.FileDataset.from_directory"><span class="n">FileDataset</span><span class="o">.</span><span class="n">from_directory</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">../../tests/data/pdb</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">example_pdb_dataset</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">loader</span><span class="o">=</span><span class="n">simple_loading_fn</span><span class="p">,</span><span class="w">
+</span>    <span class="n">transform</span><span class="o">=</span><span class="n">pipe</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+</section>
+<section id="visualizing-the-results">
+<h2>Visualizing the Results<a class="headerlink" href="#visualizing-the-results" title="Link to this heading">#</a></h2>
+<p>Let’s visualize the result of our transform pipeline:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks</span><span class="nn">.</span><span class="nn">io</span><span class="nn">.</span><span class="nn">utils</span><span class="nn">.</span><span class="nn">visualize</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-atomworks-io-utils-visualize sphx-glr-backref-type-py-function reference internal" href="../io/utils/visualize.html#atomworks.io.utils.visualize.view" title="atomworks.io.utils.visualize.view"><span class="n">view</span></a><span class="w">
+</span><span class="w">
+</span><span class="n">pipeline_output</span> <span class="o">=</span> <span class="n">dataset_with_loading_fn_and_transforms</span><span class="p">[</span><span class="w">
+</span>    <span class="mi">0</span><span class="w">
+</span><span class="p">]</span>  <span class="c1"># This will trigger the loading function and print the row information</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-atomworks-io-utils-visualize sphx-glr-backref-type-py-function reference internal" href="../io/utils/visualize.html#atomworks.io.utils.visualize.view" title="atomworks.io.utils.visualize.view"><span class="n">view</span></a><span class="p">(</span><span class="n">pipeline_output</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">atom_array</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<figure class="align-default">
+<img alt="Cropped structure visualization" src="../_images/dataset_exploration_01.png" />
+</figure>
+<p>And indeed, we have a cropped example!</p>
+<p>We will then sample uniformly (with or without replacement) from this dataset during training. Such a simple application may be appropriate for many fine-tuning cases such as distillation.</p>
+<p>The only “gotcha” outside of normal PyTorch sampling is that you’ll need to implement a default collate function (which could simply be the identity) so long as your output dictionary contains an <cite>AtomArray</cite>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="nn">.</span><span class="nn">utils</span><span class="nn">.</span><span class="nn">data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">RandomSampler</span><span class="w">
+</span><span class="w">
+</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">RandomSampler</span><span class="p">(</span><span class="n">dataset_with_loading_fn_and_transforms</span><span class="p">)</span><span class="w">
+</span><span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="w">
+</span>    <span class="n">dataset</span><span class="o">=</span><span class="n">dataset_with_loading_fn_and_transforms</span><span class="p">,</span><span class="w">
+</span>    <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span><span class="w">
+</span>    <span class="n">collate_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>  <span class="c1"># Identity collate: returns the batch as-is</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">example</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span><span class="p">:</span><span class="w">
+</span>    <span class="c1"># (Since we now have a batch dimension, we need the extra indexing dimension)</span><span class="w">
+</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Example: </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">, Length of AtomArray: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">example</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">[</span><span class="s1">'</span><span class="s1">atom_array</span><span class="s1">'</span><span class="p">]</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span>    <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span><span class="w">
+</span>        <span class="k">break</span><span class="w">
+</span></pre></div></div>
+<p>For more complicated sampling strategies, including distributed sampling for multi-GPU training, see the API documentation for <cite>samplers.py</cite>, and the tests in <cite>test_samplers.py</cite></p>
+</section>
+</section>
+<section id="tabular-datasets">
+<h1>Tabular Datasets<a class="headerlink" href="#tabular-datasets" title="Link to this heading">#</a></h1>
+<p>So far, we have seen how to make and use simple datasets with just paths. In many applications, however, we may want more nuanced dataset schemes. For example, when training on the PDB, we typically want to sample at the chain or interface-level rather than the entry-level (since we are cropping, the two are distinct). We may also want to provide additional information other than the raw CIF file (e.g., class labels) to be used by the model during training.</p>
+<p>We thus support instantiating datasets from tabular sources stored on disk.</p>
+<p>We have implemented a <cite>PandasDataset</cite> class for this purpose; however, any tabular format (e.g., <cite>PolarsDataset</cite>) could be similarly implemented without difficulty should the need arise (PR’s welcome!)</p>
+<section id="pandasdataset">
+<h2>PandasDataset<a class="headerlink" href="#pandasdataset" title="Link to this heading">#</a></h2>
+<p>The <cite>PandasDataset</cite> class requires a couple of arguments:
+- <cite>data</cite>: Either a pandas DataFrame or path to a CSV/Parquet file containing the tabular data. Each row represents one example.
+- <cite>name</cite>: Descriptive name for this dataset, just as in <cite>FileDataset</cite> and all AtomWorks <cite>Dataset</cite> classes. Used for debugging and some downstream functions when using nested datasets.</p>
+<p>Again, we can also pass a <cite>transform</cite> pipeline and <cite>loader</cite>:
+- <cite>transform</cite>: Transform pipeline to apply to loaded data.
+- <cite>loader</cite>: Optional function to process raw DataFrame rows into Transform-ready format.</p>
+<p>There’s also a few other <cite>PandasDataset</cite>-specific arguments to note:
+- <cite>filters</cite>: Optional list of pandas query strings to filter the data. Applied in order during initialization.
+- <cite>columns_to_load</cite>: Optional list of column names to load when reading from a file. If None, all columns are loaded. Can dramatically reduce memory usage and load time if loading from a columnar format like Parquet.</p>
+<p>We will start by exploring an example metadata dataframe, then load it into a <cite>PandasDataset</cite>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks</span><span class="nn">.</span><span class="nn">ml</span><span class="nn">.</span><span class="nn">utils</span><span class="nn">.</span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-atomworks-ml-utils-io sphx-glr-backref-type-py-function reference internal" href="../ml/utils.html#atomworks.ml.utils.io.read_parquet_with_metadata" title="atomworks.ml.utils.io.read_parquet_with_metadata"><span class="n">read_parquet_with_metadata</span></a><span class="w">
+</span><span class="w">
+</span><span class="n">interfaces_metadata_parquet_path</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s2">../../tests/data/ml/pdb_interfaces/metadata.parquet</span><span class="s2">&quot;</span><span class="w">
+</span><span class="n">interfaces_df</span> <span class="o">=</span> <a class="sphx-glr-backref-module-atomworks-ml-utils-io sphx-glr-backref-type-py-function reference internal" href="../ml/utils.html#atomworks.ml.utils.io.read_parquet_with_metadata" title="atomworks.ml.utils.io.read_parquet_with_metadata"><span class="n">read_parquet_with_metadata</span></a><span class="p">(</span><span class="n">interfaces_metadata_parquet_path</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">DataFrame shape:</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">interfaces_df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">Columns:</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">interfaces_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">First few rows:</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="n">interfaces_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+</section>
+<section id="understanding-the-metadata">
+<h2>Understanding the Metadata<a class="headerlink" href="#understanding-the-metadata" title="Link to this heading">#</a></h2>
+<p>This dataframe includes a row for every interface between two <cite>pn_units</cite> (essentially, chains) in the Protein Data Bank. For illustration purposes, however, we’re loading the test dataframe, which only includes information for a small subset of the full PDB.</p>
+<p>The complete dataframes can be downloaded with <cite>atomworks setup metadata</cite> and will be described in greater detail elsewhere in the documentation.</p>
+<p>For our purposes, note that we have a <cite>path</cite> column that points to a <cite>.cif</cite> file stored on disk, an <cite>example_id</cite> column which is unique across every row in the dataset, and two columns <cite>pn_unit_1_iid</cite> and <cite>pn_unit_2_iid</cite> that specify the interface of interest for this particular row.</p>
+<p><strong>NOTE</strong>: Because a given PDB ID may contain many interfaces and thus may appear multiple times in our dataset, we must also incorporate the <cite>assembly_id</cite> and the <cite>pn_unit_iids</cite> of the two interacting chains within the <cite>example_id</cite>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks</span><span class="nn">.</span><span class="nn">ml</span><span class="nn">.</span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-atomworks-ml-datasets sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../ml/datasets/datasets.html#atomworks.ml.datasets.PandasDataset" title="atomworks.ml.datasets.PandasDataset"><span class="n">PandasDataset</span></a><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks</span><span class="nn">.</span><span class="nn">ml</span><span class="nn">.</span><span class="nn">datasets</span><span class="nn">.</span><span class="nn">loaders</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-atomworks-ml-datasets-loaders sphx-glr-backref-type-py-function reference internal" href="../ml/datasets/datasets.html#atomworks.ml.datasets.loaders.create_structure_loader" title="atomworks.ml.datasets.loaders.create_structure_loader"><span class="n">create_structure_loader</span></a><span class="w">
+</span><span class="w">
+</span><span class="n">dataset</span> <span class="o">=</span> <a class="sphx-glr-backref-module-atomworks-ml-datasets sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../ml/datasets/datasets.html#atomworks.ml.datasets.PandasDataset" title="atomworks.ml.datasets.PandasDataset"><span class="n">PandasDataset</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">data</span><span class="o">=</span><span class="n">interfaces_df</span><span class="p">,</span><span class="w">
+</span>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">interfaces_dataset</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">loader</span><span class="o">=</span><a class="sphx-glr-backref-module-atomworks-ml-datasets-loaders sphx-glr-backref-type-py-function reference internal" href="../ml/datasets/datasets.html#atomworks.ml.datasets.loaders.create_structure_loader" title="atomworks.ml.datasets.loaders.create_structure_loader"><span class="n">create_structure_loader</span></a><span class="p">(</span><span class="n">column_mapping</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;</span><span class="s2">query_pn_unit_iids</span><span class="s2">&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;</span><span class="s2">pn_unit_1_iid</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">pn_unit_2_iid</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">}</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="n">transform</span><span class="o">=</span><span class="n">pipe</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Created PandasDataset with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="si">}</span><span class="s2"> examples</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+</section>
+<section id="related-examples">
+<h2>Related Examples<a class="headerlink" href="#related-examples" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="load_and_visualize_structures.html"><span class="doc">Loading and Visualizing Protein Structures</span></a> - Learn how to load and explore protein structures</p></li>
+<li><p><a class="reference internal" href="pocket_conditioning_transform.html"><span class="doc">Creating Custom Transforms: Ligand Pocket Conditioning</span></a> - Create custom transforms for ligand pocket identification and ML feature generation</p></li>
+<li><p><a class="reference internal" href="annotate_and_save_structures.html"><span class="doc">Annotating and Saving Protein Structures</span></a> - Learn how to add custom annotations to structures and save them for later use</p></li>
+</ul>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-dataset-exploration-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/084e12ab192f940e9ab5c5c9309ad2f7/dataset_exploration.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">dataset_exploration.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/f76cfcd2a87db4c7b5dd60a2c623af47/dataset_exploration.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">dataset_exploration.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/726c70fc8f109a5cd0889e24144c2fa4/dataset_exploration.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">dataset_exploration.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="load_and_visualize_structures.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Loading and Visualizing Protein Structures</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="annotate_and_save_structures.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Annotating and Saving Protein Structures</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Dataset Exploration and Management in AtomWorks</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#datasets-in-atomworks">Datasets in AtomWorks</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-a-folder-of-cif-pdb-files-as-a-dataset">Using a Folder of CIF/PDB Files as a Dataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-dataset-requirements">Understanding Dataset Requirements</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-transform-pipelines">Adding Transform Pipelines</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-the-results">Visualizing the Results</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#tabular-datasets">Tabular Datasets</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pandasdataset">PandasDataset</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-the-metadata">Understanding the Metadata</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#related-examples">Related Examples</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/auto_examples/dataset_exploration.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
