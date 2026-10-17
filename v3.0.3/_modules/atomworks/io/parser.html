@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>atomworks.io.parser &#8212; atomworks 3.0.3 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinxcontrib_typer.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../../../_static/documentation_options.js?v=9b3fc59f"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/atomworks/io/parser';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = "https://rosettacommons.github.io/atomworks/latest/_static/switcher.json";
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.3';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="3.0.3" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.3 documentation - Home"/>
+    <img src="../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.3 documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../cookbook.html">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../huggingface.html">
+    Hugging Face dataset repositories
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/RosettaCommons/atomworks" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../cookbook.html">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../huggingface.html">
+    Hugging Face dataset repositories
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/RosettaCommons/atomworks" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">atomworks.io.parser</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for atomworks.io.parser</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Entrypoint for parsing and preparing atomic-level structures with AtomWorks.</span>
+
+<span class="sd">We provide three public functions to cover the main use cases:</span>
+
+<span class="sd">* :py:func:`parse` — load a file and return a full result dictionary</span>
+<span class="sd">  (``chain_info``, ``assemblies``, ``metadata``, etc.).</span>
+<span class="sd">* :py:func:`parse_atom_array` — process an existing AtomArray and return a</span>
+<span class="sd">  result dictionary matching :py:func:`parse` output.</span>
+<span class="sd">* :py:func:`prepare_atom_array` — process an existing AtomArray with AtomWorks' common</span>
+<span class="sd">  annotations and return the processed atoms directly, without the surrounding metadata.</span>
+
+<span class="sd">To control the options for parsing and preparing, either:</span>
+<span class="sd">(a) Use the ``config`` argument to pass a configuration object (e.g. :py:class:`~atomworks.io.config.ParseConfig`) or preset name (e.g. ``"rcsb"``).</span>
+<span class="sd">(b) (Legacy) Pass bare keyword arguments to :py:func:`parse` (e.g. ``add_missing_atoms=True``)</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">biotite</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">biotite.structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">AtomArrayStack</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">atomworks</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io._loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_cif</span><span class="p">,</span> <span class="n">load_pdb</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io._pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">_assemble_parse_result</span><span class="p">,</span> <span class="n">_maybe_promote_to_plus</span><span class="p">,</span> <span class="n">_prepare_atom_array_or_stack</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParseConfig</span><span class="p">,</span> <span class="n">PrepareConfig</span><span class="p">,</span> <span class="n">_resolve_config</span><span class="p">,</span> <span class="n">get_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.atom_array_plus</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArrayPlus</span><span class="p">,</span> <span class="n">AtomArrayPlusStack</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.catcif</span><span class="w"> </span><span class="kn">import</span> <span class="n">resolve_catcif_source</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.ccd</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">build_ccd_entries_from_cif_block</span><span class="p">,</span>
+    <span class="n">custom_ccd_residues</span><span class="p">,</span>
+    <span class="n">get_custom_ccd_entries</span><span class="p">,</span>
+    <span class="n">snapshot_custom_ccd_registry</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.extra_fields</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExtraFieldsType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.io_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">infer_pdb_file_type</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.standard_annotations.serialization</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_deserialize_standard_annotations</span><span class="p">,</span>
+    <span class="n">_handle_legacy_standard_annotations</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"atomworks.io"</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"ParseConfig"</span><span class="p">,</span> <span class="s2">"get_config"</span><span class="p">,</span> <span class="s2">"parse"</span><span class="p">,</span> <span class="s2">"parse_atom_array"</span><span class="p">,</span> <span class="s2">"prepare_atom_array"</span><span class="p">]</span>
+
+<span class="n">STANDARD_PARSER_ARGS</span> <span class="o">=</span> <span class="n">get_config</span><span class="p">(</span><span class="s2">"rcsb"</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="n">STANDARD_PARSER_ARGS</span><span class="p">[</span><span class="s2">"model"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="sd">"""Common parser arguments for many biomolecular use cases (deprecated, use ``get_config("rcsb")``). Will be removed in a future version."""</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_restore_legacy_annotations_in_result</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Restore legacy condition targets in each model's final assembly frame."""</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">"asym_unit"</span><span class="p">]</span> <span class="o">=</span> <span class="n">_maybe_promote_to_plus</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"asym_unit"</span><span class="p">])</span>
+    <span class="n">_handle_legacy_standard_annotations</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"asym_unit"</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">assembly_id</span><span class="p">,</span> <span class="n">assembly</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">"assemblies"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">assembly</span> <span class="o">=</span> <span class="n">_maybe_promote_to_plus</span><span class="p">(</span><span class="n">assembly</span><span class="p">)</span>
+        <span class="n">_handle_legacy_standard_annotations</span><span class="p">(</span><span class="n">assembly</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">"assemblies"</span><span class="p">][</span><span class="n">assembly_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">assembly</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_cache_file_path</span><span class="p">(</span>
+    <span class="n">cache_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">source</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">ParseConfig</span><span class="p">,</span>
+    <span class="n">cache_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Key complete parse results by source, parsing options, and package versions.</span>
+
+<span class="sd">    ``cache_key`` supplies an immutable source identity without reading or invoking</span>
+<span class="sd">    ``source``; it must change when the source contents change. Otherwise, use the</span>
+<span class="sd">    resolved file path or hash the buffer contents, type, and position.</span>
+<span class="sd">    """</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"cache_dir"</span><span class="p">,</span> <span class="s2">"load_from_cache"</span><span class="p">,</span> <span class="s2">"save_to_cache"</span><span class="p">):</span>
+        <span class="n">options</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">identity</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"atomworks"</span><span class="p">:</span> <span class="n">atomworks</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span>
+        <span class="s2">"biotite"</span><span class="p">:</span> <span class="n">biotite</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span>
+        <span class="s2">"options"</span><span class="p">:</span> <span class="n">options</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">cache_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">identity</span><span class="p">[</span><span class="s2">"cache_key"</span><span class="p">]</span> <span class="o">=</span> <span class="n">cache_key</span>
+        <span class="c1"># The explicit identity replaces content hashing; updating the digest with empty bytes is a no-op.</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">""</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">):</span>
+        <span class="n">identity</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">buffer_type</span><span class="o">=</span><span class="nb">type</span><span class="p">(</span><span class="n">source</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="n">source</span><span class="o">.</span><span class="n">tell</span><span class="p">())</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">content</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">identity</span><span class="p">[</span><span class="s2">"path"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">source</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">""</span>
+    <span class="n">digest</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">identity</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+    <span class="n">digest</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">digest</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">cache_dir</span> <span class="o">/</span> <span class="s2">"parse-v2"</span> <span class="o">/</span> <span class="n">key</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="n">key</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">.pkl.zst"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_cache_dirs_world_writable</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Create ``path`` and any missing parents, each world-writable (``0o777``)."""</span>
+    <span class="n">newly_created</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cursor</span> <span class="o">=</span> <span class="n">path</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">cursor</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">newly_created</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">parent</span>
+    <span class="n">path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">directory</span> <span class="ow">in</span> <span class="n">newly_created</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="ne">PermissionError</span><span class="p">,</span> <span class="ne">FileNotFoundError</span><span class="p">):</span>
+            <span class="n">directory</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="mo">0o777</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_atomic_write_pickle</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Write a zstd-3 pickle atomically so concurrent readers never see a partial file."""</span>
+    <span class="n">_make_cache_dirs_world_writable</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+    <span class="c1"># Keep the codec suffix; same-directory replacement is atomic.</span>
+    <span class="n">fd</span><span class="p">,</span> <span class="n">tmp_name</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkstemp</span><span class="p">(</span><span class="nb">dir</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">parent</span><span class="p">),</span> <span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.tmp."</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">path</span><span class="o">.</span><span class="n">suffix</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">to_pickle</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">tmp_name</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="p">{</span><span class="s2">"method"</span><span class="p">:</span> <span class="s2">"zstd"</span><span class="p">,</span> <span class="s2">"level"</span><span class="p">:</span> <span class="mi">3</span><span class="p">})</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">tmp_name</span><span class="p">,</span> <span class="mo">0o666</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tmp_name</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="ne">OSError</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">tmp_name</span><span class="p">)</span>  <span class="c1"># don't leave a partial temp behind on failure</span>
+        <span class="k">raise</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_attach_live_ccd_registry</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Snapshot the currently-scoped custom CCD registry and attach it to each result's ``asym_unit``."""</span>
+    <span class="n">ccd_registry</span> <span class="o">=</span> <span class="n">snapshot_custom_ccd_registry</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ccd_registry</span><span class="p">:</span>
+        <span class="c1"># No custom CCD entries currently registered</span>
+        <span class="k">return</span>
+
+    <span class="c1"># Attach to all AtomArrayPlus-type objects</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">"asym_unit"</span><span class="p">],</span> <span class="n">AtomArrayPlus</span> <span class="o">|</span> <span class="n">AtomArrayPlusStack</span><span class="p">):</span>
+            <span class="n">r</span><span class="p">[</span><span class="s2">"asym_unit"</span><span class="p">]</span><span class="o">.</span><span class="n">_custom_ccd_registry</span> <span class="o">=</span> <span class="n">ccd_registry</span>
+        <span class="k">for</span> <span class="n">assembly</span> <span class="ow">in</span> <span class="n">r</span><span class="p">[</span><span class="s2">"assemblies"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">assembly</span><span class="p">,</span> <span class="n">AtomArrayPlus</span> <span class="o">|</span> <span class="n">AtomArrayPlusStack</span><span class="p">):</span>
+                <span class="n">assembly</span><span class="o">.</span><span class="n">_custom_ccd_registry</span> <span class="o">=</span> <span class="n">ccd_registry</span>
+
+
+<div class="viewcode-block" id="parse">
+<a class="viewcode-back" href="../../../io/parser.html#atomworks.io.parser.parse">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span>
+    <span class="n">source</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ParseConfig</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">filename</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">cache_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Parse structural files into an AtomArrayStack with standardized annotations and metadata.</span>
+
+<span class="sd">    Processing behaviour is controlled by :py:class:`~atomworks.io.config.ParseConfig`.</span>
+<span class="sd">    Legacy bare keyword arguments (e.g. ``add_missing_atoms=True``) are still accepted</span>
+<span class="sd">    but will emit a :py:class:`DeprecationWarning`; prefer passing a ``config`` object.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        source: Path or buffer to the structure file. May be any format of</span>
+<span class="sd">            atomic-level structure (e.g. .cif, .bcif, .pdb), optionally compressed</span>
+<span class="sd">            with gzip (.gz/.gzip) or Zstandard (.zst),</span>
+<span class="sd">            although .cif files are strongly recommended. A callable returning a fresh buffer</span>
+<span class="sd">            is evaluated only on cache misses and requires ``cache_key`` and ``config.file_type``.</span>
+<span class="sd">        config: Processing configuration. Pass a preset name (``"default"``,</span>
+<span class="sd">            ``"rcsb"``, ``"lightweight"``, ``"minimal"``), a</span>
+<span class="sd">            :py:class:`~atomworks.io.config.ParseConfig` instance, or ``None``</span>
+<span class="sd">            for defaults.</span>
+<span class="sd">        filename: Deprecated alias for ``source``. Cannot be used together with ``source``.</span>
+<span class="sd">        cache_key: Immutable source identity for deferred reads, replacing content hashing.</span>
+<span class="sd">            Must change whenever source contents change; parser settings and package versions</span>
+<span class="sd">            are included automatically. Cached results still honor the config's cache flags.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: A dictionary containing the following keys:</span>
+<span class="sd">            chain_info</span>
+<span class="sd">                A dictionary mapping chain ID to sequence, type (as an IntEnum), RCSB entity,</span>
+<span class="sd">                EC number, and other information.</span>
+<span class="sd">            ligand_info</span>
+<span class="sd">                A dictionary containing ligand of interest information.</span>
+<span class="sd">            asym_unit</span>
+<span class="sd">                An AtomArrayStack instance representing the asymmetric unit.</span>
+<span class="sd">            assemblies</span>
+<span class="sd">                A dictionary mapping assembly IDs to AtomArrayStack instances.</span>
+<span class="sd">            metadata</span>
+<span class="sd">                A dictionary containing metadata about the structure</span>
+<span class="sd">                (e.g., resolution, deposition date, etc.).</span>
+<span class="sd">            extra_info</span>
+<span class="sd">                A dictionary with information for cross-compatibility and caching.</span>
+<span class="sd">                Should typically not be used directly.</span>
+<span class="sd">    """</span>
+    <span class="n">config</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">_resolve_config</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">ParseConfig</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"Cannot pass both 'source' and 'filename'"</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">"The 'filename' parameter is deprecated; use 'source' instead."</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">filename</span>
+    <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"parse() requires a source (file path or buffer)"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unexpected keyword arguments: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">cache_key</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">file_type</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Deferred sources require cache_key and config.file_type"</span><span class="p">)</span>
+
+    <span class="c1"># Resolve catcif paths before any file-type inference or caching logic</span>
+    <span class="n">source</span><span class="p">,</span> <span class="n">catcif_file_type</span> <span class="o">=</span> <span class="n">resolve_catcif_source</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+    <span class="c1"># Dispatch: file input</span>
+    <span class="n">file_type</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">file_type</span> <span class="ow">or</span> <span class="n">catcif_file_type</span> <span class="ow">or</span> <span class="n">infer_pdb_file_type</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="n">is_buffer</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">)</span>
+    <span class="n">build_assembly</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">build_assembly</span>
+    <span class="n">extra_fields</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">extra_fields</span>
+
+    <span class="n">cache_file_path</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">load_from_cache</span> <span class="ow">or</span> <span class="n">config</span><span class="o">.</span><span class="n">save_to_cache</span><span class="p">)</span>
+        <span class="ow">and</span> <span class="ow">not</span> <span class="n">get_custom_ccd_entries</span><span class="p">()</span>
+        <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">altloc</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"random"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">config</span><span class="o">.</span><span class="n">altloc_seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="p">):</span>
+        <span class="n">cache_file_path</span> <span class="o">=</span> <span class="n">_build_cache_file_path</span><span class="p">(</span>
+            <span class="n">Path</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">cache_dir</span><span class="p">),</span> <span class="n">source</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">file_type</span><span class="o">=</span><span class="n">file_type</span><span class="p">),</span> <span class="n">cache_key</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">load_from_cache</span> <span class="ow">and</span> <span class="n">cache_file_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">,</span> <span class="n">position</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="n">cache_file_path</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">is_buffer</span><span class="p">:</span>
+                    <span class="n">source</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">load_standard_annotations</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">result</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="p">[</span><span class="n">result</span><span class="p">]:</span>
+                        <span class="n">_restore_legacy_annotations_in_result</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">result</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error loading parse cache: </span><span class="si">{</span><span class="n">cache_file_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+    <span class="c1"># +------ Uncached route: loading and processing ------+</span>
+    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="p">()</span>
+        <span class="n">is_buffer</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">)</span>
+    <span class="n">cif_block</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">model_ids</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">"pdb"</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">load_standard_annotations</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"load_standard_annotations=True is not supported for PDB files. Use CIF format instead."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">altloc</span> <span class="o">!=</span> <span class="s2">"first"</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"altloc='</span><span class="si">{</span><span class="n">config</span><span class="o">.</span><span class="n">altloc</span><span class="si">}</span><span class="s2">' is not supported for PDB files. "</span>
+                <span class="s2">"PDB parsing always uses altloc='first'. Use CIF format for altloc selection."</span>
+            <span class="p">)</span>
+        <span class="n">atoms</span><span class="p">,</span> <span class="n">metadata</span> <span class="o">=</span> <span class="n">load_pdb</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+        <span class="n">extra_fields</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">build_assembly</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"all"</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">"PDB files always build all assemblies; ignoring build_assembly=</span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span>
+                <span class="n">build_assembly</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">build_assembly</span> <span class="o">=</span> <span class="s2">"all"</span>
+    <span class="k">elif</span> <span class="n">file_type</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"cif"</span><span class="p">,</span> <span class="s2">"bcif"</span><span class="p">,</span> <span class="s2">"mmjson"</span><span class="p">):</span>
+        <span class="n">atoms</span><span class="p">,</span> <span class="n">_cif_file</span><span class="p">,</span> <span class="n">cif_block</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">model_ids</span> <span class="o">=</span> <span class="n">load_cif</span><span class="p">(</span>
+            <span class="n">source</span><span class="p">,</span>
+            <span class="n">file_type</span><span class="o">=</span><span class="n">file_type</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">extra_fields</span><span class="o">=</span><span class="n">extra_fields</span><span class="p">,</span>
+            <span class="n">load_standard_annotations</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">load_standard_annotations</span><span class="p">,</span>
+            <span class="n">altloc</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">altloc</span><span class="p">,</span>
+            <span class="n">altloc_seed</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">altloc_seed</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported file type: </span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="c1"># Build CCD entries from the CIF's chem_comp* categories and scope them</span>
+    <span class="c1"># to this parse call so all downstream lookups (types, bonds, templates)</span>
+    <span class="c1"># go through the registry.</span>
+    <span class="n">cif_ccd_entries</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">build_ccd_entries_from_cif_block</span><span class="p">(</span><span class="n">cif_block</span><span class="p">,</span> <span class="n">on_mismatch</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">cif_ccd_on_mismatch</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cif_block</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">else</span> <span class="p">{}</span>
+    <span class="p">)</span>
+    <span class="n">ctx</span> <span class="o">=</span> <span class="n">custom_ccd_residues</span><span class="p">(</span><span class="n">cif_ccd_entries</span><span class="p">)</span> <span class="k">if</span> <span class="n">cif_ccd_entries</span> <span class="k">else</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">nullcontext</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="n">ctx</span><span class="p">:</span>
+        <span class="n">multiple_models</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">model_ids</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">if</span> <span class="n">multiple_models</span> <span class="k">else</span> <span class="p">[(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">model_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">model_ids</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)]</span>
+        <span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">arr</span><span class="p">,</span> <span class="n">model_num</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
+            <span class="n">arr</span><span class="p">,</span> <span class="n">chain_info</span> <span class="o">=</span> <span class="n">_prepare_atom_array_or_stack</span><span class="p">(</span>
+                <span class="n">arr</span><span class="p">,</span>
+                <span class="n">cif_block</span><span class="o">=</span><span class="n">cif_block</span><span class="p">,</span>
+                <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
+                <span class="n">extra_fields</span><span class="o">=</span><span class="n">extra_fields</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">load_standard_annotations</span><span class="p">:</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">_deserialize_standard_annotations</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">cif_block</span><span class="p">,</span> <span class="n">model_num</span><span class="o">=</span><span class="n">model_num</span><span class="p">,</span> <span class="n">restore_legacy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">_assemble_parse_result</span><span class="p">(</span>
+                    <span class="n">atoms</span><span class="o">=</span><span class="n">arr</span><span class="p">,</span>
+                    <span class="n">chain_info</span><span class="o">=</span><span class="n">chain_info</span><span class="p">,</span>
+                    <span class="n">cif_block</span><span class="o">=</span><span class="n">cif_block</span><span class="p">,</span>
+                    <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
+                    <span class="n">build_assembly</span><span class="o">=</span><span class="n">build_assembly</span><span class="p">,</span>
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span>
+                    <span class="n">keep_cif_block</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">keep_cif_block</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="n">_attach_live_ccd_registry</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">results</span> <span class="k">if</span> <span class="n">multiple_models</span> <span class="k">else</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">load_standard_annotations</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="n">_restore_legacy_annotations_in_result</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">save_to_cache</span> <span class="ow">and</span> <span class="n">cache_file_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="n">entry</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"metadata"</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">"parse_arguments"</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="s2">"atomworks.version"</span><span class="p">:</span> <span class="n">atomworks</span><span class="o">.</span><span class="n">__version__</span><span class="p">}</span>
+            <span class="p">)</span>
+        <span class="n">_atomic_write_pickle</span><span class="p">((</span><span class="n">result</span><span class="p">,</span> <span class="n">source</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span> <span class="k">if</span> <span class="n">is_buffer</span> <span class="k">else</span> <span class="kc">None</span><span class="p">),</span> <span class="n">cache_file_path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="prepare_atom_array">
+<a class="viewcode-back" href="../../../io/parser.html#atomworks.io.parser.prepare_atom_array">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">prepare_atom_array</span><span class="p">(</span>
+    <span class="n">source</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span> <span class="o">|</span> <span class="n">AtomArrayPlus</span> <span class="o">|</span> <span class="n">AtomArrayPlusStack</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">PrepareConfig</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">cif_block</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">extra_fields</span><span class="p">:</span> <span class="n">ExtraFieldsType</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Perform standard AtomWorks preparation of an AtomArray, returning the processed atoms directly.</span>
+
+<span class="sd">    Runs the same core processing as :py:func:`parse` (standardize, add missing</span>
+<span class="sd">    atoms, infer bonds, annotate) but returns the processed atoms instead of a</span>
+<span class="sd">    full result dictionary. Single-model results are squeezed to</span>
+<span class="sd">    :py:class:`~biotite.structure.AtomArray` for conciseness.</span>
+
+<span class="sd">    For example, useful to add entity/molecule annotations to an AtomArray that already has a complete set of atoms and bonds.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        source: The structure to process.</span>
+<span class="sd">        config: Preset name (``"default"``, ``"rcsb"``, ``"lightweight"``),</span>
+<span class="sd">            :py:class:`~atomworks.io.config.PrepareConfig`, or ``None`` for defaults.</span>
+<span class="sd">        cif_block: Optional CIF block for richer processing (struct_conn bonds,</span>
+<span class="sd">            entity categories, custom bonds).</span>
+<span class="sd">        extra_fields: Extra CIF fields to preserve through processing.</span>
+<span class="sd">    """</span>
+    <span class="n">config</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_resolve_config</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">atoms</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_prepare_atom_array_or_stack</span><span class="p">(</span>
+        <span class="n">source</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
+        <span class="n">cif_block</span><span class="o">=</span><span class="n">cif_block</span><span class="p">,</span>
+        <span class="n">extra_fields</span><span class="o">=</span><span class="n">extra_fields</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">return_atom_array_plus</span><span class="p">:</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="n">_maybe_promote_to_plus</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">AtomArrayStack</span><span class="p">)</span> <span class="ow">and</span> <span class="n">atoms</span><span class="o">.</span><span class="n">stack_depth</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">atoms</span></div>
+
+
+
+<div class="viewcode-block" id="parse_atom_array">
+<a class="viewcode-back" href="../../../io/parser.html#atomworks.io.parser.parse_atom_array">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_atom_array</span><span class="p">(</span>
+    <span class="n">source</span><span class="p">:</span> <span class="n">AtomArray</span> <span class="o">|</span> <span class="n">AtomArrayStack</span> <span class="o">|</span> <span class="n">AtomArrayPlus</span> <span class="o">|</span> <span class="n">AtomArrayPlusStack</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">PrepareConfig</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Mimic of :py:func:`parse` that operates on an AtomArray or AtomArrayStack instead of a file input.</span>
+
+<span class="sd">    Returns identical result dict to :py:func:`parse`, but takes an AtomArray or AtomArrayStack as input instead of a file path or buffer.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        source: The AtomArray or AtomArrayStack to process.</span>
+<span class="sd">        config: Preset name (``"default"``, ``"rcsb"``, ``"lightweight"``),</span>
+<span class="sd">            :py:class:`~atomworks.io.config.PrepareConfig`, or ``None`` for defaults.</span>
+<span class="sd">    """</span>
+    <span class="n">config</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">_resolve_config</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unexpected keyword arguments: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="n">atoms</span><span class="p">,</span> <span class="n">chain_info</span> <span class="o">=</span> <span class="n">_prepare_atom_array_or_stack</span><span class="p">(</span>
+        <span class="n">source</span><span class="p">,</span>
+        <span class="n">cif_block</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_assemble_parse_result</span><span class="p">(</span>
+        <span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">,</span>
+        <span class="n">chain_info</span><span class="o">=</span><span class="n">chain_info</span><span class="p">,</span>
+        <span class="n">cif_block</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
+        <span class="n">build_assembly</span><span class="o">=</span><span class="s2">"all"</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{},</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
