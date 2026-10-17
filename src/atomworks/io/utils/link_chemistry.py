@@ -364,6 +364,14 @@ def add_polymer_bonds(atom_array: AtomArray) -> AtomArray:
         if _has_existing_polymer_attachment(atom_array, idx_out, idx_in, atom_to_res):
             continue
 
+        # Explicit backbone links may run opposite to residue numbering.
+        reverse_in = _find_atom(s1, e1, atoms_1[1]) if atoms_1[1] is not None else None
+        reverse_out = _find_atom(s2, e2, atoms_2[0]) if atoms_2[0] is not None else None
+        if reverse_in is not None and reverse_out is not None:
+            neighbors, types = atom_array.bonds.get_bonds(reverse_in)
+            if np.any((neighbors == reverse_out) & (types != struc.BondType.COORDINATION)):
+                continue
+
         # Validate capacity for ordinary H/leaving-group removal.
         _validate_inferred_polymer_bond(atom_array, idx_out, idx_in, degree, leaving_groups)
         new_bonds.append((idx_out, idx_in, int(struc.BondType.SINGLE)))

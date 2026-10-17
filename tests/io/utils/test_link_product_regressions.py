@@ -2,14 +2,42 @@
 
 import numpy as np
 import pytest
-from biotite.structure import BondType
+from biotite.structure import AtomArray, BondList, BondType
 
+from atomworks.enums import ChainType
 from atomworks.io.config import ParseConfig
 from atomworks.io.parser import parse
 from atomworks.io.utils.atom_array import get_bond_degree_per_atom
 from atomworks.io.utils.io_utils import read_any
-from atomworks.io.utils.link_chemistry import _has_valid_rdkit_valence
+from atomworks.io.utils.link_chemistry import _has_valid_rdkit_valence, add_polymer_bonds
 from tests.io.conftest import get_pdb_path
+
+
+@pytest.mark.parametrize(
+    ("existing", "add_forward"),
+    [
+        ([], True),
+        ([(0, 6, 1)], False),
+        ([(2, 4, 1)], False),
+        ([(3, 7, 1)], True),
+        ([(0, 6, BondType.COORDINATION)], True),
+    ],
+)
+def test_polymer_inference_respects_reverse_backbone_link(existing, add_forward):
+    """Honor reverse peptide links without suppressing ordinary bonds or side-chain branches."""
+    atoms = AtomArray(8)
+    atoms.atom_name = ["N", "CA", "C", "CB"] * 2
+    atoms.element = ["N", "C", "C", "C"] * 2
+    atoms.chain_id[:] = "A"
+    atoms.res_name[:] = "ALA"
+    atoms.res_id = np.repeat([1, 2], 4)
+    atoms.set_annotation("chain_type", np.full(8, ChainType.POLYPEPTIDE_L))
+    atoms.set_annotation("charge", np.zeros(8, dtype=int))
+    atoms.bonds = BondList(8, np.asarray(existing, dtype=int).reshape(-1, 3))
+
+    actual = set(map(tuple, add_polymer_bonds(atoms).bonds.as_array()))
+    expected = set(existing) | ({(2, 4, 1)} if add_forward else set())
+    assert actual == expected
 
 
 def _parse(pdb_id, *, include_metals=False, hydrogen_policy="remove"):
