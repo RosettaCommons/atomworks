@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>atomworks.io.utils.selection &#8212; atomworks 3.0.3 documentation</title>
+    <title>atomworks.io.utils.selection &#8212; atomworks 3.0.4 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../../_static/documentation_options.js?v=9b3fc59f"></script>
+    <script src="../../../../_static/documentation_options.js?v=50b65552"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -51,7 +51,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = "https://rosettacommons.github.io/atomworks/latest/_static/switcher.json";
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.3';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.4';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
         </script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="3.0.3" />
+  <meta name="docsearch:version" content="3.0.4" />
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -134,8 +134,8 @@
       
     
     
-    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.3 documentation - Home"/>
-    <img src="../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.3 documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.4 documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.4 documentation - Home"/>
   
   
 </a></div>
@@ -627,7 +627,7 @@
     <span class="k">if</span> <span class="n">n_body</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">aap</span><span class="o">.</span><span class="n">_AtomArrayPlusBase</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cannot </span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2"> with n_body=</span><span class="si">{</span><span class="n">n_body</span><span class="si">}</span><span class="s2"> on non-AtomArrayPlus!"</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">n_body</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">n_body</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aap</span><span class="o">.</span><span class="n">_ANNOTATION_STORAGE</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cannot </span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2"> with n_body=</span><span class="si">{</span><span class="n">n_body</span><span class="si">}</span><span class="s2">!"</span><span class="p">)</span>
 
 
@@ -655,11 +655,11 @@
         <span class="n">_validate_n_body_and_type</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">n_body</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"get annotation for </span><span class="si">{</span><span class="n">annot</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Auto-detect annotation dimensionality if n_body not specified</span>
-        <span class="k">for</span> <span class="n">body</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">annot</span> <span class="ow">in</span> <span class="n">get_annotation_categories</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">n_body</span><span class="o">=</span><span class="n">body</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">body</span> <span class="ow">in</span> <span class="n">aap</span><span class="o">.</span><span class="n">_ANNOTATION_STORAGE</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">aap</span><span class="o">.</span><span class="n">has_annotation</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">annot</span><span class="p">,</span> <span class="n">n_body</span><span class="o">=</span><span class="n">body</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">get_annotation</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">annot</span><span class="p">,</span> <span class="n">n_body</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">n_body</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">annot</span> <span class="ow">in</span> <span class="n">get_annotation_categories</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">n_body</span><span class="o">=</span><span class="n">n_body</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">n_body</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">aap</span><span class="o">.</span><span class="n">has_annotation</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">annot</span><span class="p">,</span> <span class="n">n_body</span><span class="o">=</span><span class="n">n_body</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">aap</span><span class="o">.</span><span class="n">_AtomArrayPlusBase</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="n">annot</span><span class="p">,</span> <span class="n">n_body</span><span class="o">=</span><span class="n">n_body</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation</span><span class="p">(</span><span class="n">annot</span><span class="p">)</span>
@@ -679,10 +679,14 @@
 <span class="sd">      Names of available annotation categories for the requested dimensionality.</span>
 <span class="sd">    """</span>
     <span class="k">if</span> <span class="n">n_body</span> <span class="o">==</span> <span class="s2">"all"</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">body</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">get_annotation_categories</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">n_body</span><span class="o">=</span><span class="n">body</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">name</span>
+            <span class="k">for</span> <span class="n">body</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">aap</span><span class="o">.</span><span class="n">_ANNOTATION_STORAGE</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">get_annotation_categories</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">n_body</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="p">]</span>
     <span class="k">if</span> <span class="n">n_body</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">n_body</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">aap</span><span class="o">.</span><span class="n">_AtomArrayPlusBase</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">n_body</span> <span class="ow">in</span> <span class="n">aap</span><span class="o">.</span><span class="n">_ANNOTATION_STORAGE</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">aap</span><span class="o">.</span><span class="n">_AtomArrayPlusBase</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">get_annotation_categories</span><span class="p">(</span><span class="n">n_body</span><span class="o">=</span><span class="n">n_body</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">[]</span>
 

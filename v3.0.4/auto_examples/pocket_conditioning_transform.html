@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Creating Custom Transforms: Ligand Pocket Conditioning &#8212; atomworks 3.0.4 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxcontrib_typer.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../_static/documentation_options.js?v=50b65552"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/pocket_conditioning_transform';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = "https://rosettacommons.github.io/atomworks/latest/_static/switcher.json";
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.4';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../_static/favicon-32x32.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contributing" href="../contributor_guide.html" />
+    <link rel="prev" title="Annotating and Saving Protein Structures" href="annotate_and_save_structures.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="3.0.4" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.4 documentation - Home"/>
+    <img src="../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.4 documentation - Home"/>
+  
+  
+</a></div>
+    
+      <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../cookbook.html">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../huggingface.html">
+    Hugging Face dataset repositories
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/RosettaCommons/atomworks" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../tutorial/index.html">
+    Tutorial
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../how_to_build_a_model/index.html">
+    How to Build a Model with AtomWorks
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../cookbook.html">
+    Cookbook
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../installation.html">
+    Installation
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../glossary.html">
+    Glossary
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api_reference.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributor_guide.html">
+    Contributing
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../mirrors.html">
+    Data Mirrors
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../huggingface.html">
+    Hugging Face dataset repositories
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../msa.html">
+    Multiple Sequence Alignment in AtomWorks
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/RosettaCommons/atomworks" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="plot_protonation.html">Parse, protonate and round-trip a molecule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basics.html">Structure Manipulation Basics</a></li>
+
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="dataset_exploration.html">Dataset Exploration and Management in AtomWorks</a></li>
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="load_and_visualize_structures.html">Loading and Visualizing Protein Structures</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="annotate_and_save_structures.html">Annotating and Saving Protein Structures</a></li>
+<li class="toctree-l1 current active"><a aria-current="page" class="current reference internal" href="#">Creating Custom Transforms: Ligand Pocket Conditioning</a></li>
+
+
+
+
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Examples</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Creating Custom Transforms: Ligand Pocket Conditioning</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-pocket-conditioning-transform-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="creating-custom-transforms-ligand-pocket-conditioning">
+<span id="sphx-glr-auto-examples-pocket-conditioning-transform-py"></span><h1>Creating Custom Transforms: Ligand Pocket Conditioning<a class="headerlink" href="#creating-custom-transforms-ligand-pocket-conditioning" title="Link to this heading">#</a></h1>
+<p>This example demonstrates how to create custom Transform classes in AtomWorks using ligand pocket identification as an example. We’ll build two transforms that follow AtomWorks conventions.</p>
+<p><strong>Prerequisites</strong>: Familiarity with <a class="reference internal" href="load_and_visualize_structures.html"><span class="doc">Loading and Visualizing Protein Structures</span></a> and <a class="reference internal" href="annotate_and_save_structures.html"><span class="doc">Annotating and Saving Protein Structures</span></a> for basic structure handling and annotation techniques.</p>
+<figure class="align-default">
+<img alt="Ligand pocket visualization" src="../_images/pocket_conditioning_transform_01.png" />
+</figure>
+</section>
+<section id="transform-architecture-and-design-patterns">
+<h1>Transform Architecture and Design Patterns<a class="headerlink" href="#transform-architecture-and-design-patterns" title="Link to this heading">#</a></h1>
+<p>AtomWorks Transform classes follow a standard pattern with one required method - <code class="docutils literal notranslate"><span class="pre">forward()</span></code> - and several optional methods/attributes to promote interoperability and pipeline compatibility.</p>
+<section id="required-method">
+<h2>Required Method<a class="headerlink" href="#required-method" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">forward()</span></code>: The only mandatory method. Takes a state dictionary and returns an updated dictionary.</p></li>
+</ul>
+</section>
+<section id="optional-methods-attributes">
+<h2>Optional Methods &amp; Attributes<a class="headerlink" href="#optional-methods-attributes" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">check_input()</span></code>: Validates input data (annotations, types, etc.), raising informative errors if conditions are violated</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">requires_previous_transforms</span></code>: List of <code class="docutils literal notranslate"><span class="pre">Transforms</span></code> that MUST run within the pipeline prior to this <code class="docutils literal notranslate"><span class="pre">Transform</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">incompatible_previous_transforms</span></code>: List of <code class="docutils literal notranslate"><span class="pre">Transforms</span></code> that CANNOT have been run within the pipeline prior to this <code class="docutils literal notranslate"><span class="pre">Transform</span></code></p></li>
+</ul>
+</section>
+<section id="conventions">
+<h2>Conventions<a class="headerlink" href="#conventions" title="Link to this heading">#</a></h2>
+<section id="a-store-information-in-atomarray-annotations-not-in-the-state-dictionary">
+<h3><strong>A.</strong> Store information in <code class="docutils literal notranslate"><span class="pre">AtomArray</span></code> annotations, not in the state dictionary.<a class="headerlink" href="#a-store-information-in-atomarray-annotations-not-in-the-state-dictionary" title="Link to this heading">#</a></h3>
+<p>This ensures robustness when atoms are added/removed downstream.</p>
+<p>For the example below:</p>
+<ul class="simple">
+<li><p>✅ Add <code class="docutils literal notranslate"><span class="pre">is_pocket_atom</span></code> annotation to AtomArray</p></li>
+<li><p>❌ Store <code class="docutils literal notranslate"><span class="pre">pocket_atom_indices</span></code> in dictionary (which creates significant dependencies with operations that delete or re-order atoms)</p></li>
+</ul>
+</section>
+<section id="b-within-forward-call-a-stand-alone-function-with-the-same-name-as-the-transform-class">
+<h3><strong>B.</strong> Within <code class="docutils literal notranslate"><span class="pre">forward()</span></code>, call a stand-alone function with the same name as the transform class.<a class="headerlink" href="#b-within-forward-call-a-stand-alone-function-with-the-same-name-as-the-transform-class" title="Link to this heading">#</a></h3>
+<p>We thus maintain an object-oriented and a functional API, making our core logic re-usable and testable outside of the <code class="docutils literal notranslate"><span class="pre">Transform</span></code> framework.</p>
+<p>For the example below:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">AnnotateLigandPockets.forward()</span></code> calls <code class="docutils literal notranslate"><span class="pre">annotate_ligand_pockets()</span></code> function</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FeaturizePocketAtoms.forward()</span></code> calls <code class="docutils literal notranslate"><span class="pre">featurize_pocket_atoms()</span></code> function</p></li>
+</ul>
+<p>Additionally, this function should preserve the input (e.g., not modify the underlying <code class="docutils literal notranslate"><span class="pre">AtomArray</span></code>) and take as arguments any necessary parameters.</p>
+</section>
+<section id="c-each-transform-should-follow-the-single-responsibility-principle-in-particular-separate-annotation-from-featurization-transforms">
+<h3><strong>C.</strong> Each <code class="docutils literal notranslate"><span class="pre">Transform</span></code> should follow the single-responsibility-principle; in particular separate Annotation from Featurization <code class="docutils literal notranslate"><span class="pre">Transforms</span></code><a class="headerlink" href="#c-each-transform-should-follow-the-single-responsibility-principle-in-particular-separate-annotation-from-featurization-transforms" title="Link to this heading">#</a></h3>
+<p>To ensure our <code class="docutils literal notranslate"><span class="pre">Transform</span></code> code is maximally forward-compatible and re-usable across disparate pipelines, we adhere to the single responsibility principle - that is, each transform should do <em>exactly one</em> action.</p>
+<p>For the example below:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">AnnotateLigandPockets</span></code> only identifies and annotates pocket atoms</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FeaturizePocketAtoms</span></code> only converts existing annotations to numeric features</p></li>
+</ul>
+<p>Now, if a different model wants to perform an action on small molecule pockets, but with a different featurization scheme, the researchers would simply need to write a different <code class="docutils literal notranslate"><span class="pre">Featurize</span></code> Transform leveraging the existing annotations.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">biotite</span><span class="nn">.</span><span class="nn">structure</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">struc</span><span class="w">
+</span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">biotite</span><span class="nn">.</span><span class="nn">structure</span><span class="w"> </span><span class="kn">import</span> <span class="n">AtomArray</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># AtomWorks imports</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks</span><span class="nn">.</span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks</span><span class="nn">.</span><span class="nn">io</span><span class="nn">.</span><span class="nn">utils</span><span class="nn">.</span><span class="nn">testing</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-atomworks-io-utils-testing sphx-glr-backref-type-py-function reference internal" href="../io/utils/testing.html#atomworks.io.utils.testing.get_pdb_path_or_buffer" title="atomworks.io.utils.testing.get_pdb_path_or_buffer"><span class="n">get_pdb_path_or_buffer</span></a><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks</span><span class="nn">.</span><span class="nn">io</span><span class="nn">.</span><span class="nn">utils</span><span class="nn">.</span><span class="nn">visualize</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-atomworks-io-utils-visualize sphx-glr-backref-type-py-function reference internal" href="../io/utils/visualize.html#atomworks.io.utils.visualize.view" title="atomworks.io.utils.visualize.view"><span class="n">view</span></a><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks</span><span class="nn">.</span><span class="nn">ml</span><span class="nn">.</span><span class="nn">transforms</span><span class="nn">.</span><span class="nn">_checks</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-atomworks-ml-transforms-_checks sphx-glr-backref-type-py-function reference internal" href="../ml/transforms.html#atomworks.ml.transforms._checks.check_atom_array_annotation" title="atomworks.ml.transforms._checks.check_atom_array_annotation"><span class="n">check_atom_array_annotation</span></a><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks</span><span class="nn">.</span><span class="nn">ml</span><span class="nn">.</span><span class="nn">transforms</span><span class="nn">.</span><span class="nn">base</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-atomworks-ml-transforms-base sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../ml/transforms.html#atomworks.ml.transforms.base.Transform" title="atomworks.ml.transforms.base.Transform"><span class="n">Transform</span></a><span class="w">
+</span><span class="w">
+</span><span class="c1"># sphinx_gallery_thumbnail_path = '_static/examples/pocket_conditioning_transform_01.png'</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Load example structure (myoglobin with heme ligand; our recurring test example)</span><span class="w">
+</span><span class="n">example_pdb_id</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s2">101m</span><span class="s2">&quot;</span><span class="w">
+</span><span class="n">pdb_path</span> <span class="o">=</span> <a class="sphx-glr-backref-module-atomworks-io-utils-testing sphx-glr-backref-type-py-function reference internal" href="../io/utils/testing.html#atomworks.io.utils.testing.get_pdb_path_or_buffer" title="atomworks.io.utils.testing.get_pdb_path_or_buffer"><span class="n">get_pdb_path_or_buffer</span></a><span class="p">(</span><span class="n">example_pdb_id</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">parse_output</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">pdb_path</span><span class="p">)</span><span class="w">
+</span><span class="n">atom_array</span> <span class="o">=</span> <span class="n">parse_output</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">assemblies</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">1</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w">
+</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Loaded structure: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span><span class="si">}</span><span class="s2"> atoms</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Non-polymer residues: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span><span class="p">[</span><span class="o">~</span><span class="n">atom_array</span><span class="o">.</span><span class="n">is_polymer</span><span class="p">]</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Heme atoms: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">res_name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">'</span><span class="s1">HEM</span><span class="s1">'</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+</section>
+</section>
+</section>
+<section id="building-annotateligandpockets">
+<h1>Building <code class="docutils literal notranslate"><span class="pre">AnnotateLigandPockets</span></code><a class="headerlink" href="#building-annotateligandpockets" title="Link to this heading">#</a></h1>
+<p>Let’s create a <code class="docutils literal notranslate"><span class="pre">Transform</span></code> that identifies atoms near ligands (non-polymer molecules) of sufficient size.</p>
+<p>Observe how we follow the conventions outlined above:</p>
+<ul class="simple">
+<li><p>Stores results as <code class="docutils literal notranslate"><span class="pre">AtomArray</span></code> annotation rather than returning indices or masks separately.</p></li>
+<li><p>Does not modify input <code class="docutils literal notranslate"><span class="pre">AtomArray</span></code> in place.</p></li>
+<li><p>Function name mimics <code class="docutils literal notranslate"><span class="pre">Transform</span></code> class name for clarity.</p></li>
+<li><p>Accepts all parameters as arguments.</p></li>
+</ul>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="k">def</span><span class="w"> </span><span class="nf">annotate_ligand_pockets</span><span class="p">(</span><span class="w">
+</span>    <span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span><span class="w">
+</span>    <span class="n">pocket_distance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">6.0</span><span class="p">,</span><span class="w">
+</span>    <span class="n">n_min_ligand_atoms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span><span class="w">
+</span>    <span class="n">annotation_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s2">is_ligand_pocket</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span> <span class="o">-</span><span class="o">&gt;</span> <span class="n">AtomArray</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;
+    Identify atoms near ligands of sufficient size.
+
+    Args:
+        atom_array: Input structure
+        pocket_distance: Distance threshold for pocket identification (Angstroms)
+        n_min_ligand_atoms: Minimum atoms required for a ligand (across the full pn_unit) to define pockets
+        annotation_name: Name for the boolean annotation
+
+    Returns:
+        AtomArray with ligand pocket annotation added
+    &quot;&quot;&quot;</span><span class="w">
+</span>    <span class="n">atom_array</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="p">)</span>  <span class="c1"># By convention, do not modify input in place</span><span class="w">
+</span><span class="w">
+</span>    <span class="c1"># Find all ligand pn_unit_iids within our structure and their atom counts</span><span class="w">
+</span>    <span class="c1"># We make use of the pn_unit_iid annotation, which is most applicable for ligands, elegantly</span><span class="w">
+</span>    <span class="c1"># handling cases of multi-residue or multi-chain small molecules (e.g., many sugars)</span><span class="w">
+</span>    <span class="c1"># See the Glossary for more information regarding our naming conventions within AtomWorks</span><span class="w">
+</span>    <span class="n">ligand_pn_unit_iids</span><span class="p">,</span> <span class="n">ligand_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span><span class="p">[</span><span class="o">~</span><span class="n">atom_array</span><span class="o">.</span><span class="n">is_polymer</span><span class="p">]</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span>    <span class="c1"># Filter to only ligands with sufficient size</span><span class="w">
+</span>    <span class="n">valid_ligand_mask</span> <span class="o">=</span> <span class="n">ligand_counts</span> <span class="o">&gt;</span><span class="o">=</span> <span class="n">n_min_ligand_atoms</span><span class="w">
+</span>    <span class="n">valid_ligand_pn_unit_iids</span> <span class="o">=</span> <span class="n">ligand_pn_unit_iids</span><span class="p">[</span><span class="n">valid_ligand_mask</span><span class="p">]</span><span class="w">
+</span><span class="w">
+</span>    <span class="c1"># Initialize pocket annotation</span><span class="w">
+</span>    <span class="n">pocket_annotation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_ligand_pn_unit_iids</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span><span class="w">
+</span>        <span class="c1"># No valid ligands found - store empty annotation and return</span><span class="w">
+</span>        <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="n">annotation_name</span><span class="p">,</span> <span class="n">pocket_annotation</span><span class="p">)</span><span class="w">
+</span>        <span class="k">return</span> <span class="n">atom_array</span><span class="w">
+</span><span class="w">
+</span>    <span class="c1"># Build CellList for efficient distance computations on CPU</span><span class="w">
+</span>    <span class="c1"># (Atoms with invalid coordinates would break our distance search)</span><span class="w">
+</span>    <span class="n">valid_coords_mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="w">
+</span>    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">valid_coords_mask</span><span class="p">)</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">No valid coordinates found</span><span class="s2">&quot;</span><span class="w">
+</span><span class="w">
+</span>    <span class="n">valid_coords</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">valid_coords_mask</span><span class="p">]</span><span class="w">
+</span>    <span class="n">cell_list</span> <span class="o">=</span> <span class="n">struc</span><span class="o">.</span><span class="n">CellList</span><span class="p">(</span><span class="n">valid_coords</span><span class="p">,</span> <span class="n">cell_size</span><span class="o">=</span><span class="n">pocket_distance</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span>    <span class="c1"># Get coordinates of all valid ligands</span><span class="w">
+</span>    <span class="n">all_valid_ligands_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">atom_array</span><span class="o">.</span><span class="n">pn_unit_iid</span><span class="p">,</span> <span class="n">valid_ligand_pn_unit_iids</span><span class="p">)</span><span class="w">
+</span>    <span class="n">all_ligand_coords</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="n">all_valid_ligands_mask</span><span class="p">]</span><span class="w">
+</span><span class="w">
+</span>    <span class="c1"># Find atoms within distance of any ligand coordinates (all at once)</span><span class="w">
+</span>    <span class="n">distance_mask</span> <span class="o">=</span> <span class="n">cell_list</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">(</span><span class="n">all_ligand_coords</span><span class="p">,</span> <span class="n">pocket_distance</span><span class="p">,</span> <span class="n">as_mask</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="w">
+</span>    <span class="n">near_ligand_valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">distance_mask</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span>    <span class="c1"># Map back to full atom array</span><span class="w">
+</span>    <span class="n">near_ligand_full</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span><span class="w">
+</span>    <span class="n">near_ligand_full</span><span class="p">[</span><span class="n">valid_coords_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">near_ligand_valid</span><span class="w">
+</span><span class="w">
+</span>    <span class="c1"># Only polymer atoms can be pocket atoms</span><span class="w">
+</span>    <span class="n">pocket_annotation</span> <span class="o">=</span> <span class="n">atom_array</span><span class="o">.</span><span class="n">is_polymer</span> <span class="o">&amp;</span> <span class="n">near_ligand_full</span><span class="w">
+</span><span class="w">
+</span>    <span class="c1"># Store result as annotation (AtomWorks convention)</span><span class="w">
+</span>    <span class="n">atom_array</span><span class="o">.</span><span class="n">set_annotation</span><span class="p">(</span><span class="n">annotation_name</span><span class="p">,</span> <span class="n">pocket_annotation</span><span class="p">)</span><span class="w">
+</span>    <span class="k">return</span> <span class="n">atom_array</span><span class="w">
+</span><span class="w">
+</span><span class="w">
+</span><span class="k">class</span><span class="w"> </span><span class="nc">AnnotateLigandPockets</span><span class="p">(</span><a class="sphx-glr-backref-module-atomworks-ml-transforms-base sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../ml/transforms.html#atomworks.ml.transforms.base.Transform" title="atomworks.ml.transforms.base.Transform"><span class="n">Transform</span></a><span class="p">)</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify atoms near ligands of sufficient size.&quot;&quot;&quot;</span><span class="w">
+</span><span class="w">
+</span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="w">
+</span>        <span class="bp">self</span><span class="p">,</span> <span class="n">pocket_distance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">6.0</span><span class="p">,</span> <span class="n">n_min_ligand_atoms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">annotation_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s2">is_ligand_pocket</span><span class="s2">&quot;</span><span class="w">
+</span>    <span class="p">)</span><span class="p">:</span><span class="w">
+</span>        <span class="bp">self</span><span class="o">.</span><span class="n">pocket_distance</span> <span class="o">=</span> <span class="n">pocket_distance</span><span class="w">
+</span>        <span class="bp">self</span><span class="o">.</span><span class="n">n_min_ligand_atoms</span> <span class="o">=</span> <span class="n">n_min_ligand_atoms</span><span class="w">
+</span>        <span class="bp">self</span><span class="o">.</span><span class="n">annotation_name</span> <span class="o">=</span> <span class="n">annotation_name</span><span class="w">
+</span><span class="w">
+</span>    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-</span><span class="o">&gt;</span> <span class="kc">None</span><span class="p">:</span><span class="w">
+</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate input has required annotations. (Optional method)&quot;&quot;&quot;</span><span class="w">
+</span>        <a class="sphx-glr-backref-module-atomworks-ml-transforms-_checks sphx-glr-backref-type-py-function reference internal" href="../ml/transforms.html#atomworks.ml.transforms._checks.check_atom_array_annotation" title="atomworks.ml.transforms._checks.check_atom_array_annotation"><span class="n">check_atom_array_annotation</span></a><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;</span><span class="s2">is_polymer</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">pn_unit_iid</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-</span><span class="o">&gt;</span> <span class="nb">dict</span><span class="p">:</span><span class="w">
+</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply ligand pocket annotation. (Required method)&quot;&quot;&quot;</span><span class="w">
+</span>        <span class="c1"># Follow forward/function pattern: call standalone function</span><span class="w">
+</span>        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">atom_array</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">annotate_ligand_pockets</span><span class="p">(</span><span class="w">
+</span>            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">atom_array</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">,</span><span class="w">
+</span>            <span class="n">pocket_distance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pocket_distance</span><span class="p">,</span><span class="w">
+</span>            <span class="n">n_min_ligand_atoms</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_min_ligand_atoms</span><span class="p">,</span><span class="w">
+</span>            <span class="n">annotation_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">annotation_name</span><span class="p">,</span><span class="w">
+</span>        <span class="p">)</span><span class="w">
+</span>        <span class="k">return</span> <span class="n">data</span><span class="w">
+</span></pre></div></div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="c1"># Test the functional version</span><span class="w">
+</span><span class="n">result_array</span> <span class="o">=</span> <span class="n">annotate_ligand_pockets</span><span class="p">(</span><span class="w">
+</span>    <span class="n">atom_array</span><span class="p">,</span> <span class="n">pocket_distance</span><span class="o">=</span><span class="mf">6.0</span><span class="p">,</span> <span class="n">n_min_ligand_atoms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">annotation_name</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">is_ligand_pocket</span><span class="s2">&quot;</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Here, we are using AtomWork's &quot;query&quot; syntax for convenience, which operates similar to Pandas DataFrame queries</span><span class="w">
+</span><span class="c1"># Please see the API documentation for more details</span><span class="w">
+</span><a class="sphx-glr-backref-module-atomworks-io-utils-visualize sphx-glr-backref-type-py-function reference internal" href="../io/utils/visualize.html#atomworks.io.utils.visualize.view" title="atomworks.io.utils.visualize.view"><span class="n">view</span></a><span class="p">(</span><span class="n">result_array</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">is_ligand_pocket | (res_name == </span><span class="s2">'</span><span class="s2">HEM</span><span class="s2">'</span><span class="s2">)</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<figure class="align-default">
+<img alt="Ligand pocket visualization" src="../_images/pocket_conditioning_transform_01.png" />
+</figure>
+</section>
+<section id="building-featurizepocketatoms">
+<h1>Building <code class="docutils literal notranslate"><span class="pre">FeaturizePocketAtoms</span></code><a class="headerlink" href="#building-featurizepocketatoms" title="Link to this heading">#</a></h1>
+<p>Now let’s create a model-specific transform that converts derived pocket annotations into numeric features.</p>
+<p>Here, we also demonstrate the use of:
+- <strong>``requires_previous_transforms``</strong>: Ensures dependency ordering in pipelines
+- <strong>``check_atom_array_annotation()``</strong>: Validates required annotations using AtomWorks utilities</p>
+<p>We can imagine varying this featurization <code class="docutils literal notranslate"><span class="pre">Transform</span></code> across models while keeping the original annotation <code class="docutils literal notranslate"><span class="pre">Transform</span></code> constant.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="k">def</span><span class="w"> </span><span class="nf">featurize_pocket_atoms</span><span class="p">(</span><span class="n">atom_array</span><span class="p">:</span> <span class="n">AtomArray</span><span class="p">,</span> <span class="n">pocket_annotation_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s2">is_ligand_pocket</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">-</span><span class="o">&gt;</span> <span class="nb">dict</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;
+    Create one-hot encoded features from pocket annotations.
+
+    Args:
+        atom_array: Structure with pocket annotations
+        pocket_annotation_name: Name of the pocket boolean annotation
+
+    Returns:
+        Dictionary with feature array and metadata
+    &quot;&quot;&quot;</span><span class="w">
+</span>    <span class="n">pocket_mask</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">atom_array</span><span class="p">,</span> <span class="n">pocket_annotation_name</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span>    <span class="c1"># Create one-hot encoded feature: 0.0 for non-pocket, 1.0 for pocket atoms</span><span class="w">
+</span>    <span class="n">features</span> <span class="o">=</span> <span class="n">pocket_mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span>    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;</span><span class="s2">features</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">features</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">feature_names</span><span class="s2">&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;</span><span class="s2">is_pocket_atom</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">n_atoms</span><span class="s2">&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">atom_array</span><span class="p">)</span><span class="p">}</span><span class="w">
+</span><span class="w">
+</span><span class="w">
+</span><span class="k">class</span><span class="w"> </span><span class="nc">FeaturizePocketAtoms</span><span class="p">(</span><a class="sphx-glr-backref-module-atomworks-ml-transforms-base sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../ml/transforms.html#atomworks.ml.transforms.base.Transform" title="atomworks.ml.transforms.base.Transform"><span class="n">Transform</span></a><span class="p">)</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert pocket annotations into one-hot encoded numeric features.&quot;&quot;&quot;</span><span class="w">
+</span><span class="w">
+</span>    <span class="n">requires_previous_transforms</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;</span><span class="s2">AnnotateLigandPockets</span><span class="s2">&quot;</span><span class="p">]</span>  <span class="c1"># noqa: RUF012</span><span class="w">
+</span><span class="w">
+</span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pocket_annotation_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s2">is_ligand_pocket</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">feature_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s2">pocket_features</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">:</span><span class="w">
+</span>        <span class="bp">self</span><span class="o">.</span><span class="n">pocket_annotation_name</span> <span class="o">=</span> <span class="n">pocket_annotation_name</span><span class="w">
+</span>        <span class="bp">self</span><span class="o">.</span><span class="n">feature_key</span> <span class="o">=</span> <span class="n">feature_key</span><span class="w">
+</span><span class="w">
+</span>    <span class="k">def</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-</span><span class="o">&gt;</span> <span class="kc">None</span><span class="p">:</span><span class="w">
+</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate input has pocket annotations using AtomWorks utility.&quot;&quot;&quot;</span><span class="w">
+</span>        <a class="sphx-glr-backref-module-atomworks-ml-transforms-_checks sphx-glr-backref-type-py-function reference internal" href="../ml/transforms.html#atomworks.ml.transforms._checks.check_atom_array_annotation" title="atomworks.ml.transforms._checks.check_atom_array_annotation"><span class="n">check_atom_array_annotation</span></a><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pocket_annotation_name</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span>    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-</span><span class="o">&gt;</span> <span class="nb">dict</span><span class="p">:</span><span class="w">
+</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate features following the forward/function pattern.&quot;&quot;&quot;</span><span class="w">
+</span>        <span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">featurize_pocket_atoms</span><span class="p">(</span><span class="w">
+</span>            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">atom_array</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">,</span> <span class="n">pocket_annotation_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pocket_annotation_name</span><span class="w">
+</span>        <span class="p">)</span><span class="w">
+</span>        <span class="k">return</span> <span class="n">data</span><span class="w">
+</span></pre></div></div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="c1"># Test featurization using a proper pipeline</span><span class="w">
+</span><span class="c1"># First apply the annotation transform, then the featurization</span><span class="w">
+</span><span class="n">annotator</span> <span class="o">=</span> <span class="n">AnnotateLigandPockets</span><span class="p">(</span><span class="n">pocket_distance</span><span class="o">=</span><span class="mf">6.0</span><span class="p">,</span> <span class="n">n_min_ligand_atoms</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span><span class="w">
+</span><span class="n">featurizer</span> <span class="o">=</span> <span class="n">FeaturizePocketAtoms</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Apply both transforms in sequence</span><span class="w">
+</span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;</span><span class="s2">atom_array</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">atom_array</span><span class="p">}</span><span class="w">
+</span><span class="n">annotated_data</span> <span class="o">=</span> <span class="n">annotator</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="w">
+</span><span class="n">feature_result</span> <span class="o">=</span> <span class="n">featurizer</span><span class="p">(</span><span class="n">annotated_data</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">features</span> <span class="o">=</span> <span class="n">feature_result</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">pocket_features</span><span class="s2">&quot;</span><span class="p">]</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Generated features: </span><span class="si">{</span><span class="n">features</span><span class="p">[</span><span class="s1">'</span><span class="s1">features</span><span class="s1">'</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Feature names: </span><span class="si">{</span><span class="n">features</span><span class="p">[</span><span class="s1">'</span><span class="s1">feature_names</span><span class="s1">'</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Feature type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">features</span><span class="p">[</span><span class="s1">'</span><span class="s1">features</span><span class="s1">'</span><span class="p">]</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Pocket atoms (sum): </span><span class="si">{</span><span class="n">features</span><span class="p">[</span><span class="s1">'</span><span class="s1">features</span><span class="s1">'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="p">)</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Non-pocket atoms: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">features</span><span class="p">[</span><span class="s1">'</span><span class="s1">features</span><span class="s1">'</span><span class="p">]</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">features</span><span class="p">[</span><span class="s1">'</span><span class="s1">features</span><span class="s1">'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="p">)</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+</section>
+<section id="pipeline-composition">
+<h1>Pipeline Composition<a class="headerlink" href="#pipeline-composition" title="Link to this heading">#</a></h1>
+<p>Transform composition allows chaining transforms together with automatic dependency checking:</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">atomworks</span><span class="nn">.</span><span class="nn">ml</span><span class="nn">.</span><span class="nn">transforms</span><span class="nn">.</span><span class="nn">base</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-atomworks-ml-transforms-base sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../ml/transforms.html#atomworks.ml.transforms.base.Compose" title="atomworks.ml.transforms.base.Compose"><span class="n">Compose</span></a><span class="w">
+</span><span class="w">
+</span><span class="c1"># Create a complete ligand pocket processing pipeline</span><span class="w">
+</span><span class="n">ligand_pocket_pipeline</span> <span class="o">=</span> <a class="sphx-glr-backref-module-atomworks-ml-transforms-base sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../ml/transforms.html#atomworks.ml.transforms.base.Compose" title="atomworks.ml.transforms.base.Compose"><span class="n">Compose</span></a><span class="p">(</span><span class="w">
+</span>    <span class="p">[</span><span class="w">
+</span>        <span class="n">AnnotateLigandPockets</span><span class="p">(</span><span class="n">pocket_distance</span><span class="o">=</span><span class="mf">6.0</span><span class="p">,</span> <span class="n">n_min_ligand_atoms</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span>        <span class="n">FeaturizePocketAtoms</span><span class="p">(</span><span class="n">feature_key</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">pocket_features</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="p">]</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Apply pipeline to fresh data</span><span class="w">
+</span><span class="n">fresh_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;</span><span class="s2">atom_array</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">atom_array</span><span class="p">}</span><span class="w">
+</span><span class="n">pipeline_result</span> <span class="o">=</span> <span class="n">ligand_pocket_pipeline</span><span class="p">(</span><span class="n">fresh_data</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">Pipeline Results:</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">  Transforms applied: </span><span class="si">{</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">ligand_pocket_pipeline</span><span class="o">.</span><span class="n">transforms</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">  Pocket atoms found: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pipeline_result</span><span class="p">[</span><span class="s1">'</span><span class="s1">atom_array</span><span class="s1">'</span><span class="p">]</span><span class="o">.</span><span class="n">is_ligand_pocket</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">  Features shape: </span><span class="si">{</span><span class="n">pipeline_result</span><span class="p">[</span><span class="s1">'</span><span class="s1">pocket_features</span><span class="s1">'</span><span class="p">]</span><span class="p">[</span><span class="s1">'</span><span class="s1">features</span><span class="s1">'</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Demonstrate the + operator</span><span class="w">
+</span><span class="n">alternative_pipeline</span> <span class="o">=</span> <span class="n">AnnotateLigandPockets</span><span class="p">(</span><span class="n">n_min_ligand_atoms</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span> <span class="o">+</span> <span class="n">FeaturizePocketAtoms</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="n">alt_result</span> <span class="o">=</span> <span class="n">alternative_pipeline</span><span class="p">(</span><span class="p">{</span><span class="s2">&quot;</span><span class="s2">atom_array</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">atom_array</span><span class="p">}</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">  Alternative (min 8 atoms): </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">alt_result</span><span class="p">[</span><span class="s1">'</span><span class="s1">atom_array</span><span class="s1">'</span><span class="p">]</span><span class="o">.</span><span class="n">is_ligand_pocket</span><span class="p">)</span><span class="si">}</span><span class="s2"> pocket atoms</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-pocket-conditioning-transform-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/6217259cca9719ee992e53760039db9b/pocket_conditioning_transform.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">pocket_conditioning_transform.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/854410de90971effa5bd0499ce646d04/pocket_conditioning_transform.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">pocket_conditioning_transform.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/090882973994fad1068ab72a04efdf7b/pocket_conditioning_transform.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">pocket_conditioning_transform.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="annotate_and_save_structures.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Annotating and Saving Protein Structures</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../contributor_guide.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Contributing</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Creating Custom Transforms: Ligand Pocket Conditioning</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#transform-architecture-and-design-patterns">Transform Architecture and Design Patterns</a><ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#required-method">Required Method</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-methods-attributes">Optional Methods &amp; Attributes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conventions">Conventions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-store-information-in-atomarray-annotations-not-in-the-state-dictionary"><strong>A.</strong> Store information in <code class="docutils literal notranslate"><span class="pre">AtomArray</span></code> annotations, not in the state dictionary.</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-within-forward-call-a-stand-alone-function-with-the-same-name-as-the-transform-class"><strong>B.</strong> Within <code class="docutils literal notranslate"><span class="pre">forward()</span></code>, call a stand-alone function with the same name as the transform class.</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-each-transform-should-follow-the-single-responsibility-principle-in-particular-separate-annotation-from-featurization-transforms"><strong>C.</strong> Each <code class="docutils literal notranslate"><span class="pre">Transform</span></code> should follow the single-responsibility-principle; in particular separate Annotation from Featurization <code class="docutils literal notranslate"><span class="pre">Transforms</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#building-annotateligandpockets">Building <code class="docutils literal notranslate"><span class="pre">AnnotateLigandPockets</span></code></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#building-featurizepocketatoms">Building <code class="docutils literal notranslate"><span class="pre">FeaturizePocketAtoms</span></code></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#pipeline-composition">Pipeline Composition</a></li>
+</ul>
+
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/auto_examples/pocket_conditioning_transform.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, bakerlab.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

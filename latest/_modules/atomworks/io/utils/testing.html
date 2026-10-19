@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>atomworks.io.utils.testing &#8212; atomworks 3.0.3 documentation</title>
+    <title>atomworks.io.utils.testing &#8212; atomworks 3.0.4 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
-    <script src="../../../../_static/documentation_options.js?v=9b3fc59f"></script>
+    <script src="../../../../_static/documentation_options.js?v=50b65552"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
@@ -51,7 +51,7 @@
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = "https://rosettacommons.github.io/atomworks/latest/_static/switcher.json";
-        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.3';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '3.0.4';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
         </script>
@@ -62,7 +62,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="3.0.3" />
+  <meta name="docsearch:version" content="3.0.4" />
   
     
     <script src="../../../../_static/searchtools.js"></script>
@@ -134,8 +134,8 @@
       
     
     
-    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.3 documentation - Home"/>
-    <img src="../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.3 documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_light.svg" class="logo__image only-light" alt="atomworks 3.0.4 documentation - Home"/>
+    <img src="../../../../_static/atomworks_logo_dark.svg" class="logo__image only-dark pst-js-only" alt="atomworks 3.0.4 documentation - Home"/>
   
   
 </a></div>
@@ -542,7 +542,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">PDB_MIRROR_PATH</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.atom_array</span><span class="w"> </span><span class="kn">import</span> <span class="n">subset_to_first_transformation</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.atom_array_plus</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationList2D</span><span class="p">,</span> <span class="n">as_atom_array_plus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.atom_array_plus</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationList2D</span><span class="p">,</span> <span class="n">as_atom_array_plus</span><span class="p">,</span> <span class="n">has_annotation</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.bonds</span><span class="w"> </span><span class="kn">import</span> <span class="n">remap_intra_residue_coordination_bonds</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.scatter</span><span class="w"> </span><span class="kn">import</span> <span class="n">apply_group_wise</span><span class="p">,</span> <span class="n">apply_segment_wise</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">atomworks.io.utils.selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_annotation</span><span class="p">,</span> <span class="n">get_annotation_categories</span><span class="p">,</span> <span class="n">get_residue_starts</span>
@@ -889,9 +889,9 @@
 
     <span class="c1"># Compare annotations directly</span>
     <span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">annotations_to_compare</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">annotation</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">get_annotation_categories</span><span class="p">(</span><span class="n">arr1</span><span class="p">,</span> <span class="n">n_body</span><span class="o">=</span><span class="s2">"all"</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_annotation</span><span class="p">(</span><span class="n">arr1</span><span class="p">,</span> <span class="n">annotation</span><span class="p">,</span> <span class="n">n_body</span><span class="o">=</span><span class="s2">"all"</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Annotation </span><span class="si">{</span><span class="n">annotation</span><span class="si">}</span><span class="s2"> not in arr1."</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">annotation</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">get_annotation_categories</span><span class="p">(</span><span class="n">arr2</span><span class="p">,</span> <span class="n">n_body</span><span class="o">=</span><span class="s2">"all"</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">has_annotation</span><span class="p">(</span><span class="n">arr2</span><span class="p">,</span> <span class="n">annotation</span><span class="p">,</span> <span class="n">n_body</span><span class="o">=</span><span class="s2">"all"</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Annotation </span><span class="si">{</span><span class="n">annotation</span><span class="si">}</span><span class="s2"> not in arr2."</span><span class="p">)</span>
 
         <span class="n">comparison_fn</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
