@@ -25,6 +25,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - run: python -m pip install --upgrade "pip>=26.2.2"
       - run: python -m pip install build twine packaging
       - run: python -m unittest discover -s .github/tests -v
       - name: Verify release version
@@ -59,6 +60,7 @@ jobs:
       - name: Install core wheel and exercise it outside the checkout
         run: |
           python -m venv "$RUNNER_TEMP/core"
+          "$RUNNER_TEMP/core/bin/python" -m pip install --upgrade "pip>=26.2.2"
           "$RUNNER_TEMP/core/bin/python" -m pip install dist/*.whl
           cp docs/examples/plot_protonation.py "$RUNNER_TEMP/smoke.py"
           cd "$RUNNER_TEMP"
@@ -179,6 +181,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - run: python -m pip install --upgrade "pip>=26.2.2"
       - run: python -m pip install packaging
       - uses: actions/download-artifact@v4
         with:
