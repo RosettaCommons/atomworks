@@ -77,6 +77,8 @@ We have found that `atomworks.ml` **dramatically** reduces the overhead of start
 
 ## Installation
 AtomWorks requires Python 3.11 or newer. Pip installs its dependencies automatically.
+Use pip 26.2.2 or newer (`python -m pip install --upgrade pip`); older pip releases still trust the
+withdrawn emSign root CA certificate.
 
 ```shell
 pip install atomworks # base installation version without torch (for only atomworks.io)
