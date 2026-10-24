@@ -215,3 +215,32 @@ def test_tuple_timeout_policy(caplog):
 
 if __name__ == "__main__":
     pytest.main(["-v", "-x", __file__])
+
+
+def test_generate_conformers_seed_zero_is_reproducible():
+    mol = Chem.MolFromSmiles("CCCCO")
+    coords = [
+        generate_conformers(mol, seed=0, n_conformers=2, hydrogen_policy="auto", optimize=False)
+        .GetConformer(i)
+        .GetPositions()
+        for i in (0, 0)
+    ]
+    assert np.array_equal(coords[0], coords[1])
+
+
+@pytest.mark.parametrize("forcefield", ["UFF", "MMFF94"])
+def test_generate_conformers_forcefield_energies(forcefield):
+    mol = smiles_to_rdkit("CC(=O)Nc1ccccc1")
+    mol = generate_conformers(
+        mol, seed=42, n_conformers=3, hydrogen_policy="keep", optimize=True, forcefield=forcefield
+    )
+    assert mol.GetNumConformers() == 3
+    for conformer in mol.GetConformers():
+        assert np.isfinite(conformer.GetDoubleProp("forcefield_energy"))
+        assert conformer.GetBoolProp("forcefield_converged")
+
+
+def test_generate_conformers_rejects_unknown_forcefield():
+    mol = smiles_to_rdkit("CCO")
+    with pytest.raises(ValueError, match="Invalid forcefield"):
+        generate_conformers(mol, seed=1, hydrogen_policy="keep", optimize=True, forcefield="AMBER")
