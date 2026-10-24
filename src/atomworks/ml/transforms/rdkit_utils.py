@@ -56,15 +56,16 @@ def generate_conformers(
     num_threads: int = 1,
     hydrogen_policy: Literal["infer", "remove", "keep", "auto"] = "remove",
     optimize: bool = True,
+    forcefield: Literal["UFF", "MMFF94"] = "UFF",
     attempts_with_distance_geometry: int = 10,
     attempts_with_random_coordinates: int = 10_000,
-    **uff_optimize_kwargs: dict,
+    **optimize_kwargs: dict,
 ) -> Mol:
     """Generate conformations for the given molecule.
 
     Args:
         mol: The RDKit molecule to generate conformations for.
-        seed: Random seed for reproducibility. If None, a random seed is used.
+        seed: Random seed for reproducibility. If None, a random seed is used (``0`` is a valid seed).
         n_conformers: Number of conformations to generate.
         method: The method to use for conformer generation. Default is "ETKDGv3".
             Allowed methods are: "ETDG", "ETKDG", "ETKDGv2", "ETKDGv3", "srETKDGv3"
@@ -77,9 +78,12 @@ def generate_conformers(
             if the molecule already has explicit hydrogens, otherwise it is set to "remove".
             If "infer", we follow the same behavior as "remove," but do not remove added hydrogens
             prior to returning the molecule.
-        optimize: Whether to optimize the generated conformers using UFF.
+        optimize: Whether to optimize the generated conformers with ``forcefield``.
             Default is True.
-        **uff_optimize_kwargs: Additional keyword arguments for UFF optimization:
+        forcefield: Force field used for optimization, ``"UFF"`` (default) or ``"MMFF94"``. After
+            optimization each conformer carries its energy (kcal/mol) and convergence flag as the
+            conformer properties ``forcefield_energy`` and ``forcefield_converged``.
+        **optimize_kwargs: Additional keyword arguments for the optimization:
             - maxIters: Maximum number of iterations (default 200).
             - vdwThresh: Used to exclude long-range van der Waals interactions
               (default 10.0).
@@ -139,7 +143,7 @@ def generate_conformers(
     # Setup the parameters for the coordinate embedding
     params = getattr(rdDistGeom, method)()
     params.clearConfs = True
-    params.randomSeed = seed or _get_random_seed()
+    params.randomSeed = _get_random_seed() if seed is None else seed
     params.enforceChirality = True
     params.useRandomCoords = False
     params.numThreads = num_threads
@@ -175,7 +179,7 @@ def generate_conformers(
             )
 
     if optimize:
-        mol = optimize_conformers(mol, **uff_optimize_kwargs)
+        mol = optimize_conformers(mol, forcefield=forcefield, **optimize_kwargs)
 
     mol = remove_hydrogens(mol) if hydrogen_policy == "remove" else mol
     return mol
@@ -188,6 +192,7 @@ def optimize_conformers(
     maxIters: int = 200,  # noqa: N803
     vdwThresh: float = 10.0,  # noqa: N803
     ignoreInterfragInteractions: bool = True,  # noqa: N803
+    forcefield: Literal["UFF", "MMFF94"] = "UFF",
 ) -> Mol:
     """
     Optimize the conformers of an RDKit molecule.
@@ -195,22 +200,43 @@ def optimize_conformers(
     Args:
         - mol (Mol): The RDKit molecule to optimize.
         - numThreads (int): Number of threads to use for parallel computation. Default is 1.
-        - maxIters (int): Maximum number of iterations for UFF optimization. Defaults to 200.
+        - maxIters (int): Maximum number of iterations for the optimization. Defaults to 200.
         - vdwThresh (float): Used to exclude long-range van der Waals interactions. Defaults to 10.0.
         - ignoreInterfragInteractions (bool): If True, nonbonded terms between fragments will not be added to the
             forcefield. Defaults to True.
+        - forcefield (str): ``"UFF"`` (default) or ``"MMFF94"``.
 
     Returns:
-        Mol: The optimized RDKit molecule.
+        Mol: The optimized RDKit molecule. Every conformer is annotated with the float property
+        ``forcefield_energy`` (kcal/mol) and the bool property ``forcefield_converged``. If the force field
+        cannot be set up for the molecule (e.g. atoms MMFF94 cannot type), the energy is ``nan`` and the
+        conformers are left unoptimized.
     """
-    success = AllChem.UFFOptimizeMoleculeConfs(
-        mol,
-        numThreads=numThreads,
-        maxIters=maxIters,
-        vdwThresh=vdwThresh,
-        ignoreInterfragInteractions=ignoreInterfragInteractions,
-    )
-    if not success:
+    if forcefield == "UFF":
+        results = AllChem.UFFOptimizeMoleculeConfs(
+            mol,
+            numThreads=numThreads,
+            maxIters=maxIters,
+            vdwThresh=vdwThresh,
+            ignoreInterfragInteractions=ignoreInterfragInteractions,
+        )
+    elif forcefield == "MMFF94":
+        results = AllChem.MMFFOptimizeMoleculeConfs(
+            mol,
+            numThreads=numThreads,
+            maxIters=maxIters,
+            mmffVariant="MMFF94",
+            nonBondedThresh=vdwThresh,
+            ignoreInterfragInteractions=ignoreInterfragInteractions,
+        )
+    else:
+        raise ValueError(f"Invalid forcefield: {forcefield}. Must be one of 'UFF' or 'MMFF94'.")
+
+    # RDKit returns (status, energy) per conformer in conformer order; status 0 = converged, -1 = no force field
+    for conformer, (status, energy) in zip(mol.GetConformers(), results, strict=True):
+        conformer.SetDoubleProp("forcefield_energy", float(energy) if status >= 0 else float("nan"))
+        conformer.SetBoolProp("forcefield_converged", status == 0)
+    if any(status != 0 for status, _ in results):
         logger.warning("Conformer optimization did not converge.")
     return mol
 
