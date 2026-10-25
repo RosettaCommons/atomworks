@@ -121,9 +121,12 @@ def _get_available_ccd_codes_in_mirror_cached(ccd_mirror_path_str: str) -> froze
     cache_file = os.path.join(root, ".ccd_codes_cache")
     if os.path.exists(cache_file):
         try:
-            # Check if cache is newer than the directory
+            # Check if cache is newer than the directory; components are added under
+            # <root>/<first letter>/, which leaves the mtime of the root itself unchanged
             cache_mtime = os.path.getmtime(cache_file)
-            dir_mtime = os.path.getmtime(root)
+            with os.scandir(root) as entries:
+                letter_dir_mtimes = [e.stat().st_mtime for e in entries if e.is_dir() and len(e.name) == 1]
+            dir_mtime = max([os.path.getmtime(root), *letter_dir_mtimes])
             if cache_mtime > dir_mtime:
                 with open(cache_file) as f:
                     codes = {line.strip() for line in f if line.strip()}

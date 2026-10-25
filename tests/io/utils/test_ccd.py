@@ -1,9 +1,14 @@
+import os
+from pathlib import Path
+
 import numpy as np
 import pytest
 
 from atomworks.io.utils.ccd import (
+    _get_available_ccd_codes_in_mirror_cached,
     _get_base_ccd_template,
     atom_array_from_ccd_code,
+    get_available_ccd_codes_in_mirror,
     get_polymerization_atoms,
     register_custom_ccd_entry,
     unregister_custom_ccd_entry,
@@ -142,6 +147,48 @@ def test_get_polymerization_atoms_prefers_canonical_names_over_overrides(cleanup
 
     # Without the canonical-names check first, this would return the nucleotide override ("O2'", "P").
     assert get_polymerization_atoms("3DA") == ("C", "N")
+
+
+def _write_mirror_component(root: Path, code: str) -> None:
+    component_dir = root / code[0] / code
+    component_dir.mkdir(parents=True, exist_ok=True)
+    (component_dir / f"{code}.cif").write_text(f"data_{code}\n")
+
+
+def _scan_mirror(root: Path) -> frozenset[str]:
+    """Resolve the mirror as a fresh process would: only the on-disk cache carries over."""
+    _get_available_ccd_codes_in_mirror_cached.cache_clear()
+    return get_available_ccd_codes_in_mirror(root)
+
+
+def test_mirror_codes_include_component_added_under_existing_letter_dir(tmp_path):
+    """A component added after the cache was written must be visible without deleting the cache."""
+    _write_mirror_component(tmp_path, "AAA")
+    assert _scan_mirror(tmp_path) == frozenset({"AAA"})
+    cache_file = tmp_path / ".ccd_codes_cache"
+    assert cache_file.is_file()
+
+    _write_mirror_component(tmp_path, "AAB")
+    # Pin the timestamps to the state the bug needs: a cache newer than the mirror root
+    # (which an added component never touches) but older than the letter directory.
+    cache_mtime = cache_file.stat().st_mtime
+    os.utime(tmp_path, (cache_mtime - 10, cache_mtime - 10))
+    os.utime(tmp_path / "A", (cache_mtime + 10, cache_mtime + 10))
+
+    assert _scan_mirror(tmp_path) == frozenset({"AAA", "AAB"})
+
+
+def test_mirror_codes_come_from_cache_file_when_mirror_is_unchanged(tmp_path):
+    """An unchanged mirror must still be answered from the cache file rather than rescanned."""
+    _write_mirror_component(tmp_path, "AAA")
+    _scan_mirror(tmp_path)
+
+    cache_file = tmp_path / ".ccd_codes_cache"
+    cache_file.write_text("AAA\nZZZ\n")  # ZZZ exists only in the cache, never on disk
+    newer = max(os.path.getmtime(tmp_path), os.path.getmtime(tmp_path / "A")) + 10
+    os.utime(cache_file, (newer, newer))
+
+    assert _scan_mirror(tmp_path) == frozenset({"AAA", "ZZZ"})
 
 
 if __name__ == "__main__":
