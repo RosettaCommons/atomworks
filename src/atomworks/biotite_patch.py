@@ -213,8 +213,10 @@ def _update_array() -> None:
 
         for name in names:
             if hasattr(atoms[0]._annot[name], "dtype"):
-                # (Preserve dtype if possible)
+                # (Preserve dtype if possible, but let NumPy size string widths from all atoms)
                 dtype = atoms[0]._annot[name].dtype
+                if dtype.kind in "US":
+                    dtype = dtype.kind
             else:
                 dtype = type(atoms[0]._annot[name])
             annotation_values = [atom._annot[name] for atom in atoms]
