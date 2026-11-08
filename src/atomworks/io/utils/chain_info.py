@@ -63,8 +63,9 @@ def build_chain_info(
         entity_poly_seq: Polymer sequence data from :py:func:`~atomworks.io.transforms.categories.category_to_dict`.
 
     Returns:
-        Dict keyed by chain ID with fields: ``res_name``, ``res_id``, ``chain_type``,
-        ``is_polymer``, ``processed_entity_{canonical,non_canonical}_sequence``,
+        Dict keyed by chain ID with fields: ``res_name``, ``res_id``, ``ins_code`` (one per
+        ``res_id``; ``""`` where no code is known, including residues added from ``entity_poly_seq``),
+        ``chain_type``, ``is_polymer``, ``processed_entity_{canonical,non_canonical}_sequence``,
         optionally ``label_entity``, ``ec_numbers``, ``unprocessed_entity_*``, ``has_sequence_heterogeneity``.
     """
     # --- Setup ---
@@ -108,6 +109,7 @@ def _extract_baseline_from_atom_array(atom_array: AtomArray) -> dict[str, dict]:
     _res_starts = get_residue_starts(atom_array)
     chain_identifiers = atom_array.chain_id[_res_starts]
     res_ids = atom_array.res_id[_res_starts]
+    ins_codes = atom_array.ins_code[_res_starts]
     res_names = atom_array.res_name[_res_starts]
     hetero = atom_array.hetero[_res_starts]
 
@@ -139,6 +141,7 @@ def _extract_baseline_from_atom_array(atom_array: AtomArray) -> dict[str, dict]:
             "chain_type": chain_type,
             "is_polymer": chain_type.is_polymer(),
             "res_id": res_ids[is_in_chain].tolist(),
+            "ins_code": ins_codes[is_in_chain].tolist(),
             "res_name": res_names[is_in_chain].tolist(),
         }
 
@@ -288,5 +291,7 @@ def _enrich_with_poly_seq(
             # Update chain_info with merged sequences
             chain_info[chain_id]["res_id"] = sorted_res_ids.tolist()
             chain_info[chain_id]["res_name"] = sorted_res_names.tolist()
+            ins_codes = np.concatenate([chain_info[chain_id]["ins_code"], np.full(missing_res_ids.size, "")])
+            chain_info[chain_id]["ins_code"] = ins_codes[sort_indices].tolist()
 
     return chain_info
