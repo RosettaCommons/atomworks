@@ -369,7 +369,8 @@ def get_coarse_graph_as_nodes_and_edges(
     """Returns the coarse-grained nodes and edges at the given annotation level based on the atom array's bond connectivity.
 
     Args:
-        atom_array (AtomArray): The atom array containing atomic information and bonds.
+        atom_array (AtomArray): The atom array containing atomic information and bonds. An array
+            without a ``BondList`` carries no bond information, so no two nodes are connected.
         annotations (str | tuple[str]): A single annotation or a tuple of annotations to be used for node
             identification.
         exclude_bond_types (set | None): Bond types to exclude from connectivity. For example,
@@ -399,7 +400,7 @@ def get_coarse_graph_as_nodes_and_edges(
     """
     annotations = [annotations] if isinstance(annotations, str) else annotations
 
-    bond_array = atom_array.bonds.as_array()
+    bond_array = atom_array.bonds.as_array() if atom_array.bonds is not None else np.empty((0, 3), dtype=np.uint32)
     if exclude_bond_types:
         mask = ~np.isin(bond_array[:, 2], [int(bt) for bt in exclude_bond_types])
         bond_array = bond_array[mask]

@@ -13,9 +13,10 @@ from atomworks.io.template import get_empty_ccd_template, infer_bonds_from_resid
 from atomworks.io.utils.atom_array import get_bond_degree_per_atom
 from atomworks.io.utils.bonds import (
     correct_formal_charges_for_specified_atoms,
+    get_coarse_graph_as_nodes_and_edges,
     hash_atom_array,
 )
-from atomworks.io.utils.io_utils import read_any
+from atomworks.io.utils.io_utils import read_any, to_cif_file
 from atomworks.io.utils.link_chemistry import get_chem_comp_leaving_atom_groups, infer_link_order, resolve_leaving_atoms
 from tests.io.conftest import TEST_DATA_IO, get_pdb_path
 
@@ -34,6 +35,38 @@ def _atom_index(atoms, chain_id, res_id, res_name, atom_name):
         & (atoms.res_name == res_name)
         & (atoms.atom_name == atom_name)
     ).item()
+
+
+def test_coarse_graph_without_a_bond_list_connects_no_nodes():
+    atoms = AtomArray(3)
+    atoms.chain_id = np.array(["A", "A", "B"])
+    assert atoms.bonds is None
+
+    nodes, edges = get_coarse_graph_as_nodes_and_edges(atoms, "chain_id")
+
+    assert nodes.tolist() == ["A", "B"]
+    assert edges.tolist() == [[0, 0], [1, 1]]
+
+
+def test_to_cif_file_writes_an_atom_array_without_a_bond_list(tmp_path):
+    """Without ``label_entity_id`` the writer annotates entities from the coarse graph."""
+    atoms = AtomArray(3)
+    atoms.coord = np.arange(9, dtype=float).reshape(3, 3)
+    atoms.chain_id = np.array(["A", "A", "B"])
+    atoms.res_id = np.array([1, 1, 1])
+    atoms.res_name = np.array(["ALA", "ALA", "GLY"])
+    atoms.atom_name = np.array(["CA", "CB", "CA"])
+    atoms.element = np.array(["C"] * 3)
+
+    to_cif_file(atoms, tmp_path / "no_bonds.cif")
+
+    written = parse(tmp_path / "no_bonds.cif", config="minimal")["asym_unit"][0]
+    assert list(zip(written.chain_id.tolist(), written.res_name.tolist(), strict=True)) == [
+        ("A", "ALA"),
+        ("A", "ALA"),
+        ("B", "GLY"),
+    ]
+    assert atoms.bonds is None
 
 
 def test_struct_conn_uses_canonical_labels_not_author_insertions():
