@@ -53,7 +53,7 @@ a full PDB/CCD mirror is not required. Infrastructure-dependent tests remain exc
 Run the slow tests separately with one worker when needed to limit memory use.
 
 Setting up PDB/CCD mirrors
--------------------------
+--------------------------
 
 For production use or training on the full PDB, you'll want complete mirrors rather than the test subset. See :doc:`mirrors` for detailed instructions on:
 
@@ -62,6 +62,6 @@ For production use or training on the full PDB, you'll want complete mirrors rat
 * Configuring environment variables for production use
 
 Migrating to AtomWorks 3.0
--------------------------
+--------------------------
 
 For changes and compatibility guidance, see the `short migration guide <migration/migration-short.html>`_ or the `detailed migration guide <migration/migration-long.html>`_.

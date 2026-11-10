@@ -174,23 +174,15 @@ def parse(
             are included automatically. Cached results still honor the config's cache flags.
 
     Returns:
-        A result dictionary, or a list of result dictionaries for models with
-        different atom sets. Each dictionary contains the following keys:
-            chain_info
-                A dictionary mapping chain ID to sequence, type (as an IntEnum), RCSB entity,
-                EC number, and other information.
-            ligand_info
-                A dictionary containing ligand of interest information.
-            asym_unit
-                An AtomArrayStack instance representing the asymmetric unit.
-            assemblies
-                A dictionary mapping assembly IDs to AtomArrayStack instances.
-            metadata
-                A dictionary containing metadata about the structure
-                (e.g., resolution, deposition date, etc.).
-            extra_info
-                A dictionary with information for cross-compatibility and caching.
-                Should typically not be used directly.
+        A result dictionary, or a list for models with different atom sets. Each
+        dictionary contains:
+
+        - ``chain_info``: chain sequences, types, entities, and related information.
+        - ``ligand_info``: information about ligands of interest.
+        - ``asym_unit``: an AtomArrayStack representing the asymmetric unit.
+        - ``assemblies``: a mapping of assembly IDs to AtomArrayStacks.
+        - ``metadata``: structure metadata, such as resolution and deposition date.
+        - ``extra_info``: compatibility and caching information for internal use.
     """
     config, kwargs = _resolve_config(config, kwargs, cls=ParseConfig)
 
