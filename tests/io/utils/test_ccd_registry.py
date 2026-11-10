@@ -204,3 +204,53 @@ def test_authored_annotations_during_atom_completion(tmp_path, ccd_code, authore
         assert np.array_equal(template.get_annotation(name), expected_values)
         if name != "is_leaving_atom":  # Preparation removes this temporary annotation.
             assert np.array_equal(parsed.get_annotation(name), expected_values)
+
+
+@pytest.mark.parametrize("authored", [False, True])
+def test_mixed_ccd_names_preserve_leaving_atoms_and_geometry(tmp_path, cleanup_registry, authored):
+    """Legacy phosphate names coexist with current sugar names in older LCC files."""
+    atoms = atom_array_from_ccd_code("LCC")
+    expected_coords = atoms.coord.copy()
+    expected_leaving = atoms.is_leaving_atom.copy()
+    aliases = dict(zip(atoms.atom_name, atoms.alt_atom_id, strict=True))
+    atoms.atom_name = np.array([aliases[name] if name in ("OP1", "OP2", "OP3") else name for name in atoms.atom_name])
+    atoms.chain_id[:] = "A"
+    atoms.res_id[:] = 1
+    if authored:
+        atoms.is_leaving_atom[:] = False
+    path = tmp_path / "legacy.cif"
+    atom_array_to_file(atoms, path, config=CIFWriteConfig(ccd_entries={"LCC": atoms}))
+    block = read_any(path).block
+    if not authored:
+        del block["chem_comp_atom"]["pdbx_leaving_atom_flag"]
+    for column in list(block["chem_comp_atom"]):
+        if "Cartn" in column:
+            del block["chem_comp_atom"][column]
+    entry = build_ccd_entries_from_cif_block(block, on_mismatch="ignore")["LCC"]
+    np.testing.assert_array_equal(entry.atom_name, atoms.atom_name)
+    np.testing.assert_array_equal(
+        entry.is_leaving_atom, np.zeros_like(expected_leaving) if authored else expected_leaving
+    )
+    with custom_ccd_residues({"LCC": entry}):
+        resolved = atom_array_from_ccd_code("LCC")
+    np.testing.assert_allclose(resolved.coord, expected_coords)
+    assert np.isnan(entry.coord).all()
+    np.testing.assert_array_equal(resolved.bonds.as_array(), entry.bonds.as_array())
+
+
+def test_alias_coordinates_do_not_override_different_chemistry(cleanup_registry):
+    """A same-named component with different bonds is not a geometry template."""
+    atoms = atom_array_from_ccd_code("LCC")
+    atoms.atom_name[atoms.atom_name == "OP3"] = "O1P"
+    atoms.coord[:] = np.nan
+    a, b, _ = atoms.bonds.as_array()[0]
+    atoms.bonds.remove_bond(int(a), int(b))
+    with custom_ccd_residues({"LCC": atoms}):
+        assert np.isnan(atom_array_from_ccd_code("LCC").coord).all()
+
+
+def test_ccd_alias_matching_rejects_duplicate_targets():
+    from atomworks.io.utils.ccd import _ccd_atom_indices
+
+    atoms = atom_array_from_ccd_code("LCC")
+    np.testing.assert_array_equal(_ccd_atom_indices(np.array(["OP3", "O1P"]), atoms), [-1, -1])

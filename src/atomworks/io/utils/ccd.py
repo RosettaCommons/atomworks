@@ -991,6 +991,31 @@ def get_ccd_descriptors(ccd_code: str, ccd_mirror_path: os.PathLike = CCD_MIRROR
 # ===== CCD ANNOTATION TRANSFER =====
 
 
+def _ccd_atom_indices(names: np.ndarray, template: struc.AtomArray) -> np.ndarray:
+    """Match standard names and unambiguous CCD aliases without renaming input."""
+    standard = {str(name): i for i, name in enumerate(template.atom_name)}
+    aliases: dict[str, set[int]] = {}
+    if "alt_atom_id" in template.get_annotation_categories():
+        for i, name in enumerate(template.alt_atom_id):
+            if name not in ("", ".", "?"):
+                aliases.setdefault(str(name), set()).add(i)
+    indices = np.array(
+        [
+            standard[name]
+            if name in standard
+            else next(iter(aliases[name]))
+            if len(aliases.get(str(name), ())) == 1
+            else -1
+            for name in names
+        ],
+        dtype=np.intp,
+    )
+    # Two authored atoms must never collapse onto one dictionary atom.
+    matched, counts = np.unique(indices[indices >= 0], return_counts=True)
+    indices[np.isin(indices, matched[counts > 1])] = -1
+    return indices
+
+
 def add_annotations_from_ccd(
     atom_array: struc.AtomArray,
     annotations: list[str] | None = None,
@@ -1024,9 +1049,9 @@ def add_annotations_from_ccd(
             - ``"ignore"`` (default): silently skip unmatched atoms (debug log only).
             - ``"error_heavy"``: raise ``ValueError`` if any unmatched atom is a heavy atom
             - ``"error"``: raise ``ValueError`` on any unmatched atom.
-        match_alt_atom_ids: If True, use the template's ``alt_atom_id`` column for
-            the entire residue when it matches more heavy atoms than ``atom_name``.
-            Ties use standard names. Defaults to ``False``.
+        match_alt_atom_ids: If True, match standard names and unambiguous
+            ``alt_atom_id`` aliases within each residue. Standard names take
+            precedence; duplicate targets remain unmatched. Defaults to ``False``.
 
     Returns:
         AtomArray with CCD annotations added (modified in-place).
@@ -1100,25 +1125,15 @@ def add_annotations_from_ccd(
         residue_atom_names = atom_array.atom_name[res_start:res_stop]
 
         # Repeated residues share a name layout even when partial or reordered.
-        heavy_mask = (
-            ~np.isin(atom_array.element[res_start:res_stop], HYDROGEN_LIKE_SYMBOLS) if match_alt_atom_ids else None
-        )
-        layout = res_name, tuple(residue_atom_names), tuple(heavy_mask) if heavy_mask is not None else ()
+        layout = res_name, tuple(residue_atom_names)
         if layout not in matching_templates:
-            # Select one naming convention for the entire residue using heavy atoms.
-            template_names = template.atom_name
-            if match_alt_atom_ids and "alt_atom_id" in template.get_annotation_categories():
-                heavy_names = residue_atom_names[heavy_mask]
-                n_std = np.isin(heavy_names, template.atom_name).sum()
-                n_alt = np.isin(heavy_names, template.alt_atom_id).sum()
-                if n_alt > n_std:
-                    template_names = template.alt_atom_id
-
-            if len(template) == len(residue_atom_names) and np.array_equal(template_names, residue_atom_names):
-                template_idxs = residue_idxs = np.arange(len(template), dtype=np.intp)
+            if match_alt_atom_ids:
+                indices = _ccd_atom_indices(residue_atom_names, template)
+                residue_idxs = np.flatnonzero(indices >= 0)
+                template_idxs = indices[residue_idxs]
             else:
                 _, template_idxs, residue_idxs = np.intersect1d(
-                    template_names, residue_atom_names, assume_unique=True, return_indices=True
+                    template.atom_name, residue_atom_names, assume_unique=True, return_indices=True
                 )
             template_annotations = template.get_annotation_categories()
             matching_templates[layout] = (
@@ -1205,7 +1220,8 @@ def _atoms_and_bonds_match(a: struc.AtomArray, b: struc.AtomArray) -> bool:
 def _fill_ideal_coords_from_bundled_ccd(code: str, entry: struc.AtomArray) -> None:
     """Fill NaN coordinates on a registry ``entry`` in place from the bundled CCD, matched by atom name.
 
-    Genuine custom ligands (no bundled definition, or atoms not a subset) are left untouched.
+    Standard names and explicit CCD aliases may coexist. Heavy atoms must map
+    uniquely with matching elements and bonds; other custom chemistry is untouched.
     """
     missing = np.isnan(entry.coord).any(axis=-1)
     if not missing.any():
@@ -1214,11 +1230,22 @@ def _fill_ideal_coords_from_bundled_ccd(code: str, entry: struc.AtomArray) -> No
         bundled = atom_array_from_bundled_ccd_code(code)
     except (ValueError, KeyError):
         return
-    name_to_coord = dict(zip(bundled.atom_name, bundled.coord, strict=False))
-    if not set(map(str, entry.atom_name)).issubset(name_to_coord):
+    indices = _ccd_atom_indices(entry.atom_name, bundled)
+    heavy = ~np.isin(entry.element, HYDROGEN_LIKE_SYMBOLS)
+    if (indices[heavy] < 0).any():
         return
-    for i in np.where(missing)[0]:
-        entry.coord[i] = name_to_coord[entry.atom_name[i]]
+    matched = indices >= 0
+    if not np.array_equal(entry.element[matched], bundled.element[indices[matched]]):
+        return
+    # An alias is evidence of identity only when the stated heavy bonds agree.
+    if entry.bonds is None or bundled.bonds is None:
+        return
+    mapped = entry[heavy].copy()
+    mapped.atom_name = bundled.atom_name[indices[heavy]]
+    reference = bundled[indices[heavy]]
+    if _bonds_to_dict(mapped) != _bonds_to_dict(reference):
+        return
+    entry.coord[missing & matched] = bundled.coord[indices[missing & matched]]
 
 
 def register_custom_ccd_entry(code: str, atom_array: struc.AtomArray) -> None:
@@ -1477,7 +1504,7 @@ def build_ccd_entries_from_cif_block(
         elements = all_elements[mask].copy() if all_elements is not None else np.full(len(atom_names), "", dtype=str)
         ccd_atom_names, ccd_alt_names, _ = get_atom_names_for_residue(comp_id, str(CCD_MIRROR_PATH or ""))
         heavy_atom_names = atom_names[~np.isin(elements, HYDROGEN_LIKE_SYMBOLS)]
-        matches_ccd = set(heavy_atom_names).issubset(ccd_atom_names) or set(heavy_atom_names).issubset(ccd_alt_names)
+        matches_ccd = set(heavy_atom_names).issubset(set(ccd_atom_names) | set(ccd_alt_names))
         chem_comp_type = id_to_type.get(comp_id) or (
             get_chem_comp_type(comp_id)
             if matches_ccd
