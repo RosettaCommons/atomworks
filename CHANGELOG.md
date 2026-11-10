@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added and changed
 
-- Add `atom_array_from_file` and `atom_array_to_file` for basic structure I/O, including standard annotations.
+- Add `atom_array_from_file` and `atom_array_to_file` for basic structure I/O, including standard annotations and catcif input.
 - Reduce core dependencies and group optional ML, script, and documentation dependencies into extras.
 - Add explicit policies for unknown CCD charges and preserve formal charges through ASE conversions.
 - Improve annotated CIF loading and assembly performance, and update link chemistry, entity annotation, and Biotite compatibility.

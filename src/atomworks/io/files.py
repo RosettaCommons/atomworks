@@ -26,13 +26,16 @@ def atom_array_from_file(
 
     Args:
         source: Path or buffer; paths may be gzip or Zstandard compressed.
-        file_type: CIF, BinaryCIF, mmJSON, or PDB; inferred when omitted.
+        file_type: CIF, BinaryCIF, mmJSON, PDB, or catcif; inferred when omitted.
         model: 1-based model selection (negative positions count from the end), or all models.
         squeeze: Return an array for a single model. Explicit model selection always does so.
 
     Returns:
         A Plus array or stack, or a list when the parser returns separate models.
     """
+    # Let parse resolve catcif entries; their contents are CIF.
+    if isinstance(source, str | os.PathLike) and ".catcif:" in str(source):
+        file_type = "cif" if file_type in (None, "catcif") else file_type
     file_type = file_type or infer_pdb_file_type(source)
     if file_type not in ("cif", "bcif", "mmjson", "pdb"):
         raise ValueError(f"Cannot read a {file_type!r} file as an atom array; use atomworks.io.parse instead.")

@@ -1,3 +1,4 @@
+from atomworks.io import atom_array_from_file
 from atomworks.io.parser import parse
 from atomworks.io.utils.catcif import to_catcif_file
 from atomworks.io.utils.testing import assert_same_atom_array_or_stack, get_pdb_path
@@ -26,9 +27,10 @@ def test_catcif_round_trip(tmp_path):
         annotations_to_compare = [
             f for f in original.get_annotation_categories() if f not in _CATCIF_ANNOTATIONS_NOT_PRESERVED
         ]
-        assert_same_atom_array_or_stack(
-            original,
-            loaded_parse,
-            annotations_to_compare=annotations_to_compare,
-            compare_bonds=False,
-        )
+        for loaded in (loaded_parse, atom_array_from_file(tag_path), atom_array_from_file(tag_path, "catcif")):
+            assert_same_atom_array_or_stack(
+                original,
+                loaded,
+                annotations_to_compare=annotations_to_compare,
+                compare_bonds=False,
+            )
