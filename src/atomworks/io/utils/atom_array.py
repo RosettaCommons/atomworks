@@ -94,8 +94,9 @@ def remove_components(
 
         # Build covalent connectivity between whole residues.
         bonds = atoms.bonds.as_array()
-        pairs = bonds[bonds[:, 2] != struc.BondType.COORDINATION, :2]
-        graph = struc.BondList(len(keep_residue), residue_index[pairs])
+        pairs = residue_index[bonds[bonds[:, 2] != struc.BondType.COORDINATION, :2]]
+        # Intra-residue bonds collapse to self-pairs, which BondList rejects.
+        graph = struc.BondList(len(keep_residue), pairs[pairs[:, 0] != pairs[:, 1]])
 
         # Keep connected groups containing any non-excluded residue.
         for component in struc.get_molecule_indices(graph):
@@ -230,8 +231,8 @@ def chain_identifier(atom_array: AtomArray) -> np.ndarray:
 def get_bond_degree_per_atom(atom_array: AtomArray) -> np.ndarray:
     """Returns the total degree (= sum of bond orders) for each atom."""
     # Count both ends of each edge
-    edge_list = atom_array.bonds._bonds[:, :2]
-    bond_types = atom_array.bonds._bonds[:, -1]
+    edge_list = atom_array.bonds.as_array()[:, :2]
+    bond_types = atom_array.bonds.as_array()[:, -1]
     weights = _BOND_ORDERS[bond_types]
     degree = np.bincount(edge_list.ravel(), weights=np.repeat(weights, 2), minlength=atom_array.array_length())
 

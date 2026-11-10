@@ -2,13 +2,11 @@ import itertools
 import logging
 import math
 from collections.abc import Iterator, Sequence
-from operator import add
 
 import numpy as np
 import pandas as pd
 import pyarrow as pa
 import torch
-from toolz import accumulate
 from torch.utils.data import Dataset, DistributedSampler, Sampler, WeightedRandomSampler
 
 logger = logging.getLogger(__name__)
@@ -328,7 +326,7 @@ class DistributedMixedSampler(Sampler):
         self.dataset_lengths = [len(info["dataset"]) for info in datasets_info]  # ordered
 
         # Calculate cumulative lengths of datasets (so we can map local dataset indices to ConcatDataset indices)
-        self.cumulative_lengths = [0, *list(accumulate(add, self.dataset_lengths))]  # ordered
+        self.cumulative_lengths = list(itertools.accumulate(self.dataset_lengths, initial=0))  # ordered
         # Remove the last element to match the other list shapes
         self.cumulative_lengths = self.cumulative_lengths[:-1]
 

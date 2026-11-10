@@ -15,7 +15,7 @@ from biotite.structure import AtomArray
 
 from atomworks.common import exists
 from atomworks.enums import ChainType, MSAFileExtension
-from atomworks.ml.encoding_definitions import RF2AA_ATOM36_ENCODING, AF3SequenceEncoding, TokenEncoding
+from atomworks.ml.encoding_definitions import AF3SequenceEncoding, TokenEncoding
 from atomworks.ml.transforms._checks import (
     check_atom_array_annotation,
     check_contains_keys,
@@ -32,11 +32,6 @@ from atomworks.ml.transforms.msa._msa_constants import (
     MSA_INTEGER_TO_THREE_LETTER,
 )
 from atomworks.ml.transforms.msa._msa_featurizing_utils import (
-    assign_extra_rows_to_cluster_representatives,
-    build_indices_should_be_counted_masks,
-    build_msa_index_can_be_masked,
-    mask_msa_like_bert,
-    summarize_clusters,
     transform_ins_counts,
     uniformly_select_rows,
 )
@@ -725,347 +720,6 @@ class FillFullMSAFromEncoded(Transform):
         return data
 
 
-class FeaturizeMSALikeRF2AA(Transform):
-    """Featurizes the MSA in the style of RF2AA, returning one featurized set of outputs for each recycle.
-
-    Args:
-        encoding (TokenEncoding): The encoding object to use for the MSA.
-        n_recycles (int): The number of recycles to perform. We will generate a unique featurized MSA for each recycle.
-        n_msa_cluster_representatives (int): The number of MSA cluster representatives to select. The remaining sequences (up to `n_extra_rows`) will be used as extra MSA.
-        n_extra_rows (int): The number of extra MSA rows to use. If there are fewer than `n_extra_rows` remaining sequences, we will use all of them.
-        mask_behavior_probs (dict): A dictionary containing the probabilities for each BERT-style mask behavior. The keys are:
-            - "replace_with_random_aa": The probability of replacing a masked index with a uniformly random amino acid.
-            - "replace_with_msa_profile": The probability of replacing a masked index with an amino acid sampled from the MSA profile.
-            - "do_not_replace": The probability of keeping the original amino acid at a masked index.
-            - The final probability, "replace_with_mask_token", is implicitly 1 - sum(probs.values()).
-        mask_probability (float): The probability of masking a given token in the MSA.
-        polymer_token_indices (torch.Tensor, optional): Tensor of token indices that correspond to polymer residues. If not provided, we assume all tokens are polymer residues. Used for optimization.
-
-    For each recycle, performs four primary steps:
-        (1) Select cluster representatives from the full MSA
-        (2) Mask the cluster representatives using a BERT-style mask
-        (3) Assign the remaining sequences to the cluster representatives
-        (4) Summarize the clusters into profiles and mean insertions at each position
-
-    Outputs:
-        For each recycle, we store the following in `data["msa_features_per_recycle_dict"]` (inspired by AF-2 Supplement, Table 1):
-        - "first_row_of_msa": The first row of the MSA, which is the query sequence.
-        - "cluster_representatives_msa_masked": The (masked) MSA for the cluster representatives.
-        - "cluster_representatives_has_insertion": A mask indicating whether a given position in the cluster representatives MSA has an insertion.
-        - "cluster_representatives_insertion_value": The raw insertion value at each position in the cluster representatives MSA, transformed to [0,1]
-        - "cluster_insertion_mean": The mean insertion value at each position in the cluster representatives MSA, transformed to [0,1]
-        - "cluster_profile": The MSA profile for the cluster representatives.
-        - "extra_msa": The MSA for the extra sequences.
-        - "extra_msa_has_insertion": A mask indicating whether a given position in the extra MSA has an insertion.
-        - "extra_msa_insertion_value": The raw insertion value at each position in the extra MSA, transformed to [0,1]
-    """
-
-    requires_previous_transforms: ClassVar[list[str | Transform]] = [
-        "FillFullMSAFromEncoded",
-        "EncodeMSA",
-        ConvertToTorch,
-    ]
-
-    def __init__(
-        self,
-        *,
-        encoding: TokenEncoding = RF2AA_ATOM36_ENCODING,
-        n_recycles: int,
-        n_msa_cluster_representatives: int,
-        n_extra_rows: int,
-        mask_behavior_probs: dict,
-        mask_probability: float,
-        polymer_token_indices: torch.Tensor | None = None,
-        eps: float = 1e-6,
-    ):
-        self.encoding = encoding
-        self.n_recycles = n_recycles
-        self.n_msa_cluster_representatives = n_msa_cluster_representatives
-        self.n_extra_rows = n_extra_rows
-        self.mask_behavior_probs = mask_behavior_probs
-        self.mask_probability = mask_probability
-        self.polymer_token_indices = polymer_token_indices
-        self.eps = eps
-
-    def check_input(self, data: dict) -> None:
-        check_contains_keys(data, ["encoded", "full_msa_details"])
-
-    def forward(self, data: dict) -> dict:
-        # (Unpack)
-        encoded_msa = data["encoded"]["msa"]  # [n_rows, n_tokens_across_chains] (int)
-        token_idx_has_msa = data["full_msa_details"]["token_idx_has_msa"]  # [n_tokens_across_chains] (bool)
-        msa_is_padded_mask = data["full_msa_details"]["msa_is_padded_mask"]  # [n_rows, n_tokens_across_chains] (bool)
-        msa_raw_ins = data["full_msa_details"]["msa_raw_ins"]  # [n_rows, n_tokens_across_chains] (int)
-
-        # Select either the first `n_msa_cluster_representatives` rows or all rows, whichever is smaller
-        n_rows, n_seq = encoded_msa.shape
-        n_msa_cluster_representatives = min(self.n_msa_cluster_representatives, n_rows)
-
-        # Compute the raw MSA profile, which is required for the BERT-style masking of the MSA, where with a 10% probability, we replace
-        # an amino acid with an amino sampled from the MSA profile at a given position
-        full_msa_profile = grouped_count(
-            encoded_msa,
-            mask=~msa_is_padded_mask,  # ... ignore padding when computing the profile
-            groups=[
-                torch.zeros(n_rows, dtype=torch.long),  # ... assign all sequences to the same group
-                torch.arange(n_seq),  # ... assign each seq position to a different group
-            ],
-            n_tokens=self.encoding.n_tokens,  # ... return a float tensor
-            dtype=torch.float,  # ... return a float tensor
-        ).squeeze(0)  # [n_tokens_across_chains, n_tokens] (float)
-        full_msa_profile /= (
-            full_msa_profile.sum(dim=-1, keepdim=True) + self.eps
-        )  # [n_tokens_across_chains, n_tokens] (float)
-
-        # ... generate a unique MSA (both cluster representative MSA and extra MSA) for each recycle (up to `n_recycles`)
-        msa_features_per_recycle_dict = {
-            "first_row_of_msa": [],  # [n_tokens_across_chains] (int)
-            "cluster_representatives_msa_ground_truth": [],  # [n_msa_cluster_representatives, n_tokens_across_chains] (int)
-            "cluster_representatives_msa_masked": [],  # [n_msa_cluster_representatives, n_tokens_across_chains] (int)
-            "cluster_representatives_has_insertion": [],  # [n_msa_cluster_representatives, n_tokens_across_chains] (bool)
-            "cluster_representatives_insertion_value": [],  # [n_msa_cluster_representatives, n_tokens_across_chains] (float)
-            "cluster_insertion_mean": [],  # [n_msa_cluster_representatives, n_tokens_across_chains] (float)
-            "cluster_profile": [],  # [n_msa_cluster_representatives, n_tokens_across_chains, n_tokens] (float)
-            "extra_msa": [],  # [n_not_selected_rows, n_tokens_across_chains] (int)
-            "extra_msa_has_insertion": [],  # [n_not_selected_rows, n_tokens_across_chains] (bool)
-            "extra_msa_insertion_value": [],  # [n_not_selected_rows, n_tokens_across_chains] (float)
-            "bert_mask_position": [],  # [n_msa_cluster_representatives, n_tokens_across_chains] (bool)
-        }
-        for _ in range(self.n_recycles):
-            # ============================================================
-            # (1) SELECT CLUSTER REPRESENTATIVES FROM THE FULL MSA
-            # ============================================================
-
-            # Select the MSA cluster representatives using the preferred sampling strategy
-            selected_indices, not_selected_indices = uniformly_select_rows(
-                n_rows, n_msa_cluster_representatives, preserve_first_index=True
-            )
-
-            # ...correct `token_idx_has_msa` for edge cases
-            # (If we only have one selected sequence, then we don't actually have any MSA's)
-            if selected_indices.numel() == 1 and not_selected_indices.numel() == 0:
-                token_idx_has_msa = torch.zeros_like(token_idx_has_msa, dtype=torch.bool)
-
-            # ============================================================
-            # (2) MASK THE CLUSTER REPRESENTATIVES WITH BERT-STYLE MASK
-            # ============================================================
-
-            # ...mask the MSA, using the BERT-style approach from AF2
-            # (We only apply the mask to the cluster representatives, not the extra MSA)
-            index_can_be_masked = build_msa_index_can_be_masked(
-                msa_is_padded_mask=msa_is_padded_mask,
-                token_idx_has_msa=token_idx_has_msa,
-                encoded_msa=encoded_msa,
-                encoding=self.encoding,
-            )  # [n_rows, n_tokens_across_chains] (bool)
-            mask_position = torch.zeros_like(encoded_msa, dtype=torch.bool)  # [n_rows, n_tokens_across_chains] (int)
-            partial_masked_msa, partial_mask_position = mask_msa_like_bert(
-                encoding=self.encoding,
-                mask_behavior_probs=self.mask_behavior_probs,
-                mask_probability=self.mask_probability,
-                full_msa_profile=full_msa_profile,
-                encoded_msa=encoded_msa[selected_indices],
-                index_can_be_masked=index_can_be_masked[selected_indices],
-            )  # [n_msa_cluster_representatives, n_tokens_across_chains] (int)
-
-            # Clone the encoded MSA to avoid modifying the original...
-            encoded_and_masked_msa = encoded_msa.detach().clone()
-
-            # ...and update the masked positions
-            encoded_and_masked_msa[selected_indices] = partial_masked_msa
-            mask_position[selected_indices] = partial_mask_position
-
-            # ============================================================
-            # (3) ASSIGN THE EXTRA SEQUENCES TO THE CLUSTER REPRESENTATIVES
-            # ============================================================
-
-            # Define the tokens to ignore when clustering
-            # NOTE: We would also need to ignore the gap token, if present in the encoding; we could consider having an encoding function to return "special" tokens to ignore.
-            tokens_to_ignore = torch.tensor([self.encoding.token_to_idx[token_name] for token_name in ["<M>", "UNK"]])
-
-            index_should_be_counted_mask = build_indices_should_be_counted_masks(
-                encoded_msa=encoded_and_masked_msa,
-                mask_position=mask_position,
-                tokens_to_ignore=tokens_to_ignore,
-                token_idx_has_msa=token_idx_has_msa,
-            )  # [n_rows, n_tokens_across_chains] (bool)
-
-            if not_selected_indices.numel() > 0:
-                # ...if we have extra sequences, assign them to the cluster representatives
-                assignments = assign_extra_rows_to_cluster_representatives(
-                    cluster_representatives_msa=encoded_and_masked_msa[selected_indices],
-                    clust_reps_should_be_counted_mask=index_should_be_counted_mask[selected_indices],
-                    extra_msa=encoded_and_masked_msa[not_selected_indices],
-                    extra_msa_should_be_counted_mask=index_should_be_counted_mask[not_selected_indices],
-                )  # [n_not_selected_rows] (int)
-            else:
-                # ...if we have no extra sequences, we set the assignments to an empty tensor
-                assignments = torch.tensor([], dtype=torch.int)
-
-            # ============================================================
-            # (4) SUMMARIZE THE CLUSTERS INTO PROFILES AND MEAN INSERTIONS AND SUBSELECT THE EXTA MSA
-            # ============================================================
-            msa_cluster_profiles = torch.zeros(
-                (*encoded_and_masked_msa[selected_indices].shape, self.encoding.n_tokens), dtype=torch.float
-            )  # [n_msa_cluster_representatives, n_tokens_across_chains, n_tokens] (float)
-            msa_cluster_mean_ins = torch.zeros_like(
-                encoded_and_masked_msa[selected_indices], dtype=torch.float
-            )  # [n_msa_cluster_representatives, n_tokens_across_chains] (float)
-
-            # Summarize the clusters into profiles and mean insertions at each position. We can perform two optimizations here:
-            # (1) We only need to summarize where we have MSA's; we will handle the atomized residues (and positions without MSAs) later
-            # (2) We only need to worry about polymer tokens; all atom tokens for indices with MSAs will be zero by definition
-
-            # ...determine the token indices we should be considering
-            polymer_token_indices = (
-                torch.arange(self.encoding.n_tokens, dtype=torch.long)
-                if self.polymer_token_indices is None
-                else self.polymer_token_indices
-            )
-
-            if torch.any(token_idx_has_msa):
-                # ...compute the profiles and mean insertions for the cluster representatives
-                msa_cluster_profiles_with_msas_poly_tokens, msa_cluster_mean_ins_with_msas = summarize_clusters(
-                    encoded_msa=encoded_and_masked_msa[
-                        :, token_idx_has_msa
-                    ],  # Optimization 1: Only consider tokens with MSAs
-                    msa_raw_ins=msa_raw_ins[:, token_idx_has_msa],
-                    mask_position=mask_position[:, token_idx_has_msa],
-                    assignments=assignments,
-                    selected_indices=selected_indices,
-                    not_selected_indices=not_selected_indices,
-                    msa_is_padded_mask=msa_is_padded_mask[:, token_idx_has_msa],
-                    n_tokens=polymer_token_indices.shape[
-                        0
-                    ],  # Optimization 2: Only consider non-atom tokens. NOTE: Hyper-specific to RF2AA; should be generalized in the future
-                    eps=self.eps,
-                )  # [n_msa_cluster_representatives, n_tokens_with_msas, n_polymer_tokens] (float), [n_msa_cluster_representatives, n_tokens_with_msas] (float)
-            else:
-                # ...if we have no tokens with MSAs, we set the profiles and mean insertions to zeros
-                msa_cluster_profiles_with_msas_poly_tokens = torch.zeros(
-                    (n_msa_cluster_representatives, 0, polymer_token_indices.shape[0]), dtype=torch.float
-                )
-                msa_cluster_mean_ins_with_msas = torch.zeros((n_msa_cluster_representatives, 0), dtype=torch.float)
-
-            # ...if we used a subset of the tokens, we need to map the profiles (but not insertions, since those don't have a token dimension) back to the full token set, padding with zeros
-            if polymer_token_indices.shape[0] < self.encoding.n_tokens:
-                msa_cluster_profiles_with_msas = torch.zeros(
-                    ((*tuple(msa_cluster_profiles_with_msas_poly_tokens.shape[:-1]), self.encoding.n_tokens)),
-                    dtype=torch.float,
-                )  # [n_msa_cluster_representatives, n_tokens_with_msas, n_tokens] (float)
-                msa_cluster_profiles_with_msas[:, :, polymer_token_indices] = msa_cluster_profiles_with_msas_poly_tokens
-            else:
-                msa_cluster_profiles_with_msas = msa_cluster_profiles_with_msas_poly_tokens
-
-            # ...fill in the profiles and mean insertions for the cluster representatives
-            msa_cluster_profiles[:, token_idx_has_msa] = msa_cluster_profiles_with_msas
-            msa_cluster_mean_ins[:, token_idx_has_msa] = msa_cluster_mean_ins_with_msas
-            del msa_cluster_profiles_with_msas, msa_cluster_mean_ins_with_msas
-
-            # Now, handle the atomized residues and positions without MSAs:
-            # (a) For insertions, they should be zeros everywhere by definition, since we have no MSA (which is handled by the initialization)
-            # (b) For profiles, they should be 1 for the index of the amino acid in the query sequence, and 0 elsewhere (e.g., one-hot encoding of the query sequence)
-            query_sequence_no_msa_profile = (
-                torch.nn.functional.one_hot(encoded_and_masked_msa[0, ~token_idx_has_msa], self.encoding.n_tokens)
-                .unsqueeze(0)
-                .float()
-            )  # [1, n_tokens_without_msas, n_tokens] (float)
-            non_query_no_msa_profile = torch.zeros(
-                ((n_msa_cluster_representatives - 1, *tuple(query_sequence_no_msa_profile.shape[1:]))),
-                dtype=torch.float,
-            )  # [n_msa_cluster_representatives - 1, n_tokens_with_msas, n_tokens] (float)
-            msa_cluster_profiles_without_msas = torch.cat(
-                [query_sequence_no_msa_profile, non_query_no_msa_profile], dim=0
-            )  # [n_msa_cluster_representatives, n_tokens_without_msas, n_tokens] (float)
-
-            msa_cluster_profiles[:, ~token_idx_has_msa] = msa_cluster_profiles_without_msas
-            del msa_cluster_profiles_without_msas, query_sequence_no_msa_profile, non_query_no_msa_profile
-
-            # ...subselect the extra MSA rows
-
-            # From AF2 Supplement, section 1.2.7:
-            #   (...)
-            #   4. The MSA sequences that have not been selected as cluster centres
-            #   at step 1 are used to randomly sample N_{extra_seq} sequences
-            #   without replacement. If there are less than N_{extra_seq} remaining
-            #   sequences available, all of them are used.
-            #   (...)
-            if not_selected_indices.shape[0] >= self.n_extra_rows:
-                # ...if we have enough extra sequences, we randomly sample `n_extra_rows` of them
-                shuffled_indices = torch.randperm(not_selected_indices.shape[0])
-                not_selected_indices = not_selected_indices[
-                    shuffled_indices[: self.n_extra_rows]
-                ]  # [n_extra_rows] (int)
-
-            # ============================================================
-            # (5) BUILD THE RETURN DICTIONARY
-            # ============================================================
-
-            # Sequence
-            msa_features_per_recycle_dict["first_row_of_msa"].append(
-                encoded_and_masked_msa[0]
-            )  # [n_tokens_across_chains] (int)
-
-            # ...without masks (ground truth for masked token recovery)
-            msa_features_per_recycle_dict["cluster_representatives_msa_ground_truth"].append(
-                encoded_msa[selected_indices]
-            )
-
-            # +------- Information about the msa cluster representatives (NOT the clusters themselves) -------+
-            # ...with masks
-            msa_features_per_recycle_dict["cluster_representatives_msa_masked"].append(
-                encoded_and_masked_msa[selected_indices]
-            )  # [n_msa_cluster_representatives, n_tokens_across_chains] (int)
-
-            # ...insertions
-            msa_features_per_recycle_dict["cluster_representatives_has_insertion"].append(
-                msa_raw_ins[selected_indices] > 0
-            )  # [n_msa_cluster_representatives, n_tokens_across_chains] (bool)
-            msa_features_per_recycle_dict["cluster_representatives_insertion_value"].append(
-                transform_ins_counts(msa_raw_ins[selected_indices])
-            )  # [n_msa_cluster_representatives, n_tokens_across_chains] (float)
-
-            # +------- Aggregated information about the msa clusters (e.g, profiles, insertions) -------+
-            msa_features_per_recycle_dict["cluster_insertion_mean"].append(
-                transform_ins_counts(msa_cluster_mean_ins)
-            )  # [n_msa_cluster_representatives, n_tokens_across_chains] (float)
-            msa_features_per_recycle_dict["cluster_profile"].append(
-                msa_cluster_profiles
-            )  # [n_msa_cluster_representatives, n_tokens_across_chains, n_tokens] (float)
-
-            # +------- Information about the extra MSA -------+
-            # NOTE: At a minimum, the extra MSA will contain the query sequence (a RF2AA novelty)
-            extra_msa = encoded_and_masked_msa[not_selected_indices]
-            if extra_msa.shape[0] > 0:
-                # ...replace the first row of the extra MSA with the (masked) query sequence (a RF2AA novelty)
-                extra_msa[0] = encoded_and_masked_msa[0]
-            else:
-                # ...if there's no extra MSA, we need to create a dummy row with the query sequence (a RF2AA novelty)
-                extra_msa = encoded_and_masked_msa[0].unsqueeze(0)
-
-            msa_features_per_recycle_dict["extra_msa"].append(extra_msa)  # [n_extra_rows, n_tokens_across_chains] (int)
-
-            # ...insertions
-            msa_features_per_recycle_dict["extra_msa_has_insertion"].append(
-                msa_raw_ins[not_selected_indices] > 0
-                if not_selected_indices.shape[0] > 0
-                else torch.zeros_like(extra_msa, dtype=torch.bool)
-            )  # [n_extra_rows, n_tokens_across_chains] (bool)
-            msa_features_per_recycle_dict["extra_msa_insertion_value"].append(
-                transform_ins_counts(msa_raw_ins[not_selected_indices])
-                if not_selected_indices.shape[0] > 0
-                else torch.zeros_like(extra_msa, dtype=torch.float)
-            )  # [n_extra_rows, n_tokens_across_chains] (float)
-
-            # +------- Mask information -------+
-            msa_features_per_recycle_dict["bert_mask_position"].append(
-                mask_position[selected_indices]
-            )  # [n_msa_cluster_representatives, n_tokens_across_chains] (bool)
-
-        data["features_per_recycle_dict"] = msa_features_per_recycle_dict
-        return data
-
-
 class FeaturizeMSALikeAF3(Transform):
     """
     Featurizes the MSA in the style of AF3, returning one featurized set of outputs for each recycle.
@@ -1097,6 +751,8 @@ class FeaturizeMSALikeAF3(Transform):
         encoding (AF3SequenceEncoding): The encoding object to use for the MSA. For AF-3, this should include the 32 classes used in the restype encoding.
         n_recycles (int): The number of recycles to perform. We will generate a unique featurized MSA for each recycle.
         n_msa (int): The number of MSA sequences to flow into the model. If there are fewer than `n_msa` sequences, we will use all of them.
+        randomize_n_msa_depth (bool): During training, sample one MSA depth uniformly from
+            `[1, min(n_msa, n_rows)]` per example. Inference always uses the fixed maximum depth.
 
     Outputs:
         For each recycle, we store the following in `data["msa_features_per_recycle_dict"]`:
@@ -1123,11 +779,13 @@ class FeaturizeMSALikeAF3(Transform):
         encoding: AF3SequenceEncoding,
         n_recycles: int,
         n_msa: int,
+        randomize_n_msa_depth: bool = False,
         eps: float = 1e-6,
     ):
         self.encoding = encoding
         self.n_recycles = n_recycles
         self.n_msa = n_msa
+        self.randomize_n_msa_depth = randomize_n_msa_depth
         self.eps = eps
 
     def check_input(self, data: dict) -> None:
@@ -1146,6 +804,7 @@ class FeaturizeMSALikeAF3(Transform):
             encoding=self.encoding,
             eps=self.eps,
             residue_is_paired=data["full_msa_details"].get("msa_residue_is_paired", None),
+            randomize_n_msa_depth=(self.randomize_n_msa_depth and not data.get("is_inference", False)),
         )
 
         data["msa_features"] = msa_features
@@ -1161,11 +820,16 @@ def featurize_msa_like_af3(
     n_recycles: int,
     eps: float = 1e-6,
     residue_is_paired: torch.Tensor | None = None,
+    randomize_n_msa_depth: bool = False,
 ) -> dict[str, list[torch.Tensor]]:
     """Functional version of FeaturizeMSALikeAF3. See FeaturizeMSALikeAF3 for more details."""
     # Select either the first `n_msa` rows or all rows, whichever is smaller
     n_rows, _ = encoded_msa.shape
     n_msa = min(n_msa, n_rows)
+    if randomize_n_msa_depth:
+        # Sample one depth per example so every recycle has the same shape and can
+        # be stacked. Row identities are still sampled independently per recycle.
+        n_msa = torch.randint(1, n_msa + 1, ()).item()
 
     full_msa_profile, ins_mean = get_full_msa_profile_and_insertion_mean(
         encoded_msa=encoded_msa,

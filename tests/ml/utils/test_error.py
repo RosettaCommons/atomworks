@@ -1,25 +1,8 @@
 import logging
-import re
 
 import pytest
 
-from atomworks.ml.utils.error import context, format_traceback
-
-
-def test_format_traceback():
-    """Test that format_traceback properly formats a traceback string."""
-    sample_traceback = """Traceback (most recent call last):
-  File "test.py", line 1, in <module>
-    raise ValueError("test error")
-ValueError: test error"""
-
-    formatted = format_traceback(sample_traceback)
-    # Check that the formatting adds ANSI color codes
-    assert "\x1b[" in formatted
-    # Strip ANSI codes before comparing the text content
-    ansi_escape = re.compile(r"\x1b[^m]*m")
-    cleaned_formatted = ansi_escape.sub("", formatted)
-    assert "ValueError: test error" in cleaned_formatted
+from atomworks.ml.utils.error import context
 
 
 def test_context_successful_execution():

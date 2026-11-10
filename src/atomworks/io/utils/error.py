@@ -5,26 +5,7 @@ import traceback
 from collections.abc import Callable
 from typing import Any
 
-from pygments import highlight
-from pygments.formatters import TerminalFormatter
-from pygments.lexers import Python3TracebackLexer
-
 logger = logging.getLogger(__name__)
-
-
-def format_traceback(tb: str) -> str:
-    """
-    Format a traceback string with syntax highlighting.
-
-    Args:
-        - tb (str): The traceback string to format
-
-    Returns:
-        str: The formatted traceback with ANSI color codes
-    """
-    if tb is None:
-        return ""
-    return highlight(tb, Python3TracebackLexer(), TerminalFormatter())
 
 
 @contextlib.contextmanager
@@ -60,7 +41,6 @@ def context(
         # Get full traceback
         exc_info = sys.exc_info()
         full_tb = "".join(traceback.format_exception(*exc_info)) if exc_info[0] else ""
-        formatted_tb = format_traceback(full_tb)
 
         try:
             # Attempt cleanup before potentially raising
@@ -70,7 +50,7 @@ def context(
                 "Cleanup failed after error '%s': %s\n%s",
                 error_msg,
                 str(cleanup_ex),
-                formatted_tb,
+                full_tb,
             )
 
         # Log the original error
@@ -78,7 +58,7 @@ def context(
             log_level,
             "Encountered error in context: \n\t%s\n\n%s",
             error_msg,
-            formatted_tb,
+            full_tb,
         )
 
         if raise_error:
@@ -93,7 +73,6 @@ def context(
         # Get full traceback similar to main exception handling
         exc_info = sys.exc_info()
         full_tb = "".join(traceback.format_exception(*exc_info)) if exc_info[0] else ""
-        formatted_tb = format_traceback(full_tb)
 
         try:
             # Attempt cleanup before raising
@@ -103,7 +82,7 @@ def context(
                 "Cleanup failed after unexpected error '%s': %s\n%s",
                 error_msg,
                 str(cleanup_ex),
-                formatted_tb,
+                full_tb,
             )
 
         # Update exception args to include context, similar to main exception handling

@@ -31,7 +31,6 @@ from os import PathLike
 from pathlib import Path
 
 import pandas as pd
-from tqdm import tqdm
 
 from atomworks.constants import _load_env_var
 from atomworks.enums import MSAFileExtension
@@ -1034,7 +1033,7 @@ def make_msas_hhblits(
     HHblits.get_or_initialize()
 
     start_time = time.time()
-    for sequence in tqdm(sequences, desc="HHblits MSA generation", unit="seq"):
+    for sequence in sequences:
         seq_hash = hash_sequence(sequence)
         _hhblits_iterative_search_single(sequence, seq_hash, output_path, search_config, cpu=cpu)
 

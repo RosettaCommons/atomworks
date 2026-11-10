@@ -95,7 +95,7 @@ def _get_chain_sse_and_valid(chain_atom_array: AtomArray, bin_path: str) -> tupl
       SSEnum and is_valid indicates if DSSP ran successfully.
     """
     try:
-        dssp_codes = dssp.DsspApp.annotate_sse(chain_atom_array, bin_path=bin_path)
+        dssp_codes = dssp.DsspElement.to_symbols(dssp.DsspApp(bin_path).run(chain_atom_array).result())
         # Convert DSSP codes to group indices
         group_indices = np.array([DSSPCode.to_group_index(code) for code in dssp_codes], dtype=np.int8)
         return group_indices, True

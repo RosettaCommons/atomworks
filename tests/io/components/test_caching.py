@@ -1,5 +1,6 @@
 import io
 import os
+import pickle
 import tempfile
 import time
 from unittest.mock import patch
@@ -9,6 +10,7 @@ import pytest
 import atomworks.io.parser as parser
 from atomworks.io.config import ParseConfig
 from atomworks.io.parser import _build_cache_file_path, parse
+from atomworks.io.utils.compression import open_compressed
 from atomworks.io.utils.testing import assert_same_atom_array_or_stack
 from tests.conftest import TEST_DATA_DIR
 from tests.io.conftest import get_pdb_path
@@ -172,7 +174,8 @@ def test_buffer_cache(filename, buffer_type, tmp_path):
         parse(buffer_type(content), config=config)
     assert cache_path.read_bytes() == cached_bytes
     assert not list(tmp_path.rglob("*.tmp.*"))
-    parser.pd.to_pickle(parser.pd.read_pickle(cache_path), cache_path.with_suffix(".gz"))
+    with open_compressed(cache_path, "rb") as source, open_compressed(cache_path.with_suffix(".gz"), "wb") as target:
+        pickle.dump(pickle.load(source), target)
     config = config.replace(save_to_cache=False, load_from_cache=True)
     with patch.object(parser, "load_cif", side_effect=AssertionError("cache miss")):
         source = buffer_type(content)

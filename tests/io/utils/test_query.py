@@ -2,8 +2,8 @@ import numpy as np
 import pytest
 from biotite.structure import AtomArray
 
+from atomworks.io import parse
 from atomworks.io.transforms.atom_array import is_any_coord_nan
-from atomworks.io.utils.io_utils import load_any
 from atomworks.io.utils.query import QueryExpression, idxs, mask, query
 from atomworks.io.utils.standard_annotations import S_ATM
 from atomworks.io.utils.testing import get_pdb_path
@@ -13,14 +13,14 @@ from atomworks.ml.conditions import C_IDX, C_NTR
 @pytest.fixture(scope="module")
 def atom_array():
     """Cache the loaded atom array for all tests in this module."""
-    atom_array = load_any(get_pdb_path("6lyz"), model=1, include_bonds=True)
+    atom_array = parse(get_pdb_path("6lyz"), config="minimal")["asym_unit"][0]
     return atom_array
 
 
 @pytest.fixture(scope="module")
 def atom_array_stack():
     """Cache the loaded atom array stack for all tests in this module."""
-    atom_array_stack = load_any(get_pdb_path("6lyz"), include_bonds=True)
+    atom_array_stack = parse(get_pdb_path("6lyz"), config="minimal")["asym_unit"]
     return atom_array_stack
 
 

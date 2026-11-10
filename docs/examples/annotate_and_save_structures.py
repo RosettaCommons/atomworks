@@ -25,9 +25,9 @@ import tempfile
 import biotite.structure as struc
 import numpy as np
 
-from atomworks.io import parse
+from atomworks.io import atom_array_to_file, parse
 from atomworks.io.config import ParseConfig
-from atomworks.io.utils.io_utils import to_cif_file
+from atomworks.io.utils.io_utils import CIFWriteConfig
 from atomworks.io.utils.testing import get_pdb_path_or_buffer
 from atomworks.io.utils.visualize import view
 
@@ -137,11 +137,7 @@ print(f"Working in temporary directory: {temp_dir}")
 cif_path = os.path.join(temp_dir, "annotated_structure.cif")
 custom_fields = ["is_hem_pocket", "is_heme"]
 
-saved_cif_path = to_cif_file(
-    atom_array,
-    cif_path,
-    extra_fields=custom_fields,
-)
+saved_cif_path = atom_array_to_file(atom_array, cif_path, config=CIFWriteConfig(extra_fields=custom_fields))
 
 print(f"Saved CIF file to: {saved_cif_path}")
 print(f"File size: {os.path.getsize(saved_cif_path) / 1024:.1f} KB")
@@ -150,9 +146,11 @@ print(f"File size: {os.path.getsize(saved_cif_path) / 1024:.1f} KB")
 # Note on Biological Assemblies and CIF Saving
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-# In some cases, you may find that ``to_cif_file`` reports an error when the structure represents a biological assembly containing multiple copies of the asymmetric unit. The reason for this error is that ``AtomWorks`` builds the biological assembly and explicitly represents every atom; we can't then reverse that process since we may be left with ambiguous bond annotations (e.g., no way to distinguish between multiple copies of "Chain A"). The best solution is to either (a) set the ``chain_id`` to the ``chain_iid`` (which resolves the ambiguity) or (b) simply save the object using a pickle.
+# For assemblies with repeated chain IDs, pass ``CIFWriteConfig(chain_disambiguation="chain_iid")``
+# to write unique chain names for compatibility with other programs, using the ``chain_iid`` annotation.
 #
-# More rigorous solutions exist; a helpful place for contributions!
+# Alternatively, ``chain_disambiguation="transformation_id"`` preserves chain names and records
+# the ``transformation_id`` annotation for AtomWorks readers. Both options leave the input array unchanged.
 #
 # Alternative Storage Options
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -172,10 +170,10 @@ print(f"File size: {os.path.getsize(saved_cif_path) / 1024:.1f} KB")
 # Loading from CIF Files
 # ~~~~~~~~~~~~~~~~~~~~~~
 
-from atomworks.io.utils.io_utils import load_any
+from atomworks.io import atom_array_from_file
 
 # Load from CIF file
-loaded_from_cif = load_any(saved_cif_path, extra_fields="all")[0]
+loaded_from_cif = atom_array_from_file(saved_cif_path, model=1)
 
 print("Loaded from CIF file:")
 print(f"  Atoms: {len(loaded_from_cif)}")

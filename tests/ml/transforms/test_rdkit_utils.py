@@ -97,7 +97,7 @@ def test_sample_rdkit_conformer_consistency(test_atom_array):
     # Sample new conformer
     new_atom_array = sample_rdkit_conformer_for_atom_array(test_atom_array, seed=42)
     # ... superimpose to original
-    new_atom_array, _ = struc.superimpose(mobile=new_atom_array, fixed=test_atom_array)
+    new_atom_array = struc.superimpose(mobile=new_atom_array, fixed=test_atom_array).apply(new_atom_array)
 
     # Check if the number of atoms and their order is preserved
     assert new_atom_array.array_length() == test_atom_array.array_length()

@@ -15,7 +15,6 @@ from typing import Any, ClassVar
 
 import numpy as np
 import torch
-from toolz import valmap
 
 from atomworks.ml.transforms._checks import check_contains_keys, check_does_not_contain_keys
 from atomworks.ml.utils.rng import capture_rng_states, rng_state, serialize_rng_state_dict
@@ -922,7 +921,7 @@ def convert_to_torch(data: dict[str, Any], keys: list[str], device: str = "cpu")
         if isinstance(value, np.ndarray) and value.dtype in supported_dtypes:
             return torch.tensor(value, device=device)
         elif isinstance(value, dict):
-            return valmap(_convert_to_tensor, value)
+            return {key: _convert_to_tensor(item) for key, item in value.items()}
         elif isinstance(value, list):
             return [_convert_to_tensor(v) for v in value]
         else:

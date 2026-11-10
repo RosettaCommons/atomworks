@@ -1,7 +1,7 @@
 """Utilities for condition annotations on AtomArray objects.
 
-The canonical save/load path is now :py:func:`atomworks.io.utils.io_utils.to_cif_file`
-(writing) and :py:func:`atomworks.io.parse` / :py:func:`atomworks.io.utils.io_utils.load_any`
+The canonical save/load path is :py:func:`atomworks.io.atom_array_to_file`
+(writing) and :py:func:`atomworks.io.atom_array_from_file` / :py:func:`atomworks.io.parse`
 (reading), both of which handle all registered
 :py:class:`~atomworks.io.utils.standard_annotations.base.StandardAnnotationBase` annotations automatically
 when ``save_standard_annotations=True`` / ``load_standard_annotations=True``.

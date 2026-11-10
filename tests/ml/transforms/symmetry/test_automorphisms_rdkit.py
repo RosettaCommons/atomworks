@@ -38,7 +38,7 @@ TEST_CASES = [
 def test_find_automorphisms(case):
     smiles = case["smiles"]
     expected = case["expected_automorphisms"]
-    mol = smiles_to_rdkit(smiles)
+    mol = smiles_to_rdkit(smiles, generate_conformers=False)
     automorphisms = find_automorphisms_with_rdkit(mol)
     assert len(automorphisms) == expected, f"Failed for SMILES: {smiles}"
 
@@ -46,7 +46,7 @@ def test_find_automorphisms(case):
 @pytest.mark.parametrize("case", TEST_CASES)
 def test_create_automorph_permutations(case):
     smiles = case["smiles"]
-    mol = smiles_to_rdkit(smiles)
+    mol = smiles_to_rdkit(smiles, generate_conformers=False)
     automorphisms = torch.as_tensor(find_automorphisms_with_rdkit(mol))
     assert automorphisms.shape == (len(automorphisms), mol.GetNumAtoms(), 2)
 
@@ -71,7 +71,7 @@ def test_create_automorph_permutations(case):
 
 @pytest.mark.parametrize("case", TEST_CASES)
 def manual_test_create_automorph(case):
-    mol = smiles_to_rdkit("c1c(O)cccc1(O)")
+    mol = smiles_to_rdkit("c1c(O)cccc1(O)", generate_conformers=False)
     automorphisms = torch.as_tensor(find_automorphisms_with_rdkit(mol))
 
     assert torch.equal(
@@ -132,7 +132,7 @@ def _legacy_get_automorphs(mol, xyz_sm, mask_sm, max_symm=1000):
 @pytest.mark.parametrize("case", TEST_CASES)
 def test_vs_openbabel(case):
     smiles = case["smiles"]
-    mol = smiles_to_rdkit(smiles)
+    mol = smiles_to_rdkit(smiles, generate_conformers=False)
     obmol = obutils.smiles_to_openbabel(smiles)
 
     rdautos = find_automorphisms_with_rdkit(mol)

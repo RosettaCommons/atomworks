@@ -7,7 +7,6 @@ from typing import Any, ClassVar, Literal
 
 import biotite.structure as struc
 import numpy as np
-import pandas as pd
 from biotite.structure import AtomArray, get_residue_count, spread_residue_wise
 
 from atomworks.enums import ChainType
@@ -691,83 +690,6 @@ def sort_poly_then_non_poly(atom_array: AtomArray, treat_atomized_as_non_poly: b
     sort_poly_then_non_poly = np.concatenate([poly_idxs, non_poly_idxs])
 
     return atom_array[sort_poly_then_non_poly]
-
-
-def sort_like_rf2aa(atom_array: AtomArray) -> AtomArray:
-    """Sort the atom array such that non-polymer chains are sorted by their covalent bonds and PN unit IIDs."""
-    is_atomized = np.zeros(len(atom_array), dtype=bool)
-    if "atomize" in atom_array.get_annotation_categories():
-        is_atomized = atom_array.atomize
-
-    # Find indices of polymer and non-polymer atoms
-    is_poly = atom_array.is_polymer & (~is_atomized)
-    is_non_poly = is_atomized | (~atom_array.is_polymer)
-    is_bonded_non_poly = np.zeros(len(atom_array), dtype=bool)
-    for pn_unit_iid in np.unique(atom_array.pn_unit_iid):
-        pn_unit_mask = atom_array.pn_unit_iid == pn_unit_iid
-        is_bonded_non_poly[pn_unit_mask] = np.any(is_poly[pn_unit_mask]) & is_non_poly[pn_unit_mask]
-    is_free_non_poly = is_non_poly & (~is_bonded_non_poly)
-    assert np.sum(is_poly) + np.sum(is_bonded_non_poly) + np.sum(is_free_non_poly) == len(
-        atom_array
-    ), "overlapping groups"
-
-    # Sort by indexing according to
-    #  0: by poly / bonded non-poly / free non-poly
-    #  1: within groups by moelcule_iid
-    #  2: within molecules by pn_unit_iid
-    #  3: within pn_units by chain_iid
-    _sort_table = pd.DataFrame(
-        {
-            "atom_idx": np.arange(len(atom_array)),
-            "group": is_poly.astype(np.int8)
-            + 2 * is_bonded_non_poly.astype(np.int8)
-            + 3 * is_free_non_poly.astype(np.int8),
-            "molecule_entity": atom_array.molecule_entity,
-            "molecule_iid": atom_array.molecule_iid,
-            "pn_unit_iid": atom_array.pn_unit_iid,
-            "chain_entity": atom_array.chain_entity,
-            "chain_iid": atom_array.chain_iid,
-        }
-    )
-    to_sorted = _sort_table.sort_values(
-        by=["group", "molecule_entity", "molecule_iid", "pn_unit_iid", "chain_entity", "chain_iid", "atom_idx"]
-    )["atom_idx"].values
-
-    # ... ensure all indices occur exactly once
-    assert np.all(np.sort(to_sorted) == np.arange(len(atom_array))), "indices must occur exactly once"
-
-    return atom_array[to_sorted]
-
-
-class SortLikeRF2AA(Transform):
-    """Sort the atom array in 3 groups (in this order). Within each group the atoms are ordered by
-    their pn_unit_iid (and within a pn_unit their order is preserved).
-
-    - (1) polymer atoms
-    - (2) non-poly atoms of a pn-unit bonded to a polymer (covalent modifications)
-    - (3) non-poly atoms of a free-floating pn-unit (free-floating ligands)
-    """
-
-    requires_previous_transforms: ClassVar[list[str | Transform]] = ["AtomizeByCCDName"]
-    incompatible_previous_transforms: ClassVar[list[str | Transform]] = [
-        "EncodeAtomArray",
-        "CropSpatialLikeAF3",
-        "CropContiguousLikeAF3",
-    ]
-
-    def check_input(self, data: dict) -> None:
-        check_atom_array_annotation(
-            data,
-            ["is_polymer", "pn_unit_iid", "molecule_iid", "molecule_entity", "chain_entity", "chain_iid", "atomize"],
-        )
-
-    def forward(self, data: dict) -> dict:
-        atom_array = data["atom_array"]
-
-        # perform the sorting
-        data["atom_array"] = sort_like_rf2aa(atom_array)
-
-        return data
 
 
 class SortPolyThenNonPoly(Transform):

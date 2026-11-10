@@ -18,7 +18,7 @@ def _single_atom_residues(res_names: list[str], *, hetero: bool) -> struc.AtomAr
     array.atom_name[:] = "CA"
     array.element[:] = "C"
     array.hetero[:] = hetero
-    array.set_annotation("label_entity_id", np.full(len(array), "1"))
+    array.set_annotation("entity_id", np.full(len(array), "1"))
     return array
 
 
@@ -40,6 +40,24 @@ def test_generic_entity_polymer_promotes_unknown_chemistry_to_other_polymer():
 
     assert info["chain_type"] == ChainType.OTHER_POLYMER
     assert info["is_polymer"] is True
+
+
+def test_entity_metadata_matches_string_identifiers():
+    atom_array = _single_atom_residues(["ALA", "GLY"], hetero=False)
+    atom_array.set_annotation("entity_id", np.full(len(atom_array), "001"))
+
+    info = build_chain_info(
+        atom_array,
+        entity={"id": np.array(["001"]), "type": np.array(["polymer"])},
+        entity_poly_seq={
+            "entity_id": np.array(["001", "001", "001"]),
+            "num": np.array([1, 2, 3]),
+            "mon_id": np.array(["ALA", "GLY", "SER"]),
+        },
+    )["A"]
+
+    assert info["label_entity"] == "001"
+    assert info["processed_entity_canonical_sequence"] == "AGS"
 
 
 @pytest.mark.parametrize("test_case", CHAIN_TYPE_TEST_CASES)

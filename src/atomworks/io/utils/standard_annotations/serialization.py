@@ -250,6 +250,15 @@ def _deserialize_standard_annotation_cif_category(
     val_array = np.stack(vals, axis=1) if len(vals) > 1 else vals[0]
     n_atoms = atom_array.array_length()
 
+    # Remap saved annotation indices after filtering atoms; discard entries for removed atoms.
+    if idxs and "atom_array_index" in atom_array.get_annotation_categories():
+        index_map = {int(old): new for new, old in enumerate(atom_array.atom_array_index)}
+        if len(index_map) != n_atoms:
+            raise ValueError("Cannot restore StandardAnnotations: atom_array_index is not unique")
+        idxs = [np.array([index_map.get(int(idx), -1) for idx in indices], dtype=int) for indices in idxs]
+        keep = np.logical_and.reduce([indices >= 0 for indices in idxs])
+        idxs, val_array = [indices[keep] for indices in idxs], val_array[keep]
+
     if annotation_cls.n_body == 0:
         if idxs:
             raise ValueError("0-body CIF categories must not contain index columns.")

@@ -131,6 +131,7 @@ def build_af3_transform_pipeline(
     # MSA parameters
     max_msa_sequences: int = 10_000,  # Paper: 16,000, but we only have 10K stored on disk
     n_msa: int = 10_000,  # Paper: ?? I think ~12K?
+    randomize_n_msa_depth: bool = True,  # sample the MSA depth per example during training; always off at inference
     dense_msa: bool = True,  # True for AF3
     # Cache paths
     msa_cache_dir: PathLike | str | None = None,
@@ -346,6 +347,7 @@ def build_af3_transform_pipeline(
             encoding=af3_sequence_encoding,
             n_recycles=n_recycles,
             n_msa=n_msa,
+            randomize_n_msa_depth=randomize_n_msa_depth and not is_inference,
         ),
         # Prepare coordinates for noising (without modifying the ground truth)
         # ... add placeholder coordinates for noising

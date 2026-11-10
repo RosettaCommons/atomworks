@@ -9,15 +9,13 @@ from scipy.spatial import cKDTree
 
 from atomworks.common import immutable_lru_cache
 from atomworks.constants import PDB_MIRROR_PATH
-from atomworks.io import parse
+from atomworks.io import atom_array_to_file, parse
 from atomworks.io.config import ParseConfig
 from atomworks.io.utils.atom_array_plus import (
     AnnotationList2D,
     AtomArrayPlus,
 )
-from atomworks.io.utils.io_utils import (
-    to_cif_file,
-)
+from atomworks.io.utils.io_utils import CIFWriteConfig
 from atomworks.io.utils.standard_annotations import STANDARD_ANNOTATIONS
 from atomworks.ml.conditions import C_CTR, C_NTR, CONDITIONS
 
@@ -77,8 +75,7 @@ def add_randomized_standard_annotations(atom_array: AtomArrayPlus) -> AtomArrayP
 
         elif sa_cls.n_body == 2:
             random_indices = np.random.choice(len(atom_array), size=(5, 2), replace=False)
-            annotation_shape = sa_cls.default_annotation(atom_array).values.shape
-            modification_shape = (5, *annotation_shape[1:])
+            modification_shape = (5, *sa_cls.value_shape)
             storage_dtype = sa_cls.storage_dtype()
             if np.issubdtype(storage_dtype, np.bool_):
                 values = np.ones(modification_shape, dtype=bool)
@@ -222,11 +219,10 @@ def save_and_load_atom_array(
     """Save an atom array to a temporary CIF and load it back."""
     with TemporaryDirectory() as temp_dir:
         temp_file = Path(temp_dir) / "test.cif"
-        to_cif_file(
+        atom_array_to_file(
             atom_array,
             temp_file,
-            extra_fields=extra_annotations_to_save or [],
-            save_standard_annotations=True,
+            config=CIFWriteConfig(extra_fields=extra_annotations_to_save or [], save_standard_annotations=True),
         )
         result = parse(
             temp_file,

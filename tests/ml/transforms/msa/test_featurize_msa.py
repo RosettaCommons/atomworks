@@ -15,7 +15,6 @@ from atomworks.ml.transforms.atom_array import (
 from atomworks.ml.transforms.atomize import AtomizeByCCDName
 from atomworks.ml.transforms.base import Compose, ConvertToTorch
 from atomworks.ml.transforms.encoding import EncodeAtomArray
-from atomworks.ml.transforms.filters import RemoveHydrogens
 from atomworks.ml.transforms.msa._msa_featurizing_utils import (
     assign_extra_rows_to_cluster_representatives,
     build_indices_should_be_counted_masks,
@@ -27,7 +26,6 @@ from atomworks.ml.transforms.msa._msa_featurizing_utils import (
 from atomworks.ml.transforms.msa.msa import (
     EncodeMSA,
     FeaturizeMSALikeAF3,
-    FeaturizeMSALikeRF2AA,
     FillFullMSAFromEncoded,
     LoadPolymerMSAs,
     PairAndMergePolymerMSAs,
@@ -534,102 +532,6 @@ MSA_FEATURIZE_PIPELINE_TEST_CASES = ["3ejj"]
 
 
 @pytest.mark.parametrize("pdb_id", MSA_FEATURIZE_PIPELINE_TEST_CASES)
-def test_msa_featurize_like_rf2aa_full_pipeline(pdb_id):
-    """
-    Test the full MSA featurization pipeline for RF2-AA, including the encoding, MSA featurization, and masking.
-    Conduct statistical checks and regression tests to ensure consistency across runs and avoid moving distributions across recycles.
-    """
-    # Hyperparameters (to be defined in Hydra)
-    encoding = RF2AA_ATOM36_ENCODING
-    n_msa_cluster_representatives = 20
-    n_extra_rows = 20
-    n_recycles = 5  # We choose 5 recycles to ensure we would find any drift across recycles
-    probs = {
-        "replace_with_random_aa": 0.1,
-        "replace_with_msa_profile": 0.1,
-        "do_not_replace": 0.1,
-    }
-    mask_probability = 0.15
-    pad_token = encoding.token_to_idx["UNK"]
-
-    with rng_state(create_rng_state_from_seeds(np_seed=42, torch_seed=42, py_seed=42)):
-        data = cached_parse(pdb_id, hydrogen_policy="remove")
-        pipeline = Compose(
-            [
-                RemoveHydrogens(),
-                AddWithinPolyResIdxAnnotation(),
-                LoadPolymerMSAs(protein_msa_dirs=PROTEIN_MSA_DIRS, rna_msa_dirs=RNA_MSA_DIRS, max_msa_sequences=1000),
-                PairAndMergePolymerMSAs(),
-                AtomizeByCCDName(
-                    atomize_by_default=True, res_names_to_ignore=encoding.tokens, move_atomized_part_to_end=True
-                ),
-                EncodeAtomArray(encoding),
-                # MSA featurize workflow
-                EncodeMSA(encoding=encoding, token_to_use_for_gap=pad_token),
-                FillFullMSAFromEncoded(pad_token=pad_token),
-                ConvertToTorch(keys=["polymer_msas_by_chain_id", "encoded", "full_msa_details"]),
-                FeaturizeMSALikeRF2AA(
-                    n_recycles=n_recycles,
-                    n_msa_cluster_representatives=n_msa_cluster_representatives,
-                    n_extra_rows=n_extra_rows,
-                    mask_behavior_probs=probs,
-                    mask_probability=mask_probability,
-                    encoding=encoding,
-                    polymer_token_indices=torch.arange(
-                        32
-                    ),  # NOTE: This is hard-coded for the AA and NA tokens in the RF2AA Encoding (all non-atom tokens)
-                ),
-            ],
-            track_rng_state=False,
-        )
-        output = pipeline(data)
-        assert output is not None
-
-        ############## Assertions ##############
-        features_by_recycle = output["features_per_recycle_dict"]
-
-        # List of keys to check for being different and having similar sums
-        keys_to_check = [
-            "first_row_of_msa",  # NOTE: This will fail if our test example has no polymers
-            "cluster_representatives_msa_ground_truth",
-            "cluster_representatives_msa_masked",
-            "cluster_representatives_has_insertion",
-            "cluster_representatives_insertion_value",
-            "cluster_insertion_mean",
-            "cluster_profile",
-            "extra_msa",
-            "extra_msa_has_insertion",
-            "extra_msa_insertion_value",
-            "bert_mask_position",
-        ]
-
-        for key in keys_to_check:
-            tensor_list = features_by_recycle[key]
-            assert all_different(tensor_list), f"{key} elements are not all different"
-            assert similar_stats(tensor_list), f"{key} elements do not have similar means and standard deviations"
-
-        ############## Regression test ##############
-
-        # Save in the test directory
-        saved_result_path = TEST_DATA_ML / f"{pdb_id}_featurize_msa_like_rf2aa_regression_test.pkl.gz"
-
-        # Uncomment to save output['features_per_recycle_dict'] for regression tests, as a compressed pickle
-        # with gzip.open(saved_result_path, "wb") as f:
-        #     pickle.dump(output["features_per_recycle_dict"], f, protocol=pickle.HIGHEST_PROTOCOL)
-
-        # Check that the new_encoded_msa matches the saved results
-        with gzip.open(saved_result_path, "rb") as f:
-            old_results = pickle.load(f)
-
-        # For each key in the dictionary, check that the values match
-        for key, old_values in old_results.items():
-            new_values = output["features_per_recycle_dict"][key]
-            assert torch.allclose(
-                torch.stack(new_values), torch.stack(old_values), atol=1e-4, rtol=1e-4
-            ), f"Failed at key: {key}. Difference: {set(new_values) - set(old_values)}"
-
-
-@pytest.mark.parametrize("pdb_id", MSA_FEATURIZE_PIPELINE_TEST_CASES)
 def test_msa_featurize_like_af3_full_pipeline(pdb_id):
     """
     Test the full MSA featurization pipeline for AF-3, including the encoding and MSA featurization (no masking).
@@ -723,6 +625,56 @@ def test_msa_featurize_like_af3_full_pipeline(pdb_id):
             assert torch.allclose(
                 new_value, old_value, atol=1e-4, rtol=1e-4
             ), f"Failed at key: {key}. Difference: {new_value - old_value}"
+
+
+@pytest.mark.parametrize(
+    ("randomize_n_msa_depth", "is_inference", "expected_depth", "expected_randint_calls"),
+    [
+        # ... randomization is on: training samples a depth, inference keeps the fixed maximum
+        (True, False, 3, 1),
+        (True, True, 6, 0),
+        # ... randomization is off (the default): the depth is fixed regardless of `is_inference`
+        (False, False, 6, 0),
+        (False, True, 6, 0),
+    ],
+)
+def test_random_msa_depth_is_training_only(
+    monkeypatch, randomize_n_msa_depth, is_inference, expected_depth, expected_randint_calls
+):
+    randint_calls = []
+
+    def fake_randint(low, high, size):
+        randint_calls.append((low, high, size))
+        return torch.tensor(3)
+
+    monkeypatch.setattr(torch, "randint", fake_randint)
+
+    n_rows = 8
+    n_tokens = 4
+    n_recycles = 3
+    data = {
+        "is_inference": is_inference,
+        "encoded": {"msa": torch.zeros((n_rows, n_tokens), dtype=torch.long)},
+        "full_msa_details": {
+            "msa_is_padded_mask": torch.zeros((n_rows, n_tokens), dtype=torch.bool),
+            "msa_raw_ins": torch.zeros((n_rows, n_tokens), dtype=torch.long),
+        },
+    }
+    transform = FeaturizeMSALikeAF3(
+        encoding=RF2AA_ATOM36_ENCODING,
+        n_recycles=n_recycles,
+        n_msa=6,
+        randomize_n_msa_depth=randomize_n_msa_depth,
+    )
+
+    output = transform.forward(data)
+    msa_per_recycle = output["msa_features"]["msa_features_per_recycle_dict"]["msa"]
+
+    assert len(randint_calls) == expected_randint_calls
+    if randint_calls:
+        assert randint_calls == [(1, 7, ())]
+    assert len(msa_per_recycle) == n_recycles
+    assert all(msa.shape[0] == expected_depth for msa in msa_per_recycle)
 
 
 # Define a simple TokenEncoding class for testing
