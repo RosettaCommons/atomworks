@@ -36,6 +36,6 @@ Round trips are structural, not byte-for-byte identity: order/dtypes and some de
 
 ## 5. Refresh the environment and parser caches
 
-Install into a fresh environment and regenerate your dependency lock: AtomWorks 3.1 requires Python ≥3.12, `biotite==2.0.0`, and NumPy ≥2.1. Install the `scripts` extra for CLI tools and the `ml` extra for ML dependencies. The retired RF2AA pipeline and feature adapters have been removed. Rebuild or separate parser caches when adopting the new chemistry and conformer policies. [Dependencies](https://github.com/RosettaCommons/atomworks/blob/production/pyproject.toml).
+Install into a fresh environment and regenerate your dependency lock: AtomWorks 3.1 requires Python ≥3.12, `biotite==2.0.0`, and NumPy ≥2.1. Install the `cli` extra for CLI tools and the `ml` extra for ML dependencies. The retired RF2AA pipeline and feature adapters have been removed. Rebuild or separate parser caches when adopting the new chemistry and conformer policies. [Dependencies](https://github.com/RosettaCommons/atomworks/blob/production/pyproject.toml).
 
 Before switching, compare a small fixed set of structures under both environments: selected model/assembly, atom identities and counts, bonds, charges and implicit hydrogens. If these structures feed an existing model, check its predictions with the new parser output.

@@ -3,7 +3,7 @@ Data Mirrors
 
 AtomWorks uses local mirrors of the PDB and CCD databases for parsing structures and training models. This page explains how to set up these mirrors.
 
-Install ``atomworks[scripts]`` to use the commands below.
+Install ``atomworks[cli]`` to use the commands below.
 
 Setting Up Mirrors
 ------------------

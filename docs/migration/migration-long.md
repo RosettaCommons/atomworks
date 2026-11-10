@@ -188,7 +188,7 @@ The parser now caches complete results as Zstandard-compressed pickles in a `par
 
 ## I/O environment and validation
 
-AtomWorks 3.1 requires Python ≥3.12 and NumPy ≥2.1, pins Biotite to 2.0.0, and checks the version at import time. Install the `scripts` extra for CLI tools and the `ml` extra for ML dependencies. The retired RF2AA pipeline and feature adapters have been removed. Optional S3 and catcif integrations have extras. Regenerate a locked environment instead of upgrading Biotite in isolation. [Dependency manifest](https://github.com/RosettaCommons/atomworks/blob/production/pyproject.toml).
+AtomWorks 3.1 requires Python ≥3.12 and NumPy ≥2.1, pins Biotite to 2.0.0, and checks the version at import time. Install the `cli` extra for CLI tools and the `ml` extra for ML dependencies. The retired RF2AA pipeline and feature adapters have been removed. Optional S3 and catcif integrations have extras. Regenerate a locked environment instead of upgrading Biotite in isolation. [Dependency manifest](https://github.com/RosettaCommons/atomworks/blob/production/pyproject.toml).
 
 Lock both environments, migrate parser calls and configuration, then compare a fixed set of structures covering covalent modifications, alternate conformers and assemblies. Review atom identities, charges, bond orders and hydrogen counts before adopting the new parser or regenerating cached outputs.
 

@@ -9,7 +9,7 @@ try:
 except ModuleNotFoundError as error:
     if error.name not in {"typer", "dotenv", "tqdm"}:
         raise
-    raise SystemExit("CLI commands require: pip install 'atomworks[scripts]'") from None
+    raise SystemExit("CLI commands require: pip install 'atomworks[cli]'") from None
 
 # Load environment variables from .env file at the root of the repository
 dotenv_path = os.path.join(os.path.dirname(__file__), "../..", ".env")

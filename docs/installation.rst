@@ -7,7 +7,7 @@ Requires Python 3.12 or newer. Choose the installation that fits your workflow:
 
    pip install atomworks               # IO library
    pip install "atomworks[ml]"          # IO + ML library
-   pip install "atomworks[ml,scripts]"  # IO + ML + command-line tools
+   pip install "atomworks[ml,cli]"  # IO + ML + command-line tools
 
 .. _optional-integrations:
 
@@ -18,7 +18,7 @@ Requires Python 3.12 or newer. Choose the installation that fits your workflow:
    ``posebusters`` (structure validation), or ``catcif`` (CIF archives).
    For example: ``pip install "atomworks[ml,s3]"``.
 
-   Use ``atomworks[scripts]`` for CLI tools without ML, ``atomworks[dev]`` for
+   Use ``atomworks[cli]`` for CLI tools without ML, ``atomworks[dev]`` for
    ML, CLI, visualization, notebooks, and test/lint tools, or ``atomworks[docs]``
    to build the documentation. Specialized integrations remain opt-in.
 

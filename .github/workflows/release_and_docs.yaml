@@ -66,8 +66,8 @@ jobs:
           core/bin/python -c "import importlib.util; assert importlib.util.find_spec('torch') is None"
           core/bin/python smoke.py
           if core/bin/aw --help >cli.log 2>&1; then exit 1; fi
-          grep -F "pip install 'atomworks[scripts]'" cli.log
-          core/bin/python -m pip install "$GITHUB_WORKSPACE/dist/$(basename "$GITHUB_WORKSPACE"/dist/*.whl)[scripts]"
+          grep -F "pip install 'atomworks[cli]'" cli.log
+          core/bin/python -m pip install "$GITHUB_WORKSPACE/dist/$(basename "$GITHUB_WORKSPACE"/dist/*.whl)[cli]"
           core/bin/aw --help
           core/bin/aw msa --help
           if core/bin/aw msa >msa.log 2>&1; then exit 1; fi

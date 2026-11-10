@@ -1346,7 +1346,7 @@ def atom_array_to_file(
     buffer = io.BytesIO() if "bcif" in file_type else io.StringIO()
     file_obj.write(buffer)
     content = buffer.getvalue()
-    if "." in file_type:
+    if file_type.endswith((".gz", ".gzip", ".zst")):
         content = content.encode() if isinstance(content, str) else content
         content = zstd.compress(content) if file_type.endswith(".zst") else gzip.compress(content, mtime=0)
     if dest is not None:

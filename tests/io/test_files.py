@@ -24,7 +24,7 @@ def atoms():
     return atoms
 
 
-@pytest.mark.parametrize("file_type", ["cif", "bcif", "cif.gz", "cif.zst", "bcif.zst"])
+@pytest.mark.parametrize("file_type", ["cif", "bcif", "cif.gz", "cif.gzip", "cif.zst", "bcif.zst"])
 def test_file_content_and_buffer_round_trip(atoms, tmp_path, file_type):
     """Round-trip coordinates and custom fields through paths/buffers; use Biotite's generated author IDs."""
     path = atom_array_to_file(atoms, tmp_path / f"out.{file_type}")
