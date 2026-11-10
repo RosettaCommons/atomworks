@@ -3,9 +3,9 @@ import numpy as np
 import pytest
 import torch
 
-from atomworks.io import parse
+from atomworks.io import atom_array_to_file, parse
 from atomworks.io.tools.inference import components_to_atom_array
-from atomworks.io.utils.io_utils import to_cif_file
+from atomworks.io.utils.io_utils import CIFWriteConfig
 from atomworks.ml.transforms.af3_reference_molecule import GetAF3ReferenceMoleculeFeatures
 from atomworks.ml.transforms.atom_array import (
     AddGlobalTokenIdAnnotation,
@@ -260,7 +260,7 @@ def test_make_reference_conformer_for_UNL(tmp_path):  # noqa: N802
 
     # Use tmp_path to create a temporary file path
     cif_path = tmp_path / "test.cif"
-    to_cif_file(atom_array, cif_path)
+    atom_array_to_file(atom_array, cif_path, config=CIFWriteConfig(include_entity_categories=True))
 
     # ... parse the atom array
     out = parse(cif_path)
@@ -311,7 +311,7 @@ def test_make_reference_conformer_for_UNL_failure_case(tmp_path):  # noqa: N802
 
     # Use tmp_path to create a temporary file path
     cif_path = tmp_path / "test.cif"
-    to_cif_file(atom_array, cif_path)
+    atom_array_to_file(atom_array, cif_path, config=CIFWriteConfig(include_entity_categories=True))
 
     # ... parse the atom array
     out = parse(cif_path)

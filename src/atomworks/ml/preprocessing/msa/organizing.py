@@ -3,7 +3,6 @@
 Prepares arbitrary directory of MSA files into an AtomWorks-compatible structure.
 """
 
-import concurrent.futures
 import dataclasses
 import functools
 import logging
@@ -11,8 +10,6 @@ import os
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from os import PathLike
 from pathlib import Path
-
-from tqdm import tqdm
 
 from atomworks.enums import MSAFileExtension
 from atomworks.io.utils.compression import transfer_with_compression
@@ -170,7 +167,6 @@ def organize_msas(input_dir: PathLike, output_dir: PathLike, config: MSAOrganiza
 
     logger.info(f"Processing with {num_workers} workers using {execution_model} parallelism")
 
-    # Process files with progress bar
     organize_func = functools.partial(_organize_single_msa, output_path=output_path, config=config)
 
     # Choose appropriate executor based on task characteristics
@@ -183,19 +179,10 @@ def organize_msas(input_dir: PathLike, output_dir: PathLike, config: MSAOrganiza
         if execution_model == "process":
             # Process pool works better with imap for large datasets
             results = executor.map(organize_func, msa_files, chunksize=chunksize)
-            # Wrap with tqdm for progress tracking
-            list(tqdm(results, total=len(msa_files), desc="Organizing MSA files", unit="file"))
+            list(results)
         else:
-            # Thread pool works better with as_completed for I/O bound tasks
-            futures = [executor.submit(organize_func, file) for file in msa_files]
-            # Monitor progress with tqdm
-            for _ in tqdm(
-                concurrent.futures.as_completed(futures),
-                total=len(futures),
-                desc="Organizing MSA files",
-                unit="file",
-            ):
-                pass  # Progress is tracked by tqdm
+            for file in msa_files:
+                executor.submit(organize_func, file)
 
     logger.info(f"MSA file organization complete! Saved processed files to: {output_dir}")
 

@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - Unreleased
+
+### Compatibility
+
+- Require Python 3.12 or newer, NumPy 2.1 or newer, and Biotite 2.0.0.
+- Move command-line dependencies to the `scripts` extra; install `atomworks[scripts]` to use `aw`.
+- Remove the retired RF2AA pipeline and feature adapters.
+- `atom_array_from_file` now uses minimal parsing, including first-conformer selection and normalized identifiers. `to_cif_file` is an alias with the `atom_array_to_file` signature; `to_cif_buffer` and `to_cif_string` are removed.
+
+### Added and changed
+
+- Add `atom_array_from_file` and `atom_array_to_file` for basic structure I/O, including standard annotations.
+- Reduce core dependencies and group optional ML, script, and documentation dependencies into extras.
+- Add explicit policies for unknown CCD charges and preserve formal charges through ASE conversions.
+- Improve annotated CIF loading and assembly performance, and update link chemistry, entity annotation, and Biotite compatibility.
+
+See the [migration guide](docs/migration/migration-long.md) for API and behavior changes.
+
 ## [2.0.0] - 2025-11-29
 
 ### Performance

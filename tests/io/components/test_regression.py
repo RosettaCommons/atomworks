@@ -10,11 +10,12 @@ import pytest
 from biotite.structure import AtomArray, AtomArrayStack
 
 from atomworks.constants import ATOMWORKS_COMMON_ANNOTATIONS, CRYSTALLIZATION_AIDS
+from atomworks.io import atom_array_to_file
 from atomworks.io.config import ParseConfig
 from atomworks.io.parser import parse
 from atomworks.io.transforms import atom_array as ta
 from atomworks.io.transforms.categories import category_to_dict
-from atomworks.io.utils.io_utils import to_cif_file
+from atomworks.io.utils.io_utils import CIFWriteConfig
 from atomworks.io.utils.testing import assert_same_atom_array_or_stack
 from tests.io.conftest import TEST_DATA_IO, get_pdb_path
 
@@ -250,11 +251,10 @@ def test_regression_cif_roundtrip(pdb_id: str, remove_hydrogens: bool, file_type
             "pdbx_struct_assembly_gen": category_to_dict(result["extra_info"]["assembly_gen_category"]),
         }
 
-        to_cif_file(
+        atom_array_to_file(
             result["asym_unit"],
             cif_path,
-            include_entity_categories=True,
-            extra_categories=extra_cats,
+            config=CIFWriteConfig(include_entity_categories=True, extra_categories=extra_cats),
         )
 
         reloaded_result = parse(

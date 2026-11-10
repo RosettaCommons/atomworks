@@ -3,17 +3,21 @@
 These transforms are used to extract information from the CIFBlock and return a dictionary containing processed information.
 """
 
+from __future__ import annotations
+
 import logging
 import re
 from contextlib import suppress
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 import numpy as np
-import pandas as pd
-import toolz
 from biotite.structure.io.pdbx import BinaryCIFBlock, BinaryCIFCategory, CIFBlock, CIFCategory
 
 from atomworks.common import exists
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 logger = logging.getLogger("atomworks.io")
 
@@ -35,6 +39,8 @@ def category_to_df(
     Returns:
         DataFrame containing the category data, or None if category doesn't exist (CIFBlock mode only)
     """
+    import pandas as pd
+
     # Check for both CIFBlock and BinaryCIFBlock
     if isinstance(cif_block_or_category, CIFBlock | BinaryCIFBlock):
         # Extract category from CIFBlock or BinaryCIFBlock
@@ -70,7 +76,7 @@ def category_to_dict(
         # Extract category from CIFBlock or BinaryCIFBlock
         cif_block = cif_block_or_category
         if exists(cif_block.get(category)):
-            return toolz.valmap(lambda x: x.as_array(), dict(cif_block[category]))
+            return {key: value.as_array() for key, value in cif_block[category].items()}
         else:
             return {}
     else:

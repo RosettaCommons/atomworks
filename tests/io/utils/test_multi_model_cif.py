@@ -2,10 +2,11 @@
 
 import pytest
 
+from atomworks.io import atom_array_to_file
 from atomworks.io.config import ParseConfig
 from atomworks.io.parser import parse
 from atomworks.io.utils.atom_array_plus import as_atom_array_plus
-from atomworks.io.utils.io_utils import read_any, to_cif_file
+from atomworks.io.utils.io_utils import CIFWriteConfig, read_any
 from atomworks.io.utils.testing import assert_same_atom_array_or_stack
 from atomworks.ml.utils.testing import get_pdb_mirror_path
 
@@ -40,7 +41,7 @@ def test_multi_model_cif_round_trip(n_models, tmp_path, file_type):
     arrays = [add_randomized_standard_annotations(arr) for arr in arrays]
 
     path = tmp_path / ("multi_model." + file_type)
-    to_cif_file(arrays, path, model_ids=model_ids, save_standard_annotations=True)
+    atom_array_to_file(arrays, path, model_ids=model_ids, config=CIFWriteConfig(include_entity_categories=True))
 
     # Verify the custom model_ids are written in the correct order
     cif_file = read_any(path)

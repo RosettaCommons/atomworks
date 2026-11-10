@@ -9,25 +9,22 @@ import os
 import uuid
 from itertools import cycle
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import biotite.structure as struc
 import numpy as np
-import py3Dmol
 from biotite.structure import AtomArray, AtomArrayStack
 from biotite.structure.io import mol, pdb, pdbx
 
 from atomworks.constants import ATOMIC_NUMBER_TO_ELEMENT, METAL_ELEMENTS
-from atomworks.io.utils.io_utils import CIFWriteConfig, read_any, to_cif_string
+from atomworks.io import CIFWriteConfig, atom_array_to_file
+from atomworks.io.utils.io_utils import read_any
 
 logger = logging.getLogger("atomworks.io")
 
-try:
+if TYPE_CHECKING:
+    import py3Dmol
     import pymol_remote.client
-
-    _is_pymol_remote_installed = True
-except ImportError:
-    _is_pymol_remote_installed = False
-    logger.warning("PymolSession not installed, visualization will not work")
 
 IPD_PYMOL_COLORS = [
     "#888888",  # pymol_gray
@@ -67,7 +64,7 @@ def view(
     polymer_sidechain_linewidth: float = 0.05,
     min_polymer_size: int = 1,
     colors: list[str] = IPD_PYMOL_COLORS,
-) -> py3Dmol.view:
+) -> "py3Dmol.view":
     """Visualize an AtomArray structure using py3Dmol for display in jupyter notebooks.
 
     Args:
@@ -97,6 +94,8 @@ def view(
     Returns:
         py3Dmol.view: The py3Dmol view object for the structure visualization.
     """
+    import py3Dmol
+
     if isinstance(structure, AtomArrayStack):
         logger.warning("AtomArrayStack is not supported; using the first model.")
         structure = structure[0]
@@ -109,7 +108,7 @@ def view(
         structure = structure[structure.occupancy > 0]
 
     # Convert the structure to a temporary CIF string for interacting with py3Dmol
-    _tmp_cif_str = to_cif_string(
+    _tmp_cif_str = atom_array_to_file(
         structure,
         config=CIFWriteConfig(include_entity_categories=False),
     )
@@ -220,21 +219,20 @@ def get_pymol_session(hostname: str | None = None, port: int | None = None) -> "
         - ImportError: If `pymol_remote` package is not installed.
         - RuntimeError: If unable to establish connection after trying 5 consecutive ports.
     """
-    if not _is_pymol_remote_installed:
-        raise ImportError("`pymol_remote` is not installed or in the pythonpath, visualization will not work.")
+    from pymol_remote import client
 
     # ... get existing session if available
     if (hostname is None) and (port is None):
-        session = pymol_remote.client._GLOBAL_SERVER_PROXY
+        session = client._GLOBAL_SERVER_PROXY
         if session:
-            return pymol_remote.client.PymolSession(hostname=session.hostname, port=session.port, force_new=False)
+            return client.PymolSession(hostname=session.hostname, port=session.port, force_new=False)
 
     # ... otherwise, try to connect to a new session
     hostname = hostname or "localhost"
     port = port or 9123
     for i in range(5):
         try:
-            session = pymol_remote.client.PymolSession(hostname=hostname, port=port + i)
+            session = client.PymolSession(hostname=hostname, port=port + i)
             break
         except Exception:
             session = None
@@ -318,14 +316,14 @@ def view_pymol(
     # Send to pymol
     if isinstance(structure, AtomArray | AtomArrayStack):
         format = "bcif" if as_bcif else "cif"
-        buffer = to_cif_string(
+        buffer = atom_array_to_file(
             structure,
+            file_type=format,
             config=CIFWriteConfig(
                 id=id,
                 include_entity_categories=False,
                 include_nan_coords=False,
             ),
-            as_bcif=as_bcif,
         )
     elif isinstance(structure, pdbx.CIFFile | pdb.PDBFile | mol.SDFile | pdbx.CIFBlock):
         format = {

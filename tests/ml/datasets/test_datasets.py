@@ -56,7 +56,17 @@ def test_nested_dummy_datasets():
         assert row.attrs["base_path"] is not None
 
 
-def test_nested_datasets_with_weighted_samplers(rf2aa_interfaces_dataset, rf2aa_pn_units_dataset, rf2aa_pdb_dataset):
+def test_nested_datasets_with_weighted_samplers(af3_interfaces_dataset, af3_pn_units_dataset):
+    """Check nested indexing and sampling using real metadata without running structure pipelines."""
+    af3_pn_units_dataset = PandasDataset(
+        data=af3_pn_units_dataset.data, name=af3_pn_units_dataset.name, metadata=af3_pn_units_dataset.metadata
+    )
+    af3_interfaces_dataset = PandasDataset(
+        data=af3_interfaces_dataset.data,
+        name=af3_interfaces_dataset.name,
+        metadata=af3_interfaces_dataset.metadata,
+    )
+    af3_pdb_dataset = ConcatDatasetWithID(datasets=[af3_pn_units_dataset, af3_interfaces_dataset])
     # +------------------  Sampler ------------------+
     num_examples_per_epoch = 100
 
@@ -70,10 +80,10 @@ def test_nested_datasets_with_weighted_samplers(rf2aa_interfaces_dataset, rf2aa_
     }
 
     pn_units_dataset_weights = calculate_weights_for_pdb_dataset_df(
-        dataset_df=rf2aa_pn_units_dataset.data, alphas=alphas, beta=b_pn_unit
+        dataset_df=af3_pn_units_dataset.data, alphas=alphas, beta=b_pn_unit
     )
     interfaces_dataset_weights = calculate_weights_for_pdb_dataset_df(
-        dataset_df=rf2aa_interfaces_dataset.data, alphas=alphas, beta=b_interface
+        dataset_df=af3_interfaces_dataset.data, alphas=alphas, beta=b_interface
     )
     pdb_dataset_weights = torch.cat([pn_units_dataset_weights, interfaces_dataset_weights])  # NOTE: Order matters!
 
@@ -90,15 +100,15 @@ def test_nested_datasets_with_weighted_samplers(rf2aa_interfaces_dataset, rf2aa_
     datasets_info = [
         {
             "name": "pdb",
-            "dataset": rf2aa_pdb_dataset,
+            "dataset": af3_pdb_dataset,
             "sampler": pdb_sampler,
             "probability": 0.2,
         },
         {
             # NOTE: Illustrative; dataset overlaps with the PDB_DATASET. In actuality, this would be a different dataset (e.g., distillation)
             "name": "pn_units",
-            "dataset": rf2aa_pn_units_dataset,
-            "sampler": SequentialSampler(rf2aa_pn_units_dataset),
+            "dataset": af3_pn_units_dataset,
+            "sampler": SequentialSampler(af3_pn_units_dataset),
             "probability": 0.8,
         },
         # etc.
@@ -138,7 +148,7 @@ def test_nested_datasets_with_weighted_samplers(rf2aa_interfaces_dataset, rf2aa_
 
     # Check that 80% of the indices are from the (second copy of) the pn_units dataset
     # (all idxs >= len(pdb_dataset) should be from pn_units dataset)
-    pn_unit_indices = [idx for idx in indices if idx >= len(rf2aa_pdb_dataset)]
+    pn_unit_indices = [idx for idx in indices if idx >= len(af3_pdb_dataset)]
     assert len(pn_unit_indices) == 80
 
     # Assert that the example_type is "pn_unit" for any example from the pn_units dataset

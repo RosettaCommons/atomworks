@@ -1,17 +1,8 @@
 """Entrypoint for parsing and preparing atomic-level structures with AtomWorks.
 
-We provide three public functions to cover the main use cases:
-
-* :py:func:`parse` — load a file and return a full result dictionary
-  (``chain_info``, ``assemblies``, ``metadata``, etc.).
-* :py:func:`parse_atom_array` — process an existing AtomArray and return a
-  result dictionary matching :py:func:`parse` output.
-* :py:func:`prepare_atom_array` — process an existing AtomArray with AtomWorks' common
-  annotations and return the processed atoms directly, without the surrounding metadata.
-
-To control the options for parsing and preparing, either:
-(a) Use the ``config`` argument to pass a configuration object (e.g. :py:class:`~atomworks.io.config.ParseConfig`) or preset name (e.g. ``"rcsb"``).
-(b) (Legacy) Pass bare keyword arguments to :py:func:`parse` (e.g. ``add_missing_atoms=True``)
+Use :py:func:`parse` for files and :py:func:`prepare_atom_array` for existing atoms.
+Both accept a ``config`` object or preset name. For unprepared file I/O, use
+:py:func:`~atomworks.io.atom_array_from_file` and :py:func:`~atomworks.io.atom_array_to_file`.
 """
 
 import contextlib
@@ -20,6 +11,7 @@ import io
 import json
 import logging
 import os
+import pickle
 import tempfile
 import warnings
 from collections.abc import Callable
@@ -27,7 +19,6 @@ from pathlib import Path
 from typing import Any
 
 import biotite
-import pandas as pd
 from biotite.structure import AtomArray, AtomArrayStack
 
 import atomworks
@@ -42,6 +33,7 @@ from atomworks.io.utils.ccd import (
     get_custom_ccd_entries,
     snapshot_custom_ccd_registry,
 )
+from atomworks.io.utils.compression import open_compressed
 from atomworks.io.utils.extra_fields import ExtraFieldsType
 from atomworks.io.utils.io_utils import infer_pdb_file_type
 from atomworks.io.utils.standard_annotations.serialization import (
@@ -125,7 +117,8 @@ def _atomic_write_pickle(obj: Any, path: Path) -> None:
     fd, tmp_name = tempfile.mkstemp(dir=str(path.parent), prefix=f"{path.name}.tmp.", suffix=path.suffix)
     os.close(fd)
     try:
-        pd.to_pickle(obj, tmp_name, compression={"method": "zstd", "level": 3})
+        with open_compressed(tmp_name, "wb") as stream:
+            pickle.dump(obj, stream, protocol=pickle.HIGHEST_PROTOCOL)
         os.chmod(tmp_name, 0o666)
         os.replace(tmp_name, path)
     except BaseException:
@@ -159,7 +152,7 @@ def parse(
     cache_key: str | None = None,
     **kwargs,
 ) -> dict[str, Any]:
-    """Parse structural files into an AtomArrayStack with standardized annotations and metadata.
+    """Read and prepare a structure file, returning atoms, assemblies and metadata.
 
     Processing behaviour is controlled by :py:class:`~atomworks.io.config.ParseConfig`.
     Legacy bare keyword arguments (e.g. ``add_missing_atoms=True``) are still accepted
@@ -181,7 +174,8 @@ def parse(
             are included automatically. Cached results still honor the config's cache flags.
 
     Returns:
-        dict: A dictionary containing the following keys:
+        A result dictionary, or a list of result dictionaries for models with
+        different atom sets. Each dictionary contains the following keys:
             chain_info
                 A dictionary mapping chain ID to sequence, type (as an IntEnum), RCSB entity,
                 EC number, and other information.
@@ -236,7 +230,8 @@ def parse(
         )
         if config.load_from_cache and cache_file_path.exists():
             try:
-                result, position = pd.read_pickle(cache_file_path)
+                with open_compressed(cache_file_path, "rb") as stream:
+                    result, position = pickle.load(stream)
                 if is_buffer:
                     source.seek(position)
                 if config.load_standard_annotations:
@@ -267,7 +262,7 @@ def parse(
                 "PDB files always build all assemblies; ignoring build_assembly=%r",
                 build_assembly,
             )
-        build_assembly = "all"
+        build_assembly = None if build_assembly is None else "all"
     elif file_type in ("cif", "bcif", "mmjson"):
         atoms, _cif_file, cif_block, metadata, model_ids = load_cif(
             source,
@@ -348,7 +343,8 @@ def prepare_atom_array(
     full result dictionary. Single-model results are squeezed to
     :py:class:`~biotite.structure.AtomArray` for conciseness.
 
-    For example, useful to add entity/molecule annotations to an AtomArray that already has a complete set of atoms and bonds.
+    This does not read a file, build biological assemblies or return source metadata.
+    Preparation may modify the input; pass ``source.copy()`` to preserve it.
 
     Args:
         source: The structure to process.
@@ -381,9 +377,12 @@ def parse_atom_array(
     config: str | PrepareConfig | None = None,
     **kwargs,
 ) -> dict[str, Any]:
-    """Mimic of :py:func:`parse` that operates on an AtomArray or AtomArrayStack instead of a file input.
+    """Prepare existing atoms and return the parser's result-dictionary schema.
 
-    Returns identical result dict to :py:func:`parse`, but takes an AtomArray or AtomArrayStack as input instead of a file path or buffer.
+    This compatibility entry point shares preparation with :py:func:`prepare_atom_array`.
+    Prefer that function when only processed atoms are needed. Source-file metadata
+    and biological assembly definitions are unavailable for an array input.
+    Preparation may modify the input; pass ``source.copy()`` to preserve it.
 
     Args:
         source: The AtomArray or AtomArrayStack to process.

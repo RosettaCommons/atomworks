@@ -91,10 +91,10 @@ def _neutralize(mol: Chem.Mol) -> Chem.Mol | None:
         reactant = mol
         # 1QD7: one product per step; building every product of a reaction to keep the first took over 30 min.
         mol = reaction.RunReactants((mol,), maxProducts=1)[0][0]
-        # Reaction SMARTS use their own map labels. Restore caller
-        # identity using RDKit's reactant-index provenance instead.
+        # RDKit preserves properties on unmatched atoms; mapped reaction atoms need
+        # caller identity restored using reactant-index provenance.
         for atom in mol.GetAtoms():
-            if atom.HasProp("react_atom_idx"):
+            if atom.HasProp("old_mapno") and atom.HasProp("react_atom_idx"):
                 source = reactant.GetAtomWithIdx(atom.GetIntProp("react_atom_idx"))
                 atom.SetAtomMapNum(source.GetAtomMapNum())
                 for name, value in source.GetPropsAsDict(includePrivate=True, includeComputed=False).items():

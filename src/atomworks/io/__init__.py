@@ -1,7 +1,8 @@
-"""Input/Output operations for biological data structures.
+"""Read, prepare, parse and write biological structures.
 
-This subpackage provides functionality for parsing, converting, and manipulating
-biological data formats, originally from the atomworks.io package.
+Use ``atom_array_from_file`` to read atoms, ``prepare_atom_array`` to prepare
+existing atoms, ``parse`` to read and prepare a file with metadata and assemblies,
+and ``atom_array_to_file`` to write a structure file.
 """
 
 import logging
@@ -16,14 +17,16 @@ logger.setLevel(_log_level)
 warnings.filterwarnings("once", category=DeprecationWarning)
 
 
-# Expose loading separately from preparation; importing parse also sets the version string.
-from atomworks.io._loaders import load_cif, load_pdb  # noqa: E402
+# Importing parse also sets the version string.
+from atomworks.io._loaders import load_cif, load_pdb  # noqa: E402  (importable, but not supported: use parse)
+from atomworks.io.files import CIFWriteConfig, atom_array_from_file, atom_array_to_file  # noqa: E402
 from atomworks.io.parser import get_config, parse, parse_atom_array, prepare_atom_array  # noqa: E402
 
 __all__ = [
+    "CIFWriteConfig",
+    "atom_array_from_file",
+    "atom_array_to_file",
     "get_config",
-    "load_cif",
-    "load_pdb",
     "parse",
     "parse_atom_array",
     "prepare_atom_array",

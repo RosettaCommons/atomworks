@@ -6,7 +6,7 @@ import biotite.structure.io.pdbx as pdbx
 import numpy as np
 import pytest
 
-from atomworks.io import parse
+from atomworks.io import atom_array_to_file, parse
 from atomworks.io.config import ParseConfig
 from atomworks.io.tools.rdkit import atom_array_to_rdkit
 from atomworks.io.utils.ccd import (
@@ -17,7 +17,7 @@ from atomworks.io.utils.ccd import (
     parse_ccd_cif,
     register_custom_ccd_entry,
 )
-from atomworks.io.utils.io_utils import read_any, to_cif_file
+from atomworks.io.utils.io_utils import CIFWriteConfig, read_any
 from atomworks.io.utils.standardize import standardize_atom_names
 from tests.conftest import TEST_DATA_DIR
 
@@ -150,7 +150,9 @@ def test_unknown_peptide_without_component_metadata(tmp_path):
     atoms.chain_id[:] = "A"
     atoms.res_id[:] = 1
     path = tmp_path / "peptide.cif"
-    to_cif_file(atoms, path, ccd_entries={"UNKNOWN_PEPTIDE": atoms})
+    atom_array_to_file(
+        atoms, path, config=CIFWriteConfig(include_entity_categories=True, ccd_entries={"UNKNOWN_PEPTIDE": atoms})
+    )
     cif = read_any(path)
     del cif.block["chem_comp"]
     cif.write(path)
@@ -184,7 +186,9 @@ def test_authored_annotations_during_atom_completion(tmp_path, ccd_code, authore
 
     # Write the component with either authored columns or columns omitted for supplementation.
     path = tmp_path / "component.cif"
-    to_cif_file(atoms, path, ccd_entries={ccd_code: atoms})
+    atom_array_to_file(
+        atoms, path, config=CIFWriteConfig(include_entity_categories=True, ccd_entries={ccd_code: atoms})
+    )
     if not authored:
         cif = read_any(path)
         for column in ("charge", "pdbx_aromatic_flag", "pdbx_leaving_atom_flag"):

@@ -12,10 +12,10 @@ from tempfile import TemporaryDirectory
 import numpy as np
 
 from atomworks.experimental.protonation import assign_hydrogens, place_hydrogens
-from atomworks.io import parse
+from atomworks.io import atom_array_to_file, parse
 from atomworks.io.config import ParseConfig
 from atomworks.io.utils.ccd import get_ccd_component_from_biotite
-from atomworks.io.utils.io_utils import to_cif_file
+from atomworks.io.utils.io_utils import CIFWriteConfig
 
 # %%
 # Prepare a heavy-atom input and parse it with explicit configuration.
@@ -28,7 +28,7 @@ config = ParseConfig.from_preset("minimal", hydrogen_policy="keep", add_id_and_e
 
 with TemporaryDirectory() as directory:
     path = Path(directory) / "ethanol.cif"
-    to_cif_file(heavy, path, ccd_entries={"EOH": component})
+    atom_array_to_file(heavy, path, config=CIFWriteConfig(ccd_entries={"EOH": component}))
     atoms = parse(path, config=config)["asym_unit"][0]
 
     # Assignment chooses the state; placement supplies hydrogen coordinates.
@@ -39,7 +39,7 @@ with TemporaryDirectory() as directory:
     assert np.isfinite(protonated.coord).all()
 
     # Write and reparse the complete molecule without changing its chemistry.
-    to_cif_file(protonated, path, ccd_entries={"EOH": component})
+    atom_array_to_file(protonated, path, config=CIFWriteConfig(ccd_entries={"EOH": component}))
     restored = parse(path, config=config)["asym_unit"][0]
     np.testing.assert_array_equal(restored.atom_name, protonated.atom_name)
     np.testing.assert_allclose(restored.coord, protonated.coord, atol=0.001)

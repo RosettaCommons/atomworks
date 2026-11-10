@@ -37,7 +37,7 @@ As you commit
 As you finalize a PR
 ---------------------
 
-1. Target **production** for public AtomWorks changes.
+1. Target **production** for the AtomWorks 3.0 release.
 2. Keep overall PR under <400 LOC (lines of code) (Rule of thumb: 500 LOC takes about 1h to review).
 3. Read and fill out the `PR checklist <https://github.com/RosettaCommons/atomworks/blob/production/.github/pull_request_template.md>`_.
 
@@ -55,7 +55,7 @@ Aside from having AtomWorks and its dependencies installed, to build the documen
 
 .. code-block:: bash
 
-   uv pip install -r docs/docs_requirements.txt
+   uv pip install -e ".[docs]" -r docs/docs_requirements.txt
 
 To build the documentation, navigate to the ``docs`` directory and run:
 
@@ -94,34 +94,18 @@ When contributing to this repository, please follow these steps:
 6. Wait for review and merge your changes.
 
 
-Publishing a release
---------------------
+Internal releases and documentation
+-----------------------------------
 
-Releases use the explicit version in ``pyproject.toml`` and a matching Git tag.
-Branch pushes and PR merges do not publish packages.
+The internal repository does not publish packages to PyPI. Public package
+releases are managed in `RosettaCommons/atomworks <https://github.com/RosettaCommons/atomworks>`_.
 
-One-time repository setup:
+To rebuild the internal documentation, run **Internal release and docs** from
+the Actions tab with the **dev** branch selected. The workflow builds the docs
+and updates the version directory and ``latest/`` on the existing ``gh-pages``
+branch, preserving older versions. It refuses to deploy unless GitHub Pages
+visibility is private.
 
-- Configure the PyPI ``atomworks`` Trusted Publisher: owner ``RosettaCommons``,
-  repository ``atomworks``, workflow ``release_and_docs.yaml``, environment ``pypi``.
-- Protect the ``pypi`` environment with reviewer approval and allow version tags.
-- Keep GitHub Pages Source as **Deploy from a branch**, using ``gh-pages`` and
-  ``/ (root)``. The workflow preserves versioned pages on that branch.
-
-For each release, merge the reviewed PRs, wait for CI on the final production commit,
-and confirm that ``project.version`` matches an unused tag and PyPI version.
-From a checkout whose ``origin`` is the public repository:
-
-.. code-block:: bash
-
-   git fetch origin
-   git tag -a v3.0.1 origin/production -m "AtomWorks 3.0.1"
-   git push origin refs/tags/v3.0.1
-
-The tag runs package checks, installed-wheel checks, scientific CPU tests
-on GitHub-hosted runners and the docs build. After they pass, approve ``pypi`` to publish the checked
-archives; subsequent jobs create the GitHub Release and deploy documentation.
-Verify a fresh ``pip install atomworks==3.0.1``, ``aw --help`` and the versioned docs.
-
-Prereleases follow the same process without replacing stable ``latest`` docs.
-Never move a published tag or reuse a published package version.
+Enable **create_release** to also create an internal GitHub release using the
+version in ``pyproject.toml``. Existing releases are left unchanged. Leave it
+disabled for a documentation-only rebuild.

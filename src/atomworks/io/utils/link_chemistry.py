@@ -35,6 +35,7 @@ from atomworks.constants import (
     DEFAULT_VALENCE,
     DO_NOT_MATCH_CCD,
     HYDROGEN_LIKE_SYMBOLS,
+    MULTIVALENT_VALENCES,
 )
 from atomworks.enums import ChainType
 from atomworks.io.utils.atom_array import (
@@ -250,14 +251,24 @@ def _element_distance_thresholds(
     return thresholds
 
 
-def _has_existing_polymer_attachment(atom_array: AtomArray, atom1: int, atom2: int, atom_to_res: np.ndarray) -> bool:
+def _has_existing_polymer_attachment(
+    adjacency: tuple[np.ndarray, np.ndarray], atom1: int, atom2: int, atom_to_res: np.ndarray
+) -> bool:
     """Return whether an authored bond already joins the proposed residue pair."""
     for atom, other in ((atom1, atom2), (atom2, atom1)):
-        neighbors, types = atom_array.bonds.get_bonds(atom)
-        residues = atom_to_res[neighbors[types != struc.BondType.COORDINATION]]
+        neighbors, types = adjacency[0][atom], adjacency[1][atom]
+        residues = atom_to_res[neighbors[(neighbors != -1) & (types != struc.BondType.COORDINATION)]]
         if atom_to_res[other] in residues:
             return True
     return False
+
+
+def _available_valence(element: str, charge: int, degree: int) -> int:
+    """Use the default valence, with multiple allowed states only for neutral atoms."""
+    allowed = MULTIVALENT_VALENCES.get(element)
+    if allowed is None or charge != 0:
+        return DEFAULT_VALENCE.get(element, 0) + charge
+    return next((v for v in allowed if v >= degree), allowed[-1])
 
 
 def _validate_inferred_polymer_bond(
@@ -280,11 +291,13 @@ def _validate_inferred_polymer_bond(
         if res_name not in leaving_groups:
             leaving_groups[res_name] = get_chem_comp_leaving_atom_groups(res_name)
         groups = leaving_groups[res_name]
-        expected = DEFAULT_VALENCE.get(atom_array.element[idx], 0) + atom_array.charge[idx]
-        has_h = ("nhyd" in atom_array.get_annotation_categories() and atom_array.nhyd[idx] > 0) or len(
-            _find_bonded_hydrogens(atom_array, int(idx))
-        )
-        if degree[idx] >= expected and not groups.get(atom_array.atom_name[idx]) and not has_h:
+        expected = _available_valence(atom_array.element[idx], atom_array.charge[idx], degree[idx])
+        if (
+            degree[idx] >= expected
+            and not groups.get(atom_array.atom_name[idx])
+            and not ("nhyd" in atom_array.get_annotation_categories() and atom_array.nhyd[idx] > 0)
+            and not len(_find_bonded_hydrogens(atom_array, int(idx)))
+        ):
             raise ValueError(
                 f"Cannot infer polymer bond at {atom_array.res_name[idx]}/{atom_array.atom_name[idx]}: "
                 "no free valence or declared leaving group"
@@ -322,6 +335,8 @@ def add_polymer_bonds(atom_array: AtomArray) -> AtomArray:
     sizes = np.diff(res_starts)
     atom_to_res = np.repeat(np.arange(len(res_starts) - 1, dtype=np.intp), sizes)
     degree = get_bond_degree_per_atom(atom_array)
+    # Bonds remain unchanged until the final merge, so reuse their adjacency throughout the loop.
+    adjacency = atom_array.bonds.get_all_bonds()
 
     atom_names = atom_array.atom_name.tolist()
     res_names = atom_array.res_name
@@ -361,14 +376,14 @@ def add_polymer_bonds(atom_array: AtomArray) -> AtomArray:
             continue
 
         # Existing backbone attachments take precedence; side-chain links do not (4AAH).
-        if _has_existing_polymer_attachment(atom_array, idx_out, idx_in, atom_to_res):
+        if _has_existing_polymer_attachment(adjacency, idx_out, idx_in, atom_to_res):
             continue
 
         # Explicit backbone links may run opposite to residue numbering.
         reverse_in = _find_atom(s1, e1, atoms_1[1]) if atoms_1[1] is not None else None
         reverse_out = _find_atom(s2, e2, atoms_2[0]) if atoms_2[0] is not None else None
         if reverse_in is not None and reverse_out is not None:
-            neighbors, types = atom_array.bonds.get_bonds(reverse_in)
+            neighbors, types = adjacency[0][reverse_in], adjacency[1][reverse_in]
             if np.any((neighbors == reverse_out) & (types != struc.BondType.COORDINATION)):
                 continue
 
@@ -848,10 +863,15 @@ def _rebalance_terminal_heteroatoms(
        and H state; otherwise no choice is made and final validation rejects it.
     """
     residue = struc.get_all_residue_positions(atom_array)
+    bonds = atom_array.bonds.as_array()
+    may_have_double = np.zeros(len(atom_array), dtype=bool)
+    may_have_double[bonds[bonds[:, 2] == struc.BondType.DOUBLE, :2].ravel()] = True
     for linked in np.flatnonzero(impacted):
         linked = int(linked)
+        if not may_have_double[linked]:
+            continue
         element = str(atom_array.element[linked])
-        if _has_valid_rdkit_valence(atom_array, linked):
+        if element not in ("P", "S", "O", "N") or _has_valid_rdkit_valence(atom_array, linked):
             continue
         neighbors, types = atom_array.bonds.get_bonds(linked)
 
@@ -878,8 +898,6 @@ def _rebalance_terminal_heteroatoms(
             continue
 
         # Case 2: a linked terminal heteroatom transfers its double bond to a sibling.
-        if element not in ("O", "S", "N"):
-            continue
         candidates = []
         for center in neighbors[(types == struc.BondType.DOUBLE) & (residue[neighbors] == residue[linked])]:
             center = int(center)
@@ -918,6 +936,8 @@ def _rebalance_terminal_heteroatoms(
         atom_array.bonds.add_bond(linked, center, struc.BondType.SINGLE)
         atom_array.bonds.remove_bond(center, sibling)
         atom_array.bonds.add_bond(center, sibling, struc.BondType.DOUBLE)
+        # Keep eligibility conservative when a later link endpoint gains a double bond.
+        may_have_double[sibling] = True
         atom_array.charge[sibling] = charge
         degree[linked] -= 1
         degree[sibling] += 1 - int(has_h)

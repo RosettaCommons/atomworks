@@ -174,177 +174,28 @@ def _update_get_residue_starts() -> None:
 
 
 def _update_array() -> None:
-    """Improve the `array` function to not truncate the datatype of annotations."""
+    """Preserve NumPy scalar dtypes and array-valued annotation shapes."""
+    original = struc.array
 
+    @functools.wraps(original)
     def array(atoms: list[Atom]) -> AtomArray:
-        """Patch of Biotite's `array` function to not truncate the datatype of annotations.
-
-        Args:
-            atoms: The atoms to be combined in an array. All atoms must share the same
-                annotation categories.
-
-        Returns:
-            The listed atoms as array.
-
-        Raises:
-            ValueError: If atoms do not share the same annotation categories.
-
-        Examples:
-            Creating an atom array from atoms:
-
-            >>> atom1 = Atom([1, 2, 3], chain_id="A")
-            >>> atom2 = Atom([2, 3, 4], chain_id="A")
-            >>> atom3 = Atom([3, 4, 5], chain_id="B")
-            >>> atom_array = array([atom1, atom2, atom3])
-            >>> print(atom_array)
-                A       0                       1.000    2.000    3.000
-                A       0                       2.000    3.000    4.000
-                B       0                       3.000    4.000    5.000
-        """
-        # Check if all atoms have the same annotation names
-        # Equality check requires sorting
-        names = sorted(atoms[0]._annot.keys())
+        names = atoms[0]._annot.keys()
         for i, atom in enumerate(atoms):
-            if sorted(atom._annot.keys()) != names:
-                raise ValueError(
-                    f"The atom at index {i} does not share the same " f"annotation categories as the atom at index 0"
-                )
-        array = AtomArray(len(atoms))
-
+            if atom._annot.keys() != names:
+                raise ValueError(f"The atom at index {i} does not share the annotation categories of atom 0")
+        result = AtomArray(len(atoms))
         for name in names:
-            if hasattr(atoms[0]._annot[name], "dtype"):
-                # (Preserve dtype if possible)
-                dtype = atoms[0]._annot[name].dtype
+            values = [atom._annot[name] for atom in atoms]
+            if isinstance(values[0], (np.ndarray, np.generic, str)):
+                annotation = np.array(values)
             else:
-                dtype = type(atoms[0]._annot[name])
-            annotation_values = [atom._annot[name] for atom in atoms]
-            annotation_values = np.array(annotation_values, dtype=dtype)  # maintain dtype
-            array.set_annotation(name, annotation_values)
-        array._coord = np.stack([atom.coord for atom in atoms])
-        return array
+                annotation = np.empty(len(atoms), dtype=type(values[0]))
+                annotation[:] = values
+            result.set_annotation(name, annotation)
+        result.coord = np.array([atom.coord for atom in atoms])
+        return result
 
     struc.array = array
-
-
-def _concatenate() -> None:
-    """
-    Almost identical to biotite.structure.concatenate, but with a temporary fix
-    for the UnboundLocalError issue in concat_atoms assignment.
-
-    Once the PR for the fix is merged and released, we can remove this patch.
-    issue: https://github.com/biotite-dev/biotite/issues/855
-    biotite PR for the fix: https://github.com/biotite-dev/biotite/pull/857
-    """
-    from biotite.sequence import Sequence
-    from biotite.structure import AtomArray, AtomArrayStack
-    from biotite.structure.bonds import BondList
-
-    # Ensure that the atoms can be iterated over multiple times
-    def concatenate(atoms: list[AtomArray | AtomArrayStack]) -> AtomArray | AtomArrayStack:
-        """
-        Concatenate multiple :class:`AtomArray` or :class:`AtomArrayStack` objects into
-        a single :class:`AtomArray` or :class:`AtomArrayStack`, respectively.
-
-        Parameters
-        ----------
-        atoms : iterable object of AtomArray or AtomArrayStack
-            The atoms to be concatenated.
-            :class:`AtomArray` cannot be mixed with :class:`AtomArrayStack`.
-
-        Returns
-        -------
-        concatenated_atoms : AtomArray or AtomArrayStack
-            The concatenated atoms, i.e. its ``array_length()`` is the sum of the
-            ``array_length()`` of the input ``atoms``.
-
-        Notes
-        -----
-        The following rules apply:
-
-        - Only the annotation categories that exist in all elements are transferred.
-        - The box of the first element that has a box is transferred, if any.
-        - The bonds of all elements are concatenated, if any element has associated bonds.
-        For elements without a :class:`BondList` an empty :class:`BondList` is assumed.
-
-        Examples
-        --------
-
-        >>> atoms1 = array(
-        ...     [
-        ...         Atom([1, 2, 3], res_id=1, atom_name="N"),
-        ...         Atom([4, 5, 6], res_id=1, atom_name="CA"),
-        ...         Atom([7, 8, 9], res_id=1, atom_name="C"),
-        ...     ]
-        ... )
-        >>> atoms2 = array(
-        ...     [
-        ...         Atom([1, 2, 3], res_id=2, atom_name="N"),
-        ...         Atom([4, 5, 6], res_id=2, atom_name="CA"),
-        ...         Atom([7, 8, 9], res_id=2, atom_name="C"),
-        ...     ]
-        ... )
-        >>> print(concatenate([atoms1, atoms2]))
-                    1      N                1.000    2.000    3.000
-                    1      CA               4.000    5.000    6.000
-                    1      C                7.000    8.000    9.000
-                    2      N                1.000    2.000    3.000
-                    2      CA               4.000    5.000    6.000
-                    2      C                7.000    8.000    9.000
-        """
-        # Ensure that the atoms can be iterated over multiple times
-        if not isinstance(atoms, Sequence):
-            atoms = list(atoms)
-
-        length = 0
-        depth = None
-        element_type = None
-        common_categories = set(atoms[0].get_annotation_categories())
-        box = None
-        has_bonds = False
-        for element in atoms:
-            if element_type is None:
-                if not isinstance(element, (AtomArray, AtomArrayStack)):
-                    raise TypeError("Expected 'AtomArray' or 'AtomArrayStack', " f"but got '{type(element).__name__}'")
-                element_type = type(element)
-            else:
-                if not isinstance(element, element_type):
-                    raise TypeError(f"Cannot concatenate '{type(element).__name__}' " f"with '{element_type.__name__}'")
-            length += element.array_length()
-            if isinstance(element, AtomArrayStack):
-                if depth is None:
-                    depth = element.stack_depth()
-                else:
-                    if element.stack_depth() != depth:
-                        raise IndexError("The stack depths are not equal")
-            common_categories &= set(element.get_annotation_categories())
-            if element.box is not None and box is None:
-                box = element.box
-            if element.bonds is not None:
-                has_bonds = True
-
-        # Use depth to decide: AtomArrayStack sets depth, AtomArray (and subclasses) leave it None.
-        # Prefer depth over element_type so subclasses / re-exports of AtomArray still get the correct type.
-        if depth is None:
-            concat_atoms = AtomArray(length)
-        else:
-            concat_atoms = AtomArrayStack(depth, length)
-        concat_atoms.coord = np.concatenate([element.coord for element in atoms], axis=-2)
-        for category in common_categories:
-            concat_atoms.set_annotation(
-                category,
-                np.concatenate([element.get_annotation(category) for element in atoms], axis=0),
-            )
-        concat_atoms.box = box
-        if has_bonds:
-            # Concatenate bonds of all elements
-            concat_atoms.bonds = BondList.concatenate(
-                [element.bonds if element.bonds is not None else BondList(element.array_length()) for element in atoms]
-            )
-
-        return concat_atoms
-
-    struc.atoms.concatenate = concatenate
-    struc.concatenate = concatenate
 
 
 def _update_set_inter_residue_bonds() -> None:
@@ -386,6 +237,7 @@ def _update_cif_loop_parsing() -> None:
     def deserialize_looped(lines: list[str]) -> dict[str, list[str]]:
         column_names = []
         for line in lines:
+            line = line.strip()
             if line[0] != "_":
                 break
             column_names.append(line.split(".")[1])
@@ -420,7 +272,6 @@ def monkey_patch_biotite() -> None:
     _enable_segment_slices_in_atom_arrays()
     _update_get_residue_starts()
     _update_array()
-    _concatenate()
     _update_set_inter_residue_bonds()
     _update_cif_loop_parsing()
 

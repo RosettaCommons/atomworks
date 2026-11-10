@@ -8,6 +8,7 @@ import numpy as np
 import pytest
 from biotite.structure import AtomArray
 
+from atomworks.common import KeyToIntMapper
 from atomworks.enums import ChainType
 from atomworks.io import parse
 from atomworks.io.config import ParseConfig
@@ -477,6 +478,14 @@ def test_same_atom_array_from_cif_and_inference():
     ]
 
     atom_array_from_inference = components_to_atom_array(monomer + ligand)
+
+    # Compare entity membership, not file-local labels absent from sequence/SMILES input.
+    for atoms, entity_ids in (
+        (atom_array_from_cif, atom_array_from_cif.entity_id),
+        (atom_array_from_inference, atom_array_from_inference.chain_entity),
+    ):
+        entity_to_int = KeyToIntMapper()
+        atoms.set_annotation("entity_id", np.array([entity_to_int(entity) for entity in entity_ids]).astype(str))
 
     for chain_id in np.unique(atom_array_from_cif.chain_id):
         chain_atom_array_from_inference = atom_array_from_inference[(atom_array_from_inference.chain_id == chain_id)]

@@ -10,42 +10,42 @@ from tests.ml.conftest import SHARED_TEST_FILTERS, TEST_PN_UNITS_FILTERS
 # NOTE: See the conftest for the filters applied to pn_units_dataset, which are validated below
 
 
-def test_filter_impact(pn_units_df, rf2aa_pn_units_dataset):
+def test_filter_impact(pn_units_df, af3_pn_units_dataset):
     # Check that the filter had an impact (rows were dropped)
     original_data_length = len(pn_units_df)
-    filtered_data_length = len(rf2aa_pn_units_dataset)
+    filtered_data_length = len(af3_pn_units_dataset)
     assert filtered_data_length < original_data_length, "Filter did not reduce the number of rows"
     expected = pn_units_df.copy()
     for query in SHARED_TEST_FILTERS + TEST_PN_UNITS_FILTERS:
         expected = expected.query(query)
     expected.set_index("example_id", drop=False, inplace=True)
-    pd.testing.assert_frame_equal(rf2aa_pn_units_dataset.data, expected)
+    pd.testing.assert_frame_equal(af3_pn_units_dataset.data, expected)
 
 
-def test_deposition_date_filter(rf2aa_pn_units_dataset):
+def test_deposition_date_filter(af3_pn_units_dataset):
     # Check that the deposition date filter was applied correctly
-    filtered_data = rf2aa_pn_units_dataset.data
+    filtered_data = af3_pn_units_dataset.data
     assert (filtered_data["deposition_date"] < "2022-01-01").all(), "Deposition date filter did not work correctly"
 
 
-def test_resolution_filter(rf2aa_pn_units_dataset):
+def test_resolution_filter(af3_pn_units_dataset):
     # Check that the resolution filter was applied correctly
-    filtered_data = rf2aa_pn_units_dataset.data
+    filtered_data = af3_pn_units_dataset.data
     assert (filtered_data["resolution"] <= 5.0).all(), "Resolution filter did not work correctly"
 
 
-def test_method_filter(rf2aa_pn_units_dataset):
+def test_method_filter(af3_pn_units_dataset):
     # Check that the method filter was applied correctly
-    filtered_data = rf2aa_pn_units_dataset.data
+    filtered_data = af3_pn_units_dataset.data
     assert (
         filtered_data["method"].isin(["X-RAY_DIFFRACTION", "ELECTRON_MICROSCOPY"]).all()
     ), "Method filter did not work correctly"
 
 
-def test_af3_excluded_ligands_filter(rf2aa_pn_units_dataset, rf2aa_interfaces_dataset):
+def test_af3_excluded_ligands_filter(af3_pn_units_dataset, af3_interfaces_dataset):
     # Check that we don't have any Query PN Units that are AF-3 excluded ligands
-    filtered_pn_units_data = rf2aa_pn_units_dataset.data
-    filtered_interfaces_data = rf2aa_interfaces_dataset.data
+    filtered_pn_units_data = af3_pn_units_dataset.data
+    filtered_interfaces_data = af3_interfaces_dataset.data
 
     # ... check query PN Units
     assert np.any(

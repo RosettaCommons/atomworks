@@ -118,8 +118,8 @@ def test_view_pymol_remote(sample_atom_array):
 
     import biotite.structure as struc
 
+    from atomworks.io import atom_array_from_file
     from atomworks.io.parser import parse
-    from atomworks.io.utils.io_utils import load_any
     from atomworks.io.utils.visualize import get_pymol_session, view_pymol
     from tests.io.conftest import get_pdb_path
 
@@ -135,7 +135,7 @@ def test_view_pymol_remote(sample_atom_array):
     _is_nan_coords = is_any_coord_nan(array)
 
     array_not_nan = array[~_is_nan_coords]
-    loaded_array = load_any(StringIO(session.get_state(obj_name, format="cif")), model=1)
+    loaded_array = atom_array_from_file(StringIO(session.get_state(obj_name, format="cif")), "cif", model=1)
     assert loaded_array.coord.shape == array_not_nan.coord.shape
 
     # NOTE: To compare actual coordinates we need to sort both arrays by

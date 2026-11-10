@@ -67,7 +67,6 @@ class AtomizeByCCDName(Transform):
 
     incompatible_previous_transforms: ClassVar[list[str | Transform]] = [
         "AddTokenBondAdjacency",  # atomization changes the bond adjacency as some tokens are expaded into atoms
-        "AddRF2AAChiralFeatures",  # chiral features depend on the atomized components since we need to calculate chirals for those
         "AddGlobalTokenIdAnnotation",  # atomization changes the token IDs
         "AtomizeByCCDName",  # cannot apply this transform twice
         "EncodeAtomArray",  # cannot encode atom array before atomizing as encoding may depend on atomization

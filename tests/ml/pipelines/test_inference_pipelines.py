@@ -1,9 +1,13 @@
 """Tests for the AF3 inference pipeline to ensure proper transformation of protein structures."""
 
+import io
+
+import numpy as np
 import pytest
 import torch
 
-from atomworks.io import parse
+from atomworks.common import KeyToIntMapper
+from atomworks.io import atom_array_to_file, parse
 from atomworks.io.config import ParseConfig
 from atomworks.io.tools.inference import (
     build_msa_paths_by_chain_id_from_component_list,
@@ -11,7 +15,7 @@ from atomworks.io.tools.inference import (
     read_chai_fasta,
 )
 from atomworks.io.utils.chain_info import build_chain_info
-from atomworks.io.utils.io_utils import CIFWriteConfig, to_cif_buffer
+from atomworks.io.utils.io_utils import CIFWriteConfig
 from atomworks.io.utils.testing import assert_same_atom_array_or_stack
 from atomworks.ml.pipelines.af3 import build_af3_transform_pipeline
 from atomworks.ml.utils.testing import cached_parse
@@ -194,11 +198,18 @@ def test_same_pipeline_outputs_from_cif_and_inference():
         }
     ]
     ligand = [{"smiles": "Cc1cc(cc(c1)Oc2nccc(n2)c3c(ncn3[C@H]4CCN(C4)CCN)c5ccc(cc5)I)C", "chain_id": "C"}]
-    buffer = to_cif_buffer(
+    content = atom_array_to_file(
         components_to_atom_array(monomer + ligand), config=CIFWriteConfig(include_entity_categories=True)
     )
-    pipeline_inputs_from_inference = parse(buffer, config=ParseConfig(hydrogen_policy="remove"))
+    pipeline_inputs_from_inference = parse(io.StringIO(content), config=ParseConfig(hydrogen_policy="remove"))
     atom_array_from_inference = pipeline_inputs_from_inference["assemblies"][transformation_id][0]
+
+    # Independent inputs assign different entity labels; compare membership on copies.
+    atom_array_from_cif = atom_array_from_cif.copy()
+    atom_array_from_inference = atom_array_from_inference.copy()
+    for atoms in (atom_array_from_cif, atom_array_from_inference):
+        entity_to_int = KeyToIntMapper()
+        atoms.set_annotation("entity_id", np.array([entity_to_int(entity) for entity in atoms.entity_id]).astype(str))
 
     annotations_to_compare = set(atom_array_from_cif.get_annotation_categories()) - {
         "res_name",

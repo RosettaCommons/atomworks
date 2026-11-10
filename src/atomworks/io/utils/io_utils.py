@@ -3,19 +3,19 @@
 __all__ = [
     "CIFWriteConfig",
     "apply_sharding_pattern",
+    "atom_array_to_file",
     "build_sharding_pattern",
     "get_structure",
     "load_any",
     "parse_sharding_pattern",
     "read_any",
     "suppress_logging_messages",
-    "to_cif_buffer",
     "to_cif_file",
-    "to_cif_string",
     "to_pdb_buffer",
     "to_pdb_string",
 ]
 import contextlib
+import gzip
 import io
 import json
 import logging
@@ -34,6 +34,7 @@ from typing import Literal
 import biotite.structure as struc
 import biotite.structure.io.pdb as biotite_pdb
 import numpy as np
+import zstandard as zstd
 from biotite.structure import AtomArray, AtomArrayStack
 from biotite.structure.io import mol, pdbx
 from biotite.structure.io.pdbx import CIFColumn
@@ -45,7 +46,7 @@ from atomworks.common import exists
 from atomworks.constants import (
     ALTLOC_DEFAULT_IDS,
     ATOMIC_NUMBER_TO_ELEMENT,
-    STANDARD_CIF_ANNOTATIONS,
+    RESERVED_CIF_FIELDS,
     STANDARD_POLYMER_RESIDUES,
 )
 from atomworks.io.utils.altloc import has_multiple_altlocs_per_residue, select_altlocs_clash_aware
@@ -56,6 +57,7 @@ from atomworks.io.utils.catcif import resolve_catcif_source
 from atomworks.io.utils.ccd import atom_array_from_ccd_code, custom_ccd_residues
 from atomworks.io.utils.chain_info import build_chain_info
 from atomworks.io.utils.compression import is_compressed_file, open_compressed
+from atomworks.io.utils.entity import normalize_entity_id
 from atomworks.io.utils.extra_fields import (
     ExtraFieldsType,
     apply_extra_field_dtypes,
@@ -168,14 +170,14 @@ class CIFWriteConfig:
 
         warn_on_ccd_without_registry: Warn on CCD write from a plain ``AtomArray``
             (no parse-time CCD snapshot). Set ``False`` to silence. Defaults to ``True``.
+        coord_decimals: Decimal places coordinates are rounded to before writing.
+            ``None`` writes them unrounded. Defaults to 3, the mmCIF convention.
 
     Note:
         ``atom_site`` always includes an ``atom_array_index`` column (0, 1, …, n-1).
 
     See Also:
-        :py:func:`to_cif_buffer`
-        :py:func:`to_cif_string`
-        :py:func:`to_cif_file`
+        :py:func:`atom_array_to_file`
     """
 
     id: str = "unknown_id"
@@ -192,76 +194,23 @@ class CIFWriteConfig:
     ccd_entries: dict[str, struc.AtomArray] | None = None
     chem_comp_source: Literal["array", "ccd", "ccd_non_canonicals"] = "ccd"
     warn_on_ccd_without_registry: bool = True
+    coord_decimals: int | None = 3
 
 
 def load_any(
-    file_or_buffer: os.PathLike | io.StringIO | io.BytesIO,
-    file_type: Literal["cif", "mmcif", "pdbx", "pdb", "pdb1", "bcif", "catcif", "mmjson"] | None = None,
+    file_or_buffer: str | os.PathLike | io.StringIO | io.BytesIO,
+    file_type: str | None = None,
     *,
-    extra_fields: ExtraFieldsType = None,
-    include_bonds: bool = True,
     model: int | None = None,
-    altloc: Literal["first", "random_per_chain", "random_clash_aware"] | str = "first",
-    altloc_seed: int | None = None,
-    infer_dtypes: bool = True,
-) -> AtomArrayStack | AtomArrayPlusStack | AtomArray | AtomArrayPlus:
-    """Convenience function for loading a structure from a file or buffer.
-
-    NOTE: This function is deprecated! Please use :py:func:`atomworks.io.parse`
-    with `config="minimal"`
-
-    By default, bonds are NOT loaded here - they are added later in
-    :py:func:`~atomworks.io.parser.parse_atom_array` using CCD templates for consistency.
-
-    Args:
-        file_or_buffer: Path to the file or buffer to load the structure from.
-        file_type: Type of the file to load. If None, it will be inferred.
-        extra_fields: Extra fields to include as AtomArray annotations. Can be:
-
-            - List of field names: ``["annot1", "annot2"]``
-            - Dict with specs: ``{"my_field": {"default": 0, "dtype": np.int32}}``
-            - ``"all"``: Include all fields from the atom_site category
-        include_bonds: Whether to include bond information from biotite's parser.
-            Defaults to False. Bonds are typically added later in parse_atom_array()
-            using CCD templates for consistency.
-        model: The model number to use for loading the structure. If None, all models
-            will be loaded.
-        altloc: The altloc ID to use for loading the structure.
-        altloc_seed: Seed for the random number generator when ``altloc="random_per_chain"``
-            or ``altloc="random_clash_aware"``.
-        infer_dtypes: Whether to automatically infer dtypes for extra fields from their values.
-            For example, fields containing "1", "2", "3" will be converted to int.
-
-    Returns:
-        The loaded structure.
-
-    References:
-        `Biotite Structure I/O <https://www.biotite-python.org/apidoc/biotite.structure.io.pdbx.get_structure.html#biotite.structure.io.pdbx.get_structure>`_
-        `mmCIF Format Specification <https://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v50.dic/>`_
-    """
+    squeeze: bool = True,
+) -> AtomArray | AtomArrayStack | AtomArrayPlus | AtomArrayPlusStack | list[AtomArray]:
+    """Deprecated alias for :py:func:`atomworks.io.atom_array_from_file`, with the same behavior."""
+    from atomworks.io.files import atom_array_from_file
 
     warnings.warn(
-        "load_any() is deprecated and will be removed in a future release. "
-        "Please use atomworks.io.parse() with config='minimal' instead.",
-        DeprecationWarning,
-        stacklevel=2,
+        "load_any() is deprecated; use atomworks.io.atom_array_from_file().", DeprecationWarning, stacklevel=2
     )
-
-    file_obj = read_any(file_or_buffer, file_type=file_type)
-    atom_array = get_structure(
-        file_obj,
-        extra_fields=extra_fields,
-        include_bonds=include_bonds,
-        model=model,
-        altloc=altloc,
-        altloc_seed=altloc_seed,
-        infer_dtypes=infer_dtypes,
-    )
-
-    # Ensure chem_comp_type is always present
-    ensure_annotations(atom_array, "chem_comp_type")
-
-    return atom_array
+    return atom_array_from_file(file_or_buffer, file_type=file_type, model=model, squeeze=squeeze)
 
 
 def _validate_label_seq_ids(cif_block: pdbx.CIFBlock | pdbx.BinaryCIFBlock) -> None:
@@ -310,6 +259,7 @@ def get_structure(
     altloc: Literal["first", "random_per_chain", "random_clash_aware"] | str = "first",
     altloc_seed: int | None = None,
     infer_dtypes: bool = True,
+    preserve_ins_code: bool = False,
 ) -> AtomArrayStack | AtomArray:
     """Load structure into Biotite's AtomArray or AtomArrayStack.
 
@@ -319,6 +269,8 @@ def get_structure(
     Note:
         For CIF files, ``transformation_id`` is automatically included. This field is
         required for assembly processing.
+        Loaded entity identifiers use the string annotation ``entity_id``;
+        ``label_entity_id`` is accepted as an extra-field input alias.
 
     Args:
         file_obj: The file object to load with Biotite.
@@ -344,6 +296,7 @@ def get_structure(
             for reproducible results.
         infer_dtypes: Whether to automatically infer dtypes for extra fields from their
             values.
+        preserve_ins_code: Keep CIF insertion codes instead of clearing them for processing.
 
     Returns:
         The loaded structure with bonds from the CIF file.
@@ -376,7 +329,8 @@ def get_structure(
             _validate_label_seq_ids(cif_block)
             atom_site = cif_block["atom_site"]
             if extra_field_names == "all":
-                extra_field_names = list(atom_site.keys())
+                extra_field_specs = normalize_extra_fields(list(atom_site.keys()))
+                extra_field_names = list(extra_field_specs)
             extra_field_names = filter_extra_fields(extra_field_names, atom_site)
             # Biotite requires label_alt_id for altloc="all", even without alternates.
             load_altlocs = altloc if include_bonds else "all"
@@ -393,7 +347,7 @@ def get_structure(
 
             # Normalize insertion codes to empty string for CIF files
             # (ins_code is a legacy PDB artifact; CIF files typically don't use it meaningfully)
-            if "ins_code" in atom_array_stack.get_annotation_categories():
+            if not preserve_ins_code and "ins_code" in atom_array_stack.get_annotation_categories():
                 atom_array_stack.ins_code[:] = ""
 
         case biotite_pdb.PDBFile:
@@ -408,7 +362,7 @@ def get_structure(
             raise ValueError(f"Unsupported file type: {type(file_obj)}. Must be a CIFFile, BinaryCIFFile, or PDBFile.")
 
     # Apply altloc filtering (only when we loaded all altlocs; when include_bonds=True, Biotite already filtered altlocs at load time)
-    if not include_bonds:
+    if not include_bonds and altloc != "all":
         if altloc == "random_clash_aware":
             atom_array_stack = select_altlocs_clash_aware(atom_array_stack, seed=altloc_seed, cif_block=cif_block)
         else:
@@ -874,7 +828,7 @@ def _build_entity_categories(
     if isinstance(atom_array, struc.AtomArrayStack):
         atom_array = atom_array[0]  # Choose any model
 
-    atom_array = _ensure_label_entity_id(atom_array)
+    atom_array = _ensure_entity_id(atom_array)
 
     assert (
         "chain_id" in atom_array.get_annotation_categories()
@@ -884,7 +838,7 @@ def _build_entity_categories(
     # Build entity→chains mapping
     res_starts = get_residue_starts(atom_array)
     chain_ids_at_res = atom_array.chain_id[res_starts]
-    entity_ids_at_res = atom_array.label_entity_id[res_starts]
+    entity_ids_at_res = atom_array.entity_id[res_starts]
 
     entity_to_chains = {}
     for chain_id in chain_info:
@@ -1024,10 +978,13 @@ def _preprocess_structure_for_cif(
         Tuple of (preprocessed structure, resolved extra_fields list).
     """
     structure = structure.copy()
-    structure.coord = np.round(structure.coord, 3)
+    if config.coord_decimals is not None:
+        structure.coord = np.round(structure.coord, config.coord_decimals)
 
     extra_fields = config.extra_fields
-    if has_ambiguous_annotation_set(structure):
+    if has_ambiguous_annotation_set(
+        structure, ("chain_id", "res_id", "res_name", "atom_name", "ins_code", "altloc_id")
+    ):
         if config.chain_disambiguation is None:
             raise ValueError(
                 "Ambiguous chain annotations detected. Multiple atoms share the same "
@@ -1062,8 +1019,10 @@ def _preprocess_structure_for_cif(
     structure.element = np.vectorize(lambda x: ATOMIC_NUMBER_TO_ELEMENT.get(x, x))(structure.element)
 
     # If altloc information is present but no altloc id is given, set all to "."
-    if "altloc_id" in structure.get_annotation_categories() and structure.altloc_id[0].strip() == "":
-        structure.altloc_id = ["."] * structure.array_length()
+    if "altloc_id" in structure.get_annotation_categories():
+        structure.altloc_id = np.where(np.char.strip(structure.altloc_id) == "", ".", structure.altloc_id)
+        if config.extra_fields == "all" and "label_alt_id" not in structure.get_annotation_categories():
+            structure.set_annotation("label_alt_id", structure.altloc_id)
 
     canonical_names = set(STANDARD_ANNOTATIONS.get_field_names())
     accepted_names = set(STANDARD_ANNOTATIONS.get_field_names(include_aliases=True))
@@ -1085,10 +1044,11 @@ def _preprocess_structure_for_cif(
             existing = set(extra_fields)
             extra_fields = list(extra_fields) + [f for f in scalar_sa_names if f not in existing]
 
-    # Set the structure in the CIF file
-    # (Biotite writes the standard CIF categories by default)
+    # Generated columns are not extras: Biotite derives auth_seq_id from res_id (likewise other auth_* fields).
+    # label_alt_id is generated as "."; coexisting conformers are restored after writing below.
     if extra_fields == "all":
-        extra_fields = list(set(structure.get_annotation_categories()) - STANDARD_CIF_ANNOTATIONS)
+        extra_fields = list(set(structure.get_annotation_categories()) - RESERVED_CIF_FIELDS)
+        extra_fields = [field for field in extra_fields if np.ndim(structure.get_annotation(field)) == 1]
 
         if config.save_standard_annotations:
             extra_fields = [field for field in extra_fields if field not in legacy_names]
@@ -1096,9 +1056,11 @@ def _preprocess_structure_for_cif(
     if not config.include_nan_coords:
         structure = ta.remove_nan_coords(structure)
 
-    structure = _ensure_label_entity_id(structure)
+    structure = _ensure_entity_id(structure)
 
     structure = remap_intra_residue_coordination_bonds(structure)
+
+    extra_fields = [field for field in extra_fields if field not in {"entity_id", "label_entity_id"}]
 
     # Always include atom_array_index in atom_site so readers can correlate atom_site rows
     # with idx0/idx1 values in other CIF categories (e.g. nonscalar StandardAnnotation blocks).
@@ -1109,11 +1071,23 @@ def _preprocess_structure_for_cif(
     return structure, extra_fields
 
 
-def _atom_site_from_array(structure: AtomArray, extra_fields: list[str]) -> pdbx.CIFCategory:
-    """Build an atom_site CIFCategory for one AtomArray via a temporary CIFFile."""
-    tmp = pdbx.CIFFile()
-    pdbx.set_structure(tmp, structure, data_block="_tmp", extra_fields=extra_fields)
-    return tmp["_tmp"]["atom_site"]
+def _atom_site_from_array(
+    structure: AtomArray | AtomArrayStack,
+    extra_fields: list[str],
+    block: pdbx.CIFBlock | None = None,
+) -> pdbx.CIFCategory:
+    """Write a structure into a CIF block and return its atom-site category."""
+    if block is None:
+        block = pdbx.CIFBlock()
+    pdbx.set_structure(block, structure, extra_fields=extra_fields)
+    atom_site = block["atom_site"]
+
+    # Biotite writes label_alt_id="."; restore actual labels only when multiple conformers coexist per residue.
+    # After selecting one conformer, non-"." labels break struct_conn atom matching in consumers such as PyMOL.
+    if "label_alt_id" in structure.get_annotation_categories() and has_multiple_altlocs_per_residue(structure):
+        alt_id = structure.label_alt_id
+        atom_site["label_alt_id"] = np.tile(alt_id, len(structure)) if isinstance(structure, AtomArrayStack) else alt_id
+    return atom_site
 
 
 def _concatenate_atom_sites(atom_sites: list[pdbx.CIFCategory]) -> pdbx.CIFCategory:
@@ -1169,26 +1143,24 @@ def _concatenate_atom_sites(atom_sites: list[pdbx.CIFCategory]) -> pdbx.CIFCateg
     return result
 
 
-def _ensure_label_entity_id(atom_array: AtomArray) -> AtomArray:
-    """Return a copy of ``atom_array`` with ``label_entity_id`` set (1-indexed).
-
-    Ensures the entity table and ``label_entity_id`` on ``atom_site`` reference
-    matching IDs during CIF writing. ``chain_entity`` (0-indexed, from
-    :py:func:`annotate_entities`) is computed if missing but not modified.
-    Returns the input unchanged if ``label_entity_id`` is already set.
-    """
-    if "label_entity_id" in atom_array.get_annotation_categories():
+def _ensure_entity_id(atom_array: AtomArray | AtomArrayStack) -> AtomArray | AtomArrayStack:
+    """Preserve canonical entity IDs, or infer them on a copy when absent."""
+    atom_array = normalize_entity_id(atom_array)
+    if "entity_id" in atom_array.get_annotation_categories():
         return atom_array
     annotated = atom_array.copy()
-    if "chain_entity" not in annotated.get_annotation_categories():
-        annotated, _ = ta.annotate_entities(
-            atom_array=annotated,
+    if annotated.bonds is None:
+        annotated.bonds = struc.BondList(annotated.array_length())
+    reference = annotated[0] if isinstance(annotated, AtomArrayStack) else annotated
+    if "chain_entity" not in reference.get_annotation_categories():
+        reference, _ = ta.annotate_entities(
+            atom_array=reference,
             level="chain",
             lower_level_id="res_id",
             lower_level_entity="res_name",
             add_inter_level_bond_hash=False,
         )
-    annotated.set_annotation("label_entity_id", (annotated.chain_entity + 1).astype(np.int8))
+    annotated.set_annotation("entity_id", (reference.chain_entity + 1).astype(str))
     return annotated
 
 
@@ -1220,12 +1192,14 @@ def _to_cif_or_bcif(
         raise ValueError("structures list must not be empty")
     if model_ids is None:
         model_ids = list(range(1, len(structures) + 1))
+    if len(set(model_ids)) != len(model_ids) or any(i <= 0 for i in model_ids):
+        raise ValueError("model_ids must be unique positive integers")
     if len(model_ids) != len(structures):
         raise ValueError(f"model_ids length {len(model_ids)} != structures length {len(structures)}")
 
-    # Set label_entity_id once on the shared structure so the entity table and
-    # atom_site reference matching IDs.
-    structures = [_ensure_label_entity_id(s) for s in structures]
+    # Use the same entity IDs for metadata and atom_site, rejecting conflicting aliases
+    # before the optional metadata builders can catch errors.
+    structures = [_ensure_entity_id(s.copy()) for s in structures]
 
     date = config.date if exists(config.date) else datetime.now().strftime("%Y-%m-%d")
     time_str = config.time if exists(config.time) else datetime.now().strftime("%H:%M:%S")
@@ -1282,18 +1256,11 @@ def _to_cif_or_bcif(
         block["atom_site"] = combined
     else:
         s, extra_fields = _preprocess_structure_for_cif(structures[0], config)
-        pdbx.set_structure(cif_file, s, data_block=config.id, extra_fields=extra_fields)
+        _atom_site_from_array(s, extra_fields, block)
 
-        # Biotite hardcodes label_alt_id="." for all atoms — restore actual values,
-        # but only when multiple conformers genuinely coexist per residue. After altloc
-        # selection (one conformer per residue), keeping a non-"." label_alt_id would
-        # break downstream CIF consumers (e.g. PyMOL struct_conn atom matching)
-        if "label_alt_id" in s.get_annotation_categories():
-            alt_id = s.label_alt_id
-            if has_multiple_altlocs_per_residue(s):
-                if isinstance(s, AtomArrayStack):
-                    alt_id = np.tile(alt_id, len(s))
-                block["atom_site"]["label_alt_id"] = CIFColumn(alt_id)
+        # Preserve atom_id instead of the consecutive IDs generated by the writer.
+        if isinstance(s, AtomArray) and "atom_id" in s.get_annotation_categories():
+            block["atom_site"]["id"] = CIFColumn(s.atom_id)
 
         if config.save_standard_annotations:
             all_extra_categories.update(_serialize_standard_annotation_categories(s))
@@ -1337,62 +1304,55 @@ def _to_cif_or_bcif(
     return cif_file
 
 
-def to_cif_buffer(
-    structure: AtomArray | list[AtomArray],
+def atom_array_to_file(
+    structure: AtomArray | AtomArrayStack | list[AtomArray],
+    dest: os.PathLike | str | io.StringIO | io.BytesIO | None = None,
     *,
+    file_type: CIFFileType | None = None,
     model_ids: list[int] | None = None,
     config: CIFWriteConfig | None = None,
-    as_bcif: bool = False,
-) -> io.StringIO | io.BytesIO:
-    """Convert an AtomArray (or list thereof) to a CIF formatted buffer.
+) -> str | bytes | os.PathLike | None:
+    """Write atoms, bonds, and StandardAnnotations as CIF or BinaryCIF.
 
     Args:
-        structure: The atomic structure to be converted.  Pass a list to write
-            each element as a separate model in a multi-model CIF.
-        model_ids: Model IDs for each element when ``structure`` is a list.
-            Defaults to ``[1, 2, …]``.
-        config: Write configuration. If None, uses default CIFWriteConfig().
-        as_bcif: Return binary CIF format. Defaults to False.
+        structure: Atoms, or a list of models.
+        dest: Path, writable buffer, or None to return content.
+        file_type: ``cif`` or ``bcif``, optionally compressed with ``gz``, ``gzip``, or ``zst``.
+            Inferred from paths; otherwise defaults to ``cif``.
+        model_ids: IDs for list input; defaults to ``[1, 2, ...]``.
+        config: Optional CIF export settings, replacing the defaults.
 
     Returns:
-        StringIO or BytesIO buffer containing the CIF/BCIF formatted structure.
-
-    See Also:
-        :py:class:`CIFWriteConfig`
-        :py:func:`to_cif_string`
-        :py:func:`to_cif_file`
+        Absolute path, None for buffers, or content (text for CIF, bytes for binary/compressed output).
     """
+    # Resolve the output format and export settings.
+    if file_type is None:
+        file_type = _infer_file_type_from_path(dest) if isinstance(dest, str | os.PathLike) else "cif"
+    file_type = _infer_file_type_from_path("structure." + file_type)
+    if model_ids is not None and not isinstance(structure, list):
+        raise ValueError("model_ids requires a list of atom arrays")
     if config is None:
-        config = CIFWriteConfig()
-
-    file_obj = _to_cif_or_bcif(structure, config, model_ids=model_ids, as_bcif=as_bcif)
-    buffer = io.BytesIO() if as_bcif else io.StringIO()
+        config = CIFWriteConfig(
+            id=os.path.basename(dest) if isinstance(dest, str | os.PathLike) else "unknown_id",
+            include_entity_categories=True,
+            extra_fields="all",
+            coord_decimals=None,
+        )
+    # Build the CIF and write paths using the existing file writer.
+    file_obj = _to_cif_or_bcif(structure, config, model_ids=model_ids, as_bcif="bcif" in file_type)
+    if isinstance(dest, str | os.PathLike):
+        return _to_cif_file(file_obj, dest, file_type=file_type)
+    # Serialize and optionally compress content for a buffer or return value.
+    buffer = io.BytesIO() if "bcif" in file_type else io.StringIO()
     file_obj.write(buffer)
-    buffer.seek(0)
-    return buffer
-
-
-def to_cif_string(
-    structure: AtomArray | list[AtomArray],
-    *,
-    model_ids: list[int] | None = None,
-    config: CIFWriteConfig | None = None,
-    as_bcif: bool = False,
-) -> str | bytes:
-    """Convert an AtomArray (or list thereof) to a CIF formatted string.
-
-    Args:
-        structure: The atomic structure to be converted.  Pass a list to write
-            each element as a separate model in a multi-model CIF.
-        model_ids: Model IDs for each element when ``structure`` is a list.
-            Defaults to ``[1, 2, …]``.
-        config: Write configuration. If None, uses default CIFWriteConfig().
-        as_bcif: Return binary CIF format. Defaults to False.
-
-    Returns:
-        String or bytes containing the CIF/BCIF formatted structure.
-    """
-    return to_cif_buffer(structure, model_ids=model_ids, config=config, as_bcif=as_bcif).getvalue()
+    content = buffer.getvalue()
+    if "." in file_type:
+        content = content.encode() if isinstance(content, str) else content
+        content = zstd.compress(content) if file_type.endswith(".zst") else gzip.compress(content, mtime=0)
+    if dest is not None:
+        dest.write(content)
+        return None
+    return content
 
 
 def _infer_file_type_from_path(path: str | os.PathLike) -> str:
@@ -1433,124 +1393,8 @@ def _to_cif_file(
     return path
 
 
-def to_cif_file(
-    structure: AtomArray | list[AtomArray],
-    path: os.PathLike,
-    *,
-    model_ids: list[int] | None = None,
-    file_type: CIFFileType | None = None,
-    id: str | None = None,
-    author: str = _get_logged_in_user(),
-    date: str | None = None,
-    time: str | None = None,
-    include_entity_poly: bool | None = None,
-    include_entity_categories: bool = True,
-    include_chem_comp: bool = True,
-    include_nan_coords: bool = True,
-    extra_fields: list[str] | Literal["all"] = [],
-    extra_categories: dict[str, dict[str, float | int | str | list | np.ndarray]] | None = None,
-    chain_disambiguation: Literal["transformation_id", "chain_iid"] | None = None,
-    save_standard_annotations: bool = True,
-    include_bonds: bool | None = None,
-    ccd_entries: dict[str, struc.AtomArray] | None = None,
-) -> os.PathLike:
-    """Convert an AtomArray structure to a CIF/BCIF formatted file.
-
-    Args:
-        structure: The atomic structure to be converted.
-        path: The file path where the CIF formatted structure will be saved.
-        file_type: The file type to save the structure as.
-            ``cif`` or ``bcif``, optionally suffixed with ``.gz``, ``.gzip``, or ``.zst``.
-            If None, inferred from the path. Zstandard uses level 3; gzip uses level 9.
-        id: The ID of the entry. This will be used as the data block name.
-            If None, the data block name will be inferred from the path.
-        author: The author of the entry. Defaults to current user.
-        date: The date of the entry (YYYY-MM-DD). Auto-generated if None.
-        time: The time of the entry (HH:MM:SS). Auto-generated if None.
-        include_entity_poly: **DEPRECATED**. Use ``include_entity_categories`` instead.
-        include_entity_categories: Write entity categories (_entity, _entity_poly, etc.).
-            Defaults to True for file operations.
-        include_chem_comp: Write _chem_comp CIF category. Defaults to True.
-        include_nan_coords: Write atoms with NaN coordinates. Defaults to True.
-        extra_fields: Additional atom_array annotations to include in the CIF file.
-            Use "all" to include all non-standard annotations.
-            Explicit StandardAnnotation aliases and legacy names are unsupported. With
-            ``save_standard_annotations=True``, "all" silently filters them and saves canonical names.
-        extra_categories: Additional CIF categories to include in data block.
-            Must be dict of form {category_name: {column_name: value}}.
-            Example: {"reflns": {"d_mean": 1.0}, "my_metadata": {"hi": np.arange(10)}}
-        chain_disambiguation: Method for disambiguating chains in multi-transformation assemblies.
-            Defaults to "chain_iid".
-
-            - "transformation_id": Stores transformation_id in struct_conn symmetry fields.
-              Preserves original chain_id. Requires AtomWorks to read.
-            - "chain_iid": Writes chain_iid as chain_id to make chains unique.
-              Better compatibility with external software.
-
-        save_standard_annotations: Whether to serialize registered
-            :py:class:`~atomworks.io.utils.standard_annotations.base.StandardAnnotationBase` annotations
-            (conditions, ``atomize``, etc.) present on the structure. Defaults to True.
-        include_bonds: **DEPRECATED**. This parameter has no effect and will be removed in a future version.
-        ccd_entries: Optional dict mapping residue name to CCD template AtomArray for
-            ``chem_comp_atom`` and ``chem_comp_bond`` emission. Falls back to the
-            structure's ``_custom_ccd_registry``, then bundled CCD.
-
-    Returns:
-        The absolute file path where the CIF formatted structure was saved.
-
-    Raises:
-        IOError: If there's an issue writing to the specified file path.
-
-    See Also:
-        :py:class:`CIFWriteConfig`
-        :py:func:`to_cif_buffer`
-        :py:func:`to_cif_string`
-    """
-    # Handle deprecated parameter
-    if include_entity_poly is not None:
-        warnings.warn(
-            "Parameter 'include_entity_poly' is deprecated and will be removed in a future version. "
-            "Use 'include_entity_categories' instead.",
-            FutureWarning,
-            stacklevel=2,
-        )
-        # If new parameter not explicitly set, use deprecated value
-        if include_entity_categories and not include_entity_poly:
-            include_entity_categories = include_entity_poly
-
-    if include_bonds is not None:
-        warnings.warn(
-            "Parameter 'include_bonds' has been deprecated in Biotite and will be removed in a future version. "
-            "This parameter has no effect.",
-            FutureWarning,
-            stacklevel=2,
-        )
-
-    # Turn any relative path into an absolute path
-    path = str(os.path.abspath(path))
-    file_name = os.path.basename(path)
-
-    if file_type is None:
-        file_type = _infer_file_type_from_path(path)
-
-    # Build config from parameters
-    config = CIFWriteConfig(
-        id=id or file_name,
-        author=author,
-        date=date,
-        time=time,
-        include_entity_categories=include_entity_categories,
-        include_chem_comp=include_chem_comp,
-        include_nan_coords=include_nan_coords,
-        extra_fields=extra_fields if extra_fields else [],
-        extra_categories=extra_categories,
-        chain_disambiguation=chain_disambiguation,
-        save_standard_annotations=save_standard_annotations,
-        ccd_entries=ccd_entries,
-    )
-
-    file_obj = _to_cif_or_bcif(structure, config, model_ids=model_ids, as_bcif="bcif" in file_type)
-    return _to_cif_file(file_obj, path, file_type=file_type)
+# Compatibility name; uses atom_array_to_file's signature.
+to_cif_file = atom_array_to_file
 
 
 def to_pdb_buffer(
@@ -1558,7 +1402,7 @@ def to_pdb_buffer(
 ) -> io.StringIO:
     """Convert an AtomArray structure to a PDB formatted StringIO buffer.
 
-    NOTE: It's recommended to use `to_cif_buffer` instead of this function. That function
+    NOTE: It's recommended to use `atom_array_to_file` instead of this function. That function
     is more flexible and can handle extra annotations and metadata that PDB does not support.
 
     Args:
@@ -1594,7 +1438,7 @@ def to_pdb_string(
     """
     Convert an AtomArray structure to a PDB formatted string.
 
-    NOTE: It's recommended to use `to_cif_string` instead of this function. That function
+    NOTE: It's recommended to use `atom_array_to_file` instead of this function. That function
     is more flexible and can handle extra annotations and metadata that PDB does not support.
 
     Args:

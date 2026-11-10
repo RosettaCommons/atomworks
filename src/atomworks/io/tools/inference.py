@@ -717,7 +717,7 @@ def _add_bonds_from_strings(
             )
         raw_bonds.append((int(idx1[0]), int(idx2[0]), struc.BondType.SINGLE))
 
-    new_bonds = struc.BondList(atom_array.array_length(), np.array(raw_bonds, dtype=np.uint32))
+    new_bonds = struc.BondList(atom_array.array_length(), np.array(raw_bonds, dtype=np.uint32).reshape(-1, 3))
     atom_array.bonds = atom_array.bonds.merge(new_bonds) if atom_array.bonds is not None else new_bonds
     return atom_array
 

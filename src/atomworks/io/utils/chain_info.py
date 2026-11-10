@@ -143,8 +143,8 @@ def _extract_baseline_from_atom_array(atom_array: AtomArray) -> dict[str, dict]:
         }
 
         # Add label_entity if annotation exists
-        if "label_entity_id" in atom_array.get_annotation_categories():
-            entity_id = str(atom_array.label_entity_id[chain_mask_atom_level][0])
+        if "entity_id" in atom_array.get_annotation_categories():
+            entity_id = str(atom_array.entity_id[chain_mask_atom_level][0])
             chain_info[chain_identifier]["label_entity"] = entity_id
 
     return chain_info
@@ -163,7 +163,7 @@ def _enrich_with_entity_info(
     if has_entity_data and not any_chain_has_label:
         raise ValueError(
             "Entity data provided (entity/entity_poly) but no chains have label_entity field. "
-            "The atom_array must have label_entity_id annotation to use entity enrichment."
+            "The atom_array must have entity_id annotation to use entity enrichment."
         )
 
     if not any_chain_has_label:

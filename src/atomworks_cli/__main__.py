@@ -2,8 +2,14 @@
 
 import os
 
-import typer
-from dotenv import load_dotenv
+try:
+    import typer
+    from dotenv import load_dotenv
+    from tqdm import tqdm  # noqa: F401
+except ModuleNotFoundError as error:
+    if error.name not in {"typer", "dotenv", "tqdm"}:
+        raise
+    raise SystemExit("CLI commands require: pip install 'atomworks[scripts]'") from None
 
 # Load environment variables from .env file at the root of the repository
 dotenv_path = os.path.join(os.path.dirname(__file__), "../..", ".env")

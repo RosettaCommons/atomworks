@@ -7,24 +7,7 @@ import traceback
 from collections.abc import Callable
 from typing import Any
 
-from pygments import highlight
-from pygments.formatters import TerminalFormatter
-from pygments.lexers import Python3TracebackLexer
-
 logger = logging.getLogger(__name__)
-
-
-def format_traceback(tb: str) -> str:
-    """
-    Format a traceback string with syntax highlighting.
-
-    Args:
-        - tb (str): The traceback string to format
-
-    Returns:
-        str: The formatted traceback with ANSI color codes
-    """
-    return highlight(tb, Python3TracebackLexer(), TerminalFormatter())
 
 
 @contextlib.contextmanager
@@ -69,16 +52,15 @@ def context(
         # Get full traceback
         exc_info = sys.exc_info()
         full_tb = "".join(traceback.format_exception(*exc_info)) if exc_info[0] else ""
-        formatted_tb = format_traceback(full_tb)
 
         try:
             # Attempt cleanup before potentially raising
             cleanup()
         except Exception as cleanup_ex:
-            logger.error("Cleanup failed after error '%s': %s\n%s", error_msg, str(cleanup_ex), formatted_tb)
+            logger.error("Cleanup failed after error '%s': %s\n%s", error_msg, str(cleanup_ex), full_tb)
 
         # Log the original error
-        logger.log(log_level, "Encountered error in context: \n\t%s\n\n%s", error_msg, formatted_tb)
+        logger.log(log_level, "Encountered error in context: \n\t%s\n\n%s", error_msg, full_tb)
 
         if raise_error:
             # Update exception args to include context
@@ -96,15 +78,12 @@ def context(
         # Get full traceback similar to main exception handling
         exc_info = sys.exc_info()
         full_tb = "".join(traceback.format_exception(*exc_info)) if exc_info[0] else ""
-        formatted_tb = format_traceback(full_tb)
 
         try:
             # Attempt cleanup before raising
             cleanup()
         except Exception as cleanup_ex:
-            logger.critical(
-                "Cleanup failed after unexpected error '%s': %s\n%s", error_msg, str(cleanup_ex), formatted_tb
-            )
+            logger.critical("Cleanup failed after unexpected error '%s': %s\n%s", error_msg, str(cleanup_ex), full_tb)
 
         # Update exception args to include context, similar to main exception handling
         ex.args = (error_msg,) + ex.args[1:]

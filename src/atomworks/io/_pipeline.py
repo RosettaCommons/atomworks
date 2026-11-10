@@ -37,6 +37,7 @@ from atomworks.io.utils.atom_array_plus import as_atom_array_plus, as_atom_array
 from atomworks.io.utils.bonds import add_bonds_from_struct_conn, filter_bonds_by_distance
 from atomworks.io.utils.ccd import add_annotations_from_ccd
 from atomworks.io.utils.chain_info import build_chain_info, update_sequences_from_res_names
+from atomworks.io.utils.entity import normalize_entity_id
 from atomworks.io.utils.extra_fields import ExtraFieldsType, normalize_extra_fields
 from atomworks.io.utils.selection import get_annotation_categories
 from atomworks.io.utils.standardize import standardize_atom_names
@@ -370,17 +371,18 @@ def _prepare_atom_array_or_stack(
 
     # +------ Initialization ------+
 
+    atoms = normalize_entity_id(atoms)
+
     if atoms.bonds is None:
         atoms.bonds = struc.BondList(atoms.array_length())
 
-    if "label_entity_id" not in atoms.get_annotation_categories():
-        # NOTE: int16 (not int8)
+    if "entity_id" not in atoms.get_annotation_categories():
         if "chain_entity" in atoms.get_annotation_categories():
-            atoms.set_annotation("label_entity_id", atoms.chain_entity.astype(np.int16))
+            atoms.set_annotation("entity_id", (atoms.chain_entity + 1).astype(str))
         else:
             atoms.set_annotation(
-                "label_entity_id",
-                pdbx.convert._determine_entity_id(atoms.chain_id).astype(np.int16),
+                "entity_id",
+                pdbx.convert._determine_entity_id(atoms.chain_id).astype(str),
             )
 
     if "occupancy" not in atoms.get_annotation_categories():

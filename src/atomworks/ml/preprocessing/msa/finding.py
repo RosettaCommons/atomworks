@@ -5,8 +5,6 @@ import warnings
 from os import PathLike
 from pathlib import Path
 
-from tqdm import tqdm
-
 from atomworks.constants import _load_env_var
 from atomworks.enums import MSAFileExtension
 from atomworks.io.utils.io_utils import apply_sharding_pattern, build_sharding_pattern
@@ -280,7 +278,7 @@ def find_msas(
     missing_sequences = []
     sequence_to_msa_path = {}
 
-    for sequence in tqdm(sequences, desc="Finding existing MSAs", unit="seq"):
+    for sequence in sequences:
         sequence_hash = hash_sequence(sequence)
         found_path = None
 

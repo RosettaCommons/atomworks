@@ -181,9 +181,8 @@ def test_insert_expandable_segment_as_separate_chain_updates_chain_dependent_ann
         assert result.pn_unit_entity[segment_idx] not in set(atom_array.pn_unit_entity.tolist())
     if "molecule_entity" in annots_before:
         assert result.molecule_entity[segment_idx] not in set(atom_array.molecule_entity.tolist())
-    if "label_entity_id" in annots_before and "chain_entity" in annots_before:
-        # New entity → fresh label_entity_id that doesn't clash with original ones.
-        assert int(result.label_entity_id[segment_idx]) not in set(atom_array.label_entity_id.tolist())
+    if "entity_id" in annots_before and "chain_entity" in annots_before:
+        assert result.entity_id[segment_idx] not in set(atom_array.entity_id.tolist())
 
     # All non-segment atoms should match original except expected globally rederived IDs/entities.
     non_segment = result[~segment_mask]
@@ -206,7 +205,7 @@ def test_insert_expandable_segment_as_separate_chain_updates_chain_dependent_ann
                 "pn_unit_id",
                 "pn_unit_iid",
                 "chain_iid",
-                "label_entity_id",
+                "entity_id",
                 "auth_seq_id",
             ]
         )
@@ -215,7 +214,11 @@ def test_insert_expandable_segment_as_separate_chain_updates_chain_dependent_ann
     _compare_atom_arrays(atom_array, non_segment, annotations_to_compare)
 
 
-def test_insert_expandable_segment_new_chain_entity_id_avoids_all_collisions():
+@pytest.mark.parametrize(
+    "existing_ids, expected_id",
+    [(("3", "2"), "4"), (("9", "10"), "11"), (("9", "1"), "10"), (("protein", "ligand"), "1")],
+)
+def test_insert_expandable_segment_new_chain_entity_id_avoids_all_collisions(existing_ids, expected_id):
     """New-chain entity id must avoid every existing entity id, not just the last atom's."""
     data = cached_parse("6lyz", **ParseConfig.from_preset("annotations_only").to_dict())
     atom_array = as_atom_array_plus(data["atom_array"].copy())
@@ -227,10 +230,8 @@ def test_insert_expandable_segment_new_chain_entity_id_avoids_all_collisions():
     chain_id[half:] = "BBB"
     atom_array.set_annotation("chain_id", chain_id)
 
-    entity_id = atom_array.label_entity_id.copy()
-    entity_id[:half] = 3  # AAA (first in array order)
-    entity_id[half:] = 2  # BBB (last in array order) -- old algo: 2 + 1 = 3, collides!
-    atom_array.set_annotation("label_entity_id", entity_id.astype(np.int8))
+    entity_id = np.array([existing_ids[0]] * half + [existing_ids[1]] * (atom_array.array_length() - half))
+    atom_array.set_annotation("entity_id", entity_id)
 
     result = insert_expandable_segment(
         atom_array.copy(),
@@ -241,9 +242,10 @@ def test_insert_expandable_segment_new_chain_entity_id_avoids_all_collisions():
         new_chain_type=ChainType.NON_POLYMER,
     )
     segment_mask = S_SEGMIN.mask(result)
-    new_entity_id = int(result.label_entity_id[segment_mask][0])
-    assert new_entity_id not in {2, 3}, f"new sentinel entity id {new_entity_id} collides with an existing entity id"
-    assert new_entity_id == 4, "expected max(existing entity ids) + 1"
+    new_entity_id = result.entity_id[segment_mask][0]
+    assert new_entity_id not in existing_ids
+    assert new_entity_id == expected_id
+    np.testing.assert_array_equal(result.entity_id[~segment_mask], atom_array.entity_id)
 
 
 def test_insert_expandable_segment_rejects_mid_residue_atom_idx():
