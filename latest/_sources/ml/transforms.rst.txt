@@ -109,11 +109,6 @@ Utility Modules
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: atomworks.ml.transforms.rf2aa_assumptions
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Submodules
 -----------
 

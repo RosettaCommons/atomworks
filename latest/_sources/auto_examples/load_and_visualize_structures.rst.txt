@@ -34,22 +34,21 @@ This example demonstrates how to load protein structures from various formats an
 Loading Structures
 ==================
 
-AtomWorks provides two main functions for loading structures, each optimized for different scenarios:
+AtomWorks provides two main functions for reading structures, each optimized for different scenarios:
 
 - ``parse()``: Full processing pipeline that cleans, validates, and processes structures, typically from the RCSB PDB. Includes imputing missing atom, inferring bonds, and extensive validation.
-- ``load_any()``: Lightweight loader for structures that do not require as extensive processing, e.g., distillation examples. Much faster when you don't need the full cleaning pipeline or missing atoms imputed.
+- ``atom_array_from_file()``: Lightweight reader for structures that do not require as extensive processing, e.g., distillation examples. Much faster when you don't need the full cleaning pipeline or missing atoms imputed.
 
 If you see output like ``Environment variable CCD_MIRROR_PATH`` or ``PDB_MIRROR_PATH`` not set, don't worry - it just means we aren't using local copies of the PDB and/or CCD (we can still load the examples we need with an internet connection).
 
-.. GENERATED FROM PYTHON SOURCE LINES 24-38
+.. GENERATED FROM PYTHON SOURCE LINES 24-37
 
 .. code-block:: Python
 
 
     import numpy as np
 
-    from atomworks.io import parse
-    from atomworks.io.utils.io_utils import load_any
+    from atomworks.io import atom_array_from_file, parse
     from atomworks.io.utils.testing import get_pdb_path_or_buffer
     from atomworks.io.utils.visualize import view
 
@@ -60,7 +59,7 @@ If you see output like ``Environment variable CCD_MIRROR_PATH`` or ``PDB_MIRROR_
     pdb_path = get_pdb_path_or_buffer(example_pdb_id)
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 39-51
+.. GENERATED FROM PYTHON SOURCE LINES 38-50
 
 Using ``parse()`` for Full Processing
 -------------------------------------
@@ -75,7 +74,7 @@ A few are:
 - ``hydrogen_policy``: How to handle hydrogens ("keep" or "remove"). Default is "keep".
 ... and many more!
 
-.. GENERATED FROM PYTHON SOURCE LINES 51-59
+.. GENERATED FROM PYTHON SOURCE LINES 50-58
 
 .. code-block:: Python
 
@@ -88,34 +87,34 @@ A few are:
     print("Available data keys:", list(parse_output.keys()))
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 60-62
+.. GENERATED FROM PYTHON SOURCE LINES 59-61
 
-Using ``load_any()`` for Lightweight Loading
---------------------------------------------
+Using ``atom_array_from_file()`` for Lightweight Loading
+--------------------------------------------------------
 
-.. GENERATED FROM PYTHON SOURCE LINES 62-72
+.. GENERATED FROM PYTHON SOURCE LINES 61-71
 
 .. code-block:: Python
 
 
-    # For comparison: load_any() for lightweight loading (no extensive processing)
-    # Useful when you have clean data (e.g., from distillation) and/or want to preserve all annotations
+    # For comparison: atom_array_from_file() for lightweight loading (no extensive processing)
+    # Read atoms, bonds, and supported annotations through minimal parsing.
 
-    loaded_structure = load_any(pdb_path, extra_fields="all")  # Load with all available fields
-    print(f"load_any result type: {type(loaded_structure)}")
+    loaded_structure = atom_array_from_file(pdb_path, squeeze=False)
+    print(f"atom_array_from_file result type: {type(loaded_structure)}")
     print(f"Number of models: {len(loaded_structure)}")
 
-    # NOTE: load_any returns an AtomArrayStack directly, while parse returns a dictionary with metadata, chain info, assemblies, etc.
+    # Here the reader returns an AtomArrayStack; models with different atoms, annotations or bonds return a list.
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 73-77
+.. GENERATED FROM PYTHON SOURCE LINES 72-76
 
 Structure Visualization
 -----------------------
 
 AtomWorks includes built-in 3D visualization capabilities. Let's extract the biological assembly and explore the structure:
 
-.. GENERATED FROM PYTHON SOURCE LINES 77-88
+.. GENERATED FROM PYTHON SOURCE LINES 76-87
 
 .. code-block:: Python
 
@@ -131,7 +130,7 @@ AtomWorks includes built-in 3D visualization capabilities. Let's extract the bio
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 89-93
+.. GENERATED FROM PYTHON SOURCE LINES 88-92
 
 .. code-block:: Python
 
@@ -140,12 +139,12 @@ AtomWorks includes built-in 3D visualization capabilities. Let's extract the bio
     view(atom_array)
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 94-96
+.. GENERATED FROM PYTHON SOURCE LINES 93-95
 
 .. figure:: /_static/examples/load_and_visualize_structures_01.png
   :alt: Myoglobin structure visualization
 
-.. GENERATED FROM PYTHON SOURCE LINES 98-103
+.. GENERATED FROM PYTHON SOURCE LINES 97-102
 
 Understanding Assemblies vs Asymmetric Units
 ---------------------------------------------
@@ -153,7 +152,7 @@ Understanding Assemblies vs Asymmetric Units
 The RCSB PDB draws a distinction between asymmetric units and biological assemblies; see the `RCSB PDB 101 Guide <https://pdb101.rcsb.org/learn/guide-to-understanding-pdb-data/biological-assemblies>`_ for more information.
 The ``parse()`` function returns both asymmetric units and biological assemblies. Let's explore the difference:
 
-.. GENERATED FROM PYTHON SOURCE LINES 103-115
+.. GENERATED FROM PYTHON SOURCE LINES 102-114
 
 .. code-block:: Python
 
@@ -170,14 +169,14 @@ The ``parse()`` function returns both asymmetric units and biological assemblies
     print(f"\nAvailable assemblies: {list(parse_output['assemblies'].keys())}")
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 116-120
+.. GENERATED FROM PYTHON SOURCE LINES 115-119
 
 Data Exploration
 ----------------
 
 Let's now explore the structure composition by examining chains, residues, and other annotations:
 
-.. GENERATED FROM PYTHON SOURCE LINES 120-133
+.. GENERATED FROM PYTHON SOURCE LINES 119-132
 
 .. code-block:: Python
 
@@ -195,14 +194,14 @@ Let's now explore the structure composition by examining chains, residues, and o
         print(f"  Total atoms: {np.sum(chain_mask)}")
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 134-138
+.. GENERATED FROM PYTHON SOURCE LINES 133-137
 
 Exploring Metadata and Chain Information
 -----------------------------------------
 
 The ``parse()`` function also extracts rich metadata about the structure from the RCSB:
 
-.. GENERATED FROM PYTHON SOURCE LINES 138-158
+.. GENERATED FROM PYTHON SOURCE LINES 137-157
 
 .. code-block:: Python
 
@@ -227,7 +226,7 @@ The ``parse()`` function also extracts rich metadata about the structure from th
             print(f"  {key}: {value}")
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 159-166
+.. GENERATED FROM PYTHON SOURCE LINES 158-165
 
 Accessing the Original mmCIF Data
 -----------------------------------
@@ -237,7 +236,7 @@ to the original Biotite CIF block using the ``keep_cif_block=True`` argument to 
 We can then use the Biotite API to explore any additional data we might need.
 (E.g., we could write a simple `Transform` that extracts the necessary information)
 
-.. GENERATED FROM PYTHON SOURCE LINES 166-171
+.. GENERATED FROM PYTHON SOURCE LINES 165-170
 
 .. code-block:: Python
 
@@ -247,7 +246,7 @@ We can then use the Biotite API to explore any additional data we might need.
     cif_block = parse_output_with_cif.get("cif_block", None)
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 172-177
+.. GENERATED FROM PYTHON SOURCE LINES 171-176
 
 Related Examples
 ----------------

@@ -1,0 +1,23 @@
+/*
+ * Hide the typer help rendering that does not match the active theme mode.
+ *
+ * Themes with light/dark support (furo, pydata-sphinx-theme, sphinx-book-theme)
+ * set a data-theme attribute on <html> or <body>; when it is absent or "auto"
+ * the browser's color scheme preference decides.
+ */
+[data-theme="dark"] .typer-only-light,
+[data-theme="light"] .typer-only-dark {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) body:not([data-theme="light"]) .typer-only-light {
+    display: none;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  html:not([data-theme="dark"]) body:not([data-theme="dark"]) .typer-only-dark {
+    display: none;
+  }
+}
