@@ -6,11 +6,7 @@ AtomWorks can be installed in several ways, depending on your workflow and envir
 0. Prerequisites
 -----------------
 
-Before installing AtomWorks, ensure you have the following prerequisites:
-
-* Python 3.12 or higher
-* pip 26.2.2 or newer (``python -m pip install --upgrade pip``); older pip releases still trust the
-  withdrawn emSign root CA certificate
+Before installing AtomWorks, ensure you have Python 3.12 or higher.
 
 Choose the installation that fits your workflow:
 
