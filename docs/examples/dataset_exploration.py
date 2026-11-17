@@ -73,7 +73,7 @@ for i, example in enumerate(dataset):
 #
 # To accomplish (2), we can additionally pass a loading function at dataset initialization that takes the raw example data as input and returns a pre-processed ready for a Transform pipeline.
 #
-# In most cases, this will involve using `parse` or `load_any` from `AtomWorks.io` to build an `AtomArray`, which is the common language of our `Transform` library.
+# In most cases, this will involve using `parse` or `atom_array_from_file` from `AtomWorks.io` to build an `AtomArray`, which is the common language of our `Transform` library.
 
 from typing import Any
 

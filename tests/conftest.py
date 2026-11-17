@@ -105,8 +105,8 @@ skip_if_no_catcif = pytest.mark.skipif(
 )
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(autouse=True, scope="session")
 def cleanup_memory():
-    """Force garbage collection after each test"""
+    """Collect cyclic garbage at session teardown."""
     yield
     gc.collect()

@@ -92,8 +92,8 @@ ROWS = [
     pytest.param("arginine_on_zinc_7pyk", "ARG", "NH2", (1, 2), {"remove_ccds": ()}, id="7PYK ARG NH2"),
     # a ligand without stated bonds keeps its charges and counts
     pytest.param("unbonded_ligand_2aj6", "UNL", "O1", (0, 0), {"remove_ccds": ()}, id="2AJ6 UNL O1"),
-    # a sulfur the dictionary draws at a higher valence keeps its hydrogen
-    pytest.param("dictionary_valence_2yak", "OSV", "S16", (0, 1), {"remove_ccds": ()}, id="2YAK OSV S16"),
+    # the dictionary gives OSV S16 two carbon bonds and no hydrogen
+    pytest.param("dictionary_valence_2yak", "OSV", "S16", (0, 0), {"remove_ccds": ()}, id="2YAK OSV S16"),
 ]
 
 

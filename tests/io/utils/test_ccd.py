@@ -1,3 +1,5 @@
+from contextlib import nullcontext
+
 import numpy as np
 import pytest
 
@@ -8,6 +10,26 @@ from atomworks.io.utils.ccd import (
     register_custom_ccd_entry,
     unregister_custom_ccd_entry,
 )
+
+
+@pytest.mark.parametrize(
+    "code,policy,error",
+    [
+        ("SF4", "zero", None),
+        ("SF4", "raise", ValueError),
+        ("ALA", "raise", None),
+        ("SF4", "infer", NotImplementedError),
+        ("SF4", "keep", NotImplementedError),
+        ("SF4", "invalid", ValueError),
+    ],
+)
+def test_unknown_ccd_charge_policy(code, policy, error):
+    with pytest.raises(error, match="Unknown CCD charges|unknown_charge_policy") if error else nullcontext():
+        atoms = atom_array_from_ccd_code(code, ccd_mirror_path=None, coords=None, unknown_charge_policy=policy)
+        assert atoms.charge.dtype == np.int8
+        if code == "SF4":
+            np.testing.assert_array_equal(atoms.charge[atoms.element == "FE"], np.zeros(4, dtype=np.int8))
+            np.testing.assert_array_equal(atoms.charge[atoms.element == "S"], np.full(4, -2, dtype=np.int8))
 
 
 @pytest.mark.parametrize(

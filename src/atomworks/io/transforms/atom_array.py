@@ -245,21 +245,19 @@ def maybe_fix_non_polymer_at_symmetry_center(
         cell_list = struc.CellList(non_polymers, cell_size=3.0)
 
         # Quick check to see whether any non-polymer is closer than 0.05A to any other.
-        clash_matrix = cell_list.get_atoms(non_polymers.coord, clash_distance, as_mask=True)  # [n, n]
+        clash_matrix = cell_list.get_atoms(
+            non_polymers.coord, clash_distance, result_format=struc.CellList.Result.MASK
+        )  # [n, n]
 
-        # Fast path when only diagonal elements present
-        n_clashes = np.count_nonzero(clash_matrix)
-        n_atoms = len(non_polymers)
-        if n_clashes == n_atoms:
+        # Ignore each atom's self-match without allocating another dense matrix.
+        np.fill_diagonal(clash_matrix, False)
+        clashing_atom_mask = np.any(clash_matrix, axis=1)
+        if not np.any(clashing_atom_mask):
             return atom_array_stack
 
-        # Remove identity matrix so we don't count self-clashes
-        identity_matrix = np.identity(n_atoms, dtype=bool)
-        clash_matrix = clash_matrix & ~identity_matrix
         logger.debug("Found clashing non-polymer at a symmetry center, resolving.")
 
         # Get list of chain_ids with clashing atoms (for computational efficiency)
-        clashing_atom_mask = np.sum(clash_matrix, axis=1) > 0
         clashing_chain_ids = np.unique(non_polymers.chain_id[clashing_atom_mask])
 
         # For each clashing chain, we check whether any non-polymer is clashing with a symmetric copy of itself

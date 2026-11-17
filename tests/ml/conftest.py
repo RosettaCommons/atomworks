@@ -12,7 +12,6 @@ from atomworks.io.tools.inference import SequenceComponent
 from atomworks.ml.datasets import ConcatDatasetWithID, PandasDataset
 from atomworks.ml.datasets.loaders import create_structure_loader
 from atomworks.ml.pipelines.af3 import build_af3_transform_pipeline
-from atomworks.ml.pipelines.rf2aa import build_rf2aa_transform_pipeline
 from atomworks.ml.preprocessing.constants import TRAINING_SUPPORTED_CHAIN_TYPES_INTS
 from atomworks.ml.utils.io import read_parquet_with_metadata
 from atomworks.ml.utils.testing import cached_parse
@@ -154,97 +153,6 @@ TEST_DIFFUSION_BATCH_SIZE = 32  # Set to a value other than default (48) for tes
 ##########################################################################################
 # + ------------------------------------ Datasets -------------------------------------- +
 ##########################################################################################
-
-
-@pytest.fixture(scope="session")
-def rf2aa_pn_units_dataset(pn_units_df):
-    return PandasDataset(
-        data=pn_units_df,
-        name="rf2aa_pn_units",
-        id_column="example_id",
-        loader=create_structure_loader(
-            base_path=PDB_MIRROR_PATH,
-            column_mapping={"query_pn_unit_iids": ["q_pn_unit_iid"]},
-        ),
-        transform=build_rf2aa_transform_pipeline(
-            protein_msa_dirs=PROTEIN_MSA_DIRS,
-            rna_msa_dirs=RNA_MSA_DIRS,
-            n_recycles=5,
-            crop_size=256,
-            crop_contiguous_probability=1 / 3,
-            crop_spatial_probability=2 / 3,
-            convert_feats_to_rf2aa_input_tuple=False,
-            assert_rf2aa_assumptions=False,
-            template_lookup_path=TEMPLATE_LOOKUP,
-            template_base_dir=TEMPLATE_DIR,
-        ),
-        save_failed_examples_to_dir=None,
-        filters=SHARED_TEST_FILTERS + TEST_PN_UNITS_FILTERS,
-    )
-
-
-@pytest.fixture(scope="session")
-def rf2aa_interfaces_dataset(interfaces_df):
-    return PandasDataset(
-        data=interfaces_df,
-        name="rf2aa_interfaces",
-        id_column="example_id",
-        loader=create_structure_loader(
-            base_path=PDB_MIRROR_PATH,
-            column_mapping={"query_pn_unit_iids": ["pn_unit_1_iid", "pn_unit_2_iid"]},
-        ),
-        transform=build_rf2aa_transform_pipeline(
-            protein_msa_dirs=PROTEIN_MSA_DIRS,
-            rna_msa_dirs=RNA_MSA_DIRS,
-            n_recycles=5,
-            crop_size=256,
-            crop_spatial_probability=1.0,
-            crop_contiguous_probability=0.0,
-            assert_rf2aa_assumptions=False,
-            convert_feats_to_rf2aa_input_tuple=False,
-            template_lookup_path=TEMPLATE_LOOKUP,
-            template_base_dir=TEMPLATE_DIR,
-        ),
-        save_failed_examples_to_dir=None,
-        filters=SHARED_TEST_FILTERS + TEST_INTERFACES_FILTERS,
-    )
-
-
-@pytest.fixture(scope="session")
-def rf2aa_pdb_dataset(rf2aa_pn_units_dataset, rf2aa_interfaces_dataset):
-    return ConcatDatasetWithID(datasets=[rf2aa_pn_units_dataset, rf2aa_interfaces_dataset])  # NOTE: Order matters!
-
-
-@pytest.fixture(scope="session")
-def rf2aa_validation_dataset(af3_validation_df):
-    """Create a PandasDataset for RF2AA validation."""
-    return PandasDataset(
-        data=af3_validation_df,
-        name="rf2aa_validation",
-        loader=create_structure_loader(
-            path_colname="pdb_id",
-            base_path=str(PDB_MIRROR_PATH),
-            extension=".cif.gz",
-            sharding_pattern="/1:3/",
-            column_mapping={
-                "interfaces_to_score": "interfaces_to_score",
-                "pn_units_to_score": "pn_units_to_score",
-            },
-        ),
-        transform=build_rf2aa_transform_pipeline(
-            protein_msa_dirs=PROTEIN_MSA_DIRS,
-            rna_msa_dirs=RNA_MSA_DIRS,
-            n_recycles=5,
-            crop_size=256,
-            crop_spatial_probability=0.0,  # NOTE: Zero probability for cropping; we don't crop during validation
-            crop_contiguous_probability=0.0,  # NOTE: Zero probability for cropping ; we don't crop during validation
-            assert_rf2aa_assumptions=False,
-            convert_feats_to_rf2aa_input_tuple=False,
-            template_lookup_path=TEMPLATE_LOOKUP,
-            template_base_dir=TEMPLATE_DIR,
-        ),
-        save_failed_examples_to_dir=None,
-    )
 
 
 # +--------------------------------------------------------------------------+

@@ -5,7 +5,6 @@ from types import MappingProxyType
 from typing import Final, Union
 
 import numpy as np
-from toolz import keymap
 
 from atomworks.constants import (
     AA_LIKE_CHEM_TYPES,
@@ -301,7 +300,9 @@ class ChainTypeInfo:
     }
 
     # Uppercase keys for case-insensitive lookup (existing behavior preserved)
-    STRING_TO_ENUM: Final[MappingProxyType[str, ChainType]] = MappingProxyType(keymap(str.upper, _MMCIF_STRINGS))
+    STRING_TO_ENUM: Final[MappingProxyType[str, ChainType]] = MappingProxyType(
+        {name.upper(): value for name, value in _MMCIF_STRINGS.items()}
+    )
     """Mapping from chain_type strings to ChainType enums."""
 
     # Reverse mappings

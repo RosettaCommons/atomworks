@@ -18,8 +18,8 @@ from biotite.structure.filter import filter_nucleotides
 from biotite.structure.residues import get_residue_masks, get_residue_starts_for
 
 from atomworks.constants import STANDARD_DNA
+from atomworks.io import atom_array_from_file
 from atomworks.io.transforms.atom_array import remove_nan_coords
-from atomworks.io.utils.io_utils import load_any
 from atomworks.io.utils.selection import ResIdxSlice
 from atomworks.io.utils.sequence import get_1_from_3_letter_code
 from atomworks.ml.executables.x3dna import X3DNAFiber
@@ -74,7 +74,7 @@ def generate_bform_dna(seq: str) -> AtomArray:
             )
 
         # load the generated structure and remove any potential nans
-        atom_array = load_any(tmp_pdb_path, file_type="pdb", model=1)
+        atom_array = atom_array_from_file(tmp_pdb_path, "pdb", model=1)
         atom_array = remove_nan_coords(atom_array)
 
         assert len(atom_array) > 0, "Generated structure must contain atoms"

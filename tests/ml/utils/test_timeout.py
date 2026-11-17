@@ -2,15 +2,19 @@ import time
 
 import pytest
 
+from atomworks.common import timeout as common_timeout
 from atomworks.ml.utils.timer import timeout
 
 
-def test_timeout_wrapper_no_timeout():
-    @timeout(timeout=2)
-    def fast_function():
-        return "Success"
+@pytest.mark.parametrize("timeout_decorator", [timeout, common_timeout])
+def test_timeout_wrapper_no_timeout(timeout_decorator):
+    payload = b"x" * (1024 * 1024)
 
-    assert fast_function() == "Success"
+    @timeout_decorator(timeout=2)
+    def fast_function():
+        return payload
+
+    assert fast_function() == payload
 
 
 def test_timeout_wrapper_with_timeout():

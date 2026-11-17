@@ -9,8 +9,7 @@ from typing import Any, Literal
 
 import biotite.structure as struc
 import numpy as np
-from biotite.structure import AtomArray
-from biotite.structure.bonds import connect_via_residue_names
+from biotite.structure import AtomArray, connect_via_residue_names
 
 from atomworks.constants import (
     CCD_MIRROR_PATH,
@@ -154,6 +153,8 @@ def get_empty_ccd_template(
     # Initialize extra fields with default values
     if extra_field_specs:
         for field_name, spec in extra_field_specs.items():
+            if field_name == "entity_id" and "entity_id" in template.get_annotation_categories():
+                continue
             if spec["default"] is not None or spec["dtype"] is not None:
                 template.set_annotation(field_name, get_default_array(spec, n_atoms))
 
@@ -199,7 +200,7 @@ def add_missing_atoms_for_chain(
         sequence: List of 3-letter CCD codes for this chain.
         res_ids: List of residue IDs corresponding to ``sequence``. A number repeated under
             insertion codes is matched to the chain's residues in order.
-        atom_array: Full structure (all chains).  Pass ``None`` to build from scratch.
+        atom_array: Full structure (all chains). Pass ``None`` to build from scratch.
         chain_mask: Boolean mask over ``atom_array`` selecting atoms in this chain.
             Required when ``atom_array`` is provided.
         chain_type: Chain type for this chain.  Required when ``atom_array`` is ``None``.
@@ -406,6 +407,8 @@ def add_missing_atoms_for_chain(
             # Initialize extra fields
             if extra_field_specs:
                 for field_name, spec in extra_field_specs.items():
+                    if field_name == "entity_id":
+                        continue
                     if spec["default"] is not None or spec["dtype"] is not None:
                         atoms_to_insert.set_annotation(field_name, get_default_array(spec, n_atoms))
 

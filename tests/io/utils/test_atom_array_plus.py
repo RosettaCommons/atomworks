@@ -1,10 +1,11 @@
+import io
 from copy import deepcopy
 
 import biotite.structure as struc
 import numpy as np
 import pytest
 
-from atomworks.io import parse
+from atomworks.io import atom_array_to_file, parse
 from atomworks.io.config import ParseConfig
 from atomworks.io.utils.annotator import ensure_annotations
 from atomworks.io.utils.atom_array_plus import (
@@ -17,7 +18,7 @@ from atomworks.io.utils.atom_array_plus import (
     stack_any,
     stack_atom_array_plus,
 )
-from atomworks.io.utils.io_utils import CIFWriteConfig, to_cif_buffer
+from atomworks.io.utils.io_utils import CIFWriteConfig
 from atomworks.io.utils.standard_annotations import S_ATM, S_SEGMAX, S_SEGMIN
 from atomworks.io.utils.standard_annotations.base import Level, StandardAnnotationBase, StandardAnnotationMeta
 from atomworks.ml.conditions import C_DIS, C_SEQ
@@ -269,9 +270,13 @@ class TestAtomArrayPlus:
 
         config = config.replace(file_type="bcif" if as_bcif else "cif")
         for second in (atoms, other):
-            buffer = to_cif_buffer(
-                [atoms, second], model_ids=[7, 3], as_bcif=as_bcif, config=CIFWriteConfig(include_chem_comp=False)
+            content = atom_array_to_file(
+                [atoms, second],
+                file_type="bcif" if as_bcif else "cif",
+                model_ids=[7, 3],
+                config=CIFWriteConfig(include_chem_comp=False),
             )
+            buffer = io.BytesIO(content) if as_bcif else io.StringIO(content)
             if second is other:
                 with pytest.raises(ValueError, match="Conflicting system values"):
                     parse(buffer, config=config)

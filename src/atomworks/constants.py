@@ -8,7 +8,6 @@ from typing import Final
 
 import numpy as np
 from biotite.structure.bonds import BondType
-from toolz import keymap
 
 logger = logging.getLogger(__name__)
 
@@ -106,7 +105,7 @@ DEFAULT_ALTLOC_ID: Final[str] = "."
 """The default altloc ID value for an atom."""
 
 # fmt: off
-ELEMENT_NAME_TO_ATOMIC_NUMBER: Final[MappingProxyType[str, int]] = MappingProxyType(keymap(str.upper, {
+ELEMENT_NAME_TO_ATOMIC_NUMBER: Final[MappingProxyType[str, int]] = MappingProxyType({name.upper(): number for name, number in {
     "H": 1,    # Hydrogen (isotopes D, T handled via PDB_ISOTOPE_SYMBOL_TO_ELEMENT_SYMBOL)
     "He": 2,   "Li": 3,   "Be": 4,   "B": 5,   "C": 6,   "N": 7,    "O": 8,    "F": 9,   "Ne": 10,
     "Na": 11,  "Mg": 12,  "Al": 13,  "Si": 14,  "P": 15,  "S": 16,  "Cl": 17,  "Ar": 18,  "K": 19,  "Ca": 20,
@@ -121,7 +120,7 @@ ELEMENT_NAME_TO_ATOMIC_NUMBER: Final[MappingProxyType[str, int]] = MappingProxyT
     "Md": 101, "No": 102, "Lr": 103, "Rf": 104, "Db": 105,"Sg": 106, "Bh": 107,"Hs": 108, "Mt": 109,"Ds": 110,
     "Rg": 111, "Cn": 112, "Nh": 113, "Fl": 114, "Mc": 115, "Lv": 116, "Ts": 117, "Og": 118,
     UNKNOWN_ELEMENT: UNKNOWN_ATOMIC_NUMBER
-}))
+}.items()})
 """Map canonical *UPPERCASE* 2 letter element names to their atomic numbers.
 
 Warning:
@@ -279,9 +278,9 @@ AA_OR_NA_CHEM_COMP_TYPES: Final[frozenset[str]] = AA_LIKE_CHEM_TYPES | NA_LIKE_C
 """Amino acid or DNA/RNA-like chemical component types."""
 
 CHEM_TYPE_POLYMERIZATION_ATOMS: Final[MappingProxyType[str, tuple[str, str]]] = MappingProxyType(
-    keymap(
-        str.upper,
-        {
+    {
+        chem_type.upper(): atoms
+        for chem_type, atoms in {
             # peptide bonds
             "peptide linking": ("C", "N"),
             "L-peptide linking": ("C", "N"),
@@ -295,8 +294,8 @@ CHEM_TYPE_POLYMERIZATION_ATOMS: Final[MappingProxyType[str, tuple[str, str]]] = 
             "L-DNA linking": ("O3'", "P"),
             "RNA linking": ("O3'", "P"),
             "L-RNA linking": ("O3'", "P"),
-        },
-    )
+        }.items()
+    }
 )
 """A mapping of chemical component types to the atoms that they link when part of a polymer."""
 
@@ -391,6 +390,14 @@ Only elements that have unambiguous valences are included.
 
 Reference:
     `RDKit Book - Valence Calculation <https://www.rdkit.org/docs/RDKit_Book.html#valence-calculation-and-allowed-valences>`_
+"""
+
+MULTIVALENT_VALENCES = {
+    "P": (3, 5),
+}
+"""Allowed neutral valences, in increasing order, of elements left out of ``DEFAULT_VALENCE``.
+An atom is taken to be in the lowest valence state its bonds fit within: phosphate
+P (bond order sum 4) is pentavalent, a phosphine (3) trivalent.
 """
 
 # fmt: off
@@ -546,16 +553,17 @@ BIOTITE_COMMON_OPTIONAL_ANNOTATIONS: Final[tuple[str, ...]] = (
 )
 """Optional annotations commonly used in Biotite.
 
-They are saved by biotite `set_structure` by default, and hence by atomworks `to_cif_file`.
-They are not loaded by biotite `get_structure` by default, but they ARE loaded by default in atomworks `load_any`
+They are saved by biotite `set_structure` by default, and hence by atomworks `atom_array_to_file`.
+They are not loaded by biotite `get_structure` by default, but they ARE loaded by default in atomworks `atom_array_from_file`
 """
 
 ALTLOC_DEFAULT_IDS: Final[tuple[str, ...]] = (".", "?", " ", "")
 """Altloc ID values that indicate a default (non-alternate) atom position."""
 
-STANDARD_CIF_ANNOTATIONS: Final[frozenset[str]] = frozenset(
+RESERVED_CIF_FIELDS: Final[frozenset[str]] = frozenset(
     {
         "chain_id",
+        "entity_id",
         "res_id",
         "res_name",
         "atom_name",
@@ -567,12 +575,24 @@ STANDARD_CIF_ANNOTATIONS: Final[frozenset[str]] = frozenset(
         "charge",
         "occupancy",
         "b_factor",
+        "group_PDB",
+        "type_symbol",
+        "label_atom_id",
+        "label_alt_id",
+        "label_comp_id",
+        "label_asym_id",
+        "label_seq_id",
+        "label_entity_id",
+        "pdbx_PDB_ins_code",
+        "auth_seq_id",
+        "auth_comp_id",
+        "auth_asym_id",
+        "auth_atom_id",
+        "B_iso_or_equiv",
+        "pdbx_formal_charge",
     }
 )
-"""All standard CIF annotations handled by Biotite, mandatory or optional.
-
-These are reserved names that are excluded from `extra_annotations`.
-"""
+"""Array annotations and generated CIF columns excluded when writing all extra fields."""
 
 ATOM_LEVEL_ANNOTATIONS: Final[tuple[str, ...]] = (
     # +---- Standard mmCIF/Biotite atom-level annotations ----+
@@ -601,6 +621,7 @@ RESIDUE_LEVEL_ANNOTATIONS: Final[tuple[str, ...]] = (
 CHAIN_LEVEL_ANNOTATIONS: Final[tuple[str, ...]] = (
     # +---- Standard mmCIF/Biotite chain-level annotations ----+
     "chain_id",  # Chain identifier (author chain ID)
+    "entity_id",  # mmCIF entity identifier, shared by atoms of the same molecular entity
     # +---- AtomWorks extensions ----+
     "chain_iid",  # Chain instance identifier (disambiguates across transforms)
     "chain_entity",  # Chain entity identifier

@@ -18,8 +18,6 @@ def datasets_to_test(
     af3_validation_dataset,
     af2_distillation_dataset_with_metadata,
     af2_distillation_dataset_no_metadata,
-    rf2aa_validation_dataset,
-    rf2aa_pdb_dataset,
 ):
     """Create the list of datasets to test with actual dataset objects."""
     return [
@@ -43,16 +41,6 @@ def datasets_to_test(
             "type": "train",
             "num_examples": 1,
         },
-        {
-            "dataset": rf2aa_validation_dataset,
-            "type": "validation",
-            "num_examples": 1,
-        },
-        {
-            "dataset": rf2aa_pdb_dataset,
-            "type": "train",
-            "num_examples": 1,
-        },
     ]
 
 
@@ -60,7 +48,7 @@ def identity_collate_fn(batch):
     return batch
 
 
-@pytest.mark.parametrize("dataset_to_test_index", range(6))
+@pytest.mark.parametrize("dataset_to_test_index", range(4))
 @pytest.mark.slow
 @skip_if_on_github_runner
 def test_data_loading_pipelines_with_random_examples(datasets_to_test, dataset_to_test_index):

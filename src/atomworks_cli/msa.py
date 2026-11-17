@@ -10,7 +10,7 @@ try:
     from .generate import generate
     from .organize import organize
 except ModuleNotFoundError as error:
-    if error.name not in {"torch", "einops", "beartype", "numba", "filelock"}:
+    if error.name not in {"torch", "einops", "numba", "filelock", "pandas", "pyarrow"}:
         raise
     app.info.help = r"Install 'atomworks\[ml]' to use MSA commands."
 

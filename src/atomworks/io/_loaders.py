@@ -23,7 +23,7 @@ from atomworks.io.utils.standard_annotations.serialization import (
 logger = logging.getLogger(__name__)
 
 COMMON_EXTRA_FIELDS = {
-    "label_entity_id": {},
+    "entity_id": {},
     "atom_id": {},
     "b_factor": {},
     "occupancy": {},

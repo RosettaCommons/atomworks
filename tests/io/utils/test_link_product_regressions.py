@@ -9,7 +9,11 @@ from atomworks.io.config import ParseConfig
 from atomworks.io.parser import parse
 from atomworks.io.utils.atom_array import get_bond_degree_per_atom
 from atomworks.io.utils.io_utils import read_any
-from atomworks.io.utils.link_chemistry import _has_valid_rdkit_valence, add_polymer_bonds
+from atomworks.io.utils.link_chemistry import (
+    _has_valid_rdkit_valence,
+    _validate_inferred_polymer_bond,
+    add_polymer_bonds,
+)
 from tests.io.conftest import get_pdb_path
 
 
@@ -189,3 +193,17 @@ def test_impossible_link_product_still_fails_hard():
     """1VQ7's PAE phosphorus cannot be repaired without bond-order sum seven."""
     with pytest.raises(ValueError, match=r"Unresolved link valence at C/5/PAE/P.*bond-order sum=7"):
         _parse("1vq7")
+
+
+@pytest.mark.parametrize("charge", [-1, 0, 1])
+def test_inferred_phosphorus_link_requires_capacity_or_a_leaving_group(charge):
+    atoms = AtomArray(5)
+    atoms.element = np.array(["P", "C", "C", "C", "O"])
+    atoms.atom_name = np.array(["P", "C1", "C2", "C3", "O"])
+    atoms.res_name = np.array(["PHN"] * 4 + ["LNK"])
+    atoms.set_annotation("charge", np.zeros(5, dtype=int))
+    atoms.charge[0] = charge
+    atoms.bonds = BondList(5, np.array([[0, 1, BondType.SINGLE], [0, 2, BondType.SINGLE], [0, 3, BondType.SINGLE]]))
+    degree = get_bond_degree_per_atom(atoms)
+    with pytest.raises(ValueError, match="Cannot infer polymer bond at PHN/P"):
+        _validate_inferred_polymer_bond(atoms, 0, 4, degree, {"PHN": {}, "LNK": {}})

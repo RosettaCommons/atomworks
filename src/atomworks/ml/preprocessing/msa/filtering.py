@@ -11,8 +11,6 @@ from multiprocessing import Pool, cpu_count
 from os import PathLike
 from pathlib import Path
 
-from tqdm import tqdm
-
 from atomworks.enums import MSAFileExtension
 from atomworks.io.utils.compression import (
     compress_file,
@@ -144,17 +142,9 @@ def filter_msas(input_dir: PathLike, output_dir: PathLike | None = None, config:
 
     logger.info(f"Processing with {num_workers} workers, chunksize={chunksize}")
 
-    # Process files with progress bar
     filter_func = functools.partial(_filter_single_msa, input_dir=input_path, output_dir=output_path, config=config)
     with Pool(processes=num_workers) as pool:
-        list(
-            tqdm(
-                pool.imap(filter_func, msa_files, chunksize=chunksize),
-                total=len(msa_files),
-                desc="Filtering MSA files",
-                unit="file",
-            )
-        )
+        list(pool.imap(filter_func, msa_files, chunksize=chunksize))
 
     logger.info(f"MSA file filtering complete! Processed {len(msa_files)} files.")
 

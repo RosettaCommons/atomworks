@@ -24,7 +24,7 @@ config = ParseConfig.from_preset("rcsb", hydrogen_policy="remove")
 result = parse("structure.cif", config=config)
 ```
 
-`ParseConfig` and `PrepareConfig` are frozen dataclasses. Derive a changed configuration with `config.replace(...)`; serialize it with `to_dict()`. Prefer an explicit constructor when migrating old dictionaries: `from_dict()` deliberately drops unknown keys, which can silently discard obsolete chemistry flags or misspellings. Bare surviving options still work with deprecation warnings; obsolete names passed directly to `parse()` produce `TypeError`. [Configuration](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/config.py), [parser](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/parser.py).
+`ParseConfig` and `PrepareConfig` are frozen dataclasses. Derive a changed configuration with `config.replace(...)`; serialize it with `to_dict()`. Prefer an explicit constructor when migrating old dictionaries: `from_dict()` deliberately drops unknown keys, which can silently discard obsolete chemistry flags or misspellings. Bare surviving options still work with deprecation warnings; obsolete names passed directly to `parse()` produce `TypeError`. [Configuration](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/io/config.py), [parser](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/io/parser.py).
 
 | 2.x usage or assumption | 3.0 action |
 |---|---|
@@ -34,16 +34,18 @@ result = parse("structure.cif", config=config)
 | `hydrogen_policy="infer"` | Choose `"keep"`/`"remove"`; run explicit protonation separately when needed. |
 | `parse_atom_array(atoms, **options)` | Use `parse_atom_array(atoms, config=PrepareConfig(...))` for a result dictionary. |
 | Need only prepared atoms | Use `prepare_atom_array(atoms, config=PrepareConfig(...))`; single-model output is squeezed to AtomArray. |
+| `load_any(...)` | Use `atom_array_from_file(...)` for atoms, bonds, and StandardAnnotations through minimal parsing, or `parse(...)` for full preparation and metadata. |
+| `to_cif_file` / `to_cif_buffer` / `to_cif_string` | `to_cif_file` remains an alias with the `atom_array_to_file` signature. Use `atom_array_to_file(atoms, dest, config=CIFWriteConfig(...))`; omit `dest` for content or pass a writable buffer. |
 | `remove_ccds=None` as old default sentinel | Omit the option for default crystallization-aid removal; use `remove_ccds=()` to keep them. |
 | Assume all multi-model files produce one stack | Same-topology models can stack; variable-topology CIFs can return a **list of result dictionaries**. Handle this explicitly. |
 
 The ordinary parser result retains `asym_unit`, `assemblies`, `chain_info`, `ligand_info`, `metadata`, and `extra_info`. Do not infer guaranteed rank from the result-key names; choose models deliberately and inspect AtomArray versus AtomArrayStack. Models use Biotite positional conventions (positive positions are one-based); do not mistake a position for an arbitrary deposited model ID. For multi-model inputs, establish the chosen model before calling code requiring a single AtomArray.
 
-Important defaults remain intentional: all models (`model=None`), all assemblies, missing-atom completion enabled, hydrogen policy `"keep"`, waters removed. Default `ParseConfig()` retains MSE; `"rcsb"` converts MSE to MET. `"lightweight"` disables missing-atom completion; `"minimal"` additionally keeps waters/excluded components and disables several annotations/corrections. These are distinct processing choices, not interchangeable performance settings. `long_bond_policy="warn"` and `struct_conn_distance_policy="filter"` can expose or remove problematic connections. Inspect changed bond sets for unusual inputs. [Presets and policies](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/config.py).
+Important defaults remain intentional: all models (`model=None`), all assemblies, missing-atom completion enabled, hydrogen policy `"keep"`, waters removed. Default `ParseConfig()` retains MSE; `"rcsb"` converts MSE to MET. `"lightweight"` disables missing-atom completion; `"minimal"` additionally keeps waters/excluded components and disables several annotations/corrections. These are distinct processing choices, not interchangeable performance settings. `long_bond_policy="warn"` and `struct_conn_distance_policy="filter"` can expose or remove problematic connections. Inspect changed bond sets for unusual inputs. [Presets and policies](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/io/config.py).
 
 ## Chemical corrections and existing checkpoints
 
-With missing-atom completion enabled, the pipeline resolves leaving atoms and overvalence, corrects relevant inter-residue formal charges/bond orders, and neutralizes charged amide nitrogens. Hydrogen counts are used in these corrections. With completion disabled, this sanitization is disabled too; selecting that mode solely to suppress changed charges also changes completeness and is not a reproduction of 2.x. [Pipeline](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/_pipeline.py), [link chemistry](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/utils/link_chemistry.py).
+With missing-atom completion enabled, the pipeline resolves leaving atoms and overvalence, corrects relevant inter-residue formal charges/bond orders, and neutralizes charged amide nitrogens. Hydrogen counts are used in these corrections. With completion disabled, this sanitization is disabled too; selecting that mode solely to suppress changed charges also changes completeness and is not a reproduction of 2.x. [Pipeline](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/io/_pipeline.py), [link chemistry](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/io/utils/link_chemistry.py).
 
 The release tests identify concrete cases worth including in a downstream migration set:
 
@@ -56,7 +58,7 @@ The release tests identify concrete cases worth including in a downstream migrat
 | `4ndz`, `6h9v` | Multi-residue ligand bonds and beta-peptide connectivity. |
 | `1twr`, `6q9t` | Authored component chemistry and unusual atom names. |
 
-These are documented regression/round-trip cases, not a claim that every structure in a production corpus is chemically validated. [Case list](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/tests/io/utils/test_io.py#L417).
+These are documented regression/round-trip cases, not a claim that every structure in a production corpus is chemically validated. [Case list](https://github.com/RosettaCommons/atomworks/blob/production/tests/io/utils/test_io.py#L417).
 
 For an existing model, preserve the old locked environment and a small set of its exact features. Compare by atom identity including assembly instance, not array offset alone. Review atom counts, charge/implicit-hydrogen annotations, bond topology and orders, masks and atomization. Evaluate the checkpoint on both feature sets and relevant scientific metrics. If necessary, retain the versioned 2.x preprocessing path for that checkpoint until retraining/fine-tuning or an explicitly validated adapter is available. Avoid silently mixing newly generated features with old cached training data.
 
@@ -81,7 +83,11 @@ Extend the migration set with cases that exercise these decisions:
 | `1n4e`, `8qia`, `6n0a` | Thymine photodimer formation, addition across C=N with hydrogen transfer, and substitution of an unresolved ASN nitrogen. |
 | `6w13`, `1vq7` | Preservation of observed phosphate oxygen and rejection of an invalid phosphorus product. |
 
-Compare successful outputs and rejected inputs: matching atom counts alone do not establish matching bonds, charges, hydrogen counts or conformer annotations. [Link validation and resolution](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/src/atomworks/io/utils/link_chemistry.py), [product regressions](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/tests/io/utils/test_link_product_regressions.py), [rebuilding pipeline](https://github.com/RosettaCommons/atomworks/blob/release/atomworks-3-0/src/atomworks/io/_pipeline.py).
+Compare successful outputs and rejected inputs: matching atom counts alone do not establish matching bonds, charges, hydrogen counts or conformer annotations. [Link validation and resolution](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/io/utils/link_chemistry.py), [product regressions](https://github.com/RosettaCommons/atomworks/blob/production/tests/io/utils/test_link_product_regressions.py), [rebuilding pipeline](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/io/_pipeline.py).
+
+### Coordinate-based bond inference
+
+`atom_array_to_rdkit(..., infer_bonds=True)` requires an explicit `system_charge` and reconstructs bonds and per-atom formal charges from coordinates. Supply a known total; do not treat an unknown CCD charge as zero or sum incomplete atom charges. Ordinary conversion (`infer_bonds=False`, the default) preserves the input bonds and formal charges. The ASE loader already supplies a total and retains its existing default of zero when charge metadata is absent.
 
 ### Explicit protonation
 
@@ -108,7 +114,7 @@ masks after atom counts or ordering change. Unresolved atoms and metals marked
 A placement result is not evidence of downstream force-field parameter coverage.
 
 See the [executed offline example](../auto_examples/plot_protonation) and the
-[current API](https://github.com/RosettaCommons/atomworks/tree/release/atomworks-3-0/src/atomworks/experimental/protonation).
+[current API](https://github.com/RosettaCommons/atomworks/tree/production/src/atomworks/experimental/protonation).
 
 ## Alternate conformers
 
@@ -121,26 +127,29 @@ config = ParseConfig.from_preset(
 result = parse("structure.cif", config=config)
 ```
 
-`"first"` remains the default; `"random_per_chain"` selects a letter per chain; `"random_clash_aware"` chooses per-residue alternatives while considering nearby clashes and correlations. A specific letter is also accepted. Selection is not exhaustive conformer enumeration and is not occupancy-weighted ensemble sampling. The clash-aware algorithm can reject unresolved conflicts and can fall back to a modified residue's parent component; this can affect atom identities. It uses the first model's coordinates when selecting from a stack. PDB inputs reject altloc choices other than `"first"`. [Configuration](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/config.py), [selection algorithm](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/utils/altloc.py).
+`"first"` remains the default; `"random_per_chain"` selects a letter per chain; `"random_clash_aware"` chooses per-residue alternatives while considering nearby clashes and correlations. A specific letter is also accepted. Selection is not exhaustive conformer enumeration and is not occupancy-weighted ensemble sampling. The clash-aware algorithm can reject unresolved conflicts and can fall back to a modified residue's parent component; this can affect atom identities. It uses the first model's coordinates when selecting from a stack. PDB inputs reject altloc choices other than `"first"`. [Configuration](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/io/config.py), [selection algorithm](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/io/utils/altloc.py).
 
 Record the source, policy, seed, parser version and CCD inputs. Unseeded random parsing bypasses the parse cache. Retaining `"first"` makes an initial version comparison easier; switching to random selection should be evaluated separately. A fixed seed establishes reproducibility within the selected implementation, not an eternal cross-version conformer identity guarantee.
 
-**Candidate edge case to resolve before broad claims:** `load_cif()` fallback paths for variable-topology models and some invalid requested-model reads do not forward the requested `altloc`/`altloc_seed`. Exercise these combinations explicitly before promising consistent random selection for all multi-model CIFs. [Loader source](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/_loaders.py).
+**Candidate edge case to resolve before broad claims:** `load_cif()` fallback paths for variable-topology models and some invalid requested-model reads do not forward the requested `altloc`/`altloc_seed`. Exercise these combinations explicitly before promising consistent random selection for all multi-model CIFs. [Loader source](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/io/_loaders.py).
 
 ## CIF round trips
 
 For an already prepared single AtomArray, retaining chemistry and registered annotations:
 
 ```python
-from atomworks.io.utils.io_utils import to_cif_file
+from atomworks.io import atom_array_to_file
+from atomworks.io.utils.io_utils import CIFWriteConfig
 
 # atoms is an already prepared AtomArray/AtomArrayPlus.
-to_cif_file(
+atom_array_to_file(
     atoms,
     "prepared.cif",
-    include_entity_categories=True,
-    include_chem_comp=True,
-    chain_disambiguation="transformation_id",
+    config=CIFWriteConfig(
+        include_entity_categories=True,
+        include_chem_comp=True,
+        chain_disambiguation="transformation_id",
+    ),
 )
 restored = parse(
     "prepared.cif",
@@ -157,27 +166,29 @@ restored = parse(
 )
 ```
 
-Choose `chain_disambiguation="transformation_id"` to preserve original chain IDs through AtomWorks; repeated chains require the transformation annotation. Choose `"chain_iid"` for more interoperable unique chain names, accepting renamed chains. **Pass this explicitly**: the actual default is `None` and ambiguous identities raise, despite a writer docstring claiming the default is `"chain_iid"`. The writer accepts multiple models as a list of AtomArrays with optional `model_ids`; do not assume every writer accepts a stack directly. [Writer](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/utils/io_utils.py).
+Choose `chain_disambiguation="transformation_id"` to preserve original chain IDs through AtomWorks; repeated chains require the transformation annotation. Choose `"chain_iid"` for more interoperable unique chain names, accepting renamed chains. **Pass this explicitly**: the actual default is `None` and ambiguous identities raise, despite a writer docstring claiming the default is `"chain_iid"`. The writer accepts multiple models as a list of AtomArrays with optional `model_ids`; do not assume every writer accepts a stack directly. [Writer](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/io/utils/io_utils.py).
 
 The new implementation emits/reloads richer component and bond chemistry, including authored custom components and standard annotations. Tests cover asymmetric units with and without CCD access and assemblies under both disambiguation modes. Scope the phrase “complete round trip” carefully:
 
-- Coordinates are rounded to three decimals by the writer.
+- The basic writer preserves coordinate precision. An explicit `CIFWriteConfig` rounds to three decimals by default; set `coord_decimals=None` to preserve precision.
 - Atom order, annotation dtypes, some regenerated IDs and alternate-location labels are not guaranteed identical. Compare structural identity and values after alignment.
-- Request additional ordinary annotations explicitly by name when writing; registered StandardAnnotations use their serializer. In this candidate, writer `extra_fields="all"` can fail on parsed structures because `label_entity_id` conflicts with a reserved CIF column (reproduced on 6LYZ). The example uses writer defaults; it does not promise retention of every ordinary annotation. Arbitrary Python attributes are not a general persistence mechanism.
+- Entity identifiers use the string annotation `entity_id`, matching Biotite. Public loading, preparation, and writing accept `label_entity_id` as a legacy input alias; when both annotations exist, their string values must match or a `ValueError` is raised. Normalized arrays contain only `entity_id`. The CIF column remains `_atom_site.label_entity_id`.
+  Compatibility conversion happens at preparation/writing boundaries; loading translates extra-field requests before reading. Low-level template, chain-metadata, and expandable-segment utilities require canonical string `entity_id` inputs. Extra-field specifications also use `entity_id` internally; if both spellings are requested, the canonical specification takes precedence.
+- Request additional ordinary annotations explicitly by name when writing, or use `extra_fields="all"`; registered StandardAnnotations use their serializer. Entity IDs are written as standard CIF fields, not duplicated as extra fields. The example uses writer defaults; it does not promise retention of every ordinary annotation. Arbitrary Python attributes are not a general persistence mechanism.
 - StandardAnnotation loading requires AtomArrayPlus and forbids missing-atom completion and MSE conversion, which change indices. PDB files cannot carry this path.
 - Serialization of two-body standard annotations has a 10,000-row limit. Large pairwise annotations may need another storage design.
 - CIF custom chemistry is scoped to the parse; AtomArrayPlus can retain the custom CCD registry for later writing. Supply `ccd_entries` explicitly if working outside that path.
 - `cif_ccd_on_mismatch="error_heavy"` rejects heavy-atom name mismatches in authored component templates by default. Investigate malformed/custom templates; `"ignore"` intentionally skips CCD supplementation for mismatching heavy-atom names rather than repairing them.
 
-[Round-trip tests](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/tests/io/utils/test_io.py), [annotation serialization](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/utils/standard_annotations/serialization.py), [custom CCD handling](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/utils/ccd.py).
+[Round-trip tests](https://github.com/RosettaCommons/atomworks/blob/production/tests/io/utils/test_io.py), [annotation serialization](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/io/utils/standard_annotations/serialization.py), [custom CCD handling](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/io/utils/ccd.py).
 
 ## Parser caching
 
-The parser now caches complete results as Zstandard-compressed pickles in a `parse-v2` namespace. Settings, package versions and source identity enter the key; random unseeded conformers and active external CCD overrides bypass caching. **Paths are keyed by resolved path, not file-content hash.** Replacing a file in place can reuse a stale result; keep source paths immutable or supply a changed immutable `cache_key`. An explicit key must change with source contents. Isolate old/new cache directories for a controlled migration. Benchmark cached and uncached performance separately. [Cache code](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/io/parser.py).
+The parser now caches complete results as Zstandard-compressed pickles in a `parse-v2` namespace. Settings, package versions and source identity enter the key; random unseeded conformers and active external CCD overrides bypass caching. **Paths are keyed by resolved path, not file-content hash.** Replacing a file in place can reuse a stale result; keep source paths immutable or supply a changed immutable `cache_key`. An explicit key must change with source contents. Isolate old/new cache directories for a controlled migration. Benchmark cached and uncached performance separately. [Cache code](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/io/parser.py).
 
 ## I/O environment and validation
 
-Python ≥3.11 remains supported; the candidate pins Biotite exactly to 1.6.0 and checks it at import time (2.2.1 pins 1.4.0). PyArrow minimum rises to 23.0.1, core adds jaxtyping, and Hydride is no longer a core dependency. Optional S3 and catcif integrations have extras. Regenerate a locked environment instead of upgrading Biotite in isolation. [Dependency manifest](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/pyproject.toml).
+AtomWorks 3.1 requires Python ≥3.12 and NumPy ≥2.1, pins Biotite to 2.0.0, and checks the version at import time. Install the `cli` extra for CLI tools and the `ml` extra for ML dependencies. The retired RF2AA pipeline and feature adapters have been removed. Optional S3 and catcif integrations have extras. Regenerate a locked environment instead of upgrading Biotite in isolation. [Dependency manifest](https://github.com/RosettaCommons/atomworks/blob/production/pyproject.toml).
 
 Lock both environments, migrate parser calls and configuration, then compare a fixed set of structures covering covalent modifications, alternate conformers and assemblies. Review atom identities, charges, bond orders and hydrogen counts before adopting the new parser or regenerating cached outputs.
 
@@ -187,9 +198,9 @@ The remaining sections apply when using AtomWorks for model features or datasets
 
 ### Model encodings and conditions
 
-`UNIFIED_ATOM37_ENCODING` retains 37 atom slots but adds terminal phosphate `OP3` in slot 36 for standard DNA/RNA and a new gap token `<G>` at class 33. The vocabulary therefore grows from 33 to 34 classes relative to 2.2.1. Check embedding/head sizes, saved class tables, labels, loss masks and atom-slot masks. A matching 37-wide coordinate tensor can still carry changed semantics. [Definition](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/ml/encoding_definitions.py).
+`UNIFIED_ATOM37_ENCODING` retains 37 atom slots but adds terminal phosphate `OP3` in slot 36 for standard DNA/RNA and a new gap token `<G>` at class 33. The vocabulary therefore grows from 33 to 34 classes relative to 2.2.1. Check embedding/head sizes, saved class tables, labels, loss masks and atom-slot masks. A matching 37-wide coordinate tensor can still carry changed semantics. [Definition](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/ml/encoding_definitions.py).
 
-`atom_array_to_encoded_resnames()` changes its default `atomize_token` from `"<A>"` to `None` (atomic-number tokens). It requires `atomize`; a one-atom residue is no longer automatically classified as atomized merely by length. For a checkpoint using generic atom tokens, explicitly supply `atomize_token="<A>"`, and check the encoding contains that token. `EncodeAtomArray` also exposes `atomize_token`/`atomize_atom_name` for explicitly matching its encoding. Keep the checkpoint's saved encoding definition when reproducing an old model rather than assuming the current global constant is compatible. [Encoding functions](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/ml/transforms/encoding.py).
+`atom_array_to_encoded_resnames()` changes its default `atomize_token` from `"<A>"` to `None` (atomic-number tokens). It requires `atomize`; a one-atom residue is no longer automatically classified as atomized merely by length. For a checkpoint using generic atom tokens, explicitly supply `atomize_token="<A>"`, and check the encoding contains that token. `EncodeAtomArray` also exposes `atomize_token`/`atomize_atom_name` for explicitly matching its encoding. Keep the checkpoint's saved encoding definition when reproducing an old model rather than assuming the current global constant is compatible. [Encoding functions](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/ml/transforms/encoding.py).
 
 Conditions now specialize the StandardAnnotation framework. Sequence and coordinate conditions contain target residue names and coordinates; derive masks through their API rather than treating the annotation itself as a boolean. To mark existing coordinates as ground truth, for example:
 
@@ -201,7 +212,7 @@ C_CRD.set_annotation_from_ground_truth(atoms, selected)
 conditioned_mask = C_CRD.mask(atoms)
 ```
 
-For external target values, set explicit condition annotations with the condition API. Calling `set_annotation_from_ground_truth` intentionally replaces targets with values from the current structure. Legacy module aliases and some legacy CIF masks are supported, but this is a specific compatibility list (sequence, coordinate, index), not blanket support for arbitrary historical fields. Custom condition subclasses should follow the new definitions and StandardAnnotation contract. [Condition definitions](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/ml/conditions/definitions.py), [base API](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/ml/conditions/base.py).
+For external target values, set explicit condition annotations with the condition API. Calling `set_annotation_from_ground_truth` intentionally replaces targets with values from the current structure. Legacy module aliases and some legacy CIF masks are supported, but this is a specific compatibility list (sequence, coordinate, index), not blanket support for arbitrary historical fields. Custom condition subclasses should follow the new definitions and StandardAnnotation contract. [Condition definitions](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/ml/conditions/definitions.py), [base API](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/ml/conditions/base.py).
 
 ### Datasets and preprocessing
 
@@ -219,8 +230,8 @@ loader = create_structure_loader(
 )
 ```
 
-Provide these columns in the metadata table. A string mapping produces a scalar; a list produces an ordered list. Specialized factories remain deprecated wrappers. `storage="filesystem"`, `"bytes"`, and `"blob"` share the factory but have backend-specific arguments. Passing `altloc_seed_colname="altloc_seed"` selects `random_clash_aware` for nonmissing CIF seeds, even if the supplied parser configuration had another altloc policy. Pass it only when the table is meant to define conformer sampling. [Loaders](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/ml/datasets/loaders/cif.py).
+Provide these columns in the metadata table. A string mapping produces a scalar; a list produces an ordered list. Specialized factories remain deprecated wrappers. `storage="filesystem"`, `"bytes"`, and `"blob"` share the factory but have backend-specific arguments. Passing `altloc_seed_colname="altloc_seed"` selects `random_clash_aware` for nonmissing CIF seeds, even if the supplied parser configuration had another altloc policy. Pass it only when the table is meant to define conformer sampling. [Loaders](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/ml/datasets/loaders/cif.py).
 
-Preprocessing is reorganized around `PreprocessConfig` and assembly/PN-unit/interface records; the old `get_pn_unit_data_from_structure` module is removed. Treat new preprocessing tables as versioned datasets. Audit column names/types and row meaning against the release tutorial and your training pipeline rather than assuming old Parquet files are interchangeable. For multiple conformer rows, preserve seeds and consider the optional altloc weighting in `calculate_weights_for_pdb_dataset_df(..., altloc_seed_column=...)` so extra conformers do not accidentally overweight a structure. This option is explicit, not automatic. [Preprocessing](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/ml/preprocessing/preprocess.py), [samplers](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/ml/samplers.py).
+Preprocessing is reorganized around `PreprocessConfig` and assembly/PN-unit/interface records; the old `get_pn_unit_data_from_structure` module is removed. Treat new preprocessing tables as versioned datasets. Audit column names/types and row meaning against the release tutorial and your training pipeline rather than assuming old Parquet files are interchangeable. For multiple conformer rows, preserve seeds and consider the optional altloc weighting in `calculate_weights_for_pdb_dataset_df(..., altloc_seed_column=...)` so extra conformers do not accidentally overweight a structure. This option is explicit, not automatic. [Preprocessing](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/ml/preprocessing/preprocess.py), [samplers](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/ml/samplers.py).
 
-`PandasDataset` delegates to a metadata index and can use Arrow with `memory_map=True`. Its `.data` is then an Arrow Table, so pandas-only operations must be adapted. Dataset filters are independent row predicates evaluated on the input and combined; filters that calculate aggregate thresholds from the progressively filtered table may change meaning. Use a stable ID column rather than relying on the old optional `id_column=None` pattern. [Dataset](https://github.com/RosettaCommons/atomworks/blob/df50559731c0ba43cc29a82b50c87a60d1a0a951/src/atomworks/ml/datasets/pandas_dataset.py).
+`PandasDataset` delegates to a metadata index and can use Arrow with `memory_map=True`. Its `.data` is then an Arrow Table, so pandas-only operations must be adapted. Dataset filters are independent row predicates evaluated on the input and combined; filters that calculate aggregate thresholds from the progressively filtered table may change meaning. Use a stable ID column rather than relying on the old optional `id_column=None` pattern. [Dataset](https://github.com/RosettaCommons/atomworks/blob/production/src/atomworks/ml/datasets/pandas_dataset.py).

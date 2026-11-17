@@ -138,7 +138,7 @@ def get_atom_mask_from_cell_list(
         result = np.zeros(cell_list_size, dtype=bool)
         for i in range(0, num_coords, max_rows_per_chunk):
             end = min(i + max_rows_per_chunk, num_coords)
-            chunk_mask = cell_list.get_atoms(coord[i:end], cutoff, as_mask=True)
+            chunk_mask = cell_list.get_atoms(coord[i:end], cutoff, result_format=CellList.Result.MASK)
             result |= np.any(chunk_mask, axis=0)
         return result
 
@@ -152,9 +152,9 @@ def get_atom_mask_from_cell_list(
         )
         for i in range(0, num_coords, max_rows_per_chunk):
             end = min(i + max_rows_per_chunk, num_coords)
-            pairwise_mask[i:end, :] = cell_list.get_atoms(coord[i:end], cutoff, as_mask=True)
+            pairwise_mask[i:end, :] = cell_list.get_atoms(coord[i:end], cutoff, result_format=CellList.Result.MASK)
     else:
-        pairwise_mask = cell_list.get_atoms(coord, cutoff, as_mask=True)
+        pairwise_mask = cell_list.get_atoms(coord, cutoff, result_format=CellList.Result.MASK)
 
     return pairwise_mask
 

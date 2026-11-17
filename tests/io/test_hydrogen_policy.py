@@ -7,6 +7,7 @@ from biotite.structure.io import pdbx
 
 from atomworks.constants import STANDARD_AA
 from atomworks.experimental.protonation import assign_hydrogens, place_hydrogens
+from atomworks.io import atom_array_to_file
 from atomworks.io.config import ParseConfig
 from atomworks.io.parser import parse
 from atomworks.io.utils.atom_array import (
@@ -15,7 +16,7 @@ from atomworks.io.utils.atom_array import (
     get_bond_degree_per_atom,
     remove_hydrogens,
 )
-from atomworks.io.utils.io_utils import to_cif_file
+from atomworks.io.utils.io_utils import CIFWriteConfig
 from atomworks.io.utils.testing import assert_same_atom_array_or_stack, get_pdb_path
 
 
@@ -99,7 +100,7 @@ def test_nhyd_roundtrip_via_cif(pdb_id, missing_value, extra_fields, tmp_path):
     aa = parse(path, config=ParseConfig(hydrogen_policy="remove", add_missing_atoms=True))["asym_unit"][0]
 
     cif_path = tmp_path / f"{pdb_id}_nhyd.cif"
-    to_cif_file(aa, cif_path, extra_fields=["nhyd"])
+    atom_array_to_file(aa, cif_path, config=CIFWriteConfig(extra_fields=["nhyd"], include_entity_categories=True))
     expected = aa.nhyd.copy()
     if missing_value is not None:
         cif = pdbx.CIFFile.read(cif_path)
@@ -180,7 +181,7 @@ def test_added_hydrogens_survive_cif_roundtrip(pdb_id, tmp_path):
     assert np.isin(protonated.element, ["H", "D"]).any(), f"{pdb_id}: nothing was protonated"
 
     cif_path = tmp_path / f"{pdb_id}_protonated.cif"
-    to_cif_file(protonated, cif_path)
+    atom_array_to_file(protonated, cif_path)
     reloaded = parse(cif_path, config=ParseConfig(hydrogen_policy="keep", add_missing_atoms=False))["asym_unit"][0]
 
     # Bonds are excluded: H carry generated names that no CCD template knows, so the reader

@@ -6,11 +6,24 @@ import biotite.structure as struc
 import numpy as np
 from biotite.structure import AtomArray
 
-from atomworks.constants import BIOTITE_BOND_TYPE_TO_BOND_ORDER
+from atomworks.constants import BIOTITE_BOND_TYPE_TO_BOND_ORDER, METAL_ELEMENTS
 from atomworks.io.utils.atom_array import count_bonded_hydrogens
 from atomworks.io.utils.ccd import atom_array_from_ccd_code
 
 _BOND_ORDER_SYMBOL = {1: "-", 2: "=", 3: "≡"}
+
+
+def metal_bound_oxide_or_sulfide(atom_array: AtomArray) -> np.ndarray:
+    """Identify metal-bound O²⁻/S²⁻ allowed as exceptions to test charge-validation rules."""
+    mask = np.zeros(atom_array.array_length(), dtype=bool)
+    if atom_array.bonds is None:
+        return mask
+    implicit_h = atom_array.nhyd if "nhyd" in atom_array.get_annotation_categories() else np.zeros(len(atom_array))
+    metal = np.isin(np.char.upper(atom_array.element.astype(str)), sorted(METAL_ELEMENTS))
+    for index in np.flatnonzero(np.isin(atom_array.element, ["O", "S"]) & (atom_array.charge == -2)):
+        neighbours, _ = atom_array.bonds.get_bonds(int(index))
+        mask[index] = len(neighbours) > 0 and metal[neighbours].all() and implicit_h[index] == 0
+    return mask
 
 
 def _format_bad_atoms(atom_array: AtomArray, mask: np.ndarray) -> str:
@@ -82,10 +95,10 @@ def check_charge_invariants(pdb_id: str, atom_array: AtomArray) -> None:
     Collects all failures and reports them in a single assertion at the end.
     """
     failures: list[str] = []
-    # (a) No extreme organic charges: |charge| < 2
+    # (a) No extreme organic charges: |charge| < 2; metal-bound oxide/sulfide is inorganic.
     organic_elements = {"C", "H", "N", "O", "S", "P", "Se"}
     organic_mask = np.isin(atom_array.element, list(organic_elements))
-    bad = organic_mask & (np.abs(atom_array.charge) >= 2)
+    bad = organic_mask & (np.abs(atom_array.charge) >= 2) & ~metal_bound_oxide_or_sulfide(atom_array)
     if np.any(bad):
         failures.append(f"organic element has extreme charge (|charge| >= 2):\n{_format_bad_atoms(atom_array, bad)}")
 

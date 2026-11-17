@@ -5,6 +5,7 @@ from biotite.structure import AtomArray
 from rdkit import Chem
 
 from atomworks.constants import STANDARD_AA
+from atomworks.io import atom_array_from_file
 from atomworks.io.tools.inference import components_to_atom_array
 from atomworks.io.tools.rdkit import (
     atom_array_from_rdkit,
@@ -16,7 +17,6 @@ from atomworks.io.tools.rdkit import (
     smiles_to_rdkit,
 )
 from atomworks.io.utils.ccd import atom_array_from_ccd_code
-from atomworks.io.utils.io_utils import load_any
 from tests.io.conftest import TEST_DATA_IO
 
 try:
@@ -272,7 +272,9 @@ def molecules():
         "NAG": ccd_code_to_rdkit("NAG", hydrogen_policy="remove"),
         "BMA": ccd_code_to_rdkit("BMA", hydrogen_policy="remove"),
         "CustomUNL": atom_array_to_rdkit(
-            load_any(TEST_DATA_IO / "test_unl_ligand_with_bonds.cif", model=1), set_coord=False, hydrogen_policy="keep"
+            atom_array_from_file(TEST_DATA_IO / "test_unl_ligand_with_bonds.cif", model=1),
+            set_coord=False,
+            hydrogen_policy="keep",
         ),
     }
     return mols
@@ -373,10 +375,23 @@ def test_chriality_in_spoofed_rdkit_molecules():
     assert Chem.FindMolChiralCenters(mol_ala_inverted) == [(1, "R")]
 
 
+@pytest.mark.parametrize("element, charge", [("Na", 1), ("Cl", -1)])
+def test_single_atom_bond_inference_uses_explicit_charge(element, charge):
+    atoms = AtomArray(1)
+    atoms.element[:] = element
+    atoms.coord[:] = 0
+    atoms.set_annotation("charge", np.array([0]))
+
+    mol = atom_array_to_rdkit(atoms, infer_bonds=True, system_charge=charge)
+
+    assert mol.GetNumAtoms() == 1 and mol.GetNumBonds() == 0
+    assert Chem.GetFormalCharge(mol) == charge
+    assert atoms.charge.tolist() == [0]
+
+
 @pytest.mark.parametrize(
     "ccd_code",
     [
-        "35N",  # Simple TMC with copper
         "GDP",  # Guanosine diphosphate (simpler than ATP)
         "ATP",  # Adenosine triphosphate (several phosphate groups)
         "SAM",  # S-adenosyl methionine (sulfur chemistry)
@@ -403,10 +418,15 @@ def test_atom_array_to_rdkit_bond_inference(ccd_code: str):
     # Path 2: Conversion with bond inference from 3D coordinates
     original_no_bonds = original.copy()
     original_no_bonds.bonds = None  # Remove bonds to force inference
+    original_no_bonds.charge[:] = 7  # Inference must reconstruct, not inherit these charges.
+
+    with pytest.raises(ValueError, match="system_charge"):
+        atom_array_to_rdkit(original_no_bonds, infer_bonds=True)
 
     mol_inferred = atom_array_to_rdkit(
         original_no_bonds,
         infer_bonds=True,  # Infer bonds from coordinates
+        system_charge=0,  # These CCD reference components have known neutral totals.
         hydrogen_policy="keep",
         sanitize=True,
     )

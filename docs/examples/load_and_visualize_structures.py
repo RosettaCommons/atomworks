@@ -15,17 +15,16 @@ This example demonstrates how to load protein structures from various formats an
 # Loading Structures
 # ==================
 #
-# AtomWorks provides two main functions for loading structures, each optimized for different scenarios:
+# AtomWorks provides two main functions for reading structures, each optimized for different scenarios:
 #
 # - ``parse()``: Full processing pipeline that cleans, validates, and processes structures, typically from the RCSB PDB. Includes imputing missing atom, inferring bonds, and extensive validation.
-# - ``load_any()``: Lightweight loader for structures that do not require as extensive processing, e.g., distillation examples. Much faster when you don't need the full cleaning pipeline or missing atoms imputed.
+# - ``atom_array_from_file()``: Lightweight reader for structures that do not require as extensive processing, e.g., distillation examples. Much faster when you don't need the full cleaning pipeline or missing atoms imputed.
 #
 # If you see output like ``Environment variable CCD_MIRROR_PATH`` or ``PDB_MIRROR_PATH`` not set, don't worry - it just means we aren't using local copies of the PDB and/or CCD (we can still load the examples we need with an internet connection).
 
 import numpy as np
 
-from atomworks.io import parse
-from atomworks.io.utils.io_utils import load_any
+from atomworks.io import atom_array_from_file, parse
 from atomworks.io.utils.testing import get_pdb_path_or_buffer
 from atomworks.io.utils.visualize import view
 
@@ -57,17 +56,17 @@ parse_output = parse(pdb_path)
 print("Available data keys:", list(parse_output.keys()))
 
 ########################################################################
-# Using ``load_any()`` for Lightweight Loading
-# --------------------------------------------
+# Using ``atom_array_from_file()`` for Lightweight Loading
+# --------------------------------------------------------
 
-# For comparison: load_any() for lightweight loading (no extensive processing)
-# Useful when you have clean data (e.g., from distillation) and/or want to preserve all annotations
+# For comparison: atom_array_from_file() for lightweight loading (no extensive processing)
+# Read atoms, bonds, and supported annotations through minimal parsing.
 
-loaded_structure = load_any(pdb_path, extra_fields="all")  # Load with all available fields
-print(f"load_any result type: {type(loaded_structure)}")
+loaded_structure = atom_array_from_file(pdb_path, squeeze=False)
+print(f"atom_array_from_file result type: {type(loaded_structure)}")
 print(f"Number of models: {len(loaded_structure)}")
 
-# NOTE: load_any returns an AtomArrayStack directly, while parse returns a dictionary with metadata, chain info, assemblies, etc.
+# Here the reader returns an AtomArrayStack; models with different atoms, annotations or bonds return a list.
 
 ########################################################################
 # Structure Visualization

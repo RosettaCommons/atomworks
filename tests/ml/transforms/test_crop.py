@@ -145,9 +145,7 @@ def get_example(example_id: str, dataset: Any) -> dict:
 
 
 @pytest.mark.parametrize("example_id", BENCHMARK_EXAMPLE_IDS)
-def test_af3_like_spatial_crop_transform(
-    example_id: str, rf2aa_pdb_dataset: Any, np_seed: int = 1, crop_size: int = 384
-):
+def test_af3_like_spatial_crop_transform(example_id: str, af3_pdb_dataset: Any, np_seed: int = 1, crop_size: int = 384):
     prep_pipe = Compose(
         [
             AddGlobalAtomIdAnnotation(),
@@ -161,7 +159,7 @@ def test_af3_like_spatial_crop_transform(
     crop_pipe = CropSpatialLikeAF3(crop_size=crop_size)
 
     with rng_state(create_rng_state_from_seeds(np_seed=np_seed)):
-        data = get_example(example_id, rf2aa_pdb_dataset)
+        data = get_example(example_id, af3_pdb_dataset)
         data = prep_pipe(data)
         pre_crop_atom_array = data["atom_array"]
         query = data["query_pn_unit_iids"]

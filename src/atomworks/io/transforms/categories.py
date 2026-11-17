@@ -3,49 +3,19 @@
 These transforms are used to extract information from the CIFBlock and return a dictionary containing processed information.
 """
 
+from __future__ import annotations
+
 import logging
 import re
 from contextlib import suppress
 from datetime import datetime
 
 import numpy as np
-import pandas as pd
-import toolz
 from biotite.structure.io.pdbx import BinaryCIFBlock, BinaryCIFCategory, CIFBlock, CIFCategory
 
 from atomworks.common import exists
 
 logger = logging.getLogger("atomworks.io")
-
-
-def category_to_df(
-    cif_block_or_category: CIFBlock | BinaryCIFBlock | CIFCategory | BinaryCIFCategory, category: str | None = None
-) -> pd.DataFrame | None:
-    """Convert CIF component to pandas DataFrame.
-
-    Accepts either ``(CIFBlock, category_name)`` or ``(CIFCategory)`` directly.
-    Supports both text CIF and binary CIF (BinaryCIF) formats.
-
-    Args:
-        cif_block_or_category: :py:class:`~biotite.structure.io.pdbx.CIFBlock`,
-            :py:class:`~biotite.structure.io.pdbx.BinaryCIFBlock`, or
-            :py:class:`~biotite.structure.io.pdbx.CIFCategory` | :py:class:`~biotite.structure.io.pdbx.BinaryCIFCategory`
-        category: Category name when passing CIFBlock/BinaryCIFBlock, omit when passing CIFCategory
-
-    Returns:
-        DataFrame containing the category data, or None if category doesn't exist (CIFBlock mode only)
-    """
-    # Check for both CIFBlock and BinaryCIFBlock
-    if isinstance(cif_block_or_category, CIFBlock | BinaryCIFBlock):
-        # Extract category from CIFBlock or BinaryCIFBlock
-        cif_block = cif_block_or_category
-        if category in cif_block:
-            return pd.DataFrame(category_to_dict(cif_block, category))
-        return None
-    else:
-        # Convert CIFCategory directly
-        category_obj = cif_block_or_category
-        return pd.DataFrame(category_to_dict(category_obj))
 
 
 def category_to_dict(
@@ -70,7 +40,7 @@ def category_to_dict(
         # Extract category from CIFBlock or BinaryCIFBlock
         cif_block = cif_block_or_category
         if exists(cif_block.get(category)):
-            return toolz.valmap(lambda x: x.as_array(), dict(cif_block[category]))
+            return {key: value.as_array() for key, value in cif_block[category].items()}
         else:
             return {}
     else:

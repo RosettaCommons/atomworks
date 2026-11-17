@@ -14,7 +14,6 @@ from typing import Final, Literal
 
 import biotite.structure as struc
 import numpy as np
-import toolz
 from biotite.structure import AtomArray
 from rdkit import Chem
 from rdkit.Chem import AllChem, Mol, rdDetermineBonds, rdFingerprintGenerator
@@ -137,7 +136,7 @@ Maps (biotite bond type) -> (rdkit bond type, is_aromatic)
 """
 
 CONVERTIBLE_RDKIT_BOND_TYPES: Final[frozenset[Chem.BondType]] = frozenset(
-    toolz.keymap(lambda x: x[0], RDKIT_BOND_TYPE_TO_BIOTITE)
+    bond_type for bond_type, _ in RDKIT_BOND_TYPE_TO_BIOTITE
 )
 """Set of RDKit Bond types that can be converted to Biotite bond types."""
 
@@ -672,7 +671,7 @@ def atom_array_from_rdkit(
         # ... after kekulize, order is guaranteed to be integer
         bond_type = RDKIT_BOND_TYPE_TO_BIOTITE[(bond.GetBondType(), is_bond_aromatic)]
         bond_list.append((begin_atom_idx, end_atom_idx, bond_type))
-    atom_array.bonds = struc.bonds.BondList(n_atoms, np.array(bond_list))
+    atom_array.bonds = struc.bonds.BondList(n_atoms, np.array(bond_list, dtype=np.int64).reshape(-1, 3))
 
     # Set extra annotations
     annotations = mol._annotations if hasattr(mol, "_annotations") else {}
@@ -765,20 +764,28 @@ def atom_array_to_rdkit(
         - assume_metal_bonds_are_dative (bool): Whether to assume that all bonds with metals are dative bonds. Default is False.
             WARNING: This messes up RDKit conformer generation.
         - infer_bonds (bool): If True, infer bonds from 3D coordinates using rdDetermineBonds,
-            ignoring any existing bonds in atom_array. If False, use bonds from atom_array.bonds.
+            ignoring existing bonds and per-atom formal charges in atom_array.
+            If False, use bonds and formal charges from atom_array.
             Defaults to False.
         - system_charge (int): Overall charge of the system for bond order determination (used when infer_bonds=True).
-            Defaults to 0.
+            Required when infer_bonds=True; not inferred from per-atom charges.
         - timeout_seconds (int): Timeout in seconds for bond inference when using xyz2mol_tm for transition metal complexes.
             Defaults to 1 second.
 
     Returns:
         - rdkit.Chem.Mol: RDKit Molecule generated from the AtomArray.
 
+    Raises:
+        ValueError: If infer_bonds=True without an explicit system_charge.
+        RuntimeError: If bond inference fails or the final charge differs from system_charge.
+
     Note:
         Aromaticity, hybridization states, and other properties are automatically
         perceived by RDKit's SanitizeMol during the conversion process.
     """
+    if infer_bonds and system_charge is None:
+        raise ValueError("system_charge must be provided explicitly when infer_bonds=True.")
+
     # Read the input directly; copy only annotations retained by the output.
     mol = Chem.RWMol()
 
@@ -800,7 +807,7 @@ def atom_array_to_rdkit(
         atomic_number = element_to_atomic_number(element)
 
         rdatom = Chem.Atom(atomic_number)
-        if charges is not None:
+        if charges is not None and not infer_bonds:
             # ... set formal charge if available (otherwise RDKit will assume it is 0
             #  and assign a charge state in SanitizeMol if it is required to satisfy
             #  valence constraints)
@@ -823,17 +830,13 @@ def atom_array_to_rdkit(
     _should_be_aromatic = set()
     if infer_bonds:
         assert mol.GetNumAtoms() > 0, "Cannot infer bonds for empty molecule"
-        assert (
-            "charge" in atom_array.get_annotation_categories() or system_charge is not None
-        ), "System charge must be provided when inferring bonds if atom_array has no 'charge' annotation."
-
-        system_charge = system_charge if system_charge is not None else int(np.nansum(atom_array.charge))
-
         try:
-            # (Fast) Try standard rdDetermineBonds first
-            # Suppress YAeHMOP warnings that write directly to stderr
-            with _suppress_stderr_fd():
-                rdDetermineBonds.DetermineBonds(mol, useHueckel=True, charge=system_charge, maxIterations=10_000)
+            if mol.GetNumAtoms() == 1:
+                mol.GetAtomWithIdx(0).SetFormalCharge(system_charge)
+            else:
+                # Suppress YAeHMOP warnings that write directly to stderr.
+                with _suppress_stderr_fd():
+                    rdDetermineBonds.DetermineBonds(mol, useHueckel=True, charge=system_charge, maxIterations=10_000)
         except Exception as err_rdkit:
             # (Slow) Transitionmetal complexes (TMC) - fall back to xyz2mol_tm
             try:
@@ -950,6 +953,9 @@ def atom_array_to_rdkit(
 
     if hydrogen_policy == "infer":
         mol = add_hydrogens(mol, add_coords=set_coord)
+
+    if infer_bonds and (actual_charge := Chem.GetFormalCharge(mol)) != system_charge:
+        raise RuntimeError(f"Bond inference returned total charge {actual_charge}, expected {system_charge}.")
 
     return mol
 

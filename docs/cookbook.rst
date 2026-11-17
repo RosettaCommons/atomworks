@@ -82,27 +82,26 @@ Output
 mmCIF output
 ~~~~~~~~~~~~
 
-:func:`~atomworks.io.utils.io_utils.to_cif_file` supports `.cif`, `.cif.gz` and `.bcif` outputs::
+:func:`~atomworks.io.atom_array_to_file` supports `.cif`, `.cif.gz` and `.bcif` outputs::
 
-    import atomworks.io.utils.io_utils
+    from atomworks.io import CIFWriteConfig, atom_array_to_file
 
-    atomworks.io.utils.io_utils.to_cif_file(atom_array, filename, chain_disambiguation="chain_iid")
+    atom_array_to_file(atom_array, filename, config=CIFWriteConfig(chain_disambiguation="chain_iid"))
 
 You can also write a CIF to an in-memory buffer and read it back into AtomWorks.
 The example below keeps track of the different copies of a chain in a biological
 assembly using ``transformation_id``::
 
-    import atomworks.io
-    import atomworks.io.utils.io_utils
+    import io
 
-    buffer = atomworks.io.utils.io_utils.to_cif_buffer(
+    import atomworks.io
+    from atomworks.io import CIFWriteConfig
+
+    text = atomworks.io.atom_array_to_file(
         atom_array,
-        config=atomworks.io.utils.io_utils.CIFWriteConfig(
-            include_entity_categories=True,
-            chain_disambiguation="transformation_id",
-        ),
+        config=CIFWriteConfig(include_entity_categories=True, chain_disambiguation="transformation_id"),
     )
-    restored = atomworks.io.parse(buffer, config="minimal")["asym_unit"][0]
+    restored = atomworks.io.parse(io.StringIO(text), config="minimal")["asym_unit"][0]
 
 If you plan to open the CIF in another program, use ``chain_disambiguation="chain_iid"``
 to give each chain copy a unique name. The ``transformation_id`` option keeps the

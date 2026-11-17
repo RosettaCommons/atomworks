@@ -8,7 +8,6 @@ from typing import Any, ClassVar
 import numpy as np
 import torch
 from biotite.structure import AtomArray, residue_iter
-from toolz import keyfilter
 
 from atomworks.common import exists
 from atomworks.io.utils.io_utils import apply_sharding_pattern, build_sharding_pattern
@@ -140,7 +139,7 @@ def load_cached_residue_level_data(
         # Load and optionally filter the cached data
         cached_data = loader(file_path)
         if keys_to_load is not None:
-            cached_data = keyfilter(lambda k: k in keys_to_load, cached_data)
+            cached_data = {key: value for key, value in cached_data.items() if key in keys_to_load}
 
         cached_data_by_res_name[res_name] = cached_data
 

@@ -14,6 +14,7 @@ from biotite.structure import AtomArray, AtomArrayStack
 
 from atomworks.constants import ATOMWORKS_COMMON_ANNOTATIONS, CCD_MIRROR_PATH
 from atomworks.enums import ChainType
+from atomworks.io import atom_array_from_file, atom_array_to_file
 from atomworks.io.config import ParseConfig, PrepareConfig
 from atomworks.io.parser import parse, parse_atom_array, prepare_atom_array
 from atomworks.io.tools.inference import (
@@ -37,11 +38,7 @@ from atomworks.io.utils.io_utils import (
     _build_chem_comp_atom,
     get_structure,
     infer_pdb_file_type,
-    load_any,
     read_any,
-    to_cif_buffer,
-    to_cif_file,
-    to_cif_string,
     to_pdb_string,
 )
 from atomworks.io.utils.testing import (
@@ -50,7 +47,7 @@ from atomworks.io.utils.testing import (
     get_pdb_path,
 )
 from atomworks.ml.utils.testing import assert_equal
-from tests.conftest import skip_if_no_internet
+from tests.conftest import TEST_DATA_DIR, skip_if_no_internet
 from tests.io.conftest import TEST_DATA_IO
 
 
@@ -77,10 +74,10 @@ from tests.io.conftest import TEST_DATA_IO
         ),
     ],
 )
-def test_load_any(pdb_id, file_type, directory):
+def test_atom_array_from_file(pdb_id, file_type, directory):
     with tempfile.TemporaryDirectory() if directory else nullcontext() as tmp_dir:
         # Test loading from a buffer or file
-        loaded_structure = load_any(rcsb.fetch(pdb_id, file_type, tmp_dir), file_type=file_type)
+        loaded_structure = atom_array_from_file(rcsb.fetch(pdb_id, file_type, tmp_dir), file_type=file_type)
         assert isinstance(loaded_structure, AtomArray | AtomArrayStack)
         assert loaded_structure.array_length() > 0
 
@@ -220,7 +217,7 @@ def test_parse_atom_array_with_multiple_transformations():
     assert tfm_1_atom_1_idx not in tfm_2_atom_1_bonds
 
 
-def test_to_cif_string():
+def test_atom_array_to_file_returns_content():
     result = parse(get_pdb_path("6lyz"), config="minimal")
     cif_structure = result["asym_unit"]
 
@@ -228,7 +225,7 @@ def test_to_cif_string():
     cif_structure.res_id = struc.spread_residue_wise(cif_structure, np.arange(struc.get_residue_count(cif_structure)))
     # ... drop HOH
     cif_structure = cif_structure[0, cif_structure.res_name != "HOH"]
-    cif_string = to_cif_string(cif_structure)
+    cif_string = atom_array_to_file(cif_structure)
 
     assert isinstance(cif_string, str)
     assert len(cif_string) > 0
@@ -252,7 +249,7 @@ def test_to_cif_string():
         "test_category3": {"test_col1": [1, 3, 4], "test_col2": [2, 5, "a"]},
     }
 
-    cif_string2 = to_cif_string(
+    cif_string2 = atom_array_to_file(
         cif_structure,
         config=CIFWriteConfig(id="test_id", extra_categories=metadata),
     )
@@ -285,6 +282,21 @@ def test_to_cif_string():
         "#\n"
     )
     assert metadata_serialized in cif_string2, "Metadata not found in serialized CIF string."
+
+
+def test_nucleic_acid_links_reinfer_from_structure_components():
+    """Backbone P accepts its O3' link without the CCD leaving group a structure-derived component lacks."""
+    path = TEST_DATA_DIR / "experimental" / "protonation" / "mg_rna_aptamer_7eoh.cif.zst"
+    atoms = parse(path, config="minimal")["asym_unit"][0]
+    rna = atoms[np.isin(atoms.res_name, ["A", "C", "G", "U"])]
+    text = atom_array_to_file(rna, config=CIFWriteConfig(chem_comp_source="array", warn_on_ccd_without_registry=False))
+    back = parse(io.StringIO(text), config="minimal")["asym_unit"][0]
+
+    def backbone_links(array: AtomArray) -> int:
+        pairs = np.sort(array.atom_name[array.bonds.as_array()[:, :2]], axis=1)
+        return int(np.all(pairs == ["O3'", "P"], axis=1).sum())
+
+    assert backbone_links(back) == backbone_links(rna) > 0
 
 
 def test_to_pdb_string():
@@ -353,11 +365,10 @@ def test_cif_assembly_roundtrip(pdb_id: str, assembly_id: str, mode: str):
     # Write to CIF (with specified mode)
     with tempfile.TemporaryDirectory() as tmp_dir:
         cif_path = Path(tmp_dir) / f"{pdb_id}_assembly_{assembly_id}.cif"
-        to_cif_file(
+        atom_array_to_file(
             original,
             cif_path,
-            include_entity_categories=True,
-            chain_disambiguation=mode,
+            config=CIFWriteConfig(include_entity_categories=True, chain_disambiguation=mode),
         )
 
         # Read back
@@ -383,7 +394,7 @@ def test_cif_assembly_roundtrip(pdb_id: str, assembly_id: str, mode: str):
             "molecule_id",
             "molecule_iid",
             "molecule_entity",
-            "label_entity_id",
+            "entity_id",
             "atom_id",
             "auth_seq_id",
             "label_alt_id",
@@ -465,7 +476,7 @@ def forget_ccd_lookups():
         pytest.param(ParseConfig(hydrogen_policy="remove", add_missing_atoms=True), id="with_rebuild"),
     ],
 )
-def test_to_cif_file_roundtrip(
+def test_atom_array_to_file_roundtrip(
     pdb_id: str, reload_config: ParseConfig, biotite_ccd: str, monkeypatch, forget_ccd_lookups
 ):
     """CIF roundtrip on diverse asymmetric units, with and without biotite CCD access.
@@ -482,7 +493,7 @@ def test_to_cif_file_roundtrip(
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         cif_path = Path(tmp_dir) / "test.cif"
-        to_cif_file(original, cif_path, include_entity_categories=True)
+        atom_array_to_file(original, cif_path, config=CIFWriteConfig(include_entity_categories=True))
 
         if biotite_ccd == "off":
             # Force reload to reconstruct residue chemistry from the CIF's own
@@ -525,7 +536,7 @@ def test_entity_id_consistent_when_atom_order_disagrees_with_chain_id_order():
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         cif_path = Path(tmp_dir) / "entity_id_swap.cif"
-        to_cif_file(combined, cif_path)
+        atom_array_to_file(combined, cif_path)
         reloaded = parse(
             cif_path,
             config=ParseConfig.from_preset("minimal", load_standard_annotations=True, return_atom_array_plus=True),
@@ -588,7 +599,11 @@ def test_struct_oper_roundtrip(pdb_id: str):
         ):
             extra_cats["pdbx_struct_assembly"] = category_to_dict(result_asym["cif_block"], "pdbx_struct_assembly")
 
-        to_cif_file(result_asym["asym_unit"], cif_path, include_entity_categories=True, extra_categories=extra_cats)
+        atom_array_to_file(
+            result_asym["asym_unit"],
+            cif_path,
+            config=CIFWriteConfig(include_entity_categories=True, extra_categories=extra_cats),
+        )
 
         # Load saved file WITH and WITHOUT missing atoms and build assembly from it
         # ... without missing atoms
@@ -649,7 +664,7 @@ def test_chain_disambiguation_errors():
     with tempfile.TemporaryDirectory() as tmp_dir:
         # Error case 1: No disambiguation for ambiguous structure
         with pytest.raises(ValueError, match="Ambiguous chain annotations detected"):
-            to_cif_file(assembly_original, Path(tmp_dir) / "fail.cif", chain_disambiguation=None)
+            atom_array_to_file(assembly_original, Path(tmp_dir) / "fail.cif", config=CIFWriteConfig())
 
         # Error case 2: transformation_id mode without transformation_id annotation
         assembly_no_tid = assembly_original.copy()
@@ -657,13 +672,19 @@ def test_chain_disambiguation_errors():
         with pytest.raises(
             ValueError, match="chain_disambiguation='transformation_id' specified.*lacks.*'transformation_id'"
         ):
-            to_cif_file(assembly_no_tid, Path(tmp_dir) / "fail.cif", chain_disambiguation="transformation_id")
+            atom_array_to_file(
+                assembly_no_tid,
+                Path(tmp_dir) / "fail.cif",
+                config=CIFWriteConfig(chain_disambiguation="transformation_id"),
+            )
 
         # Error case 3: chain_iid mode without chain_iid annotation
         assembly_no_ciid = assembly_original.copy()
         assembly_no_ciid.del_annotation("chain_iid")
         with pytest.raises(ValueError, match="chain_disambiguation='chain_iid' specified.*lacks.*'chain_iid'"):
-            to_cif_file(assembly_no_ciid, Path(tmp_dir) / "fail.cif", chain_disambiguation="chain_iid")
+            atom_array_to_file(
+                assembly_no_ciid, Path(tmp_dir) / "fail.cif", config=CIFWriteConfig(chain_disambiguation="chain_iid")
+            )
 
 
 def test_parse_with_no_resolved_atoms(tmpdir):
@@ -681,7 +702,7 @@ def test_parse_with_no_resolved_atoms(tmpdir):
 
     # Use the tmpdir fixture to create a temporary file path
     cif_path = Path(tmpdir) / "test.cif"
-    cif_path = to_cif_file(atom_array, cif_path, include_nan_coords=True)
+    cif_path = atom_array_to_file(atom_array, cif_path, config=CIFWriteConfig(include_nan_coords=True))
 
     # ... parse the atom array
     out = parse(Path(cif_path))
@@ -706,9 +727,13 @@ def test_inject_msa_information_into_chain_info():
 
     msa_paths_by_chain_id = build_msa_paths_by_chain_id_from_component_list(components)
 
-    cif_buffer_with_metadata = to_cif_buffer(
-        atom_array,
-        config=CIFWriteConfig(id="test_inject_msa", extra_categories={"msa_paths_by_chain_id": msa_paths_by_chain_id}),
+    cif_buffer_with_metadata = io.StringIO(
+        atom_array_to_file(
+            atom_array,
+            config=CIFWriteConfig(
+                id="test_inject_msa", extra_categories={"msa_paths_by_chain_id": msa_paths_by_chain_id}
+            ),
+        )
     )
 
     # ... parse
@@ -968,7 +993,7 @@ def test_write_read_vs_parse_atom_array(dict_inputs, custom_residues, cleanup_re
     # Write-read, as was formerly done in the inference code
     with tempfile.TemporaryDirectory() as temp_dir:
         cif_path = Path(temp_dir) / "test.cif"
-        to_cif_file(input_atom_array, cif_path, include_nan_coords=True)
+        atom_array_to_file(input_atom_array, cif_path, config=CIFWriteConfig(include_nan_coords=True))
 
         config_kwargs = {"convert_mse_to_met": True, "hydrogen_policy": "remove"}
 

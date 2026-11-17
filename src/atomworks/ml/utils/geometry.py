@@ -342,7 +342,8 @@ def align_atom_arrays(mbl_sele: AtomArray, tgt_sele: AtomArray, mbl_full: AtomAr
         AtomArray: an atom array of the same shape as mbl_full, containing the transformed coordinates.
         float: the RMSD between mbl_sele and tgt_sele following alignment.
     """
-    mbl_fitted, xform = superimpose(tgt_sele, mbl_sele)
+    xform = superimpose(tgt_sele, mbl_sele)
+    mbl_fitted = xform.apply(mbl_sele)
     mbl_full_xformed = xform.apply(mbl_full)
     return mbl_full_xformed, rmsd(mbl_fitted, tgt_sele)
 

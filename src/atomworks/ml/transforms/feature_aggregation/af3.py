@@ -78,8 +78,8 @@ class AggregateFeaturesLikeAF3(Transform):
         msa_feats = data["msa_features"]
 
         msa_stacked_by_recycle = torch.stack(
-            msa_feats["msa_features_per_recycle_dict"]["msa"]
-        ).float()  # [n_recycles, n_sequences, n_tokens_across_chains, n_types_of_tokens]
+            [msa.float() for msa in msa_feats["msa_features_per_recycle_dict"]["msa"]]
+        )  # [n_recycles, n_sequences, n_tokens_across_chains, n_types_of_tokens]
         has_deletion_stacked_by_recycle = torch.stack(
             msa_feats["msa_features_per_recycle_dict"]["has_insertion"]
         )  # [n_recycles, n_sequences, n_tokens_across_chains]

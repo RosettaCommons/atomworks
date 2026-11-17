@@ -44,8 +44,9 @@ def ase_to_atom_array(atoms: Atoms, *, formal_charges: bool = False) -> AtomArra
 
     Args:
         atoms: The ASE atoms.
-        formal_charges: Read whole-number ``initial_charges`` as the formal ``charge``, as
-            :py:func:`atom_array_to_ase` writes it. ASE does not say which kind they are, so this is opt-in.
+        formal_charges: Read whole-number ``initial_charges`` as formal charges only if ``charge`` is absent. Arrays written by
+            :py:func:`atom_array_to_ase` carry ``charge`` itself and need no flag; for ASE's own
+            ``initial_charges``, which may be partial charges, this is opt-in.
 
     See Also:
         :py:func:`atom_array_to_ase`: Convert Biotite AtomArray back to ASE format
@@ -76,10 +77,17 @@ def ase_to_atom_array(atoms: Atoms, *, formal_charges: bool = False) -> AtomArra
         if key in ("numbers", "positions"):  # Skip default ASE arrays
             continue
         name = key
-        if formal_charges and key == "initial_charges" and np.all(value == np.round(value)):
+        if key == "initial_charges" and "charge" in atoms.arrays and np.array_equal(value, atoms.arrays["charge"]):
+            continue  # the same charge, written for ASE's calculators
+        if (
+            formal_charges
+            and key == "initial_charges"
+            and "charge" not in atoms.arrays
+            and np.all(value == np.round(value))
+        ):
             name, value = "charge", value.astype(np.int8)
         try:
-            array.set_annotation(name, value)
+            array.set_annotation(name, value.copy() if name == "charge" else value)
         except ValueError as e:
             logger.debug(f"Could not add annotation '{name}': {e}")
 
@@ -101,7 +109,8 @@ def ase_to_atom_array(atoms: Atoms, *, formal_charges: bool = False) -> AtomArra
 def atom_array_to_ase(array: AtomArray) -> Atoms:
     """Convert AtomArray to ASE Atoms object.
 
-    The formal ``charge`` goes to ``initial_charges``, and the bonds to ``info["atomworks_bonds"]`` as
+    The formal ``charge`` fills absent ``initial_charges`` for ASE's calculators and is kept as its own array, so
+    the round trip restores it without ambiguity. The bonds go to ``info["atomworks_bonds"]`` as
     ``(atom_id, atom_id, BondType)`` rows, preserving Biotite's bond-type codes, including aromatic
     and coordination types. IDs start at 0 if the array has no ``atom_id``. Bonds survive in memory
     only: ASE trajectory and database files drop the per-atom IDs needed to restore them.
@@ -137,10 +146,11 @@ def atom_array_to_ase(array: AtomArray) -> Atoms:
     # NOTE: Biotite stores annotations in _annot dict. While private, this is
     # the standard pattern for bulk annotation access (similar to how atoms.arrays works in ASE).
     annotations = dict(array._annot)
-    charges = annotations.pop("charge", None)
+    if "charge" in annotations:
+        annotations["charge"] = annotations["charge"].copy()
     atoms.arrays.update(annotations)
-    if charges is not None:
-        atoms.set_initial_charges(np.asarray(charges, dtype=float))
+    if "charge" in annotations and "initial_charges" not in annotations:
+        atoms.set_initial_charges(np.asarray(annotations["charge"], dtype=float))
 
     # Transfer metadata, if available
     if hasattr(array, "_info"):

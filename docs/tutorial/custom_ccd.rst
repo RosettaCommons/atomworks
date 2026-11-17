@@ -7,13 +7,12 @@ with correct atom names, elements, charges, bonds, and a nonempty chain ID;
 
 .. code-block:: python
 
-   from atomworks.io import parse
+   from atomworks.io import atom_array_to_file, parse
    from atomworks.io.config import ParseConfig
    from atomworks.io.utils.ccd import custom_ccd_residues
-   from atomworks.io.utils.io_utils import to_cif_file
 
    with custom_ccd_residues({"LG1": ligand}):
-       to_cif_file(atoms, "structure.cif")
+       atom_array_to_file(atoms, "structure.cif")
 
    config = ParseConfig.from_preset(
        "minimal", build_assembly=None, cif_ccd_on_mismatch="ignore",

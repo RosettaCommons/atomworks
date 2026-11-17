@@ -26,9 +26,10 @@ def test_get_torch_eps():
 
 def test_rigid_from_3_points_random(device):
     batch_size = 10
-    x1 = torch.randn(batch_size, 3, device=device)
-    x2 = torch.randn(batch_size, 3, device=device)
-    x3 = torch.randn(batch_size, 3, device=device)
+    # Use a noncollinear triangle; nearly parallel vectors make float32 Gram-Schmidt ill-conditioned.
+    basis, x2 = get_random_rigid(batch_size, device=device)
+    x1 = x2 + basis[..., 0] + basis[..., 1]
+    x3 = x2 + 2 * basis[..., 0]
 
     rot, t = rigid_from_3_points(x1, x2, x3)
 

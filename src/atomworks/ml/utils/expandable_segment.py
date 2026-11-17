@@ -156,12 +156,11 @@ def _make_expandable_segment_sentinel_from_copied_atom(
             sentinel.is_polymer[:] = chain_type.is_polymer()
             handled.add("is_polymer")
 
-    # Update the entity id if creating a new chain. Use the global max (not the
-    # source atom's own entity id) so the new id is guaranteed unused regardless
-    # of whether entity ids happen to increase monotonically with array/chain order.
-    if "label_entity_id" in existing_annots and chain_id != array.chain_id[source_atom_idx]:
-        new_entity_id = int(array.label_entity_id.max()) + 1
-        sentinel.label_entity_id[:] = new_entity_id
+    if "entity_id" in existing_annots and chain_id != array.chain_id[source_atom_idx]:
+        numeric_ids = (int(value) for value in array.entity_id if value.isdecimal())
+        new_entity_id = str(max(numeric_ids, default=0) + 1)
+        sentinel.set_annotation("entity_id", np.array([new_entity_id]))
+        handled.add("entity_id")
 
     # Set expandable segment annotations BEFORE the standard-annotation reset, so that
     # Atomize.default_annotation can see SEGMIN/SEGMAX and treat this sentinel as a standard polymer (not atomized).

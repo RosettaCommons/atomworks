@@ -4,13 +4,13 @@ import os
 import threading
 from collections.abc import Callable, Generator, Iterable
 from contextlib import contextmanager
+from copy import deepcopy
 from pathlib import Path
 from typing import Any, Literal
 
 import biotite.structure as struc
 import biotite.structure.io.pdbx as pdbx
 import numpy as np
-import toolz
 
 from atomworks.common import exists, immutable_lru_cache
 from atomworks.constants import (
@@ -315,27 +315,16 @@ def _filter_biotite_ccd_for_ccd_code(ccd_code: str) -> pdbx.CIFBlock:
     if ccd_code not in get_available_ccd_codes_in_biotite():
         raise KeyError(f"CCD code `{ccd_code}` not found in Biotite's CCD")
 
-    ccd = struc.info.get_ccd()
-
-    # Chem comp
-    chem_comp = ccd.get("chem_comp")
-    chem_comp = pdbx.convert._filter(chem_comp, chem_comp["id"].as_array() == ccd_code)
-
-    # Chem comp atom
-    chem_comp_atom = ccd.get("chem_comp_atom")
-    chem_comp_atom = pdbx.convert._filter(chem_comp_atom, chem_comp_atom["comp_id"].as_array() == ccd_code)
-
-    # Chem comp bond
-    chem_comp_bond = ccd.get("chem_comp_bond")
-    chem_comp_bond = pdbx.convert._filter(chem_comp_bond, chem_comp_bond["comp_id"].as_array() == ccd_code)
-
-    return pdbx.CIFBlock(
-        {
-            "chem_comp": chem_comp,
-            "chem_comp_atom": chem_comp_atom,
-            "chem_comp_bond": chem_comp_bond,
-        }
-    )
+    categories = {}
+    for name in ("chem_comp", "chem_comp_atom", "chem_comp_bond"):
+        category = struc.info.get_from_ccd(name, ccd_code)
+        # Bondless components still need an empty category; copies isolate Biotite's cached data.
+        categories[name] = (
+            deepcopy(category)
+            if category is not None
+            else pdbx.convert._filter(struc.info.get_ccd()[name], slice(0, 0))
+        )
+    return pdbx.CIFBlock(categories)
 
 
 def _build_ccd_template_atom_array(
@@ -374,6 +363,13 @@ def _build_ccd_template_atom_array(
     return atoms
 
 
+def _validate_unknown_charge_policy(policy: str) -> None:
+    if policy in ("infer", "keep"):
+        raise NotImplementedError(f"unknown_charge_policy={policy!r} is not implemented.")
+    if policy not in ("zero", "raise"):
+        raise ValueError("unknown_charge_policy must be 'zero', 'raise', 'infer', or 'keep'.")
+
+
 def parse_ccd_cif(
     cif: pdbx.CIFFile,
     coords: Literal["model", "ideal_pdbx", "ideal_rdkit"] | None | tuple[str, ...] = (
@@ -383,6 +379,7 @@ def parse_ccd_cif(
     ),
     add_properties: bool = False,
     add_mapping: bool = False,
+    unknown_charge_policy: Literal["zero", "raise", "infer", "keep"] = "zero",
 ) -> struc.AtomArray:
     """Parses a Chemical Component Dictionary CIF file into a Biotite AtomArray structure.
 
@@ -398,6 +395,8 @@ def parse_ccd_cif(
         add_mapping: Whether to include external resource mappings, such as e.g. the ChEMBL ID.
             Defaults to False.
             Mappings are available under the ``mapping`` attribute of the returned ``AtomArray``.
+        unknown_charge_policy: Fill unknown CCD charges with zero (default), or raise.
+            ``"infer"`` and ``"keep"`` are not implemented.
 
     Returns:
         AtomArray: The parsed atomic structure with requested annotations and properties.
@@ -408,6 +407,7 @@ def parse_ccd_cif(
         >>> # With fallback preferences:
         >>> atom_array = parse_ccd_cif(cif, coords=["ideal_pdbx", "model", "ideal_rdkit"])
     """
+    _validate_unknown_charge_policy(unknown_charge_policy)
     # Convert single value or list to tuple for uniform processing and hashability
     if isinstance(coords, str):
         coord_types = (coords,)
@@ -451,6 +451,15 @@ def parse_ccd_cif(
         return atoms
 
     n_atoms = atom_data.row_count
+    charge_column = atom_data.get("charge")
+    unknown = (
+        np.ones(n_atoms, dtype=bool)
+        if charge_column is None
+        else np.isnan(charge_column.as_array(float, masked_value=np.nan))
+    )
+    if unknown_charge_policy == "raise" and unknown.any():
+        names = atom_data["atom_id"].as_array(str)[unknown].tolist()
+        raise ValueError(f"Unknown CCD charges in {ccd_code} for atoms {names}.")
 
     def _get_str(field_name: str, default: str = "") -> np.ndarray:
         """Get string field or return default."""
@@ -468,7 +477,11 @@ def parse_ccd_cif(
         chem_comp_type=chem_comp_type,
         atom_names=atom_data.get("atom_id").as_array(str).copy(),
         elements=atom_data.get("type_symbol").as_array(str).copy(),
-        charges=atom_data.get("charge").as_array(np.int8).copy(),
+        charges=(
+            np.zeros(n_atoms, dtype=np.int8)
+            if charge_column is None
+            else charge_column.as_array(np.int8, masked_value=0).copy()
+        ),
         is_aromatic=_get_bool("pdbx_aromatic_flag"),
         is_leaving_atom=_get_bool("pdbx_leaving_atom_flag"),
     )
@@ -552,7 +565,9 @@ def parse_ccd_cif(
     # Set general annotations:
     if add_properties:
         try:
-            atoms.properties = toolz.valmap(lambda x: x.as_item(), dict(block["pdbe_chem_comp_rdkit_properties"]))
+            atoms.properties = {
+                name: column.as_item() for name, column in dict(block["pdbe_chem_comp_rdkit_properties"]).items()
+            }
         except KeyError:
             logger.warning(f"No properties data found for `{ccd_code}`. Properties will be `None`.")
             atoms.properties = None
@@ -616,6 +631,7 @@ def atom_array_from_ccd_code(
         Registry entries override standard CCD definitions. Use :py:func:`register_custom_ccd_entry`
         to provide custom templates that will be used instead of standard CCD data.
     """
+    _validate_unknown_charge_policy(parse_ccd_cif_kwargs.get("unknown_charge_policy", "zero"))
     # Check registry first
     code_upper = ccd_code.upper()
     if code_upper in _ccd_registry:

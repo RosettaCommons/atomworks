@@ -13,12 +13,11 @@ import signal
 import time
 from collections.abc import Callable
 from enum import Enum
-from functools import lru_cache, wraps
+from functools import lru_cache, reduce, wraps
 from multiprocessing import Queue
 from typing import Any, Literal, Never
 
 import numpy as np
-from toolz.curried import compose, reduce
 
 
 def exists(obj: Any) -> bool:
@@ -110,7 +109,7 @@ def listmap(func: Callable, *iterables) -> list:
     Returns:
         A list containing the results of applying func to the iterables.
     """
-    return compose(list, map)(func, *iterables)
+    return list(map(func, *iterables))
 
 
 def as_list(value: Any) -> list:
@@ -356,23 +355,27 @@ def timeout_using_subprocess(timeout: float | int | None) -> Callable:
             with _AllowSubprocessForDeamonicProcess():
                 proc.start()
 
-            # ... wait for the subprocess to finish and check if it timed out
-            proc.join(timeout=float(timeout))
-
-            # ... if the subprocess is still running, terminate it and raise a TimeoutError
-            if proc.is_alive():
-                proc.terminate()
-                proc.join()
-                raise TimeoutError(f"Function {func} timed out after {timeout} seconds")
-
-            # ... try retrieving the result, if available
+            # Drain the queue before joining: large results can block the child's queue feeder.
+            deadline = time.monotonic() + float(timeout)
             try:
-                status, value = queue.get(timeout=0.1)  # short timeout to prevent hang
-                # NOTE: Hang can happen when the child process dies unexpectedly
-                #       and the main process is waiting for the result in the queue.
-                # See Issue(https://bugs.python.org/issue43805)
+                status, value = queue.get(timeout=float(timeout))
+                proc.join(timeout=max(0.0, deadline - time.monotonic()))
+                if proc.is_alive():
+                    raise TimeoutError(f"Function {func} timed out after {timeout} seconds")
             except _queue.Empty:
+                if proc.is_alive():
+                    raise TimeoutError(f"Function {func} timed out after {timeout} seconds") from None
                 raise ChildProcessError("Child process died unexpectedly")  # noqa: B904
+            finally:
+                if proc.is_alive():
+                    proc.terminate()
+                    proc.join(timeout=0.1)
+                    if proc.is_alive():
+                        proc.kill()
+                        proc.join(timeout=1.0)
+                else:
+                    proc.join(timeout=0)
+                queue.close()
 
             match status:
                 case _TimeoutHandlerStatus.SUCCESS:

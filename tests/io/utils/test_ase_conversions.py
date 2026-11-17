@@ -52,13 +52,21 @@ def test_a_structure_survives_repeated_round_trips(filename):
 
     current = original
     for _ in range(2):
-        current = ase_to_atom_array(atom_array_to_ase(current), formal_charges=True)
+        current = ase_to_atom_array(atom_array_to_ase(current))
 
     np.testing.assert_array_equal(current.element, original.element)
     np.testing.assert_array_equal(current.atom_name, original.atom_name)
     np.testing.assert_array_equal(current.charge, original.charge)
     np.testing.assert_allclose(current.coord, original.coord, atol=1e-5)
     assert _bond_names(current) == _bond_names(original)
+
+    expected_charges = original.charge.copy()
+    converted = atom_array_to_ase(original)
+    restored = ase_to_atom_array(converted)
+    restored.charge[:] = 6
+    np.testing.assert_array_equal(converted.arrays["charge"], expected_charges)
+    converted.arrays["charge"][:] = 7
+    np.testing.assert_array_equal(original.charge, expected_charges)
 
 
 def test_roundtrip_conversion_with_metadata():
@@ -126,17 +134,25 @@ def test_a_bond_whose_atom_is_gone_is_dropped_and_the_rest_are_kept():
     assert _bond_names(kept) == _bond_names(original[keep])
 
 
-def test_a_calculators_partial_charges_are_not_taken_for_formal_charges():
+@pytest.mark.parametrize("initial_charge", [0.4, 1.0])
+@pytest.mark.parametrize("formal_charges", [False, True])
+@pytest.mark.parametrize("charge_first", [False, True])
+def test_a_calculators_partial_charges_are_not_taken_for_formal_charges(initial_charge, formal_charges, charge_first):
     """``initial_charges`` holds a formal charge or a partial one; both survive."""
     original = _structure("test_unl_ligand_with_bonds.cif")
 
     atoms = atom_array_to_ase(original)
-    atoms.set_initial_charges(np.linspace(-0.4, 0.4, len(atoms)))
-    back = ase_to_atom_array(atoms)
+    expected = np.full(len(atoms), initial_charge)
+    atoms.set_initial_charges(expected)
+    if not charge_first:
+        atoms.arrays["charge"] = atoms.arrays.pop("charge")
+    back = ase_to_atom_array(atoms, formal_charges=formal_charges)
 
-    np.testing.assert_allclose(back.initial_charges, atoms.get_initial_charges())
-    assert "charge" not in back.get_annotation_categories()
-    np.testing.assert_allclose(atom_array_to_ase(back).get_initial_charges(), atoms.get_initial_charges())
+    np.testing.assert_allclose(back.initial_charges, expected)
+    np.testing.assert_array_equal(back.charge, original.charge)
+    np.testing.assert_allclose(atom_array_to_ase(back).get_initial_charges(), expected)
+    np.testing.assert_allclose(back.initial_charges, expected)
+    np.testing.assert_allclose(atoms.get_initial_charges(), expected)
 
 
 def test_a_bond_table_that_cannot_be_read_is_ignored():

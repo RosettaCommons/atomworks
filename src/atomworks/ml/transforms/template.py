@@ -20,21 +20,16 @@ from atomworks.constants import NA_VALUES
 from atomworks.enums import ChainType
 from atomworks.ml.encoding_definitions import (
     LEGACY_RF2_ATOM14_ENCODING,
-    RF2AA_ATOM36_ENCODING,
     AF3SequenceEncoding,
-    TokenEncoding,
 )
 from atomworks.ml.transforms._checks import check_atom_array_annotation, check_contains_keys, check_is_instance
-from atomworks.ml.transforms.atom_array import (
-    AddWithinPolyResIdxAnnotation,
-    chain_instance_iter,
-)
+from atomworks.ml.transforms.atom_array import chain_instance_iter
 from atomworks.ml.transforms.base import Transform
-from atomworks.ml.transforms.encoding import atom_array_from_encoding, atom_array_to_encoding
+from atomworks.ml.transforms.encoding import atom_array_from_encoding
 from atomworks.ml.transforms.featurize_unresolved_residues import mask_polymer_residues_with_unresolved_frame_atoms
 from atomworks.ml.utils.geometry import apply_inverse_rigid, rigid_from_3_points
 from atomworks.ml.utils.numpy import select_data_by_id
-from atomworks.ml.utils.token import get_token_count, get_token_starts
+from atomworks.ml.utils.token import get_token_starts
 
 logger = logging.getLogger(__name__)
 
@@ -71,13 +66,6 @@ class RF2AATemplate:
     seq: torch.Tensor  # [1, n_templates x n_atoms_per_template]
     ids: list[tuple[str]]  # Holds the f"{pdb_id}_{chain_id}" of the template
     label: list[str]  # holds the lookup_id for this template
-
-    # RF2AA ideal N, CA, C initial coordinates (protein), copied from `chemdata` in RF2AA to decouple from `atomworks.ml`
-    _INIT_N = torch.tensor([-0.5272, 1.3593, 0.000]).float()
-    _INIT_CA = torch.zeros_like(_INIT_N)
-    _INIT_C = torch.tensor([1.5233, 0.000, 0.000]).float()
-    RF2AA_INIT_TEMPLATE_COORDINATES = torch.full((36, 3), np.nan)
-    RF2AA_INIT_TEMPLATE_COORDINATES[:3] = torch.stack((_INIT_N, _INIT_CA, _INIT_C), dim=0)  # (3,3)
 
     def __post_init__(self):
         self.ids = np.array(self.ids).flatten().squeeze()  # Flatten the list of tuples into an array
@@ -209,49 +197,6 @@ class RF2AATemplate:
         atom_array = mask_polymer_residues_with_unresolved_frame_atoms(atom_array)
 
         return atom_array
-
-
-def blank_rf2aa_template_features(
-    n_template: int,
-    n_token: int,
-    encoding: TokenEncoding,
-    mask_token_idx: int,
-    init_coords: torch.Tensor | float,
-) -> torch.Tensor:
-    """
-    Generates blank template features for RF2AA.
-
-    Args:
-        n_template (int): Number of templates.
-        n_token (int): Number of tokens in the structure.
-        encoding (TokenEncoding): Encoding object containing token and atom information.
-        mask_token_idx (int, optional): Index of the mask token. Defaults to 20.
-        init_coords (torch.Tensor | float, optional): Initial coordinates for the atoms.
-
-    Returns:
-        tuple: A tuple containing the following elements:
-            - xyz (torch.Tensor): Tensor of shape (n_template, n_token, encoding.n_atoms_per_token, 3) containing the coordinates of the atoms.
-            - t1d (torch.Tensor): Tensor of shape (n_template, n_token, encoding.n_tokens) containing the 1D template features.
-            - mask (torch.Tensor): Tensor of shape (n_template, n_token, encoding.n_atoms_per_token) containing the mask information.
-            - template_origin (np.ndarray): Array of shape (n_template,) containing the origin of the templates.
-    """
-    # TODO: Fix fill value
-    # Initialize blank template features
-    xyz = torch.full((n_template, n_token, encoding.n_atoms_per_token, 3), fill_value=float("nan"))
-    mask = torch.zeros((n_template, n_token, encoding.n_atoms_per_token), dtype=torch.bool)
-    t1d = torch.zeros((n_template, n_token, encoding.n_tokens))
-    template_origin = np.full(n_template, "")
-
-    # Fill in the initial coordinates and mask values
-    xyz[:, :] = init_coords
-
-    t1d[..., mask_token_idx] = 1.0  # Set the mask token to 1.0
-    # NOTE: In RF2AA the last dim of t1d is the `confidence`. We set it here just
-    #  for code clarity.
-    _confidence = torch.zeros((n_template, n_token))
-    t1d[..., -1] = _confidence
-
-    return xyz, t1d, mask, template_origin
 
 
 @cache
@@ -455,223 +400,6 @@ class AddRFTemplates(Transform):
             logger.debug(f"Added {len(templates[chain_id])} templates for chain {chain_id}: {chain_templates.ids}.")
 
         data["template"] = templates
-        return data
-
-
-class FeaturizeTemplatesLikeRF2AA(Transform):
-    """
-    A transform that featurizes RFTemplates templates for RF2AA.
-
-    This class takes the templates added by the `AddRFTemplates` transform and featurizes them
-    for use in the RF2AA model. The templates are added to the data under the key `template`.
-
-    Attributes:
-        - n_template (int): The number of templates to use.
-        - mask_token_idx (int): The index of the mask token. Defaults to 21.
-        - init_coords (torch.Tensor | float): The initial coordinates for the templates.
-        - encoding (TokenEncoding): The encoding to use for the templates. Defaults to `RF2AA_ATOM36_ENCODING`.
-
-    Methods:
-        check_input(data: dict[str, Any]) -> None:
-            Checks the input data for the required keys and types.
-
-        forward(data: dict[str, Any]) -> dict[str, Any]:
-            Featurizes the templates and adds them to the data.
-
-    Raises:
-        AssertionError: If `n_template` is not a positive integer.
-        AssertionError: If `encoding` is not an instance of `TokenEncoding`.
-        AssertionError: If `init_coords` is a tensor and its dimensions do not match the expected shape.
-    """
-
-    requires_previous_transforms: ClassVar[list[str | Transform]] = [AddRFTemplates, AddWithinPolyResIdxAnnotation]
-
-    def __init__(
-        self,
-        n_template: int,
-        init_coords: torch.Tensor | float,
-        mask_token_idx: int = 21,  # NOTE: This is the mask token `MSK` index in the original RF2AA code
-        encoding: TokenEncoding = RF2AA_ATOM36_ENCODING,
-        allowed_chain_types: list[ChainType] = [ChainType.POLYPEPTIDE_L, ChainType.RNA],
-    ):
-        """
-        Initializes the FeaturizeRFTemplatesForRF2AA transform.
-
-        Args:
-            - n_template (int): The number of templates to use. Must be a positive integer.
-            - mask_token_idx (int, optional): The index of the mask token. Defaults to 21.
-            - init_coords (torch.Tensor or float, optional): The initial coordinates for the templates.
-                If a tensor, its dimensions must match the expected shape.
-            - encoding (TokenEncoding, optional): The encoding to use for the templates.
-                Must be an instance of `TokenEncoding`. Defaults to `RF2AA_ATOM36_ENCODING`.
-
-        Raises:
-            AssertionError: If `n_template` is not a positive integer.
-            AssertionError: If `encoding` is not an instance of `TokenEncoding`.
-            AssertionError: If `init_coords` is a tensor and its dimensions do not match the expected shape.
-            AssertionError: If `allowed_chain_types` is not a list or contains any elements that are not instances of `ChainType`.
-        """
-        assert (
-            isinstance(n_template, int) and n_template > 0
-        ), f"n_template must be a positive integer, got {n_template}"
-        assert isinstance(
-            encoding, TokenEncoding
-        ), f"encoding must be an instance of TokenEncoding, got {type(encoding)}"
-        assert (
-            isinstance(allowed_chain_types, list) and len(allowed_chain_types) > 0
-        ), f"allowed_chain_types must be a non-empty list, got {allowed_chain_types}"
-        assert np.isin(
-            allowed_chain_types, ChainType
-        ).all(), f"Allowed chain types must be a list of ChainType enums. Got {allowed_chain_types=}."
-        self.n_template = n_template
-        self.mask_token_idx = mask_token_idx
-        self.init_coords = init_coords
-        self.encoding = encoding
-        self.allowed_chain_types = allowed_chain_types
-
-        if isinstance(init_coords, torch.Tensor):
-            n_dim = init_coords.shape[-1]
-            assert n_dim == 3, f"init_coords must have 3 dimensions, got {n_dim}"
-
-            if init_coords.ndim >= 2:
-                n_token = init_coords.shape[-2]
-                assert (
-                    n_token == encoding.n_atoms_per_token
-                ), f"init_coords must have {encoding.n_atoms_per_token} tokens, got {n_token}"
-
-    def check_input(self, data: dict[str, Any]) -> None:
-        check_contains_keys(data, ["template", "atom_array"])
-        check_is_instance(data, "template", dict)
-        check_is_instance(data, "atom_array", AtomArray)
-        check_atom_array_annotation(data, ["chain_type", "within_poly_res_idx"])
-
-    def forward(self, data: dict[str, Any]) -> dict[str, Any]:
-        # Extract data
-        atom_array = data["atom_array"]
-        templates_by_chain = data["template"]
-
-        # Initialize empty template features (= all padded) to fill later
-        xyz, t1d, mask, _ = blank_rf2aa_template_features(
-            n_template=self.n_template,
-            n_token=get_token_count(atom_array),
-            encoding=self.encoding,
-            mask_token_idx=self.mask_token_idx,
-            init_coords=self.init_coords,
-        )
-
-        # Get full atom array token starts (useful for going from atom-level > token-level annotations)
-        _a_token_starts = get_token_starts(atom_array)  # [n_token] (int)
-
-        # Fill the template features chain by chain and template by template ...
-        for chain in chain_instance_iter(atom_array):
-            # Check for allowable chain types
-            if chain.chain_type[0] not in self.allowed_chain_types:
-                # Only fill templates for proteins
-                continue
-
-            # Check for chains where templates exist
-            chain_id = chain.chain_id[0]
-            if chain_id not in templates_by_chain:
-                # Early exit if there are no templates for this chain
-                continue
-
-            # Get chain token starts (useful for going from atom-level > token-level annotations)
-            _c_token_starts = get_token_starts(chain)  # [n_token_in_chain] (int)
-            # ... atomized tokens cannot be matched to templates
-            if "atomize" in chain.get_annotation_categories():
-                is_token_atomized = chain.atomize[_c_token_starts]  # [n_token_in_chain] (bool)
-            else:
-                is_token_atomized = np.zeros_like(_c_token_starts, dtype=bool)
-            matchable_query_chain_tokens = _c_token_starts[~is_token_atomized]  # [n_matchable_token_in_chain] (int)
-
-            # Featurize the templates and insert into the template features
-            for tmpl_idx, tmpl_data in enumerate(templates_by_chain[chain_id]):
-                template = tmpl_data["atom_array"]
-
-                # Filter the template to only include tokens that are aligned to the query chain and that are not atomized
-                # ... we use -1 as a placeholder query_res_idx for template tokens without alignment
-                has_aligned_res_annotation = template.aligned_query_res_idx >= 0
-                # ... find all template tokens that are aligned to the query chain
-                has_match_in_query_chain = np.isin(
-                    template.aligned_query_res_idx, chain.within_poly_res_idx[matchable_query_chain_tokens]
-                )
-                # ... check there is at least one template token that is aligned to the query chain
-                if not np.any(has_match_in_query_chain & has_aligned_res_annotation):
-                    # skip templates that do not have any aligned residues in the query
-                    # (e.g. because query chain was cropped and crop does not overlap with template)
-                    continue
-                # ... subset the template to only the relevant tokens
-                template = template[has_match_in_query_chain & has_aligned_res_annotation]
-
-                # Get template token starts (useful for going from atom-level > token-level annotations)
-                _t_token_starts = get_token_starts(template)
-
-                # Annotate the global `token_id` for the template tokens which will be used to match
-                #  the template tokens to the query chain to fill the template features
-                template_token_id = select_data_by_id(
-                    select_ids=template.aligned_query_res_idx[_t_token_starts],
-                    data_ids=chain.within_poly_res_idx[matchable_query_chain_tokens],
-                    data=chain.token_id[matchable_query_chain_tokens],
-                    axis=0,
-                )  # [n_token_in_template] (int)
-
-                # Encode template
-                template_encoded = atom_array_to_encoding(
-                    template, self.encoding
-                )  # [n_token_in_template, ...] (float/bool/int)
-
-                # Match based on global token ids
-                _is_matched_token = np.isin(atom_array.token_id[_a_token_starts], template_token_id)  # [n_token] (bool)
-                token_ids_to_fill = atom_array.token_id[_a_token_starts][
-                    _is_matched_token
-                ]  # [n_matchable_token_in_template] (int)
-                token_idxs_to_fill = np.where(_is_matched_token)[0]  # [n_matchable_token_in_template] (int)
-
-                # Fill coordinates
-                _tmpl_xyz = select_data_by_id(
-                    select_ids=token_ids_to_fill,
-                    data_ids=template_token_id,
-                    data=template_encoded["xyz"],
-                    axis=0,
-                )
-                xyz[tmpl_idx, token_idxs_to_fill] = torch.tensor(_tmpl_xyz)
-
-                # Fill mask
-                _tmpl_mask = select_data_by_id(
-                    select_ids=token_ids_to_fill,
-                    data_ids=template_token_id,
-                    data=template_encoded["mask"],
-                    axis=0,
-                )
-                mask[tmpl_idx, token_idxs_to_fill] = torch.tensor(_tmpl_mask)
-
-                # Fill 1D template features
-                _tmpl_seq = select_data_by_id(
-                    select_ids=token_ids_to_fill,
-                    data_ids=template_token_id,
-                    data=template_encoded["seq"],
-                    axis=0,
-                )
-                _tmpl_confidence = select_data_by_id(
-                    select_ids=token_ids_to_fill,
-                    data_ids=template_token_id,
-                    data=template.alignment_confidence[_t_token_starts],
-                    axis=0,
-                )
-                # ... set one-hot encoded sequence for tokens where template features can be filled
-                t1d[tmpl_idx, token_idxs_to_fill, :-1] = torch.nn.functional.one_hot(
-                    torch.tensor(_tmpl_seq), self.encoding.n_tokens - 1
-                ).float()
-                # ... set confidence for tokens where template features can be filled
-                #     for this we extract the residue-wise alignment confidence
-                t1d[tmpl_idx, token_idxs_to_fill, -1] = torch.tensor(_tmpl_confidence)
-
-        # Save the template features
-        data["template_feat"] = {
-            "xyz": xyz,  # [n_template, n_res, n_atoms_per_token, 3] (float)
-            "mask": mask,  # [n_template, n_res, n_atoms_per_token] (bool)
-            "t1d": t1d,  # [n_tepmlate, n_res, n_tokens],  [0:n_tokens-1] = one-hot encoded sequence, [-1] = confidence
-        }
         return data
 
 
@@ -986,7 +714,6 @@ class RandomSubsampleTemplates(Transform):
 
     incompatible_previous_transforms: ClassVar[list[str | Transform]] = [
         FeaturizeTemplatesLikeAF3,
-        FeaturizeTemplatesLikeRF2AA,
         "OneHotTemplateRestype",
     ]
 

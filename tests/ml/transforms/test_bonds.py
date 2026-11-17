@@ -1,5 +1,3 @@
-import biotite.structure as struc
-import networkx as nx
 import numpy as np
 import pytest
 import torch
@@ -11,11 +9,8 @@ from atomworks.ml.transforms.atomize import AtomizeByCCDName
 from atomworks.ml.transforms.base import Compose, ConvertToTorch
 from atomworks.ml.transforms.bonds import (
     AddAF3TokenBondFeatures,
-    AddRF2AABondFeaturesMatrix,
-    AddRF2AATraversalDistanceMatrix,
     AddTokenBondAdjacency,
     _atom_adjacency_to_token_adjacency,
-    _create_rf2aa_bond_features_matrix,
     get_token_bond_adjacency,
 )
 from atomworks.ml.transforms.covalent_modifications import AnnotateCovalentModifications
@@ -153,130 +148,6 @@ def test_bond_adjaceny_transform_slow(pdb_id):
             atom_array.bonds.adjacency_matrix(), get_token_starts(atom_array, add_exclusive_stop=True)
         )
     ), "Token bond adjacency is not correct"
-
-
-RF2AA_BOND_FEATURES_MATRIX_TEST_CASES = [
-    {
-        "token_bond_adjacency": np.array([[0, 1, 0, 0], [1, 0, 1, 0], [0, 1, 0, 1], [0, 0, 1, 0]], dtype=bool),
-        "token_is_atom": np.array([False, False, True, True], dtype=bool),
-        "atom_biotite_bond_type_matrix": np.array([[0, 5], [5, 0]], dtype=np.int8),
-        "expected_output": np.array([[0, 5, 0, 0], [5, 0, 6, 0], [0, 6, 0, 4], [0, 0, 4, 0]], dtype=np.int8),
-    },
-]
-
-
-@pytest.mark.parametrize("test_case", RF2AA_BOND_FEATURES_MATRIX_TEST_CASES)
-def test_create_rf2aa_bond_features_matrix(test_case):
-    output = _create_rf2aa_bond_features_matrix(
-        test_case["token_bond_adjacency"], test_case["token_is_atom"], test_case["atom_biotite_bond_type_matrix"]
-    )
-    assert np.array_equal(
-        output, test_case["expected_output"]
-    ), f"Expected {test_case['expected_output']}, but got {output}"
-
-
-@pytest.mark.parametrize("pdb_id", ["6wjc"])
-def test_add_rf2aa_bond_features_matrix(pdb_id):
-    data = cached_parse(pdb_id)
-    pipe = Compose(
-        [
-            AtomizeByCCDName(
-                atomize_by_default=True,
-                res_names_to_ignore=STANDARD_AA,
-                move_atomized_part_to_end=True,
-            ),
-            AddTokenBondAdjacency(),
-            AddRF2AABondFeaturesMatrix(),
-        ],
-        track_rng_state=False,
-    )
-    data = pipe(data)
-
-    token_bond_adjacency = data["token_bond_adjacency"]
-    rf2aa_bond_features_matrix = data["rf2aa_bond_features_matrix"]
-
-    # Assert same shape
-    assert token_bond_adjacency.shape == rf2aa_bond_features_matrix.shape
-
-    # Assert 0's in same locations, and non-zeros in same locations
-    assert np.all(rf2aa_bond_features_matrix[token_bond_adjacency == 0] == 0)
-    assert np.all(rf2aa_bond_features_matrix[token_bond_adjacency != 0] != 0)
-
-    # TODO: More rigorous tests of pipeline
-
-
-TRAVERSAL_DISTANCE_MATRIX_TEST_CASES = [
-    {
-        "input": {
-            "rf2aa_bond_features_matrix": np.array([[0, 1, 0, 0], [1, 0, 2, 0], [0, 2, 0, 3], [0, 0, 3, 0]]),
-            "atom_array": np.array([1, 2, 3, 4]),
-        },
-        "expected": np.array([[0, 1, 2, 3], [1, 0, 1, 2], [2, 1, 0, 1], [3, 2, 1, 0]]),
-    },
-    {
-        "input": {
-            "rf2aa_bond_features_matrix": np.array([[0, 1, 1, 0], [1, 0, 0, 1], [1, 0, 0, 1], [0, 1, 1, 0]]),
-            "atom_array": np.array([1, 2, 3, 4]),
-        },
-        "expected": np.array([[0, 1, 1, 2], [1, 0, 2, 1], [1, 2, 0, 1], [2, 1, 1, 0]]),
-    },
-]
-
-
-def compute_expected_output_with_networkx(rf2aa_bond_features_matrix):
-    """Compute the same bond matrix using networkx as a sanity check"""
-    # Reduce the bond features matrix to only include atom-atom bonds
-    atom_bonds = (rf2aa_bond_features_matrix > 0) & (rf2aa_bond_features_matrix < 5)
-
-    # Create a graph from the atom bonds matrix
-    graph = nx.Graph()
-
-    # Add edges to the graph
-    rows, cols = np.where(atom_bonds)
-    edges = list(zip(rows, cols, strict=False))
-    graph.add_edges_from(edges)
-
-    # Initialize the distance matrix with zeros
-    num_atoms = rf2aa_bond_features_matrix.shape[0]
-    dist_matrix = np.zeros((num_atoms, num_atoms))
-
-    # Compute the shortest path distance for each atom
-    for i in range(num_atoms):
-        # Get the shortest path lengths from atom i to all other atoms
-        lengths = nx.single_source_shortest_path_length(graph, i)
-        for j in range(num_atoms):
-            # Set the distance to infinity if there is no path
-            dist_matrix[i, j] = lengths.get(j, np.inf)
-
-    # Replace infinite distances with a specified value (e.g., 4.0)
-    dist_matrix = np.nan_to_num(dist_matrix, posinf=4.0)
-
-    return torch.tensor(dist_matrix).float()
-
-
-@pytest.mark.parametrize("test_case", TRAVERSAL_DISTANCE_MATRIX_TEST_CASES)
-def test_generate_rf2aa_traversal_distance_matrix(test_case):
-    # Spoof an AtomArray so we don't trigger the `check_input`
-    atom_array = struc.AtomArray(10)
-    data = test_case["input"]
-    data["atom_array"] = atom_array
-    expected = test_case["expected"]
-
-    # Compute expected output using networkx
-    expected_from_nx = compute_expected_output_with_networkx(data["rf2aa_bond_features_matrix"])
-
-    transform = AddRF2AATraversalDistanceMatrix()
-
-    # Run the forward method
-    result = transform(data)
-
-    # Check if the result matches the expected output, which matches the networkx output
-    assert np.allclose(
-        result["rf2aa_traversal_distance_matrix"], expected
-    ), f"Expected {expected}, but got {result['rf2aa_traversal_distance_matrix']}"
-    assert np.allclose(
-        result["rf2aa_traversal_distance_matrix"], expected_from_nx
-    ), f"Expected {expected_from_nx}, but got {result['rf2aa_traversal_distance_matrix']}"
 
 
 AF3_TOKEN_BOND_FEATURES_TEST_CASES = [

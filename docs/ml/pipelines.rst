@@ -10,11 +10,3 @@ AF3 Pipeline
    :members:
    :undoc-members:
    :show-inheritance:
-
-RF2AA Pipeline
---------------
-
-.. automodule:: atomworks.ml.pipelines.rf2aa
-   :members:
-   :undoc-members:
-   :show-inheritance: 

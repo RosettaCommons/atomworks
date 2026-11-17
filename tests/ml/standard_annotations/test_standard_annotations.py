@@ -1,5 +1,6 @@
 """Tests for the StandardAnnotation framework"""
 
+import io
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -10,25 +11,22 @@ from biotite.structure import AtomArray
 from biotite.structure.io import pdbx
 
 from atomworks.constants import MASKED
+from atomworks.io import atom_array_from_file, atom_array_to_file
 from atomworks.io.config import ParseConfig
 from atomworks.io.parser import STANDARD_PARSER_ARGS, parse
 from atomworks.io.utils.atom_array_plus import (
     as_atom_array_plus,
 )
-from atomworks.io.utils.io_utils import (
-    load_any,
-    to_cif_file,
-)
+from atomworks.io.utils.io_utils import CIFWriteConfig, get_structure, read_any
 from atomworks.io.utils.selection import get_annotation_categories
 from atomworks.io.utils.standard_annotations import STANDARD_ANNOTATIONS
 from atomworks.io.utils.standard_annotations.serialization import _deserialize_standard_annotations
 from atomworks.io.utils.testing import assert_same_atom_array_or_stack
-from atomworks.ml.conditions import C_CRD, C_IDX, C_NTR, C_SEQ
+from atomworks.ml.conditions import C_CRD, C_IDX, C_NTR, C_SEQ, CONDITIONS
 from atomworks.ml.utils.testing import (
     add_randomized_standard_annotations,
     cached_parse,
     get_pdb_mirror_path,
-    save_and_load_atom_array,
 )
 
 # ---------------------------------------------------------------------------
@@ -125,13 +123,23 @@ def test_legacy_index_prefers_boolean_alias(minimal_atom_array):
     assert "mask_index_1_residue" not in loaded.get_annotation_categories()
 
 
-def test_save_and_load_with_standard_annotations():
+@pytest.mark.parametrize("file_type", ["cif", "bcif"])
+@pytest.mark.parametrize("alternate_conformers", [False, True])
+def test_save_and_load_with_standard_annotations(file_type, alternate_conformers):
     """Round-trip with non-default values for all StandardAnnotations, extra annotations included."""
 
-    atom_array = load_any(get_pdb_mirror_path("6lyz"))[0]
+    atom_array = get_structure(read_any(get_pdb_mirror_path("6lyz")), model=1, include_bonds=True)
     atom_array = as_atom_array_plus(atom_array)
 
+    # Alternate positions of one water test annotation remapping after conformer selection.
+    altloc = np.full(len(atom_array), ".")
+    if alternate_conformers:
+        altloc[-2:] = ["B", "A"]
+        atom_array.res_id[-1] = atom_array.res_id[-2]
+    atom_array.set_annotation("altloc_id", altloc)
+
     test_atom_array = add_randomized_standard_annotations(atom_array)
+    CONDITIONS.fill_missing_conditions_with_defaults(test_atom_array)
 
     # Extra non-SA scalar annotations
     extra_mask_original = np.zeros(len(test_atom_array), dtype=bool)
@@ -141,17 +149,17 @@ def test_save_and_load_with_standard_annotations():
     extra_annotation_original = np.random.randint(0, 100, size=test_atom_array.array_length())
     test_atom_array.set_annotation("extra_annotation", extra_annotation_original)
 
-    loaded = save_and_load_atom_array(
-        test_atom_array,
-        extra_fields_to_load=["extra_mask", "extra_annotation"],
-        extra_annotations_to_save=["extra_mask", "extra_annotation"],
-    )
+    content = atom_array_to_file(test_atom_array, file_type=file_type)
+    buffer = io.StringIO(content) if file_type == "cif" else io.BytesIO(content)
+    loaded = atom_array_from_file(buffer, file_type=file_type)
 
     assert set(get_annotation_categories(loaded, n_body="all")).issuperset(
         set(STANDARD_ANNOTATIONS.get_field_names())
     ), "Loaded atom array must have all StandardAnnotation categories for this test to be valid."
 
-    assert_same_atom_array_or_stack(test_atom_array, loaded, annotations_to_compare="arr1", enforce_order=False)
+    assert_same_atom_array_or_stack(
+        test_atom_array[altloc != "B"], loaded, annotations_to_compare="arr1", enforce_order=False
+    )
 
 
 def test_loading_standard_annotations_requires_plus():
@@ -160,7 +168,7 @@ def test_loading_standard_annotations_requires_plus():
 
 
 def test_round_trip_parse():
-    """Save with to_cif_file, load with parse + load_standard_annotations=True."""
+    """Save with atom_array_to_file, load with parse + load_standard_annotations=True."""
 
     parser_args = STANDARD_PARSER_ARGS.copy()
     parser_args["fix_arginines"] = False
@@ -176,7 +184,7 @@ def test_round_trip_parse():
 
     with TemporaryDirectory() as tmp:
         path = Path(tmp) / "test.cif"
-        to_cif_file(test_atom_array, path, save_standard_annotations=True)
+        atom_array_to_file(test_atom_array, path, config=CIFWriteConfig(save_standard_annotations=True))
 
         result = parse(
             path,

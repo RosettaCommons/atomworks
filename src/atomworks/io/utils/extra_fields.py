@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 # Translation map for builtin field names to CIF field names
 _TRANSLATE_BUILTIN_FIELDS = {
+    "entity_id": "label_entity_id",
     "atom_id": "id",
     "charge": "pdbx_formal_charge",
     "b_factor": "B_iso_or_equiv",
@@ -41,7 +42,7 @@ def infer_dtype_from_values(values: np.ndarray) -> tuple[np.dtype, np.ndarray]:
         except (ValueError, TypeError):
             pass
     if np.isin(values, ["True", "False"]).all():
-        values = np.array([v == "True" for v in values], dtype=bool)
+        values = values == "True"
         return values.dtype, values
     return values.dtype, values
 
@@ -51,6 +52,8 @@ def normalize_extra_fields(
     require_defaults: bool = False,
 ) -> dict[str, dict[str, Any]]:
     """Normalize extra_fields to dict of {name: {"default": ..., "dtype": ...}}.
+
+    Accept ``label_entity_id`` as an alias for ``entity_id``; the canonical spec takes precedence.
 
     Args:
         extra_fields: Iterable of field names (list, set, frozenset) or dict with specs.
@@ -80,6 +83,11 @@ def normalize_extra_fields(
         # as_list handles these via duck typing
         for name in as_list(extra_fields):
             result[name] = {"default": None, "dtype": None}
+
+    if "label_entity_id" in result:
+        result.setdefault("entity_id", result.pop("label_entity_id"))
+    if "entity_id" in result:
+        result["entity_id"]["dtype"] = str
 
     if require_defaults:
         missing = [n for n, s in result.items() if s["default"] is None and s["dtype"] is None]
@@ -263,8 +271,9 @@ def apply_extra_field_dtypes(
             continue
 
         values = atom_array_stack.get_annotation(field_name)
-        spec = extra_field_specs.get(field_name)
-        dtype = spec.get("dtype") if spec is not None else None
+        spec = extra_field_specs.get(field_name) or {}
+        # Entity identifiers must remain strings, including leading zeros.
+        dtype = str if field_name == "entity_id" else spec.get("dtype")
 
         if dtype is not None:
             try:
@@ -281,7 +290,6 @@ def apply_extra_field_dtypes(
             "chain_entity",
             "pn_unit_entity",
             "molecule_entity",
-            "label_entity_id",
             "chain_type",
             "charge",
         ):

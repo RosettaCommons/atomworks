@@ -12,13 +12,11 @@ from rdkit.Chem import Mol
 from atomworks.io.tools.rdkit import atom_array_from_rdkit
 from atomworks.io.utils.selection import get_residue_starts
 from atomworks.ml.transforms._checks import (
-    check_atom_array_annotation,
     check_contains_keys,
     check_is_instance,
     check_nonzero_length,
 )
 from atomworks.ml.transforms.base import Transform
-from atomworks.ml.utils.token import get_af3_token_center_coords, get_token_count, spread_token_wise
 
 logger = logging.getLogger(__name__)
 
@@ -238,91 +236,6 @@ def get_rf2aa_chiral_features(
     )
 
     return chiral_feats  # [n_chirals, 5] (float)
-
-
-class AddRF2AAChiralFeatures(Transform):
-    """AddRF2AAChiralFeatures adds chiral features to the atom array data under the "chiral_feats" key.
-
-    Chiral centers are taken from data["chiral_centers"], which is a list of dictionaries, of the form:
-    {"chiral_center_atom_id": int, "bonded_explicit_atom_ids": list[int]}
-
-    This metadata can be added by running e.g. the AddOpenBabelMoleculesForAtomizedMolecules and
-    GetChiralCentersFromOpenBabel transforms. This transform also requires the AtomizeByCCDName transform
-    to be applied previously to ensure the atom array is properly atomized.
-
-    Args:
-        data: A dictionary containing the input data, including the atom array and chiral centers.
-
-    Returns:
-        The updated data dictionary with the added chiral features under the "chiral_feats" key.
-
-    Example:
-        .. code-block:: python
-
-            data = {
-                "atom_array": atom_array,
-                "chiral_centers": [
-                    {"chiral_center_atom_id": 5, "bonded_explicit_atom_ids": [1, 2, 3, 4]},
-                    {"chiral_center_atom_id": 10, "bonded_explicit_atom_ids": [6, 7, 8, 9]},
-                ],
-            }
-
-            transform = AddRF2AAChiralFeatures()
-            result = transform.forward(data)
-
-            print(result["chiral_feats"])
-            # Output might look like:
-            #  (assuming the atom_id s above also correspond to the indices in the atom array,
-            #   otherwise the first 4 columns look different as they are the indices in the atom array)
-            # tensor([[ 5.,  1.,  2.,  3.,  0.61546...],
-            #         [ 5.,  2.,  3.,  4., -0.61546...],
-            #         ...
-            #         [10.,  7.,  8.,  9., -0.61546...]])
-    """
-
-    requires_previous_transforms: ClassVar[list[str | Transform]] = ["AtomizeByCCDName"]
-
-    def check_input(self, data: dict[str, Any]) -> None:
-        check_contains_keys(data, ["atom_array", "chiral_centers"])
-        check_is_instance(data, "atom_array", AtomArray)
-        check_nonzero_length(data, "atom_array")
-        check_atom_array_annotation(data, ["atomize", "atom_id"])
-
-    def forward(self, data: dict[str, Any]) -> dict[str, Any]:
-        atom_array: AtomArray = data["atom_array"]
-
-        token_idxs = spread_token_wise(atom_array, np.arange(get_token_count(atom_array)))
-        _id_to_token_idx = dict(zip(atom_array.atom_id, token_idxs, strict=False))
-        id_to_idx = np.vectorize(_id_to_token_idx.get)
-
-        chiral_centers_by_idx = []
-        for chiral_center in data["chiral_centers"]:
-            chiral_center_atom_id = chiral_center["chiral_center_atom_id"]
-
-            if chiral_center_atom_id not in atom_array.atom_id:
-                # ... skip chiral centers around atoms that are no longer in the array
-                continue
-
-            bonded_atom_ids = chiral_center["bonded_explicit_atom_ids"]
-            if not np.all(np.isin(bonded_atom_ids, atom_array.atom_id)):
-                # ... skip chiral centers with atoms that are no longer in the array
-                continue
-
-            # Convert from `id` to token `idx`
-            chiral_center_idx = id_to_idx([chiral_center_atom_id])[0]
-            bonded_atom_idxs = id_to_idx(bonded_atom_ids)
-            chiral_centers_by_idx.append(
-                {"chiral_center_idx": chiral_center_idx, "bonded_explicit_atom_idxs": bonded_atom_idxs}
-            )
-
-        chiral_feats = get_rf2aa_chiral_features(
-            chiral_centers_by_idx,
-            torch.tensor(get_af3_token_center_coords(atom_array)),
-            take_first_chiral_subordering=False,
-        )
-        data["chiral_feats"] = chiral_feats  # [n_chirals, 5]
-
-        return data
 
 
 def _get_reference_conformer_to_residue_mapping(atom_names: np.ndarray, conformer: AtomArray) -> tuple[np.ndarray]:

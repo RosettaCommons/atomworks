@@ -19,7 +19,7 @@ except ImportError:
 
 # Hard-enforce biotite version compatibility by importing biotite directly.
 # Atomworks monkey-patches several private biotite internals that are sensitive to exact version alignment
-_REQUIRED_BIOTITE_VERSION = "1.6.0"
+_REQUIRED_BIOTITE_VERSION = "2.0.0"
 try:
     import biotite as _biotite_check
 except ImportError:
@@ -46,7 +46,7 @@ warnings.filterwarnings("once", category=DeprecationWarning)
 # Enforce strict biotite version — atomworks patches biotite internals
 import biotite  # noqa: E402
 
-_REQUIRED_BIOTITE_VERSION = "1.6.0"
+_REQUIRED_BIOTITE_VERSION = "2.0.0"
 if biotite.__version__ != _REQUIRED_BIOTITE_VERSION:
     raise RuntimeError(
         f"atomworks requires biotite=={_REQUIRED_BIOTITE_VERSION}, "

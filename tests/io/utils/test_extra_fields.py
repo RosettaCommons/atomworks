@@ -1,6 +1,8 @@
 """Tests for extra fields utilities."""
 
 import numpy as np
+import pytest
+from biotite.structure.io import pdbx
 
 from atomworks.io.config import ParseConfig
 from atomworks.io.parser import parse
@@ -10,7 +12,7 @@ from atomworks.io.utils.extra_fields import (
     normalize_extra_fields,
     transfer_annotation_if_exists,
 )
-from atomworks.io.utils.io_utils import load_any
+from atomworks.io.utils.io_utils import get_structure, read_any
 from atomworks.io.utils.testing import get_pdb_path
 from atomworks.ml.utils.testing import cached_parse
 from tests.io.conftest import TEST_DATA_IO
@@ -63,6 +65,19 @@ def test_normalize_require_defaults():
     assert "without_default" not in result
 
 
+@pytest.mark.parametrize("extra_fields", [["entity_id"], ["label_entity_id"], "all"])
+@pytest.mark.parametrize("infer_dtypes", [False, True])
+def test_entity_field_requests_preserve_identifiers(extra_fields, infer_dtypes):
+    cif = pdbx.CIFFile.read(TEST_DATA_IO / "1a8o_modified.cif")
+    site = cif.block["atom_site"]
+    expected = np.char.add("00", site["label_entity_id"].as_array(str))
+    site["label_entity_id"] = expected
+    site["entity_id"] = np.full(len(expected), "not-the-entity-id")
+    atoms = get_structure(cif, model=1, extra_fields=extra_fields, infer_dtypes=infer_dtypes)
+    assert np.array_equal(atoms.entity_id, expected)
+    assert "label_entity_id" not in atoms.get_annotation_categories()
+
+
 def test_infer_dtype_from_values():
     """Test dtype inference from string and numeric values."""
     # String to int
@@ -96,15 +111,11 @@ def test_get_default_array():
     assert np.all(np.isnan(get_default_array({"default": None, "dtype": np.float64}, 3)))
 
 
-def test_load_any_backward_compatible(compressed_example):
-    """Test old extra_fields formats still work."""
-    path = compressed_example(TEST_DATA_IO / "1a8o_modified.cif")
-    # List format
-    result = load_any(path, extra_fields=["b_factor", "occupancy"])
-    assert "b_factor" in result.get_annotation_categories()
-
-    # Dict format
-    result = load_any(path, extra_fields={"b_factor": None})
+@pytest.mark.parametrize("extra_fields", [["b_factor", "occupancy"], {"b_factor": None}])
+def test_get_structure_extra_fields(compressed_example, extra_fields):
+    """Load extra fields supplied as a list or a specification dictionary."""
+    file = read_any(compressed_example(TEST_DATA_IO / "1a8o_modified.cif"))
+    result = get_structure(file, extra_fields=extra_fields)
     assert "b_factor" in result.get_annotation_categories()
     assert np.issubdtype(result.b_factor.dtype, np.floating)
 

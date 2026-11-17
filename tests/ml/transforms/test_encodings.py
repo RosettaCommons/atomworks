@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 
 from atomworks.constants import ELEMENT_NAME_TO_ATOMIC_NUMBER
-from atomworks.io.utils.io_utils import load_any
+from atomworks.io import atom_array_from_file
 from atomworks.ml.encoding_definitions import (
     AF2_ATOM14_ENCODING,
     AF2_ATOM37_ENCODING,
@@ -242,7 +242,7 @@ def test_resname_encoding_at_token_starts(override: bool, atom_mode: str):
 
 
 def test_atomize_token_encodes_atomized_tokens():
-    atom_array = load_any(str(TEST_DATA_DIR / "io" / "1qfe.pdb"), model=1)
+    atom_array = atom_array_from_file(TEST_DATA_DIR / "io" / "1qfe.pdb", model=1)
 
     assert hasattr(atom_array, "hetero") and atom_array.hetero is not None
     assert np.any(atom_array.hetero), "Expected ligand atoms in 1qfe.pdb"
@@ -271,7 +271,7 @@ def test_atomize_token_encodes_atomized_tokens():
 
 
 def test_atomize_token_none_uses_atomic_number_tokens():
-    atom_array = load_any(str(TEST_DATA_DIR / "io" / "test_unl_ligand_with_bonds.cif"), model=1)
+    atom_array = atom_array_from_file(TEST_DATA_DIR / "io" / "test_unl_ligand_with_bonds.cif", model=1)
     atom_array.set_annotation("atomize", np.ones(atom_array.array_length(), dtype=bool))
 
     atomic_numbers = np.unique(

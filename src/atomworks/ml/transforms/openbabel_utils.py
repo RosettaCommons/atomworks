@@ -299,7 +299,7 @@ def atom_array_from_openbabel(obmol: openbabel.OBMol) -> AtomArray:
 
         bonds.append((start_atom_idx, end_atom_idx, _OPENBABEL_BOND_TYPE_TO_BIOTITE[(order, is_aromatic)]))
     # ... transform bonds into a biotite BondList
-    atom_array.bonds = struc.BondList(len(atoms), np.array(bonds))
+    atom_array.bonds = struc.BondList(len(atoms), np.array(bonds, dtype=np.int64).reshape(-1, 3))
 
     # Set extra annotations
     annotations = obmol._annotations if hasattr(obmol, "_annotations") else {}
@@ -523,7 +523,6 @@ class AddOpenBabelMoleculesForAtomizedMolecules(Transform):
 
     requires_previous_transforms: ClassVar[list[str | Transform]] = ["AtomizeByCCDName"]
     incompatible_previous_transforms: ClassVar[list[str | Transform]] = [
-        "AddRF2AAChiralFeatures",
         "CropContiguousLikeAF3",
         "CropSpatialLikeAF3",
     ]
@@ -616,7 +615,6 @@ class GetChiralCentersFromOpenBabel(Transform):
         "AddOpenBabelMoleculesForAtomizedMolecules",
         "AtomizeByCCDName",
     ]
-    incompatible_previous_transforms: ClassVar[list[str | Transform]] = ["AddRF2AAChiralFeatures"]
 
     def check_input(self, data: dict[str, Any]) -> None:
         check_contains_keys(data, ["atom_array", "openbabel"])

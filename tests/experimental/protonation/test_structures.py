@@ -18,6 +18,7 @@ from atomworks.experimental.protonation._assign import AQUA_PKA, DEFAULT_AQUA_PK
 from atomworks.io import parse
 from atomworks.io.config import ParseConfig
 from tests.experimental.protonation.test_regressions import DATA, hydrogens_on, is_h, protonate_array, residue_key
+from tests.io.utils.charge_invariants import metal_bound_oxide_or_sulfide
 
 
 def atoms_named(atom_array, res_name, atom_name):
@@ -98,17 +99,25 @@ METAL_DONORS = {
 # (fixture, residue, atoms or None for all, bonded to another residue or None for either,
 #  hydrogens, formal charge or None for any[, parse overrides])
 ATOM_STATES = [
-    ("sf4_ferredoxin_1fdn", "SF4", None, None, 0, 0),
-    ("sf4_ferredoxin_2fdn", "SF4", None, None, 0, 0),
-    ("clf_nitrogenase_7adr", "CLF", None, None, 0, 0),
-    ("fes_ferredoxin_6e6r", "FES", None, None, 0, 0),
-    ("feo_myohemerythrin_2mhr", "FEO", None, None, 0, 0),
+    ("sf4_ferredoxin_1fdn", "SF4", ("S1", "S2", "S3", "S4"), None, 0, -2),
+    ("sf4_ferredoxin_2fdn", "SF4", ("S1", "S2", "S3", "S4"), None, 0, -2),
+    ("clf_nitrogenase_7adr", "CLF", ("S1", "S2A", "S3A", "S4A", "S2B", "S3B", "S4B"), None, 0, -2),
+    ("fes_ferredoxin_6e6r", "FES", ("S1", "S2"), None, 0, -2),
+    ("feo_myohemerythrin_2mhr", "FEO", ("O",), None, 0, -2),
+    # Unknown CCD metal charges are stored as zero; this is not a neutral oxidation-state assignment.
+    ("sf4_ferredoxin_1fdn", "SF4", ("FE1", "FE2", "FE3", "FE4"), None, 0, 0),
+    ("sf4_ferredoxin_2fdn", "SF4", ("FE1", "FE2", "FE3", "FE4"), None, 0, 0),
+    ("clf_nitrogenase_7adr", "CLF", tuple(f"FE{i}" for i in range(1, 9)), None, 0, 0),
+    ("fes_ferredoxin_6e6r", "FES", ("FE1", "FE2"), None, 0, 0),
+    ("feo_myohemerythrin_2mhr", "FEO", ("FE1", "FE2"), None, 0, 0),
     ("cua_ba3_2cua", "CUA", None, None, 0, 0),
-    ("mgf_phosphoglucomutase_6h8z", "MGF", ("F1", "F2", "F3"), None, 0, 0),
-    ("mgf_phosphoglucomutase_6h8z", "MGF", ("MG",), None, 0, -1),
+    ("nco_zdna_1dn8", "NCO", ("CO",), None, 0, 0),
+    ("heme_myoglobin_5yce", "HEM", ("FE",), None, 0, 0),
+    ("mgf_phosphoglucomutase_6h8z", "MGF", ("F1", "F2", "F3"), None, 0, -1),
+    ("mgf_phosphoglucomutase_6h8z", "MGF", ("MG",), None, 0, 2),
     ("nco_zdna_1dn8", "NCO", ("N1", "N2", "N3", "N4", "N5", "N6"), None, 3, 0),
-    ("nco_zdna_1dn8", "NCO", ("CO",), None, 0, 3),
-    ("heme_myoglobin_5yce", "HEM", ("NA", "NB", "NC", "ND", "FE"), None, 0, 0),
+    ("heme_myoglobin_5yce", "HEM", ("NA", "NC"), None, 0, -1),
+    ("heme_myoglobin_5yce", "HEM", ("NB", "ND"), None, 0, 0),
     ("chloride_complex_4hbt", "CL", ("CL",), None, 0, -1),
     # An acylated lysine is a neutral amide.
     ("lys_biotin_1bdo", "LYS", ("NZ",), True, 1, 0),
@@ -144,7 +153,6 @@ ATOM_STATES = [
 ]
 # (fixture, residue, net formal charge, hydrogens or None[, parse overrides]) of every resolved copy
 RESIDUE_STATES = [
-    ("heme_myoglobin_5yce", "HEM", -2, 30),
     ("phosphate_charge_4js1", "PO4", -2, 1, _KEEP_AIDS),
     ("phosphopeptide_5ema", "SEP", -2, 4),
     ("free_and_attached_solutes_5xag", "GOL", 0, None, _KEEP_AIDS),
@@ -199,7 +207,8 @@ def test_every_hydrogen_is_placed_once_at_a_bond_length_on_a_sane_charge(name):
     assert np.isfinite(protonated.coord[h]).all()
     assert (degree[h] == 1).all()
     assert ((lengths >= low) & (lengths <= high)).all(), [_label(protonated, i) for i in heavy[lengths > high]]
-    assert (np.abs(protonated.charge[~metal]) <= 1).all()
+    ionic = metal_bound_oxide_or_sulfide(protonated)
+    assert ((np.abs(protonated.charge) <= 1) | metal | ionic).all()
 
 
 @pytest.mark.parametrize(
@@ -333,6 +342,17 @@ def test_a_residue_carries_its_net_charge_at_ph_7_4(name, res_name, charge, n_h,
     for res in residues:
         assert int(protonated.charge[res].sum()) == charge
         assert n_h in (None, sum(len(hydrogens_on(protonated, i)) for i in res))
+
+
+def test_heme_ligand_charge_and_hydrogens_do_not_assume_an_iron_oxidation_state():
+    protonated = protonate("heme_myoglobin_5yce")
+    residues = _residues(protonated, "HEM")
+    assert residues
+    for res in residues:
+        ligand = res[protonated.element[res] != "FE"]
+        # Porphyrinate contributes -2 and the two deprotonated propionates contribute -2.
+        assert int(protonated.charge[ligand].sum()) == -4
+        assert sum(len(hydrogens_on(protonated, i)) for i in res) == 30
 
 
 def test_the_parse_reads_a_tetrahedral_intermediate_as_a_serine_bonded_oxyanion():

@@ -11,7 +11,6 @@ from collections import Counter
 from collections.abc import Sequence
 
 import numpy as np
-import toolz
 
 from atomworks.constants import (
     AA_LIKE_CHEM_TYPES,
@@ -52,9 +51,9 @@ def aa_chem_comp_3to1(standard_only: bool = False) -> dict[str, str]:
     Returns:
         Dictionary mapping 3-letter to 1-letter amino acid codes.
     """
-    aa_3to1 = toolz.keyfilter(lambda x: x in aa_chem_comps(), chem_comp_to_one_letter())
+    aa_3to1 = {key: value for key, value in chem_comp_to_one_letter().items() if key in aa_chem_comps()}
     if standard_only:
-        return toolz.keyfilter(lambda x: x in STANDARD_AA, aa_3to1)
+        return {key: value for key, value in aa_3to1.items() if key in STANDARD_AA}
     return aa_3to1
 
 
@@ -68,9 +67,9 @@ def na_chem_comp_3to1(standard_only: bool = False) -> dict[str, str]:
     Returns:
         Dictionary mapping 3-letter to 1-letter nucleic acid codes.
     """
-    na_3to1 = toolz.keyfilter(lambda x: x in na_chem_comps(), chem_comp_to_one_letter())
+    na_3to1 = {key: value for key, value in chem_comp_to_one_letter().items() if key in na_chem_comps()}
     if standard_only:
-        return toolz.keyfilter(lambda x: x in STANDARD_NA, na_3to1)
+        return {key: value for key, value in na_3to1.items() if key in STANDARD_NA}
     return na_3to1
 
 
