@@ -1,7 +1,18 @@
 Installation
 ============
 
-Requires Python 3.12 or newer. Choose the installation that fits your workflow:
+AtomWorks can be installed in several ways, depending on your workflow and environment. Below are the recommended methods:
+
+0. Prerequisites
+-----------------
+
+Before installing AtomWorks, ensure you have Python 3.12 or higher.
+
+Choose the installation that fits your workflow:
+
+1. Installing via pip (recommended)
+-----------------------------------
+This is the easiest way to get started with AtomWorks.
 
 .. code-block:: bash
 
