@@ -60,6 +60,23 @@ def test_entity_metadata_matches_string_identifiers():
     assert info["processed_entity_canonical_sequence"] == "AGS"
 
 
+def test_unresolved_poly_seq_residues_get_an_empty_insertion_code():
+    atom_array = _single_atom_residues(["ALA", "GLY"], hetero=False)
+    atom_array.res_id = np.array([2, 3])
+    atom_array.ins_code = np.array(["A", "B"])
+    poly_seq = {
+        "entity_id": np.array(["1"] * 4),
+        "num": np.array([1, 2, 3, 4]),
+        "mon_id": np.array(["MET", "ALA", "GLY", "SER"]),
+    }
+
+    info = build_chain_info(atom_array, entity_poly_seq=poly_seq)["A"]
+
+    assert info["res_id"] == [1, 2, 3, 4]
+    assert info["ins_code"] == ["", "A", "B", ""]
+    assert info["res_name"] == ["MET", "ALA", "GLY", "SER"]
+
+
 @pytest.mark.parametrize("test_case", CHAIN_TYPE_TEST_CASES)
 def test_infer_chain_info_from_atom_array(test_case: dict):
     cif_path = get_pdb_path(test_case["pdb_id"])

@@ -466,12 +466,13 @@ def _prepare_atom_array_or_stack(
             remaining_chains = set(atoms.chain_id)
             chain_info = {chain_id: info for chain_id, info in chain_info.items() if chain_id in remaining_chains}
             for chain_id, info in chain_info.items():
+                in_chain = atoms.chain_id == chain_id
+                present = set(zip(atoms.res_id[in_chain].tolist(), atoms.ins_code[in_chain].tolist(), strict=True))
+                resolved = np.array([key in present for key in zip(info["res_id"], info["ins_code"], strict=True)])
                 # Preserve unresolved sequence entries unless they are explicitly excluded.
-                keep = ~np.isin(info["res_name"], [ccd.upper() for ccd in config.remove_ccds]) | np.isin(
-                    info["res_id"], atoms.res_id[atoms.chain_id == chain_id]
-                )
+                keep = ~np.isin(info["res_name"], [ccd.upper() for ccd in config.remove_ccds]) | resolved
                 if not keep.all():
-                    for key in ("res_id", "res_name"):
+                    for key in ("res_id", "ins_code", "res_name"):
                         info[key] = np.asarray(info[key])[keep].tolist()
                     update_sequences_from_res_names(info)
 
